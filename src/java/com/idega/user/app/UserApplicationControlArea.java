@@ -29,12 +29,14 @@ import com.idega.presentation.Script;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.presentation.BasicUserOverview;
 import com.idega.user.presentation.BasicUserOverviewPS;
 import com.idega.user.presentation.GroupTreeNode;
 import com.idega.user.presentation.GroupTreeView;
+import com.idega.util.IWTimestamp;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -238,9 +240,11 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		
 		WelcomeMessage welcomeMessage = new WelcomeMessage();
 		welcomeMessage.setBold();
-		welcomeMessage.showDate(true);
 		
-		
+		IWTimestamp s = IWTimestamp.RightNow();
+		Text date = new Text(s.getDateString("EEEEEEEEEEEE dd.MM.yyyy",iwc.getCurrentLocale())); 
+		date.setFontClass("boldBlue");
+	
   	Table welcomeMessageTable = new Table(2,1);
 		welcomeMessageTable.setCellspacing(0);
 		welcomeMessageTable.setCellpadding(0);
@@ -253,6 +257,8 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		if(iwc.isLoggedOn())
 		welcomeMessageTable.add(lockImage,1,1);
 		welcomeMessageTable.add(welcomeMessage,2,1);
+		welcomeMessageTable.add(Text.BREAK,2,1);
+		welcomeMessageTable.add(date,2,1);
   	
   	
   	return welcomeMessageTable;
