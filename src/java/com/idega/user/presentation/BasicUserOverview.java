@@ -788,23 +788,24 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     
     private void addGreetingPage(IWContext iwc) {
         //Birna did this
-        //				Table frameTable = new Table(1,1);
-        //				frameTable.setCellpaddingAndCellspacing(0);
-        //				frameTable.setStyleClass("mainDisplay");
-        //				frameTable.setHeight(1,1,"100%");
-        //				frameTable.setWidth(1,1,"100%");
+        				Table frameTable = new Table(1,2);
+        				frameTable.setCellpaddingAndCellspacing(0);
+        				frameTable.setHeight("100%");
+        				frameTable.setWidth("100%");
+        				frameTable.setHeight(1, 40);
         
         String frontPageId = getBundle(iwc).getProperty(USER_APPLICATION_FRONT_PAGE_ID);
         if(frontPageId!=null && !"-1".equals(frontPageId)) {
             IFrame frontPage = new IFrame();
-            frontPage.setHeight("95%");
-            frontPage.setWidth("99%");
+            frontPage.setHeight("100%");
+            frontPage.setWidth("100%");
             frontPage.setStyleClass("main");
             frontPage.setIBPage(Integer.parseInt(frontPageId));
             frontPage.setScrolling(IFrame.SCROLLING_AUTO);
             //			frontPage.setBorder(1);
-            add(frontPage);
+            frameTable.add(frontPage, 1, 2);
         }
+        add(frameTable);
     }
     
     /**
