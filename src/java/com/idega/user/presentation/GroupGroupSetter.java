@@ -90,7 +90,7 @@ import com.idega.util.IWColor;
     }
 
     public void main(IWContext iwc) throws Exception {
-
+//TODO only display allowed ggroups
 
       String save = iwc.getParameter("save");
       if(save != null){
