@@ -69,6 +69,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 */
 	public void main(IWContext iwc) throws Exception {
 		super.main(iwc);
+		getRightBox().selectAllOnSubmit();
 		
 		if( rootGroup!=null ){
 			setAvailableGroups( com.idega.util.ListUtil.convertCollectionToList(getGroupBusiness(iwc).getGroupsContained(rootGroup)) );
