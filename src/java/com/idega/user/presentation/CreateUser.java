@@ -6,7 +6,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.ejb.CreateException;
 import javax.ejb.EJBException;
+import javax.ejb.FinderException;
 
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
@@ -28,7 +30,6 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
-
 /**
  * Title:        User
  * Description:
@@ -172,7 +173,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		disableAccountField = new CheckBox(disableAccountFieldParameterName);*/
 		goToPropertiesField = new HiddenInput(goToPropertiesFieldParameterName,"TRUE");
 		//goToPropertiesField.setChecked(true);
-
+		
 		primaryGroupField = new GroupChooser(primaryGroupFieldParameterName);
 		
 
@@ -395,128 +396,31 @@ public class CreateUser extends StyledIWAdminWindow {
 
 	}
 
-	public void commitCreation(IWContext iwc) throws Exception {
+	public void commitCreation(IWContext iwc) {
 
 		User newUser = null;
 
-		//String login = iwc.getParameter(userLoginFieldParameterName);
-		//String passw = iwc.getParameter(passwordFieldParameterName);
-		//String cfPassw = iwc.getParameter(confirmPasswordFieldParameterName);
-		//String password = null;
-		String ssn = iwc.getParameter(ssnFieldParameterName);
 
-		/*String mustChage = iwc.getParameter(mustChangePasswordFieldParameterName);
-		String cannotchangePassw = iwc.getParameter(cannotChangePasswordFieldParameterName);
-		String passwNeverExpires = iwc.getParameter(passwordNeverExpiresFieldParameterName);
-		String disabledAccount = iwc.getParameter(disableAccountFieldParameterName);*/
+		String ssn = iwc.getParameter(ssnFieldParameterName);
 		String primaryGroup = iwc.getParameter(primaryGroupFieldParameterName);
 		primaryGroup = primaryGroup.substring(primaryGroup.lastIndexOf("_")+1);
-
-		//Boolean bMustChange = Boolean.FALSE;
-		//Boolean bAllowedToChangePassw = Boolean.TRUE;
-		//Boolean bPasswNeverExpires = Boolean.TRUE;
-		//Boolean bEnabledAccount = Boolean.TRUE;
-
-		//Integer primaryGroupId = null;
-
-		//if (primaryGroup != null && !primaryGroup.equals("")) {
-			//primaryGroupId = new Integer(primaryGroup);
-		//}
-
-	/*	if (mustChage != null && !"".equals(mustChage)) {
-			bMustChange = Boolean.TRUE;
-		}
-		else {
-			bMustChange = Boolean.FALSE;
+		Integer primaryGroupId = null;
+		if (primaryGroup != null && !primaryGroup.equals("")) {
+			primaryGroupId = new Integer(primaryGroup);
 		}
 
-		if (cannotchangePassw != null && !"".equals(cannotchangePassw)) {
-			bAllowedToChangePassw = Boolean.FALSE;
-		}
-		else {
-			bAllowedToChangePassw = Boolean.TRUE;
-		}
 
-		if (passwNeverExpires != null && !"".equals(passwNeverExpires)) {
-			bPasswNeverExpires = Boolean.TRUE;
-		}
-		else {
-			bPasswNeverExpires = Boolean.FALSE;
-		}
 
-		if (disabledAccount != null && !"".equals(disabledAccount)) {
-			bEnabledAccount = Boolean.FALSE;
-		}
-		else {
-			bEnabledAccount = Boolean.TRUE;
-		}
-
-		if (passw != null && cfPassw != null && passw.equals(cfPassw)) {
-			password = passw;
-		}
-		else if (passw != null && cfPassw != null && !passw.equals(cfPassw)) {
-			throw new Exception("password and confirmed password not the same");
-		}*/
-
-		try {
+		
 			String fullName = iwc.getParameter(fullNameFieldParameterName);
-			newUser = getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(fullName,ssn,null,null);
-			
-			IWTimestamp t = null;
-			
-			if (ssn != null && ssn.length() > 0) {
-				t = new IWTimestamp();
-			
-				String day = ssn.substring(0,2);
-				String month = ssn.substring(2,4);
-				String year = ssn.substring(4,6);
-				
-				int iDay = Integer.parseInt(day);
-				int iMonth = Integer.parseInt(month);
-				int iYear = Integer.parseInt(year);
-				if (ssn.substring(9).equals("9"))
-					iYear += 1900;
-				else if (ssn.substring(9).equals("0"))
-					iYear += 2000;
-				else if (ssn.substring(9).equals("8"))
-					iYear += 1800;
-				t.setHour(0);
-				t.setMinute(0);
-				t.setSecond(0);
-				t.setMilliSecond(0);
-				t.setDay(iDay);
-				t.setMonth(iMonth);
-				t.setYear(iYear);
-				
-				
-			}
-			
-			newUser =
-				getUserBusiness(iwc).createUserWithLogin(
-					null,
-					null,
-					null,
-					ssn,
-					null,
-					null,
-					null,
-					t,
-					null,
-					null,
-					null,
-					null,
-					IWTimestamp.RightNow(),
-					5000,
-					null,
-					null,
-					null,
-					null,
-					fullName);
-		}
-		catch (Exception e) {
-			add("Error: " + e.getMessage());
-			e.printStackTrace();
-		}
+			try {
+				newUser = getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(fullName,ssn,null,null);
+			Group group = getGroupBusiness(iwc).getGroupByGroupID(primaryGroupId.intValue());
+			group.addGroup(newUser);
+			newUser.setPrimaryGroupID(primaryGroupId);
+			newUser.store();
+
+		
 
 		if (iwc.getParameter(goToPropertiesFieldParameterName) != null) {
 			Link gotoLink = new Link();
@@ -525,7 +429,16 @@ public class CreateUser extends StyledIWAdminWindow {
 			String script = "window.opener." + gotoLink.getWindowToOpenCallingScript(iwc);
 			setOnLoad(script);
 		}
-
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			catch (CreateException e) {
+				e.printStackTrace();
+			}
+			catch (FinderException e) {
+				e.printStackTrace();
+			}
 	}
 
 	public void main(IWContext iwc) throws Exception {
