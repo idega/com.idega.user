@@ -56,9 +56,9 @@ public abstract class UserTab extends Table implements Collectable{
     this.setStyleClass("main"); //added for isi styles - birna
     this.setCellpadding(3);
     this.setCellspacing(0);
-    this.setWidth("100%"); //changed from 370
-    this.setHeight("100%");
-    this.setVerticalAlignment("middle"); //added - birna
+    this.setWidth("400"); //changed from 370
+    this.setHeight("90%");
+    this.setVerticalAlignment("top"); //added - birna
     initializeFieldNames();
     initializeFields();
     initializeTexts();
