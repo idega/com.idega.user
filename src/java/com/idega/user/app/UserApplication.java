@@ -76,7 +76,7 @@ public class UserApplication extends IWBrowser {
     } 
 
     //this.addToBottom(new Bottom());
-    this.setBottomURL(IWPresentationEvent.IW_EVENT_HANDLER_URL);
+    this.setBottomURL( getIWApplicationContext().getApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL)  );
 
 //    this.setBorder(20);
 //    this.getMiddleFrameset().setBorder(10);
