@@ -15,8 +15,8 @@ import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.AbstractChooserWindow;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.StyledAbstractChooserWindow;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.data.User;
@@ -25,7 +25,7 @@ import com.idega.user.data.UserHome;
 /**
  * @author gimmi
  */
-public class UserChooserWindow extends AbstractChooserWindow {
+public class UserChooserWindow extends StyledAbstractChooserWindow {
 
 	/**
 	 * @todo Add order functions
@@ -47,12 +47,14 @@ public class UserChooserWindow extends AbstractChooserWindow {
 	public static String AVAILABLE_USER_PKS_SESSION_PARAMETER = "us_ch_av_us_sp";
 	public static String USING_AVAILABLE_USER_PKS_SESSION_PARAMETER = "ucw_upsp";
 	private int currentPage = 0;
+	
+	private String mainTableStyle = "main";
 
 	public UserChooserWindow() {
     setTitle("User chooser");
     setWidth(500);
     setHeight(500);
-    setCellpadding(5);
+//    setCellpadding(5);
     setScrollbar(true);
     this.getLocation().setApplicationClass(this.getClass());
     this.getLocation().isInPopUpWindow(true);
@@ -125,7 +127,10 @@ public class UserChooserWindow extends AbstractChooserWindow {
 			init(iwc);
 			
 	    addTitle(iwrb.getLocalizedString("select_a_user","Select a user"),IWConstants.BUILDER_FONT_STYLE_TITLE);
-	
+	   
+	    Table mainTable = new Table(1,1);
+	    mainTable.setStyleClass(mainTableStyle);
+	    
 			Form form = new Form();
 			form.maintainParameter(SCRIPT_PREFIX_PARAMETER);
 			form.maintainParameter(SCRIPT_SUFFIX_PARAMETER);
@@ -140,7 +145,8 @@ public class UserChooserWindow extends AbstractChooserWindow {
 			}catch (RemoteException r){ 
 				throw new RuntimeException(r.getMessage());
 			}
-			add(form);
+			mainTable.add(form,1,1);
+			add(mainTable,iwc);
 		}
 		
 	}
