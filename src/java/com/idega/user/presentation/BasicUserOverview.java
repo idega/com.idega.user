@@ -54,6 +54,7 @@ import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.PrintButton;
+import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
@@ -233,29 +234,30 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             confirmDeleting += " ?";
             SubmitButton deleteButton =
                 new SubmitButton(
-                        iwrb.getLocalizedImageButton("Delete selection", "Delete selection"),
+                        iwrb.getLocalizedString("Delete selection", "Delete selection"),
                         BasicUserOverview.DELETE_USERS_KEY,
                         BasicUserOverview.DELETE_USERS_KEY);
+            StyledButton styledDeleteButton = new StyledButton(deleteButton);
             deleteButton.setSubmitConfirm(confirmDeleting);
             //form.add(deleteButton);
             //form.add(Text.getNonBrakingSpace());
-            entityBrowser.addPresentationObjectToBottom(deleteButton);
+            entityBrowser.addPresentationObjectToBottom(styledDeleteButton);
             
         }
     }
 
     private void addMoveOrAddButton(EntityBrowser entityBrowser) {
         String confirmMoving;
-        Image buttonMoving;
+        String buttonMoving;
         boolean addMoveOrAddButton = true;
         if (selectedGroup == null) {
             confirmMoving = iwrb.getLocalizedString("buo_add_selected_users", "Add selected users");
-            buttonMoving = iwrb.getLocalizedImageButton("Add to", "Add to");
+            buttonMoving = iwrb.getLocalizedString("Add to", "Add to");
         }
         else {
             addMoveOrAddButton = hasEditPermissionForRealGroup;
             confirmMoving = iwrb.getLocalizedString("buo_move_selected_users", "Move selected users");
-            buttonMoving = iwrb.getLocalizedImageButton("Move to", "Move to");
+            buttonMoving = iwrb.getLocalizedString("Move to", "Move to");
         
         }
         confirmMoving += " ?";
@@ -263,6 +265,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         if(addMoveOrAddButton) {
             SubmitButton moveToButton = new SubmitButton(buttonMoving, BasicUserOverview.MOVE_USERS_KEY, BasicUserOverview.MOVE_USERS_KEY);
             moveToButton.setSubmitConfirm(confirmMoving);
+            StyledButton styledMoveToButton = new StyledButton(moveToButton);
             
        
             GroupChooser targetGroupChooser = new GroupChooser(SELECTED_TARGET_GROUP_KEY);
@@ -271,7 +274,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 targetGroupChooser.setSelectedNode(new GroupTreeNode(selectedGroup));
             }
             
-            entityBrowser.addPresentationObjectToBottom(moveToButton);
+            entityBrowser.addPresentationObjectToBottom(styledMoveToButton);
             entityBrowser.addPresentationObjectToBottom(targetGroupChooser);
         }
     }
