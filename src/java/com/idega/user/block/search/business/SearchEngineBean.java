@@ -23,7 +23,7 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 	public Collection getResult(UserSearchEvent e) throws RemoteException {
 		switch (e.getSearchType()) {
 			case UserSearchEvent.SEARCHTYPE_SIMPLE :
-				return getSimpleSearchResults(e.getSearchType(), e.getSearchString());
+				return getSimpleSearchResults(e.getSearchString());
 			case UserSearchEvent.SEARCHTYPE_ADVANCED :
 				return getAdvancedSearchResults(e);
 			default :
@@ -57,7 +57,7 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 		return User.class;
 	}
 	
-	public Collection getSimpleSearchResults(int searchType, String searchString) throws RemoteException {
+	public Collection getSimpleSearchResults(String searchString) throws RemoteException {
 		return doSimpleSearch(searchString);
 	}
 	
