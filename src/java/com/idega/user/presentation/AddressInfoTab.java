@@ -16,6 +16,7 @@ import java.util.StringTokenizer;
 
 import com.idega.core.data.Address;
 import com.idega.core.data.PostalCode;
+import com.idega.core.data.Country;
 
 
 
@@ -107,9 +108,11 @@ public class AddressInfoTab extends UserTab{
     provinceField.setLength(20);
 
 //only works for Iceland
-    postalCodeField = new PostalCodeDropdownMenu();
-    postalCodeField.setCountry("Iceland");//hack
-
+    if(postalCodeField==null){
+    	postalCodeField = new PostalCodeDropdownMenu();
+    	postalCodeField.setCountry("Iceland");//hack
+    }
+    
     countryField = new TextInput(countryFieldName);
     countryField.setLength(20);
     countryField.setDisabled(true);
@@ -266,7 +269,9 @@ public class AddressInfoTab extends UserTab{
       /** @todo remove this fieldValues bullshit!**/
       String street = addr.getStreetAddress();
       int code = addr.getPostalCodeID();     
-      String country = addr.getCountry().getName();
+      Country country = addr.getCountry();
+      String countryName = null;
+      if(country!=null) countryName = country.getName();
       String city = addr.getCity();
       String province = addr.getProvince(); 	
       String poBox = addr.getPOBox();
@@ -276,7 +281,7 @@ public class AddressInfoTab extends UserTab{
 	      if( city!=null ) fieldValues.put(cityFieldName, city );
 	      if ( province!=null ) fieldValues.put(provinceFieldName, province );
 	      if ( code!=-1 ) fieldValues.put(postalCodeFieldName, String.valueOf(code) );
-	      if ( country!=null ) fieldValues.put(countryFieldName, country );
+	      if ( countryName!=null ) fieldValues.put(countryFieldName, countryName );
 	      if ( poBox!=null ) fieldValues.put(poBoxFieldName, poBox);
 	  }
       
