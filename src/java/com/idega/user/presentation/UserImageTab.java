@@ -53,7 +53,7 @@ public class UserImageTab extends UserTab{
   }
 
   public void initializeFields(){
-    imageField = new ImageInserter(imageFieldName);
+    imageField = new ImageInserter(imageFieldName+getUserId());
     imageField.setHasUseBox(false);
   }
   
@@ -64,7 +64,6 @@ public class UserImageTab extends UserTab{
   
   public void initializeFieldValues(){
 		systemImageId = -1;
-    this.updateFieldsDisplayStatus();
   }
 
   public void lineUpFields(){
@@ -86,6 +85,7 @@ public class UserImageTab extends UserTab{
 
   public boolean collect(IWContext iwc){
 	  String imageID = iwc.getParameter(imageFieldName+this.getUserId());
+		System.out.println("parameter ("+imageFieldName+this.getUserId()+ " : "+imageID);
 	
 	  if(imageID != null){
 	    fieldValues.put(imageFieldName,imageID);
@@ -100,15 +100,20 @@ public class UserImageTab extends UserTab{
         
         String image = (String)fieldValues.get(imageFieldName);
         
-        if( (image!=null) && (!image.equals("-1")) && (!image.equals("")) && (!image.equals("0")) ){
+        if( (image!=null) && (!image.equals("-1")) && (!image.equals("")) ){
       		if( user == null ) user = getUserBusiness(getIWApplicationContext()).getUser(this.getUserId());
 	  			
-	  			systemImageId = Integer.parseInt(image);
-	  			user.setSystemImageID(systemImageId);
-        	user.store();
+	  			int tempId = Integer.parseInt(image);
+	  			if( tempId!=systemImageId){
+	  				systemImageId = tempId;
+		  			user.setSystemImageID(systemImageId);
+						user.store();
+						updateFieldsDisplayStatus();
+						
+	  			}
+        	
         
-        	updateFieldsDisplayStatus();
-					iwc.removeSessionAttribute(imageFieldName+getUserId());
+        	iwc.removeSessionAttribute(imageFieldName+getUserId());
         	
         
         
@@ -117,7 +122,7 @@ public class UserImageTab extends UserTab{
       }
     }
     catch(Exception e){
-      e.printStackTrace(System.err);
+      e.printStackTrace();
       throw new RuntimeException("update user exception");
     }
     return true;
@@ -131,11 +136,10 @@ public class UserImageTab extends UserTab{
   	
 			imageField.setImSessionImageName(imageFieldName+getUserId()); 
 			
-      if( user == null ) user = getUserBusiness(getIWApplicationContext()).getUser(this.getUserId());
+      if( user == null ) user = getUserBusiness(getIWApplicationContext()).getUser(getUserId());
 			
 			systemImageId = getSelectedImageId(user);
 			
-			System.out.println("IMAGE ID = "+systemImageId);
 			
 			if( systemImageId!=-1 ){
       	fieldValues.put(this.imageFieldName,Integer.toString(systemImageId));
