@@ -134,12 +134,13 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
                     // to open windows (e.g. the group property window)
                     groupId = (Integer) group.getPrimaryKey();
                     eventContext = e.getIWContext();
-
+                    User currentUser = iwc.getCurrentUser();
+                    
                     //Apply permission stuff
-                    applyPermissions(iwc, parentGroup, group);
+                    groupBusiness.applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(iwc, group, currentUser);
 
                     // get groupType tree and iterate through it and create default sub groups.
-                    createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(group, groupBusiness, e.getIWContext());
+                    createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(group, groupBusiness, e.getIWContext(), currentUser);
 
                     //TODO fix this what is it doing? some caching stuff?
                     e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
@@ -203,7 +204,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
      * @param iWContext
      */
     private void createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(Group group, GroupBusiness business,
-            IWContext iwc) throws RemoteException {
+            IWContext iwc, User user) throws RemoteException {
         GroupType type;
         try {
             type = business.getGroupTypeHome().findByPrimaryKey(
@@ -259,10 +260,10 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
                         Group newGroup = business.createGroupUnder(name, "",
                                 typeString, group);
 
-                        applyPermissions(iwc, group, newGroup);
+                        groupBusiness.applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(iwc,newGroup, user);
 
                         if (!type.isLeaf()) {
-                            createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(newGroup, business, iwc);
+                            createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(newGroup, business, iwc, user);
                         }
 
                     } catch (CreateException e) {
@@ -276,29 +277,6 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
         }
     }
 
-    private void applyPermissions(IWContext iwc, Group parentGroup,Group childGroup) throws RemoteException {
-
-        //set current user a owner of group
-        groupBusiness.applyCurrentUserAsOwnerOfGroup(iwc, childGroup);
-
-        //give the current users primary group all permission except for owner
-        groupBusiness.applyAllGroupPermissionsForGroupToCurrentUsersPrimaryGroup(iwc, childGroup);
-
-        //owners should get the permission to give permission for this group
-        groupBusiness.applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(iwc, childGroup);
-
-        //check if to inherit permissions from parent or its permission
-        // controller
-        if (parentGroup != null) {
-            groupBusiness.applyPermissionInheritanceFromGroupToGroup(parentGroup, childGroup);
-        }
-
-    }
-
-
-
-
-
-
+    
 
 }
