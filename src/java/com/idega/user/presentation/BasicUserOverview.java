@@ -36,7 +36,7 @@ import com.idega.util.ListUtil;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2002 - idega team - <a href="mailto:gummi@idega.is">Gudmundur Saemundsson</a>
  * @version 1.0
  */
 
@@ -144,13 +144,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
 
 
-
+	int userSize = users.size();
 
 //      System.out.println("BasicUserOverview: sel = "+sel+" & parSize = "+parSize);
-      users = ListUtil.convertCollectionToList(users).subList( (sel*parSize), Math.min((users.size()),((sel+1)*parSize)) );
+      users = ListUtil.convertCollectionToList(users).subList( (sel*parSize), Math.min(userSize,((sel+1)*parSize)) );
 //      this.add(" ("+sel+")");
 
-      userTable = new Table(3, ((users.size()>33)?users.size():33)+1  );
+      userTable = new Table(3, ((userSize>33)?userSize:33)+1  );
       returnTable.add(userTable,1,2);
       userTable.setCellpaddingAndCellspacing(0);
       userTable.setLineAfterColumn(1);
@@ -219,7 +219,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             line++;
           }
 
-          userTable.add("&nbsp;Dúfnahólar "+line+", 109 RVK",2,line-1);
+          userTable.add( getUserBusiness(iwc).getUsersMainAddress(tempUser).getName() ,2,line-1);
 
           if(delete && !adminUsers.contains(tempUser) && !userIsSuperAdmin && iwc.getAccessController().isAdmin(iwc)){
             Link delLink = new Link(new Text("Delete"));
