@@ -54,7 +54,7 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
   	return IW_BUNDLE_IDENTIFIER;
   }
   
-  public void main(IWContext iwc) {
+  public void main(IWContext iwc) throws RemoteException {
     getPresentationState(iwc);
     // get groupid 
     Integer groupId = new Integer(-1);
