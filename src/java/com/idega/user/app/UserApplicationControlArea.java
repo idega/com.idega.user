@@ -212,7 +212,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		if(topGroupNodes != null && !topGroupNodes.isEmpty()) {
+		if(topGroupNodes != null && topGroupNodes.size() > 0) {
 			Image refreshIcon = iwb.getImage("refresh.gif");
 			Link refreshLink = new Link(refreshIcon);
 			groupTree.setRefreshLink(refreshLink);
