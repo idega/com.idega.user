@@ -4,9 +4,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-
+import java.util.Map;
 import javax.swing.event.ChangeListener;
-
 import com.idega.builder.presentation.StyledIBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
@@ -22,7 +21,6 @@ import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
-import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.presentation.Table;
@@ -331,8 +329,20 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 		return rBundle.getLocalizedString("create_group", "Create group");
 	}
 	
-	public PresentationObject getPresentationObject(IWContext iwc) {
-		return this;
+	public Class getPresentationObjectClass(IWContext iwc) {
+		return this.getClass();
+	}
+	
+	public Map getParameterMap(IWContext iwc) {
+		return null;
+	}
+	
+	public boolean isValid(IWContext iwc) {
+		return true;
+	}
+	
+	public int getPriority(IWContext iwc) {
+		return -1;
 	}
 	
 	private Group getGroup(Integer groupId){

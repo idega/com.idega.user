@@ -3,7 +3,7 @@ package com.idega.user.block.search.presentation;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
-
+import java.util.Map;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWStateMachine;
@@ -14,7 +14,6 @@ import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
-import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
@@ -289,8 +288,20 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		return rBundle.getLocalizedString("searchwindow.name", "Search");
 	}
 
-	public PresentationObject getPresentationObject(IWContext iwc) {
-		return this;
+	public Class  getPresentationObjectClass(IWContext iwc) {
+		return this.getClass();
+	}
+	
+	public boolean isValid(IWContext iwc) {
+		return true;
+	}
+	
+	public Map  getParameterMap(IWContext iwc) {
+		return null;
+	}
+	
+	public int getPriority(IWContext iwc) {
+		return -1;
 	}
 	
 	public GroupBusiness getGroupBusiness(IWContext iwc) {
