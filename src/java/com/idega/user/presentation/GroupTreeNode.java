@@ -258,7 +258,7 @@ public class GroupTreeNode implements ICTreeNode {
 
 	public int getChildCount() {
 		if (_children != null){
-			System.out.println("Getting child count from vector");
+//			System.out.println("Getting child count from vector");
 
 			return _children.size();
 		}
