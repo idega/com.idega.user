@@ -22,6 +22,7 @@ public class CreateGroupEvent extends IWPresentationEvent {
   private static String _PRM_DESCRIPTION = "group_description";
   private static String _PRM_TYPE = "group_type";
   private static String _PRM_PARENT_ID = "group_parent_id";
+  private static String _PRM_HOME_PAGE = "group_home_page_id";
 
   private static String _PRM_COMMIT = "group_commit";
   private static String _PRM_CANCEL = "group_cancel";
@@ -32,6 +33,7 @@ public class CreateGroupEvent extends IWPresentationEvent {
   private String _groupName = null;
   private String _groupDescription = null;
   private String _groupType = null;
+  private String _groupHomePage = null;
   private int _groupParentID = 0;
   private int _groupParentType = 0;
 
@@ -68,6 +70,12 @@ public class CreateGroupEvent extends IWPresentationEvent {
   public boolean doCancel(){
     return _groupCancel != null;
   }
+  public int getHomePageID(){
+  	if ( _groupHomePage != null && _groupHomePage.length() > 0 ) {
+  		return Integer.parseInt(_groupHomePage);
+  	}
+  	return -1;
+  }
 
 
 
@@ -96,6 +104,9 @@ public class CreateGroupEvent extends IWPresentationEvent {
   public String getIONameForCancel(){
     return _PRM_CANCEL;
   }
+  public String getIONameForHomePage(){
+    return _PRM_HOME_PAGE;
+  }
 
 
   public boolean initializeEvent(IWContext iwc) {
@@ -103,6 +114,7 @@ public class CreateGroupEvent extends IWPresentationEvent {
     _groupName = iwc.getParameter(getIONameForName());
     _groupDescription = iwc.getParameter(getIONameForDescription());
     _groupType = iwc.getParameter(getIONameForGroupType());
+    _groupHomePage = iwc.getParameter(getIONameForHomePage());
     String groupParentTypeAndID = iwc.getParameter(getIONameForParentID());
 
     try {

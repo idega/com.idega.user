@@ -81,7 +81,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 		try
 		{
 			GroupBusiness business = (GroupBusiness)IBOLookup.getServiceInstance(e.getIWContext(),GroupBusiness.class);
-			Group group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType());
+			Group group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID());
 
 			// Create under
 			if(event.getParentType() == CreateGroupEvent.TYPE_DOMAIN){  // under Domain

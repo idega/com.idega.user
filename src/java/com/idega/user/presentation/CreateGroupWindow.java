@@ -5,6 +5,7 @@ import com.idega.user.app.ToolbarElement;
 import com.idega.presentation.*;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBDomain;
+import com.idega.builder.presentation.IBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
@@ -51,7 +52,7 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
     _stateHandler = new StatefullPresentationImplHandler();
     _stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
     setWidth(320);
-    setHeight(210);
+    setHeight(240);
     setScrollbar(false);
     this.getLocation().setApplicationClass(CreateGroupWindow.class);
     this.getLocation().isInPopUpWindow(true);
@@ -82,12 +83,12 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
       addTitle(iwrb.getLocalizedString("create_new_group","Create a new Group"),IWConstants.BUILDER_FONT_STYLE_TITLE);
 
       add(form);
-      Table tab = new Table(2,6);
+      Table tab = new Table(2,7);
       tab.setColumnAlignment(1,"right");
       tab.setColumnVerticalAlignment(1,"top");
       tab.setWidth(1,"130");
       tab.setCellspacing(3);
-      tab.setAlignment(2,6,"right");
+      tab.setAlignment(2,7,"right");
       form.add(tab);
       TextInput inputName = new TextInput(_createEvent.getIONameForName());
       inputName.setLength(28);
@@ -125,7 +126,11 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
   //      }
   //    }
 
-
+	  IBPageChooser pageChooser = new IBPageChooser(_createEvent.getIONameForHomePage(),IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+      Text pageText = new Text(iwrb.getLocalizedString("home_page","Select homepage")+":");
+      pageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+      tab.add(pageText,1,4);
+      tab.add(pageChooser,2,4);
 
 
       DropdownMenu mnu = new DropdownMenu(_createEvent.getIONameForGroupType());
@@ -148,14 +153,14 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 
       Text typeText = new Text(iwrb.getLocalizedString("select_type","Select type")+":");
       typeText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-      tab.add(typeText,1,4);
-      tab.add(mnu,2,4);
+      tab.add(typeText,1,5);
+      tab.add(mnu,2,5);
 
       SubmitButton button = new SubmitButton(iwrb.getLocalizedImageButton("save","Save"),_createEvent.getIONameForCommit());
       SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close","Close"),_createEvent.getIONameForCancel());
-      tab.add(close,2,6);
-      tab.add(Text.getNonBrakingSpace(),2,6);
-      tab.add(button,2,6);
+      tab.add(close,2,7);
+      tab.add(Text.getNonBrakingSpace(),2,7);
+      tab.add(button,2,7);
 
     }
   }
