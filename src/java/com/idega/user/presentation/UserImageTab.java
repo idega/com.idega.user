@@ -4,7 +4,7 @@ import java.rmi.RemoteException;
 
 import com.idega.block.media.presentation.ImageInserter;
 import com.idega.business.IBOLookup;
-import com.idega.core.user.presentation.UserTab;
+import com.idega.user.presentation.UserTab;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
@@ -22,57 +22,51 @@ import com.idega.user.data.User;
 
 public class UserImageTab extends UserTab{
 
+/*	this is the order methods are executed
+    initializeFieldNames();
+    initializeFields();
+    initializeTexts();
+    initializeFieldValues();
+    lineUpFields();
+ */   
+    
   private ImageInserter imageField;
-
   private String imageFieldName;
-
   private Text imageText;
+  private UserBusiness biz;
   
   private User user = null;
+  private int systemImageId = -1;
 
   public UserImageTab() {
     super();
-    this.setName("Image");
+    setName("Image");
   }
 
   public UserImageTab(int userId){
     this();
-    this.setUserID(userId);
+    setUserID(userId);
   }
 
   public void initializeFieldNames(){
-    imageFieldName = "STimage";
-  }
-
-  public void initializeFieldValues(){
-    fieldValues.put(this.imageFieldName,"");
-
-    this.updateFieldsDisplayStatus();
-  }
-
-  public void updateFieldsDisplayStatus(){
-    int imageId = -1;
-    try {
-      imageId = Integer.parseInt((String)fieldValues.get(this.imageFieldName));
-    }
-    catch (NumberFormatException ex) {
-      imageId = -1;
-    }
-
-    if ( imageId != -1 )
-      imageField.setImageId(imageId);
+    imageFieldName = "userSystemImageId";
   }
 
   public void initializeFields(){
     imageField = new ImageInserter(imageFieldName);
     imageField.setHasUseBox(false);
   }
-
+  
   public void initializeTexts(){
     imageText = getTextObject();
     imageText.setText("Image"+":");
   }
+  
+  public void initializeFieldValues(){
+    fieldValues.put(this.imageFieldName,"");
 
+    this.updateFieldsDisplayStatus();
+  }
 
   public void lineUpFields(){
     this.resize(1,1);
@@ -86,7 +80,13 @@ public class UserImageTab extends UserTab{
     imageTable.add(this.imageField,1,2);
     this.add(imageTable,1,1);
   }
+  
+  public void updateFieldsDisplayStatus(){
 
+    if ( systemImageId != -1 ){
+      imageField.setImageId(systemImageId);       
+    }
+  }
 
   public boolean collect(IWContext iwc){
     if(iwc != null){
@@ -106,14 +106,21 @@ public class UserImageTab extends UserTab{
     try{
       if(getUserId() > -1){
         
-        String imageId = (String)fieldValues.get(this.imageFieldName);
+        String image = (String)fieldValues.get(imageFieldName);
         
-        if( imageId!=null && !imageId.equals("-1") && !imageId.equals("") ){
-	  			if( user == null ) user = getUserBusiness().getUser(this.getUserId());
-	  			int id = Integer.parseInt(imageId);
+        if( (image!=null) && (!image.equals("-1")) && (!image.equals("")) && (!image.equals("0")) ){
+      		if( user == null ) user = getUserBusiness().getUser(this.getUserId());
+	  			int id = Integer.parseInt(image);
 	  			user.setSystemImageID(id);
         	user.store();
-        }        
+        
+        	updateFieldsDisplayStatus();
+        
+        
+        }
+        
+        
+                
       }
     }
     catch(Exception e){
@@ -128,8 +135,15 @@ public class UserImageTab extends UserTab{
 
     try{
       if( user == null ) user = getUserBusiness().getUser(this.getUserId());
-
-      fieldValues.put(this.imageFieldName,(user.getSystemImageID() != -1) ? Integer.toString(user.getSystemImageID()):"" );
+			
+			systemImageId = getSelectedImageId(user);
+			
+			System.out.println("IMAGE ID = "+systemImageId);
+			
+			if( systemImageId!=-1 ){
+      	fieldValues.put(this.imageFieldName,Integer.toString(systemImageId));
+			}
+      
       this.updateFieldsDisplayStatus();
     }
     catch(Exception e){
@@ -140,7 +154,36 @@ public class UserImageTab extends UserTab{
   }
 
 	private UserBusiness getUserBusiness() throws RemoteException {
-		return (UserBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), UserBusiness.class);	
+		if(biz==null) biz = (UserBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), UserBusiness.class);	
+		return biz;
 	}
+	
+	private void setSelectedImageId(){
+		try {
+			String image = (String)fieldValues.get(this.imageFieldName);
+			if( (image!=null) && (!image.equals("-1")) && (!image.equals("")) && (!image.equals("0")) ){
+      	systemImageId = Integer.parseInt(image);
+			}
+    } 
+    catch (Exception ex) {
+    	ex.printStackTrace(System.err);
+    }
+    
+    System.out.println("IMAGE ID = "+systemImageId);
+	}
+	
+	private int getSelectedImageId(User user){
+		try {
+			int tempImageId = user.getSystemImageID();
+ 			if( (systemImageId==-1) && (tempImageId!=-1) ) systemImageId=tempImageId;
+    }
+    catch (Exception ex) {
+    	ex.printStackTrace(System.err);
+    }
+    
+    return systemImageId;
+	}
+	
+	
 
 } // Class StaffInfoTab
