@@ -56,7 +56,15 @@ public class UserApplicationMainArea extends Block implements IWBrowserView, Sta
 
   public void main(IWContext iwc) throws Exception {
     this.empty();
-	this.add(_buo);
+    UserApplicationMainAreaPS ps = (UserApplicationMainAreaPS)this.getPresentationState(iwc);
+    if( ps.getClassNameToShow()!= null ){
+    	PresentationObject obj = (PresentationObject)Class.forName(ps.getClassNameToShow()).newInstance();
+    	add(obj);
+    }
+    else{
+		this.add(_buo);
+    }
+	
   }
 
 

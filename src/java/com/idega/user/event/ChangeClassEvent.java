@@ -19,6 +19,10 @@ public class ChangeClassEvent extends IWPresentationEvent {
   private final String ENCRYPTED_CLASS_PARAMETER = IWMainApplication.classToInstanciateParameter;
   private String _className;
 
+  public ChangeClassEvent(Class theClass){
+	setChangeClass(theClass);
+  }
+  
   public void setChangeClass(Class theClass){
     addParameter(ENCRYPTED_CLASS_PARAMETER,IWMainApplication.getEncryptedClassName(theClass));
   }
@@ -34,7 +38,7 @@ public class ChangeClassEvent extends IWPresentationEvent {
 
   public boolean initializeEvent(IWContext iwc) {
     //get the encrypted class name
-    String className = iwc.getParameter(IWMainApplication.classToInstanciateParameter);
+    String className = iwc.getParameter(ENCRYPTED_CLASS_PARAMETER);
    	if( className != null ){
    		setChangeClassName(IWMainApplication.decryptClassName(className));
  		return true;

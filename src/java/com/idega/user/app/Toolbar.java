@@ -11,8 +11,10 @@ import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
 import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.CreateUser;
+import com.idega.user.event.ChangeClassEvent;
 import com.idega.util.IWColor;
 
 
@@ -29,7 +31,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
   private IWBundle iwb;
   private String _controlTarget = null;
-  private IWPresentationEvent _contolEvent = null;
+  private IWPresentationEvent _controlEvent = null;
 
   private Vector _toolbarElements = new Vector();
 
@@ -126,7 +128,7 @@ public class Toolbar extends Page implements IWBrowserView {
   }
 
   public void setControlEventModel(IWPresentationEvent model){
-    _contolEvent = model;
+    _controlEvent = model;
   }
 
   public void setControlTarget(String controlTarget){
@@ -190,8 +192,6 @@ public class Toolbar extends Page implements IWBrowserView {
     tLink11.setWindowToOpen(CreateUser.class);
     toolbar1.add(tLink11,3,1);
 
-//    toolbarTable.add(toolbar1,1,2);
-	this.add(toolbar1);
 
     toolbar1.setWidth(2,"26");
     toolbar1.setWidth(3,"26");
@@ -199,16 +199,66 @@ public class Toolbar extends Page implements IWBrowserView {
 
     Link resetLink = new Link("reset");
     resetLink.addEventModel(new ResetPresentationEvent());
-    if(_contolEvent != null){
-      resetLink.addEventModel(_contolEvent);
+    if(_controlEvent != null){
+      resetLink.addEventModel(_controlEvent);
     }
     if(_controlTarget != null){
       resetLink.setTarget(_controlTarget);
     }
 
     toolbar1.add(resetLink,4,1);
+    
+   //Group
+   //user
+   //finance
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Finance", iwb.getImage("group.gif"), com.idega.block.news.presentation.News.class),5,1);
+   //reports
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Reports", iwb.getImage("group.gif"), com.idega.block.news.presentation.News.class),6,1);
+   //To do
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("To do", iwb.getImage("group.gif"), com.idega.block.news.presentation.News.class),7,1);
+   //settings
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Settings", iwb.getImage("group.gif"), com.idega.block.news.presentation.News.class),8,1);
+   //view
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Views", iwb.getImage("group.gif"), com.idega.block.news.presentation.News.class),9,1);
+   //search
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Search", iwb.getImage("group.gif"), com.idega.block.news.presentation.News.class),10,1);
+   
+   //    toolbarTable.add(toolbar1,1,2);
+	this.add(toolbar1);
+	
+   //hitt
+   //group
+   //user
+   //calendar
+   //history
+   //export
+   //import
+   //bread crumbs
+   //name - address - pin
+   
+   
 
   }
+  
+ private Table getToolbarButtonWithChangeClassEvent(String textOnButton, Image icon, Class changeClass){
+ 	Table button = new Table(2,1);
+ 	Text text = new Text(textOnButton);
+ 	text.setFontFace(Text.FONT_FACE_VERDANA);
+ 	text.setFontSize(Text.FONT_SIZE_10_HTML_2);
+ 	Link eventLink = new Link(text);
+ 	button.add(icon,1,1);
+ 	button.add(eventLink,2,1);
+ 	eventLink.addEventModel(new ChangeClassEvent(changeClass));
+    if(_controlEvent != null){
+      eventLink.addEventModel(_controlEvent);
+    }
+    if(_controlTarget != null){
+      eventLink.setTarget(_controlTarget);
+    }
+    
+    return button;
+ 	
+ }
 
 
 }

@@ -5,6 +5,7 @@ package com.idega.user.app;
 import com.idega.user.block.search.event.SimpleSearchEvent;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.event.*;
+import com.idega.user.event.ChangeClassEvent;
 import javax.swing.event.EventListenerList;
 import com.idega.idegaweb.IWException;
 
@@ -20,6 +21,7 @@ import com.idega.idegaweb.IWException;
 public class UserApplicationMainAreaPS extends IWPresentationStateImpl implements IWActionListener {
 
   private EventListenerList _listenerList = new EventListenerList();
+  private String _class = null;
 
   public UserApplicationMainAreaPS() {
 
@@ -54,6 +56,15 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
 	  System.out.println("[UserAppMainArea]: searchType =  "+((SimpleSearchEvent)e).getSearchType());
       this.fireStateChanged();
     }
+    
+ 	if(e instanceof ChangeClassEvent){
+      System.out.println("[UserAppMainArea]: search for "+((SimpleSearchEvent)e).getSearchString());
+	  System.out.println("[UserAppMainArea]: searchType =  "+((SimpleSearchEvent)e).getSearchType());
+      _class = ((ChangeClassEvent)e).getChangeClassName();       
+		this.fireStateChanged();
+    }else{
+    	_class=null;	
+ 	}
 
 
 
@@ -62,6 +73,10 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
       listners[i].actionPerformed(e);
     }
 
+  }
+  
+  public String getClassNameToShow(){
+  	return _class;	
   }
 
 }
