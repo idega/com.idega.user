@@ -127,7 +127,7 @@ public class CreateUser extends StyledIWAdminWindow {
 	public CreateUser() {
 		super();
 		setHeight(300);
-		setWidth(310);
+		setWidth(330);
 		setScrollbar(false);
 		setResizable(true);
 	}
@@ -340,7 +340,7 @@ public class CreateUser extends StyledIWAdminWindow {
 						setAlertOnLoad(iwrb.getLocalizedString("new_user.ssn_or_fullName_required","Personal ID or name is required"));
 					//is addressed if only the name is entered
 					else if(ssn == null || ssn.equals("") && (fullName != null || !fullName.equals(""))) {
-						inputTable.add(iwrb.getLocalizedString("new_user.ssn_warning","You have selected to create a user with no Personal ID, do you want to continue?"),1,5);
+						inputTable.add(iwrb.getLocalizedString("new_user.ssn_warning","You have selected to create a user with no Personal ID, do you want to continue?"),1,4);
 						ssnWarningDisplay = true;
 						fullNameField.setContent(fullName);
 						formNotComplete = false;
@@ -354,7 +354,7 @@ public class CreateUser extends StyledIWAdminWindow {
 					}
 					//is addressed if the only the social security number is entered
 					else if((ssn != null || !ssn.equals("")) && (fullName == null || fullName.equals(""))) {
-						inputTable.add(iwrb.getLocalizedString("new_user.fullName_warning","You have selected to create a user with no name, do you want to continue?"),1,5);
+						inputTable.add(iwrb.getLocalizedString("new_user.fullName_warning","You have selected to create a user with no name, do you want to continue?"),1,4);
 						fullNameWarningDisplay = true;
 						ssnField.setContent(ssn);
 						formNotComplete = false;
