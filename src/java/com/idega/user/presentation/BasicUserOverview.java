@@ -113,7 +113,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     Table returnTable = new Table(1,2);
     returnTable.setCellpaddingAndCellspacing(0);
     returnTable.setWidth(Table.HUNDRED_PERCENT);
-    returnTable.setHeight(Table.HUNDRED_PERCENT);
+		returnTable.setHeight(Table.HUNDRED_PERCENT);
+    returnTable.setHeight(2,Table.HUNDRED_PERCENT);
     returnTable.setHeight(1,22);
 
     returnTable.add(toolbar,1,1);
@@ -162,7 +163,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			int size = users.size();
 		
 				userTable = new Table(6, ((size>33)?size:33)+1  );
-				returnTable.add(userTable,1,1);
+				returnTable.add(userTable,1,2);
 				
 				
 				
