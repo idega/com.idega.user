@@ -2,11 +2,12 @@ package com.idega.user.presentation;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-
 import javax.ejb.FinderException;
 import javax.swing.event.ChangeEvent;
-
 import com.idega.block.entity.event.EntityBrowserEvent;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDOLookup;
@@ -174,13 +175,24 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
             String[] groupIds;
             if (mainIwc.isParameterSet(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY) && mainIwc.isParameterSet(MassMovingWindow.MOVE_SELECTED_GROUPS)) {
                 groupIds = mainIwc.getParameterValues(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY);
+                String parentGroupType = mainIwc.getParameter(MassMovingWindow.PRM_PARENT_GROUP_TYPE);
                 
                 try {
 					GroupHome grHome = (GroupHome)IDOLookup.getHome(Group.class);
-					Collection groupPKCollection = grHome.findByPrimaryKeyCollection(grHome.decode(groupIds));
+					Collection groupCollection = grHome.findByPrimaryKeyCollection(grHome.decode(groupIds));
+					Collection groupTypes = Collections.singleton(MassMovingWindow.GROUP_TYPE_CLUB_PLAYER);
 					
 					// move users
-					resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(groupPKCollection,MassMovingWindow.GROUP_TYPE_CLUB_DIVISION, mainIwc);
+					if(parentGroupType.equals(MassMovingWindow.GROUP_TYPE_CLUB_DIVISION)){
+						resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(groupCollection,groupTypes, mainIwc);
+					} else {
+						resultOfMovingUsers = new HashMap();
+						for (Iterator iter = groupCollection.iterator(); iter.hasNext();) {
+							Group divGroups = (Group) iter.next();
+							resultOfMovingUsers.putAll(BasicUserOverview.moveContentOfGroups(Collections.singleton(divGroups),groupTypes, mainIwc));
+						}
+						
+					}
 				} catch (IDOLookupException e1) {
 					e1.printStackTrace();
 				} catch (FinderException e1) {

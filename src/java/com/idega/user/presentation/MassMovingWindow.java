@@ -2,6 +2,7 @@ package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -53,10 +54,14 @@ public class MassMovingWindow extends StyledIWAdminWindow {
   
   public static final String GROUP_TYPE_CLUB = "iwme_club";
   public static final String GROUP_TYPE_CLUB_DIVISION = "iwme_club_division";
+  public static final String GROUP_TYPE_CLUB_PLAYER = "iwme_club_player";
+  private static final String[] VISIBLE_GROUPS = new String[] {GROUP_TYPE_CLUB_DIVISION,GROUP_TYPE_CLUB_PLAYER};
   
   private static final String HELP_TEXT_KEY = "mass_moving_window";
   
   private String mainTableStyle = "main";
+  private String parentGroupType;
+  public static final String PRM_PARENT_GROUP_TYPE = "par_type";
   
   // display settings
   private final int NUMBER_OF_ROWS = 40;
@@ -120,9 +125,9 @@ public class MassMovingWindow extends StyledIWAdminWindow {
         throw new RuntimeException(ex.getMessage());
       }
       // type of group correct?
-      String groupType = group.getGroupType();
-      if (GROUP_TYPE_CLUB.equals(groupType) ||
-          GROUP_TYPE_CLUB_DIVISION.equals(groupType))  {
+      parentGroupType = group.getGroupType();
+      if (GROUP_TYPE_CLUB.equals(parentGroupType) ||
+          GROUP_TYPE_CLUB_DIVISION.equals(parentGroupType))  {
         return SHOW_CHILDREN_OF_GROUP_ACTION;
       }
     }
@@ -139,12 +144,21 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     form.addParameter(MOVE_SELECTED_GROUPS,"w");
     form.setName("mass_form");
     form.addEventModel(event, iwc);
+    form.addParameter(PRM_PARENT_GROUP_TYPE,parentGroupType);
     // define headline
     String headlineString = iwrb.getLocalizedString("mm_choose_desired_divisions_or_groups_to_age_and_gender_sort", "Choose the desired divisions or groups to age and gender sort");
     Text headline = new Text(headlineString);
     headline.setBold();
     // get entities
-    Collection coll = getChildrenOfGroup(iwc);
+    Collection coll = new ArrayList(getChildrenOfGroup(iwc));
+    Collection types = Arrays.asList(VISIBLE_GROUPS);
+    for (Iterator iter = coll.iterator(); iter.hasNext();) {
+		Group gr = (Group) iter.next();
+		if(!types.contains(gr.getGroupType())){
+			iter.remove();
+		}
+	}
+    
     // define browser
     EntityBrowser browser = getBrowser(coll);
     // define button
@@ -270,7 +284,7 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
     // set number of rows
     browser.setDefaultNumberOfRows(NUMBER_OF_ROWS);
-    browser.setEntities("mass_moving", entities);
+    browser.setEntities(EVENT_NAME, entities);
     browser.setWidth(Table.HUNDRED_PERCENT);
     // fonts
     Text column = new Text();
