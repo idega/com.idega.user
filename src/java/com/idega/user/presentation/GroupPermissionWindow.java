@@ -410,8 +410,8 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	
 		List permissionTypes = new ArrayList();
 		
-		permissionTypes.add(0,"read");
-		permissionTypes.add(1,"write");
+		permissionTypes.add(0,"view");
+		permissionTypes.add(1,"edit");
 		permissionTypes.add(2,"create");
 		permissionTypes.add(3,"delete");
 
