@@ -162,6 +162,9 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 					
 				}
 				
+				//remove permissions changed 
+				//AccessControl.removePermissionRecords(AccessController.CATEGORY_GROUP_ID,iwc, instanceId,(String)item, groupsToRemove);
+				
 				//refresh permissions PermissionCacher.updatePermissions()
 				
 				iwc.getApplicationContext().removeApplicationAttribute("ic_permission_map_"+AccessController.CATEGORY_GROUP_ID);
@@ -181,7 +184,8 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	
 		EntityBrowser browser = new EntityBrowser();
 		browser.setEntities("gpw_"+selectedGroupId,entityCollection);
-		browser.setDefaultNumberOfRows(entityCollection.size());
+		//browser.setDefaultNumberOfRows(entityCollection.size() );
+		browser.setDefaultNumberOfRows(18 );
 		browser.setShowSettingButton(false);
 		browser.setWidth(browser.HUNDRED_PERCENT);
 		browser.setUseExternalForm(true);
