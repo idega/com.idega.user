@@ -1,6 +1,5 @@
 package com.idega.user.presentation;
 
-import com.idega.core.builder.business.BuilderConstants;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -11,13 +10,14 @@ import com.idega.presentation.ui.AbstractChooser;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
 public class GroupChooser extends AbstractChooser {
   private String style;
   private Image chooserButtonImage = null;
+  private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
   public GroupChooser(String chooserName) {
     addForm(false);
@@ -37,8 +37,8 @@ public class GroupChooser extends AbstractChooser {
   public void main(IWContext iwc){
     empty();
     if(chooserButtonImage == null) {
-			IWBundle iwb = iwc.getIWMainApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
-			setChooseButtonImage(iwb.getImage("open.gif","Choose"));
+			IWBundle iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER); //BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
+			setChooseButtonImage(iwb.getImage("magnifyingglass.gif","Choose"));
     }
     	
   }
@@ -57,6 +57,10 @@ public class GroupChooser extends AbstractChooser {
 	public void setSelectedGroup(String userId, String userName) {
 		super.setChooserValue(userName,userId);
 	}
+  public String getBundleIdentifier(){
+    return IW_BUNDLE_IDENTIFIER;
+  }
+
   
 
 }
