@@ -16,6 +16,7 @@ import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.accesscontrol.business.PermissionCacher;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationState;
@@ -91,6 +92,8 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 			
 		setWidth(width);
 		setHeight(height);
+		setScrollbar(true);
+		
 
 	}
 	/**
@@ -163,7 +166,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 					
 				}
 				
-				 
+				//refresh permissions PermissionCacher.updatePermissions()
 				
 				
 				
@@ -252,21 +255,44 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 						Iterator iterator = col.iterator();
 					
 						boolean active = false;
-						String columnName = path.getShortKey();
-						String groupId = null;
+						boolean isSet = false;
+						boolean isOwner = false;
 						
-						while (iterator.hasNext() && !active) {
+						final String columnName = path.getShortKey();
+						final String ownerType = "owner";
+						
+						String groupId = null;
+						String permissionType = null;
+						
+						while (iterator.hasNext() && !isSet) {
 							ICPermission perm = (ICPermission) iterator.next();
 							groupId = perm.getContextValue();
-							active = columnName.equals(perm.getPermissionString());
-						
+							permissionType = perm.getPermissionString();
+							
+							isSet = columnName.equals(permissionType);
+							if(!isOwner){
+								isOwner = ownerType.equals(permissionType);
+							}
+							
+							if(isSet){
+								active = perm.getPermissionValue();
+							}
+							
 						}
 					
 						
-						CheckBox checkBox = new CheckBox(columnName,groupId);
-						checkBox.setChecked(active);
+						PresentationObject returnObj = null;
 						
-						return checkBox;
+						
+						if(isSet || isOwner ){
+							returnObj = new CheckBox(columnName,groupId);
+							((CheckBox)returnObj).setChecked(active);
+						}
+						else{
+							returnObj = new Text("");
+						}
+						
+						return returnObj;
 					
 					}
 				};
@@ -350,7 +376,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 		try {
 				allPermissions = AccessControl.getAllGroupPermissionsForGroup(getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(selectedGroupId)));
 				Collection ownedPermissions = AccessControl.getAllGroupPermissionsOwnedByGroup( iwc.getCurrentUser().getGroup() );
-				ownedPermissions.removeAll(allPermissions);
+				//ownedPermissions.removeAll(allPermissions);
 			
 				allPermissions.addAll(ownedPermissions);
 
