@@ -31,14 +31,15 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 	public static final String PARAMETERSTRING_GROUP_ID = "ic_group_id";
   public static final String SESSION_ADDRESS = "ic_group_property_window";
   private final int width = 410;
-	private final int height = 530;
+	private final int height = 590;
 	
 	
 	public GroupPropertyWindow() {
 		super();
-		setBackgroundColor(new IWColor(207, 208, 210));
+//		setBackgroundColor(new IWColor(207, 208, 210));
 		setWidth(width);
 		setHeight(height);
+		setResizable(true);
 	}
   
   public String getSessionAddressString() {
