@@ -138,7 +138,7 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 		_buo.setArtificialCompoundId(getCompoundId(), iwc);
 		search.setLocation(location, iwc);
 		search.setArtificialCompoundId(getCompoundId(), iwc);
-		this.setIWUserContext(iwc);
+		//this.setIWUserContext(iwc);
 		IWPresentationState buoState = _buo.getPresentationState(iwc);
 		if (buoState instanceof IWActionListener) {
 			((UserApplicationMainAreaPS) this.getPresentationState(iwc)).addIWActionListener((IWActionListener) buoState);

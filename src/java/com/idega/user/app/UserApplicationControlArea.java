@@ -164,7 +164,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		 * this.setIWUserContext(iwc);
 		 */
 		//    EventListenerList list = this.getEventListenerList(iwc);
-		this.setIWUserContext(iwc);
+		//this.setIWUserContext(iwc);
 
 		IWPresentationState gtState = groupTree.getPresentationState(iwc);
 		if (gtState instanceof IWActionListener) {
