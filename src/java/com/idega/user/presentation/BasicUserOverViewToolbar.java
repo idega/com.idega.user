@@ -181,6 +181,23 @@ public class BasicUserOverViewToolbar extends Toolbar {
 					button3.add(tLink14, 2, 1);
 					toolbar1.add(button3, 7, 1);
 				}
+				
+				if (selectedGroup != null && showISStuff) {
+					Table button4 = new Table(2, 1);
+					button4.setCellpadding(0);
+					Image iconRegister = iwb.getImage("export.gif");
+					button4.add(iconRegister, 1, 1);
+					Text text4 = new Text(iwrb.getLocalizedString("updatecdiv", "Update template"));
+					text4.setFontFace(Text.FONT_FACE_VERDANA);
+					text4.setFontSize(Text.FONT_SIZE_7_HTML_1);
+					Link tLink15 = new Link(text4);
+					tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
+					tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.UpdateClubDivisionTemplate");
+
+					button4.add(tLink15, 2, 1);
+					toolbar1.add(button4, 8, 1);
+				}
+
 			}
 
 		}
@@ -240,7 +257,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
 		}
 
 		if (selectedGroup != null || this.title != null) {
-			toolbar1.add(new PrintButton(iwb.getImage("print.gif")), 8, 1);
+			toolbar1.add(new PrintButton(iwb.getImage("print.gif")), 9, 1);
 		}
 
 		//calendar
