@@ -37,6 +37,15 @@ import com.idega.util.IWColor;
 public class UserApplication extends IWBrowser {
 
   private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
+  
+	/**
+		 * added 7/10/03 for stylesheet writeout
+		 * @author birna
+		 */
+		private Page parentPage;
+		private String styleScript = "memberStyles.css";
+		private String styleSrc = "";
+		private String bannerTableStyle = "banner";
 
   public UserApplication() {
     initializePresentation();
@@ -47,10 +56,10 @@ public class UserApplication extends IWBrowser {
     this.setHeight(600);
 
     this.addToTop(new Top());
-    this.setSpanPixels(POS_TOP,68);
+    this.setSpanPixels(POS_TOP,44); //changed from (POS_TOP, 68);
     this.setSpanPixels(POS_LEFTMAIN, 200);
-    this.setSpanPixels(POS_MENU,26);
-    this.setSpanPixels(POS_BOTTOM,26);
+    this.setSpanPixels(POS_MENU,30); //changed from (POS_MENU,26);
+    this.setSpanPixels(POS_BOTTOM,26); //changed from (POS_MENU,26);
 
     UserApplicationMenuArea menuArea = new UserApplicationMenuArea();
 		UserApplicationControlArea treeArea = new UserApplicationControlArea();
@@ -120,10 +129,10 @@ public class UserApplication extends IWBrowser {
       if(this.isChildOfOtherPage()){
         Page parent = this.getParentPage();
         parent.setAllMargins(0);
-        parent.setBackgroundColor("#386CB7");
+        parent.setBackgroundColor("#ffffff"); //changed from #386cb7
       } else {
         setAllMargins(0);
-        setBackgroundColor("#386CB7");
+        setBackgroundColor("#ffffff"); //changed from #386cb7
       }
     }
 
@@ -169,14 +178,22 @@ public class UserApplication extends IWBrowser {
 
       if(!initialized){
         Table headerTable = new Table(1,1);
+        //added for isi styles 7/10/03 - birna
+				headerTable.setStyleClass(bannerTableStyle);
         headerTable.setCellpadding(0);
         headerTable.setCellspacing(0);
         headerTable.setWidth("100%");
         headerTable.setHeight("100%");
-        headerTable.setColor(1,1,"#386CB7");
+     //   headerTable.setColor(1,1,"#386CB7");
+     
+//			added for stylesheet writout:
+					parentPage = this.getParentPage();
+					styleSrc = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/" + styleScript);
+					parentPage.addStyleSheetURL(styleSrc);
 
         /** @todo setja inn mynd i header**/
-        headerTable.add(this.getBundle(iwc).getImage("/top.gif","idegaWeb Member"),1,1);
+//        headerTable.add(this.getBundle(iwc).getImage("/top.gif","idegaWeb Member"),1,1);
+				headerTable.add(this.getBundle(iwc).getImage("felix_banner.gif","idegaWeb Member"),1,1);
 
         /*Text adminTitle = new Text("Félagakerfi ÍSÍ & UMFÍ");
         adminTitle.setBold();
@@ -214,29 +231,29 @@ public class UserApplication extends IWBrowser {
       if(this.isChildOfOtherPage()){
         Page parent = this.getParentPage();
         parent.setAllMargins(0);
-        parent.setBackgroundColor(new IWColor(207,208,210).getHexColorString());
+        parent.setBackgroundColor("#ffffff");//new IWColor(207,208,210).getHexColorString());
       } else {
         setAllMargins(0);
-        setBackgroundColor(new IWColor(207,208,210).getHexColorString());
+        setBackgroundColor("#ffffff");//new IWColor(207,208,210).getHexColorString());
       }
 
     }
 
    public void main(IWContext iwc) throws Exception{
-    Table toolbarTable = new Table(1,3);
+    Table toolbarTable = new Table(1,1);
     
     toolbarTable.setCellpadding(0);
     toolbarTable.setCellspacing(0);
     toolbarTable.setWidth("100%");
     toolbarTable.setHeight("100%");
-    toolbarTable.setHeight(1,1);
-    toolbarTable.setHeight(3,1);
+//    toolbarTable.setHeight(1,1);
+//    toolbarTable.setHeight(3,1);
 
-    IWColor color = new IWColor(207,208,210);//jonni color
-
-    toolbarTable.setColor(color);
-    toolbarTable.setColor(1,1,color.brighter());
-    toolbarTable.setColor(1,3,color.darker());
+//    IWColor color = new IWColor(0,0,0);//new IWColor(207,208,210);//jonni color
+//
+//    toolbarTable.setColor(color);
+//    toolbarTable.setColor(1,1,color.brighter());
+//    toolbarTable.setColor(1,3,color.darker());
 
     add(toolbarTable);
    }

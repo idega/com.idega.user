@@ -3,6 +3,7 @@ package com.idega.user.presentation;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -16,7 +17,6 @@ import com.idega.presentation.ui.Window;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
-import com.idega.util.IWColor;
 
 /**
  * Title:        User
@@ -27,7 +27,7 @@ import com.idega.util.IWColor;
  * @version 1.0
  */
 
-public class CreateUser extends Window {
+public class CreateUser extends Window { 
 	private GroupBusiness groupBiz;
 
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
@@ -98,12 +98,26 @@ public class CreateUser extends Window {
 	private String rowHeight = "37";
 
 	private UserBusiness userBiz;
+	
+	/**
+	 * added 7/10/03 for stylesheet writeout
+	 * @author birna
+	 */
+	private Page parentPage;
+	private String styleScript = "memberStyles.css";
+	private String styleSrc = "";
+	
+	private String inputTextStyle = "text";
+	private String backgroundTableStyle = "back";
+	private String mainTableStyle = "main";
+	private String bannerTableStyle = "banner";
+	private Table bannerTable;
 
 	public CreateUser() {
 		super();
-		setHeight(200);
-		setWidth(300);
-		setBackgroundColor(new IWColor(207, 208, 210));
+		setHeight(250);
+		setWidth(350);
+	//	setBackgroundColor(new IWColor(207, 208, 210));
 		setScrollbar(false);
 		setResizable(true);
 	}
@@ -132,6 +146,7 @@ public class CreateUser extends Window {
 	protected void initializeFields(IWContext iwc) {
 		fullNameField = new TextInput(fullNameFieldParameterName);
 		fullNameField.setLength(20);
+		fullNameField.setStyleClass("text");
 		userLoginField = new TextInput(userLoginFieldParameterName);
 		userLoginField.setLength(12);
 		passwordField = new PasswordInput(passwordFieldParameterName);
@@ -220,15 +235,60 @@ public class CreateUser extends Window {
 
 	}
 
-	public void lineUpElements() {
+	public void lineUpElements(IWContext iwc) {
+		
+		/**
+		 * set up 7/10/03 to match the isi Styles
+		 * @author birna
+		 */
+		
+		bannerTable = new Table(1,1);
+		bannerTable.setStyleClass(bannerTableStyle);
+		bannerTable.setCellpadding(0);
+		bannerTable.setCellspacing(0);
+		bannerTable.setWidth("100%");
+		bannerTable.add(this.getBundle(iwc).getImage("felix_banner.gif","idegaWeb Member"),1,1);
+		
+		Table backTable = new Table(1,3);
+		backTable.setStyleClass(backgroundTableStyle);
+		backTable.setCellspacing(0);
+		backTable.setCellpadding(0);
+		backTable.setWidth("100%");
+		backTable.setHeight("100%");
+		backTable.setAlignment("left");
+		backTable.setVerticalAlignment("middle");
 
+		Table mainTable = new Table(2,2);
+		mainTable.setStyleClass(mainTableStyle);
+		mainTable.setCellspacing(10);
+		mainTable.setCellpadding(0);
+		mainTable.setWidth("98%");
+		mainTable.setHeight("98%");
+		mainTable.setAlignment("center");
+		mainTable.setVerticalAlignment("middle");
+		
+		/*
+		 * commented out 7/10/03 
 		Table frameTable = new Table(1, 4);
 		frameTable.setAlignment("center");
 		frameTable.setVerticalAlignment("middle");
 		frameTable.setCellpadding(0);
-		frameTable.setCellspacing(0);
-
+		frameTable.setCellspacing(0);*/
+		
+		Table inputTable = new Table(1, 6);
+		inputTable.setCellpadding(0);
+		inputTable.setCellspacing(0);
+		
+		inputTable.add(fullNameText,1,1);
+		inputTable.add(fullNameField,1,2);
+		inputTable.add(ssnText,1,3);
+		inputTable.add(ssnField,1,4);
+		inputTable.add(primaryGroupText, 1, 5);
+		inputTable.add(primaryGroupField, 1, 6);
+	//	inputTable.add(goToPropertiesField,1,5);
+		
 		// nameTable begin
+		/* commented out 7/10/03
 		Table nameTable = new Table(2, 2);
 		nameTable.setCellpadding(0);
 		nameTable.setCellspacing(0);
@@ -239,6 +299,7 @@ public class CreateUser extends Window {
 		nameTable.add(ssnField, 2, 1);
 		nameTable.add(fullNameText, 1, 2);
 		nameTable.add(fullNameField, 2, 2);
+		*/
 		// nameTable end
 
 		// loginTable begin
@@ -263,14 +324,16 @@ public class CreateUser extends Window {
 		// loginTable end
 
 		// groupTable begin
-		Table groupTable = new Table(2, 1);
+		/*commented out 8/10/03
+		Table groupTable = new Table(1, 2);
 		groupTable.setCellpadding(0);
 		groupTable.setCellspacing(0);
 		groupTable.setHeight(1, rowHeight);
 		groupTable.setWidth(1, "110");
 
 		groupTable.add(primaryGroupText, 1, 1);
-		groupTable.add(primaryGroupField, 2, 1);
+		groupTable.add(primaryGroupField, 1, 2);
+		*/
 		// groupTable end
 
 		// AccountPropertyTable begin
@@ -300,6 +363,7 @@ public class CreateUser extends Window {
 
 	//	propertyTable.add(goToPropertiesText, 1, 1);
 		propertyTable.add(goToPropertiesField, 2, 1);
+		
 		// propertyTable end
 
 		// buttonTable begin
@@ -308,11 +372,20 @@ public class CreateUser extends Window {
 		buttonTable.setCellspacing(0);
 		buttonTable.setHeight(1, rowHeight);
 		buttonTable.setWidth(2, "5");
+		buttonTable.setAlignment("right");
+		buttonTable.setVerticalAlignment("bottom");
 
-		buttonTable.add(okButton, 1, 1);
+		buttonTable.add(okButton, 1, 1); 
 		buttonTable.add(cancelButton, 3, 1);
 		// buttonTable end
+		
+		mainTable.add(inputTable, 1,1);
+		mainTable.add(buttonTable, 2,2);
+		
+		backTable.add(bannerTable,1,1);
+		backTable.add(mainTable,1,2);
 
+	/*commented out 7/10/03
 		frameTable.add(nameTable, 1, 1);
 		//frameTable.add(loginTable, 1, 2);
 		frameTable.add(groupTable, 1, 2);
@@ -321,7 +394,9 @@ public class CreateUser extends Window {
 		frameTable.add(buttonTable, 1, 4);
 		frameTable.setAlignment(1, 4, "right");
 
-		myForm.add(frameTable);
+		myForm.add(frameTable);*/
+		
+		myForm.add(backTable);
 
 	}
 
@@ -462,13 +537,22 @@ public class CreateUser extends Window {
 		this.empty();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
+		//added for stylesheet writout:
+		parentPage = this.getParentPage();
+	  styleSrc = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/" + styleScript);
+	  parentPage.addStyleSheetURL(styleSrc);
+	  
+	 
+	  //this.addHeaderObject(bannerTable);
+	  
+		
 		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
 
 		myForm = new Form();
 		add(myForm);
 		initializeTexts();
 		initializeFields(iwc);
-		lineUpElements();
+		lineUpElements(iwc);
 		
 		String submit = iwc.getParameter("submit");
 
