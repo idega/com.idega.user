@@ -1,13 +1,18 @@
 package com.idega.user.presentation;
 
 import com.idega.user.event.*;
+import com.idega.block.entity.event.EntityBrowserEvent;
 import com.idega.builder.data.IBDomain;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.user.data.Group;
 import com.idega.presentation.event.TreeViewerEvent;
 import com.idega.idegaweb.browser.event.IWBrowseEvent;
+
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
+import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import javax.swing.event.ChangeListener;
 import com.idega.idegaweb.IWException;
@@ -110,6 +115,17 @@ public class BasicUserOverviewPS extends IWPresentationStateImpl implements IWAc
       _partitionSize = ((PartitionSelectEvent)e).getPartitionSize();
       _firstPartitionIndex = ((PartitionSelectEvent)e).getFirstPartitionIndex();
       this.fireStateChanged();
+    }
+    
+    if (e instanceof EntityBrowserEvent)  {
+      IWContext mainIwc = e.getIWContext();
+      String[] userIds;
+      if (mainIwc.isParameterSet(BasicUserOverview.DELETE_USERS_KEY) &&
+          mainIwc.isParameterSet(BasicUserOverview.PARAMETER_DELETE_USERS)) {
+        userIds = mainIwc.getParameterValues(BasicUserOverview.PARAMETER_DELETE_USERS);
+        // delete users (if something has been chosen)
+        List notDeletedUsers = BasicUserOverview.deleteUsers(Arrays.asList(userIds),mainIwc); 
+      }
     }
 
   }
