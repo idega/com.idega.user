@@ -4,9 +4,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-
+import java.util.Map;
 import javax.ejb.FinderException;
-
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.event.EntityBrowserEvent;
 import com.idega.block.entity.presentation.EntityBrowser;
@@ -18,14 +17,14 @@ import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
-import com.idega.idegaweb.presentation.*;
+import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
-import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
+import com.idega.user.app.Toolbar;
 import com.idega.user.app.ToolbarElement;
 import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.business.GroupBusiness;
@@ -41,13 +40,12 @@ import com.idega.util.IWColor;
  * @version 1.0
  * Created on Apr 14, 2003
  */
-public class MassMovingWindow extends StyledIWAdminWindow implements ToolbarElement {
+public class MassMovingWindow extends StyledIWAdminWindow {
     
   private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";  
   
   public static final String EVENT_NAME = "mass_moving";
   
-  public static final String SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY = "selected_group_mm_id_key";
   public static final String MOVE_SELECTED_GROUPS = "move_selected_groups";
   public static final String SELECTED_CHECKED_GROUPS_KEY = "selected_checked_groups_key";
   
@@ -71,31 +69,6 @@ public class MassMovingWindow extends StyledIWAdminWindow implements ToolbarElem
   public MassMovingWindow() {
   		setWidth(440);
   		setHeight(300);
-  }
-    
-
-  /* (non-Javadoc)
-   * @see com.idega.user.app.ToolbarElement#getButtonImage(com.idega.presentation.IWContext)
-   */
-  public Image getButtonImage(IWContext iwc) {
-    IWBundle bundle = this.getBundle(iwc);
-    return bundle.getImage("create_group.gif", "Create group");
-  }
-
-  /* (non-Javadoc)
-   * @see com.idega.user.app.ToolbarElement#getName(com.idega.presentation.IWContext)
-   */
-  public String getName(IWContext iwc) {
-    IWResourceBundle resourceBundle = this.getBundle(iwc).getResourceBundle(iwc);
-    return resourceBundle.getLocalizedString("massMovingWindow.name", "Mass moving automatic...");
-  }
-
-
-  /* (non-Javadoc)
-   * @see com.idega.user.app.ToolbarElement#getPresentationObject(com.idega.presentation.IWContext)
-   */
-  public PresentationObject getPresentationObject(IWContext iwc) {
-    return this;
   }
 
   public String getBundleIdentifier() {
@@ -135,14 +108,14 @@ public class MassMovingWindow extends StyledIWAdminWindow implements ToolbarElem
     *
     */
     // try to get the group 
-    if (iwc.isParameterSet(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY))  {
-      String selectedGroupProviderStateId = iwc.getParameter(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
+    if (iwc.isParameterSet(Toolbar.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY))  {
+      String selectedGroupProviderStateId = iwc.getParameter(Toolbar.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
       GroupBusiness groupBusiness = getGroupBusiness(iwc);
       try {
         // try to get the selected group  
         IWStateMachine stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
         groupProviderState = (UserApplicationMenuAreaPS) stateMachine.getStateFor(selectedGroupProviderStateId, UserApplicationMenuAreaPS.class);
-        Integer selectedGroupId = (Integer) groupProviderState.getSelectedGroupId();
+        Integer selectedGroupId =  groupProviderState.getSelectedGroupId();
         if (selectedGroupId == null)  {
           return SHOW_ERROR_MESSAGE_ACTION;
         }
@@ -280,9 +253,8 @@ public class MassMovingWindow extends StyledIWAdminWindow implements ToolbarElem
       }
       return result;
     }
-    else {
-      return coll;
-    }
+    return coll;
+
   }
         
     
