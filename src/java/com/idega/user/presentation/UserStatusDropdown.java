@@ -27,6 +27,7 @@ public class UserStatusDropdown extends DropdownMenu{
 	public static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
   
   public static final String NO_STATUS_KEY = "default_key";
+  public static final String DEFAULT_INPUT_NAME = "ic_user_status";
   
   // if you change this variable: default value is NOT localized yet
   public static final String NO_STATUS_VALUE = "";
@@ -34,6 +35,10 @@ public class UserStatusDropdown extends DropdownMenu{
 	private Collection statuses;
 	private IWResourceBundle iwrb;
 
+	public UserStatusDropdown(){
+		this(DEFAULT_INPUT_NAME);
+	}
+	
 	public UserStatusDropdown(String name) {
 		super(name);
 	}
