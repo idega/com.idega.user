@@ -21,6 +21,7 @@ import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.data.ICTreeNode;
+import com.idega.data.IDOLookupException;
 import com.idega.event.EventLogic;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
@@ -107,7 +108,7 @@ public class HomePageBusinessBean extends DPTTriggerBusinessBean implements Home
 		return null; //TMP
 	}
 	
-	public void createHomePage(IWContext iwc, Group group, PageTriggerInfo info) throws RemoteException, SQLException {
+	public void createHomePage(IWContext iwc, Group group, PageTriggerInfo info) throws RemoteException, Exception {
 
 		PageLink pageLink = createPageLink(iwc, info, group.getPrimaryKey().toString(), group.getName(), null, null, null, null);
 
@@ -465,27 +466,25 @@ public class HomePageBusinessBean extends DPTTriggerBusinessBean implements Home
 		}
 	}
 
-//	public boolean invalidateProject(IWContext iwc, int projectId, int userId) {
-//		try {
-//			IPProject p = ((IPProjectHome) com.idega.data.IDOLookup.getHomeLegacy(IPProject.class)).findByPrimaryKeyLegacy(projectId);
-//
+	public boolean invalidateGroup(IWContext iwc, Group group) throws IDOLookupException {
+
+		//GroupHome grHome = ((GroupHome)IDOLookup.getHome(Group.class));
+		
+		group.setHomePage(null);
+		
+		group.store();
+		
+//		PageLink link = ((PageLinkHome)IDOLookup.getHome(PageLink.class)).find
+		
 //			List l = EntityFinder.findRelated(p,PageLinkBMPBean.getStaticInstance(PageLink.class));
 //			if (l != null && l.size() > 0) {
-//				boolean b = invalidatePageLink(iwc, (PageLink) l.get(0), userId);
+//				boolean b = invalidatePageLink(iwc, (PageLink) l.get(0), User.get);
 //				if (!b) {
 //					return false;
 //				}
 //			}
-//			p.setDeleted(true);
-//			p.setDeletedBy(userId);
-//			p.setDeletedWhen(IWTimestamp.getTimestampRightNow());
-//			p.update();
-//
-//			return true;
-//		} catch (Exception ex) {
-//			ex.printStackTrace();
-//			return false;
-//		}
-//	}
+
+			return true;
+	}
 
 } //

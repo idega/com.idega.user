@@ -69,13 +69,12 @@ public class HomePageGenerator extends Block {
 		if(pDetachPageAndGroup!= null && !"".equals(pDetachPageAndGroup)) {
 			System.out.println("Detach page from Group: "+pDetachPageAndGroup);
 			
+			HomePageBusiness hpBusiness = (HomePageBusiness)IBOLookup.getServiceInstance(iwc,HomePageBusiness.class);
+			
 			GroupHome grHome = ((GroupHome)IDOLookup.getHome(Group.class));
 			Group myGroup = grHome.findByPrimaryKey(grHome.decode(pDetachPageAndGroup));
 			
-			myGroup.setHomePage(null);
-			
-			myGroup.store();
-			
+			hpBusiness.invalidateGroup(iwc,myGroup);			
 		}
 		
 		String pCreateForGroup = iwc.getParameter(_prmCreateForGroup);
@@ -161,13 +160,18 @@ public class HomePageGenerator extends Block {
 						page.setDisabled(true);
 						groupListTable.add(page,2,tableRow);
 						
-						groupListTable.add(new SubmitButton("Detach",_prmDetachPageAndGroup,group.getPrimaryKey().toString()),3,tableRow);
+						SubmitButton button = new SubmitButton("Detach",_prmDetachPageAndGroup,group.getPrimaryKey().toString());
+						//button.setToDisableOnClick(button,true);
+						//button.setToSubmit();
+						groupListTable.add(button,3,tableRow);
 
 					} else {
 						groupListTable.add(new Text(" - "),2,tableRow);
 						
-						
-						groupListTable.add(new SubmitButton("Create",_prmCreateForGroup,group.getPrimaryKey().toString()),3,tableRow);
+						SubmitButton button = new SubmitButton("Create",_prmCreateForGroup,group.getPrimaryKey().toString());
+						//button.setToDisableOnClick(button,true);
+						//button.setToSubmit();
+						groupListTable.add(button,3,tableRow);
 						
 						
 						
