@@ -215,10 +215,8 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		table.setWidth(Table.HUNDRED_PERCENT);
 		table.setStyleClass("back");
   	table.setAlignment(1,2,"center");		
-		table.setHeight(1,6);
+		table.setHeight(1,7);
 		table.setHeight(3,6); 
-		table.add(com.idega.presentation.text.Text.NON_BREAKING_SPACE,1,1);
-		table.add(com.idega.presentation.text.Text.NON_BREAKING_SPACE,1,3);
   	table.setVerticalAlignment(1,2,"top");
  	
   	Table treeTable = new Table(1,1);

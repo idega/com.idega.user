@@ -18,6 +18,7 @@ import com.idega.idegaweb.browser.presentation.IWBrowseControl;
 import com.idega.idegaweb.browser.presentation.IWBrowserCompliant;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.presentation.Frame;
+import com.idega.presentation.FrameSet;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
@@ -52,19 +53,26 @@ public class UserApplication extends IWBrowser {
   }
 
   public void initializePresentation(){
-    this.setWidth(800);
-    this.setHeight(700);
+    this.setWidth(900);
+    this.setHeight(750);
 
     this.addToTop(new Top());
     this.setSpanPixels(POS_TOP,51); //changed from (POS_TOP, 68);
     this.setSpanPixels(POS_LEFTMAIN, 190); //changed from ...,200);
-    this.setSpanPixels(POS_MENU,30); //changed from (POS_MENU,26);
+    this.setSpanPixels(POS_MENU,35); //changed from (POS_MENU,26);
     this.setSpanPixels(POS_BOTTOM,1); //changed from (POS_MENU,26)
 
     UserApplicationMenuArea menuArea = new UserApplicationMenuArea();
 		UserApplicationControlArea treeArea = new UserApplicationControlArea();
 		UserApplicationMainArea mainArea = new UserApplicationMainArea();
-				
+		UserApplicationLoginArea loginArea = new UserApplicationLoginArea();
+		
+		FrameSet leftFrame = new FrameSet();
+		leftFrame.add(loginArea);
+		leftFrame.add(treeArea);
+		
+//		this.add(leftFrame);
+
 		this.addToMenu(menuArea);
     this.showMenuFrame(true);
     this.showBottomFrame(true); //MUST BE TRUE!

@@ -3,13 +3,16 @@ package com.idega.user.presentation;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 
+import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.core.location.business.CommuneBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.Country;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -70,6 +73,9 @@ public class AddressInfoTab extends UserTab {
   private static final String secondCountryFieldName = "UMsecondCountry";
   private static final String secondCommuneFieldName = "UMsecondPoBox";
   private static final String secondPoBoxFieldName = "UMsecondCommune";
+  
+	private static final String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
+	private static final String HELP_TEXT_KEY = "address_info_tab";
 
 	private Text streetText;
 	private Text cityText;
@@ -227,6 +233,18 @@ public class AddressInfoTab extends UserTab {
 			su.getSelectorFromIDOEntities(secondCommuneField, getCommuneBusiness(iwc).getCommunes(), "getCommuneName");
 		}catch (RemoteException e) {}
 
+	}
+	
+	public Help getHelpButton() {
+		IWContext iwc = IWContext.getInstance();
+		IWBundle iwb = getBundle(iwc);
+		Help help = new Help();
+		Image helpImage = iwb.getImage("help.gif");
+		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+		help.setHelpTextKey(HELP_TEXT_KEY);
+		help.setImage(helpImage);
+		return help;
+		
 	}
 
 	public void initializeTexts() {
@@ -389,6 +407,8 @@ public class AddressInfoTab extends UserTab {
     add(coAddressText);
     this.add(secondAddressTable2);
     this.add(secondAddressTable);
+    
+    this.add(getHelpButton());
 	}
 
 	public boolean collect(IWContext iwc) {

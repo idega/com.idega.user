@@ -23,6 +23,7 @@ import com.idega.user.block.search.presentation.SearchForm;
 import com.idega.user.block.search.presentation.SearchWindow;
 import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.presentation.CreateGroupWindow;
+import com.idega.user.presentation.CreateUser;
 import com.idega.user.presentation.MassMovingWindow;
 
 
@@ -182,7 +183,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //    text.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink11 = new Link(text);
 		tLink11.setStyleClass(styledLink);
-    tLink11.setWindowToOpen(com.idega.core.user.presentation.CreateUser.class);
+    tLink11.setWindowToOpen(CreateUser.class);
     button.setWidth(2,10);
     button.add(tLink11,2,1);
     toolbar1.add(button,2,1);
@@ -409,7 +410,7 @@ public class Toolbar extends Page implements IWBrowserView {
    searchForm.setHorizontalAlignment("right");
    //toolbar1.add(button9,10,1);
    toolbarTable.setAlignment(2,2,"right");
-   toolbarTable.setVerticalAlignment(2,2,"middle");
+   toolbarTable.setVerticalAlignment(2,2,"top");
  //  toolbarTable.add(text9,2,2);
    toolbarTable.add(searchForm,3,2);
    

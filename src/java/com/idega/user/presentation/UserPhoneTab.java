@@ -2,12 +2,15 @@ package com.idega.user.presentation;
 
 import java.sql.SQLException;
 
+import com.idega.block.help.presentation.Help;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneType;
 import com.idega.core.contact.data.PhoneTypeBMPBean;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
@@ -28,6 +31,9 @@ public class UserPhoneTab extends UserTab {
 
 	private static final String TAB_NAME = "usr_phone_tab_name";
 	private static final String DEFAULT_TAB_NAME = "Phone/Mail";
+	
+	private static final String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
+	private static final String HELP_TEXT_KEY = "user_phone_tab";
 
 	private TextInput homePhoneField;
 	private TextInput workPhoneField;
@@ -218,9 +224,20 @@ public class UserPhoneTab extends UserTab {
 		workPlaceText = new Text(iwrb.getLocalizedString(workPlaceFieldName, "Workplace") + ":");
 //		workPlaceText.setFontSize(fontSize);
 	}
+	public Help getHelpButton() {
+		IWContext iwc = IWContext.getInstance();
+		IWBundle iwb = getBundle(iwc);
+		Help help = new Help();
+		Image helpImage = iwb.getImage("help.gif");
+		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+		help.setHelpTextKey(HELP_TEXT_KEY);
+		help.setImage(helpImage);
+		return help;
+		
+	}
 
 	public void lineUpFields() {
-		this.resize(1, 3);
+		this.resize(1, 4);
 
 		Table staffTable = new Table(3, 4);
 		staffTable.setWidth("100%");
@@ -260,6 +277,7 @@ public class UserPhoneTab extends UserTab {
 		mailTable.add(workPlaceField,2,3);
     
 		this.add(mailTable, 1, 3);
+		this.add(getHelpButton(),1,4);
 	}
 
 	public boolean collect(IWContext iwc) {

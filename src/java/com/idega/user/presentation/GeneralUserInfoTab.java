@@ -8,10 +8,13 @@ import java.util.StringTokenizer;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
+import com.idega.block.help.presentation.Help;
 import com.idega.block.media.presentation.ImageInserter;
 import com.idega.data.IDOLookup;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
@@ -37,6 +40,9 @@ public class GeneralUserInfoTab extends UserTab {
 
 	private static final String TAB_NAME = "usr_info_tab_name";
 	private static final String DEFAULT_TAB_NAME = "General";
+	
+	private static final String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
+	private static final String HELP_TEXT_KEY = "general_user_info_tab";
 
 	private TextInput idField;
 	private TextInput fullNameField;
@@ -256,9 +262,21 @@ public class GeneralUserInfoTab extends UserTab {
 		removeImageText.setText(iwrb.getLocalizedString(removeImageFieldName, "do not show an image"));
 //		removeImageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 	}
+	
+	public Help getHelpButton() {
+		IWContext iwc = IWContext.getInstance();
+		IWBundle iwb = getBundle(iwc);
+		Help help = new Help();
+		Image helpImage = iwb.getImage("help.gif");
+		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+		help.setHelpTextKey(HELP_TEXT_KEY);
+		help.setImage(helpImage);
+		return help;
+		
+	}
 
 	public void lineUpFields() {
-		resize(1, 3);
+		resize(1, 4);
 		
 		//First Part (names)
 		Table nameTable = new Table(3, 6); //changed from (2,5) - birna
@@ -312,6 +330,12 @@ public class GeneralUserInfoTab extends UserTab {
 		descriptionTable.add(descriptionField, 1, 1);//changed from ...,1,2)
 		add(descriptionTable, 1, 3);
 		//Third Part ends
+		
+		Table helpTable = new Table(1,1);
+		helpTable.setCellpadding(0);
+		helpTable.setCellspacing(0);
+		helpTable.add(getHelpButton());
+		add(helpTable,1,4);
 	}
 
 	public boolean collect(IWContext iwc) {

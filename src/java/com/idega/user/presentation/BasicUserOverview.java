@@ -145,7 +145,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
 		return users;
 	}
-
+	
+	protected Table getToolbarTable() {
+		Table toolbarTable = new Table();
+		return toolbarTable;
+	}
 	protected Table getList(IWContext iwc) throws Exception {
 
 		if (getPresentationStateOfBasicUserOverview(iwc).getResultOfMovingUsers() != null) {
@@ -157,10 +161,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		Table middleTable = middleTable();
 		
 //	create the return table
-		Table returnTable = new Table(2, 5);
+		Table returnTable = new Table(2, 4);
 		returnTable.setCellpaddingAndCellspacing(0);
 		returnTable.setWidth(Table.HUNDRED_PERCENT);
-		returnTable.setHeight(Table.HUNDRED_PERCENT);
+		returnTable.setHeight("90%");//Table.HUNDRED_PERCENT);
 		returnTable.setHeight(4, Table.HUNDRED_PERCENT);
 		returnTable.mergeCells(1,1,2,1);
 		returnTable.mergeCells(1,2,2,2);
@@ -170,19 +174,17 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		returnTable.setWidth(1,3,6);
 		returnTable.setColor(1,3,"#f3f3f3");
 		returnTable.setColor(2,4,"#f3f3f3");
-		returnTable.setRowStyle(3,"border-boddom","1px solid #cccccc");
+//		returnTable.setRowStyle(3,"border-bottom","1px solid #cccccc");
 
 		returnTable.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_TOP);
 		returnTable.setVerticalAlignment(2, 4, Table.VERTICAL_ALIGN_TOP);
 		returnTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_BOTTOM);
 
 		returnTable.add(toolbar, 1, 1);
-		returnTable.add(new PrintButton(iwb.getImage("print.gif")), 1, 5);
 		
 		if (selectedGroup != null) {
 			topTable.add(selectedGroup.getName() + Text.NON_BREAKING_SPACE,1,1);
 			returnTable.add(topTable,2,3);
-//			middleTable.add(Text.NON_BREAKING_SPACE,1,1);
 			returnTable.add(middleTable,1,2);
 		}
 		
@@ -216,6 +218,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		if (users != null && !users.isEmpty()) {
 
 			EntityBrowser entityBrowser = getEntityBrowser(users, iwc);
+			// put print button to bottom
+			entityBrowser.addPresentationObjectToBottom(new PrintButton(iwb.getImage("print.gif")));
 			// put browser into a form
 			Form form = new Form();
 			// switch off the inherent form of the entity browser
@@ -288,6 +292,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		else {
 			PresentationObject po = getEmptyListPresentationObject();
 			if (po != null) {
+				returnTable.add(new PrintButton(iwb.getImage("print.gif")), 1, 4);
 				returnTable.add(po, 2, 4);
 			}
 			
@@ -318,6 +323,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		middleTable.setHeight(6);
 		return middleTable;
 	}
+
 	/**
 	 * This method is called everytime the getEntities method returns null or
 	 * empty list.
@@ -329,18 +335,21 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	}
 
 	/**
-	 * @return BasicUserOverViewToolbar
+	 * @return StyledBasicUserOverViewToolbar
 	 */
 	protected StyledBasicUserOverViewToolbar getToolbar() {
+		IWContext iwc = IWContext.getInstance();
+		ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
 		if (toolbar == null || selectedGroup == null) {
 			toolbar = new StyledBasicUserOverViewToolbar();
 		}
 
 		if (selectedGroup != null) {
 			toolbar.setSelectedGroup(selectedGroup);
-			toolbar.setDomain(ps.getParentDomainOfSelection());
-			toolbar.setParentGroup(ps.getParentGroupOfSelection());
+
 		}
+		toolbar.setDomain(ps.getParentDomainOfSelection());
+		toolbar.setParentGroup(ps.getParentGroupOfSelection());
 
 		return toolbar;
 
@@ -727,6 +736,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		}
 
 		isCurrentUserSuperAdmin = iwc.isSuperAdmin();
+		
 
 		if (selectedGroup != null && !isCurrentUserSuperAdmin) {
 			if (accessController.hasViewPermissionFor(selectedGroup, iwc) || accessController.isOwner(selectedGroup, iwc)) {
@@ -1119,7 +1129,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		String identifier = (iterator.hasNext()) ? iterator.next().toString() : "move";
 
 		entityBrowser.setEntities(identifier, users);
-		entityBrowser.setDefaultNumberOfRows(Math.min(users.size(), 30));
+		entityBrowser.setDefaultNumberOfRows(Math.min(users.size(), 22));
 		//entityBrowser.setLineColor("#DBDCDF");
 		entityBrowser.setWidth(Table.HUNDRED_PERCENT);
 		//entityBrowser.setLinesBetween(true);

@@ -1,11 +1,18 @@
 package com.idega.user.presentation;
 
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.ejb.EJBException;
+
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
-import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -15,10 +22,11 @@ import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
-import com.idega.presentation.ui.Window;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.IWTimestamp;
 
 /**
  * Title:        User
@@ -29,7 +37,7 @@ import com.idega.user.data.User;
  * @version 1.0
  */
 
-public class CreateUser extends Window { 
+public class CreateUser extends StyledIWAdminWindow { 
 	private GroupBusiness groupBiz;
 
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
@@ -101,19 +109,10 @@ public class CreateUser extends Window {
 
 	private UserBusiness userBiz;
 	
-	/**
-	 * added 7/10/03 for stylesheet writeout
-	 * @author birna
-	 */
-	private Page parentPage;
-	private String styleScript = "UserApplicationStyle.css";
-	private String styleSrc = "";
-	
 	private String inputTextStyle = "text";
 	private String backgroundTableStyle = "back";
 	private String mainTableStyle = "main";
 	private String bannerTableStyle = "banner";
-	private Table bannerTable;
 
 	public CreateUser() {
 		super();
@@ -159,7 +158,7 @@ public class CreateUser extends Window {
 		confirmPasswordField = new PasswordInput(confirmPasswordFieldParameterName);
 		confirmPasswordField.setLength(12);
 		ssnField = new TextInput(ssnFieldParameterName);
-		ssnField.setLength(12);
+		ssnField.setLength(20);
 		ssnField.setMaxlength(12);
 		//ssnField.setAsIcelandicSSNumber();
 
@@ -176,12 +175,12 @@ public class CreateUser extends Window {
 		primaryGroupField = new GroupChooser(primaryGroupFieldParameterName);
 		
 
-		//String[] gr = new String[1];
+		String[] gr = new String[1];
 		
-	//	Collection groups = null;
-	//	groupBiz = getGroupBusiness(iwc);
+		Collection groups = null;
+		groupBiz = getGroupBusiness(iwc);
 		
-		/*if(!iwc.isSuperAdmin()){
+		if(!iwc.isSuperAdmin()){
 			groups = getUserBusiness(iwc).getAllGroupsWithEditPermission(iwc.getCurrentUser(),iwc );
 		}
 		else{
@@ -228,10 +227,10 @@ public class CreateUser extends Window {
 			Iterator iter = groups.iterator();
 			while (iter.hasNext()) {
 				Group item = (Group) iter.next();
-				primaryGroupField.addMenuElement(item.getPrimaryKey().toString(), groupBiz.getNameOfGroupWithParentName(item));
+				//primaryGroupField.addMenuElements(item.getPrimaryKey().toString(), groupBiz.getNameOfGroupWithParentName(item));
 			}
 		}
-*/
+
 
 		okButton = new SubmitButton(iwrb.getLocalizedString("save", "Save"), submitButtonParameterName, okButtonParameterValue);
     okButton.setAsImageButton(true);
@@ -242,18 +241,7 @@ public class CreateUser extends Window {
 	}
 
 	public void lineUpElements(IWContext iwc) {
-		
-		/**
-		 * set up 7/10/03 to match the isi Styles
-		 * @author birna
-		 */
-		
-		bannerTable = new Table(1,1);
-		bannerTable.setStyleClass(bannerTableStyle);
-		bannerTable.setCellpadding(0);
-		bannerTable.setCellspacing(0);
-		bannerTable.setWidth("100%");
-		bannerTable.add(this.getBundle(iwc).getImage("top.gif","idegaWeb Member"),1,1);
+	
 		
 		Table backTable = new Table(1,3);
 		backTable.setStyleClass(backgroundTableStyle);
@@ -388,7 +376,7 @@ public class CreateUser extends Window {
 		mainTable.add(inputTable, 1,1);
 		mainTable.add(buttonTable, 2,2);
 		
-		backTable.add(bannerTable,1,1);
+//		backTable.add(bannerTable,1,1);
 		backTable.add(mainTable,1,2);
 
 	/*commented out 7/10/03
@@ -473,7 +461,7 @@ public class CreateUser extends Window {
 			String fullName = iwc.getParameter(fullNameFieldParameterName);
 			newUser = getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(fullName,ssn,null,null);
 			
-			/*IWTimestamp t = null;
+			IWTimestamp t = null;
 			
 			if (ssn != null && ssn.length() > 0) {
 				t = new IWTimestamp();
@@ -500,9 +488,9 @@ public class CreateUser extends Window {
 				t.setYear(iYear);
 				
 				
-			}*/
+			}
 			
-			/*newUser =
+			newUser =
 				getUserBusiness(iwc).createUserWithLogin(
 					null,
 					null,
@@ -522,7 +510,7 @@ public class CreateUser extends Window {
 					null,
 					null,
 					null,
-					fullName);*/
+					fullName);
 		}
 		catch (Exception e) {
 			add("Error: " + e.getMessage());
@@ -543,20 +531,11 @@ public class CreateUser extends Window {
 		this.empty();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		IWBundle iwb = getBundle(iwc);
-
-		//added for stylesheet writout:
-		parentPage = this.getParentPage();
-	  styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
-	  parentPage.addStyleSheetURL(styleSrc);
-	  
-	 
-	  //this.addHeaderObject(bannerTable);
-	  
-		
+	  	
 		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
 
 		myForm = new Form();
-		add(myForm);
+		add(myForm,iwc);
 		initializeTexts();
 		initializeFields(iwc);
 		lineUpElements(iwc);

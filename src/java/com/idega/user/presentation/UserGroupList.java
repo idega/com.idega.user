@@ -3,11 +3,14 @@ package com.idega.user.presentation;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.idega.block.help.presentation.Help;
 import com.idega.event.IWLinkEvent;
 import com.idega.event.IWLinkListener;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -32,6 +35,9 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
 	private static final String TAB_NAME = "usr_grp_tab_name";
 	private static final String DEFAULT_TAB_NAME = "Groups";
+	
+	private static final String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
+	private static final String HELP_TEXT_KEY = "user_group_list";
 	
 	private Link addLink;
 	private IFrame memberofFrame;
@@ -147,8 +153,19 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 			return false;
 		}
 	}
+	public Help getHelpButton() {
+		IWContext iwc = IWContext.getInstance();
+		IWBundle iwb = getBundle(iwc);
+		Help help = new Help();
+		Image helpImage = iwb.getImage("help.gif");
+		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+		help.setHelpTextKey(HELP_TEXT_KEY);
+		help.setImage(helpImage);
+		return help;
+		
+	}
 	public void lineUpFields() {
-		this.resize(1, 4);
+		this.resize(1, 5);
 
 		Table prTable = new Table(2, 1);
 
@@ -166,6 +183,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		this.setHeight(4, super.rowHeight);
 
 		this.add(addLink, 1, 4);
+		this.add(getHelpButton(),1,5);
 	}
 	public boolean collect(IWContext iwc) {
 		String prgroup = iwc.getParameter(primaryGroupFieldName);
