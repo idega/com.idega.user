@@ -39,19 +39,16 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private TextArea descriptionField;
 	private IBPageChooser homepageField;
 	private DropdownMenu grouptypeField;
-	private CheckBox deletegroupField;
 
 	private Text nameText;
 	private Text descriptionText;
 	private Text homepageText;
 	private Text grouptypeText;
-	private Text deletegroupText;
 
 	private String nameFieldName;
 	private String descriptionFieldName;
 	private String homepageFieldName;
-	private String grouptypeFieldName;
-	private String deletegroupFieldName;
+	private String grouptypeFieldName; 
 	
 	private IWResourceBundle _iwrb = null;
 
@@ -136,8 +133,6 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		catch (Exception ex) {
 			throw new EJBException(ex);
 		}
-		
-		deletegroupField = new CheckBox(deletegroupFieldName,"true");
 
 		memberofFrame = new IFrame("ic_user_memberof_ic_group", GroupList.class);
 		memberofFrame.setHeight(150);
@@ -160,9 +155,6 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		grouptypeText = getTextObject();
 		grouptypeText.setText("Group type:");
 
-		deletegroupText = getTextObject();
-		deletegroupText.setText("Delete group:");
-
 		memberof = getTextObject();
 		memberof.setText("Member of:");
 	}
@@ -172,20 +164,11 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 			if (getGroupId() > -1) {
 
 				Group group = getGroupBusiness(iwc).getGroupByGroupID(getGroupId());
-				//Group group = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(getGroupId());
-				
-				String delete = (String)fieldValues.get(deletegroupFieldName);
-				if (delete != null && delete.equals("true")) {
-					group.removeGroup();	
-					
-				}
-				else {
-					group.setName((String) fieldValues.get(nameFieldName));
-					group.setDescription((String) fieldValues.get(descriptionFieldName));
-					group.setHomePageID((Integer) fieldValues.get(homepageFieldName));
-					group.setGroupType((String) fieldValues.get(grouptypeFieldName));
-					group.store();
-				}
+				group.setName((String) fieldValues.get(nameFieldName));
+				group.setDescription((String) fieldValues.get(descriptionFieldName));
+				group.setHomePageID((Integer) fieldValues.get(homepageFieldName));
+				group.setGroupType((String) fieldValues.get(grouptypeFieldName));
+			  group.store();
 			}
 		}
 		catch (Exception e) {
@@ -197,7 +180,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	}
 	
 	public void lineUpFields() {
-		resize(1, 8);
+		resize(1, 7);
 		setCellpadding(0);
 		setCellspacing(0);
 
@@ -225,24 +208,16 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		grouptypeTable.add(grouptypeField, 2, 1);
 		add(grouptypeTable,1,3);
 
-		Table deletegroupTable = new Table(2,1);
-		deletegroupTable.setCellpadding(0);
-		deletegroupTable.setCellspacing(0);
-		deletegroupTable.setWidth(1,"50");
-		deletegroupTable.add(deletegroupText,1,1);
-		deletegroupTable.add(deletegroupField,2,1);
-		add(deletegroupTable,1,4);
-
 		Table descriptionTable = new Table(1, 2);
 		descriptionTable.setCellpadding(0);
 		descriptionTable.setCellspacing(0);
 		descriptionTable.setHeight(1, rowHeight);
 		descriptionTable.add(descriptionText, 1, 1);
 		descriptionTable.add(descriptionField, 1, 2);
-		add(descriptionTable, 1, 5);
+		add(descriptionTable, 1, 4);
 
-		add(memberof, 1, 6);
-		add(memberofFrame, 1, 7);
+		add(memberof, 1, 5);
+		add(memberofFrame, 1, 6);
 
 //		setHeight(3, "30");
 		setHeight(1, super.rowHeight);
@@ -251,7 +226,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		setHeight(4, super.rowHeight);
 //		setHeight(6, super.rowHeight);
 
-		add(addLink, 1, 8);
+		add(addLink, 1, 7);
 	}
 
 	public boolean collect(IWContext iwc) {
@@ -261,7 +236,6 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 			String desc = iwc.getParameter(descriptionFieldName);
 			String homepage = iwc.getParameter(homepageFieldName);
 			String grouptype = iwc.getParameter(grouptypeFieldName);
-			String delete = iwc.getParameter(deletegroupFieldName);
 
 			if (gname != null) {
 				fieldValues.put(nameFieldName, gname);
@@ -280,10 +254,6 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 				fieldValues.put(grouptypeFieldName, grouptype);
 			}
 			
-			if (delete != null) {
-				fieldValues.put(deletegroupFieldName, delete);
-			}
-
 			updateFieldsDisplayStatus();
 
 			return true;
@@ -296,7 +266,6 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		nameFieldName = "UM_group_name";
 		homepageFieldName = "UM_home_page";
 		grouptypeFieldName = "UM_group_type";
-		deletegroupFieldName = "UM_delete_group";
 	}
 
 	public void initializeFieldValues() {
@@ -304,7 +273,6 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		fieldValues.put(descriptionFieldName, "");
 		fieldValues.put(homepageFieldName, new Integer(0));
 		fieldValues.put(grouptypeFieldName, "");
-		fieldValues.put(deletegroupFieldName,"");
 
 		updateFieldsDisplayStatus();
 	}
