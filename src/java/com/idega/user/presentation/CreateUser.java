@@ -20,6 +20,7 @@ import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.Window;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
@@ -38,6 +39,8 @@ import com.idega.util.IWTimestamp;
  */
 
 public class CreateUser extends Window {
+	private GroupBusiness groupBiz;
+
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
 	private static final String TAB_NAME = "usr_create_tab_name";
@@ -104,21 +107,14 @@ public class CreateUser extends Window {
 
 	private String rowHeight = "37";
 
+	private UserBusiness userBiz;
+
 	public CreateUser() {
 		super();
-		IWContext iwc = IWContext.getInstance();
-		IWResourceBundle iwrb = getResourceBundle(iwc);
-
-		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
 		setHeight(490);
 		setWidth(390);
 		setBackgroundColor(new IWColor(207, 208, 210));
 		setScrollbar(false);
-		myForm = new Form();
-		add(myForm);
-		initializeTexts();
-		initializeFields();
-		lineUpElements();
 	}
 
 	protected void initializeTexts() {
@@ -142,7 +138,7 @@ public class CreateUser extends Window {
 		primaryGroupText = new Text(iwrb.getLocalizedString(primaryGroupFieldParameterName,"Primarygroup"));
 	}
 
-	protected void initializeFields() {
+	protected void initializeFields(IWContext iwc) {
 		fullNameField = new TextInput(fullNameFieldParameterName);
 		fullNameField.setLength(20);
 		userLoginField = new TextInput(userLoginFieldParameterName);
@@ -169,28 +165,34 @@ public class CreateUser extends Window {
 		primaryGroupField = new DropdownMenu(primaryGroupFieldParameterName);
 		primaryGroupField.addSeparator();
 
-		try {
-			String[] gr = new String[1];
-			gr[0] = ((UserGroupRepresentative) com.idega.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
-			GroupHome home = (GroupHome) IDOLookup.getHome(Group.class);
-			Collection groups = home.findAllGroups(gr, false);
-			if (groups != null) {
-				/**
-				 * @todo filter standardGroups
-				 */
-				Iterator iter = groups.iterator();
-				while (iter.hasNext()) {
-					Group item = (Group) iter.next();
-					primaryGroupField.addMenuElement(item.getPrimaryKey().toString(), item.getName());
-				}
+		String[] gr = new String[1];
+		
+		Collection groups = null;
+		groupBiz = getGroupBusiness(iwc);
+		
+		if(!iwc.isSuperAdmin()){
+			groups = getUserBusiness(iwc).getAllGroupsWithEditPermission(iwc.getCurrentUser(),iwc );
+		}
+		else{
+			try {
+				groups = groupBiz.getAllGroups();
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
 			}
 		}
-		catch (RemoteException ex) {
-			throw new RuntimeException(ex.getMessage());
+		
+		
+
+		
+		if (groups != null) {
+			Iterator iter = groups.iterator();
+			while (iter.hasNext()) {
+				Group item = (Group) iter.next();
+				primaryGroupField.addMenuElement(item.getPrimaryKey().toString(), groupBiz.getNameOfGroupWithParentName(item));
+			}
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+
 
 		okButton = new SubmitButton("     OK     ", submitButtonParameterName, okButtonParameterValue);
 		//cancelButton = new SubmitButton(" Cancel ", submitButtonParameterName, cancelButtonParameterValue);
@@ -433,7 +435,20 @@ public class CreateUser extends Window {
 	}
 
 	public void main(IWContext iwc) throws Exception {
+		this.empty();
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+
+		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
+
+		myForm = new Form();
+		add(myForm);
+		initializeTexts();
+		initializeFields(iwc);
+		lineUpElements();
+		
 		String submit = iwc.getParameter("submit");
+
+		
 		selectedGroupId = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
 		if (selectedGroupId != null) {
 			primaryGroupField.setSelectedElement(selectedGroupId);
@@ -452,16 +467,27 @@ public class CreateUser extends Window {
 	}
 
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
-		UserBusiness business = null;
-		if (business == null) {
+		if (userBiz == null) {
 			try {
-				business = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return business;
+		return userBiz;
+	}
+	
+	public GroupBusiness getGroupBusiness(IWApplicationContext iwc) {
+		if (groupBiz == null) {
+			try {
+				groupBiz = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+			}
+			catch (java.rmi.RemoteException rme) {
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return groupBiz;
 	}
 
 	public String getBundleIdentifier() {
