@@ -1,16 +1,27 @@
 package com.idega.user.presentation;
 
-import javax.ejb.*;
-import com.idega.data.IDOException;
 import java.rmi.RemoteException;
-import com.idega.user.data.*;
-import com.idega.business.IBOLookup;
-import com.idega.user.business.GroupBusiness;
-import com.idega.data.IDOLookup;
+
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
+
 import com.idega.builder.data.IBDomain;
+import com.idega.business.IBOLookup;
+import com.idega.core.accesscontrol.business.AccessControl;
+import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.data.IDOLookup;
+import com.idega.event.IWActionListener;
+import com.idega.event.IWPresentationEvent;
+import com.idega.event.IWPresentationStateImpl;
 import com.idega.idegaweb.IWException;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.user.business.GroupBusiness;
+import com.idega.user.data.Group;
+import com.idega.user.data.GroupDomainRelationType;
+import com.idega.user.data.GroupDomainRelationTypeHome;
+import com.idega.user.data.User;
 import com.idega.user.event.CreateGroupEvent;
-import com.idega.event.*;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -84,6 +95,19 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 			GroupBusiness business = (GroupBusiness)IBOLookup.getServiceInstance(e.getIWContext(),GroupBusiness.class);
 			Group group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID());
 
+			//set owner
+			IWUserContext iwc =  e.getIWContext();
+			User user = iwc.getCurrentUser();
+			AccessController access = iwc.getAccessController();
+			try {
+				access.setAsOwner(group,((Integer)user.getPrimaryKey()).intValue(), iwc);
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+				
+			}
+			
+			
 			// Create under
 			if(event.getParentType() == CreateGroupEvent.TYPE_DOMAIN){  // under Domain
 			  GroupDomainRelationTypeHome gdrHome = (GroupDomainRelationTypeHome)IDOLookup.getHome(GroupDomainRelationType.class);
