@@ -78,18 +78,20 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
     else if( plugins!=null && !plugins.isEmpty() ){
     	System.out.println("Plugins are not null");
     	Iterator iter = plugins.iterator();
+    	boolean buoHasBeenAdded = false;
     	
     	while (iter.hasNext()) {
     		
-			UserGroupPlugIn plugin = (UserGroupPlugIn) iter.next();
-			className = plugin.getBusinessICObject().getClassName();
-			System.out.println("Plugin business class : "+className);
-			UserGroupPlugInBusiness biz = (UserGroupPlugInBusiness) IBOLookup.getServiceInstance(iwc,Class.forName(className));
-			PresentationObject obj = biz.instanciateViewer(ps.getSelectedGroup());
-			
-			if(obj==null){
-				add(_buo);
-			}
+				UserGroupPlugIn plugin = (UserGroupPlugIn) iter.next();
+				className = plugin.getBusinessICObject().getClassName();
+				System.out.println("Plugin business class : "+className);
+				UserGroupPlugInBusiness biz = (UserGroupPlugInBusiness) IBOLookup.getServiceInstance(iwc,Class.forName(className));
+				PresentationObject obj = biz.instanciateViewer(ps.getSelectedGroup());
+				
+				if(obj==null && !buoHasBeenAdded){
+					add(_buo);
+					buoHasBeenAdded=true;
+				}
 			
 			add(obj);
 		}
