@@ -6,7 +6,6 @@ import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
@@ -16,7 +15,6 @@ import com.idega.user.app.Toolbar;
 import com.idega.user.app.UserApplication;
 import com.idega.user.data.Group;
 import com.idega.user.event.SelectGroupEvent;
-import com.idega.util.IWColor;
 
 /**
  * 
