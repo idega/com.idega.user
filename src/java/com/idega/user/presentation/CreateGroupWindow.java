@@ -27,6 +27,7 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
@@ -65,8 +66,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	public CreateGroupWindow() {
 		_stateHandler = new StatefullPresentationImplHandler();
 		_stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
-		setWidth(470);//380
-		setHeight(410);//320
+		setWidth(320);
+		setHeight(320);
 		setResizable(true);
 		setScrollbar(false);
 		getLocation().setApplicationClass(CreateGroupWindow.class);
@@ -126,47 +127,47 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			form.addEventModel(_createEvent, iwc);
 			
 			setTitle(iwrb.getLocalizedString("create_new_group", "Create a new Group"));
-			addTitle(iwrb.getLocalizedString("create_new_group", "Create a new Group"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+			addTitle(iwrb.getLocalizedString("create_new_group", "Create a new Group"), TITLE_STYLECLASS);
 			
 			add(form,iwc);
 			Table mainTable = new Table();
-			mainTable.setWidth(380);
-			mainTable.setHeight(290);
+			mainTable.setWidth(Table.HUNDRED_PERCENT);
 			mainTable.setCellpadding(0);
 			mainTable.setCellspacing(0);
-			Table tab = new Table(2, 11); //changed from Table(2,8) - birna
+			mainTable.setHeight(2, 5);
+			Table tab = new Table(2, 5); //changed from Table(2,8) - birna
 			tab.setStyleClass(mainTableStyle);
 			tab.setWidth(Table.HUNDRED_PERCENT);
-			tab.setHeight(250);
-			
-			//setting alignment for all the cells in the main table:
+			tab.setWidth(1, "50%");
+			tab.setWidth(2, "50%");
 			tab.setColumnAlignment(1, "left"); //changed from (1,"right") - birna
-
-			tab.setCellspacing(5);
+			tab.setCellspacing(12);
 			tab.setCellpadding(0);
 			
 			TextInput inputName = new TextInput(_createEvent.getIONameForName());
 			inputName.setAsNotEmpty(iwrb.getLocalizedString("new_group.group_name_required","Group name must be selected"));
 			inputName.setStyleClass("text");
-			inputName.setLength(20);
-//			inputName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+			//inputName.setLength(20);
+			inputName.setWidth(Table.HUNDRED_PERCENT);
 			
 			Text inputText = new Text();
 			inputText.setText(iwrb.getLocalizedString("group_name", "Group name") + ":");
 			
 			tab.add(inputText, 1, 1);
-			tab.add(inputName, 1, 2); //changed from (inputName, 2,1) - birna
+			tab.add(Text.getBreak(), 1, 1);
+			tab.add(inputName, 1, 1); //changed from (inputName, 2,1) - birna
 			
 			TextArea descriptionTextArea = new TextArea(_createEvent.getIONameForDescription());
-			descriptionTextArea.setHeight(10); //changed from (4)
-			descriptionTextArea.setWidth(30);
+			descriptionTextArea.setHeight("200"); //changed from (4)
+			descriptionTextArea.setWidth(Table.HUNDRED_PERCENT);
 			descriptionTextArea.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 			
 			Text descText = new Text(iwrb.getLocalizedString("group_description", "Description") + ":");
 			tab.add(descText, 2, 1); // changed from (descText,1,2); - birna
-			tab.mergeCells(2,2,2,8); //added - birna
-			tab.setVerticalAlignment(2,2,Table.VERTICAL_ALIGN_TOP);
-			tab.add(descriptionTextArea, 2, 2); 
+			tab.add(Text.getBreak(), 2, 1);
+			tab.mergeCells(2, 1, 2, 5); //added - birna
+			tab.setVerticalAlignment(2,1,Table.VERTICAL_ALIGN_TOP);
+			tab.add(descriptionTextArea, 2, 1); 
 			
 			GroupChooser groupChooser = getGroupChooser(_createEvent.getIONameForParentID(), true, iwc);
 			groupChooser.setStyleClassName("text");
@@ -176,40 +177,26 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			Layer layer = new Layer();
 			layer.add(createUnderText);
 			layer.setNoWrap();
-			tab.add(layer, 1, 3);
-			tab.add(groupChooser, 1, 4); //changed from (groupChooser, 2,3) - birna
+			tab.add(layer, 1, 2);
+			tab.add(Text.getBreak(), 1, 2);
+			tab.add(groupChooser, 1, 2); //changed from (groupChooser, 2,3) - birna
 			
 			StyledIBPageChooser pageChooser = new StyledIBPageChooser(_createEvent.getIONameForHomePage(), IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 			pageChooser.setStyleClassName("text");
 			pageChooser.setInputLength(17);
 			Text pageText = new Text(iwrb.getLocalizedString("home_page", "Select homepage") + ":");
 
-			tab.add(pageText, 1, 5); //changed from (pageText,1,4) - birna
-			tab.add(pageChooser, 1, 6); //changed from (pageChooser, 2,4) - birna
+			tab.add(pageText, 1, 3); //changed from (pageText,1,4) - birna
+			tab.add(Text.getBreak(), 1, 3);
+			tab.add(pageChooser, 1, 3); //changed from (pageChooser, 2,4) - birna
 			
 			DropdownMenu mnu = getGroupTypeMenu(iwrb, iwc);
-			/* 
-			 new DropdownMenu(_createEvent.getIONameForGroupType());
-			 try {
-			 GroupTypeHome gtHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
-			 Collection types = gtHome.findVisibleGroupTypes();
-			 Iterator iter = types.iterator();
-			 while (iter.hasNext()) {
-			 GroupType item = (GroupType) iter.next();
-			 String value = item.getType();
-			 String name = item.getType(); //item.getName();
-			 mnu.addMenuElement(value, iwrb.getLocalizedString(name, name));
-			 }
-			 }
-			 catch (RemoteException ex) {
-			 throw new EJBException(ex);
-			 }*/
-			//    mnu.setSelectedElement(type);
 			mnu.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 			
 			Text typeText = new Text(iwrb.getLocalizedString("select_type", "Select type") + ":");
-			tab.add(typeText, 1, 7); //changed from (typeText,1,5) - birna
-			tab.add(mnu, 1, 8); //changed from (mnu,2,5) - birna
+			tab.add(typeText, 1, 4); //changed from (typeText,1,5) - birna
+			tab.add(Text.getBreak(), 1, 4);
+			tab.add(mnu, 1, 4); //changed from (mnu,2,5) - birna
 			
 			GroupChooser aliasGroupChooser = getGroupChooser(_createEvent.getIONameForAliasID(), false, iwc);
 			aliasGroupChooser.setStyleClassName("text");
@@ -220,46 +207,37 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			}
 			aliasGroupChooser.setFilter(filter);
 			Text aliasText = new Text(iwrb.getLocalizedString("alias_group", "Alias for group") + ":");
-//			aliasText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 			
-			Layer layer2 = new Layer();
-			layer2.add(aliasText);
-			layer2.setNoWrap();
-			tab.add(layer2, 1, 9); //changed from (layer2,1,6) - birna
-			tab.add(aliasGroupChooser, 1, 10); //changed from (aliasGroupcChooser,2,3) - birna
-			tab.add(Text.BREAK + Text.BREAK,1,10);
-			SubmitButton button = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), _createEvent.getIONameForCommit());
-//			String message = iwrb.getLocalizedString("group_please_set_name_choose_group", "Please set name and choose a group as parent");
-//			getAssociatedScript().addFunction("mandatoryCheck", "function mandatoryCheck(form) { " +
-//			"\n\t if ((form."+
-//			_createEvent.getIONameForParentID() +
-//			".value == \"\") || (form." +
-//			_createEvent.getIONameForName() +
-//			".value == \"\")) { \n\t alert(\""
-//			+ message +
-//			"\") \n\t return false \n\t } \n\t } "); //else  \n\t { \n\t window.close() \n\t }  \n\t }" );
-//			form.setOnSubmit("mandatoryCheck(this)");
-			SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"), _createEvent.getIONameForCancel());
-			//button.setOnClick("mandatoryCheck(this)")
-			close.setOnClick("window.close();return false;");
+			tab.add(aliasText, 1, 5); //changed from (layer2,1,6) - birna
+			tab.add(Text.getBreak(), 1, 5);
+			tab.add(aliasGroupChooser, 1, 5); //changed from (aliasGroupcChooser,2,3) - birna
 
+			StyledButton button = new StyledButton(new SubmitButton(_createEvent.getIONameForCommit(), iwrb.getLocalizedString("save", "Save")));
+			SubmitButton closeButton = new SubmitButton(_createEvent.getIONameForCancel(), iwrb.getLocalizedString("close", "Close"));
+			closeButton.setOnClick("window.close();return false;");
+			StyledButton close = new StyledButton(closeButton);
+
+			Table buttonTable = new Table(3, 1);
+			buttonTable.setCellpadding(0);
+			buttonTable.setCellspacing(0);
+			buttonTable.setWidth(2, 5);
+			buttonTable.add(button, 1, 1);
+			buttonTable.add(close, 3, 1);
+			
 			Help help = getHelp(HELP_TEXT_KEY);
 			Table bottomTable = new Table();
 			bottomTable.setCellpadding(0);
 			bottomTable.setCellspacing(5);
 			bottomTable.setWidth(Table.HUNDRED_PERCENT);
-			bottomTable.setHeight(39);
 			bottomTable.setStyleClass(mainTableStyle);
-			bottomTable.add(help,1,1);
-			bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
-			bottomTable.add(button,2,1);
-			bottomTable.add(Text.getNonBrakingSpace(),2,1);
-			bottomTable.add(close,2,1);
+			bottomTable.add(help, 1, 1);
+			bottomTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+			bottomTable.add(buttonTable, 2, 1);
 			
-			mainTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
-			mainTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
-			mainTable.add(tab,1,1);
-			mainTable.add(bottomTable,1,3);
+			mainTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
+			mainTable.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_TOP);
+			mainTable.add(tab, 1, 1);
+			mainTable.add(bottomTable, 1, 3);
 			form.add(mainTable);
 			
 		}
