@@ -477,11 +477,13 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			
 			//getChildren and add this group as permission controlling group
 			Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(selectedGroup);
-			Iterator itering = children.iterator();
-			while (itering.hasNext()) {
-				Group child = (Group) itering.next();
-				child.setPermissionControllingGroup(selectedGroup);
-				child.store();
+			if(children!=null && !children.isEmpty()){
+				Iterator itering = children.iterator();
+				while (itering.hasNext()) {
+					Group child = (Group) itering.next();
+					child.setPermissionControllingGroup(selectedGroup);
+					child.store();
+				}
 			}
 		}
 		else{//take it off if set
@@ -494,15 +496,17 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			
 //				getChildren and remove this group as permission controlling group
 			  Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(selectedGroup);
-			  Iterator itering = children.iterator();
-			  while (itering.hasNext()) {
-				  Group child = (Group) itering.next();
-				  if(id==child.getPermissionControllingGroupID()){
-				  	child.setPermissionControllingGroup(null);
-				  	
-					child.store();
+			  if(children!=null && !children.isEmpty()){
+				  Iterator itering = children.iterator();
+				  while (itering.hasNext()) {
+					  Group child = (Group) itering.next();
+					  if(id==child.getPermissionControllingGroupID()){
+					  	child.setPermissionControllingGroup(null);
+					  	
+						child.store();
+					  }
+					  
 				  }
-				  
 			  }
 			}
 		}
