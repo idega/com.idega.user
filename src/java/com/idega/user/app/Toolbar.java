@@ -107,7 +107,6 @@ public class Toolbar extends Page implements IWBrowserView {
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
 		boolean useDropdown = iwb.getBooleanProperty("use_dropdown_in_toolbar", false);
-		useDropdown = true;
 
 		Table toolbarTable = new Table(4, 1);
 		toolbarTable.setCellpadding(0);
