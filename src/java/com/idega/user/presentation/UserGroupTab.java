@@ -94,7 +94,7 @@ public abstract class UserGroupTab extends Table implements Collectable {
     return business;
   }
 
-  public GroupBusiness getUserGroupBusiness(IWApplicationContext iwc){
+  public GroupBusiness getGroupBusiness(IWApplicationContext iwc){
     GroupBusiness business = null;
     if(business == null){
       try{

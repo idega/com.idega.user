@@ -13,7 +13,6 @@ import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
-import com.idega.core.business.UserGroupBusiness;
 import com.idega.user.data.Group;
 import java.util.List;
 import java.util.Iterator;
@@ -112,7 +111,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     try{
       if(getGroupId() > -1){
 
-        Group group = this.getUserGroupBusiness(iwc).getGroupByGroupID(getGroupId());
+        Group group = this.getGroupBusiness(iwc).getGroupByGroupID(getGroupId());
         //Group group = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(getGroupId());
         group.setName((String)fieldValues.get(this.nameFieldName));
         group.setDescription((String)fieldValues.get(this.descriptionFieldName));
@@ -195,14 +194,14 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
   }
 
   public void main(IWContext iwc) throws Exception {
-    Object obj = UserGroupBusiness.getGroupsContainingDirectlyRelated(this.getGroupId());
+    Object obj =  this.getGroupBusiness(iwc).getGroupsContainingDirectlyRelated(this.getGroupId());
     if(obj != null){
       iwc.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED,obj);
     }else{
       iwc.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
     }
 
-    Object ob = UserGroupBusiness.getGroupsContainingNotDirectlyRelated(this.getGroupId());
+    Object ob = this.getGroupBusiness(iwc).getGroupsContainingNotDirectlyRelated(this.getGroupId());
     if(ob != null){
       iwc.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED,ob);
     }else{

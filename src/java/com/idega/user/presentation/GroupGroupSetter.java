@@ -1,9 +1,9 @@
 package com.idega.user.presentation;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.idega.core.business.UserGroupBusiness;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
@@ -55,7 +55,7 @@ import com.idega.user.data.Group;
       int groupId = Integer.parseInt(stringGroupId);
       form.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID,stringGroupId);
 
-      List directGroups = UserGroupBusiness.getGroupsContainingDirectlyRelated(groupId);
+      Collection directGroups = getGroupBusiness(iwc).getGroupsContainingDirectlyRelated(groupId);
 
       Iterator iter = null;
       if(directGroups != null){
@@ -65,7 +65,8 @@ import com.idega.user.data.Group;
           right.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
         }
       }
-      List notDirectGroups = UserGroupBusiness.getAllGroupsNotDirectlyRelated(groupId,iwc);
+      
+      Collection notDirectGroups = getGroupBusiness(iwc).getAllGroupsNotDirectlyRelated(groupId,iwc);
       if(notDirectGroups != null){
         iter = notDirectGroups.iterator();
         while (iter.hasNext()) {
@@ -97,7 +98,7 @@ import com.idega.user.data.Group;
         String[] related = iwc.getParameterValues(GroupGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
 
         //Group group = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(groupId);
-        Group group = getUserGroupBusiness(iwc).getGroupByGroupID(groupId);
+        Group group = getGroupBusiness(iwc).getGroupByGroupID(groupId);
         List currentRelationShip = group.getListOfAllGroupsContainingThis();
 
 
@@ -107,7 +108,7 @@ import com.idega.user.data.Group;
             for (int i = 0; i < related.length; i++) {
               int id = Integer.parseInt(related[i]);
               //Group gr = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(id);
-              Group gr = getUserGroupBusiness(iwc).getGroupByGroupID(id);
+              Group gr = getGroupBusiness(iwc).getGroupByGroupID(id);
               if(!currentRelationShip.remove(gr)){
                 gr.addGroup(group);
               }
@@ -122,7 +123,7 @@ import com.idega.user.data.Group;
           } else{
             for (int i = 0; i < related.length; i++) {
               //((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(Integer.parseInt(related[i])).addGroup(group);
-              Group group2 = getUserGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(related[i]));
+              Group group2 = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(related[i]));
               group2.addGroup(group);
             }
           }
@@ -163,7 +164,7 @@ import com.idega.user.data.Group;
 */
     }
   
-    public GroupBusiness getUserGroupBusiness(IWApplicationContext iwc){
+    public GroupBusiness getGroupBusiness(IWApplicationContext iwc){
     GroupBusiness business = null;
     if(business == null){
       try{
