@@ -368,7 +368,7 @@ public class GeneralUserInfoTab extends UserTab{
                             (String)fieldValues.get(this.displayNameFieldName),(String)fieldValues.get(this.descriptionFieldName),
                             gen,(String)fieldValues.get(this.personalIDFieldName),dateOfBirthTS,null);
         if ( createdTS != null )
-        	super.getUserBusiness(iwc).getUser(getUserId()).setCreated(createdTS.getTimestamp());
+        	getUser().setCreated(createdTS.getTimestamp());
       }
     }catch(Exception e){
       //return false;
@@ -382,7 +382,7 @@ public class GeneralUserInfoTab extends UserTab{
   public void initFieldContents(){
 
     try{
-      User user = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKey(new Integer(getUserId()));
+      User user = getUser();
  
       fieldValues.put(this.firstNameFieldName,(user.getFirstName() != null) ? user.getFirstName():"" );
       fieldValues.put(this.middleNameFieldName,(user.getMiddleName() != null) ? user.getMiddleName():"" );

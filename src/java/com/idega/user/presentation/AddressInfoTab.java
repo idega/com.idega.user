@@ -262,7 +262,7 @@ public class AddressInfoTab extends UserTab{
   public void initFieldContents(){
     try{
     	UserBusiness userBiz = getUserBusiness(this.getEventIWContext());
-      Address addr = userBiz.getUsersMainAddress(userBiz.getUser(this.getUserId()));
+      Address addr = userBiz.getUsersMainAddress(getUser());
 
       boolean hasAddress = false;
       if(addr != null){

@@ -77,7 +77,7 @@ public class UserLoginTab extends UserTab {
 
   public void initFieldContents() {
     try {
-      LoginTable lTable = LoginDBHandler.getUserLogin(this.getUserId());
+      LoginTable lTable = LoginDBHandler.getUserLogin(getUserId());
       LoginInfo lInfo = LoginDBHandler.getLoginInfo(lTable.getID());
 
       if(lTable != null){
@@ -289,7 +289,7 @@ public class UserLoginTab extends UserTab {
       if(((passw != null && !passw.equals("")) || ((confirmedpassw != null && !confirmedpassw.equals("")))) ){
         if(login != null && !login.equals("")){
           LoginTable userLoginTable = LoginDBHandler.getUserLogin(this.getUserId());
-          String oldLogin = null;
+          String oldLogin = null; 
           if(userLoginTable != null){
             oldLogin = userLoginTable.getUserLogin();
           }

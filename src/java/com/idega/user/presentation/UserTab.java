@@ -5,7 +5,10 @@ import com.idega.presentation.IWContext;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.text.Text;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.data.User;
 import com.idega.util.datastructures.Collectable;
+
+import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.List;
@@ -34,6 +37,9 @@ public abstract class UserTab extends Table implements Collectable{
   protected int fontSize = 2;
 
   protected Text proxyText;
+	protected UserBusiness business = null;
+	protected User user = null;
+	
 
   //protected UserBusiness business;
 
@@ -88,11 +94,30 @@ public abstract class UserTab extends Table implements Collectable{
 
   public void setUserID(int id){
     userId = id;
+    
     initFieldContents();
   }
 
   public int getUserId(){
     return userId;
+  }
+  
+  public User getUser(){
+  	if(user==null){
+			user = reGetUser();
+  	}
+  	
+  	return user;
+  }
+  
+  protected User reGetUser(){
+  	try {
+			return this.getUserBusiness(this.getIWApplicationContext()).getUser(getUserId());
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return null;
   }
 
   public void addErrorMessage(String message){
@@ -119,7 +144,6 @@ public abstract class UserTab extends Table implements Collectable{
 
 
   public UserBusiness getUserBusiness(IWApplicationContext iwc){
-    UserBusiness business = null;
     if(business == null){
       try{
         business = (UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserBusiness.class);

@@ -69,7 +69,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
         }
       }
       //User user = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(this.getUserId());
-      User user = userBusiness.getUser(getUserId());
+      User user = getUser();
       int prgroupid = user.getPrimaryGroupID();
       fieldValues.put(primaryGroupFieldName, (prgroupid != -1)?Integer.toString(prgroupid):"");
     }
@@ -109,7 +109,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
     try {
       String pr = (String)this.fieldValues.get(this.primaryGroupFieldName);
       UserBusiness userBusiness = this.getUserBusiness(iwc);
-      User user = userBusiness.getUser(getUserId());
+      User user = getUser();
       userBusiness.setPermissionGroup(user, ("".equals(pr))?null:new Integer(pr));
       return true;
     }

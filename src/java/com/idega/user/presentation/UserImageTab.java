@@ -101,7 +101,7 @@ public class UserImageTab extends UserTab{
         String image = (String)fieldValues.get(imageFieldName);
         
         if( (image!=null) && (!image.equals("-1")) && (!image.equals("")) ){
-      		if( user == null ) user = getUserBusiness(getIWApplicationContext()).getUser(this.getUserId());
+      		if( user == null ) user = getUser();
 	  			
 	  			int tempId = Integer.parseInt(image);
 	  			if( tempId!=systemImageId){
@@ -136,7 +136,7 @@ public class UserImageTab extends UserTab{
   	
 			imageField.setImSessionImageName(imageFieldName+getUserId()); 
 			
-      if( user == null ) user = getUserBusiness(getIWApplicationContext()).getUser(getUserId());
+      if( user == null ) user = getUser();
 			
 			systemImageId = getSelectedImageId(user);
 			

@@ -275,8 +275,8 @@ public class UserPhoneTab extends UserTab{
   public void initFieldContents(){
 
     try{
-      Phone[] phones = this.getUserBusiness(this.getEventIWContext()).getUserPhones(getUserId());
-      Email mail = this.getUserBusiness(this.getEventIWContext()).getUserMail(getUserId());
+      Phone[] phones = this.getUserBusiness(this.getEventIWContext()).getUserPhones(getUser());
+      Email mail = this.getUserBusiness(this.getEventIWContext()).getUserMail(getUser());
 
       for ( int a = 0; a < phones.length; a++ ) {
         if ( a == 0 ) {
