@@ -55,6 +55,7 @@ public class UserImageTab extends UserTab{
   public void initializeFields(){
     imageField = new ImageInserter(imageFieldName);
     imageField.setHasUseBox(false);
+		imageField.setImSessionImageName(imageFieldName+getUserId()); 
   }
   
   public void initializeTexts(){
@@ -82,7 +83,7 @@ public class UserImageTab extends UserTab{
   }
   
   public void updateFieldsDisplayStatus(){
-      imageField.setImageId(systemImageId);       
+      imageField.setImageId(systemImageId);     
   }
 
   public boolean collect(IWContext iwc){
@@ -109,6 +110,8 @@ public class UserImageTab extends UserTab{
         	user.store();
         
         	updateFieldsDisplayStatus();
+					iwc.removeSessionAttribute(imageFieldName+getUserId());
+        	
         
         
         }
