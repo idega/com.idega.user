@@ -258,10 +258,14 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
         		Iterator iter = plugins.iterator();
         		while (iter.hasNext()) {
         			UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
-        			UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) IBOLookup.getServiceInstance(iwc, Class.forName(element.getBusinessICObject().getClassName()));
-        			List list = pluginBiz.getGroupToolbarElements(realGroup);
-        			if (list != null) {
-        				toolbarElements.addAll(list);
+        			try {
+        			    UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) IBOLookup.getServiceInstance(iwc, Class.forName(element.getBusinessICObject().getClassName()));
+        			    List list = pluginBiz.getGroupToolbarElements(realGroup);
+        			    if (list != null) {
+        			        toolbarElements.addAll(list);
+        			    }
+        			} catch(Exception e) {
+        			    log(e);
         			}
         		}
         		// adding some toolbar elements that belong to this bundle
