@@ -14,7 +14,6 @@ import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;
-import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.IFrame;
@@ -24,23 +23,23 @@ import com.idega.user.data.User;
 import com.idega.util.Disposable;
 
 /**
- * Title:        User
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson</a>
+ * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
+ * 
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>
  * @version 1.0
  */
-
 public class UserGroupList extends UserTab implements Disposable, IWLinkListener {
+
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
 	private static final String TAB_NAME = "usr_grp_tab_name";
+
 	private static final String DEFAULT_TAB_NAME = "Groups";
-	
+
 	private static final String HELP_TEXT_KEY = "user_group_list";
-	
-	private Link addLink;
+
+//	private Link addLink;
+
 	private IFrame memberofFrame;
 
 	private DropdownMenu primaryGroupField;
@@ -50,10 +49,10 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	private Text primaryGroupText;
 
 	public static final String PARAMETER_USER_ID = "ic_user_id";
-	public static final String SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED =
-		"ic_user_ic_group_direct_UGL";
-	public static final String SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED =
-		"ic_user_ic_group_not_direct_UGL";
+
+	public static final String SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED = "ic_user_ic_group_direct_UGL";
+
+	public static final String SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED = "ic_user_ic_group_not_direct_UGL";
 
 	protected Text memberof;
 
@@ -61,29 +60,24 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		super();
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-
 		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
-//		this.setName("Groups");
-
+		//		this.setName("Groups");
 	}
+
 	public void initFieldContents() {
-		addLink.setWindowToOpen(UserGroupSetter.class);
-		addLink.addParameter(UserGroupList.PARAMETER_USER_ID, this.getUserId());
+//		addLink.setWindowToOpen(UserGroupSetter.class);
+//		addLink.addParameter(UserGroupList.PARAMETER_USER_ID, this.getUserId());
 		try {
-			UserBusiness userBusiness =
-				this.getUserBusiness(this.getEventIWContext());
-			Collection userGroups =
-				userBusiness.getUserGroupsDirectlyRelated(this.getUserId());
+			UserBusiness userBusiness = this.getUserBusiness(this.getEventIWContext());
+			Collection userGroups = userBusiness.getUserGroupsDirectlyRelated(this.getUserId());
 			if ((userGroups != null) && !userGroups.isEmpty()) {
 				Iterator iter = userGroups.iterator();
 				while (iter.hasNext()) {
-					Group item = (Group)iter.next();
+					Group item = (Group) iter.next();
 					if (item == null)
-						System.out.println(
-							"ITEM IS NULL!!!WHY? Temporary check. please fix this, that means you Tryggvi");
+						System.out.println("ITEM IS NULL!!!WHY? Temporary check. please fix this, that means you Tryggvi");
 					else {
 						Object prim = item.getPrimaryKey();
-
 						String groupId = prim.toString();
 						String groupName = item.getName();
 						if (groupName == null)
@@ -92,12 +86,11 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 					}
 				}
 			}
-			//User user = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(this.getUserId());
+			//User user =
+			// ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(this.getUserId());
 			User user = getUser();
 			int prgroupid = user.getPrimaryGroupID();
-			fieldValues.put(
-				primaryGroupFieldName,
-				(prgroupid != -1) ? Integer.toString(prgroupid) : "");
+			fieldValues.put(primaryGroupFieldName, (prgroupid != -1) ? Integer.toString(prgroupid) : "");
 		}
 		catch (Exception ex) {
 			add(new ExceptionWrapper(ex, this));
@@ -105,10 +98,11 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		}
 		updateFieldsDisplayStatus();
 	}
+
 	public void updateFieldsDisplayStatus() {
-		primaryGroupField.setSelectedElement(
-			(String)fieldValues.get(primaryGroupFieldName));
+		primaryGroupField.setSelectedElement((String) fieldValues.get(primaryGroupFieldName));
 	}
+
 	public void initializeFields() {
 		memberofFrame = new IFrame("ic_user_memberof_ic_group", GroupList.class);
 		memberofFrame.setHeight(280);
@@ -118,12 +112,10 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
 		primaryGroupField = new DropdownMenu(primaryGroupFieldName);
 		primaryGroupField.keepStatusOnAction();
-
-		IWContext iwc = IWContext.getInstance();
-		IWResourceBundle iwrb = getResourceBundle(iwc);
-
-		addLink = new Link("  " + iwrb.getLocalizedString("addRemove","Add/Remove")+"  ");
-		addLink.setStyleClass("styledLink"); 
+//		IWContext iwc = IWContext.getInstance();
+//		IWResourceBundle iwrb = getResourceBundle(iwc);
+//		addLink = new Link("  " + iwrb.getLocalizedString("addRemove", "Add/Remove") + "  ");
+//		addLink.setStyleClass("styledLink");
 	}
 
 	public void actionPerformed(IWLinkEvent e) {
@@ -140,20 +132,20 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		primaryGroupText = new Text(iwrb.getLocalizedString(primaryGroupFieldName,"Primarygroup") + ":");
 		primaryGroupText.setBold();
 	}
+
 	public boolean store(IWContext iwc) {
 		try {
-			String pr = (String)this.fieldValues.get(this.primaryGroupFieldName);
+			String pr = (String) this.fieldValues.get(this.primaryGroupFieldName);
 			UserBusiness userBusiness = this.getUserBusiness(iwc);
 			User user = getUser();
-			userBusiness.setPermissionGroup(
-				user,
-				("".equals(pr)) ? null : new Integer(pr));
+			userBusiness.setPermissionGroup(user, ("".equals(pr)) ? null : new Integer(pr));
 			return true;
 		}
 		catch (Exception ex) {
 			return false;
 		}
 	}
+
 	public Help getHelpButton() {
 		IWContext iwc = IWContext.getInstance();
 		IWBundle iwb = getBundle(iwc);
@@ -163,8 +155,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;
-		
 	}
+
 	public void lineUpFields() {
 		this.resize(1, 1);
 
@@ -185,7 +177,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		table.add(Text.getBreak(), 1, 2);
 		table.add(memberofFrame, 1, 2);
 
-		table.add(addLink, 1, 3);
+//		table.add(addLink, 1, 3);
 		
 		add(table, 1, 1);
 	}
@@ -197,39 +189,38 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		}
 		return true;
 	}
+
 	public void initializeFieldNames() {
 		this.primaryGroupFieldName = "primary_group";
 	}
+
 	public void initializeFieldValues() {
 		fieldValues.put(this.primaryGroupFieldName, "");
 		this.updateFieldsDisplayStatus();
 	}
 
 	public void dispose(IWContext iwc) {
-		iwc.removeSessionAttribute(
-			UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
-		iwc.removeSessionAttribute(
-			UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
+		iwc.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
+		iwc.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
 	}
 
 	public void main(IWContext iwc) throws Exception {
-		getPanel().addHelpButton(getHelpButton());		
+		getPanel().addHelpButton(getHelpButton());	
 
 		primaryGroupField.removeElements();
 		primaryGroupField.addSeparator();
 		UserBusiness userBusiness = this.getUserBusiness(iwc);
-		Collection userGroups =
-			userBusiness.getUserGroupsDirectlyRelated(this.getUserId());
+		Collection userGroups = Collections.unmodifiableCollection(userBusiness.getUserGroupsDirectlyRelated(this.getUserId()));
+
 		if (userGroups != null) {
+			System.out.println("[UserGroupList]: userGroups!=null");
 			Iterator iter = userGroups.iterator();
 			while (iter.hasNext()) {
-				Group item = (Group)iter.next();
+				Group item = (Group) iter.next();
 				if (item == null)
-					System.out.println(
-						"ITEM IS NULL!!!WHY? Temporary check. please fix this, that means you Tryggvi");
+					System.out.println("ITEM IS NULL!!!WHY? Temporary check. please fix this, that means you Tryggvi");
 				else {
 					Object prim = item.getPrimaryKey();
-
 					String groupId = prim.toString();
 					String groupName = item.getName();
 					if (groupName == null)
@@ -238,85 +229,81 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 				}
 			}
 		}
-
-		primaryGroupField.setSelectedElement(
-			(String)fieldValues.get(primaryGroupFieldName));
-
+		primaryGroupField.setSelectedElement((String) fieldValues.get(primaryGroupFieldName));
 		User user = getUser();
-		
-		Collection directGroups = Collections.unmodifiableCollection(userBusiness.getUserGroupsDirectlyRelated(this.getUserId()));
-		directGroups = getFilteredGroups(iwc, directGroups, user);
+		Collection directGroups = userGroups;
+		Collection topGroupNodes = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(),iwc);
+		directGroups = getFilteredGroups(iwc, directGroups, user,topGroupNodes);
 		if (directGroups != null) {
-			iwc.setSessionAttribute(
-				UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED,
-				directGroups);
-		} else {
-			iwc.removeSessionAttribute(
-				UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
-		}
-
-		Collection indirectGroups = Collections.unmodifiableCollection(userBusiness.getParentGroupsInDirectForUser(this.getUserId()));
-		indirectGroups = getFilteredGroups(iwc, indirectGroups, user);
-		if (indirectGroups != null) {
-			iwc.setSessionAttribute(
-				UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED,
-				indirectGroups);
+			iwc.setSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED, directGroups);
 		}
 		else {
-			iwc.removeSessionAttribute(
-				UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
+			iwc.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
+		}
+		Collection indirectGroups = Collections.unmodifiableCollection(userBusiness.getParentGroupsInDirectForUser(this.getUserId()));
+		indirectGroups = getFilteredGroups(iwc, indirectGroups, user,topGroupNodes);
+
+		if (indirectGroups != null) {
+			iwc.setSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED, indirectGroups);
+		}
+		else {
+			iwc.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
 		}
 	}
-	
-	private Collection getFilteredGroups(IWContext iwc, Collection groups, User user) {
+
+	private Collection getFilteredGroups(IWContext iwc, Collection groups, User user, Collection topGroupNodes) {
 		boolean isAdmin = iwc.isSuperAdmin();
 		boolean isSameUser = iwc.getUser().getPrimaryKey().equals(user.getPrimaryKey());
-		if(isAdmin || isSameUser) {
+		if (isAdmin || isSameUser) {
 			return groups;
 		}
 		Collection result = new ArrayList();
 		UserBusiness userBusiness = this.getUserBusiness(iwc);
 		Iterator groupIter = groups.iterator();
-		while(groupIter.hasNext()) {
+		User currentUser = iwc.getCurrentUser();
+		while (groupIter.hasNext()) {
 			Group group = (Group) groupIter.next();
 			boolean ok = false;
 			try {
-				ok = userBusiness.isGroupUnderUsersTopGroupNode(iwc, group, user);
-			} catch (RemoteException e) {
+				ok = userBusiness.isGroupUnderUsersTopGroupNode(iwc, group, currentUser,topGroupNodes);
+			}
+			catch (RemoteException e) {
 				System.out.println("Could not check if group was descendant of a users top group, group not shown");
 				e.printStackTrace();
 			}
-			if(ok) {
+			if (ok) {
 				result.add(group);
-			} else {
+			}
+			else {
 				System.out.println("Group " + group.getName() + " not shown");
 			}
 		}
-		
 		return result;
 	}
-	
+
 	/**
-	 * Checks if a user is allowed to see membership of a certain user for a certain group.
-	 * @param viewer The user veiwing membership
-	 * @param group The group being veiwed for membership
-	 * @param user The user being veiwed for membership
-	 * @return true if <code>viewer</code> is allowed to see <code>user</code>s membership in 
-	 *         <code>group</code>
+	 * Checks if a user is allowed to see membership of a certain user for a
+	 * certain group.
+	 * 
+	 * @param viewer
+	 *            The user veiwing membership
+	 * @param group
+	 *            The group being veiwed for membership
+	 * @param user
+	 *            The user being veiwed for membership
+	 * @return true if <code>viewer</code> is allowed to see <code>user</code>
+	 *         s membership in <code>group</code>
 	 */
 	public boolean isUserAllowedToSeeGroupMembershipForUser(User viewer, Group group, User user) {
-		/*boolean ok = true;
-		boolean isSameUser = viewer.getPrimaryKey().toString()!=user.getPrimaryKey().toString();
-		boolean viewerIsAdmin = false;
-		try {
-			viewerIsAdmin = viewer.equals(.getAdministratorUser());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if(!(isSameUser || viewerIsAdmin)) {
-			Group topLevelGroup = viewer.getPrimaryGroup();
-			
-		}*/
+		/*
+		 * boolean ok = true; boolean isSameUser =
+		 * viewer.getPrimaryKey().toString()!=user.getPrimaryKey().toString();
+		 * boolean viewerIsAdmin = false; try { viewerIsAdmin =
+		 * viewer.equals(.getAdministratorUser()); } catch (Exception e) {
+		 * e.printStackTrace(); } if(!(isSameUser || viewerIsAdmin)) { Group
+		 * topLevelGroup = viewer.getPrimaryGroup();
+		 *  }
+		 */
 		return true;
 	}
 
@@ -330,8 +317,10 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	//
 	//    public Table getGroupTable(IWContext iwc){
 	//
-	//      List direct = (List)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
-	//      List notDirect = (List)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
+	//      List direct =
+	// (List)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
+	//      List notDirect =
+	// (List)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
 	//
 	//      Table table = null;
 	//        try{
@@ -393,10 +382,10 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	//
 	//
 	//  } // InnerClass
-
 	//  public class UserGroupSetter extends Window {
 	//
-	//    private static final String FIELDNAME_SELECTION_DOUBLE_BOX = "related_groups";
+	//    private static final String FIELDNAME_SELECTION_DOUBLE_BOX =
+	// "related_groups";
 	//
 	//    public UserGroupSetter(){
 	//      super("add user to groups");
@@ -419,7 +408,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	//        //frameTable.setBorder(1);
 	//
 	//
-	//        SelectionDoubleBox sdb = new SelectionDoubleBox(FIELDNAME_SELECTION_DOUBLE_BOX,"Not in","In");
+	//        SelectionDoubleBox sdb = new
+	// SelectionDoubleBox(FIELDNAME_SELECTION_DOUBLE_BOX,"Not in","In");
 	//
 	//        SelectionBox left = sdb.getLeftBox();
 	//        left.setHeight(8);
@@ -436,7 +426,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	//        int userId = Integer.parseInt(stringUserId);
 	//        form.addParameter(UserGroupList.PARAMETER_USER_ID,stringUserId);
 	//
-	//        Collection directGroups = userBusiness.getUserGroupsDirectlyRelated(userId);
+	//        Collection directGroups =
+	// userBusiness.getUserGroupsDirectlyRelated(userId);
 	//
 	//        Iterator iter = null;
 	//        if(directGroups != null){
@@ -446,7 +437,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	//            right.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
 	//          }
 	//        }
-	//        Collection notDirectGroups = userBusiness.getAllGroupsNotDirectlyRelated(userId,iwc);
+	//        Collection notDirectGroups =
+	// userBusiness.getAllGroupsNotDirectlyRelated(userId,iwc);
 	//        if(notDirectGroups != null){
 	//          iter = notDirectGroups.iterator();
 	//          while (iter.hasNext()) {
@@ -459,7 +451,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	//        frameTable.setAlignment(2,2,"center");
 	//        frameTable.add("UserId: "+userId,2,1);
 	//        frameTable.add(sdb,2,2);
-	//        frameTable.add(new SubmitButton("  Save  ","save","true"),2,3);
+	//        frameTable.add(new SubmitButton(" Save ","save","true"),2,3);
 	//        frameTable.setAlignment(2,3,"right");
 	//        form.add(frameTable);
 	//      }
@@ -478,11 +470,14 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	//        String stringUserId = iwc.getParameter(UserGroupList.PARAMETER_USER_ID);
 	//        int userId = Integer.parseInt(stringUserId);
 	//
-	//        String[] related = iwc.getParameterValues(UserGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
+	//        String[] related =
+	// iwc.getParameterValues(UserGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
 	//
-	//        //User user = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId);
+	//        //User user =
+	// ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId);
 	//        User user = userBusiness.getUser(userId);
-	//        Collection currentRelationShip = userBusiness.getUserGroupsDirectlyRelated(user);
+	//        Collection currentRelationShip =
+	// userBusiness.getUserGroupsDirectlyRelated(user);
 	//
 	//
 	//        if(related != null){
@@ -490,7 +485,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	//          if(currentRelationShip != null){
 	//            for (int i = 0; i < related.length; i++) {
 	//              int id = Integer.parseInt(related[i]);
-	//              //Group gr = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(id);
+	//              //Group gr =
+	// ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(id);
 	//              Group gr = userBusiness.getGroupHome().findByPrimaryKey(new Integer(id));
 	//              if(!currentRelationShip.remove(gr)){
 	//                //user.addTo(gr);
@@ -510,7 +506,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	//              //user.addTo(Group.class,Integer.parseInt(related[i]));
 	//              //((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(Integer.parseInt(related[i])).addUser(user);
 	//              //com.idega.user.data.GroupBMPBean.addUser(Integer.parseInt(related[i]),user);
-	//              Group gr = userBusiness.getGroupHome().findByPrimaryKey(new Integer(related[i]));
+	//              Group gr = userBusiness.getGroupHome().findByPrimaryKey(new
+	// Integer(related[i]));
 	//              gr.addUser(user);
 	//            }
 	//          }
@@ -552,9 +549,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	//    }
 	//
 	//  } // InnerClass
-
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
-
 } // Class
