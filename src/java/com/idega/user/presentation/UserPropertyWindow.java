@@ -49,7 +49,6 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 	}
 
 	public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
-		IWResourceBundle iwrb = getResourceBundle(iwc);
 		int count = 0;
 		GeneralUserInfoTab genTab = new GeneralUserInfoTab();
 
