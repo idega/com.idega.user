@@ -113,7 +113,7 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 			try {
 			
 				String[] values = iwc.getParameterValues(permissionTypeOwner);
-				Map permissions = getPermissionMapFromSession(iwc,permissionTypeOwner);
+				Map permissions = getPermissionMapFromSession(iwc,permissionTypeOwner,false);
 				
 				if(values!=null && values.length>0){
 					
@@ -130,7 +130,6 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 					permission.store();
 				}
 
-				permissions.clear();
 					
 			}
 			catch (Exception e) {
@@ -214,8 +213,10 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
   
 					private com.idega.core.user.data.User administrator = null;
 					private boolean loggedInUserIsAdmin;
+
           
           public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+						Map permissionMap = getPermissionMapFromSession(iwc,permissionTypeOwner,true);
             return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
           } 
   
@@ -233,6 +234,7 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 						final String ownerType = permissionTypeOwner;
 						String groupId = null;
 						String permissionType = null;
+						Map permissionMap = getPermissionMapFromSession(iwc,permissionTypeOwner,false);
 						
 						while (iterator.hasNext() && !isOwner) {
 							ICPermission perm = (ICPermission) iterator.next();
@@ -244,7 +246,6 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 							isOwner = (ownerType.equals(permissionType)) && groupId.equals(selectedGroupId) && perm.getPermissionValue() ;
 							
 							if( isOwner ){							
-								Map permissionMap = getPermissionMapFromSession(iwc,permissionTypeOwner);
 								permissionMap.put(groupId, perm);
 							}
 						}

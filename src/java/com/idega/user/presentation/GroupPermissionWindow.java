@@ -64,8 +64,8 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	private boolean saveChanges = false;
 
 	
-	protected int width = 640;
-	protected int height = 550;
+	protected int width = 670;
+	protected int height = 545;
 	
 	private String selectedGroupId = null;
 	
@@ -150,7 +150,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 				while (iterator.hasNext()) {
 					String key = (String) iterator.next();
 					String[] values = iwc.getParameterValues(key);
-					Map permissions = this.getPermissionMapFromSession(iwc,key);
+					Map permissions = this.getPermissionMapFromSession(iwc,key,false);
 					
 					//adding new values
 					if(values!=null && values.length>0){
@@ -173,10 +173,6 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 						permission.store();
 					}
 					
-					permissions.clear();
-					
-					
-					
 				}
 				
 				
@@ -195,7 +191,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 			
 		}
 				
-		List entityList = entityList = orderAndGroupPermissionsByContextValue(allPermissions);
+		List entityList = orderAndGroupPermissionsByContextValue(allPermissions,iwc);
 		GroupComparator groupComparator = new GroupComparator(iwc.getCurrentLocale());
 		groupComparator.setObjectsAreICPermissions(true);
 		groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));
@@ -276,15 +272,19 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
   
 					private com.idega.core.user.data.User administrator = null;
 					private boolean loggedInUserIsAdmin;
+
           
+          //called when going between subsets
           public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+						Map permissionMap = getPermissionMapFromSession(iwc,entityPath.getShortKey(),true);//zero the map
             return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
           } 
   
 					public PresentationObject getPresentationObject(Object permissions, EntityPath path,EntityBrowser browser, IWContext iwc)  {
 
 						Collection col = (Collection) permissions;
-    
+
+						
 						Iterator iterator = col.iterator();
 					
 						boolean active = false;
@@ -293,6 +293,8 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 						
 						final String columnName = path.getShortKey();
 						final String ownerType = "owner";
+						
+						Map permissionMap = getPermissionMapFromSession(iwc,columnName,false);
 						
 						String groupId = null;
 						String permissionType = null;
@@ -309,14 +311,11 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 							
 							if(isSet){
 								active = perm.getPermissionValue();
-								
 								if( active ){							
-									Map permissionMap = getPermissionMapFromSession(iwc,columnName);//TODO must be done outside of loop
 									permissionMap.put(groupId, perm);
 								}
-								
 							}
-							
+	
 						}
 					
 						
@@ -406,7 +405,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	 * @param iwc
 	 * @return Collection
 	 */
-	private List orderAndGroupPermissionsByContextValue(Collection allPermissions) {
+	private List orderAndGroupPermissionsByContextValue(Collection allPermissions, IWContext iwc) {
 		
 		Iterator iter = allPermissions.iterator();
 		
@@ -427,6 +426,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 			
 			list.add(perm);
 			map.put(groupId,list);				
+			
 		}
 			
 		finalCollection = com.idega.util.ListUtil.convertCollectionToList(map.values());
@@ -582,11 +582,11 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	}
 	
 	
-	protected Map getPermissionMapFromSession(IWContext iwc, String permissionKey){
+	protected Map getPermissionMapFromSession(IWContext iwc, String permissionKey, boolean emptyMap){
 		Map map = (Map) iwc.getSessionAttribute(this.SESSION_PARAM_PERMISSIONS_BEFORE_SAVE+permissionKey);
 		
-		if( map == null ){
-			 map = new HashMap(); 
+		if( map == null || emptyMap){
+			map = new HashMap(); 
 			iwc.setSessionAttribute(SESSION_PARAM_PERMISSIONS_BEFORE_SAVE+permissionKey,map);
 		}
 		return map;
