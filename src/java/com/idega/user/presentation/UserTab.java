@@ -117,7 +117,8 @@ public abstract class UserTab extends Table implements Collectable{
   //cannot store it because some tabs might update it via the userid and not by this bean
   protected User getUser(){
   	try {
-			return this.getUserBusiness(this.getIWApplicationContext()).getUser(getUserId());
+  		if(getUserId()<1) return null;
+  		else return this.getUserBusiness(this.getIWApplicationContext()).getUser(getUserId());
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
@@ -127,7 +128,8 @@ public abstract class UserTab extends Table implements Collectable{
 
 	protected Group getGroup(){
 		try {
-			return this.getGroupBusiness(this.getIWApplicationContext()).getGroupByGroupID(getGroupID());
+			if(getGroupID()<1) return null;
+			else return this.getGroupBusiness(this.getIWApplicationContext()).getGroupByGroupID(getGroupID());
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
