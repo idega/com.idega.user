@@ -157,16 +157,23 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		Table middleTable = middleTable();
 		
 //	create the return table
-		Table returnTable = new Table(1, 5);
+		Table returnTable = new Table(2, 5);
 		returnTable.setCellpaddingAndCellspacing(0);
 		returnTable.setWidth(Table.HUNDRED_PERCENT);
 		returnTable.setHeight(Table.HUNDRED_PERCENT);
 		returnTable.setHeight(4, Table.HUNDRED_PERCENT);
+		returnTable.mergeCells(1,1,2,1);
+		returnTable.mergeCells(1,2,2,2);
+		returnTable.mergeCells(1,3,1,4);
 		returnTable.setHeight(1, 50);
 		returnTable.setHeight(2,6);
+		returnTable.setWidth(1,3,6);
+		returnTable.setColor(1,3,"#f3f3f3");
+		returnTable.setColor(2,4,"#f3f3f3");
+		returnTable.setRowStyle(3,"border-boddom","1px solid #cccccc");
 
 		returnTable.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_TOP);
-		returnTable.setVerticalAlignment(1, 4, Table.VERTICAL_ALIGN_TOP);
+		returnTable.setVerticalAlignment(2, 4, Table.VERTICAL_ALIGN_TOP);
 		returnTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_BOTTOM);
 
 		returnTable.add(toolbar, 1, 1);
@@ -174,7 +181,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		
 		if (selectedGroup != null) {
 			topTable.add(selectedGroup.getName() + Text.NON_BREAKING_SPACE,1,1);
-			returnTable.add(topTable,1,3);
+			returnTable.add(topTable,2,3);
 //			middleTable.add(Text.NON_BREAKING_SPACE,1,1);
 			returnTable.add(middleTable,1,2);
 		}
@@ -274,14 +281,14 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 				entityBrowser.addPresentationObjectToBottom(targetGroupChooser);
 			}
 
-			returnTable.add(form, 1, 4);
+			returnTable.add(form, 2, 4);
 			return returnTable;
 
 		}
 		else {
 			PresentationObject po = getEmptyListPresentationObject();
 			if (po != null) {
-				returnTable.add(po, 1, 4);
+				returnTable.add(po, 2, 4);
 			}
 			
 
@@ -688,6 +695,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		iwb = this.getBundle(iwc);
 		iwrb = this.getResourceBundle(iwc);
 		this.getParentPage().setAllMargins(0);
+		this.
 
 		accessController = iwc.getAccessController();
 		ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
@@ -704,6 +712,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		 * if(selectedGroup!=null){
 		 * iwc.setSessionAttribute(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID,selectedGroup.getPrimaryKey().toString());
 		 */
+	//	 setBottomURL(getIWApplicationContext().getApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));
 
 		if (administratorUser == null) {
 			try {

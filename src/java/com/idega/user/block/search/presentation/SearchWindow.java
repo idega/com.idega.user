@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWStateMachine;
@@ -48,6 +49,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 	private GroupBusiness groupBiz;
 
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
+	private static final String HELP_TEXT_KEY = "search_window";
   
 	private UserSearchEvent searchEvent;
   private String userApplicationMainAreaPSId = null; 
@@ -234,12 +236,14 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		tab.add(genders, 3, 12); 		
 
 		//buttons
+		Help help = getHelp(HELP_TEXT_KEY,iwc);
 		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("user.search.window.search", "Search"));
    	SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("user.search.window.close", "Close") );
     close.setOnClick("window.close();return false;");
     
 		HiddenInput type = new HiddenInput(UserSearchEvent.SEARCH_FIELD_SEARCH_TYPE, Integer.toString(UserSearchEvent.SEARCHTYPE_ADVANCED));
-	
+		
+		tab.add(help,1,13);
 		tab.add(close, 3, 13);
 		tab.add(type,3,13);
 		tab.add(Text.getNonBrakingSpace(), 3, 13);

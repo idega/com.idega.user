@@ -6,17 +6,18 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import javax.ejb.FinderException;
+
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.event.EntityBrowserEvent;
 import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.block.entity.presentation.converter.CheckBoxConverter;
+import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
@@ -25,12 +26,9 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.app.ToolbarElement;
-//import com.idega.user.app.UserApplicationMainAreaPS;
 import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
-//import com.idega.user.data.GroupBMPBean;
-
 import com.idega.util.IWColor;
 
 /**
@@ -42,7 +40,7 @@ import com.idega.util.IWColor;
  * @version 1.0
  * Created on Apr 14, 2003
  */
-public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
+public class MassMovingWindow extends StyledIWAdminWindow implements ToolbarElement {
     
   private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";  
   
@@ -57,6 +55,8 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
   
   public static final String GROUP_TYPE_CLUB = "iwme_club";
   public static final String GROUP_TYPE_CLUB_DIVISION = "iwme_club_division";
+  
+  private static final String HELP_TEXT_KEY = "mass_moving_window";
   
   // display settings
   private final int NUMBER_OF_ROWS = 40;
@@ -182,6 +182,7 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     // define browser
     EntityBrowser browser = getBrowser(coll);
     // define button
+    Help help = getHelp(HELP_TEXT_KEY,iwc);
     SubmitButton move = new SubmitButton(iwrb.getLocalizedImageButton("move", "Move to"));
     SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
     String wait = iwrb.getLocalizedString("mm_please_wait_processing_request", "Please wait. Processing request");
@@ -190,14 +191,15 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     move.setOnClick("window.opener.parent.frames['iw_event_frame'].document.write('"+wait+"'); mass_form.submit(); window.close();");
     // assemble table
     Table table = new Table(1,3);
-    Table buttons = new Table(2,1);
-    buttons.add(close, 1, 1);
-    buttons.add(move, 2, 1);
+    Table buttons = new Table(3,1);
+    buttons.add(help,1,1);
+    buttons.add(close, 2, 1);
+    buttons.add(move, 3, 1);
     table.add(headline,1 ,1);
     table.add(browser,1,2);
     table.add(buttons,1,3);    
     form.add(table);
-    add(form);
+    add(form,iwc);
     // add action listener
     addActionListener(actionListener);
   } 
@@ -215,7 +217,7 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     table.add(close,1,2);   
     Form form = new Form(); 
     form.add(table);
-    add(form);
+    add(form,iwc);
   }
     
 

@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import javax.swing.event.ChangeListener;
 
+import com.idega.block.help.presentation.Help;
 import com.idega.builder.presentation.IBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
@@ -53,6 +54,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 
   public static final String SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY = "selected_group_pp_id_key";
   public static final String NO_GROUP_SELECTED = "no_group_selected";
+  
+  private static final String HELP_TEXT_KEY = "create_group_window";
   
 	private StatefullPresentationImplHandler _stateHandler = null;
 	private CreateGroupEvent _createEvent;
@@ -106,6 +109,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 
 	public void main(IWContext iwc) throws Exception {
 		//this.debugParameters(iwc);
+		IWBundle iwb = getBundle(iwc);
 		CreateGroupWindowPS _ps = (CreateGroupWindowPS) this.getPresentationState(iwc);
 		
 
@@ -219,7 +223,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			layer2.add(aliasText);
 			layer2.setNoWrap();
 			tab.add(layer2, 1, 9); //changed from (layer2,1,6) - birna
-			tab.add(aliasGroupChooser, 1, 10); //changed from (aliasGroupPhooser,2,3) - birna
+			tab.add(aliasGroupChooser, 1, 10); //changed from (aliasGroupcChooser,2,3) - birna
  			SubmitButton button = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), _createEvent.getIONameForCommit());
       String message = iwrb.getLocalizedString("group_please_set_name_choose_group", "Please set name and choose a group as parent");
       getAssociatedScript().addFunction("mandatoryCheck", "function mandatoryCheck(form) { " +
@@ -234,6 +238,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
       SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"), _createEvent.getIONameForCancel());
       //button.setOnClick("mandatoryCheck(this)")
       close.setOnClick("window.close();return false;");
+      Help help = getHelp(HELP_TEXT_KEY,iwc);
+      tab.add(help,1,11);
 			tab.add(close, 2, 11); //changed from (close,2,8) - birna
 			tab.add(Text.getNonBrakingSpace(), 2, 11); //changed from (Text.getNonBrakingSpace(),2,8) - birna
 			tab.add(button, 2, 11); //changed from (button,2,8)

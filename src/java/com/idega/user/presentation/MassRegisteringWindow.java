@@ -7,6 +7,7 @@ import java.util.Vector;
 
 import javax.ejb.FinderException;
 
+import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -44,6 +45,8 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 	private String PARAMETER_PID = "mrw_pid";
 	private String PARAMETER_STATUS = "mrw_sta";
 	private String PARAMETER_SAVE = "mrw_sv";
+	
+	private static final String HELP_TEXT_KEY = "mass_registering_window";
 
 	private int numberOfRows = 18;
 	private Group group;
@@ -58,6 +61,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 	}
 	
 	private void addForm(IWContext iwc, boolean verifyForm) {
+		Help help = getHelp(HELP_TEXT_KEY,iwc);
 		Form form = new Form();
 		form.maintainParameter(PARAMETER_GROUP_ID);
 		Table table = new Table();
@@ -137,6 +141,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 		++row;
 		++row;
 		table.setAlignment(5, row, Table.HORIZONTAL_ALIGN_RIGHT);
+		table.add(help,1,row);
 		if (verifyForm) {
 			table.mergeCells(1, row, 2, row);
 			table.add(new BackButton(iwrb.getLocalizedImageButton("back", "Back")), 1 , row);

@@ -14,14 +14,14 @@ import javax.ejb.FinderException;
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
+import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessControl;
-import com.idega.core.accesscontrol.business.*;
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
-import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentationImplHandler;
@@ -49,12 +49,14 @@ import com.idega.util.IWColor;
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
  * 
  */
-public class GroupPermissionWindow extends IWAdminWindow {//implements StatefullPresentation{
+public class GroupPermissionWindow extends StyledIWAdminWindow {//implements StatefullPresentation{
 	
 	private static final String IW_BUNDLE_IDENTIFIER  = "com.idega.user";
 	private static final String PARAM_SELECTED_GROUP_ID  = SelectGroupEvent.PRM_GROUP_ID; //todo remove when using event system
 	private static final String PARAM_SAVING  = "gpw_save";
 	private static final String SESSION_PARAM_PERMISSIONS_BEFORE_SAVE  = "gpw_permissions_b_s";
+	
+	private static final String HELP_TEXT_KEY = "group_permission_window";
 	
 	//private static final String PARA  = "com.idega.user";
 	
@@ -352,7 +354,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 		Form form = getGroupPermissionForm(browser);
 		form.add(new HiddenInput(PARAM_SELECTED_GROUP_ID,selectedGroupId));
 		form.add(new HiddenInput(PARAM_SAVING,"TRUE"));
-		add(form);
+		add(form,iwc);
 		
 		
 		
@@ -480,6 +482,9 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	 */
 	private Form getGroupPermissionForm(EntityBrowser browser) throws Exception{
 		
+		IWContext iwc = IWContext.getInstance();
+		Help help = getHelp(HELP_TEXT_KEY,iwc);
+		
 		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"));
 		save.setSubmitConfirm(iwrb.getLocalizedString("grouppermissionwindow.confirm_message","Change selected permissions?"));
 		
@@ -492,15 +497,17 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 		owners.addParameter(PARAM_SELECTED_GROUP_ID,selectedGroupId);
 		
 				
-		Table table = new Table(1,2);
+		Table table = new Table(2,2);
+		table.mergeCells(1,1,2,1);
 		table.add(browser,1,1);
-		table.add(owners,1,2);
-		table.add(close,1,2);
-		table.add(save,1,2);
+		table.add(help,1,2);
+		table.add(owners,2,2);
+		table.add(close,2,2);
+		table.add(save,2,2);
 		table.setWidth(Table.HUNDRED_PERCENT);
 		table.setHeight(Table.HUNDRED_PERCENT);
 		table.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
-		table.setAlignment(1,2,Table.HORIZONTAL_ALIGN_RIGHT);
+		table.setAlignment(2,2,Table.HORIZONTAL_ALIGN_RIGHT);
 
 		Form form = new Form();
 		form.add(table);

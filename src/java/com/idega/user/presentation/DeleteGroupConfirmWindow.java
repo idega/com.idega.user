@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import javax.swing.event.ChangeListener;
 
+import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
@@ -16,7 +17,6 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
-import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.Table;
@@ -31,7 +31,7 @@ import com.idega.user.event.DeleteGroupEvent;
  *@author     <a href="mailto:thomas@idega.is">Thomas Hilbig</a>
  *@version    1.0
  */
-public class DeleteGroupConfirmWindow extends IWAdminWindow implements StatefullPresentation{
+public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements StatefullPresentation{
   
   private IWPresentationState presentationState = null;
   
@@ -40,9 +40,11 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
   public static final String PARENT_DOMAIN_ID_KEY = "parent_domain_id";
   public static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
   
+  private static final String HELP_TEXT_KEY = "delete_group_confirm_window";
+  
   public DeleteGroupConfirmWindow() {
-    setWidth(240);
-    setHeight(100);
+    setWidth(300);
+    setHeight(200);
     setScrollbar(false);
     setResizable(false);
   }
@@ -71,8 +73,8 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
     }
     // get resource bundle 
     IWResourceBundle iwrb = getResourceBundle(iwc);
-    setTitle(iwrb.getLocalizedString("create_new_group", "Delete Group"));
-    addTitle(iwrb.getLocalizedString("create_new_group", "Delete Group"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+    setTitle(iwrb.getLocalizedString("delete_group", "Delete Group"));
+    addTitle(iwrb.getLocalizedString("delete_group", "Delete Group"), IWConstants.BUILDER_FONT_STYLE_TITLE);
     
     // create delete event
     DeleteGroupEvent deleteEvent = new DeleteGroupEvent();
@@ -92,10 +94,11 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
     boolean askForConfirmation = getGroupBusiness(iwc).isGroupRemovable(group);   
 		Table table = getContent(iwrb, group, askForConfirmation);
     form.add(table);
-    add(form);
+    add(form,iwc);
   }
 
 	private Table getContent(IWResourceBundle iwrb, Group group, boolean askForConfirmation) {
+		IWContext iwc = IWContext.getInstance();
     // get selected group
     String groupName;
     groupName = group.getName();
@@ -122,6 +125,7 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
       explanation2.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);   
     }
 		// get buttons
+		Help help = getHelp(HELP_TEXT_KEY,iwc);
     SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("Close", "Close"), DeleteGroupEvent.CANCEL_KEY);
 		SubmitButton ok = new SubmitButton(iwrb.getLocalizedImageButton("yes", "Yes"), DeleteGroupEvent.OKAY_KEY);
 		SubmitButton cancel = new SubmitButton(iwrb.getLocalizedImageButton("cancel", "Cancel"), DeleteGroupEvent.CANCEL_KEY);
@@ -129,10 +133,12 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
 		cancel.setOnClick("window.close(); return false;");
 		ok.setOnClick("delete_form.submit();window.close();");
     //  assemble table
-    Table table = new Table(1,3);
+    Table table = new Table(2,3);
     table.setWidth(Table.HUNDRED_PERCENT);
-    table.setAlignment(1,3,Table.HORIZONTAL_ALIGN_RIGHT);
+    table.setAlignment(2,3,Table.HORIZONTAL_ALIGN_RIGHT);
+    table.mergeCells(1,1,2,1);
 		table.add(selectedGroup, 1,1);
+		table.add(help,1,3);
 		if (askForConfirmation) {
       table.add(question,1,2);
 		  table.add(ok,1,3);

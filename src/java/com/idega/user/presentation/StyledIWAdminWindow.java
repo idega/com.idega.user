@@ -1,6 +1,7 @@
 package com.idega.user.presentation;
 
 
+import com.idega.block.help.presentation.Help;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
@@ -16,7 +17,8 @@ import com.idega.user.business.UserBusiness;
 
 public class StyledIWAdminWindow extends Window {
 
-private final static String IW_BUNDLE_IDENTIFIER="com.idega.user"; //changed from com.idega.core
+private final static String IW_BUNDLE_IDENTIFIER="com.idega.user"; 
+public static final String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
 
 private IWBundle iwb;
 public IWBundle iwbCore;
@@ -234,9 +236,19 @@ private Text adminTitle = null;
 //			}
 		super._main(iwc);
 	}
-
 	public void main(IWContext iwc)throws Exception{
 	}
+	public Help getHelp(String helpTextKey, IWContext iwc) {
+	 	iwb = getBundle(iwc);
+	 	Help help = new Help();
+	  Image helpImage = iwb.getImage("help.gif");
+ 	  help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+	  help.setHelpTextKey(helpTextKey);
+	  help.setImage(helpImage);
+	  return help;
+	}
+
+
 	
 //	public UserBusiness getUserBusiness(IWApplicationContext iwac) throws RemoteException {
 //		return (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, UserBusiness.class);

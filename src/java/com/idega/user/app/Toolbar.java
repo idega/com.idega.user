@@ -183,7 +183,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //    text.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink11 = new Link(text);
 		tLink11.setStyleClass(styledLink);
-    tLink11.setWindowToOpen(CreateUser.class);
+    tLink11.setWindowToOpen(com.idega.core.user.presentation.CreateUser.class);
     button.setWidth(2,10);
     button.add(tLink11,2,1);
     toolbar1.add(button,2,1);
