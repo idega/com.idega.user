@@ -22,7 +22,7 @@ import com.idega.util.IWColor;
  * Title:        User
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -33,6 +33,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 	
 
 	public static final String PARAMETERSTRING_USER_ID = "ic_user_id";
+	private int userId = -1; 
 
 	public static final String SESSION_ADDRESS = "ic_user_property_window";
 
@@ -48,6 +49,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 	}
 
 	public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
+		IWResourceBundle iwrb = getResourceBundle(iwc);
 		int count = 0;
 		GeneralUserInfoTab genTab = new GeneralUserInfoTab();
 
@@ -66,7 +68,9 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
 			int userId = Integer.parseInt(id);
 			User user = getUserBusiness(iwc).getUser(userId);
+			
 
+			
 			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
 			Iterator iter = plugins.iterator();
 
@@ -97,24 +101,39 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 
 	public void main(IWContext iwc) throws Exception {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		addTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+		
 		String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
 		String grpid = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
+		
+		
+
+		PresentationObject[] obj = this.getAddedTabs();
+
 		int iGrpId = -1;
 		if (grpid != null) iGrpId = Integer.parseInt(grpid);
-	
+			
 		if (id != null) {
-			int newId = Integer.parseInt(id);
-			PresentationObject[] obj = this.getAddedTabs();
+			userId = Integer.parseInt(id);
+			int newId = Integer.parseInt(id);		
 			for (int i = 0; i < obj.length; i++) {
 				PresentationObject mo = obj[i];
 				if (mo instanceof UserTab && ((UserTab) mo).getUserId() != newId) {
 					mo.setIWContext(iwc);
 					((UserTab) mo).setUserID(newId);
-					((UserTab) mo).setGroupID(iGrpId);
+					((UserTab) mo).setGroupID(iGrpId);					
 				}
 			}
 		}
+		// ask one of the tab for the user id because the user id parameter is not set when navigating within the user property window 
+		// that is switching from one tab to another
+		if (obj.length > 0) {
+			userId = ((UserTab) obj[0]).getUserId();
+			User user = getUserBusiness(iwc).getUser(userId);
+			String userName = user.getName();
+			addTitle(iwrb.getLocalizedString("user","User: ") + " " + userName);
+		}
+		addTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+
 	}
 
 	public GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws RemoteException {
