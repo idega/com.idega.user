@@ -188,7 +188,7 @@ public class Toolbar extends Page implements IWBrowserView {
     button2.add(tLink12,2,1);
     toolbar1.add(button2,3,1);
     
-	if(iwc.getAccessController().isRoleMaster(iwc)){
+	if(iwc.isSuperAdmin()){
 		Table button4 = new Table(2,1);
 		button4.setCellpadding(0);
 		Image iconRoleMasters = iwb.getImage("other_choises.gif");
