@@ -205,7 +205,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 		browser.setEntities("gpw_"+selectedGroupId,entityList);
 		//browser.setDefaultNumberOfRows(entityCollection.size() );
 		browser.setDefaultNumberOfRows(16);
-		browser.setShowSettingButton(false);
+		browser.setAcceptUserSettingsShowUserSettingsButton(false,false);
 		browser.setWidth(browser.HUNDRED_PERCENT);
 		browser.setUseExternalForm(true);
 		browser.setUseEventSystem(false);
