@@ -1,25 +1,23 @@
 package com.idega.user.presentation;
 
-import com.idega.event.IWEventModel;
-import com.idega.presentation.ui.*;
-import com.idega.business.IWEventListener;
-import com.idega.idegaweb.browser.presentation.IWBrowserView;
-import com.idega.presentation.PresentationObjectContainer;
-import com.idega.presentation.IWContext;
+import com.idega.event.IWEventListener;
+import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.browser.presentation.IWBrowserView;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.Page;
-import com.idega.user.data.User;
+import com.idega.presentation.ui.CloseButton;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.Window;
 import com.idega.user.business.UserBusiness;
-import com.idega.data.EntityFinder;
+import com.idega.user.data.User;
 import java.util.Collection;
-import java.util.Vector;
 import java.util.Iterator;
-import com.idega.user.presentation.UserPropertyWindow;
-import com.idega.core.accesscontrol.business.AccessControl;
-import com.idega.user.business.UserGroupBusiness;
+import java.util.Vector;
 
 /**
  * Title:        User
@@ -34,7 +32,7 @@ public class BasicUserOverview extends Page implements IWBrowserView {
 
   private static final String PARAMETER_DELETE_USER =  "delte_ic_user";
   private String _controlTarget = null;
-  private IWEventModel _contolEvent = null;
+  private IWPresentationEvent _contolEvent = null;
 
   public BasicUserOverview(IWContext iwc) throws Exception {
     //this.empty();
@@ -45,7 +43,7 @@ public class BasicUserOverview extends Page implements IWBrowserView {
   }
 
 
-  public void setControlEventModel(IWEventModel model){
+  public void setControlEventModel(IWPresentationEvent model){
     _contolEvent = model;
   }
 

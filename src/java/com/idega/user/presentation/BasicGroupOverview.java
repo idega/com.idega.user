@@ -1,25 +1,23 @@
 package com.idega.user.presentation;
 
-import com.idega.event.*;
-import com.idega.idegaweb.browser.presentation.IWBrowserView;
-import com.idega.presentation.ui.*;
-import com.idega.presentation.*;
+import com.idega.event.IWEventListener;
+import com.idega.core.business.UserGroupBusiness;
 import com.idega.core.data.GenericGroup;
-import com.idega.business.IWEventListener;
-import com.idega.idegaweb.browser.presentation.IWBrowseControl;
+import com.idega.event.IWPresentationEvent;
+import com.idega.idegaweb.browser.presentation.IWBrowserView;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
+import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.user.data.User;
-import com.idega.data.EntityFinder;
-import java.util.List;
-import com.idega.user.presentation.UserPropertyWindow;
-import com.idega.user.data.Group;
-import com.idega.core.business.UserGroupBusiness;
-import java.util.Iterator;
-import java.util.Vector;
-import com.idega.core.accesscontrol.business.AccessControl;
-
+import com.idega.presentation.ui.CloseButton;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.Window;
 import com.idega.user.data.UserGroupRepresentative;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Title:        User
@@ -35,13 +33,13 @@ public class BasicGroupOverview extends Page implements IWBrowserView {
   private static final String PARAMETER_DELETE_GROUP =  "delete_ic_group";
   private String _controlTarget = null;
   int counter = 0;
-  private IWEventModel _contolEvent = null;
+  private IWPresentationEvent _contolEvent = null;
 
   public BasicGroupOverview(){
     super();
   }
 
-  public void setControlEventModel(IWEventModel model){
+  public void setControlEventModel(IWPresentationEvent model){
     _contolEvent = model;
   }
 
