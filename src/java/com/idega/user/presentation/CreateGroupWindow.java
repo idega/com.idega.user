@@ -153,7 +153,7 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			tab.add(descText, 1, 2);
 			tab.add(descriptionTextArea, 2, 2); 
 
-			GroupChooser groupChooser = getGroupChooser(_createEvent.getIONameForParentID(), iwc);
+			GroupChooser groupChooser = getGroupChooser(_createEvent.getIONameForParentID(), true, iwc);
 			Text createUnderText = new Text(iwrb.getLocalizedString("parent_group", "Create group under") + ":");
 			createUnderText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
@@ -194,7 +194,7 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			tab.add(typeText, 1, 5);
 			tab.add(mnu, 2, 5);
 
-			GroupChooser aliasGroupChooser = getGroupChooser(_createEvent.getIONameForAliasID(), iwc);
+			GroupChooser aliasGroupChooser = getGroupChooser(_createEvent.getIONameForAliasID(), false, iwc);
 			Text aliasText = new Text(iwrb.getLocalizedString("alias_group", "Alias for group") + ":");
 			aliasText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
@@ -246,13 +246,13 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 	/*
 	 *
 	 */
-	private GroupChooser getGroupChooser(String name, IWContext iwc) {
+	private GroupChooser getGroupChooser(String name, boolean preselectSelectedGroup, IWContext iwc) {
 		GroupChooser chooser = new GroupChooser(name);
 		chooser.setInputStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 
 		try {
 			//IBDomain domain = iwc.getDomain();
-      if (selectedGroup != null)  {
+      if (selectedGroup != null && preselectSelectedGroup)  {
         chooser.setSelectedNode(new GroupTreeNode(selectedGroup));
       }
       else  {

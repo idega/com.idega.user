@@ -368,7 +368,7 @@ public class CreateUser extends Window {
 		try {
 			String fullName = iwc.getParameter(fullNameFieldParameterName);
 			IWTimestamp t = null;
-			if (ssn != null) {
+			if (ssn != null && ssn.length() > 0) {
 				t = new IWTimestamp();
 			
 				String day = ssn.substring(0,2);

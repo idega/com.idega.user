@@ -1,8 +1,6 @@
 package com.idega.user.presentation;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 
 import javax.swing.event.ChangeEvent;
@@ -41,28 +39,18 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
 	protected Group _selectedGroup = null;
 	protected IBDomain _selectedDomain = null;
   
-  public boolean moveResult = false;
-  private Collection notMovedUsers;
-  private int numberOfMovedUsers = -1;
+  public boolean showMoveResult = false;
+  private Map resultOfMovingUsers = null;
 
 
   public BasicUserOverviewPS() {
   }
   
-  public Collection getNotMovedUsers() {
-    Collection coll = new ArrayList();
-    coll.addAll(notMovedUsers);
-    notMovedUsers = null;
-    moveResult = false;
-    return coll;
+  public Map getResultOfMovingUsers() {
+    // prevent showing the result a second time
+    showMoveResult = false;
+    return resultOfMovingUsers;
   }
-
-  public int getNumberOfMovedUsers()  {
-    int number = numberOfMovedUsers;
-    numberOfMovedUsers = 0;
-    return number;
-  }
-  
 
   public Group getSelectedGroup(){
     return _selectedGroup;
@@ -126,10 +114,8 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
         userIds = mainIwc.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
         int targetGroupId = Integer.parseInt(mainIwc.getParameter(BasicUserOverview.SELECTED_TARGET_GROUP_KEY));
         // move users to a group
-        Collection notMovedUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup, targetGroupId, mainIwc);
-        this.notMovedUsers = notMovedUsers;
-        numberOfMovedUsers = userIds.length - notMovedUsers.size();
-        moveResult = true;
+        resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup, targetGroupId, mainIwc);
+        showMoveResult = true;
       }
     }  
     
@@ -137,16 +123,11 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
       IWContext mainIwc = e.getIWContext();
       String[] groupIds;
       if (mainIwc.isParameterSet(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY) && 
-          mainIwc.isParameterSet(MassMovingWindow.MOVE_SELECTED_GROUPS) &&
-          mainIwc.isParameterSet(MassMovingWindow.SELECTED_TARGET_GROUP_KEY) ) {
+          mainIwc.isParameterSet(MassMovingWindow.MOVE_SELECTED_GROUPS) ) {
         groupIds = mainIwc.getParameterValues(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY);
-        int targetGroupId = Integer.parseInt(mainIwc.getParameter(MassMovingWindow.SELECTED_TARGET_GROUP_KEY));
         // move users 
-        Map map = BasicUserOverview.moveContentOfGroups(Arrays.asList(groupIds), targetGroupId, mainIwc);
-        this.notMovedUsers = (Collection) map.get("not_moved");
-        Collection movedUsers = (Collection) map.get("moved");
-        numberOfMovedUsers = movedUsers.size();
-        moveResult = true;
+        resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(Arrays.asList(groupIds), mainIwc);
+        showMoveResult = true;
            
       }
     }     

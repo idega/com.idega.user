@@ -2,7 +2,6 @@ package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.ejb.FinderException;
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
@@ -20,17 +19,13 @@ import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.app.ToolbarElement;
-import com.idega.user.app.UserApplicationMainArea;
 import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.business.GroupBusiness;
-import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 //import com.idega.user.data.GroupBMPBean;
-import com.idega.user.data.User;
 
 import com.idega.util.IWColor;
 
@@ -52,12 +47,12 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
   public static final String SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY = "selected_group_mm_id_key";
   public static final String MOVE_SELECTED_GROUPS = "move_selected_groups";
   public static final String SELECTED_CHECKED_GROUPS_KEY = "selected_checked_groups_key";
-  public static final String SELECTED_TARGET_GROUP_KEY = "selected_target_group_key";
   
   private static final String SHOW_CHILDREN_OF_GROUP_ACTION = "show_children_of_group_action";
   private static final String SHOW_ERROR_MESSAGE_ACTION = "error_message";
   
   public static final String GROUP_TYPE_CLUB = "iwme_club";
+  public static final String GROUP_TYPE_CLUB_DIVISION = "iwme_club_division";
   
   // display settings
   private final int NUMBER_OF_ROWS = 15;
@@ -79,8 +74,8 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
    * @see com.idega.user.app.ToolbarElement#getName(com.idega.presentation.IWContext)
    */
   public String getName(IWContext iwc) {
-    IWResourceBundle rBundle = this.getBundle(iwc).getResourceBundle(iwc);
-    return rBundle.getLocalizedString("massMovingWindow.name", "Move...");
+    IWResourceBundle resourceBundle = this.getBundle(iwc).getResourceBundle(iwc);
+    return resourceBundle.getLocalizedString("massMovingWindow.name", "Move...");
   }
 
 
@@ -105,23 +100,28 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
       showListOfChildren(iwrb, iwc);
     }
     // show error message
-    String errorMessage = iwrb.getLocalizedString("mm_select_club", "Please select first a club");
+    String errorMessage = iwrb.getLocalizedString("mm_select_club", "Select a club or club division first, please.");
     Text error = new Text(errorMessage);
     error.setBold();
     add(error);
   }
 
   private String parseRequest(IWContext iwc) {
-    /*String actionListenerStateId = "";
+    /* 
+     * see to do item below
+     * 
+    String actionListenerStateId = "";
     if (iwc.isParameterSet(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY)) {
       actionListenerStateId = iwc.getParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY);
     }
     else {
       return SHOW_ERROR_MESSAGE_ACTION;
-    }*/
+    }
 		if (!iwc.isParameterSet(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY)) {
 			return SHOW_ERROR_MESSAGE_ACTION;
 		}
+    *
+    */
     // try to get the group 
     if (iwc.isParameterSet(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY))  {
       String selectedGroupProviderStateId = iwc.getParameter(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
@@ -148,7 +148,8 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
       }
       // type of group correct?
       String groupType = group.getGroupType();
-      if (GROUP_TYPE_CLUB.equals(groupType))  {
+      if (GROUP_TYPE_CLUB.equals(groupType) ||
+          GROUP_TYPE_CLUB_DIVISION.equals(groupType))  {
         return SHOW_CHILDREN_OF_GROUP_ACTION;
       }
     }
@@ -169,8 +170,6 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     Collection coll = getChildrenOfGroup(iwc);
     // define browser
     EntityBrowser browser = getBrowser(coll);
-    // get target goup list
-    DropdownMenu targetGroupMenu = getGroupList(iwc);
     // define button
     SubmitButton move = new SubmitButton(iwrb.getLocalizedImageButton("move", "Move to"));
     SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
@@ -178,10 +177,9 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     move.setOnClick("mass_form.submit(); window.close();");
     // assemble table
     Table table = new Table(1,2);
-    Table buttons = new Table(3,1);
+    Table buttons = new Table(2,1);
     buttons.add(close, 1, 1);
     buttons.add(move, 2, 1);
-    buttons.add(targetGroupMenu,3,1);
     table.add(browser,1,1);
     table.add(buttons,1,2);    
     form.add(table);
@@ -242,7 +240,7 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     return browser;
   }    
     
-
+  /*
   private DropdownMenu getGroupList(IWContext iwc) {
     DropdownMenu groupList = new DropdownMenu(SELECTED_TARGET_GROUP_KEY);
     GroupBusiness groupBusiness = BasicUserOverview.getGroupBusiness(iwc);
@@ -258,7 +256,7 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     }
     return groupList;
   }    
-    
+  */
     
     
     

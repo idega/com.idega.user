@@ -14,6 +14,7 @@ import javax.swing.event.ChangeListener;
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
+import com.idega.block.entity.presentation.converters.MessageConverter;
 import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
@@ -61,6 +62,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
   public static final String SELECTED_GROUP_KEY = "selected_group_key";
 	public static final String DELETE_USERS_KEY = "delete_selected_users";
   public static final String MOVE_USERS_KEY = "move_users";
+
+  
 	private String _controlTarget = null;
 	private IWPresentationEvent _controlEvent = null;
 	protected IWResourceBundle iwrb = null;
@@ -124,7 +127,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	
 	protected Table getList(IWContext iwc) throws Exception {		
     
-    if (ps.moveResult)  {
+    if (ps.showMoveResult)  {
       return getResultList(iwc);
     }
 		
@@ -186,8 +189,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 							BasicUserOverview.DELETE_USERS_KEY,
 							BasicUserOverview.DELETE_USERS_KEY);
 					deleteButton.setSubmitConfirm(confirmDeleting);
-					form.add(deleteButton);
-          form.add(Text.getNonBrakingSpace());
+					//form.add(deleteButton);
+          //form.add(Text.getNonBrakingSpace());
+          entityBrowser.addPresentationObjectToBottom(deleteButton);
+ 
 				}
 			}
 			
@@ -202,11 +207,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 				moveToButton.setSubmitConfirm(confirmMoving);		
         // add group drop down list
         DropdownMenu targetGroupMenu = getGroupList(iwc);
-        form.add(moveToButton);
-        form.add(Text.getNonBrakingSpace());
-        form.add(targetGroupMenu);
-        			
-				
+        //form.add(moveToButton);
+        //form.add(Text.getNonBrakingSpace());
+        //form.add(targetGroupMenu);
+        entityBrowser.addPresentationObjectToBottom(moveToButton);
+        entityBrowser.addPresentationObjectToBottom(targetGroupMenu);
 			}
 			
 			
@@ -378,7 +383,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 				User user = (User) genericEntity;
 				Address address = null;
 				try {
-					address = BasicUserOverview.getUserBusiness(iwc).getUsersMainAddress(user);
+					address = BasicUserOverview.getUserBusiness(iwc).getUsersCoAddress(user);
 				}
 				catch (RemoteException ex) {
 					System.err.println("[BasicUserOverview]: Address could not be retrieved.Message was :" + ex.getMessage());
@@ -606,42 +611,22 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		return notRemovedUsers;
 	}
   
-  public static Collection moveUsers(Collection userIds, Group parentGroup, int targetGroupId, IWContext iwc)  {
+  public static Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, IWContext iwc)  {
     UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
-    User currentUser = iwc.getCurrentUser();
-    Collection list = userBusiness.moveUsers(userIds, parentGroup, targetGroupId, currentUser);
-    return list;
-  }
-  
-  public static Map moveContentOfGroups(Collection groupIds, int targetGroupId, IWContext iwc)  {
-    UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
-    GroupBusiness groupBusiness = getGroupBusiness(iwc.getApplicationContext());
     User currentUser = iwc.getCurrentUser();
     Map resultMap = new HashMap();
-    resultMap.put("moved", new ArrayList());
-    resultMap.put("not_moved", new ArrayList());
-    Iterator groupIterator = groupIds.iterator();
-    while (groupIterator.hasNext())  {
-      Group group;
-      String id = (String) groupIterator.next();
-      try {
-       group = groupBusiness.getGroupByGroupID(Integer.parseInt(id));
-      }
-      // RemoteException FinderException
-      catch (Exception ex)  {
-        throw new RuntimeException(ex.getMessage());
-      }
-      Map map = userBusiness.moveUsers(group,targetGroupId, currentUser);
-      
-      Collection movedColl = (Collection) resultMap.get("moved");
-      movedColl.addAll((Collection) map.get("moved"));
-      resultMap.put("moved", movedColl);
-      
-      Collection notMovedColl = (Collection) resultMap.get("not_moved");
-      notMovedColl.addAll((Collection) map.get("not_moved"));
-      resultMap.put("not_moved", notMovedColl);      
-    }
+    Map map = userBusiness.moveUsers(userIds, parentGroup, targetGroupId, currentUser);
+    Integer groupId = (Integer) parentGroup.getPrimaryKey();
+    // map has user's ids as keys, messages as values
+    // if the value is null the corresponding user was successfully moved
+    resultMap.put(groupId , map);
     return resultMap;
+  }
+  
+  public static Map moveContentOfGroups(Collection groupIds, IWContext iwc)  {
+    UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
+    User currentUser = iwc.getCurrentUser();
+    return userBusiness.moveUsers(groupIds, currentUser);
   }
   
 	public IWPresentationState getPresentationState(IWUserContext iwuc) {
@@ -668,25 +653,66 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 ////////////////////////////////////////////////////////// hack for friday /////////////////////////////////////////////////////////////////////////////////////  
     
   private Table getResultList(IWContext iwc)  {
-    String movedUsersMessage  = getLocalizedString("number_of_sucessfully_moved_users", "Number of successfully moved users", iwc );
+    String movedUsersNumberMessage  = getLocalizedString("number_of_sucessfully_moved_users", "Number of successfully moved users", iwc );
+    String notMovedUsersNumberMessage  = getLocalizedString("number_of_not_moved_users", "Number of not moved users", iwc );
     String notMovedUsersMessage = getLocalizedString("the_following_users_were_not moved", "Following users could not moved to the specified group", iwc);
     String success = getLocalizedString("all_users_were_moved_to the_specified_group","All users were moved to the specified group.",iwc);
-    Collection notMovedUsers = ps.getNotMovedUsers();
-    int movedUsers = ps.getNumberOfMovedUsers();
-    movedUsersMessage = movedUsersMessage + ": " + movedUsers;
-    notMovedUsersMessage = notMovedUsersMessage + ": ";
-    Text movedUsersMessageText = new Text(movedUsersMessage);
-    movedUsersMessageText.setBold(); //setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+    Map resultOfMovingUsers = ps.getResultOfMovingUsers();
+    UserBusiness userBusiness = BasicUserOverview.getUserBusiness(iwc);
+    // map has ids of groups as key and groupMaps as values.
+    // groupMaps has user's ids as key and messages as values.
+    // if a message is null the corresponding user was successfully moved
+    // collect all results, the piece of information about the source is not used yet (perhaps in the future)
+    int movedUsers = 0;
+    int notMovedUsers = 0; 
+    Map completeResultOfMoving = new HashMap();
+    Collection notMovedUsersColl = new ArrayList();
+    Iterator iterator = resultOfMovingUsers.values().iterator();
+    while (iterator.hasNext())  {
+      Map map = (Map) iterator.next();
+      Iterator entryIterator = map.entrySet().iterator();
+      while (entryIterator.hasNext()) {
+        Map.Entry entry = (Map.Entry) entryIterator.next();
+        String message = (String) entry.getValue();
+        if (message != null) {
+          notMovedUsers++;
+          Integer userId = (Integer) entry.getKey();
+          completeResultOfMoving.put(userId, message);
+          try {
+            User notMovedUser = userBusiness.getUser(userId);
+            notMovedUsersColl.add(notMovedUser);
+          }
+          catch (RemoteException ex)  {
+            throw new RuntimeException(ex.getMessage());
+          }
+        }
+        else {
+          movedUsers++;
+        }
+      }
+    }
+    movedUsersNumberMessage += ": " + movedUsers;
+    notMovedUsersNumberMessage += ": " + notMovedUsers;
+    notMovedUsersMessage += ": ";
+    
+    Text movedUsersNumberMessageText = new Text(movedUsersNumberMessage);
+    movedUsersNumberMessageText.setBold(); //setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+    
+    Text notMovedUsersNumberMessageText = new Text(notMovedUsersNumberMessage);
+    notMovedUsersNumberMessageText.setBold(); //setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+    
     Text notMovedUsersMessageText = new Text(notMovedUsersMessage);
     notMovedUsersMessageText.setBold(); //setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
     Text successText = new Text(success);
     successText.setBold();
-    Table table = new Table(1,3);
-    table.add(movedUsersMessageText,1,1);
-    if (notMovedUsers.size() > 0) {
-      EntityBrowser browser = getEntityBrowserForResult(notMovedUsers, iwc);
-      table.add(notMovedUsersMessageText,1,2);
-      table.add(browser,1,3);
+    
+    Table table = new Table(1,4);
+    table.add(movedUsersNumberMessageText,1,1);
+    if (notMovedUsers > 0) {
+      EntityBrowser browser = getEntityBrowserForResult(notMovedUsersColl, completeResultOfMoving, iwc);
+      table.add(notMovedUsersNumberMessageText,1,2);
+      table.add(notMovedUsersMessageText,1,3);
+      table.add(browser,1,4);
     }
     else {
       table.add(successText,1,2);
@@ -694,7 +720,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     return table;
   }
   
-  protected EntityBrowser getEntityBrowserForResult(Collection users, IWContext iwc) {
+  private EntityBrowser getEntityBrowserForResult(Collection users, Map messageMap, IWContext iwc) {
     // define entity browser
     EntityBrowser entityBrowser = new EntityBrowser();
     PresentationObject parentObject = this.getParentObject();
@@ -709,6 +735,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     }
     // add BasisUserOverviewPs as ActionListener to the entityBrowser
     entityBrowser.addActionListener((IWActionListener) presentationStateParent);
+    
+    // define error message converter class
+    MessageConverter converterErrorMessage = new MessageConverter();
+    // set error message map
+    converterErrorMessage.setEntityMessageMap(messageMap);
       
       
     //    define address converter class
@@ -722,7 +753,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         User user = (User) entity;
         Address address = null;
         try {
-          address = BasicUserOverview.getUserBusiness(iwc).getUsersMainAddress(user);
+          address = BasicUserOverview.getUserBusiness(iwc).getUsersCoAddress(user);
         }
         catch (RemoteException ex) {
           System.err.println("[BasicUserOverview]: Address could not be retrieved.Message was : " + ex.getMessage());
@@ -827,6 +858,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
 
     // set default columns
+    String errorMessageKey = "errorMessageKey";
     String nameKey = "com.idega.user.data.User.FIRST_NAME:" + "com.idega.user.data.User.MIDDLE_NAME:"+"com.idega.user.data.User.LAST_NAME";
     String completeAddressKey =
       "com.idega.core.data.Address.STREET_NAME:"
@@ -859,14 +891,15 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
       
     //entityBrowser.setVerticalZebraColored("#FFFFFF",IWColor.getHexColorString(246, 246, 247)); why does this not work!??
       
-    entityBrowser.setDefaultColumn(1, nameKey);
-    entityBrowser.setDefaultColumn(2, pinKey);
-    entityBrowser.setDefaultColumn(3, emailKey);
-    entityBrowser.setDefaultColumn(4, completeAddressKey);
-    entityBrowser.setDefaultColumn(5, phoneKey);
+    entityBrowser.setDefaultColumn(1, errorMessageKey);
+    entityBrowser.setDefaultColumn(2, nameKey);
+    entityBrowser.setDefaultColumn(3, pinKey);
+    entityBrowser.setDefaultColumn(4, emailKey);
+    entityBrowser.setDefaultColumn(5, completeAddressKey);
+    entityBrowser.setDefaultColumn(6, phoneKey);
 
     // set special converters
-
+    entityBrowser.setEntityToPresentationConverter(errorMessageKey, converterErrorMessage);
     entityBrowser.setEntityToPresentationConverter(completeAddressKey, converterCompleteAddress);
     // set converter for all columns of this class
     entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Address", converterAddress);

@@ -148,25 +148,31 @@ public class AddressInfoTab extends UserTab {
 
 	public void initializeFields() {
 		streetField = new TextInput(streetFieldName);
+    streetField.setDisabled(true);
 		streetField.setLength(20);
 
 		cityField = new TextInput(cityFieldName);
+    cityField.setDisabled(true);
 		cityField.setLength(20);
 
 		provinceField = new TextInput(provinceFieldName);
+    provinceField.setDisabled(true);
 		provinceField.setLength(20);
 
 		//only works for Iceland
 		if (postalCodeField == null) {
 			postalCodeField = new PostalCodeDropdownMenu();
+      postalCodeField.setDisabled(true);
 			postalCodeField.setCountry("Iceland"); //hack
 		}
 
 		countryField = new TextInput(countryFieldName);
+    countryField.setDisabled(true);
 		countryField.setLength(20);
 		countryField.setDisabled(true);
 
 		poBoxField = new TextInput(poBoxFieldName);
+    poBoxField.setDisabled(true);
 		poBoxField.setLength(10);
     // second address
     secondStreetField = new TextInput(secondStreetFieldName);
