@@ -63,8 +63,7 @@ public class UserImageTab extends UserTab{
   }
   
   public void initializeFieldValues(){
-    fieldValues.put(this.imageFieldName,"");
-
+		systemImageId = -1;
     this.updateFieldsDisplayStatus();
   }
 
@@ -86,7 +85,7 @@ public class UserImageTab extends UserTab{
   }
 
   public boolean collect(IWContext iwc){
-	  String imageID = iwc.getParameter(imageFieldName);
+	  String imageID = iwc.getParameter(imageFieldName+this.getUserId());
 	
 	  if(imageID != null){
 	    fieldValues.put(imageFieldName,imageID);

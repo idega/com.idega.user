@@ -57,7 +57,11 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
         Iterator iter = userGroups.iterator();
         while (iter.hasNext()) {
           Group item = (Group)iter.next();
-          String groupId = item.getPrimaryKey().toString();
+          if(item == null) System.out.println("ITEM IS NULL!!!!!");
+          
+          Object prim = item.getPrimaryKey();
+          
+          String groupId = prim.toString();
           String groupName = item.getName();
           if(groupName==null) groupName = "untitled";
           primaryGroupField.addMenuElement(groupId,groupName);
