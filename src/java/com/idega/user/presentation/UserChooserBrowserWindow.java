@@ -11,6 +11,7 @@ package com.idega.user.presentation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
@@ -20,11 +21,12 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
-import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.RadioButton;
 import com.idega.presentation.ui.StyledAbstractChooserWindow;
+import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.data.User;
@@ -62,15 +64,28 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
     // set title
     String title = resourceBundle.getLocalizedString("uc_find_user", "Find user");
     setTitle(title);
-    addTitle(title, IWConstants.BUILDER_FONT_STYLE_TITLE);
+    addTitle(title, TITLE_STYLECLASS);
     // parse request and get search string
     String action = parseRequest(iwc);
     
-    Table mainTable = new Table(1,4);
-    mainTable.setCellpadding(5);
+    Table mainTable = new Table(1, 3);
+    mainTable.setCellpadding(0);
+    mainTable.setCellspacing(0);
+    mainTable.setWidth(Table.HUNDRED_PERCENT);
+    mainTable.setStyleClass(1, 3, "main");
+    mainTable.setCellpadding(1, 3, 5);
+    mainTable.setAlignment(1, 3, Table.HORIZONTAL_ALIGN_RIGHT);
+    mainTable.setHeight(2, 5);
+    
+    Table inputTable = new Table();
+    inputTable.setCellpadding(12);
+    inputTable.setCellspacing(0);
+    inputTable.setStyleClass("main");
+    mainTable.add(inputTable, 1, 1);
 
     Table searchTable = getSearchInputField(resourceBundle);
-    mainTable.add(searchTable ,1 ,1);
+    inputTable.add(searchTable ,1 ,1);
+    inputTable.setWidth(Table.HUNDRED_PERCENT);
     String message; 
     if (SHOW_LIST_ACTION.equals(action))  {
       Collection entities = getEntities();
@@ -80,7 +95,9 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
       else {
         message = resourceBundle.getLocalizedString("uc_results_for", "Results for") + ": " + searchString;
         EntityBrowser browser = getBrowser(entities, iwc);
-        mainTable.add(browser,1,3);
+        inputTable.add(browser,1,3);
+        inputTable.setCellpaddingTop(1, 3, 0);
+        inputTable.setCellpaddingBottom(1, 2, 2);
       }
     }
     else {
@@ -89,13 +106,14 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
     // show message for user
     Text messageText = new Text(message);
     messageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-    mainTable.add(messageText ,1 ,2);
+    inputTable.add(messageText ,1 ,2);
       
-    Link okayLink = getOkayButton(resourceBundle);
-    mainTable.add(okayLink,1,4);
+    mainTable.add(getOkayButton(resourceBundle), 1, 3);
+    
     Form form = new Form();
     form.maintainAllParameters();
     form.add(mainTable);
+
     add(form,iwc);
 	}
   
@@ -113,12 +131,13 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
     }
   }
   
-  private Link getOkayButton(IWResourceBundle resourceBundle) {
+  private StyledButton getOkayButton(IWResourceBundle resourceBundle) {
     String okayString = resourceBundle.getLocalizedString("Close", "close");
-    Link okayLink = new Link(okayString);
-    okayLink.setAsImageButton(true);
+    CloseButton okayLink = new CloseButton(okayString);
     okayLink.setOnClick("window.close(); return false;");
-    return okayLink;
+    StyledButton close = new StyledButton(okayLink);
+    close.setAlignment(Table.HORIZONTAL_ALIGN_RIGHT);
+    return close;
   }
 
   private EntityBrowser getBrowser(Collection entities, IWContext iwc)  {
@@ -193,16 +212,19 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
   }
     
   private Table getSearchInputField(IWResourceBundle iwrb) {
-    Table table = new Table(2,1);
-    SubmitButton searchButton = 
-      new SubmitButton(iwrb.getLocalizedImageButton("search", "Search"), SEARCH_SUBMIT_KEY, SEARCH_SUBMIT_KEY);
+    Table table = new Table(3, 1);
+    table.setCellpadding(0);
+    table.setCellspacing(0);
+    table.setWidth(2, 5);
+    
+    StyledButton searchButton = new StyledButton(new SubmitButton(iwrb.getLocalizedString("search", "Search"), SEARCH_SUBMIT_KEY, SEARCH_SUBMIT_KEY));
     TextInput searchInput = new TextInput(SEARCH_KEY);
     searchInput.setContent(searchString);
-    table.add(searchInput,1,1);
-    table.add(searchButton,2,1);
+    table.add(searchInput, 1, 1);
+    table.add(searchButton, 3, 1);
+    
     return table;
   }
-    
   
   public String getBundleIdentifier(){
     return IW_BUNDLE_IDENTIFIER;
