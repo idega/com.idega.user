@@ -129,7 +129,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
     add(toolbarTable);
 
-    Table toolbar1 = new Table(7,1);
+    Table toolbar1 = new Table(8,1);
     toolbar1.setColor(color);
     toolbar1.setCellpadding(0);
     toolbar1.setCellspacing(0);
@@ -220,8 +220,8 @@ public class Toolbar extends Page implements IWBrowserView {
 			button5.add(tLink15,2,1);
 			toolbar1.add(button5,6,1);
 		}
-		
-		if (showISStuff && iwc.isSuperAdmin()) {
+    
+	  if (showISStuff && iwc.isSuperAdmin()) {
 			Table button6 = new Table(2, 1);
 			button6.setCellpadding(0);
 			Image iconImport = iwb.getImage("import.gif");
@@ -240,6 +240,21 @@ public class Toolbar extends Page implements IWBrowserView {
 			button6.add(tLink16, 2, 1);
 			toolbar1.add(button6, 7, 1);
 		}
+    
+    //Member exchange window temp
+    if(showISStuff){
+      Table button7 = new Table(2,1);
+      button7.setCellpadding(0);
+      Image iconExchange = iwb.getImage("new_group.gif");
+      button7.add(iconExchange,1,1);
+      Text text7 = new Text(iwrb.getLocalizedString("button.report_query_builder","Report builder"));
+      text7.setFontFace(Text.FONT_FACE_VERDANA);
+      text7.setFontSize(Text.FONT_SIZE_7_HTML_1);
+      Link tLink17 = new Link(text7);
+      tLink17.setWindowToOpen("com.idega.user.presentation.QueryBuilderWindow");
+      button7.add(tLink17,2,1);
+      toolbar1.add(button7,8,1);
+    }
 
     
    //finance
