@@ -1,5 +1,5 @@
 /*
- * $Id: UserContactSearch.java,v 1.3 2005/01/19 18:56:11 eiki Exp $
+ * $Id: UserContactSearch.java,v 1.4 2005/01/19 23:32:53 eiki Exp $
  * Created on Jan 17, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -33,12 +33,13 @@ import com.idega.user.data.User;
 
 /**
  * 
- * Last modified: $Date: 2005/01/19 18:56:11 $ by $Author: eiki $
- * This class implements the Searchplugin interface and can therefore be used in a Search block for searching for user contact info.
- * To use it simply register this class as a iw.searchable component in a bundle.
+ * Last modified: $Date: 2005/01/19 23:32:53 $ by $Author: eiki $
+ * This class implements the Searchplugin interface and can therefore be used in a Search block (com.idega.core.search).<br>
+ * It searches lots of user related info like name, personalid,email etc. and returns contact information for users.<br>
+ * To use it simply register this class as a iw.searchplugin component in a bundle.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class UserContactSearch implements SearchPlugin {
 
@@ -46,7 +47,7 @@ public class UserContactSearch implements SearchPlugin {
 	public static final String SEARCH_DESCRIPTION_LOCALIZABLE_KEY = "user_contact_search.description";
 	public static final String SEARCH_TYPE = "user";
 	public static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-	private IWMainApplication iwma;
+	protected IWMainApplication iwma;
 	
 	
 	/**
@@ -102,8 +103,7 @@ public class UserContactSearch implements SearchPlugin {
 		searcher.setSearchQuery(searchQuery);
 		
 		try {
-			SearchEngine userSearch = (SearchEngine) IBOLookup.getServiceInstance(iwma.getIWApplicationContext(),SearchEngine.class);
-			Collection users = userSearch.getSimpleSearchResults( ((SimpleSearchQuery)searchQuery).getSimpleSearchQuery().replace('*','%'));
+			Collection users = getUsers(searchQuery);
 			
 			if(users!=null && !users.isEmpty()){
 				Iterator iter = users.iterator();
@@ -152,89 +152,7 @@ public class UserContactSearch implements SearchPlugin {
 			}
 			
 			searcher.setSearchResults(results);
-//			add("Group name search:");
-//			addBreak();
-//			try {
-//				GroupBusiness groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
-	//
-//				Collection groups = groupBusiness.getGroupsByGroupName(queryString.replace('*','%'));
-//				List users = new ArrayList();
-//				
-//				if(groups!=null){
-//					Iterator iterator = groups.iterator();
-//					while (iterator.hasNext()) {
-//						Group group = (Group) iterator.next();
-//						try {
-//							users.addAll(groupBusiness.getUsers(group));
-//						}
-//						catch (FinderException e1) {
-//							e1.printStackTrace();
-//						}
-//					}
-//				}
-//				
-//				if(!users.isEmpty()){
-//					Iterator iterator = users.iterator();
-//					while (iterator.hasNext()) {
-//						User user = (User) iterator.next();
-//						
-//						add(user.getName());
-//						add(" , email: ");
-//						add(user.getEmails());
-//						addBreak();
-//					}
-//				}
-//				
-//			}
-//			catch (IBOLookupException e) {
-//				e.printStackTrace();
-//			}
-//			catch (RemoteException e) {
-//				e.printStackTrace();
-//			}
-//			
-	//
-//			addBreak();
-//			add("Group type search:");
-//			addBreak();
-//			try {
-//				GroupBusiness groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
-////	find a better finder
-//				Collection groups = groupBusiness.getGroupsByGroupTypeAndFirstPartOfName(queryString.replace('*','%').toLowerCase(),"");
-//				List users = new ArrayList();
-//				
-//				if(groups!=null){
-//					Iterator iterator = groups.iterator();
-//					while (iterator.hasNext()) {
-//						Group group = (Group) iterator.next();
-//						try {
-//							users.addAll(groupBusiness.getUsers(group));
-//						}
-//						catch (FinderException e1) {
-//							e1.printStackTrace();
-//						}
-//					}
-//				}
-//				
-//				if(!users.isEmpty()){
-//					Iterator iterator = users.iterator();
-//					while (iterator.hasNext()) {
-//						User user = (User) iterator.next();
-//						
-//						add(user.getName());
-//						add(" , email: ");
-//						add(user.getEmails());
-//						addBreak();
-//					}
-//				}
-//				
-//			}
-//			catch (IBOLookupException e) {
-//				e.printStackTrace();
-//			}
-//			catch (RemoteException e) {
-//				e.printStackTrace();
-//			}
+			
 		}
 		catch (IBOLookupException e) {
 			e.printStackTrace();
@@ -244,6 +162,12 @@ public class UserContactSearch implements SearchPlugin {
 		}
 		
 		return searcher;
+	}
+
+	protected Collection getUsers(SearchQuery searchQuery) throws IBOLookupException, RemoteException {
+		SearchEngine userSearch = (SearchEngine) IBOLookup.getServiceInstance(iwma.getIWApplicationContext(),SearchEngine.class);
+		Collection users = userSearch.getSimpleSearchResults( ((SimpleSearchQuery)searchQuery).getSimpleSearchQuery().replace('*','%'));
+		return users;
 	}
 
 	/* (non-Javadoc)
