@@ -37,6 +37,8 @@ public class Toolbar extends Page implements IWBrowserView {
 
   protected Vector _toolbarElements = new Vector();
   private SearchForm searchForm = new SearchForm();
+  
+  private String selectedGroupProviderStateId = null;
 
 
   public Toolbar(){
@@ -45,6 +47,11 @@ public class Toolbar extends Page implements IWBrowserView {
   public void add(ToolbarElement element){
     _toolbarElements.add(element);
   }
+  
+  public void setSelectedGroupProviderStateId(String selectedGroupProviderStateId) {
+    this.selectedGroupProviderStateId = selectedGroupProviderStateId;
+  }
+    
 
   public void add(Toolbar toolbar){
     _toolbarElements.add(toolbar);
@@ -146,6 +153,8 @@ public class Toolbar extends Page implements IWBrowserView {
     text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink12 = new Link(text2);
     tLink12.setWindowToOpen(CreateGroupWindow.class);
+    if (selectedGroupProviderStateId != null)
+      tLink12.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
     button2.add(tLink12,2,1);
     toolbar1.add(button2,3,1);
    //finance

@@ -4,7 +4,13 @@ import com.idega.event.*;
 import java.util.*;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.idegaweb.IWException;
+import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.presentation.event.TreeViewerEvent;
+import com.idega.user.data.Group;
+import com.idega.user.presentation.BasicUserOverviewPS;
+import com.idega.user.presentation.DeleteGroupConfirmWindowPS;
+
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.EventListenerList;
 
 /**
@@ -16,9 +22,11 @@ import javax.swing.event.EventListenerList;
  * @version 1.0
  */
 
-public class UserApplicationMenuAreaPS extends IWPresentationStateImpl implements IWActionListener {
+public class UserApplicationMenuAreaPS extends IWControlFramePresentationState implements IWActionListener {
 
   private EventListenerList _listenerList = new EventListenerList();
+  
+  private Integer selectedGroupId = null;
 
   public UserApplicationMenuAreaPS() {
 
@@ -65,6 +73,25 @@ public class UserApplicationMenuAreaPS extends IWPresentationStateImpl implement
     }
 
   }
+  
+  public Integer getSelectedGroupId() {
+    return selectedGroupId;
+  }
 
+  public void stateChanged(ChangeEvent e) {
+    Object object = e.getSource();
+    if (object instanceof BasicUserOverviewPS) {
+      BasicUserOverviewPS state = (BasicUserOverviewPS) object;
+      Group group = state.getSelectedGroup();
+      selectedGroupId = (Integer) group.getPrimaryKey();
+      // refresh the view 
+      setOnLoad("parent.frames['iwb_menu'].location.reload()");
+    }
+    else if (object instanceof DeleteGroupConfirmWindowPS)  {
+      // the former selected group does not exist any longer!
+      selectedGroupId = null;
+    }
+      
+  }
 
 }

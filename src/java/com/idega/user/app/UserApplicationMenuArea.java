@@ -81,6 +81,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
     iwb = getBundle(iwc);
     this.setBackgroundColor(IWColor.getHexColorString(212,208,200));
     getParentPage().setBackgroundColor(IWColor.getHexColorString(212,208,200));
+    toolbar.setSelectedGroupProviderStateId(this.getCompoundId());
     super.add(toolbar);
   }
 
