@@ -213,9 +213,10 @@ import com.idega.util.IWColor;
             while (iter.hasNext()) {
               Object item = iter.next();
               //user.removeFrom((Group)item);
-              ((Group)item).removeUser(user, iwc.getCurrentUser());
+              if(item!=null) {
+              		((Group)item).removeUser(user, iwc.getCurrentUser());
+              }
             }
-
           } else{
             for (int i = 0; i < related.length; i++) {
               //user.addTo(Group.class,Integer.parseInt(related[i]));
