@@ -17,7 +17,7 @@ import com.idega.presentation.ui.AbstractChooser;
 
 public class UserChooserBrowser extends AbstractChooser {
 	
-	private String imgName = "open.gif";
+	private String imgName = "magnify.gif";
 	private boolean isUserBundle = false;
 	
   public UserChooserBrowser(String chooserName) {
