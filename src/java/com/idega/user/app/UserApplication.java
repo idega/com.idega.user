@@ -64,9 +64,11 @@ public class UserApplication extends IWBrowser {
     this.showBottomFrame(true);
     this.addToLeftMain(new UserApplicationControlArea());
     
-    //this.addToMain(new BasicUserOverview());
+    //temp remove
+    boolean useBasic = (this.getIWApplicationContext().getApplication().getSettings().getProperty("USE_BASIC")!=null);//temporary solutions
     
-    this.addToMain(new UserApplicationMainArea());
+    if( useBasic ) this.addToMain(new BasicUserOverview());
+    else this.addToMain(new UserApplicationMainArea());
 
     this.addToBottom(new Bottom());
 
