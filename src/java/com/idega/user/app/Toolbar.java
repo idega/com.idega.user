@@ -199,7 +199,7 @@ public class Toolbar extends Page implements IWBrowserView {
  	button2.setCellpadding(0);
     Image iconCrGroup = iwb.getImage("new_group.gif");
     button2.add(iconCrGroup,1,1);
-	Text text2 = new Text("Ný hópur");
+	Text text2 = new Text("Nýr hópur");
  	text2.setFontFace(Text.FONT_FACE_VERDANA);
  	text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink12 = new Link(text2);

@@ -253,15 +253,28 @@ public class UserApplication extends IWBrowser {
     }
 
    public void main(IWContext iwc) throws Exception{
-
-
-
-    Table footerTable = new Table(2,1);
+    /*Table footerTable = new Table(2,1);
     footerTable.setCellpadding(0);
     footerTable.setCellspacing(0);
     footerTable.setWidth("100%");
     footerTable.setHeight("100%");
-    footerTable.setWidth(2,1,"20");
+    footerTable.setWidth(2,1,"20");*/
+
+    Table toolbarTable = new Table(1,3);
+    toolbarTable.setCellpadding(0);
+    toolbarTable.setCellspacing(0);
+    toolbarTable.setWidth("100%");
+    toolbarTable.setHeight("100%");
+    toolbarTable.setHeight(1,1);
+    toolbarTable.setHeight(3,1);
+
+    IWColor color = new IWColor(207,208,210);//jonni color
+
+    toolbarTable.setColor(color);
+    toolbarTable.setColor(1,1,color.brighter());
+    toolbarTable.setColor(1,3,color.darker());
+
+    add(toolbarTable);
 
    // CloseButton cb = new CloseButton();
 
@@ -269,7 +282,7 @@ public class UserApplication extends IWBrowser {
 
     //footerTable.add(cb,1,1);
 
-    add(footerTable);
+    //add(footerTable);
    }
 
 
