@@ -35,6 +35,11 @@ import com.idega.util.Disposable;
  * @version 1.0
  */
 public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
+	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
+
+	private static final String TAB_NAME = "gen_tab_name";
+	private static final String DEFAULT_TAB_NAME = "General";
+
 	private TextInput nameField;
 	private TextArea descriptionField;
 	private IBPageChooser homepageField;
@@ -62,7 +67,11 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 
 	public GeneralGroupInfoTab() {
 		super();
-		setName("General");
+		IWContext iwc = IWContext.getInstance();
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+
+		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));		
+//		setName("General");
 	}
 
 	public void initFieldContents() {
@@ -139,24 +148,32 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		memberofFrame.setWidth(367);
 		memberofFrame.setScrolling(IFrame.SCROLLING_YES);
 		//
-		addLink = new Link("  Add/Remove  ");
+		IWContext iwc = IWContext.getInstance();
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+
+		String addRemove = "  " + iwrb.getLocalizedString("gen_addremove","Add/Remove") + "  ";
+
+		addLink = new Link(addRemove);
 	}
 
 	public void initializeTexts() {
+		IWContext iwc = IWContext.getInstance();
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+
 		nameText = getTextObject();
-		nameText.setText("Name:");
+		nameText.setText(iwrb.getLocalizedString("gen_name","Name") + ":");
 
 		descriptionText = getTextObject();
-		descriptionText.setText("Description:");
+		descriptionText.setText(iwrb.getLocalizedString("gen_desc","Description") + ":");
 
 		homepageText = getTextObject();
-		homepageText.setText("Home page:");
+		homepageText.setText(iwrb.getLocalizedString("gen_home","Home page") + ":");
 
 		grouptypeText = getTextObject();
-		grouptypeText.setText("Group type:");
+		grouptypeText.setText(iwrb.getLocalizedString("gen_type","Group type") + ":");
 
 		memberof = getTextObject();
-		memberof.setText("Member of:");
+		memberof.setText(iwrb.getLocalizedString("gen_memberof","Member of") + ":");
 	}
 
 	public boolean store(IWContext iwc) {
@@ -280,6 +297,10 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	public void dispose(IWContext iwc) {
 		iwc.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
 		iwc.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
+	}
+
+	public String getBundleIdentifier() {
+		return IW_BUNDLE_IDENTIFIER;
 	}
 
 	public void main(IWContext iwc) throws Exception {
