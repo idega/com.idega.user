@@ -242,7 +242,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	 * @return BasicUserOverViewToolbar
 	 */
 	protected BasicUserOverViewToolbar getToolbar() {
-		if( toolbar == null){
+		if( toolbar == null || selectedGroup == null){
 			toolbar = new BasicUserOverViewToolbar();
 		}
 
