@@ -161,7 +161,7 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 		browser.setColorForOddRows(IWColor.getHexColorString(246, 246, 247));
 		
 		int column = 1;
-		String nameKey = "com.idega.user.data.User.FIRST_NAME:" + "com.idega.user.data.User.LAST_NAME:" + "com.idega.user.data.User.MIDDLE_NAME";
+		String nameKey = User.class.toString()+".FIRST_NAME:" + User.class.toString()+".LAST_NAME:" + User.class.toString()+".MIDDLE_NAME";
 			
 		//browser.setLeadingEntity("com.idega.core.accesscontrol.data.ICPermission");
 		//browser.setMandatoryColumn(column,"com.idega.core.accesscontrol.data.ICPermission.GROUP_ID");

@@ -262,7 +262,7 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     EntityToPresentationObjectConverter checkBoxConverter = new CheckBoxConverter(SELECTED_CHECKED_GROUPS_KEY); 
     // set default columns
     //String columnName = GroupBMPBean.getNameColumnName();
-    String nameKey = "com.idega.user.data.Group.NAME"; //+ GroupBMPBean.getNameColumnName();
+    String nameKey = Group.class.toString()+".NAME"; //+ GroupBMPBean.getNameColumnName();
     EntityBrowser browser = new EntityBrowser();
     // keep things simple
     browser.setUseEventSystem(false);

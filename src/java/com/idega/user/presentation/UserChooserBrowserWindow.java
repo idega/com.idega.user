@@ -142,8 +142,8 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
       }
     };
     // set default columns
-    String nameKey = "com.idega.user.data.User.FIRST_NAME:" + "com.idega.user.data.User.MIDDLE_NAME:"+"com.idega.user.data.User.LAST_NAME";
-    String pinKey = "com.idega.user.data.User.PERSONAL_ID";
+    String nameKey = User.class.toString()+".FIRST_NAME:" + User.class.toString()+".MIDDLE_NAME:"+User.class.toString()+".LAST_NAME";
+    String pinKey = User.class.toString()+".PERSONAL_ID";
     EntityBrowser browser = new EntityBrowser();
     // keep things simple
     browser.setUseEventSystem(false);

@@ -21,8 +21,11 @@ import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.data.Address;
+import com.idega.core.data.Country;
 import com.idega.core.data.Email;
 import com.idega.core.data.Phone;
+import com.idega.core.data.PhoneType;
+import com.idega.core.data.PostalCode;
 import com.idega.data.EntityRepresentation;
 import com.idega.data.GenericEntity;
 import com.idega.event.IWActionListener;
@@ -538,19 +541,19 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			}
 		};
 		// set default columns
-		String nameKey = "com.idega.user.data.User.FIRST_NAME:" + "com.idega.user.data.User.MIDDLE_NAME:"+"com.idega.user.data.User.LAST_NAME";
+		String nameKey = User.class.toString()+".FIRST_NAME:" + User.class.toString()+".MIDDLE_NAME:"+User.class.toString()+".LAST_NAME";
 		String completeAddressKey =
-			"com.idega.core.data.Address.STREET_NAME:"
-				+ "com.idega.core.data.Address.STREET_NUMBER:"
-				+ "com.idega.core.data.Address.P_O_BOX:"
-				+ "com.idega.core.data.PostalCode.POSTAL_CODE_ID|POSTAL_CODE:"
-				+ "com.idega.core.data.Address.CITY:"
-				+ "com.idega.core.data.Country.IC_COUNTRY_ID|COUNTRY_NAME";
-		String emailKey = "com.idega.core.data.Email.ADDRESS";
-		String phoneKey = "com.idega.core.data.PhoneType.IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + "com.idega.core.data.Phone.PHONE_NUMBER";
-		String pinKey = "com.idega.user.data.User.PERSONAL_ID";
+			Address.class.toString()+".STREET_NAME:"
+				+ Address.class.toString()+".STREET_NUMBER:"
+				+ Address.class.toString()+".P_O_BOX:"
+				+ PostalCode.class.toString()+".POSTAL_CODE_ID|POSTAL_CODE:"
+				+ Address.class.toString()+".CITY:"
+				+ Country.class.toString()+".IC_COUNTRY_ID|COUNTRY_NAME";
+		String emailKey = Email.class.toString()+".ADDRESS";
+		String phoneKey = PhoneType.class.toString()+".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + Phone.class.toString()+".PHONE_NUMBER";
+		String pinKey = User.class.toString()+".PERSONAL_ID";
     
-    String dateOfBirthKey = "com.idega.user.data.User.DATE_OF_BIRTH";
+    String dateOfBirthKey = User.class.toString()+".DATE_OF_BIRTH";
 			
 		entityBrowser.setEntities(getEntityBrowserIdentifier(ps), users);
 		
@@ -582,13 +585,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		entityBrowser.setEntityToPresentationConverter(completeAddressKey, converterCompleteAddress);
     entityBrowser.setEntityToPresentationConverter(dateOfBirthKey, new DateConverter());
 		// set converter for all columns of this class
-		entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Address", converterAddress);
-		entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Email", converterEmail);
-		entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Phone", converterPhone);
+		entityBrowser.setEntityToPresentationConverter(Address.class.toString(), converterAddress);
+		entityBrowser.setEntityToPresentationConverter(Email.class.toString(), converterEmail);
+		entityBrowser.setEntityToPresentationConverter(Phone.class.toString(), converterPhone);
 		// set foreign entities
-		entityBrowser.addEntity("com.idega.core.data.Address");
-		entityBrowser.addEntity("com.idega.core.data.Email");
-		entityBrowser.addEntity("com.idega.core.data.Phone");
+		entityBrowser.addEntity(Address.class.toString());
+		entityBrowser.addEntity(Email.class.toString());
+		entityBrowser.addEntity(Phone.class.toString());
 		// change display
 		entityBrowser.setCellspacing(2);
 		
@@ -991,17 +994,17 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
     // set default columns
     String errorMessageKey = "errorMessageKey";
-    String nameKey = "com.idega.user.data.User.FIRST_NAME:" + "com.idega.user.data.User.MIDDLE_NAME:"+"com.idega.user.data.User.LAST_NAME";
+    String nameKey = User.class.toString()+".FIRST_NAME:" + User.class.toString()+".MIDDLE_NAME:"+User.class.toString()+".LAST_NAME";
     String completeAddressKey =
-      "com.idega.core.data.Address.STREET_NAME:"
-        + "com.idega.core.data.Address.STREET_NUMBER:"
-        + "com.idega.core.data.Address.P_O_BOX:"
-        + "com.idega.core.data.PostalCode.POSTAL_CODE_ID|POSTAL_CODE:"
-        + "com.idega.core.data.Address.CITY:"
-        + "com.idega.core.data.Country.IC_COUNTRY_ID|COUNTRY_NAME";
-    String emailKey = "com.idega.core.data.Email.ADDRESS";
-    String phoneKey = "com.idega.core.data.PhoneType.IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + "com.idega.core.data.Phone.PHONE_NUMBER";
-    String pinKey = "com.idega.user.data.User.PERSONAL_ID";
+      Address.class.toString()+".STREET_NAME:"
+        + Address.class.toString()+".STREET_NUMBER:"
+        + Address.class.toString()+".P_O_BOX:"
+        + PostalCode.class.toString()+".POSTAL_CODE_ID|POSTAL_CODE:"
+        + Address.class.toString()+".CITY:"
+        + Country.class.toString()+".IC_COUNTRY_ID|COUNTRY_NAME";
+    String emailKey = Email.class.toString()+".ADDRESS";
+    String phoneKey = PhoneType.class.toString()+".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + Phone.class.toString()+".PHONE_NUMBER";
+    String pinKey = User.class.toString()+".PERSONAL_ID";
         
     Iterator iterator = messageMap.keySet().iterator();
     String identifier = (iterator.hasNext()) ? iterator.next().toString() : "move";
@@ -1035,13 +1038,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     entityBrowser.setEntityToPresentationConverter(errorMessageKey, converterErrorMessage);
     entityBrowser.setEntityToPresentationConverter(completeAddressKey, converterCompleteAddress);
     // set converter for all columns of this class
-    entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Address", converterAddress);
-    entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Email", converterEmail);
-    entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Phone", converterPhone);
+    entityBrowser.setEntityToPresentationConverter(Address.class.toString(), converterAddress);
+    entityBrowser.setEntityToPresentationConverter(Email.class.toString(), converterEmail);
+    entityBrowser.setEntityToPresentationConverter(Phone.class.toString(), converterPhone);
     // set foreign entities
-    entityBrowser.addEntity("com.idega.core.data.Address");
-    entityBrowser.addEntity("com.idega.core.data.Email");
-    entityBrowser.addEntity("com.idega.core.data.Phone");
+    entityBrowser.addEntity(Address.class.toString());
+    entityBrowser.addEntity(Email.class.toString());
+    entityBrowser.addEntity(Phone.class.toString());
     // change display
     entityBrowser.setCellspacing(2);
     entityBrowser.setAcceptUserSettingsShowUserSettingsButton(false,false);
