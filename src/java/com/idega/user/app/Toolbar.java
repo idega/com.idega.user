@@ -2,12 +2,7 @@ package com.idega.user.app;
 
 import java.util.List;
 import java.util.Vector;
-
-import com.idega.block.datareport.presentation.ReportQueryOverview;
 import com.idega.block.importer.presentation.Importer;
-import com.idega.core.file.data.ICFile;
-import com.idega.core.file.data.ICFileHome;
-import com.idega.data.IDOLookup;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWLocation;
@@ -39,8 +34,7 @@ import com.idega.user.presentation.RoleMastersWindow;
 
 public class Toolbar extends Page implements IWBrowserView {
   
-  public static final String QUERY_FOLDER_NAME = "query";
-  public static final String LAYOUT_FOLDER_NAME = "layout";
+
 
 	protected String title;
 	protected IWBundle iwb;
@@ -59,6 +53,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
 
   public Toolbar(){
+  	// default constructor
   }
 
   public void add(ToolbarElement element){
@@ -81,10 +76,6 @@ public class Toolbar extends Page implements IWBrowserView {
 //        this.add((ToolbarElement)item);
 //      }
 //    }
-  }
-
-  public void addSeperator(){
-
   }
 
   protected List getToolbarElements(){
@@ -370,11 +361,6 @@ public class Toolbar extends Page implements IWBrowserView {
       Link tLink18 = new Link(text8);
 			tLink18.setStyleClass(styledLink);
       tLink18.setWindowToOpen(com.idega.block.datareport.presentation.ReportOverviewWindow.class);
-      //ICFile queryFolder = lookUpFile(QUERY_FOLDER_NAME);
-      ICFile layoutFolder = lookUpFile(LAYOUT_FOLDER_NAME);
-      if (layoutFolder != null) {
-        tLink18.addParameter(ReportQueryOverview.SET_ID_OF_DESIGN_FOLDER_KEY, layoutFolder.getPrimaryKey().toString());
-      }
       button8.add(tLink18,2,1);
       toolbar1.add(button8,9,1);
     }    
@@ -505,17 +491,5 @@ public class Toolbar extends Page implements IWBrowserView {
 	public void setUserApplicationMainAreaStateId(String string) {
 		userApplicationMainAreaStateId = string;
 	}
-
-  private ICFile lookUpFile(String name)  {
-    try {
-      ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
-      ICFile file = home.findByFileName(name);
-      return file;
-    }
-    // FinderException, RemoteException
-    catch(Exception ex){
-      return null;
-    }
-  }     
 
 }
