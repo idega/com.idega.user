@@ -7,12 +7,13 @@ import java.util.Vector;
 
 import javax.ejb.FinderException;
 
-import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.help.presentation.Help;
+import com.idega.idegaweb.presentation.*;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.ui.BackButton;

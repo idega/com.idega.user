@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWStateMachine;
@@ -12,6 +11,8 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.help.presentation.Help;
+import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
@@ -32,7 +33,6 @@ import com.idega.user.block.search.event.UserSearchEvent;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
-import com.idega.user.presentation.StyledIWAdminWindow;
 import com.idega.user.presentation.UserStatusDropdown;
 
 

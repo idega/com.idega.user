@@ -3,7 +3,6 @@ package com.idega.user.presentation;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 
-import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.core.location.business.CommuneBusiness;
 import com.idega.core.location.data.Address;
@@ -11,6 +10,7 @@ import com.idega.core.location.data.Country;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.help.presentation.Help;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;

@@ -2,7 +2,6 @@ package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
 
-import com.idega.block.help.presentation.Help;
 import com.idega.builder.presentation.IBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
@@ -10,6 +9,7 @@ import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.help.presentation.Help;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;

@@ -8,11 +8,11 @@ import java.util.StringTokenizer;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
-import com.idega.block.help.presentation.Help;
 import com.idega.block.media.presentation.ImageInserter;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.help.presentation.Help;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;

@@ -7,7 +7,6 @@ import java.util.Iterator;
 
 import javax.swing.event.ChangeListener;
 
-import com.idega.block.help.presentation.Help;
 import com.idega.builder.presentation.StyledIBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
@@ -19,6 +18,8 @@ import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.help.presentation.Help;
+import com.idega.idegaweb.presentation.*;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Layer;

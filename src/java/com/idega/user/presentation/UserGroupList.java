@@ -3,11 +3,11 @@ package com.idega.user.presentation;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.idega.block.help.presentation.Help;
 import com.idega.event.IWLinkEvent;
 import com.idega.event.IWLinkListener;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.help.presentation.Help;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;

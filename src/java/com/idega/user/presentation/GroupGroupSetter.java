@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.help.presentation.Help;
+import com.idega.idegaweb.presentation.*;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
