@@ -202,7 +202,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 				frameTable.setWidth(1,1,"100%");
 				IFrame frontPage = new IFrame();
 				String frontPageId = getBundle(iwc).getProperty(USER_APPLICATION_FRONT_PAGE_ID);
-				if(!"-1".equals(frontPageId)) {
+				if(frontPageId!=null && !"-1".equals(frontPageId)) {
 					frontPage.setHeight("99%");
 					frontPage.setWidth("99%");
 					frontPage.setIBPage(Integer.parseInt(frontPageId));
