@@ -13,7 +13,6 @@ package com.idega.user.block.search.presentation;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
-import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
