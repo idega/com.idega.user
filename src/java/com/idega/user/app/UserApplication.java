@@ -255,11 +255,11 @@ public class UserApplication extends IWBrowser {
     footerTable.setHeight("100%");
     footerTable.setWidth(2,1,"20");
 
-    CloseButton cb = new CloseButton();
+   // CloseButton cb = new CloseButton();
 
-    footerTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_RIGHT);
+   // footerTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_RIGHT);
 
-    footerTable.add(cb,1,1);
+    //footerTable.add(cb,1,1);
 
     add(footerTable);
    }

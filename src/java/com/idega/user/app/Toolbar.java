@@ -160,7 +160,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
     Table toolbar1 = new Table();
     toolbar1.setCellpadding(0);
-    toolbar1.setCellspacing(0);
+    toolbar1.setCellspacing(4);
 
 /*
     Table table = new Table(4,3);
@@ -201,7 +201,7 @@ public class Toolbar extends Page implements IWBrowserView {
 	Text text2 = new Text("New Group");
  	text2.setFontFace(Text.FONT_FACE_VERDANA);
  	text2.setFontSize(Text.FONT_SIZE_10_HTML_2);
-    Link tLink12 = new Link(iconCrGroup);
+    Link tLink12 = new Link(text2);
     tLink12.setWindowToOpen(CreateGroupWindow.class);
     button2.add(tLink12,2,1);
     toolbar1.add(button2,3,1);
@@ -210,33 +210,40 @@ public class Toolbar extends Page implements IWBrowserView {
     //toolbar1.setWidth(2,"26");
    // toolbar1.setWidth(3,"26");
 
-
-    Link resetLink = new Link("reset");
-    resetLink.addEventModel(new ResetPresentationEvent());
-    if(_controlEvent != null){
-      resetLink.addEventModel(_controlEvent);
-    }
-    if(_controlTarget != null){
-      resetLink.setTarget(_controlTarget);
-    }
-
-    toolbar1.add(resetLink,4,1);
     
    //Group
    //user
    //finance
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Finance", iwb.getImage("finance.gif"), com.idega.block.news.presentation.News.class),5,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Finance", iwb.getImage("finance.gif"), com.idega.block.news.presentation.News.class),4,1);
    //reports
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Reports", iwb.getImage("reports.gif"), com.idega.block.news.presentation.News.class),6,1);
-   //To do
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("To do", iwb.getImage("todo.gif"), com.idega.block.news.presentation.News.class),7,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Reports", iwb.getImage("reports.gif"), com.idega.block.news.presentation.News.class),5,1);
+   //To do - stickies
+//    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("To do", iwb.getImage("todo.gif"), com.idega.block.news.presentation.News.class),7,1);
    //settings
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Settings", iwb.getImage("settings.gif"), com.idega.block.news.presentation.News.class),8,1);
-   //view
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Views", iwb.getImage("views.gif"), com.idega.block.news.presentation.News.class),9,1);
-   //search
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Search", iwb.getImage("search.gif"), com.idega.block.news.presentation.News.class),10,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Settings", iwb.getImage("settings.gif"), com.idega.block.news.presentation.News.class),6,1);
    
+   //view
+   	//dropdownmenu
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Views", iwb.getImage("views.gif"), com.idega.block.news.presentation.News.class),7,1);
+   //search
+   	//text input
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Search", iwb.getImage("search.gif"), com.idega.block.news.presentation.News.class),8,1);
+   
+
+   Text text3 = new Text("Reset");
+   text3.setFontFace(Text.FONT_FACE_VERDANA);
+   text3.setFontSize(Text.FONT_SIZE_10_HTML_2);
+   Link resetLink = new Link(text3);
+   resetLink.addEventModel(new ResetPresentationEvent());
+   if(_controlEvent != null){
+     resetLink.addEventModel(_controlEvent);
+   }
+   if(_controlTarget != null){
+     resetLink.setTarget(_controlTarget);
+   }
+
+   toolbar1.add(resetLink,9,1);
+    
    //    toolbarTable.add(toolbar1,1,2);
 	this.add(toolbar1);
 	
