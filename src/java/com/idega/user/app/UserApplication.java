@@ -58,26 +58,29 @@ public class UserApplication extends IWBrowser {
 
     this.addToTop(new Top());
     this.setSpanPixels(POS_TOP,50); 
-    this.setSpanPixels(POS_LEFTMAIN, 200); 
+    this.setSpanPixels(POS_LEFTMAIN, 200);
     this.setSpanPixels(POS_MENU,35); 
-    this.setSpanPixels(POS_BOTTOM,1); 
+    this.setSpanPixels(POS_BOTTOM,35); 
+    this.setSpanPixels(POS_EVENT,1); 
 
     UserApplicationMenuArea menuArea = new UserApplicationMenuArea();
 		UserApplicationControlArea treeArea = new UserApplicationControlArea();
 		UserApplicationMainArea mainArea = new UserApplicationMainArea();
+		UserApplicationBottomArea bottomArea = new UserApplicationBottomArea();
 		
 		this.addToMenu(menuArea);
     this.showMenuFrame(true);
-    this.showBottomFrame(true); //MUST BE TRUE!
+    this.showEventFrame(true); //MUST BE TRUE!
 		this.addToLeftMain(treeArea);
     this.addToMain(mainArea);
+    this.addToBottom(bottomArea);
     
 		menuArea.setUserApplicationMainAreaStateId(mainArea.getCompoundId());
     
 
     //this.addToBottom(new Bottom());
    // System.out.println("SERVLET URL : "+getIWApplicationContext().getApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));
-    this.setBottomURL(getIWApplicationContext().getIWMainApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));
+    this.setEventURL(getIWApplicationContext().getIWMainApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));
     
     
 //    this.setBorder(20);
@@ -90,9 +93,11 @@ public class UserApplication extends IWBrowser {
     this.getMenuFrame().setNoresize(true);
     this.getBottomFrame().setScrolling(false);
     this.getBottomFrame().setNoresize(true);
+    this.getEventFrame().setScrolling(false);
+    this.getEventFrame().setNoresize(true);
     this.getMainFrame().setScrolling(true);
     this.getLeftMainFrame().setNoresize(false);
-    this.getLeftMainFrame().setScrolling(true);
+    this.getLeftMainFrame().setScrolling(false);
   }
 
   public String getBundleIdentifier(){
