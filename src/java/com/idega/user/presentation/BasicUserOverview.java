@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.swing.event.ChangeListener;
+
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
@@ -57,7 +59,6 @@ import com.idega.user.business.UserStatusBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.Status;
 import com.idega.user.data.User;
-import com.idega.user.data.UserStatus;
 import com.idega.util.IWColor;
 import com.idega.util.text.TextSoap;
 /**
@@ -589,7 +590,6 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
             // entity is a user, try to get the corresponding address
             User user = (User) entity;
-            UserStatus userStatus = null;
             Status status = null;
             int userStatusID = -1;
             try {
