@@ -60,7 +60,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 
 
 	public SearchWindow() {
-		setWidth(510);
+		setWidth(500);
 		setHeight(470);
 		setScrollbar(false);
 		setResizable(true);
@@ -104,11 +104,16 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		setName(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"));
 		
 		add(form,iwc);
+		Table mainTable = new Table();
+		mainTable.setWidth(400);
+		mainTable.setHeight(380);
+		mainTable.setCellpadding(0);
+		mainTable.setCellspacing(0);
 		Table tab = new Table(3,13);
 		tab.setStyleClass(mainTableStyle);
-		tab.setWidth(400);
-		tab.setHeight(380);
-		form.add(tab);
+		tab.setWidth(Table.HUNDRED_PERCENT);
+		tab.setHeight(340);
+		form.add(mainTable);
 		
 		tab.setColumnVerticalAlignment(1, Table.VERTICAL_ALIGN_TOP);
 		tab.setColumnVerticalAlignment(2, Table.VERTICAL_ALIGN_TOP);
@@ -249,13 +254,23 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		
 		type.setOnClick("window.close();return false;");
 		
-		tab.add(help,1,13);
-		tab.setAlignment(3,13,"right");
-		tab.add(save, 3, 13);
-		tab.add(type,3,13);
-		tab.add(Text.getNonBrakingSpace(), 3, 13);
-		tab.add(close, 3, 13);
-				
+		Table bottomTable = new Table();
+		bottomTable.setCellpadding(0);
+		bottomTable.setCellspacing(5);
+		bottomTable.setWidth(Table.HUNDRED_PERCENT);
+		bottomTable.setHeight(39);
+		bottomTable.setStyleClass(mainTableStyle);
+		bottomTable.add(help,1,1);
+		bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
+		bottomTable.add(save,2,1);
+		bottomTable.add(type,2,1);
+		bottomTable.add(Text.NON_BREAKING_SPACE,2,1);
+		bottomTable.add(close,2,1);
+
+		mainTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
+		mainTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
+		mainTable.add(tab,1,1);
+		mainTable.add(bottomTable,1,3);		
 	}
 
 
