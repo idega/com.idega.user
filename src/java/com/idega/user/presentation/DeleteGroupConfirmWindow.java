@@ -1,6 +1,9 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.swing.event.ChangeListener;
 
@@ -43,8 +46,9 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
   
   public DeleteGroupConfirmWindow() {
     setWidth(240);
-    setHeight(140);
+    setHeight(100);
     setScrollbar(false);
+    setResizable(false);
   }
   
   public void main(IWContext iwc) {
@@ -65,73 +69,107 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
       String groupIdString = iwc.getParameter(PARENT_DOMAIN_ID_KEY);
       parentDomainId = new Integer(groupIdString);
     }
+    // get resource bundle 
+    IWResourceBundle iwrb = getResourceBundle(iwc);
+    setTitle(iwrb.getLocalizedString("create_new_group", "Delete Group"));
+    addTitle(iwrb.getLocalizedString("create_new_group", "Delete Group"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+    
     // create delete event
     DeleteGroupEvent deleteEvent = new DeleteGroupEvent();
     // set group id at event
     deleteEvent.setGroupId(groupId);
     deleteEvent.setParentGroupId(parentGroupId);
     deleteEvent.setParentDomainId(parentDomainId);
-    
-    // check if the group can be deleted
-    // use the event method
-    Group group = getGroup(groupId);
-    boolean confirmation = getGroupBusiness(iwc).isGroupRemovable(group);   
-    //_createEvent.setSource(this.getLocation());
     deleteEvent.setSource(this);
-    // set controller (added by Thomas)
-    String id = IWMainApplication.getEncryptedClassName(UserApplication.Top.class);
-    id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + id;
-    deleteEvent.setController(id);
-    Table table = new Table(1,2);
+    // form
     Form form = new Form();
     // add event model
     form.addEventModel(deleteEvent, iwc);
-    // get resource bundle
-    IWResourceBundle resourceBundle = getResourceBundle(iwc);
-    String textString = (confirmation) ? 
-      resourceBundle.getLocalizedString("Do you really want to remove the selected group?", "Do you really want to remove the selected group?"):
-      resourceBundle.getLocalizedString("Selected group has children and can not be removed.", "Selected group has children and can not be removed.");
-    Text text = new Text(textString);
-    text.setFontStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-    SubmitButton close = new SubmitButton(resourceBundle.getLocalizedImageButton("Close", "Close"), DeleteGroupEvent.CANCEL_KEY);
-    SubmitButton ok = new SubmitButton(resourceBundle.getLocalizedImageButton("yes", "Yes"), DeleteGroupEvent.OKAY_KEY);
-    SubmitButton cancel = new SubmitButton(resourceBundle.getLocalizedImageButton("cancel", "Cancel"), DeleteGroupEvent.CANCEL_KEY);
-    close.setOnClick("window.close()");
-    cancel.setOnClick("window.close()");
-    ok.setOnClick("window.close()");
-    table.add(textString, 1,1);
-    if (confirmation) {
-      table.add(ok,1,2);
-      table.add(cancel, 1,2);
-    }
-    else  { 
-      table.add(close, 1,2);
-    }
+    // check if the group can be deleted
+    Group group = getGroup(groupId);
+    boolean askForConfirmation = getGroupBusiness(iwc).isGroupRemovable(group);   
+		Table table = getContent(iwrb, group, askForConfirmation);
     form.add(table);
     add(form);
   }
 
+	private Table getContent(IWResourceBundle iwrb, Group group, boolean askForConfirmation) {
+    // get selected group
+    String groupName;
+    try {
+      groupName = group.getName();
+    }
+    catch (RemoteException re) {
+      throw new RuntimeException(re.getMessage());
+    }
+    StringBuffer buffer = new StringBuffer(iwrb.getLocalizedString("Group", "Group"))
+      .append(": ")
+      .append(groupName);
+    Text selectedGroup = new Text(buffer.toString());
+    selectedGroup.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		// get text
+    Text question = null;
+    Text explanation1 = null;
+    Text explanation2 = null;
+		if (askForConfirmation) {
+      question =  
+		    new Text(iwrb.getLocalizedString("Do you really want to remove the selected group?", "Do you really want to remove the selected group?"));
+      question.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+    }
+    else  {
+      explanation1 = 
+        new Text(iwrb.getLocalizedString("The selected group has children.", "The selected group has children."));
+      explanation1.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+      explanation2 =
+        new Text(iwrb.getLocalizedString("Please remove the children first.", "Please remove the children first."));
+      explanation2.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);   
+    }
+		// get buttons
+    SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("Close", "Close"), DeleteGroupEvent.CANCEL_KEY);
+		SubmitButton ok = new SubmitButton(iwrb.getLocalizedImageButton("yes", "Yes"), DeleteGroupEvent.OKAY_KEY);
+		SubmitButton cancel = new SubmitButton(iwrb.getLocalizedImageButton("cancel", "Cancel"), DeleteGroupEvent.CANCEL_KEY);
+    close.setOnClick("window.close()");
+		cancel.setOnClick("window.close()");
+		ok.setOnClick("window.close()");
+    //  assemble table
+    Table table = new Table(1,3);
+    table.setWidth(Table.HUNDRED_PERCENT);
+    table.setAlignment(1,3,Table.HORIZONTAL_ALIGN_RIGHT);
+		table.add(selectedGroup, 1,1);
+		if (askForConfirmation) {
+      table.add(question,1,2);
+		  table.add(ok,1,3);
+      table.add(Text.getNonBrakingSpace(),1,3);
+		  table.add(cancel, 1,3);
+		}
+		else  { 
+      table.add(explanation1,1,2);
+      table.add(Text.getBreak(),1,2);
+      table.add(explanation2,1,2);
+		  table.add(close, 1,3);
+		}
+		return table;
+	}
+
   public void initializeInMain(IWContext iwc) {
-    StringBuffer id = new StringBuffer(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);
-    id.append(IWMainApplication.getEncryptedClassName(UserApplication.class));
-    id.append(Frame.COMPOUND_ID_FRAME_NAME_KEY);
-    id.append("iwb_main_left");
-    setArtificialCompoundId(id.toString(), iwc);
     IWPresentationState state = this.getPresentationState(iwc);
     // add action listener
     addActionListener((IWActionListener) state);
-    // get and set change listener
-    id = new StringBuffer(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);
-    id.append(IWMainApplication.getEncryptedClassName(UserApplication.Top.class));
     IWStateMachine stateMachine;
     IWPresentationState changeListenerState = null;
+    // add all changelisteners
+    Collection changeListeners;
     try {
       stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
-      changeListenerState = (IWControlFramePresentationState) stateMachine.getStateFor(id.toString(), IWControlFramePresentationState.class);
+      changeListeners = stateMachine.getAllChangeListeners();
     }
     catch (RemoteException e) {
+      changeListeners = new ArrayList();
     }
-    state.addChangeListener((ChangeListener) changeListenerState);
+    Iterator iterator = changeListeners.iterator();
+    while (iterator.hasNext())  {
+      state.addChangeListener((ChangeListener) iterator.next());
+    }
   }
 
 
