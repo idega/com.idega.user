@@ -317,26 +317,20 @@ public class UserPhoneTab extends UserTab {
 	public boolean store(IWContext iwc) {
 		try {
 			if (getUserId() > -1) {
-				String[] phoneString =
+				String[] phoneString = 
 					{
 						(String)fieldValues.get(this.homePhoneFieldName),
 						(String)fieldValues.get(this.workPhoneFieldName),
 						(String)fieldValues.get(this.mobilePhoneFieldName),
 						(String)fieldValues.get(this.faxPhoneFieldName)};
-				String[] phoneTypeString =
-					{
-						(String)fieldValues.get(this.homePhoneMenuName),
-						(String)fieldValues.get(this.workPhoneMenuName),
-						(String)fieldValues.get(this.mobilePhoneMenuName),
-						(String)fieldValues.get(this.faxPhoneMenuName)};
-
+				int[] phoneTypes = { PhoneType.HOME_PHONE_ID, PhoneType.WORK_PHONE_ID, PhoneType.MOBILE_PHONE_ID, PhoneType.FAX_NUMBER_ID };
 				for (int a = 0; a < phoneString.length; a++) {
-					if (phoneString[a] != null && phoneString[a].length() > 0) {
+					if (phoneString[a] != null && phoneString[a].trim().length() > 0) {
 						//business.updateUserPhone(getUserId(),Integer.parseInt(phoneTypeString[a]),phoneString[a]);
 						super.getUserBusiness(iwc).updateUserPhone(
 							getUserId(),
-							Integer.parseInt(phoneTypeString[a]),
-							phoneString[a]);
+							phoneTypes[a],
+							phoneString[a].trim());
 					}
 				}
 				if ((String)fieldValues.get(this.emailFieldName) != null
