@@ -5,10 +5,15 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb User</name>
   <artifactId>com.idega.user</artifactId>
-  <currentVersion>1.0-SNAPSHOT</currentVersion>
+  <currentVersion>1.0.0</currentVersion>
   <inceptionYear>2000</inceptionYear>
-  <shortDescription>User</shortDescription>
+  <shortDescription>Basic user functionality</shortDescription>
   <versions>
+	<version>
+      <id>1.0.0</id>
+      <name>1.0.0</name>
+      <tag>USER_1_0_0</tag>
+    </version>
   </versions>
   <branches/>
   <developers>
@@ -45,8 +50,8 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
-      <!-- <version>1.9</version>-->
-      <version>SNAPSHOT</version>
+      <version>3.0.0</version>-->
+      <!--<version>SNAPSHOT</version>-->
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
@@ -56,8 +61,8 @@
    <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.block.login</artifactId>
-      <!--<version>1.0</version>-->
-      <version>SNAPSHOT</version>
+      <version>1.1.0</version>
+      <!--<version>SNAPSHOT</version>-->
       
       <type>jar</type>
       <url>http://www.idega.com/</url>
@@ -68,8 +73,8 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.builder</artifactId>
-      <!--<version>1.1</version>-->
-      <version>SNAPSHOT</version>
+      <version>1.4.0</version>
+      <!--<version>SNAPSHOT</version>-->
       
       <type>jar</type>
       <url>http://www.idega.com/</url>
@@ -80,8 +85,8 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.block.entity</artifactId>
-      <!--<version>1.0</version>-->
-      <version>SNAPSHOT</version>
+      <version>1.1.0</version>
+      <!--<version>SNAPSHOT</version>-->
       
       <type>jar</type>
       <url>http://www.idega.com/</url>
@@ -92,8 +97,8 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.block.media</artifactId>
-      <!--<version>1.0</version>-->
-      <version>SNAPSHOT</version>
+      <version>1.1.0</version>
+      <!--<version>SNAPSHOT</version>-->
       
       <type>jar</type>
       <url>http://www.idega.com/</url>

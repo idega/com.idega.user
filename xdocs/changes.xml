@@ -1,0 +1,15 @@
+<document>
+  <properties>
+    <title>Core User changes</title>
+    <author email="tryggvi@idega.com">Tryggvi Larusson</author>
+  </properties>
+  <body>
+  
+    <release version="1.0.0" date="2005-03-10">
+      <action dev="tryggvil" type="update">
+        Declaration of version for use in new systems based on JSF.
+      </action>              
+    </release>
+
+  </body>
+</document>
