@@ -260,7 +260,7 @@ public class GeneralUserInfoTab extends UserTab {
 	}
 
 	public void lineUpFields() {
-		resize(1, 4);
+		resize(1, 1);
 		
 		Table table = new Table(); //changed from (2,5) - birna
 		table.setWidth("100%");

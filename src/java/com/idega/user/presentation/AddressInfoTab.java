@@ -14,11 +14,12 @@ import com.idega.idegaweb.help.presentation.Help;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;
-import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CountryDropdownMenu;
 import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.PostalCodeDropdownMenu;
+import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.util.SelectorUtility;
 import com.idega.user.business.UserBusiness;
@@ -96,32 +97,14 @@ public class AddressInfoTab extends UserTab {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
-		
-//		this.setName("Address");
 	}
-/*
-	public void main(IWContext iwc) throws Exception {
-		IWBundle bundle = getBundle(iwc);
-		useCommune = ("true").equals(bundle.getProperty(USE_COMMUNES_BUNDLE_PROPERTY_NAME));
-		lineUpFields();
-		super.main(iwc);
-	}
-*/		
+
 	public void initializeFieldNames() {
 	}
 
 	public void initializeFieldValues() {
-
 		if (fieldValues == null)
 			fieldValues = new Hashtable();
-
-		/*fieldValues.put(streetFieldName,"");
-		fieldValues.put(cityFieldName,"");
-		fieldValues.put(provinceFieldName,"");
-		fieldValues.put(postalCodeFieldName,"");
-		fieldValues.put(countryFieldName,"");
-		fieldValues.put(poBoxFieldName,"");*/
-
 	}
 
 	public void updateFieldsDisplayStatus() {
@@ -279,7 +262,6 @@ public class AddressInfoTab extends UserTab {
 	public void lineUpFields() {
 		this.resize(1, 1);
 		int row = 1;
-		int totalRows = 4;
 
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
@@ -295,105 +277,94 @@ public class AddressInfoTab extends UserTab {
 			adminUser = null;
 		}
 		
-		if (useCommune) {
-			++totalRows;
-		}
-		Table table = new Table(2, totalRows);
+		Table table = new Table();
+		table.setColumns(2);
 		table.setWidth(Table.HUNDRED_PERCENT);
 		table.setCellpadding(5);
 		table.setCellspacing(0);
-		table.setBorder(1);
-		table.add(this.cityText, 1, row);
-		table.add(this.cityField, 2, row);
-		++row;
-		table.add(this.provinceText, 1, row);
-		table.add(this.provinceField, 2, row);
-		if (useCommune) {
-			++row;
-			table.add(this.communeText, 1, row);
-			table.add(this.communeField, 2, row);
-		}
-		++row;
-		table.add(this.countryText, 1, row);
-		table.add(this.countryField, 2, row);
-		++row;
-    table.add(postalCodeText,1,row);
-    table.add(postalCodeField,2,row);
-
-		//    fpane.add(addressTable);
-
-		Table addressTable2 = new Table(4, 1);
-		
-		addressTable2.setWidth("100%");
-		addressTable2.setCellpadding(3);
-		addressTable2.setCellspacing(3);
-		addressTable2.setWidth(1, "70");
-		addressTable2.setWidth(2, "70");
-		addressTable2.setWidth(3, "70");
-
-		addressTable2.add(this.streetText, 1, 1);
-		addressTable2.add(this.streetField, 2, 1);
-		addressTable2.add(this.poBoxText, 3, 1);
-		addressTable2.add(this.poBoxField, 4, 1);
-
-		this.add(addressTable2);
+		table.setBorder(0);
     this.add(table);
-		//    fpane.add(addressTable2);
-		//    this.add(fpane);
 
-    // second address
-    Table secondAddressTable = new Table(3, totalRows);
-    row = 1;
-    //    FramePane fpane = new FramePane();
+		table.add(this.streetText, 1, row);
+		table.add(Text.getBreak(), 1, row);
+		table.add(this.streetField, 1, row);
+		
+		table.add(this.poBoxText, 2, row);
+		table.add(Text.getBreak(), 2, row);
+		table.add(this.poBoxField, 2, row++);
 
-    secondAddressTable.setWidth("100%");
-    secondAddressTable.setCellpadding(3);
-    secondAddressTable.setCellspacing(3);
+		table.add(this.cityText, 1, row);
+		table.add(Text.getBreak(), 1, row);
+		table.add(this.cityField, 1, row);
 
-    secondAddressTable.setWidth(1, "70");
-    
-    secondAddressTable.setHeight(1,"20");
-   
-    secondAddressTable.add(this.cityText, 1, row);
-    secondAddressTable.add(secondCityField, 2, row++);
-    secondAddressTable.add(this.provinceText, 1,row);
-    secondAddressTable.add(secondProvinceField, 2, row++);
-    if (useCommune) {
-    	secondAddressTable.add(communeText, 1, row);
-    	secondAddressTable.add(secondCommuneField, 2, row++);
-    }
-    secondAddressTable.add(this.countryText, 1, row);
-    secondAddressTable.add(secondCountryField, 2, row++);
-    secondAddressTable.add(postalCodeText,1,row);
-    secondAddressTable.add(secondPostalCodeField,2,row);
-		secondAddressTable.add(Text.getNonBrakingSpace(2), 2, row);
-		if(user.getPrimaryKey().equals(adminUser.getPrimaryKey())) {
-			Link editPostalCodeLink = new Link(iwrb.getLocalizedImageButton("AddressInfoTab.postalcodewindow.add","Add"));
-			editPostalCodeLink.setWindowToOpen(PostalCodeEditorWindow.class);
-			secondAddressTable.setVerticalAlignment(3,row,Table.VERTICAL_ALIGN_MIDDLE);
-			secondAddressTable.add(editPostalCodeLink, 3, row);			
+		table.add(this.provinceText, 2, row);
+		table.add(Text.getBreak(), 2, row);
+		table.add(this.provinceField, 2, row++);
+
+    table.add(postalCodeText,1,row);
+		table.add(Text.getBreak(), 1, row);
+    table.add(postalCodeField, 1, row);
+
+    int column = 2;
+		if (useCommune) {
+			table.add(this.communeText, column, row);
+			table.add(Text.getBreak(), column, row);
+			table.add(this.communeField, column, row);
+			column = 1;
 		}
 
-    //    fpane.add(secondAddressTable);
+		table.add(this.countryText, column, row);
+		table.add(Text.getBreak(), column, row);
+		table.add(this.countryField, column, row++);
+		
+		row++;
+		table.add(coAddressText, 1, row++);
 
-    Table secondAddressTable2 = new Table(4, 1);
+    //CO address
+    table.add(this.streetText, 1, row);
+		table.add(Text.getBreak(), 1, row);
+    table.add(this.secondStreetField, 1, row);    
 
-    secondAddressTable2.setWidth("100%");
-    secondAddressTable2.setCellpadding(3);
-    secondAddressTable2.setCellspacing(3);
-    secondAddressTable2.setWidth(1, "70");
-    secondAddressTable2.setWidth(2, "70");
-    secondAddressTable2.setWidth(3, "70");
+    table.add(this.poBoxText, 2, row);
+		table.add(Text.getBreak(), 2, row);
+    table.add(this.secondPoBoxField, 2, row++);
 
-    secondAddressTable2.add(this.streetText, 1, 1);
-    secondAddressTable2.add(this.secondStreetField, 2, 1);    
-    secondAddressTable2.add(this.poBoxText, 3, 1);
-    secondAddressTable2.add(this.secondPoBoxField, 4, 1);
+    table.add(this.cityText, 1, row);
+		table.add(Text.getBreak(), 1, row);
+    table.add(secondCityField, 1, row);
 
-    add(coAddressText);
-    this.add(secondAddressTable2);
-    this.add(secondAddressTable);
-	}
+    table.add(this.provinceText, 2,row);
+		table.add(Text.getBreak(), 2, row);
+    table.add(secondProvinceField, 2, row++);
+    
+		table.add(postalCodeText,1,row);
+		table.add(Text.getBreak(), 1, row);
+
+		Table postalTable = new Table();
+		postalTable.setCellpaddingAndCellspacing(0);
+		postalTable.add(secondPostalCodeField,1,1);
+		table.add(postalTable, 1, row);
+		if(user.getPrimaryKey().equals(adminUser.getPrimaryKey())) {
+			GenericButton addPostal = new GenericButton("add_postal", iwrb.getLocalizedString("AddressInfoTab.postalcodewindow.add","Add"));
+			addPostal.setWindowToOpen(PostalCodeEditorWindow.class);
+			StyledButton button = new StyledButton(addPostal);
+			
+			postalTable.setWidth(2, 3);
+			postalTable.add(button, 3, 1);
+		}
+		
+    column = 2;
+    if (useCommune) {
+	    	table.add(communeText, column, row);
+	  		table.add(Text.getBreak(), column, row);
+	    	table.add(secondCommuneField, column, row);
+	    	column = 1;
+    }
+    
+    table.add(this.countryText, column, row);
+		table.add(Text.getBreak(), column, row);
+    table.add(secondCountryField, column, row++);
+  	}
 
 	public void main(IWContext iwc) {
 		getPanel().addHelpButton(getHelpButton());		
