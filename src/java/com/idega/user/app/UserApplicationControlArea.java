@@ -230,16 +230,48 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	 * 
 	 * @return
 	 */
-	public Layer displayTable(IWContext iwc) {
+	public Table displayTable(IWContext iwc) {
+		Table table = new Table(1, 2);
+		table.setCellpadding(7);
+		table.setCellpaddingTop(1, 2, 0);
+		table.setWidth(Table.HUNDRED_PERCENT);
+		table.setHeight(Table.HUNDRED_PERCENT);
+		table.setHeight(1, Table.HUNDRED_PERCENT);
+		table.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_CENTER);
+		
+		Table borderTable = new Table(1, 1);
+		borderTable.setCellpadding(0);
+		borderTable.setCellspacing(0);
+		borderTable.setWidth(Table.HUNDRED_PERCENT);
+		borderTable.setHeight(Table.HUNDRED_PERCENT);
+		borderTable.setCellBorder(1, 1, 1, "#cccccc", "solid");
+		borderTable.setColor(1, 1, "#FFFFFF");
+		
 		Layer layer = new Layer(Layer.DIV);
-		layer.setWidth(214);
-		layer.setHeight(459);
-		layer.setStyleClass("main");
-		layer.setPadding(4);
-		layer.add(groupTree);
+		layer.setWidth(208);
+		layer.setHeight("100%");
+		//layer.setStyleAttribute("border", "1px #cccccc solid");
+		//layer.setStyleAttribute("background-color", "#ffffff");
+		//layer.setStyleClass("main");
+		//layer.setPadding(0);
+		//layer.add(groupTree);
 		layer.setOverflow("auto");
+		borderTable.add(layer);
+		
+		Table treeTable = new Table(1, 1);
+		treeTable.setCellpadding(4);
+		treeTable.add(groupTree, 1, 1);
+		treeTable.setWidth(Table.HUNDRED_PERCENT);
+		treeTable.setHeight(Table.HUNDRED_PERCENT);
+		treeTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
+		layer.add(treeTable);
+		
+		table.add(borderTable, 1, 1);
+		
+		Image image = getBundle(iwc).getImage("banner.gif");
+		table.add(image, 1, 2);
 
-		return layer;
+		return table;
 	}
 
 	public Table welcomeMessageTable(IWContext iwc) {
@@ -281,13 +313,12 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
 		Table table = new Table(1, 2);
 		table.setCellpaddingAndCellspacing(0);
-		table.setWidth(230);
+		table.setWidth(Table.HUNDRED_PERCENT);
 		table.setHeight(Table.HUNDRED_PERCENT);
 		table.setHeight(1, 1, 42);
 		table.setBackgroundImage(1, 1, iwb.getImage("bgtile.gif"));
 		table.setHeight(1, 2, Table.HUNDRED_PERCENT);
 		table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
-		table.setCellpadding(1, 2, 7);
 		table.setCellpaddingLeft(1, 1, 7);
 		table.setStyleClass(1, 2, "back");
 		
