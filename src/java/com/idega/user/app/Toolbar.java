@@ -3,7 +3,7 @@ package com.idega.user.app;
 import java.util.List;
 import java.util.Vector;
 
-import com.idega.block.datareport.presentation.ReportLayoutChooser;
+import com.idega.block.datareport.presentation.ReportOverview;
 import com.idega.block.importer.presentation.Importer;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
@@ -154,7 +154,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
     add(toolbarTable);
 
-    Table toolbar1 = new Table(11,1);
+    Table toolbar1 = new Table(10,1);
     toolbar1.setStyleClass(menuTableStyle);
 		Image menuTile = iwb.getImage("menu_tile.gif");
 		toolbar1.setBackgroundImage(menuTile);
@@ -381,19 +381,19 @@ public class Toolbar extends Page implements IWBrowserView {
 		}
     
 
-    if(showReportGenerator){
-      Table button7 = new Table(2,1);
-      button7.setCellpadding(0);
-  //    Image iconExchange = iwb.getImage("isi_new_group.gif");
-  //    button7.add(iconExchange,1,1);
-      Text text7 = new Text(iwrb.getLocalizedString("button.report_query_builder","Query builder"));
-      text7.setFontFace(Text.FONT_FACE_VERDANA);
-      text7.setFontSize(Text.FONT_SIZE_7_HTML_1);
-      Link tLink17 = new Link(text7);
-      tLink17.setWindowToOpen(com.idega.user.presentation.QueryBuilderWindow.class);
-      button7.add(tLink17,2,1);
-      toolbar1.add(button7,8,1);
-    }
+//    if(showReportGenerator){
+//      Table button7 = new Table(2,1);
+//      button7.setCellpadding(0);
+//  //    Image iconExchange = iwb.getImage("isi_new_group.gif");
+//  //    button7.add(iconExchange,1,1);
+//      Text text7 = new Text(iwrb.getLocalizedString("button.report_query_builder","Query builder"));
+//      text7.setFontFace(Text.FONT_FACE_VERDANA);
+//      text7.setFontSize(Text.FONT_SIZE_7_HTML_1);
+//      Link tLink17 = new Link(text7);
+//      tLink17.setWindowToOpen(com.idega.user.presentation.QueryBuilderWindow.class);
+//      button7.add(tLink17,2,1);
+//      toolbar1.add(button7,8,1);
+//    }
     
     if(showReportGenerator){
       Table button8 = new Table(2,1);
@@ -408,13 +408,13 @@ public class Toolbar extends Page implements IWBrowserView {
       ICFile queryFolder = lookUpFile(QUERY_FOLDER_NAME);
       ICFile layoutFolder = lookUpFile(LAYOUT_FOLDER_NAME);
       if (queryFolder != null)  {
-        tLink18.addParameter(ReportLayoutChooser.SET_ID_OF_QUERY_FOLDER_KEY, queryFolder.getPrimaryKey().toString());
+        tLink18.addParameter(ReportOverview.SET_ID_OF_QUERY_FOLDER_KEY, queryFolder.getPrimaryKey().toString());
       }
       if (layoutFolder != null) {
-        tLink18.addParameter(ReportLayoutChooser.SET_ID_OF_DESIGN_FOLDER_KEY, layoutFolder.getPrimaryKey().toString());
+        tLink18.addParameter(ReportOverview.SET_ID_OF_DESIGN_FOLDER_KEY, layoutFolder.getPrimaryKey().toString());
       }
       button8.add(tLink18,2,1);
-      toolbar1.add(button8,9,1);
+      toolbar1.add(button8,8,1);
     }    
 
     
@@ -441,7 +441,7 @@ public class Toolbar extends Page implements IWBrowserView {
 		 tLink15.setWindowToOpen("is.idega.idegaweb.member.isi.block.reports.presentation.WorkReportWindow");
 		 
 		 button5.add(tLink15,2,1);
-		 toolbar1.add(button5,10,1);
+		 toolbar1.add(button5,9,1);
 	 }
 	 
    // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("reports","Reports"), iwb.getImage("reports.gif"), com.idega.block.reports.presentation.Reporter.class),5,1);
@@ -466,7 +466,7 @@ public class Toolbar extends Page implements IWBrowserView {
    searchForm.setLocation(location,iwc);
    searchForm.setArtificialCompoundId(getCompoundId(),iwc);
    searchForm.setHorizontalAlignment("right");
-   toolbar1.add(button9,11,1);
+   toolbar1.add(button9,10,1);
    toolbarTable.add(searchForm,2,2);
 
 /*
