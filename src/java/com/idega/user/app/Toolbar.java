@@ -269,6 +269,13 @@ public class Toolbar extends Page implements IWBrowserView {
 					menu.addMenuElementFirst("", "");
 					form.add(menu);
 	
+					int handbookFileID = Integer.parseInt(iwb.getProperty("handbook_file_id", "-1"));
+					if (handbookFileID != -1) {
+						SelectOption option = new SelectOption(iwrb.getLocalizedString("toolbar.handbook", "Handbook"));
+						option.setFileToOpenOnSelect(handbookFileID);
+						menu.add(option);
+					}
+					
 					Image iconOtherChanges = iwb.getImage("other_choises.gif");
 					Text menuText =  new Text(iwrb.getLocalizedString("button.other_choices", "Other choices"));
 					menuText.setStyleClass(styledText);
