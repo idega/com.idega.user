@@ -13,9 +13,11 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.data.Group;
@@ -53,13 +55,13 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	
 	private IWResourceBundle _iwrb = null;
 
-//	private Link addLink;
-//	private IFrame memberofFrame;
+	private Link addLink;
+	private IFrame memberofFrame;
 	public static final String PARAMETER_GROUP_ID = "ic_group_id";
 	public static final String SESSIONADDRESS_GROUPS_DIRECTLY_RELATED = "ic_group_ic_group_direct_GGIT";
 	public static final String SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED = "ic_group_ic_group_not_direct_GGIT";
 
-//	protected Text memberof;
+	protected Text memberof;
 
 	public GeneralGroupInfoTab() {
 		super();
@@ -67,8 +69,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	}
 
 	public void initFieldContents() {
-//		addLink.setWindowToOpen(GroupGroupSetter.class);
-//		addLink.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID, getGroupId());
+		addLink.setWindowToOpen(GroupGroupSetter.class);
+		addLink.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID, getGroupId());
 
 		try {
 			Group group = (Group) (((GroupHome) com.idega.data.IDOLookup.getHome(Group.class)).findByPrimaryKey(new Integer(getGroupId())));
@@ -137,12 +139,12 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		
 		deletegroupField = new CheckBox(deletegroupFieldName,"true");
 
-//		memberofFrame = new IFrame("ic_user_memberof_ic_group", GroupList.class);
-//		memberofFrame.setHeight(150);
-//		memberofFrame.setWidth(367);
-//		memberofFrame.setScrolling(IFrame.SCROLLING_YES);
+		memberofFrame = new IFrame("ic_user_memberof_ic_group", GroupList.class);
+		memberofFrame.setHeight(150);
+		memberofFrame.setWidth(367);
+		memberofFrame.setScrolling(IFrame.SCROLLING_YES);
 //
-//		addLink = new Link("  Add/Remove  ");
+		addLink = new Link("  Add/Remove  ");
 	}
 	
 	public void initializeTexts() {
@@ -161,8 +163,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		deletegroupText = getTextObject();
 		deletegroupText.setText("Delete group:");
 
-//		memberof = getTextObject();
-//		memberof.setText("Member of:");
+		memberof = getTextObject();
+		memberof.setText("Member of:");
 	}
 	
 	public boolean store(IWContext iwc) {
@@ -195,7 +197,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	}
 	
 	public void lineUpFields() {
-		resize(1, 5);
+		resize(1, 8);
 		setCellpadding(0);
 		setCellspacing(0);
 
@@ -239,8 +241,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		descriptionTable.add(descriptionField, 1, 2);
 		add(descriptionTable, 1, 5);
 
-//		add(memberof, 1, 4);
-//		add(memberofFrame, 1, 5);
+		add(memberof, 1, 6);
+		add(memberofFrame, 1, 7);
 
 //		setHeight(3, "30");
 		setHeight(1, super.rowHeight);
@@ -249,7 +251,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		setHeight(4, super.rowHeight);
 //		setHeight(6, super.rowHeight);
 
-//		add(addLink, 1, 6);
+		add(addLink, 1, 8);
 	}
 
 	public boolean collect(IWContext iwc) {

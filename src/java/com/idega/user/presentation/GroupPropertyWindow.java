@@ -17,7 +17,6 @@ import com.idega.user.data.User;
 import com.idega.user.data.UserGroupPlugIn;
 import com.idega.util.IWColor;
 
-
 /**
  * Title:        User
  * Description:
@@ -29,72 +28,63 @@ import com.idega.util.IWColor;
 
 public class GroupPropertyWindow extends TabbedPropertyWindow {
 
-  public static final String PARAMETERSTRING_GROUP_ID = "ic_group_id";
+	public static final String PARAMETERSTRING_GROUP_ID = "ic_group_id";
 
+	public GroupPropertyWindow() {
+		super();
+		setBackgroundColor(new IWColor(207, 208, 210));
+	}
 
-  public GroupPropertyWindow(){
-    super();
-    this.setBackgroundColor(new IWColor(207,208,210));
-  }
+	public String getSessionAddressString() {
+		return "ic_group_property_window";
+	}
 
-  public String getSessionAddressString(){
-    return "ic_group_property_window";
-  }
+	public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
+		try {
+			int count = 0;
+			panel.addTab(new GeneralGroupInfoTab(), count++, iwc);
+			//panel.addTab(new GroupMembershipTab(), 1, iwc);
+			//  panel.addTab(new ExtendedGroupMembershipTab(),2,iwc);
 
-  public void initializePanel( IWContext iwc, TabbedPropertyPanel panel){
-  	
-  	try{
-  		int count = 0;
-    	panel.addTab(new GeneralGroupInfoTab(),count++,iwc);
-//    panel.addTab(new GroupMembershipTab(),1,iwc);
-    //panel.addTab(new ExtendedGroupMembershipTab(),2,iwc);
-    
-//	temp shit
+			//	temp shit
 			String id = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
 			int groupId = Integer.parseInt(id);
 			Group group = getGroupBusiness(iwc).getGroupByGroupID(groupId);
-   
+
 			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForGroupTypeString(group.getGroupType());
 			Iterator iter = plugins.iterator();
-	  
+
 			while (iter.hasNext()) {
 				UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
-			
-				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness)
-						 com.idega.business.IBOLookup.getServiceInstance(iwc,Class.forName(element.getBusinessICObject().getClassName()));
-				
+
+				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, Class.forName(element.getBusinessICObject().getClassName()));
+
 				List tabs = pluginBiz.getGroupPropertiesTabs(group);
 				Iterator tab = tabs.iterator();
 				while (tab.hasNext()) {
 					UserGroupTab el = (UserGroupTab) tab.next();
-					panel.addTab(el,count++,iwc);
+					panel.addTab(el, count++, iwc);
 				}
-			
 			}
-		
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
-    
+	}
 
-    
-  }
-
-  public void main(IWContext iwc) throws Exception {
-    String id = iwc.getParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID);
-    if(id != null){
-      int newId = Integer.parseInt(id);
-      PresentationObject[] obj = this.getAddedTabs();
-      for (int i = 0; i < obj.length; i++) {
-        PresentationObject mo = obj[i];
-        if( mo instanceof UserGroupTab && ((UserGroupTab)mo).getGroupId() != newId){
-          ((UserGroupTab)mo).setGroupId(newId);
-        }
-      }
-    }
-  }
-
-
+	public void main(IWContext iwc) throws Exception {
+		String id = iwc.getParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID);
+		if (id != null) {
+			int newId = Integer.parseInt(id);
+			PresentationObject[] obj = this.getAddedTabs();
+			for (int i = 0; i < obj.length; i++) {
+				PresentationObject mo = obj[i];
+				if (mo instanceof UserGroupTab && ((UserGroupTab) mo).getGroupId() != newId) {
+					((UserGroupTab) mo).setGroupId(newId);
+				}
+			}
+		}
+	}
 
 	/**
 	 * @see com.idega.presentation.TabbedPropertyWindow#disposeOfPanel(com.idega.presentation.IWContext)
@@ -103,9 +93,7 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 		return iwc.isParameterSet(PARAMETERSTRING_GROUP_ID);
 	}
 
-	public GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws RemoteException{
-		return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac,GroupBusiness.class);
+	public GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws RemoteException {
+		return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
 	}
-  
-
 }
