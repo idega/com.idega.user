@@ -143,10 +143,10 @@ private Image helpImage = null;
 	
 	public void addTitle(String title) {
 		adminTitle = new Text(title+"&nbsp;&nbsp;");
-		adminTitle.setBold();
+//		adminTitle.setBold();
 		adminTitle.setFontColor("#FFFFFF");
-		adminTitle.setFontSize("3");
-		adminTitle.setFontFace(Text.FONT_FACE_ARIAL);
+//		adminTitle.setFontSize("3");
+//		adminTitle.setFontFace(Text.FONT_FACE_ARIAL);
 		super.setTitle(title);
 		titleIsSet = true;
 
