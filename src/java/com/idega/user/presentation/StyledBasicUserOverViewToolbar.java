@@ -227,6 +227,21 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                     }
                     toolbar1.setAlignment(9,1,"center");
                 }
+                if(showISStuff && (selectedGroup.getGroupType().equals("iwma_run"))) {
+                  Table t = new Table();
+                  t.setStyleClass(styleButton);
+                  t.setAlignment(1,1,Table.HORIZONTAL_ALIGN_CENTER);
+                  t.setCellpadding(1);
+                  Text text = new Text(iwrb.getLocalizedString("generate_year","Generate Year Group"));
+                  Link l = new Link(text);
+                  l.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
+                  l.setWindowToOpen("is.idega.idegaweb.marathon.presentation.CreateYearWindow");
+                  l.setStyleClass(styledLinkClass);
+                  
+                  t.add(l,1,1);
+                  toolbar1.add(t,10,1);
+                  toolbar1.setAlignment(10,1,Table.HORIZONTAL_ALIGN_CENTER);
+                }
                 
                 if (showISStuff) {
                     Table button4 = new Table(1, 1);
