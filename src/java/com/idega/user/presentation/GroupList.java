@@ -59,8 +59,14 @@ public class GroupList extends Page {
           iter = direct.iterator();
           while (iter.hasNext()) {
             Object item = iter.next();
-            table.add("D",1,row);
-            table.add(((Group)item).getName(),3,row++);
+            if( item !=null ){
+	            table.add("D",1,row);
+							table.add(((Group)item).getName(),3,row++);
+            }
+            else{
+            	System.err.println("ITEM IS NULL in grouplist");
+            }
+            
           }
         }
       }
