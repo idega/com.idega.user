@@ -14,7 +14,6 @@ import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.UserGroupPlugIn;
-import com.idega.util.IWColor;
 
 /**
  * Title:        User
