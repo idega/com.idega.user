@@ -10,7 +10,9 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.PrintButton;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.app.Toolbar;
+import com.idega.user.business.UserPinLookupToGroupImportHandler;
 import com.idega.user.data.Group;
 import com.idega.user.event.SelectGroupEvent;
 import com.idega.util.IWColor;
@@ -150,8 +152,9 @@ public class BasicUserOverViewToolbar extends Toolbar {
 
 					tLink14.setParameter(Importer.PARAMETER_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
 					tLink14.setParameter(Importer.PARAMETER_IMPORT_FILE, ColumnSeparatedImportFile.class.getName());
-					//TODO: Eiki make plugin based
-					tLink14.setParameter(Importer.PARAMETER_IMPORT_HANDLER, "is.idega.idegaweb.member.block.importer.business.PinLookupToGroupImportHandler");
+
+					Class pinLookupToGroupImportHandler = ImplementorRepository.getInstance().getAnyClassImpl(UserPinLookupToGroupImportHandler.class, this.getClass());
+					tLink14.setParameter(Importer.PARAMETER_IMPORT_HANDLER, pinLookupToGroupImportHandler.getName());
 
 					//setja import handler 
 					//setja import file
@@ -186,7 +189,8 @@ public class BasicUserOverViewToolbar extends Toolbar {
 					Link tLink15 = new Link(text4);
 					tLink15.setStyleClass(styledLinkClass);
 					tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
-					tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.UpdateClubDivisionTemplate");
+                    Class updateClubDivisionTemplate = ImplementorRepository.getInstance().getAnyClassImpl(UserUpdateClubDivisionTemplate.class,this.getClass());
+					tLink15.setWindowToOpen(updateClubDivisionTemplate);
 
 					button4.add(tLink15, 2, 1);
 					toolbar1.add(button4, 8, 1);

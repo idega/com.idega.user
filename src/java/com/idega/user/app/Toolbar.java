@@ -14,13 +14,19 @@ import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.block.search.presentation.SearchForm;
 import com.idega.user.block.search.presentation.SearchWindow;
+import com.idega.user.business.UserNationalRegisterFileImportHandler;
+import com.idega.user.data.UserNationalRegisterImportFile;
 import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.CreateUser;
 import com.idega.user.presentation.MassMovingWindow;
 import com.idega.user.presentation.RoleMastersWindow;
+import com.idega.user.presentation.UserClubMemberExchangeWindow;
+import com.idega.user.presentation.UserUpdateClubDivisionTemplate;
+import com.idega.user.presentation.UserWorkReportWindow;
 
 
 /**
@@ -238,8 +244,9 @@ public class Toolbar extends Page implements IWBrowserView {
 //			text5.setFontSize(Text.FONT_SIZE_7_HTML_1);
 			Link tLink15 = new Link(text5);
 			tLink15.setStyleClass(styledLink);
-			//TODO Eiki add somekind of plugin lookup for toolbar items
-			tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.ClubMemberExchangeWindow");
+
+            Class clubMemberExchangeWindow = ImplementorRepository.getInstance().getAnyClassImpl(UserClubMemberExchangeWindow.class,this.getClass());
+			tLink15.setWindowToOpen(clubMemberExchangeWindow);
 			button5.setWidth(2,10);
 			button5.add(tLink15,2,1);
 			toolbar1.add(button5,6,1);
@@ -256,6 +263,8 @@ public class Toolbar extends Page implements IWBrowserView {
 //			text5.setFontSize(Text.FONT_SIZE_7_HTML_1);
 //			Link tLink15 = new Link(text5);
 //			//TODO Eiki add somekind of plugin lookup for toolbar items
+			//do it it in the same way like above
+			
 //			tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.ClubMemberExchangeWindow");
 //			button5.add(tLink15,2,1);
 //			toolbar1.add(button5,6,1);
@@ -313,9 +322,11 @@ public class Toolbar extends Page implements IWBrowserView {
 			Link tLink16 = new Link(text6);
 			tLink16.setStyleClass(styledLink);
 
-			//TODO: Eiki make plugin based
-			tLink16.setParameter(Importer.PARAMETER_IMPORT_FILE, "is.idega.block.nationalregister.data.NationalRegisterImportFile");
-			tLink16.setParameter(Importer.PARAMETER_IMPORT_HANDLER, "is.idega.block.nationalregister.business.NationalRegisterFileImportHandler");
+			ImplementorRepository repository =  ImplementorRepository.getInstance();
+			Class nationalRegisterImportFile = repository.getAnyClassImpl(UserNationalRegisterImportFile.class,this.getClass());
+			Class nationalRegisterFileImportHandler = repository.getAnyClassImpl(UserNationalRegisterFileImportHandler.class, this.getClass());
+			tLink16.setParameter(Importer.PARAMETER_IMPORT_FILE, nationalRegisterImportFile.getName());
+			tLink16.setParameter(Importer.PARAMETER_IMPORT_HANDLER, nationalRegisterFileImportHandler.getName());
 
 			tLink16.setWindowToOpen(Importer.class);
 			button6.setWidth(2,15);
@@ -387,7 +398,8 @@ public class Toolbar extends Page implements IWBrowserView {
 		 
 		 Link tLink15 = new Link(text5);
 		tLink15.setStyleClass(styledLink);
-		 tLink15.setWindowToOpen("is.idega.idegaweb.member.isi.block.reports.presentation.WorkReportWindow");
+		Class workReportWindow = ImplementorRepository.getInstance().getAnyClassImpl(UserWorkReportWindow.class, this.getClass());
+		 tLink15.setWindowToOpen(workReportWindow);
 		 
 		 button5.add(tLink15,2,1);
 		 toolbar1.add(button5,10,1);

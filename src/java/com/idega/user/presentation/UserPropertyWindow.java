@@ -13,6 +13,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.TabbedPropertyPanel;
 import com.idega.presentation.TabbedPropertyWindow;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.User;
@@ -76,8 +77,9 @@ public class UserPropertyWindow extends TabbedPropertyWindow implements CalPrope
 			panel.addTab(new AddressInfoTab(), ++count, iwc);
 			panel.addTab(new UserPhoneTab(), ++count, iwc);
 			panel.addTab(new UserGroupList(), ++count, iwc);
-
-			panel.addTab((PresentationObject) Class.forName("is.idega.idegaweb.member.presentation.UserFamilyTab").newInstance(), ++count, iwc);
+			PresentationObject familyTab = (PresentationObject) ImplementorRepository.getInstance().newInstanceOrNull(FamilyTab.class, this.getClass());
+			panel.addTab(familyTab, ++count, iwc);
+			// if the other tabs are added do it in the same way like above!
 			//panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFinanceTab").newInstance() ,++count,iwc);
 			//panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserHistoryTab").newInstance() ,++count,iwc);
 
