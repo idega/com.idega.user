@@ -107,7 +107,7 @@ public class GroupMembershipTab extends UserGroupTab {
       iwc.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
     }
 
-    Object obju = getGroupBusiness(iwc).getUsersContainedDirectlyRelated(this.getGroupId());
+    Object obju = getGroupBusiness(iwc).getUsersDirectlyRelated(this.getGroupId());
     if(obju != null){
       iwc.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_DIRECTLY_RELATED,obju);
     }else{
@@ -118,7 +118,7 @@ public class GroupMembershipTab extends UserGroupTab {
     /**
      * @todo check
      */
-    Object obu = getGroupBusiness(iwc).getUsersContainedNotDirectlyRelated(this.getGroupId());
+    Object obu = getGroupBusiness(iwc).getUsersNotDirectlyRelated(this.getGroupId());
     if(obu != null){
       iwc.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_NOT_DIRECTLY_RELATED,obu);
     }else{
