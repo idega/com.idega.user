@@ -648,7 +648,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         
         entityBrowser.setEntities(getEntityBrowserIdentifier(ps), users);
         
-        entityBrowser.setDefaultNumberOfRows(Math.min(users.size(), 30));
+        entityBrowser.setDefaultNumberOfRows(30);
         //entityBrowser.setLineColor("#DBDCDF");
         entityBrowser.setWidth(Table.HUNDRED_PERCENT);
         //entityBrowser.setLinesBetween(true);
