@@ -72,17 +72,39 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 
 			toolbar1.add(title, 10, 1);
 		}
+		
+		Group aliasGroup = null;
+		
+		if(selectedGroup != null && selectedGroup.getGroupType().equals("alias")){
+			aliasGroup = selectedGroup.getAlias();	
+		}
 
-		if (selectedGroup != null) {
+		if (selectedGroup != null) {//TODO EIki check alias stuff
+			
+			
 			//user
-			boolean canCreateUserOrGroup = access.hasCreatePermissionFor(selectedGroup, iwc);
-			if (!canCreateUserOrGroup)
-				canCreateUserOrGroup = access.isOwner(selectedGroup, iwc); //is this necessery (eiki)
-			if (!canCreateUserOrGroup)
-				canCreateUserOrGroup = iwc.isSuperAdmin();
+			boolean canCreateUserOrGroup = iwc.isSuperAdmin();
+			
+			if (!canCreateUserOrGroup){
+				if(aliasGroup==null){
+					canCreateUserOrGroup = access.hasCreatePermissionFor(selectedGroup, iwc);
+				}
+				else{
+					canCreateUserOrGroup = access.hasCreatePermissionFor(aliasGroup, iwc);
+				}
+			}
+			if (!canCreateUserOrGroup){
+				if(aliasGroup==null){
+					canCreateUserOrGroup = access.isOwner(selectedGroup, iwc);
+				}
+				else{
+					canCreateUserOrGroup = access.isOwner(aliasGroup, iwc);
+				}
+			}
 
 			if (canCreateUserOrGroup) {
-
+	
+				
 				Table button = new Table(1, 1);
 				button.setStyleClass(styleButton);
 				button.setAlignment(1,1,"center");
@@ -91,22 +113,32 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 				Link tLink11 = new Link(text);
 				tLink11.setStyleClass(styledLinkClass);
 				tLink11.setWindowToOpen(CreateUser.class);
-				if (selectedGroup.getGroupType().equals("alias") && selectedGroup.getAlias() != null)
-					tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getAlias().getPrimaryKey()).toString());
-				else
-					tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
-
+				if (aliasGroup!=null){
+					tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, aliasGroup.getPrimaryKey().toString());
+				}
+				else{
+					tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, selectedGroup.getPrimaryKey().toString());
+				}
+				
 				button.add(tLink11, 1, 1);
 				toolbar1.add(button, 2, 1);
 				toolbar1.setAlignment(2,1,"center");
 			}
 			//group
-			boolean canEditGroup = access.hasEditPermissionFor(selectedGroup, iwc);
-			if (!canEditGroup)
-				canEditGroup = access.isOwner(selectedGroup, iwc); //is this necessery (eiki)
-			if (!canEditGroup)
-				canEditGroup = iwc.isSuperAdmin();
-
+			//TODO ADD ALIAS CHECK AND CHANGE THE LINK TO THE GROUP IF OWNER
+			boolean canEditGroup = iwc.isSuperAdmin();
+			if (!canEditGroup){
+				canEditGroup = access.hasEditPermissionFor(selectedGroup, iwc);
+			}
+			if (!canEditGroup){
+				canEditGroup = access.isOwner(selectedGroup, iwc);
+				
+				if(!canEditGroup && aliasGroup!=null){
+					canEditGroup = access.isOwner(aliasGroup, iwc);
+				}
+			}
+			
+			
 			if (canEditGroup) {
 				//edit group
 				Table button2 = new Table(1, 1);
@@ -159,7 +191,13 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 					Text text3 = new Text(iwrb.getLocalizedString("massregistering", "Bulk registering"));
 					Link tLink14 = new Link(text3);
 					tLink14.setStyleClass(styledLinkClass);
-					tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
+					if(aliasGroup==null){
+						tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, selectedGroup.getPrimaryKey().toString());
+					}
+					else{
+						tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, aliasGroup.getPrimaryKey().toString());
+					}
+					
 					tLink14.setWindowToOpen(MassRegisteringWindow.class);
 
 					button3.add(tLink14, 1, 1);
@@ -175,7 +213,15 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 					Text text4 = new Text(iwrb.getLocalizedString("updatecdiv", "Update template"));
 					Link tLink15 = new Link(text4);
 					tLink15.setStyleClass(styledLinkClass);
-					tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
+					
+					
+					if(aliasGroup==null){
+						tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, selectedGroup.getPrimaryKey().toString());
+					}
+					else{
+						tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, aliasGroup.getPrimaryKey().toString());
+					}
+					
 					tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.UpdateClubDivisionTemplate");
 
 					button4.add(tLink15, 1, 1);
@@ -188,12 +234,23 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 		}
 
 		//permission	
+		//TODO Eiki open up seperate windows for the alias group and the permissions
 		if (selectedGroup != null) {
 
-			boolean isOwner = access.isOwner(selectedGroup, iwc);
+			boolean isOwner = isOwner = iwc.isSuperAdmin();
+			
+			
+			if (!isOwner){
+				
+				isOwner = access.isOwner(selectedGroup, iwc);
 
-			if (!isOwner)
-				isOwner = iwc.isSuperAdmin();
+				if(!isOwner && aliasGroup!=null){
+					isOwner = access.isOwner(aliasGroup, iwc);
+				}
+				
+				
+			}
+				
 
 			if (isOwner) {
 				Table button4 = new Table(1, 1);
