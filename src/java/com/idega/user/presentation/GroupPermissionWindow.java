@@ -65,7 +65,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 
 	
 	protected int width = 640;
-	protected int height = 480;
+	protected int height = 550;
 	
 	private String selectedGroupId = null;
 	
@@ -311,7 +311,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 								active = perm.getPermissionValue();
 								
 								if( active ){							
-									Map permissionMap = getPermissionMapFromSession(iwc,columnName);
+									Map permissionMap = getPermissionMapFromSession(iwc,columnName);//TODO must be done outside of loop
 									permissionMap.put(groupId, perm);
 								}
 								
