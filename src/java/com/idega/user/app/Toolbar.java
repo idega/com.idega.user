@@ -3,7 +3,11 @@ package com.idega.user.app;
 import java.util.List;
 import java.util.Vector;
 
+import com.idega.block.datareport.presentation.ReportLayoutChooser;
 import com.idega.block.importer.presentation.Importer;
+import com.idega.core.data.ICFile;
+import com.idega.core.data.ICFileHome;
+import com.idega.data.IDOLookup;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWLocation;
@@ -35,6 +39,9 @@ import com.idega.util.IWColor;
  */
 
 public class Toolbar extends Page implements IWBrowserView {
+  
+  public static final String QUERY_FOLDER_NAME = "query";
+  public static final String LAYOUT_FOLDER_NAME = "layout";
 
 	protected String title;
 	protected IWBundle iwb;
@@ -130,7 +137,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
     add(toolbarTable);
 
-    Table toolbar1 = new Table(9,1);
+    Table toolbar1 = new Table(10,1);
     toolbar1.setColor(color);
     toolbar1.setCellpadding(0);
     toolbar1.setCellspacing(0);
@@ -248,7 +255,7 @@ public class Toolbar extends Page implements IWBrowserView {
       button7.setCellpadding(0);
       Image iconExchange = iwb.getImage("new_group.gif");
       button7.add(iconExchange,1,1);
-      Text text7 = new Text(iwrb.getLocalizedString("button.report_query_builder","Report builder"));
+      Text text7 = new Text(iwrb.getLocalizedString("button.report_query_builder","Query builder"));
       text7.setFontFace(Text.FONT_FACE_VERDANA);
       text7.setFontSize(Text.FONT_SIZE_7_HTML_1);
       Link tLink17 = new Link(text7);
@@ -256,6 +263,28 @@ public class Toolbar extends Page implements IWBrowserView {
       button7.add(tLink17,2,1);
       toolbar1.add(button7,8,1);
     }
+    
+    if(showISStuff){
+      Table button8 = new Table(2,1);
+      button8.setCellpadding(0);
+      Image iconExchange = iwb.getImage("new_group.gif");
+      button8.add(iconExchange,1,1);
+      Text text8 = new Text(iwrb.getLocalizedString("button.report_report_builder","Report builder"));
+      text8.setFontFace(Text.FONT_FACE_VERDANA);
+      text8.setFontSize(Text.FONT_SIZE_7_HTML_1);
+      Link tLink18 = new Link(text8);
+      tLink18.setWindowToOpen("com.idega.block.datareport.presentation.ReportLayoutChooserWindow");
+      ICFile queryFolder = lookUpFile(QUERY_FOLDER_NAME);
+      ICFile layoutFolder = lookUpFile(LAYOUT_FOLDER_NAME);
+      if (queryFolder != null)  {
+        tLink18.addParameter(ReportLayoutChooser.SET_ID_OF_QUERY_FOLDER_KEY, queryFolder.getID());
+      }
+      if (layoutFolder != null) {
+        tLink18.addParameter(ReportLayoutChooser.SET_ID_OF_DESIGN_FOLDER_KEY, layoutFolder.getID());
+      }
+      button8.add(tLink18,2,1);
+      toolbar1.add(button8,9,1);
+    }    
 
     
    //finance
@@ -281,7 +310,7 @@ public class Toolbar extends Page implements IWBrowserView {
 		 tLink15.setWindowToOpen("is.idega.idegaweb.member.isi.block.reports.presentation.WorkReportWindow");
 		 
 		 button5.add(tLink15,2,1);
-		 toolbar1.add(button5,9,1);
+		 toolbar1.add(button5,10,1);
 	 }
 	 
    // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("reports","Reports"), iwb.getImage("reports.gif"), com.idega.block.reports.presentation.Reporter.class),5,1);
@@ -356,5 +385,17 @@ public class Toolbar extends Page implements IWBrowserView {
 	public void setUserApplicationMainAreaStateId(String string) {
 		userApplicationMainAreaStateId = string;
 	}
+
+  private ICFile lookUpFile(String name)  {
+    try {
+      ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
+      ICFile file = (ICFile) home.findByFileName(name);
+      return file;
+    }
+    // FinderException, RemoteException
+    catch(Exception ex){
+      return null;
+    }
+  }     
 
 }
