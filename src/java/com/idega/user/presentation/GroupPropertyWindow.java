@@ -28,7 +28,7 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 
   public void initializePanel( IWContext iwc, TabbedPropertyPanel panel){
     panel.addTab(new GeneralGroupInfoTab(),0,iwc);
-    panel.addTab(new GroupMembershipTab(),1,iwc);
+//    panel.addTab(new GroupMembershipTab(),1,iwc);
     //panel.addTab(new ExtendedGroupMembershipTab(),2,iwc);
   }
 

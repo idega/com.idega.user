@@ -54,7 +54,7 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 	    return "com.idega.user";
 	}
 	public void main(IWContext iwc) throws Exception {
-
+		this.empty();
 		iwb = getBundle(iwc);
 
 		Form form = new Form();

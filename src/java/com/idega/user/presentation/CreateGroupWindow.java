@@ -1,9 +1,12 @@
 package com.idega.user.presentation;
 
-import com.idega.idegaweb.*;
-import com.idega.user.app.ToolbarElement;
-import com.idega.user.app.UserApplication;
-import com.idega.presentation.*;
+import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.Iterator;
+
+import javax.ejb.EJBException;
+import javax.swing.event.ChangeListener;
+
 import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBDomain;
 import com.idega.builder.presentation.IBPageChooser;
@@ -12,28 +15,32 @@ import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.idegaweb.presentation.IWAdminWindow;
+import com.idega.presentation.Frame;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.Layer;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.StatefullPresentation;
+import com.idega.presentation.StatefullPresentationImplHandler;
+import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
-import com.idega.user.business.GroupBusiness;
-import com.idega.user.data.Group;
-import com.idega.user.data.GroupDomainRelationType;
-import com.idega.user.data.GroupDomainRelationTypeHome;
+import com.idega.user.app.ToolbarElement;
+import com.idega.user.app.UserApplication;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.GroupTypeHome;
 import com.idega.user.event.CreateGroupEvent;
-
-import java.rmi.RemoteException;
-import java.util.Collection;
-import java.util.Iterator;
-
-import javax.ejb.EJBException;
-import javax.swing.event.ChangeListener;
 
 /**
  *
