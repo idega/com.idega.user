@@ -142,7 +142,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 //    this.debugEventListanerList(iwc);
 //    groupTree.debugEventListanerList(iwc);
 
-    this.getParentPage().setBackgroundColor(IWColor.getHexColorString(0,0,0));
+    //this.getParentPage().setBackgroundColor(IWColor.getHexColorString(Color.white));
 
   }
 

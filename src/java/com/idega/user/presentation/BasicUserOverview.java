@@ -20,6 +20,8 @@ import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.Window;
 import com.idega.user.business.UserBusiness;
 import com.idega.util.IWColor;
+
+import java.awt.ActiveEvent;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -123,7 +125,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 //      userTable = new Table(3,(users.size()>16)?users.size():16);
       userTable.setCellspacing(0);
 //      userTable.setHorizontalZebraColored("D8D4CD","C3BEB5");
-      userTable.setHorizontalZebraColored(IWColor.getHexColorString(0,0,0),IWColor.getHexColorString(246,246,247));
+      userTable.setHorizontalZebraColored("#FFFFFF",IWColor.getHexColorString(246,246,247));
       userTable.setWidth("100%");
       for (int i = 1; i <= userTable.getRows() ; i++) {
         userTable.setHeight(i,"20");
