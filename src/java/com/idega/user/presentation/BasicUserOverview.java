@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import com.idega.event.IWEventModel;
 import com.idega.presentation.ui.*;
 import com.idega.business.IWEventListener;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
@@ -33,7 +34,7 @@ public class BasicUserOverview extends Page implements IWBrowserView {
 
   private static final String PARAMETER_DELETE_USER =  "delte_ic_user";
   private String _controlTarget = null;
-  private Parameter _controlParameters[] = new Parameter[3];
+  private IWEventModel _contolEvent = null;
 
   public BasicUserOverview(IWContext iwc) throws Exception {
     //this.empty();
@@ -44,21 +45,14 @@ public class BasicUserOverview extends Page implements IWBrowserView {
   }
 
 
+  public void setControlEventModel(IWEventModel model){
+    _contolEvent = model;
+  }
+
   public IWEventListener getListener(){return null;}
 
   public void setControlTarget(String controlTarget){
     _controlTarget = controlTarget;
-  }
-
-  public void setApplicationParameter(Parameter prm){
-    _controlParameters[0] = prm;
-  }
-  public void setSourceParamenter(Parameter prm){
-    _controlParameters[1] = prm;
-  }
-
-  public void setControlFrameParameter(Parameter prm){
-    _controlParameters[2] = prm;
   }
 
 

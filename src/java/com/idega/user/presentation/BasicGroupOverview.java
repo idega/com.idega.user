@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import com.idega.event.*;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.presentation.ui.*;
 import com.idega.presentation.*;
@@ -33,28 +34,21 @@ public class BasicGroupOverview extends Page implements IWBrowserView {
 
   private static final String PARAMETER_DELETE_GROUP =  "delete_ic_group";
   private String _controlTarget = null;
-  private Parameter _controlParameters[] = new Parameter[3];
   int counter = 0;
+  private IWEventModel _contolEvent = null;
 
   public BasicGroupOverview(){
     super();
+  }
+
+  public void setControlEventModel(IWEventModel model){
+    _contolEvent = model;
   }
 
   public IWEventListener getListener(){return null;}
 
   public void setControlTarget(String controlTarget){
     _controlTarget = controlTarget;
-  }
-
-  public void setApplicationParameter(Parameter prm){
-    _controlParameters[0] = prm;
-  }
-  public void setSourceParamenter(Parameter prm){
-    _controlParameters[1] = prm;
-  }
-
-  public void setControlFrameParameter(Parameter prm){
-    _controlParameters[2] = prm;
   }
 
   public Table getGroups(IWContext iwc) throws Exception{
@@ -112,8 +106,8 @@ public class BasicGroupOverview extends Page implements IWBrowserView {
     if(_controlTarget != null ){
       Link link = new Link("rugl");
       //link.setURL("/",true,true);
-      for (int i = 0; i < _controlParameters.length; i++) {
-        link.addParameter(_controlParameters[i]);
+      if(_contolEvent != null){
+        link.addEventModel(_contolEvent);
       }
       link.addParameter("rugl",counter++);
       link.setTarget(_controlTarget);
