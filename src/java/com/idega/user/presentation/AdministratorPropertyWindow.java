@@ -14,13 +14,15 @@ import com.idega.presentation.PresentationObject;
  */
 
 public class AdministratorPropertyWindow extends UserPropertyWindow{
+  
+  public final String SESSION_ADDRESS = "ic_admin_property_window";
 
   public AdministratorPropertyWindow(){
     super();
   }
 
   public String getSessionAddressString(){
-    return "ic_admin_property_window";
+    return SESSION_ADDRESS;
   }
 
   public void initializePanel( IWContext iwc, TabbedPropertyPanel panel){

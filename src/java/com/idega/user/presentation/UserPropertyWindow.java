@@ -28,6 +28,8 @@ import com.idega.util.IWColor;
 public class UserPropertyWindow extends TabbedPropertyWindow{
 
   public static final String PARAMETERSTRING_USER_ID = "ic_user_id";
+  
+  public static final String SESSION_ADDRESS = "ic_user_property_window";  
 
   public UserPropertyWindow(){
     super();
@@ -35,7 +37,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
   }
 
   public String getSessionAddressString(){
-    return "ic_user_property_window";
+    return SESSION_ADDRESS;
   }
 
   public void initializePanel( IWContext iwc, TabbedPropertyPanel panel){

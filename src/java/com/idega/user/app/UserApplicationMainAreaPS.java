@@ -17,6 +17,7 @@ import com.idega.user.event.SelectGroupEvent;
 import com.idega.user.presentation.CreateGroupWindowPS;
 import com.idega.user.presentation.DeleteGroupConfirmWindowPS;
 import com.idega.user.presentation.GroupPropertyWindow;
+import com.idega.user.presentation.UserPropertyWindow;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -158,6 +159,7 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
     if (object instanceof DeleteGroupConfirmWindowPS || object instanceof CreateGroupWindowPS) { 
       // refresh
       setOnLoad("parent.frames['iwb_main_left'].location.reload()");
+      setOnLoad("parent.frames['iwb_main'].location.reload()");
     }
     // do not use "else if" !
     if (object instanceof CreateGroupWindowPS) {
@@ -170,10 +172,16 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
       setOnLoad(gotoLink.getWindowToOpenCallingScript(eventContext));
     }
     if (object instanceof IWTabbedPane) {
-        IWTabbedPane pane = (IWTabbedPane) object;
-        String attribute = pane.getAttributeString();
-        if (attribute.indexOf("group_property_window") > -1)
-          setOnLoad("parent.frames['iwb_main'].location.reload()");
+      IWTabbedPane pane = (IWTabbedPane) object;
+      String attribute = pane.getAttributeString();
+      String userPropertyString = UserPropertyWindow.SESSION_ADDRESS;
+      String groupPropertyString = GroupPropertyWindow.SESSION_ADDRESS;
+      boolean groupProperty = (attribute.indexOf(groupPropertyString) > -1);
+      boolean userProperty = (attribute.indexOf(userPropertyString) > -1);
+      if (groupProperty || userProperty) 
+        setOnLoad("parent.frames['iwb_main'].location.reload()");
+      if (groupProperty)
+        setOnLoad("parent.frames['iwb_main_left'].location.reload()"); 
     }
   }
 

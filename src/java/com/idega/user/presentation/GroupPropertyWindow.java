@@ -29,15 +29,16 @@ import com.idega.util.IWColor;
 public class GroupPropertyWindow extends TabbedPropertyWindow {
 
 	public static final String PARAMETERSTRING_GROUP_ID = "ic_group_id";
-
+  public static final String SESSION_ADDRESS = "ic_group_property_window";
+  
 	public GroupPropertyWindow() {
 		super();
 		setBackgroundColor(new IWColor(207, 208, 210));
 	}
-
-	public String getSessionAddressString() {
-		return "ic_group_property_window";
-	}
+  
+  public String getSessionAddressString() {
+    return SESSION_ADDRESS;
+  }
 
 	public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
 		try {
