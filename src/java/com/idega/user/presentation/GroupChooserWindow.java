@@ -15,7 +15,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.AbstractChooser;
-import com.idega.presentation.ui.AbstractChooserWindow;
+import com.idega.presentation.ui.StyledAbstractChooserWindow;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
@@ -30,7 +30,7 @@ import com.idega.user.data.GroupType;
  * @version 1.0
  */
 
-public class GroupChooserWindow extends AbstractChooserWindow {
+public class GroupChooserWindow extends StyledAbstractChooserWindow {
 
 
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
@@ -68,7 +68,7 @@ public class GroupChooserWindow extends AbstractChooserWindow {
 
     Text text = new Text(iwrb.getLocalizedString("select_group","Select group")+":");
       text.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-    add(text);
+    add(text,iwc);
 
     try {
 //      TreeViewer viewer = com.idega.builder.business.IBPageHelper.getInstance().getPageTreeViewer(iwc);
@@ -111,7 +111,7 @@ public class GroupChooserWindow extends AbstractChooserWindow {
       viewer.setLocation((IWLocation)this.getLocation().clone());
       viewer.getLocation().setSubID(1);
 
-      add(viewer);
+      add(viewer,iwc);
 
       viewer.setToMaintainParameter(SCRIPT_PREFIX_PARAMETER,iwc);
       viewer.setToMaintainParameter(SCRIPT_SUFFIX_PARAMETER,iwc);
