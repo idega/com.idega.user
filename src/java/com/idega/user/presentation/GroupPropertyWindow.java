@@ -4,17 +4,14 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.PresentationObject;
 import com.idega.presentation.TabbedPropertyPanel;
 import com.idega.presentation.TabbedPropertyWindow;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.Group;
-import com.idega.user.data.UserGroupPlugIn;
 
 /**
  * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
@@ -61,28 +58,39 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 
 	public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
 		try {
+			int parentGroupId = -1;
+			String groupIdString = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
+			String parentGroupIdString = iwc.getParameter(PARENT_GROUP_ID_KEY);
+			if(parentGroupIdString!=null){
+				parentGroupId = Integer.parseInt(parentGroupIdString);
+			}
+			
+			int groupId = Integer.parseInt(groupIdString);
+			Group group = getGroupBusiness(iwc).getGroupByGroupID(groupId);
 			int count = 0;
+			
+			//always add this tab
 			GeneralGroupInfoTab info = new GeneralGroupInfoTab();
 			info.setPanel(panel);
-			panel.addTab(info, count++, iwc);
-
-			//	temp shit
-			String id = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
-			int groupId = Integer.parseInt(id);
-			Group group = getGroupBusiness(iwc).getGroupByGroupID(groupId);
-
+			info.setGroupIds(groupId, parentGroupId);
+			panel.addTab(info, count, iwc);
+			
+			//METADATA TAB, only show if admin
+			if(iwc.isSuperAdmin()){
+				GenericMetaDataTab metadataTab = new GenericMetaDataTab(group);
+				metadataTab.setPanel(panel);
+				panel.addTab(metadataTab,++count,iwc);
+			}
+			
 			IWResourceBundle iwrb = getResourceBundle(iwc);
 			setTitle(iwrb.getLocalizedString("group_property_window", "Group Property Window"));
 			addTitle(group.getName(), TITLE_STYLECLASS);
 
-			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForGroupTypeString(group.getGroupType());
+			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForGroupType(group.getGroupType());
 			Iterator iter = plugins.iterator();
 
 			while (iter.hasNext()) {
-				UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
-
-				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, Class.forName(element.getBusinessICObject().getClassName()));
-
+				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) iter.next();
 				List tabs = pluginBiz.getGroupPropertiesTabs(group);
 
 				if (tabs != null) {
@@ -90,30 +98,14 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 					while (tab.hasNext()) {
 						UserGroupTab el = (UserGroupTab) tab.next();
 						el.setPanel(panel);
-						panel.addTab(el, count++, iwc);
+						el.setGroupIds(groupId, parentGroupId);
+						panel.addTab(el, ++count, iwc);
 					}
 				}
 			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	public void main(IWContext iwc) throws Exception {
-		int parentGroupId = -1;
-		if (iwc.isParameterSet(PARENT_GROUP_ID_KEY))
-			parentGroupId = Integer.parseInt(iwc.getParameter(PARENT_GROUP_ID_KEY));
-		String id = iwc.getParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID);
-		if (id != null) {
-			int newId = Integer.parseInt(id);
-			PresentationObject[] obj = this.getAddedTabs();
-			for (int i = 0; i < obj.length; i++) {
-				PresentationObject mo = obj[i];
-				if (mo instanceof UserGroupTab && ((UserGroupTab) mo).getGroupId() != newId) {
-					((UserGroupTab) mo).setGroupIds(newId, parentGroupId);
-				}
-			}
 		}
 	}
 
