@@ -9,6 +9,7 @@ import java.util.Vector;
 import javax.swing.event.ChangeListener;
 
 import com.idega.block.login.presentation.Login;
+import com.idega.block.login.presentation.WelcomeMessage;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.event.IWActionListener;
@@ -232,30 +233,29 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
   	
   	return table;
   }
-  public Table loginTable(IWContext iwc) {
+  public Table welcomeMessageTable(IWContext iwc) {
 		IWBundle iwb = getBundle(iwc);
-		Image logoutImage = iwb.getImage("logout.gif");
 		Image lockImage = iwb.getImage("las.gif");
 		
-		Login login = new Login();
-		login.setTextStyle(LOGIN_STYLE);
-		login.setLogoutButton(logoutImage);
-  	
-  	Table loginTable = new Table(2,1);
-  	loginTable.setCellspacing(0);
-  	loginTable.setCellpadding(0);
-  	loginTable.setWidth(Table.HUNDRED_PERCENT);
-  	loginTable.setHeight(50);
-  	loginTable.setAlignment(1,1,"center");
-  	loginTable.setAlignment(2,1,"center");
-  	loginTable.setVerticalAlignment(1,1,"middle");
-  	loginTable.setVerticalAlignment(2,1,"middle");
+		WelcomeMessage welcomeMessage = new WelcomeMessage();
+		welcomeMessage.setBold();
+		
+		
+  	Table welcomeMessageTable = new Table(2,1);
+		welcomeMessageTable.setCellspacing(0);
+		welcomeMessageTable.setCellpadding(0);
+		welcomeMessageTable.setWidth(Table.HUNDRED_PERCENT);
+		welcomeMessageTable.setHeight(50);
+		welcomeMessageTable.setAlignment(1,1,"center");
+  	welcomeMessageTable.setAlignment(2,1,"center");
+		welcomeMessageTable.setVerticalAlignment(1,1,"middle");
+  	welcomeMessageTable.setVerticalAlignment(2,1,"middle");
 		if(iwc.isLoggedOn())
-			loginTable.add(lockImage,1,1);
-		loginTable.add(login,2,1);
+		welcomeMessageTable.add(lockImage,1,1);
+		welcomeMessageTable.add(welcomeMessage,2,1);
   	
   	
-  	return loginTable;
+  	return welcomeMessageTable;
   }
 
   public void main(IWContext iwc) throws Exception {
@@ -266,7 +266,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	String styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
 	parentPage.addStyleSheetURL(styleSrc);
 	
-		Table loginTable = loginTable(iwc);
+		Table loginTable = welcomeMessageTable(iwc);
 		Table table = displayTable(iwc);
 		this.add(loginTable);
     this.add(table);
