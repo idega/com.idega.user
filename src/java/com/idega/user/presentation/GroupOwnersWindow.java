@@ -147,7 +147,7 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 		EntityBrowser browser = new EntityBrowser();
 		browser.setEntities("gpow_"+selectedGroupId,users);
 		browser.setDefaultNumberOfRows(users.size());
-		browser.setShowSettingButton(false);
+		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
 		browser.setWidth(browser.HUNDRED_PERCENT);
 		browser.setUseExternalForm(true);
 		
