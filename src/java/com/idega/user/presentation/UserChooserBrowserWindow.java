@@ -16,6 +16,7 @@ import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.data.IDOLookup;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -36,6 +37,8 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
   
   private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
   
+  private static int NUMBER_OF_ROWS = 4;
+  
   public static final String SEARCH_KEY = "search_key";
   public static final String SEARCH_SUBMIT_KEY = "search_submit_key";
   
@@ -43,13 +46,12 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
   private static final String DO_NOT_SHOW_LIST_ACTION = "do_not_show_list_action";
   private static final String SELECTED_USER = "selectedUser";
   
-  private String searchString = null;
+  private String searchString = "";
   
   
   public UserChooserBrowserWindow() {
-    setTitle("User chooser");
-    setWidth(400);
-    setHeight(400);
+    setWidth(600);
+    setHeight(300);
     setCellpadding(5);
     setScrollbar(true);
     setResizable(true);
@@ -60,45 +62,57 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
 	 */
 	public void displaySelection(IWContext iwc) {
     IWResourceBundle resourceBundle = getResourceBundle(iwc);
-    Table mainTable = new Table(1,3);
+    // set title
+    String title = resourceBundle.getLocalizedString("uc_find_user", "Find user");
+    setTitle(title);
+    addTitle(title, IWConstants.BUILDER_FONT_STYLE_TITLE);
+    // parse request and get search string
+    String action = parseRequest(iwc);
+    
+    Table mainTable = new Table(1,4);
     Table searchTable = getSearchInputField(resourceBundle);
-    mainTable.add(searchTable,1,1);
-    // parse request
-    String action = parseAction(iwc); 
+    mainTable.add(searchTable ,1 ,1);
+    String message; 
     if (SHOW_LIST_ACTION.equals(action))  {
       Collection entities = getEntities();
       if (entities.isEmpty()) {
-        Text nothingFound = new Text(resourceBundle.getLocalizedString("noResultsWereFound", "Sorry, no results were found"));
-        mainTable.add(nothingFound,1,2);
+        message = resourceBundle.getLocalizedString("uc_no_results_were_found", "Sorry, no results were found");
       }
       else {
-        EntityBrowser browser = getBrowser(entities);
-        mainTable.add(browser,1,2);
+        message = resourceBundle.getLocalizedString("uc_results_for", "Results for") + ": " + searchString;
+        EntityBrowser browser = getBrowser(entities, iwc);
+        mainTable.add(browser,1,3);
       }
     }
+    else {
+      message = resourceBundle.getLocalizedString("uc_fill_in_search_field", "Please fill in the search field");
+    }
+    // show message for user
+    Text messageText = new Text(message);
+    messageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+    mainTable.add(messageText ,1 ,2);
+      
     Link okayLink = getOkayButton(resourceBundle);
-    mainTable.add(okayLink,1,3);
+    mainTable.add(okayLink,1,4);
     Form form = new Form();
     form.maintainAllParameters();
     form.add(mainTable);
     add(form);
 	}
   
-  private String parseAction(IWContext iwc)  {
-    if ( iwc.isParameterSet(SEARCH_SUBMIT_KEY) && 
-         iwc.isParameterSet(SEARCH_KEY) &&  
-         (searchString = iwc.getParameter(SEARCH_KEY)).length() == 0)  {
-      searchString = null;
+  private String parseRequest(IWContext iwc)  {
+    if (iwc.isParameterSet(SEARCH_SUBMIT_KEY))  {
+      // reset browser
+      EntityBrowser.releaseBrowser(iwc);
+    }
+    searchString = iwc.isParameterSet(SEARCH_KEY) ? iwc.getParameter(SEARCH_KEY) : "";
+    if (searchString.length() == 0) {
       return DO_NOT_SHOW_LIST_ACTION;
     }
     else  {
-      searchString = "%"+searchString+"%";
       return SHOW_LIST_ACTION;
     }
   }
-    
-    
-  
   
   private Link getOkayButton(IWResourceBundle resourceBundle) {
     String okayString = resourceBundle.getLocalizedString("Close", "close");
@@ -108,7 +122,7 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
     return okayLink;
   }
 
-  private EntityBrowser getBrowser(Collection entities)  {
+  private EntityBrowser getBrowser(Collection entities, IWContext iwc)  {
     // define checkbox button converter class
     EntityToPresentationObjectConverter converterToChooseButton = new EntityToPresentationObjectConverter() {
 
@@ -126,21 +140,13 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
     };
     // set default columns
     String nameKey = "com.idega.user.data.User.FIRST_NAME:" + "com.idega.user.data.User.MIDDLE_NAME:"+"com.idega.user.data.User.LAST_NAME";
-    String completeAddressKey =
-      "com.idega.core.data.Address.STREET_NAME:"
-        + "com.idega.core.data.Address.STREET_NUMBER:"
-        + "com.idega.core.data.Address.P_O_BOX:"
-        + "com.idega.core.data.PostalCode.POSTAL_CODE_ID|POSTAL_CODE:"
-        + "com.idega.core.data.Address.CITY:"
-        + "com.idega.core.data.Country.IC_COUNTRY_ID|COUNTRY_NAME";
-    String emailKey = "com.idega.core.data.Email.ADDRESS";
-    String phoneKey = "com.idega.core.data.PhoneType.IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + "com.idega.core.data.Phone.PHONE_NUMBER";
     String pinKey = "com.idega.user.data.User.PERSONAL_ID";
     EntityBrowser browser = new EntityBrowser();
     // keep things simple
     browser.setUseEventSystem(false);
-    browser.setEntities("chooserWindow", entities);
-    browser.setDefaultNumberOfRows(Math.min(entities.size(), 30));
+    browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
+    browser.setDefaultNumberOfRows(NUMBER_OF_ROWS);
+    browser.setEntities("chooser_window_" + searchString, entities);
 
     browser.setWidth(Table.HUNDRED_PERCENT);
       
@@ -153,17 +159,15 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
     browser.setColorForEvenRows(IWColor.getHexColorString(246, 246, 247));
     browser.setColorForOddRows("#FFFFFF");
       
-    //entityBrowser.setVerticalZebraColored("#FFFFFF",IWColor.getHexColorString(246, 246, 247)); why does this not work!??
-      
     browser.setDefaultColumn(1, nameKey);
     browser.setDefaultColumn(2, pinKey);
-    browser.setDefaultColumn(3, emailKey);
-    browser.setDefaultColumn(4, completeAddressKey);
-    browser.setDefaultColumn(5, phoneKey);
     browser.setMandatoryColumn(1, "Choose");
     // set special converters
     browser.setEntityToPresentationConverter("Choose", converterToChooseButton);
     browser.setUseExternalForm(true);
+    // set mandatory parameters
+    browser.addMandatoryParameters(getHiddenParameters(iwc));
+    browser.addMandatoryParameter(SEARCH_KEY, searchString);
     return browser;
   }
     
@@ -172,7 +176,8 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
       return new ArrayList();
     try {
       UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
-      Collection entities = userHome.findUsersBySearchCondition(searchString);
+      String modifiedSearch = getModifiedSearchString(searchString);
+      Collection entities = userHome.findUsersBySearchCondition(modifiedSearch);
       return entities;
     }
     // Remote and FinderException
@@ -180,12 +185,19 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
       throw new RuntimeException(ex.getMessage());
     }
   }
+  
+  private String getModifiedSearchString(String originalSearchString)  {
+    StringBuffer buffer = new StringBuffer("%");
+    buffer.append(originalSearchString).append("%");
+    return buffer.toString();
+  }
     
   private Table getSearchInputField(IWResourceBundle iwrb) {
     Table table = new Table(2,1);
     SubmitButton searchButton = 
       new SubmitButton(iwrb.getLocalizedImageButton("search", "Search"), SEARCH_SUBMIT_KEY, SEARCH_SUBMIT_KEY);
     TextInput searchInput = new TextInput(SEARCH_KEY);
+    searchInput.setContent(searchString);
     table.add(searchInput,1,1);
     table.add(searchButton,2,1);
     return table;
