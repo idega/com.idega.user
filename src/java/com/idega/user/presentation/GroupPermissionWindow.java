@@ -412,12 +412,14 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 							//recurse through children and give same rights
 							Group parent = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(values[i]));
 							Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(parent);
-							Iterator childIter = children.iterator();
-							while (childIter.hasNext()) {
-								Group childGroup = (Group) childIter.next();
-								//only if current user owns the group
-								if(access.isOwner(childGroup,iwc)){
-									access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, selectedGroupId, childGroup.getPrimaryKey().toString(), key, Boolean.TRUE);
+							if(children!=null && !children.isEmpty()){
+								Iterator childIter = children.iterator();
+								while (childIter.hasNext()) {
+									Group childGroup = (Group) childIter.next();
+									//only if current user owns the group
+									if(access.isOwner(childGroup,iwc)){
+										access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, selectedGroupId, childGroup.getPrimaryKey().toString(), key, Boolean.TRUE);
+									}
 								}
 							}
 						}
@@ -446,12 +448,14 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 						//recurse through children and remove same rights	
 						Group parent = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(permission.getContextValue()));
 						Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(parent);
-						Iterator childIter = children.iterator();
-						while (childIter.hasNext()) {
-							Group childGroup = (Group) childIter.next();
+						if(children!=null && !children.isEmpty()){
+							Iterator childIter = children.iterator();
+							while (childIter.hasNext()) {
+								Group childGroup = (Group) childIter.next();
+								
+								access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, selectedGroupId, childGroup.getPrimaryKey().toString(), key, Boolean.FALSE);
 							
-							access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, selectedGroupId, childGroup.getPrimaryKey().toString(), key, Boolean.FALSE);
-						
+							}
 						}
 						
 					}
