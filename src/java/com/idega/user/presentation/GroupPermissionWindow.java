@@ -36,6 +36,7 @@ import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupComparator;
 import com.idega.user.data.Group;
+import com.idega.user.data.GroupTypeConstants;
 import com.idega.user.data.User;
 import com.idega.user.event.SelectGroupEvent;
 import com.idega.util.IWColor;
@@ -57,8 +58,12 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	private static final String RECURSE_PERMISSIONS_TO_CHILDREN_KEY = "gpw_recurse_ch_of_gr";
 	private static final String PARAM_OVERRIDE_INHERITANCE = "gpw_over";
 	private static final String PARAM_IS_PERMISSION_CONTROLLER = "gpw_permission_ctrl";
+	private static final String PARAM_FILTER_CLUBS = "gpw_filter_clubs";
+	private static final String PARAM_FILTER_DIVISIONS = "gpw_filter_divisions";
 	private static final String HELP_TEXT_KEY = "group_permission_window";
 
+	private boolean filterClubs = false;
+	private boolean filterDivisions = false;
 
 	private String mainStyleClass = "main";
 	
@@ -71,7 +76,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	private boolean saveChanges = false;
 
 	protected int width = 750;
-	protected int height = 555;
+	protected int height = 600;
 
 	private String selectedGroupId = null;
 
@@ -219,7 +224,20 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));		
 		groupComparator.setSortByParents(true);
 		Collections.sort(entityList, groupComparator); 
-		EntityBrowser browser = getEntityBrowser(permissionTypes, entityList);
+		List browserList = null;
+		List groupTypes = new ArrayList();
+		if (filterClubs) {
+		    groupTypes.add(GroupTypeConstants.GROUP_TYPE_CLUB);
+		}
+		if (filterDivisions) {
+		    groupTypes.add("iwme_club_division");
+		}
+		if (!groupTypes.isEmpty()) {
+		    browserList = getFilteredEntityListByGroupType(entityList, groupTypes);
+		} else {
+		    browserList = entityList;
+		}
+		EntityBrowser browser = getEntityBrowser(permissionTypes, browserList);
 		//////////////////////////
 		
 		Form form = getGroupPermissionForm(browser);
@@ -229,6 +247,21 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		add(form, iwc);
 	}
 	
+	private List getFilteredEntityListByGroupType(List entityList, List groupTypes) {
+	    List filteredEntityList = new ArrayList();
+	    Iterator it = entityList.iterator();
+	    while (it.hasNext()) {
+	        List permissionCollection = (List)it.next();
+	        String groupID = ((ICPermission) permissionCollection.iterator().next()).getContextValue();
+	        Group tempGroup = (Group) groupComparator.getCachedGroups().get(groupID);
+	        //System.out.println(tempGroup.getGroupType());
+	        if (groupTypes.contains(tempGroup.getGroupType())) {
+	            filteredEntityList.add(permissionCollection);
+	        }
+	    }
+	    return filteredEntityList;
+	}
+
 	private EntityBrowser getEntityBrowser(List permissionTypes, List entityList) {
 		EntityBrowser browser = EntityBrowser.getInstanceUsingExternalForm();
 		
@@ -849,6 +882,31 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		mainTable.setCellpadding(0);
 		mainTable.setCellspacing(0);
 		
+		Table filterTable = new Table(1, 2);
+		filterTable.setWidth(Table.HUNDRED_PERCENT);
+		filterTable.setCellpadding(0);
+		filterTable.setCellspacing(0);
+		filterTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
+		filterTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
+		filterTable.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+		filterTable.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_RIGHT);
+		
+		Text filterClubsText = new Text(iwrb.getLocalizedString("grouppermissionwindow.filter_clubs","Filter clubs"));
+		filterTable.add(filterClubsText, 1, 1);
+		filterTable.add(Text.NON_BREAKING_SPACE, 1, 1);
+		CheckBox filterClubsCheckBox = new CheckBox(PARAM_FILTER_CLUBS, "filter_clubs");
+		filterClubsCheckBox.setChecked(filterClubs);
+		filterClubsCheckBox.setToSubmit();
+		Text filterDivisionText = new Text(iwrb.getLocalizedString("grouppermissionwindow.filter_divisions","Filter divisions"));
+		filterTable.add(filterDivisionText, 1, 2);
+		filterTable.add(Text.NON_BREAKING_SPACE, 1, 2);
+		CheckBox filterDivisionsCheckBox = new CheckBox(PARAM_FILTER_DIVISIONS, "filter_divisions");
+		filterDivisionsCheckBox.setChecked(filterDivisions);
+		filterDivisionsCheckBox.setToSubmit();
+		
+		filterTable.add(filterClubsCheckBox, 1, 1);
+		filterTable.add(filterDivisionsCheckBox, 1, 2);
+
 		Table table = new Table(2, 3);
 		table.setRowHeight(1,"20");
 		table.setStyleClass(mainStyleClass);
@@ -875,6 +933,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		
 		
 		table.add(browser, 1, 2);
+		table.add(filterTable, 2, 3);
 		
     Table bottomTable = new Table();
 		bottomTable.setCellpadding(0);
@@ -953,6 +1012,8 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	    permissionTypes = getAllPermissionTypes();
 	    access = iwc.getAccessController();
 		
+		filterClubs = iwc.isParameterSet(PARAM_FILTER_CLUBS);
+		filterDivisions = iwc.isParameterSet(PARAM_FILTER_DIVISIONS);
 	}
 
 	public String getBundleIdentifier() {
