@@ -14,6 +14,7 @@ import com.idega.user.app.Toolbar;
 import com.idega.user.app.UserApplication;
 import com.idega.user.data.Group;
 import com.idega.user.event.SelectGroupEvent;
+import com.inet.pool.i;
 
 /**
  * 
@@ -178,8 +179,8 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 					tLink14.setWindowToOpen(Importer.class);
 
 					button3.add(tLink14, 1, 1);
-					toolbar1.add(button3, 6, 1);
-					toolbar1.setAlignment(6,1,"center");
+					toolbar1.add(button3, 7, 1);
+					toolbar1.setAlignment(7,1,"center");
 				}
 
 				//mass registering button
@@ -201,8 +202,8 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 					tLink14.setWindowToOpen(MassRegisteringWindow.class);
 
 					button3.add(tLink14, 1, 1);
-					toolbar1.add(button3, 7, 1);
-					toolbar1.setAlignment(7,1,"center");
+					toolbar1.add(button3, 8, 1);
+					toolbar1.setAlignment(8,1,"center");
 				}
 				
 				if (selectedGroup != null && showISStuff &&  ( selectedGroup.getGroupType().equals("iwme_league") || selectedGroup.getGroupType().equals("iwme_club_division_template") ) ) {
@@ -225,8 +226,8 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 					tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.UpdateClubDivisionTemplate");
 
 					button4.add(tLink15, 1, 1);
-					toolbar1.add(button4, 8, 1);
-					toolbar1.setAlignment(8,1,"center");
+					toolbar1.add(button4, 9, 1);
+					toolbar1.setAlignment(9,1,"center");
 				}
 
 			}
@@ -234,6 +235,10 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 		}
 
 		//permission	
+		
+		
+		
+		
 		//TODO Eiki open up seperate windows for the alias group and the permissions
 		if (selectedGroup != null) {
 
@@ -249,6 +254,31 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 				}
 				
 				
+			}
+			
+			if( access.isRoleMaster(iwc) ){
+				Table button4 = new Table(1, 1);
+				button4.setStyleClass(styleButton);
+				button4.setAlignment(1,1,"center");
+				button4.setCellpadding(0);
+				Text text3 = new Text(iwrb.getLocalizedString("roles", "Roles"));
+				Link tLink12 = new Link(text3);
+				tLink12.setStyleClass(styledLinkClass);
+				SelectGroupEvent selectGroup = new SelectGroupEvent();
+				selectGroup.setGroupToSelect(selectedGroup.getNodeID());
+
+				// set controller (added by Thomas)
+				String id = IWMainApplication.getEncryptedClassName(UserApplication.Top.class);
+				id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + id;
+				selectGroup.setController(id);
+				button4.add(tLink12, 1, 1);
+				selectGroup.setSource(this);
+				tLink12.addEventModel(selectGroup);
+
+				tLink12.setWindowToOpen(GroupRolesWindow.class);
+
+				toolbar1.add(button4, 4, 1);
+				toolbar1.setAlignment(4,1,"center");
 			}
 				
 
@@ -273,8 +303,8 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 
 				tLink12.setWindowToOpen(GroupPermissionWindow.class);
 
-				toolbar1.add(button4, 4, 1);
-				toolbar1.setAlignment(4,1,"center");
+				toolbar1.add(button4, 5, 1);
+				toolbar1.setAlignment(5,1,"center");
 
 				// delete button
 
@@ -293,8 +323,8 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 				if (parentDomain != null)
 					tLink5.addParameter(DeleteGroupConfirmWindow.PARENT_DOMAIN_ID_KEY, ((Integer) parentDomain.getPrimaryKey()).toString());
 				button5.add(tLink5, 1, 1);
-				toolbar1.add(button5, 5, 1);
-				toolbar1.setAlignment(5,1,"center");
+				toolbar1.add(button5, 6, 1);
+				toolbar1.setAlignment(6,1,"center");
 			}
 		}
 

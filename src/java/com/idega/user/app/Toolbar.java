@@ -25,6 +25,7 @@ import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.CreateUser;
 import com.idega.user.presentation.MassMovingWindow;
+import com.idega.user.presentation.RoleMastersWindow;
 
 
 /**
@@ -205,6 +206,17 @@ public class Toolbar extends Page implements IWBrowserView {
     button2.add(tLink12,2,1);
     toolbar1.add(button2,3,1);
     
+	if(iwc.getAccessController().isRoleMaster(iwc)){
+		Table button4 = new Table(1,1);
+		button4.setCellpadding(0);
+		Text text4 = new Text(iwrb.getLocalizedString("button.role_masters","Role Masters"));
+		Link tLink14 = new Link(text4);
+		tLink14.setStyleClass(styledLink);
+	   tLink14.setWindowToOpen(RoleMastersWindow.class);
+	   button4.add(tLink14,1,1);
+	   toolbar1.add(button4,4,1);  
+	}
+    
 		//Search temp
 		Table button3 = new Table(4,1);
 		button3.setCellpadding(0);
@@ -223,7 +235,9 @@ public class Toolbar extends Page implements IWBrowserView {
 		button3.add(Text.NON_BREAKING_SPACE);
 		Image dottedImage = iwb.getImage("dotted.gif");
 		button3.add(dottedImage,4,1);
-		toolbar1.add(button3,4,1);
+		toolbar1.add(button3,5,1);
+			
+
   
     
 		//Member exchange window temp
