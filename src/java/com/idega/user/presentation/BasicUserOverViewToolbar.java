@@ -37,7 +37,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
   public void main(IWContext iwc) throws Exception{
     iwb = getBundle(iwc);
 
-    Table toolbarTable = new Table(1,1);
+    Table toolbarTable = new Table(1,3);
     toolbarTable.setCellpadding(0);
     toolbarTable.setCellspacing(0);
     toolbarTable.setWidth("100%");

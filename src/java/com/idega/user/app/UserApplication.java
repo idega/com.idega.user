@@ -38,7 +38,7 @@ import javax.swing.event.ChangeListener;
  * <p>Company: idega Software</p>
  * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
- */ 
+ */
 
 public class UserApplication extends IWBrowser {
 
@@ -56,7 +56,7 @@ public class UserApplication extends IWBrowser {
     this.setHeight(700);
 
     this.addToTop(new Top());
-    this.setSpanPixels(POS_TOP,33);
+    this.setSpanPixels(POS_TOP,68);
     this.setSpanPixels(POS_LEFTMAIN, 200);
     this.setSpanPixels(POS_MENU,26);
     this.setSpanPixels(POS_BOTTOM,26);
@@ -150,10 +150,10 @@ public class UserApplication extends IWBrowser {
       if(this.isChildOfOtherPage()){
         Page parent = this.getParentPage();
         parent.setAllMargins(0);
-        parent.setBackgroundColor(IWAdminWindow.HEADER_COLOR);
+        parent.setBackgroundColor("#386CB7");
       } else {
         setAllMargins(0);
-        setBackgroundColor(IWAdminWindow.HEADER_COLOR);
+        setBackgroundColor("#386CB7");
       }
     }
 
@@ -194,22 +194,24 @@ public class UserApplication extends IWBrowser {
       }
 
       if(!initialized){
-        Table headerTable = new Table(2,1);
+        Table headerTable = new Table(1,1);
         headerTable.setCellpadding(0);
         headerTable.setCellspacing(0);
         headerTable.setWidth("100%");
         headerTable.setHeight("100%");
-        
+        headerTable.setColor(1,1,"#386CB7");
+
         /** @todo setja inn mynd i header**/
-        //headerTable.add(iwc.getApplication().getCoreBundle().getImage("/editorwindow/idegaweb.gif","idegaWeb"),1,1);
-		Text adminTitle = new Text("Félagakerfi ÍSÍ & UMFÍ");
+        headerTable.add(this.getBundle(iwc).getImage("/top.gif","idegaWeb Member"),1,1);
+
+        /*Text adminTitle = new Text("Félagakerfi ÍSÍ & UMFÍ");
         adminTitle.setBold();
         adminTitle.setFontColor("#FFFFFF");
         adminTitle.setFontSize(Text.FONT_SIZE_12_HTML_3);
         adminTitle.setFontFace(Text.FONT_FACE_ARIAL);
 		headerTable.add(adminTitle,1,1);
-		
-        /*Text adminTitle = new Text("Users & Groups &nbsp;&nbsp;");
+
+        Text adminTitle = new Text("Users & Groups &nbsp;&nbsp;");
           adminTitle.setBold();
           adminTitle.setFontColor("#FFFFFF");
           adminTitle.setFontSize("3");
@@ -219,7 +221,9 @@ public class UserApplication extends IWBrowser {
 
 
         headerTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_LEFT);
-        headerTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
+        headerTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
+
+        //headerTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
 
 
         add(headerTable);

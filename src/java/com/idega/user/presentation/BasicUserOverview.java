@@ -43,7 +43,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
   private IWPresentationEvent _controlEvent = null;
 
   private BasicUserOverviewPS _presentationState = null;
-  private BasicUserOverViewToolbar toolbar = new BasicUserOverViewToolbar();
+  private BasicUserOverViewToolbar toolbar = null;
 
   public BasicUserOverview(IWContext iwc) throws Exception {
     //this.empty();
@@ -56,11 +56,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
   public void setControlEventModel(IWPresentationEvent model){
     _controlEvent = model;
+    if( toolbar == null ) toolbar = new BasicUserOverViewToolbar();
     toolbar.setControlEventModel(model);
   }
 
   public void setControlTarget(String controlTarget){
     _controlTarget = controlTarget;
+    if( toolbar == null ) toolbar = new BasicUserOverViewToolbar();
     toolbar.setControlTarget(controlTarget);
   }
 
@@ -68,6 +70,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
   public Table getUsers(IWContext iwc) throws Exception{
     //List users = EntityFinder.findAllOrdered(com.idega.user.data.UserBMPBean.getStaticInstance(),com.idega.user.data.UserBMPBean.getColumnNameFirstName());
 //    Collection users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
+    if( toolbar == null ) toolbar = new BasicUserOverViewToolbar();
     BasicUserOverviewPS ps = (BasicUserOverviewPS)this.getPresentationState(iwc);
     Group selectedGroup = ps.getSelectedGroup();
     IBDomain selectedDomain = ps.getSelectedDomain();
