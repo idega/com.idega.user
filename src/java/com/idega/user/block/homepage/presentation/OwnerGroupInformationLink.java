@@ -33,6 +33,8 @@ public class OwnerGroupInformationLink extends Link {
 	
 	private int informationToShow = SHOW_NAME;
 	
+	private boolean setPageAsDPTRootpage = false;
+	
 	
 	
 	public void setInformationToShow(int showConstant) {
@@ -67,6 +69,9 @@ public class OwnerGroupInformationLink extends Link {
 					// No Group found
 					System.out.println("["+this.getClassName()+"]: no Group has this page("+rootPageID+") as homepage");
 				}
+				if(setPageAsDPTRootpage) {
+					this.setPage(rootPageID);
+				}
 			} else {
 				this.setText(textBefore+" <pre> <info> </pre> "+textAfter);
 			}
@@ -74,6 +79,10 @@ public class OwnerGroupInformationLink extends Link {
 		
 		
 		
+	}
+	
+	public void setPageAsDPTRootPage(boolean value) {
+		setPageAsDPTRootpage = value;
 	}
 
 	/**
@@ -94,6 +103,7 @@ public class OwnerGroupInformationLink extends Link {
 		og.textAfter=this.textAfter;
 		og.textBefore=this.textBefore;
 		og.informationToShow=this.informationToShow;
+		og.setPageAsDPTRootpage=this.setPageAsDPTRootpage;
 		return og;
 	}
 
