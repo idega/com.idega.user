@@ -28,6 +28,7 @@ public class GroupChooser extends AbstractChooser {
   }
 
   public void main(IWContext iwc){
+    empty();
     IWBundle iwb = iwc.getApplication().getBundle(BuilderLogic.IW_BUNDLE_IDENTIFIER);
     setChooseButtonImage(iwb.getImage("open.gif","Choose"));
   }
