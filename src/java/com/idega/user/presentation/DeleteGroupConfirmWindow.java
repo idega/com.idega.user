@@ -75,7 +75,7 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
     // get resource bundle 
     IWResourceBundle iwrb = getResourceBundle(iwc);
     setTitle(iwrb.getLocalizedString("delete_group", "Delete Group"));
-    addTitle(iwrb.getLocalizedString("delete_group", "Delete Group"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+    addTitle(iwrb.getLocalizedString("delete_group", "Delete Group"), TITLE_STYLECLASS);
     
     // create delete event
     DeleteGroupEvent deleteEvent = new DeleteGroupEvent();
