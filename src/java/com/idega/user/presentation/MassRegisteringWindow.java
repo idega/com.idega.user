@@ -1,8 +1,10 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.ejb.FinderException;
@@ -10,7 +12,9 @@ import javax.ejb.FinderException;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
@@ -28,6 +32,9 @@ import com.idega.user.data.User;
 import com.idega.user.data.UserHome;
 /**
  * @author gimmi
+ * 
+ * Hint: This class does not use the event system at all.
+ * 
  */
 public class MassRegisteringWindow extends IWAdminWindow {
 
@@ -37,11 +44,13 @@ public class MassRegisteringWindow extends IWAdminWindow {
 	private String ACTION = "mrw_act";
 	private String ACTION_NEXT ="mrw_act_nx";
 	private String ACTION_SAVE ="mrw_act_sv";
+  private String ACTION_CANCEL = "mrw_act_cc";
 	private String PARAMETER_PID = "mrw_pid";
 	private String PARAMETER_STATUS = "mrw_sta";
 	private String PARAMETER_SAVE = "mrw_sv";
 
-	private int numberOfRows = 20;
+  /** TODO */
+	private int numberOfRows = 2;
 	private Group group;
 	private IWResourceBundle iwrb;
 	private UserHome uHome;
@@ -91,15 +100,21 @@ public class MassRegisteringWindow extends IWAdminWindow {
 					try {
 						++row;
 						user = uHome.findByPersonalID(sPid);
-						stat = sHome.findByPrimaryKey(new Integer(sStat));
+            if (UserStatusDropdown.NO_STATUS_KEY.equals(sStat))  {
+						  stat = null;
+            }
+            else {
+              stat = sHome.findByPrimaryKey(new Integer(sStat));
+            }
 						check = new CheckBox(PARAMETER_SAVE+"_"+i);
 						check.setStyleAttribute(STYLE_2);
 						check.setChecked(true);
 
 						table.add(check, 1, row);
 						table.add(formatText(user.getName()), 3, row);
-						table.add(formatText(iwrb.getLocalizedString(stat.getStatusKey(), stat.getStatusKey())), 5, row);
-
+            if (stat != null)   {
+						  table.add(formatText(iwrb.getLocalizedString(stat.getStatusKey(), stat.getStatusKey())), 5, row);
+            }
 						form.maintainParameter(PARAMETER_PID+"_"+i);
 						form.maintainParameter(PARAMETER_STATUS+"_"+i);
 						foundUser = true;
@@ -115,7 +130,10 @@ public class MassRegisteringWindow extends IWAdminWindow {
 				status  = new UserStatusDropdown(PARAMETER_STATUS+"_"+i);
 				status.setStyleAttribute(STYLE_2);
 				pid = new TextInput(PARAMETER_PID+"_"+i);
-				pid.setAsIcelandicSSNumber(iwrb.getLocalizedString("user.pid_incorrect_in_row","Personal ID not correct for user in row")+" "+i);
+        /**TODO
+         * DO NOT FORGET TO ACTIVATE THIS AGAIN
+         */
+				//pid.setAsIcelandicSSNumber(iwrb.getLocalizedString("user.pid_incorrect_in_row","Personal ID not correct for user in row")+" "+i);
 				pid.setStyleAttribute(STYLE_2);
 				pid.setMaxlength(10);
 				table.add(formatText(Integer.toString(i)), 1, row);
@@ -129,14 +147,15 @@ public class MassRegisteringWindow extends IWAdminWindow {
 		table.setAlignment(5, row, Table.HORIZONTAL_ALIGN_RIGHT);
 		if (verifyForm) {
 			table.mergeCells(1, row, 2, row);
-			table.add(new BackButton(iwrb.getLocalizedImageButton("back", "Back")), 1, row);
+			table.add(new BackButton(iwrb.getLocalizedImageButton("back", "Back")), 1 , row);
 			if (foundUser) {
 				table.add(new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), ACTION, ACTION_SAVE), 5, row);
 			}
 		}else {		
 			table.add(new SubmitButton(iwrb.getLocalizedImageButton("next", "Next"), ACTION, ACTION_NEXT), 5, row);
 		}
-
+    // add close button
+    table.add(new SubmitButton(iwrb.getLocalizedImageButton("cancel", "Cancel"), ACTION, ACTION_CANCEL), 4, row );
 		form.add(table);
 		add(form);
 	}
@@ -182,11 +201,15 @@ public class MassRegisteringWindow extends IWAdminWindow {
 				try {
 					sPid = iwc.getParameter(PARAMETER_PID+"_"+i);
 					sStat = iwc.getParameter(PARAMETER_STATUS+"_"+i);
-					user = uHome.findByPersonalID(sPid);
-					stat = sHome.findByPrimaryKey(new Integer(sStat));
-					
+ 					user = uHome.findByPersonalID(sPid);
+          if (UserStatusDropdown.NO_STATUS_KEY.equals(sStat))  {
+            stat = null;
+          }
+          else {
+					  stat = sHome.findByPrimaryKey(new Integer(sStat));
+          }					
 					group.addGroup(user);
-					if ( ! usb.setUserGroupStatus(user.getID(), ((Integer)group.getPrimaryKey()).intValue(), ((Integer)stat.getPrimaryKey()).intValue()) ) {
+					if ( stat != null && (! usb.setUserGroupStatus(user.getID(), ((Integer)group.getPrimaryKey()).intValue(), ((Integer)stat.getPrimaryKey()).intValue()) )) {
 						failedInserts.add(user);
 						errorFree = false;
 					}
@@ -229,7 +252,10 @@ public class MassRegisteringWindow extends IWAdminWindow {
 			
 			if (action == null) {
 				addForm(iwc, false);	
-			}else if (action.equals(ACTION_NEXT)) {
+			} else if (action.equals(ACTION_CANCEL))  {
+        close();
+      }      
+      else if (action.equals(ACTION_NEXT)) {
 				addForm(iwc, true);
 			}else if (action.equals(ACTION_SAVE)) {
 				if (handleInsert(iwc)) {
@@ -237,9 +263,9 @@ public class MassRegisteringWindow extends IWAdminWindow {
 				}else {
 					errorList();	
 				}	
+        setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
 			}
 			
 		}	
 	}
-	
 }
