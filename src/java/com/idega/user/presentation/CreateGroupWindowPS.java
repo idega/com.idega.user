@@ -40,6 +40,9 @@ import com.idega.user.event.CreateGroupEvent;
 public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWActionListener{
 
   private boolean _close = false ;
+  
+  private Integer groupId = null;
+  private IWContext eventContext = null;
 
   private String _groupName = null;
   private String _groupDescription = null;
@@ -58,6 +61,8 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
     _groupDescription = null;
     _groupType = null;
     _close = false;
+    groupId = null;
+    eventContext = null;
   }
 
 
@@ -71,6 +76,14 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 
   public String getGroupType(){
     return _groupType;
+  }
+  
+  public Integer getGroupId() {
+    return groupId;
+  }
+  
+  public IWContext getEventContext()  {
+    return eventContext;
   }
 
   public boolean doClose(){
@@ -102,7 +115,9 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 		{
 			GroupBusiness business = (GroupBusiness)IBOLookup.getServiceInstance(e.getIWContext(),GroupBusiness.class);
 			Group group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID(),event.getAliasID());
-
+      // store group id and context, so change listners are able to open windows (e.g. the group property window)
+      groupId = (Integer) group.getPrimaryKey();
+      eventContext = e.getIWContext();
 			//set current user a owner of group
 			setCurrentUserAsOwnerOfGroup(e.getIWContext(), group);
 			//get groupType tree and iterate through it and create default sub groups.
@@ -137,7 +152,10 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 		{
 			throw new EJBException(fe);
 		}
+
     this.fireStateChanged();
+    // forget everything
+    reset();
 
 
       } else if(event.doCancel()){
