@@ -200,18 +200,25 @@ private Image helpImage = null;
 	public void main(IWContext iwc)throws Exception{
 	}
 	public Help getHelp(String helpTextKey) {
+		IWContext iwc = IWContext.getInstance();
+		iwb = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 	 	Help help = new Help();
-	 	helpImage = new Image();
-	 	helpImage.setSrc("/idegaweb/bundles/com.idega.user.bundle/resources/help.gif");
+	 	helpImage = iwb.getImage("help.gif");//.setSrc("/idegaweb/bundles/com.idega.user.bundle/resources/help.gif");
  	  help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
 	  help.setHelpTextKey(helpTextKey);
 	  help.setImage(helpImage);
 	  return help;
 	}
-	public Help getHelpWithSmallImage(String helpTextKey) {
+	public Help getHelpWithGrayImage(String helpTextKey, boolean dark) {
+		IWContext iwc = IWContext.getInstance();
+		iwb = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 		Help help = new Help();
-		helpImage = new Image();
-		helpImage.setSrc("/idegaweb/bundles/com.idega.user.bundle/resources/help_small.gif");
+		if(dark) {
+			helpImage = iwb.getImage("help_small.gif");
+		}
+		else {
+			helpImage = iwb.getImage("help_lightgray.gif");
+		}
 		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
 		help.setHelpTextKey(helpTextKey);
 		help.setImage(helpImage);
