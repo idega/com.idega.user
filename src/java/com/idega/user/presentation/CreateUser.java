@@ -124,7 +124,6 @@ public class CreateUser extends StyledIWAdminWindow {
 
 	private UserBusiness userBiz;
 	
-	private boolean isSetToClose = false;
 	private boolean ssnWarningDisplay = false;
 	private boolean fullNameWarningDisplay = false;
 	private boolean formNotComplete = false;
@@ -287,9 +286,10 @@ public class CreateUser extends StyledIWAdminWindow {
 				Link gotoLink = new Link();
 				gotoLink.setWindowToOpen(UserPropertyWindow.class);
 				gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, newUser.getPrimaryKey().toString());
+				close();
+				setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
 				String script = "window.opener." + gotoLink.getWindowToOpenCallingScript(iwc);
-				setOnLoad(script);
-				isSetToClose = true;							
+				setOnLoad(script);						
 			}
 			else {
 				setAlertOnLoad(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
@@ -396,20 +396,12 @@ public class CreateUser extends StyledIWAdminWindow {
 				}
 				//is addressed if both name and social security number are entered
 				else if (submit.equals("ok") && !formNotComplete) {
-					commitCreation(iwc);
-					if(isSetToClose) {
-						close();
-						setParentToReload();
-					}				
+					commitCreation(iwc);		
 				}
 				//is addressed if the user submits entering only ssn or name
 				//then name is set = ssn or ssn set = the primary key of the user (see commitCreation(iwc))
 				else if (submit.equals("submit")) {
 					commitCreation(iwc);
-					if(isSetToClose) {
-						close();
-						setParentToReload();
-					}
 				}	
 				else if (submit.equals("cancel")) {
 					close();
