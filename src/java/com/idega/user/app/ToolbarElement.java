@@ -1,5 +1,7 @@
 package com.idega.user.app;
-import com.idega.presentation.*;
+import java.util.Map;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -14,6 +16,9 @@ public interface ToolbarElement {
 
   public Image getButtonImage(IWContext iwc);
   public String getName(IWContext iwc);
-  public PresentationObject getPresentationObject(IWContext iwc);
+  public Class getPresentationObjectClass(IWContext iwc);
+  public Map getParameterMap(IWContext iwc);
+  public boolean isValid(IWContext iwc);
+  public int getPriority(IWContext iwc);
 
 }
