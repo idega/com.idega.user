@@ -329,10 +329,10 @@ public class CreateUser extends Window {
 
 		User newUser = null;
 
-		String login = iwc.getParameter(userLoginFieldParameterName);
-		String passw = iwc.getParameter(passwordFieldParameterName);
-		String cfPassw = iwc.getParameter(confirmPasswordFieldParameterName);
-		String password = null;
+		//String login = iwc.getParameter(userLoginFieldParameterName);
+		//String passw = iwc.getParameter(passwordFieldParameterName);
+		//String cfPassw = iwc.getParameter(confirmPasswordFieldParameterName);
+		//String password = null;
 		String ssn = iwc.getParameter(ssnFieldParameterName);
 
 		/*String mustChage = iwc.getParameter(mustChangePasswordFieldParameterName);
@@ -342,16 +342,16 @@ public class CreateUser extends Window {
 		String primaryGroup = iwc.getParameter(primaryGroupFieldParameterName);
 		primaryGroup = primaryGroup.substring(primaryGroup.lastIndexOf("_")+1);
 
-		Boolean bMustChange = Boolean.FALSE;
-		Boolean bAllowedToChangePassw = Boolean.TRUE;
-		Boolean bPasswNeverExpires = Boolean.TRUE;
-		Boolean bEnabledAccount = Boolean.TRUE;
+		//Boolean bMustChange = Boolean.FALSE;
+		//Boolean bAllowedToChangePassw = Boolean.TRUE;
+		//Boolean bPasswNeverExpires = Boolean.TRUE;
+		//Boolean bEnabledAccount = Boolean.TRUE;
 
-		Integer primaryGroupId = null;
+		//Integer primaryGroupId = null;
 
-		if (primaryGroup != null && !primaryGroup.equals("")) {
-			primaryGroupId = new Integer(primaryGroup);
-		}
+		//if (primaryGroup != null && !primaryGroup.equals("")) {
+			//primaryGroupId = new Integer(primaryGroup);
+		//}
 
 	/*	if (mustChage != null && !"".equals(mustChage)) {
 			bMustChange = Boolean.TRUE;
