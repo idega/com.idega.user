@@ -58,7 +58,6 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWColor;
-import com.idega.util.StringHandler;
 /**
  * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
  * 
