@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.idega.presentation.IWContext; 
+import com.idega.presentation.IWTabbedPane;
 import com.idega.presentation.Page;
 
 import javax.swing.event.ChangeEvent;
@@ -158,12 +159,19 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
   }
 
   public void stateChanged(ChangeEvent e) {
-    if (e.getSource() instanceof DeleteGroupConfirmWindowPS) {
+    Object object = e.getSource();
+    if (object instanceof DeleteGroupConfirmWindowPS) {
       // selected group was successfully(!) removed 
-      // set selected group null
+      // set selected group to null
       _selectedGroup = null;
       // refresh the view 
       setOnLoad("parent.frames['iwb_main'].location.reload()");
+    }
+    else if (object instanceof IWTabbedPane) {
+      IWTabbedPane pane = (IWTabbedPane) object;
+      String attribute = pane.getAttributeString();
+      if (attribute.indexOf("group_property_window") > -1)
+        setOnLoad("parent.frames['iwb_main_left'].location.reload()");
     }
   }
 

@@ -755,4 +755,5 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	public String getBundleIdentifier() {
 		return "com.idega.user";
 	}
+    
 }

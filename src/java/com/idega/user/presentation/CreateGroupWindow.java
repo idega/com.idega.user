@@ -1,6 +1,7 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -30,6 +31,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
@@ -81,14 +83,29 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 		id = new StringBuffer(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);
 		id.append(IWMainApplication.getEncryptedClassName(UserApplication.Top.class));
 		IWStateMachine stateMachine;
+    /*
 		IWPresentationState changeListenerState = null;
-		try {
+    try {
 			stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
 			changeListenerState = (IWControlFramePresentationState) stateMachine.getStateFor(id.toString(), IWControlFramePresentationState.class);
-		}
+    }
 		catch (RemoteException e) {
 		}
 		state.addChangeListener((ChangeListener) changeListenerState);
+    */
+    Collection changeListeners;
+    try {
+      stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
+      changeListeners = stateMachine.getAllChangeListeners();
+    }
+    catch (RemoteException e) {
+      changeListeners = new ArrayList();
+    }
+    Iterator iterator = changeListeners.iterator();
+    while (iterator.hasNext())  {
+      state.addChangeListener((ChangeListener) iterator.next());
+    }
+    
 	}
 
 	public void main(IWContext iwc) throws Exception {
@@ -191,9 +208,9 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			layer2.setNoWrap();
 			tab.add(layer2, 1, 6);
 			tab.add(aliasGroupChooser, 2, 6);
-
-			SubmitButton button = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), _createEvent.getIONameForCommit());
+ 			SubmitButton button = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), _createEvent.getIONameForCommit());
 			SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
+      button.setOnClick("window.close()");
 			close.setOnClick("window.close()");
 			tab.add(close, 2, 8);
 			tab.add(Text.getNonBrakingSpace(), 2, 8);
