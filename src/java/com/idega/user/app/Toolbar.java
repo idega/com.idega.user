@@ -243,8 +243,8 @@ public class Toolbar extends Page implements IWBrowserView {
 					}
 					else {
 						Image toolImage = toolbarElement.getButtonImage(finalIwc);
+						toolbar2.setCellpaddingLeft(toolbarColumn, 1, 7);
 						if (toolImage != null) {
-							toolbar2.setCellpaddingLeft(toolbarColumn, 1, 7);
 							toolbar2.setCellpaddingRight(toolbarColumn, 1, 3);
 							toolbar2.add(getToolbarLink(toolImage, toolPresentationClass, parameterMap), toolbarColumn++, 1);
 						}
