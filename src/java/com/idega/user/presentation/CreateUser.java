@@ -153,6 +153,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		fullNameField = new TextInput(fullNameFieldParameterName);
 		fullNameField.setLength(20);
 		fullNameField.setStyleClass("text");
+		fullNameField.setAsNotEmpty(iwrb.getLocalizedString(fullNameFieldParameterName,"Full name must be selected"));
 		userLoginField = new TextInput(userLoginFieldParameterName);
 		userLoginField.setLength(12);
 		passwordField = new PasswordInput(passwordFieldParameterName);
@@ -162,6 +163,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		ssnField = new TextInput(ssnFieldParameterName);
 		ssnField.setLength(20);
 		ssnField.setMaxlength(12);
+		ssnField.setAsNotEmpty(iwrb.getLocalizedString(ssnFieldParameterName,"Personal ID must be selected"));
 		//ssnField.setAsIcelandicSSNumber();
 
 		/*generateLoginField = new CheckBox(generateLoginFieldParameterName);
@@ -175,65 +177,8 @@ public class CreateUser extends StyledIWAdminWindow {
 		//goToPropertiesField.setChecked(true);
 		
 		primaryGroupField = new GroupChooser(primaryGroupFieldParameterName);
+//		primaryGroupField.setAsNotEmpty(iwrb.getLocalizedString(primaryGroupFieldParameterName,"A group must be selected"));
 		
-
-		String[] gr = new String[1];
-		
-		Collection groups = null;
-		groupBiz = getGroupBusiness(iwc);
-		
-		if(!iwc.isSuperAdmin()){
-			groups = getUserBusiness(iwc).getAllGroupsWithEditPermission(iwc.getCurrentUser(),iwc );
-		}
-		else{
-			GroupBusiness groupBusiness = this.getGroupBusiness(iwc);
-			UserBusiness business = this.getUserBusiness(iwc);
-			User user = iwc.getCurrentUser();
-			Collection tops = null;
-			try {
-				tops = business.getUsersTopGroupNodesByViewAndOwnerPermissions(user,iwc);
-			}
-			catch (RemoteException e) {
-				e.printStackTrace();
-			}
-			  
-			if(tops!=null && !tops.isEmpty()){
-				Iterator topGroupsIterator = tops.iterator();
-				List allGroups = new ArrayList();
-			
-				while (topGroupsIterator.hasNext())  {
-					Group parentGroup = (Group) topGroupsIterator.next();
-					allGroups.add(parentGroup);
-					Collection coll = null;
-					try {
-						coll = groupBusiness.getChildGroupsRecursive(parentGroup);
-					}
-					catch (EJBException e1) {
-						e1.printStackTrace();
-					}
-					catch (RemoteException e1) {
-						e1.printStackTrace();
-					}
-					if (coll != null) allGroups.addAll(coll);
-				}
-					
-					groups = allGroups;
-				
-			}
-		}
-		
-		
-
-		
-		if (groups != null) {
-			Iterator iter = groups.iterator();
-			while (iter.hasNext()) {
-				Group item = (Group) iter.next();
-				//primaryGroupField.addMenuElements(item.getPrimaryKey().toString(), groupBiz.getNameOfGroupWithParentName(item));
-			}
-		}
-
-
 		okButton = new SubmitButton(iwrb.getLocalizedString("save", "Save"), submitButtonParameterName, okButtonParameterValue);
     okButton.setAsImageButton(true);
 		//cancelButton = new SubmitButton(" Cancel ", submitButtonParameterName, cancelButtonParameterValue);
