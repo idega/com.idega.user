@@ -116,6 +116,7 @@ public class AddressInfoTab extends UserTab{
 
 //only works for Iceland
     postalCodeField = new PostalCodeDropdownMenu();
+    postalCodeField.setCountry("Iceland");//hack
     
     //TextInput(postalCodeFieldName);
     //postalCodeField.setLength(4);
