@@ -1,17 +1,24 @@
 package com.idega.user.presentation;
 
+import java.rmi.RemoteException;
 import java.util.Hashtable;
 
+import com.idega.business.IBOLookup;
+import com.idega.core.location.business.CommuneBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.Country;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CountryDropdownMenu;
+import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.PostalCodeDropdownMenu;
 import com.idega.presentation.ui.TextInput;
+import com.idega.presentation.ui.util.SelectorUtility;
 import com.idega.user.business.UserBusiness;
 
 /**
@@ -27,6 +34,8 @@ public class AddressInfoTab extends UserTab {
 
 	private static final String TAB_NAME = "addr_info_tab_name";
 	private static final String DEFAULT_TAB_NAME = "Address";
+	
+	private String USE_COMMUNES_BUNDLE_PROPERTY_NAME = "USE_COMMUNES";
 
 	private TextInput streetField;
 	private TextInput cityField;
@@ -34,6 +43,7 @@ public class AddressInfoTab extends UserTab {
 	private PostalCodeDropdownMenu postalCodeField;
 	private CountryDropdownMenu countryField;
 	private TextInput poBoxField;
+	private DropdownMenu communeField;
 
   private TextInput secondStreetField;
   private TextInput secondCityField;
@@ -41,6 +51,7 @@ public class AddressInfoTab extends UserTab {
   private PostalCodeDropdownMenu secondPostalCodeField;
   private CountryDropdownMenu secondCountryField;
   private TextInput secondPoBoxField;
+  private DropdownMenu secondCommuneField;
 
 	private static final String streetFieldName = "UMstreet";
 	private static final String cityFieldName = "UMcity";
@@ -48,6 +59,7 @@ public class AddressInfoTab extends UserTab {
 	private static final String postalCodeFieldName =
 		PostalCodeDropdownMenu.IW_POSTAL_CODE_MENU_PARAM_NAME;
 	private static final String countryFieldName = "UMcountry";
+	private static final String communeFieldName = "UMcommune";
 	private static final String poBoxFieldName = "UMpoBox";
 
   private static final String secondStreetFieldName = "UMsecondStreet";
@@ -56,7 +68,8 @@ public class AddressInfoTab extends UserTab {
   private static final String secondPostalCodeFieldName = 
     "UMsecond" + PostalCodeDropdownMenu.IW_POSTAL_CODE_MENU_PARAM_NAME;
   private static final String secondCountryFieldName = "UMsecondCountry";
-  private static final String secondPoBoxFieldName = "UMsecondPoBox";
+  private static final String secondCommuneFieldName = "UMsecondPoBox";
+  private static final String secondPoBoxFieldName = "UMsecondCommune";
 
 	private Text streetText;
 	private Text cityText;
@@ -64,19 +77,28 @@ public class AddressInfoTab extends UserTab {
 	private Text postalCodeText;
 	private Text countryText;
 	private Text poBoxText;
+	private Text communeText;
   
   private Text coAddressText;
-
+  boolean useCommune = false;
+  
+  
 	public AddressInfoTab() {
 		super();
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-
 		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
 		
 //		this.setName("Address");
 	}
-
+/*
+	public void main(IWContext iwc) throws Exception {
+		IWBundle bundle = getBundle(iwc);
+		useCommune = ("true").equals(bundle.getProperty(USE_COMMUNES_BUNDLE_PROPERTY_NAME));
+		lineUpFields();
+		super.main(iwc);
+	}
+*/		
 	public void initializeFieldNames() {
 	}
 
@@ -140,6 +162,7 @@ public class AddressInfoTab extends UserTab {
 	}
 
 	public void initializeFields() {
+		IWContext iwc = IWContext.getInstance();
 		streetField = new TextInput(streetFieldName);
     streetField.setDisabled(true);
 		streetField.setLength(20);
@@ -159,6 +182,12 @@ public class AddressInfoTab extends UserTab {
 			postalCodeField.setCountry("Iceland"); //TODO remove hack
 		}
 
+		SelectorUtility su = new SelectorUtility();
+		try {
+			communeField = new DropdownMenu(communeFieldName);
+			su.getSelectorFromIDOEntities(communeField, getCommuneBusiness(iwc).getCommunes(), "getCommuneName");
+		}catch (RemoteException e) {}
+		
 		countryField = new CountryDropdownMenu(countryFieldName);
     countryField.setDisabled(true);
 		countryField.setSelectedCountry("Iceland"); //TODO remove hack
@@ -190,6 +219,11 @@ public class AddressInfoTab extends UserTab {
     secondPoBoxField = new TextInput(secondPoBoxFieldName);
     secondPoBoxField.setLength(10);
 
+		try {
+			secondCommuneField = new DropdownMenu(secondCommuneFieldName);
+			su.getSelectorFromIDOEntities(secondCommuneField, getCommuneBusiness(iwc).getCommunes(), "getCommuneName");
+		}catch (RemoteException e) {}
+
 	}
 
 	public void initializeTexts() {
@@ -214,17 +248,26 @@ public class AddressInfoTab extends UserTab {
 		poBoxText = new Text(iwrb.getLocalizedString(poBoxFieldName,"P.O.Box"));
 		poBoxText.setFontSize(fontSize);
     // the same texts are used for the second address
+		
+		communeText = new Text(iwrb.getLocalizedString(communeFieldName, "Commune"));
     
     coAddressText = new Text(iwrb.getLocalizedString("UM_coAddress","co address"));
     
 	}
-
 	public void lineUpFields() {
+		this.resize(1, 1);
+		int row = 1;
+		int totalRows = 4;
+
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		this.resize(1, 1);
 
-		Table addressTable = new Table(2, 4);
+		if (useCommune) {
+			++totalRows;
+		}
+		Table addressTable = new Table(2, totalRows);
+		
+//		System.out.println("UseCommune = "+useCommune);
 
 		//    FramePane fpane = new FramePane();
 
@@ -232,23 +275,31 @@ public class AddressInfoTab extends UserTab {
 		addressTable.setCellpadding(0);
 		addressTable.setCellspacing(0);
     int i;
-    for (i= 1; i < 5; i++) {
+    for (i= 1; i <= totalRows; i++) {
 		  addressTable.setHeight(i, rowHeight);
     }
 		addressTable.setWidth(1, "70");
-		addressTable.add(this.cityText, 1, 1);
-		addressTable.add(this.cityField, 2, 1);
-		addressTable.add(this.provinceText, 1, 2);
-		addressTable.add(this.provinceField, 2, 2);
-		addressTable.add(this.countryText, 1, 3);
-		addressTable.add(this.countryField, 2, 3);
-    addressTable.add(postalCodeText,1,4);
-    addressTable.add(postalCodeField,2,4);
+		addressTable.add(this.cityText, 1, row);
+		addressTable.add(this.cityField, 2, row);
+		++row;
+		addressTable.add(this.provinceText, 1, row);
+		addressTable.add(this.provinceField, 2, row);
+		if (useCommune) {
+			++row;
+			addressTable.add(this.communeText, 1, row);
+			addressTable.add(this.communeField, 2, row);
+		}
+		++row;
+		addressTable.add(this.countryText, 1, row);
+		addressTable.add(this.countryField, 2, row);
+		++row;
+    addressTable.add(postalCodeText,1,row);
+    addressTable.add(postalCodeField,2,row);
 
 		//    fpane.add(addressTable);
 
 		Table addressTable2 = new Table(4, 1);
-
+		
 		addressTable2.setWidth("100%");
 		addressTable2.setCellpadding(0);
 		addressTable2.setCellspacing(0);
@@ -268,33 +319,37 @@ public class AddressInfoTab extends UserTab {
 		//    this.add(fpane);
 
     // second address
-    Table secondAddressTable = new Table(2, 4);
-
+    Table secondAddressTable = new Table(2, totalRows);
+    row = 1;
     //    FramePane fpane = new FramePane();
 
     secondAddressTable.setWidth("100%");
     secondAddressTable.setCellpadding(0);
     secondAddressTable.setCellspacing(0);
 
-    for (i= 1; i < 5; i++) {
+    for (i= 1; i <= totalRows; i++) {
       secondAddressTable.setHeight(i, rowHeight);
     }
     secondAddressTable.setWidth(1, "70");
     
     secondAddressTable.setHeight(1,"20");
    
-    secondAddressTable.add(this.cityText, 1, 1);
-    secondAddressTable.add(secondCityField, 2, 1);
-    secondAddressTable.add(this.provinceText, 1,2);
-    secondAddressTable.add(secondProvinceField, 2, 2);
-    secondAddressTable.add(this.countryText, 1, 3);
-    secondAddressTable.add(secondCountryField, 2, 3);
-    secondAddressTable.add(postalCodeText,1,4);
-    secondAddressTable.add(secondPostalCodeField,2,4);
-		secondAddressTable.add(Text.getNonBrakingSpace(2), 2, 4);
+    secondAddressTable.add(this.cityText, 1, row);
+    secondAddressTable.add(secondCityField, 2, row++);
+    secondAddressTable.add(this.provinceText, 1,row);
+    secondAddressTable.add(secondProvinceField, 2, row++);
+    if (useCommune) {
+    	secondAddressTable.add(communeText, 1, row);
+    	secondAddressTable.add(secondCommuneField, 2, row++);
+    }
+    secondAddressTable.add(this.countryText, 1, row);
+    secondAddressTable.add(secondCountryField, 2, row++);
+    secondAddressTable.add(postalCodeText,1,row);
+    secondAddressTable.add(secondPostalCodeField,2,row);
+		secondAddressTable.add(Text.getNonBrakingSpace(2), 2, row);
 		Link editPostalCodeLink = new Link(iwrb.getLocalizedImageButton("AddressInfoTab.postalcodewindow.add","Add"));
 		editPostalCodeLink.setWindowToOpen(PostalCodeEditorWindow.class);
-		secondAddressTable.add(editPostalCodeLink, 2, 4);
+		secondAddressTable.add(editPostalCodeLink, 2, row);
 
     //    fpane.add(secondAddressTable);
 
@@ -395,6 +450,11 @@ public class AddressInfoTab extends UserTab {
 				String city = iwc.getParameter(cityFieldName);
 				String province = iwc.getParameter(provinceFieldName);
 				String poBox = iwc.getParameter(poBoxFieldName);
+				String commune = iwc.getParameter(communeFieldName);
+				Integer communeID = null;
+				try {
+					communeID = Integer.valueOf(commune);
+				} catch (NumberFormatException n) {}
 
 				this.getUserBusiness(iwc).updateUsersMainAddressOrCreateIfDoesNotExist(
 					userId,
@@ -403,7 +463,8 @@ public class AddressInfoTab extends UserTab {
 					country,
 					city,
 					province,
-					poBox);
+					poBox,
+					communeID);
 
 			}
 			catch (Exception e) {
@@ -425,6 +486,11 @@ public class AddressInfoTab extends UserTab {
         String city = iwc.getParameter(secondCityFieldName);
         String province = iwc.getParameter(secondProvinceFieldName);
         String poBox = iwc.getParameter(secondPoBoxFieldName);
+				String commune = iwc.getParameter(secondCommuneFieldName);
+				Integer communeID = null;
+				try {
+					communeID = Integer.valueOf(commune);
+				} catch (NumberFormatException n) {}
 
         this.getUserBusiness(iwc).updateUsersCoAddressOrCreateIfDoesNotExist(
           userId,
@@ -433,7 +499,8 @@ public class AddressInfoTab extends UserTab {
           country,
           city,
           province,
-          poBox);
+          poBox,
+        	communeID);
 
       }
       catch (Exception e) {
@@ -528,4 +595,8 @@ public class AddressInfoTab extends UserTab {
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
+	
+	public CommuneBusiness getCommuneBusiness (IWApplicationContext iwac) throws RemoteException {
+		return (CommuneBusiness) IBOLookup.getServiceInstance(iwac, CommuneBusiness.class);
+	}	
 } // Class AddressInfoTab
