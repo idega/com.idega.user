@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.presentation.IWContext;
@@ -19,7 +18,6 @@ import com.idega.user.app.Toolbar;
 import com.idega.user.app.ToolbarElement;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.Group;
-import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.event.SelectGroupEvent;
 
 /**
@@ -257,15 +255,10 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
         		Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForGroup(realGroup);
         		Iterator iter = plugins.iterator();
         		while (iter.hasNext()) {
-        			UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
-        			try {
-        			    UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) IBOLookup.getServiceInstance(iwc, Class.forName(element.getBusinessICObject().getClassName()));
-        			    List list = pluginBiz.getGroupToolbarElements(realGroup);
-        			    if (list != null) {
-        			        toolbarElements.addAll(list);
-        			    }
-        			} catch(Exception e) {
-        			    log(e);
+        			UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) iter.next();
+        			List list = pluginBiz.getGroupToolbarElements(realGroup);
+        			if (list != null) {
+        				toolbarElements.addAll(list);
         			}
         		}
         		// adding some toolbar elements that belong to this bundle
