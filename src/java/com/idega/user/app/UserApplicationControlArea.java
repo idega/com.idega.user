@@ -233,7 +233,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		layer.setWidth(Table.HUNDRED_PERCENT);
 		layer.setHeight(Table.HUNDRED_PERCENT);
 		layer.add(groupTree);
-		layer.setOverflow("auto");
+		layer.setOverflow("scroll");
 		table.add(layer, 1, 1);
 
 		Image banner = getBundle(iwc).getImage("banner.gif");
