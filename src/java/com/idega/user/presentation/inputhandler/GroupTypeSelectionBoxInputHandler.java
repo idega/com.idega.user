@@ -15,6 +15,7 @@ import javax.ejb.FinderException;
 
 import com.idega.business.InputHandler;
 import com.idega.data.IDOLookup;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.SelectionBox;
@@ -28,7 +29,7 @@ import com.idega.user.data.GroupTypeHome;
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements InputHandler {
-
+	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 	public GroupTypeSelectionBoxInputHandler() {
 		super();
 	}
@@ -40,17 +41,18 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 	
 	public void main(IWContext iwc) {
 		try {
+			IWResourceBundle iwrb = this.getResourceBundle(iwc);
 			GroupTypeHome groupTypeHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
 
-			Collection groupTypes = groupTypeHome.findAllGroupTypes();
+			Collection groupTypes = groupTypeHome.findVisibleGroupTypes();
 
 			if (groupTypes != null) {
 				Iterator iter = groupTypes.iterator();
 				while (iter.hasNext()) {
-					GroupType groupType = groupTypeHome.findByPrimaryKey(iter.next());
+					GroupType groupType = (GroupType) iter.next();
 					String name = groupType.getType();
 					if(name!=null) {
-						addMenuElement(groupType.getPrimaryKey().toString(), name);
+						addMenuElement(name, iwrb.getLocalizedString(name,name));
 					}
 				}
 			}
@@ -80,15 +82,10 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 		Collection groupTypes = null;
 		int count = values.length;
 		if (values != null && count > 0) {
-			groupTypes = new ArrayList(count);
-			GroupTypeHome groupTypeHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
+			groupTypes = new ArrayList();
+			
 			for(int i=0; i<values.length; i++) {
-				GroupType gType = groupTypeHome.findByPrimaryKey(values[i]);
-				String tName = gType.getType();
-				if(gType!=null) {
-					//groupTypes.add(gType);
-					groupTypes.add(tName);
-				}
+					groupTypes.add(values[i]);
 			}
 		}
 
@@ -100,6 +97,7 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 	 */
 	public String getDisplayNameOfValue(Object value, IWContext iwc) {
 		String result = null;
+		IWResourceBundle iwrb = getResourceBundle(iwc);
 		if(value!=null && value instanceof Collection) {
 			Collection groupTypes = (Collection) value;
 			StringBuffer buf = new StringBuffer();
@@ -111,22 +109,16 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 				} else {
 					buf.append(", ");
 				}
-				GroupType gType = (GroupType) gtIter.next();
-				String name = gType.getType();
-				buf.append(name);
+				String name = (String) gtIter.next();
+				
+				buf.append(iwrb.getLocalizedString(name,name));
 			}
 			result = buf.toString();
 		}
 		return result;
 	}
 
+	public String getBundleIdentifier() {
+		return IW_BUNDLE_IDENTIFIER;
+	}
 }
-
-
-
-
-
-
-
-
-
