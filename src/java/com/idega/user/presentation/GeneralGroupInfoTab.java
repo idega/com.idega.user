@@ -25,7 +25,7 @@ import com.idega.util.Disposable;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
@@ -206,7 +206,10 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 				Group group = getGroupBusiness(iwc).getGroupByGroupID(getGroupId());
 				group.setName((String) fieldValues.get(nameFieldName));
 				group.setDescription((String) fieldValues.get(descriptionFieldName));
-				group.setHomePageID((Integer) fieldValues.get(homepageFieldName));
+				Integer homePageId = (Integer) fieldValues.get(homepageFieldName);
+				if(homePageId.intValue()>0){
+					group.setHomePageID(homePageId);
+				}
 				group.setGroupType((String) fieldValues.get(grouptypeFieldName));
 				group.setShortName((String) fieldValues.get(shortNameFieldName));
 				group.setAbbrevation((String) fieldValues.get(abbrFieldName));
