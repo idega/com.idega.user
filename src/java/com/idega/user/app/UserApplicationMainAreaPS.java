@@ -19,6 +19,7 @@ import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.event.SelectGroupEvent;
+import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.CreateGroupWindowPS;
 import com.idega.user.presentation.DeleteGroupConfirmWindowPS;
 import com.idega.user.presentation.GroupPropertyWindow;
@@ -170,7 +171,7 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
 
   public void stateChanged(ChangeEvent e) {
     Object object = e.getSource();
-    if (object instanceof DeleteGroupConfirmWindowPS || object instanceof CreateGroupWindowPS) { 
+    if (object instanceof DeleteGroupConfirmWindowPS) { 
       // refresh
       setOnLoad("parent.frames['iwb_main_left'].location.reload()");
       setOnLoad("parent.frames['iwb_main'].location.reload()");
@@ -182,11 +183,21 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
       CreateGroupWindowPS state = (CreateGroupWindowPS) e.getSource();
       IWContext eventContext = state.getEventContext();
       Integer groupId = state.getGroupId();
-      Link gotoLink = new Link();  
-      gotoLink.setStyleClass(styledLinkClass); 
-      gotoLink.setWindowToOpen(GroupPropertyWindow.class);
-      gotoLink.addParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, groupId.toString());
-      setOnLoad(gotoLink.getWindowToOpenCallingScript(eventContext));
+      if(groupId!=null){
+	      Link gotoLink = new Link();  
+	      gotoLink.setWindowToOpen(GroupPropertyWindow.class);
+	      gotoLink.addParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, groupId.toString());
+	      setOnLoad("parent.frames['iwb_main_left'].location.reload()");
+	      setOnLoad("parent.frames['iwb_main'].location.reload()");
+	      setOnLoad(gotoLink.getWindowToOpenCallingScript(eventContext));
+      }else{
+      	//group creation must have failed or the groupt type changed open the window again
+      	//eiki
+	      Link gotoLink = new Link();  
+	      gotoLink.setWindowToOpen(CreateGroupWindow.class);
+	      setOnLoad(gotoLink.getWindowToOpenCallingScript(eventContext));
+      }
+      
     }
     if (object instanceof IWTabbedPane) {
       IWTabbedPane pane = (IWTabbedPane) object;
