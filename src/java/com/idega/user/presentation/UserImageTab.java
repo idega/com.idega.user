@@ -182,4 +182,8 @@ public class UserImageTab extends UserTab {
 
 		return systemImageId;
 	}
+	
+	public String getBundleIdentifier() {
+		return IW_BUNDLE_IDENTIFIER;
+	}	
 }
