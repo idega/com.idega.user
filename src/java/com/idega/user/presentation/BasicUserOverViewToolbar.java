@@ -65,6 +65,8 @@ public class BasicUserOverViewToolbar extends Toolbar {
     toolbar1.setCellpadding(0);
     toolbar1.setCellspacing(0);
 
+
+   //user
     Table button = new Table(2,1);
  	button.setCellpadding(0);
     Image iconCrUser = iwb.getImage("new_user.gif");
@@ -76,27 +78,23 @@ public class BasicUserOverViewToolbar extends Toolbar {
     tLink11.setWindowToOpen(CreateUser.class);
     button.add(tLink11,2,1);
     toolbar1.add(button,2,1);
-
- 	Table button2 = new Table(2,1);
- 	button2.setCellpadding(0);
-    Image iconCrGroup = iwb.getImage("new_group.gif");
-    button2.add(iconCrGroup,1,1);
-	Text text2 = new Text(iwrb.getLocalizedString("new.group","Edit group"));
- 	text2.setFontFace(Text.FONT_FACE_VERDANA);
- 	text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
-    Link tLink12 = new Link(text2);
-    tLink12.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID,((Integer)selectedGroup.getPrimaryKey()).toString() );
-   // tLink12.setWindowToOpen(CreateGroupWindow.class);
-   	tLink12.setWindowToOpen(GroupPropertyWindow.class);
-    button2.add(tLink12,2,1);
-    toolbar1.add(button2,3,1);
-    
-    
-
-
-   //hitt
    //group
-   //user
+	if(selectedGroup!=null){
+	 	Table button2 = new Table(2,1);
+	 	button2.setCellpadding(0);
+	    Image iconCrGroup = iwb.getImage("new_group.gif");
+	    button2.add(iconCrGroup,1,1);
+		Text text2 = new Text(iwrb.getLocalizedString("new.group","Edit group"));
+	 	text2.setFontFace(Text.FONT_FACE_VERDANA);
+	 	text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
+	    Link tLink12 = new Link(text2);
+	    tLink12.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID,((Integer)selectedGroup.getPrimaryKey()).toString() );
+	   // tLink12.setWindowToOpen(CreateGroupWindow.class);
+	   	tLink12.setWindowToOpen(GroupPropertyWindow.class);
+	    button2.add(tLink12,2,1);
+	    toolbar1.add(button2,3,1);
+	}
+    
    //calendar
    toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("calendar","Calendar"), iwb.getImage("calendar.gif"), com.idega.block.news.presentation.News.class),4,1);
    //history
