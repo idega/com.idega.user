@@ -233,7 +233,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
             return;
         }
 
-        Iterator iterator = type.getChildren();
+        Iterator iterator = type.getChildrenIterator();
 
         while (iterator != null && iterator.hasNext()) {
             GroupType gType = (GroupType) iterator.next();

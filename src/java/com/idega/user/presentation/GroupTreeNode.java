@@ -117,7 +117,7 @@ public class GroupTreeNode implements ICTreeNode {
 		_parent = parent;
 	}
 
-	public Iterator getChildren() {
+	public Iterator getChildrenIterator() {
 		if (_children != null) {
 			return _children.iterator();
 		}
@@ -161,7 +161,7 @@ public class GroupTreeNode implements ICTreeNode {
 					g = _group;
 				}
 
-				Iterator iter = g.getChildren();
+				Iterator iter = g.getChildrenIterator();
 				GroupTreeNode node = null;
 				while (iter.hasNext()) {
 					Group item = (Group) iter.next();
