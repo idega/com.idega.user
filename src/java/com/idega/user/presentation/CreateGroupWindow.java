@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.swing.event.ChangeListener;
+
 import com.idega.builder.presentation.StyledIBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
@@ -20,7 +22,6 @@ import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
-import com.idega.presentation.Layer;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.presentation.Table;
@@ -67,7 +68,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 		_stateHandler = new StatefullPresentationImplHandler();
 		_stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
 		setWidth(340);
-		setHeight(350);
+		setHeight(370);
 		setResizable(true);
 		setScrollbar(false);
 		getLocation().setApplicationClass(CreateGroupWindow.class);
@@ -174,10 +175,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			groupChooser.setInputLength(17);
 			Text createUnderText = new Text(iwrb.getLocalizedString("parent_group", "Create group under") + ":");
 			
-			Layer layer = new Layer();
-			layer.add(createUnderText);
-			layer.setNoWrap();
-			tab.add(layer, 1, 2);
+			tab.add(createUnderText, 1, 2);
 			tab.add(Text.getBreak(), 1, 2);
 			tab.add(groupChooser, 1, 2); //changed from (groupChooser, 2,3) - birna
 			
