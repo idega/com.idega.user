@@ -1,13 +1,17 @@
 package com.idega.user.app;
 
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
+import com.idega.business.IBOLookup;
 import com.idega.event.IWPresentationEvent;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWResourceBundle;
@@ -21,12 +25,16 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SelectOption;
-import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.block.search.presentation.SearchForm;
 import com.idega.user.block.search.presentation.SearchWindow;
+import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserGroupPlugInBusiness;
+import com.idega.user.data.User;
+import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.CreateUser;
+import com.idega.user.presentation.MassMovingWindowPlugin;
 import com.idega.user.presentation.RoleMastersWindow;
 
 /**
@@ -96,7 +104,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
 	}
 
-	public void main(IWContext iwc) throws Exception {
+	public void main(final IWContext iwc) throws Exception {
 		this.empty();
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
@@ -202,13 +210,28 @@ public class Toolbar extends Page implements IWBrowserView {
 		}
 
 		// adding all plugins that implement the interface ToolbarElement
-		List  toolbarElements = ImplementorRepository.getInstance().newInstances(ToolbarElement.class, this.getClass());
-		final IWContext finalIwc = iwc;
+		//get plugins
+		List  toolbarElements = new ArrayList();
+		User user = iwc.getCurrentUser();
+		Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
+		Iterator iter = plugins.iterator();
+		while (iter.hasNext()) {
+			UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
+			UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) IBOLookup.getServiceInstance(iwc, Class.forName(element.getBusinessICObject().getClassName()));
+			List list = pluginBiz.getMainToolbarElements();
+			if (list != null) {
+				toolbarElements.addAll(list);
+			}
+		}
+		// adding some toolbar elements that belong to this bundle
+		toolbarElements.add(new MassMovingWindowPlugin());
+		// all toolbar elements found, start sorting
+		int column = 6;
 		Comparator priorityComparator = new Comparator() {
 			
 			public int compare(Object toolbarElementA, Object toolbarElementB) {
-				int priorityA = ((ToolbarElement) toolbarElementA).getPriority(finalIwc);
-				int priorityB = ((ToolbarElement) toolbarElementB).getPriority(finalIwc);
+				int priorityA = ((ToolbarElement) toolbarElementA).getPriority(iwc);
+				int priorityB = ((ToolbarElement) toolbarElementB).getPriority(iwc);
 				if (priorityA == -1  && priorityB == -1) {
 					return 0;
 				}
@@ -222,6 +245,7 @@ public class Toolbar extends Page implements IWBrowserView {
 			}
 		};
 		Collections.sort(toolbarElements, priorityComparator);
+		// sorting finished
 		Iterator toolbarElementsIterator = toolbarElements.iterator();
 		while (toolbarElementsIterator.hasNext()) {
 			ToolbarElement toolbarElement = (ToolbarElement) toolbarElementsIterator.next();
@@ -242,7 +266,7 @@ public class Toolbar extends Page implements IWBrowserView {
 					menu.addOption(toolOption);
 				}
 				else {
-					Image toolImage = toolbarElement.getButtonImage(finalIwc);
+					Image toolImage = toolbarElement.getButtonImage(iwc);
 					Link toolLink = new Link(toolName);
 					toolLink.setStyleClass(styledLink);
 					toolLink.setParameter(parameterMap);
@@ -305,4 +329,8 @@ public class Toolbar extends Page implements IWBrowserView {
 		userApplicationMainAreaStateId = string;
 	}
 
+	public GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws RemoteException {
+		return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+	}
+	
 }

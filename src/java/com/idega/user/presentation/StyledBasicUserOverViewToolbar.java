@@ -1,7 +1,14 @@
 package com.idega.user.presentation;
 
-import com.idega.block.importer.data.ColumnSeparatedImportFile;
-import com.idega.block.importer.presentation.Importer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.presentation.IWContext;
@@ -10,11 +17,11 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.app.Toolbar;
+import com.idega.user.app.ToolbarElement;
+import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.Group;
+import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.event.SelectGroupEvent;
-import com.idega.user.handler.plugin.UserPinLookupToGroupImportHandler;
-import com.idega.user.plugin.UserCashierWindow;
-import com.idega.user.plugin.UserUpdateClubDivisionTemplate;
 
 /**
  * 
@@ -24,7 +31,6 @@ import com.idega.user.plugin.UserUpdateClubDivisionTemplate;
  * @author <a href="mailto:birna@idega.is">Birna Iris Jonsdottir</a>
  */
 public class StyledBasicUserOverViewToolbar extends Toolbar {
-    public static final String PARAMETERSTRING_GROUP_ID = "ic_group_id";
     private Group aliasGroup;
     private boolean hasCreatePermissionForRealGroup = false;
     private boolean hasDeletePermissionForRealGroup = false;
@@ -75,7 +81,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
         return selectedGroup;
     }
     
-    public void main(IWContext iwc) throws Exception {
+    public void main(final IWContext iwc) throws Exception {
         this.empty();
         iwb = getBundle(iwc);
         iwrb = getResourceBundle(iwc);
@@ -148,124 +154,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
             editGroup.add(editLink, 1, 1);
             toolbar1.add(editGroup, 3, 1);
             toolbar1.setAlignment(3,1,"center");
-            
-            if (hasEditPermissionForRealGroup) {
-                //import button
-                if (selectedGroup != null && showISStuff) {
-                    Table button3 = new Table(1, 1);
-                    button3.setStyleClass(styleButton);
-                    button3.setAlignment(1,1,"center");
-                    button3.setCellpadding(1);
-                    Text text3 = new Text(iwrb.getLocalizedString("import", "Import"));
-                    Link tLink14 = new Link(text3);
-                    tLink14.setStyleClass(styledLinkClass);
-                    
-                    tLink14.setParameter(Importer.PARAMETER_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
-                    tLink14.setParameter(Importer.PARAMETER_IMPORT_FILE, ColumnSeparatedImportFile.class.getName());
 
-                    Class pinLookupToGroupImportHandler = ImplementorRepository.getInstance().getAnyClassImpl(UserPinLookupToGroupImportHandler.class, this.getClass());
-                    if (pinLookupToGroupImportHandler != null) {
-        				logWarning("[StyledBasicUserOverviewToolbar] Implementation of UserPinLookupToGroupImportHandler could not be found. Implementing bundle was not loaded.");
-        				tLink14.setParameter(Importer.PARAMETER_IMPORT_HANDLER, pinLookupToGroupImportHandler.getName());
-                    
-        				//setja import handler 
-        				//setja import file
-        				tLink14.setWindowToOpen(Importer.class);
-                    
-        				button3.add(tLink14, 1, 1);
-        				
-        				toolbar1.add(button3, 7, 1);
-                    }
-                    toolbar1.setAlignment(7,1,"center");
-                }
-                
-                //mass registering button
-                if (showISStuff) {
-                    Table button3 = new Table(1, 1);
-                    button3.setStyleClass(styleButton);
-                    button3.setAlignment(1,1,"center");
-                    button3.setCellpadding(1);
-                    Text text3 = new Text(iwrb.getLocalizedString("massregistering", "Bulk registering"));
-                    Link tLink14 = new Link(text3);
-                    tLink14.setStyleClass(styledLinkClass);
-                    if(aliasGroup==null){
-                        tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, selectedGroup.getPrimaryKey().toString());
-                    }
-                    else{
-                        tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, aliasGroup.getPrimaryKey().toString());
-                    }
-                    
-                    tLink14.setWindowToOpen(MassRegisteringWindow.class);
-                    
-                    button3.add(tLink14, 1, 1);
-                    toolbar1.add(button3, 8, 1);
-                    toolbar1.setAlignment(8,1,"center");
-                }
-                
-                if (showISStuff &&  ( selectedGroup.getGroupType().equals("iwme_league") || selectedGroup.getGroupType().equals("iwme_club_division_template") ) ) {
-                    Table button4 = new Table(1, 1);
-                    button4.setStyleClass(styleButton);
-                    button4.setAlignment(1,1,"center");
-                    button4.setCellpadding(1);
-                    Text text4 = new Text(iwrb.getLocalizedString("updatecdiv", "Update template"));
-                    Link tLink15 = new Link(text4);
-                    tLink15.setStyleClass(styledLinkClass);
-                    
-                    
-                    if(aliasGroup==null){
-                        tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, selectedGroup.getPrimaryKey().toString());
-                    }
-                    else{
-                        tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, aliasGroup.getPrimaryKey().toString());
-                    }
-                    Class updateClubDivisionTemplate = ImplementorRepository.getInstance().getAnyClassImpl(UserUpdateClubDivisionTemplate.class,this.getClass());
-                    if (updateClubDivisionTemplate  != null) {
-        				logWarning("[StyledBasicUserOverviewToolbar] Implementation of UserUpdateClubDivisionTemplate could not be found. Implementing bundle was not loaded.");
-                
-        				tLink15.setWindowToOpen(updateClubDivisionTemplate);
-                    
-        				button4.add(tLink15, 1, 1);
-        				toolbar1.add(button4, 9, 1);
-                    }
-                    toolbar1.setAlignment(9,1,"center");
-                }
-                if(selectedGroup.getGroupType().equals("iwma_run")) {
-                  Table t = new Table();
-                  t.setStyleClass(styleButton);
-                  t.setAlignment(1,1,Table.HORIZONTAL_ALIGN_CENTER);
-                  t.setCellpadding(1);
-                  Text text = new Text(iwrb.getLocalizedString("generate_year","Generate Year Group"));
-                  Link l = new Link(text);
-                  l.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
-                  l.setWindowToOpen("is.idega.idegaweb.marathon.presentation.CreateYearWindow");
-                  l.setStyleClass(styledLinkClass);
-                  
-                  t.add(l,1,1);
-                  toolbar1.add(t,10,1);
-                  toolbar1.setAlignment(10,1,Table.HORIZONTAL_ALIGN_CENTER);
-                }
-                
-                if (showISStuff) {
-                    Table button4 = new Table(1, 1);
-                    button4.setStyleClass(styleButton);
-                    button4.setAlignment(1,1,"center");
-                    button4.setCellpadding(1);
-                    Text text4 = new Text(iwrb.getLocalizedString("cashier", "Cashier"));
-                    Link tLink15 = new Link(text4);
-                    tLink15.setStyleClass(styledLinkClass);
-                    tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
-                    Class cashierWindow = ImplementorRepository.getInstance().getAnyClassImpl(UserCashierWindow.class,this.getClass());
-                    if (cashierWindow != null) {
-        				tLink15.setWindowToOpen(cashierWindow);
-        				button4.add(tLink15, 1, 1);
-        				toolbar1.add(button4, 9, 1);
-                    }
-                    toolbar1.setAlignment(9,1,"center");
-                }
-            }
-            
-            
-            
             //permission	
             //TODO Eiki open up seperate windows for the alias group and the permissions
             if( isRoleMaster ){
@@ -331,8 +220,98 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 button5.add(tLink5, 1, 1);
                 toolbar1.add(button5, 6, 1);
                 toolbar1.setAlignment(6,1,"center");
+            }            
+       
+            if (hasEditPermissionForRealGroup && selectedGroup != null) {
+                //mass registering button
+                if (showISStuff) {
+                    Table button3 = new Table(1, 1);
+                    button3.setStyleClass(styleButton);
+                    button3.setAlignment(1,1,"center");
+                    button3.setCellpadding(1);
+                    Text text3 = new Text(iwrb.getLocalizedString("massregistering", "Bulk registering"));
+                    Link tLink14 = new Link(text3);
+                    tLink14.setStyleClass(styledLinkClass);
+                    if(aliasGroup==null){
+                        tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, selectedGroup.getPrimaryKey().toString());
+                    }
+                    else{
+                        tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, aliasGroup.getPrimaryKey().toString());
+                    }
+                    
+                    tLink14.setWindowToOpen(MassRegisteringWindow.class);
+                    
+                    button3.add(tLink14, 1, 1);
+                    toolbar1.add(button3, 7, 1);
+                    toolbar1.setAlignment(7,1,"center");
+                }
+        		// adding all plugins that implement the interface ToolbarElement
+        		//get plugins
+                ///
+                // Assertion: selectedGroup is not null
+                ///
+            	String selectedGroupID = (aliasGroup == null) ? selectedGroup.getPrimaryKey().toString() : aliasGroup.getPrimaryKey().toString();
+        		List  toolbarElements = new ArrayList();
+        		Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForGroupTypeString(selectedGroup.getGroupType());
+        		Iterator iter = plugins.iterator();
+        		while (iter.hasNext()) {
+        			UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
+        			UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) IBOLookup.getServiceInstance(iwc, Class.forName(element.getBusinessICObject().getClassName()));
+        			List list = pluginBiz.getGroupToolbarElements(selectedGroup);
+        			if (list != null) {
+        				toolbarElements.addAll(list);
+        			}
+        		}
+        		// adding some toolbar elements that belong to this bundle
+//        		toolbarElements.add(new MassMovingWindowPlugin());
+        		// all toolbar elements found, start sorting
+        		int column = 8;
+        		Comparator priorityComparator = new Comparator() {
+        			
+        			public int compare(Object toolbarElementA, Object toolbarElementB) {
+        				int priorityA = ((ToolbarElement) toolbarElementA).getPriority(iwc);
+        				int priorityB = ((ToolbarElement) toolbarElementB).getPriority(iwc);
+        				if (priorityA == -1  && priorityB == -1) {
+        					return 0;
+        				}
+        				else if (priorityA == -1) {
+        					return 1;
+        				}
+        				else if (priorityB ==  -1) {
+        					return -1;
+        				}
+        				return priorityA - priorityB;
+        			}
+        		};
+        		Collections.sort(toolbarElements, priorityComparator);
+        		// sorting finished
+        		Iterator toolbarElementsIterator = toolbarElements.iterator();
+        		while (toolbarElementsIterator.hasNext()) {
+        			ToolbarElement toolbarElement = (ToolbarElement) toolbarElementsIterator.next();
+        			if (toolbarElement.isValid(iwc)) {
+        				Class toolPresentationClass = toolbarElement.getPresentationObjectClass(iwc);
+        				Map parameterMap = toolbarElement.getParameterMap(iwc);    
+        				if (parameterMap == null) {
+        					parameterMap = new HashMap(1);
+        				}
+        				// note: not all plugins are using that parameter
+        				parameterMap.put(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID,selectedGroupID );        				
+                        Table toolButton = new Table(1, 1);
+                        toolButton.setStyleClass(styleButton);
+                        toolButton.setAlignment(1,1,"center");
+                        toolButton.setCellpadding(1);
+                        String toolName = toolbarElement.getName(iwc);
+                        Text toolText = new Text(toolName);
+                        Link toolLink = new Link(toolText);
+                        toolLink.setStyleClass(styledLinkClass);
+                        toolLink.setParameter(parameterMap);
+                        toolLink.setWindowToOpen(toolPresentationClass);
+                        toolButton.add(toolLink, 1,1);
+                        toolbar1.add(toolButton, column, 1);
+                        toolbar1.setAlignment(column++, 1, Table.HORIZONTAL_ALIGN_CENTER);
+        			}
+            	}
             }
-            
         }
 //      if (selectedGroup != null || this.title != null) {
 //      toolbar1.add(new PrintButton(iwb.getImage("print.gif")), 9, 1);

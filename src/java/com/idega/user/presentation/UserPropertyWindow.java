@@ -11,12 +11,10 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.TabbedPropertyPanel;
 import com.idega.presentation.TabbedPropertyWindow;
-import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.User;
 import com.idega.user.data.UserGroupPlugIn;
-import com.idega.user.plugin.FamilyTab;
 import com.idega.util.IWColor;
 
 /**
@@ -76,10 +74,10 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			panel.addTab(new AddressInfoTab(), ++count, iwc);
 			panel.addTab(new UserPhoneTab(), ++count, iwc);
 			panel.addTab(new UserGroupList(), ++count, iwc);
-			PresentationObject familyTab = (PresentationObject) ImplementorRepository.getInstance().newInstanceOrNull(FamilyTab.class, this.getClass());
-			if(familyTab!=null) {
-				panel.addTab(familyTab, ++count, iwc);
-			}
+//			PresentationObject familyTab = (PresentationObject) ImplementorRepository.getInstance().newInstanceOrNull(FamilyTab.class, this.getClass());
+//			if(familyTab!=null) {
+//				panel.addTab(familyTab, ++count, iwc);
+//			}
 			//panel.addTab((PresentationObject) Class.forName("is.idega.idegaweb.member.presentation.UserFamilyTab").newInstance(), ++count, iwc);
 			// if the other tabs are added do it in the same way like above!
 			//panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFinanceTab").newInstance() ,++count,iwc);
