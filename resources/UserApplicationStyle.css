@@ -1,0 +1,113 @@
+/*memberStyles.css*/
+/*birna*/
+
+body{
+	background-color: #ffffff;
+	font-size: 60%;
+	margin-top: 1px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 1px;
+}
+body, p, h1, h2, h3, table, td, th, textarea, input{
+	font-family: verdana,helvetica,arial,sans-serif;
+}
+a{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 10px;
+	text-decoration: none;
+}
+h1{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 14pt;
+	color: #000000;
+	font-weight: normal;
+}
+.menu{
+	background: #ffffff url(menu1.gif) repeat;
+}
+.banner{
+	background: #ffffff url(banner_tile.gif) repeat;
+}
+table.back{
+	background-color: #eeeeee;
+	border: 1px solid #cccccc;
+}
+table.main{
+	border: 1px solid #cccccc;
+	background-color: #ffffff;
+	font-size: 10px;
+	font-weight: bold;
+}
+table.box{
+	border: 1px solid #bbbbbb;
+	width: 85px;
+	height: 8px;
+	font-size: 8px;
+}
+td.white{
+	background-color: #ffffff;
+	font-size: 10px;
+}
+td.lightgray{
+	border-bottom: 1px solid #cccccc;
+	background-color: #eeeeee;
+	font-size: 10px;
+}
+input.text{
+	border: 1px solid #bbbbbb;
+}
+input.checkbox{
+	border: 1px solid #cccccc;
+	background-color: #ffffff;
+}
+textarea.navigationtree{
+	border: 1px solid #cccccc;
+	height: 200px;
+	scrollbar-face-color: #ffffff;
+	scrollbar-highlight-color: #ffffff;
+	scrollbar-shadow-color: #bbbbbb;
+	scrollbar-3dlight-color: #dddddd;
+	scrollbar-arrow-color: #cccccc;
+	scrollbar-darkshadow-color: #eeeeee
+}
+button.defaultbutton{
+	border: 1px solid #bbbbbb;
+	font: 9px;
+	background: #eeeeee; 	
+	cursor: hand;
+	cursor: pointer;
+}
+button.panebutton{
+	border: 1px solid #bbbbbb;
+	font: 9px helvetica,verdana,arial,sans-serif;
+	color:  #777777;
+	font-style: italic;
+	font-weight: bold;
+	background: #eeeeee;
+	cursor: hand;
+	cursor: pointer;
+	width: 100px;
+}
+textarea{
+	border: 1px solid #bbbbbb;
+}
+
+select { 
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+        font-size: 10px; 
+} 
+option.op1{
+	border-bottom: 1px solid #bbbbbb;
+	border-top: 1px solid #bbbbbb;
+	font: 9px verdana,helvetica,arial,sans-serif;
+	color: #111111;	
+}
+
+
+
+
+
+
+
+
