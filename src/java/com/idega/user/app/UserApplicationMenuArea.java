@@ -28,6 +28,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
   private IWPresentationEvent _controlEvent = null;
   private Toolbar toolbar = new Toolbar();
   private static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
+	private String userApplicationMainAreaStateId = null;
 
 
 
@@ -78,7 +79,15 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
     getParentPage().setBackgroundColor(IWColor.getHexColorString(212,208,200));
     String id = getPresentationState(iwc).getCompoundId();
     toolbar.setSelectedGroupProviderStateId(id);
+    toolbar.setUserApplicationMainAreaStateId(userApplicationMainAreaStateId);
     super.add(toolbar);
   }
+
+	/**
+	 * @param string
+	 */
+	public void setUserApplicationMainAreaStateId(String string) {
+		userApplicationMainAreaStateId = string;
+	}
 
 }

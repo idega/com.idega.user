@@ -53,20 +53,18 @@ public class UserApplication extends IWBrowser {
     this.setSpanPixels(POS_MENU,26);
     this.setSpanPixels(POS_BOTTOM,26);
 
-    this.addToMenu(new UserApplicationMenuArea());
+    UserApplicationMenuArea menuArea = new UserApplicationMenuArea();
+		UserApplicationControlArea treeArea = new UserApplicationControlArea();
+		UserApplicationMainArea mainArea = new UserApplicationMainArea();
+		
+		this.addToMenu(menuArea);
     this.showMenuFrame(true);
     this.showBottomFrame(true);
-    this.addToLeftMain(new UserApplicationControlArea());
+		this.addToLeftMain(treeArea);
+    this.addToMain(mainArea);
     
-    //temp remove
-    boolean useBasic = (this.getIWApplicationContext().getApplication().getSettings().getProperty("USE_BASIC")!=null);//temporary solutions
+		menuArea.setUserApplicationMainAreaStateId(mainArea.getCompoundId());
     
-    if( useBasic ) this.addToMain(new BasicUserOverview());
-    else {
-      UserApplicationMainArea area = new UserApplicationMainArea();
-      //area.setArtificialCompoundId(id,iwc);
-      this.addToMain(area);
-    }
 
     //this.addToBottom(new Bottom());
    // System.out.println("SERVLET URL : "+getIWApplicationContext().getApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));

@@ -15,6 +15,7 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.user.block.search.presentation.SearchForm;
+import com.idega.user.block.search.presentation.SearchWindow;
 import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.CreateUser;
@@ -32,7 +33,8 @@ import com.idega.util.IWColor;
 
 public class Toolbar extends Page implements IWBrowserView {
 
-  protected IWBundle iwb;
+	protected String title;
+	protected IWBundle iwb;
   protected IWResourceBundle iwrb;
   protected String _controlTarget = null;
   protected IWPresentationEvent _controlEvent = null;
@@ -41,6 +43,7 @@ public class Toolbar extends Page implements IWBrowserView {
   private SearchForm searchForm = new SearchForm();
   
   private String selectedGroupProviderStateId = null;
+  private String userApplicationMainAreaStateId = null;
 
 
   public Toolbar(){
@@ -159,6 +162,23 @@ public class Toolbar extends Page implements IWBrowserView {
       tLink12.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
     button2.add(tLink12,2,1);
     toolbar1.add(button2,3,1);
+    
+		//Search temp
+		Table button3 = new Table(2,1);
+		button3.setCellpadding(0);
+		Image iconSearch = iwb.getImage("new_group.gif");
+		button3.add(iconSearch,1,1);
+		Text text3 = new Text(iwrb.getLocalizedString("button.search","Search"));
+		text3.setFontFace(Text.FONT_FACE_VERDANA);
+		text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
+		Link tLink13 = new Link(text3);
+		if (userApplicationMainAreaStateId != null)
+			tLink13.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, userApplicationMainAreaStateId);
+		tLink13.setWindowToOpen(SearchWindow.class);
+		button3.add(tLink13,2,1);
+		toolbar1.add(button3,4,1);
+    
+    
    //finance
    // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("finance","Finance"), iwb.getImage("finance.gif"), com.idega.block.finance.presentation.AccountViewer.class),4,1);
 
@@ -169,7 +189,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("To do", iwb.getImage("todo.gif"), com.idega.block.news.presentation.News.class),7,1);
 
    //settings
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("settings","Settings"), iwb.getImage("settings.gif"),com.idega.block.news.presentation.News.class ),4,1);
+  //  toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("settings","Settings"), iwb.getImage("settings.gif"),com.idega.block.news.presentation.News.class ),4,1);
 
    //view
    //dropdownmenu
@@ -223,6 +243,17 @@ public class Toolbar extends Page implements IWBrowserView {
 
     return button;
  }
+ 
+ public void setTitle(String title){
+ 	this.title = title;
+ }
 
+
+	/**
+	 * @param string
+	 */
+	public void setUserApplicationMainAreaStateId(String string) {
+		userApplicationMainAreaStateId = string;
+	}
 
 }

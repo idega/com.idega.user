@@ -15,6 +15,7 @@ import com.idega.presentation.IWTabbedPane;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.presentation.text.Link;
 import com.idega.user.block.search.event.SimpleSearchEvent;
+import com.idega.user.block.search.presentation.SearchWindowPS;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.event.ChangeClassEvent;
@@ -172,6 +173,11 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
       setOnLoad("parent.frames['iwb_main_left'].location.reload()");
       setOnLoad("parent.frames['iwb_main'].location.reload()");
     }
+    
+    if( object instanceof SearchWindowPS){
+			setOnLoad("parent.frames['iwb_main'].location.reload()");
+    }
+    
     // do not use "else if" !
     if (object instanceof CreateGroupWindowPS) {
       CreateGroupWindowPS state = (CreateGroupWindowPS) e.getSource();

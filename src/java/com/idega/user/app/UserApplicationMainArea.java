@@ -42,6 +42,7 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 
   private BasicUserOverview _buo = new BasicUserOverview();
 	private SearchResultsWindow search = new SearchResultsWindow();//these should be added dynamically
+	public static String USER_APPLICATION_MAIN_AREA_PS_KEY = "iwme_uama_ps_key";
 
 
   public UserApplicationMainArea() {
