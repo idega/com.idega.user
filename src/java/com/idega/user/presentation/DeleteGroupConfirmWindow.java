@@ -9,6 +9,8 @@ import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
@@ -23,6 +25,7 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.app.UserApplication;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.event.DeleteGroupEvent;
 
@@ -71,16 +74,8 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
     
     // check if the group can be deleted
     // use the event method
-    boolean confirmation = false;
-    try {
-      Group group = getGroup(groupId);
-      confirmation = (group.getGroupType().equals("alias") || group.getChildCount() <= 0);
-    }
-    catch (Exception ex)  {
-      System.err.println("[DeleteGroupConfirmWindow] RemoteException or NullpointerException"+ ex.getMessage());
-      ex.printStackTrace(System.err);
-      confirmation = false;
-    }  
+    Group group = getGroup(groupId);
+    boolean confirmation = getGroupBusiness(iwc).isGroupRemovable(group);   
     //_createEvent.setSource(this.getLocation());
     deleteEvent.setSource(this);
     // set controller (added by Thomas)
@@ -95,8 +90,9 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
     IWResourceBundle resourceBundle = getResourceBundle(iwc);
     String textString = (confirmation) ? 
       resourceBundle.getLocalizedString("Do you really want to remove the selected group?", "Do you really want to remove the selected group?"):
-      resourceBundle.getLocalizedString("Selected group has children and can not be removed.", "Selected group has children and ca not be removed.");
+      resourceBundle.getLocalizedString("Selected group has children and can not be removed.", "Selected group has children and can not be removed.");
     Text text = new Text(textString);
+    text.setFontStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
     SubmitButton close = new SubmitButton(resourceBundle.getLocalizedImageButton("Close", "Close"), DeleteGroupEvent.CANCEL_KEY);
     SubmitButton ok = new SubmitButton(resourceBundle.getLocalizedImageButton("yes", "Yes"), DeleteGroupEvent.OKAY_KEY);
     SubmitButton cancel = new SubmitButton(resourceBundle.getLocalizedImageButton("cancel", "Cancel"), DeleteGroupEvent.CANCEL_KEY);
@@ -177,6 +173,16 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
       return null;
     }
   }   
+  
+  private GroupBusiness getGroupBusiness(IWApplicationContext iwac)   { 
+    try {
+      return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+    }
+    catch (java.rmi.RemoteException rme) {
+      throw new RuntimeException(rme.getMessage());
+    }
+  }
+  
   
 }
 

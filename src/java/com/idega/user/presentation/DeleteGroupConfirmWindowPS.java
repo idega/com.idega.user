@@ -11,7 +11,9 @@ import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationStateImpl;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationHome;
@@ -34,25 +36,25 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
         Group group = event.getGroup();
         Group parentGroup = event.getParentGroup();
         IBDomain parentDomain = event.getParentDomain();
-        try { 
-          if (group.getGroupType().equals("alias") || group.getChildCount() <= 0)  {
+        IWApplicationContext iwac = e.getIWContext().getApplicationContext();
+        GroupBusiness groupBusiness = getGroupBusiness(iwac);
+        if (groupBusiness.isGroupRemovable(group))  {
+          try {
+            // remove group
             if (parentGroup != null)
               parentGroup.removeGroup(group);
             else if (parentDomain != null)  {
               removeRelation( parentDomain, group);
             }
+            //TODO fix this
+				    e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
+				    e.getIWContext().getApplicationContext().removeApplicationAttribute("group_tree");			
+            this.fireStateChanged();
           }
-          
-					//TODO fix this
-					e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
-					e.getIWContext().getApplicationContext().removeApplicationAttribute("group_tree");			
-          
+          catch (RemoteException ex)  {
+          }
         }
-         catch (RemoteException ex)  {
-        }
-        this.fireStateChanged();
       }
-      
     }
 	}
   
@@ -72,7 +74,14 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
     
   }
     
-      
+  private GroupBusiness getGroupBusiness(IWApplicationContext iwac)    {
+    try {
+      return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+    }
+    catch (java.rmi.RemoteException rme) {
+      throw new RuntimeException(rme.getMessage());
+    }
+  }      
     
   
   
