@@ -140,10 +140,11 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 		    useApplyButton = useOkButton;
 		}
 		else {
-		    if(!isAdmin) {//only super admin can edit without permission
-		        useOkButton = false;
-		        useApplyButton = false;
+		    if(isAdmin) {//only super admin can edit without permission
+		        useOkButton = true;
+		        useApplyButton = true;
 		    }
+		    
 		}
 		
 		
