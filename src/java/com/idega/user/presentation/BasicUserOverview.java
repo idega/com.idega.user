@@ -191,11 +191,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
       
     
     
-			userTable = new Table(6, ((size>33)?size:33)+1  );
-				returnTable.add(entityBrowser,1,2);
-        //entityBrowser.setLocation(loc);
-      if (userTable != null)
-        return returnTable;
+/////			userTable = new Table(6, ((size>33)?size:33)+1  );
+///				returnTable.add(entityBrowser,1,2);
+//        //entityBrowser.setLocation(loc);
+//      if (userTable != null)
+//        return returnTable;
 // does not go further!!!!!!!!!!!!
 /////////////////////////////////////////////////////////
 
