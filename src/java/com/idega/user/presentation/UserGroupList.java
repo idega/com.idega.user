@@ -57,14 +57,15 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
         Iterator iter = userGroups.iterator();
         while (iter.hasNext()) {
           Group item = (Group)iter.next();
-          if(item == null) System.out.println("ITEM IS NULL!!!!!");
-          
-          Object prim = item.getPrimaryKey();
-          
-          String groupId = prim.toString();
-          String groupName = item.getName();
-          if(groupName==null) groupName = "untitled";
-          primaryGroupField.addMenuElement(groupId,groupName);
+          if(item == null) System.out.println("ITEM IS NULL!!!WHY? Temporary check. please fix this, that means you Tryggvi");
+          else{
+	          Object prim = item.getPrimaryKey();
+	          
+	          String groupId = prim.toString();
+	          String groupName = item.getName();
+	          if(groupName==null) groupName = "untitled";
+	          primaryGroupField.addMenuElement(groupId,groupName);
+          }        
         }
       }
       //User user = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(this.getUserId());
@@ -165,9 +166,20 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
       Iterator iter = userGroups.iterator();
       while (iter.hasNext()) {
         Group item = (Group)iter.next();
-        primaryGroupField.addMenuElement(item.getPrimaryKey().toString(),item.getName());
+				if(item == null) System.out.println("ITEM IS NULL!!!WHY? Temporary check. please fix this, that means you Tryggvi");
+				else{
+					Object prim = item.getPrimaryKey();
+					
+					String groupId = prim.toString();
+					String groupName = item.getName();
+					if(groupName==null) groupName = "untitled";
+					primaryGroupField.addMenuElement(groupId,groupName);
+				}  
       }
     }
+    
+
+							
     primaryGroupField.setSelectedElement((String)fieldValues.get(primaryGroupFieldName));
 
 
