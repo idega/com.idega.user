@@ -1,5 +1,6 @@
 package com.idega.user.app;
 
+import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -7,12 +8,16 @@ import java.util.Vector;
 
 import javax.swing.event.ChangeListener;
 
+import com.idega.builder.data.IBDomain;
+import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationState;
+import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
@@ -24,6 +29,8 @@ import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
+import com.idega.user.presentation.BasicUserOverview;
+import com.idega.user.presentation.BasicUserOverviewPS;
 import com.idega.user.presentation.GroupTreeNode;
 import com.idega.user.presentation.GroupTreeView;
 
@@ -153,7 +160,19 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 			script.addVariable("boldLink", "null");
 			script.addFunction("setLinkToBold", buffer.toString());
 		}
-
+    
+    BasicUserOverviewPS state = getPresentationStateOfBasicUserOverview(iwc);
+    Group group = state.getSelectedGroup();
+    IBDomain domain = state.getSelectedDomain();
+    if (group != null) {
+      int groupId = ((Integer) group.getPrimaryKey()).intValue();
+      groupTree.setSelectedGroupId(groupId);
+    }
+    // use else if because both variables could be not null but only one should be selected within the tree
+    else if (domain != null)  {
+      int domainId = ((Integer) domain.getPrimaryKey()).intValue();
+      groupTree.setSelectedGroupId(domainId);
+    }
     groupTree.setToShowSuperRootNode(true);
     groupTree.setDefaultOpenLevel(0);
     groupTree.setSuperRootNodeName(iwrb.getLocalizedString("tree.super.node.name","My groups"));
@@ -233,5 +252,17 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
 		return list;
 	}
+  
+  private BasicUserOverviewPS getPresentationStateOfBasicUserOverview(IWUserContext iwuc) {
+    try {
+      IWStateMachine stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwuc, IWStateMachine.class); 
+      String code = IWMainApplication.getEncryptedClassName(BasicUserOverview.class);
+      code = ":" + code;
+      return (BasicUserOverviewPS) stateMachine.getStateFor( code , BasicUserOverviewPS.class);
+    }
+    catch (RemoteException ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+  }
 
 }
