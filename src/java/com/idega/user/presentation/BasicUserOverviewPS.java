@@ -7,13 +7,16 @@ import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.user.data.Group;
 import com.idega.presentation.event.TreeViewerEvent;
 import com.idega.idegaweb.browser.event.IWBrowseEvent;
+import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import com.idega.presentation.IWContext;
+import com.idega.presentation.IWContext; 
 import com.idega.presentation.Page;
+
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import com.idega.idegaweb.IWException;
 import com.idega.event.*;
@@ -27,7 +30,7 @@ import com.idega.event.*;
  * @version 1.0
  */
 
-public class BasicUserOverviewPS extends IWPresentationStateImpl implements IWActionListener {
+public class BasicUserOverviewPS extends IWControlFramePresentationState implements IWActionListener {
 
 
 //  String color1 = "00FF00";
@@ -147,11 +150,21 @@ public class BasicUserOverviewPS extends IWPresentationStateImpl implements IWAc
 	}
 
   /**
-  * Returns the parentGroupOfSelection.
+  * Returns the parentGroupOfSelection. 
   * @return Group
   */
   public Group getParentGroupOfSelection() {
 	  return parentGroupOfSelection;
+  }
+
+  public void stateChanged(ChangeEvent e) {
+    if (e.getSource() instanceof DeleteGroupConfirmWindowPS) {
+      // selected group was successfully(!) removed 
+      // set selected group null
+      _selectedGroup = null;
+      // refresh the view 
+      setOnLoad("parent.frames['iwb_main'].location.reload()");
+    }
   }
 
 }

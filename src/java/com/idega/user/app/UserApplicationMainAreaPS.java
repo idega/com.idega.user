@@ -9,15 +9,20 @@ import com.idega.event.*;
 import com.idega.user.data.Group;
 import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.event.ChangeClassEvent;
+import com.idega.user.event.DeleteGroupEvent;
 import com.idega.user.event.SelectGroupEvent;
+import com.idega.user.presentation.DeleteGroupConfirmWindowPS;
 
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
+import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -29,7 +34,7 @@ import com.idega.idegaweb.IWException;
  * @version 1.0
  */
 
-public class UserApplicationMainAreaPS extends IWPresentationStateImpl implements IWActionListener {
+public class UserApplicationMainAreaPS extends IWControlFramePresentationState implements IWActionListener {
 
   private EventListenerList _listenerList = new EventListenerList();
   private String _class = null;
@@ -141,6 +146,13 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
       }
     }
     return business;
+  }
+
+  public void stateChanged(ChangeEvent e) {
+    if (e.getSource() instanceof DeleteGroupConfirmWindowPS) { 
+      // refresh
+      setOnLoad("parent.frames['iwb_main_left'].location.reload()");
+    }
   }
 
 /*
