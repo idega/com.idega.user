@@ -1,50 +1,28 @@
 package com.idega.user.block.search.presentation;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 
-import javax.swing.event.ChangeListener;
-
-import com.idega.builder.presentation.IBPageChooser;
 import com.idega.business.IBOLookup;
-import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
-import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
-import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
-import com.idega.presentation.StatefullPresentation;
-import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.app.ToolbarElement;
-import com.idega.user.app.UserApplication;
 import com.idega.user.app.UserApplicationMainArea;
 import com.idega.user.app.UserApplicationMainAreaPS;
-import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.block.search.event.SimpleSearchEvent;
-import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
-import com.idega.user.data.GroupType;
-import com.idega.user.event.CreateGroupEvent;
-import com.idega.user.presentation.GroupChooser;
-import com.idega.user.presentation.GroupTreeNode;
 
 /**
  * <p>Title: idegaWeb User</p>

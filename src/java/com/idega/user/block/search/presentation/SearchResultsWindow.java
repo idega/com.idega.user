@@ -14,12 +14,10 @@ import java.util.Collection;
 
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Text;
 import com.idega.user.block.search.business.SearchEngine;
-import com.idega.user.block.search.event.SimpleSearchEvent;
 import com.idega.user.presentation.BasicUserOverViewToolbar;
 import com.idega.user.presentation.BasicUserOverview;
 

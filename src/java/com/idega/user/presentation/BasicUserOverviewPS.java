@@ -13,7 +13,6 @@ import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.user.data.Group;
-import com.idega.user.event.PartitionSelectEvent;
 import com.idega.user.event.SelectDomainEvent;
 import com.idega.user.event.SelectGroupEvent;
 
