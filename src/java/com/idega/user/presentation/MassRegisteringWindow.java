@@ -273,8 +273,8 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
                     else {
                         stat = sHome.findByPrimaryKey(new Integer(sStat));
                     }		
-                    String msg = userBuis.isUserSuitedForGroup(user,group);
-                    if(msg!=null){
+                    String failedMsg = userBuis.isUserSuitedForGroup(user,group);
+                    if(failedMsg==null){
                     		group.addGroup(user);
                     		 if ( stat != null && (! usb.setUserGroupStatus(user.getID(), ((Integer)group.getPrimaryKey()).intValue(), ((Integer)stat.getPrimaryKey()).intValue(),iwc.getCurrentUserId()) )) {
                                  failedInserts.add(new FailedRegisterUser(user,""));
@@ -287,7 +287,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
                            }
                 	   }
                     else{
-                        failedInserts.add(new FailedRegisterUser(user,msg));
+                        failedInserts.add(new FailedRegisterUser(user,failedMsg));
                         errorFree = false;
                     }
                    
