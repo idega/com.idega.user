@@ -205,6 +205,11 @@ public class MassRegisteringWindow extends IWAdminWindow {
 						failedInserts.add(user);
 						errorFree = false;
 					}
+					// Added this.... Is this OK?
+					if (user.getPrimaryGroup() == null) {
+						user.setPrimaryGroup(group);
+						user.store();
+					}
 				} catch (FinderException e) {
 					e.printStackTrace(System.err);
 				}
