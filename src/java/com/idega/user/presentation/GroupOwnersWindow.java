@@ -69,8 +69,6 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 	private final String permissionTypeOwner = "owner"; //HARD CODED TEMPORARY
 
 	private String mainStyleClass = "main";
-
-	private GroupPermissionWindow gpw = null;
 	private Group selectedGroup;
 
 	/**
@@ -116,7 +114,6 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 	public void main(IWContext iwc) throws Exception {
 		iwrb = this.getResourceBundle(iwc);
 
-		gpw = new GroupPermissionWindow();
 
 		parseAction(iwc);
 
