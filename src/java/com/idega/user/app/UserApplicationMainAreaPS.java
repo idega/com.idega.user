@@ -3,10 +3,17 @@
 package com.idega.user.app;
 
 import com.idega.user.block.search.event.SimpleSearchEvent;
+import com.idega.user.business.GroupBusiness;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.event.*;
+import com.idega.user.data.Group;
 import com.idega.user.event.ChangeClassEvent;
+import com.idega.user.event.SelectGroupEvent;
+
+import java.util.Collection;
 import javax.swing.event.EventListenerList;
+
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
 
 /**
@@ -14,7 +21,8 @@ import com.idega.idegaweb.IWException;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Gudmundur Saemundsson</a>
+ * @author <a href="eiki@idega.is">Eirikur Hrafnsson</a>
  * @version 1.0
  */
 
@@ -22,6 +30,9 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
 
   private EventListenerList _listenerList = new EventListenerList();
   private String _class = null;
+  private Group _selectedGroup = null;
+  private Collection _plugins = null;
+  
 
   public UserApplicationMainAreaPS() {
 
@@ -51,6 +62,19 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
       this.fireStateChanged();
     }
     
+    if(e instanceof SelectGroupEvent){
+    	try{
+	    	_selectedGroup = ((SelectGroupEvent)e).getSelectedGroup();
+	    	String groupType = _selectedGroup.getGroupType();
+	    	_plugins = getGroupBusiness( e.getIWContext()).getUserGroupPluginsForGroupTypeString(groupType);
+      		this.fireStateChanged();
+    	}
+    	catch( Exception ex ){
+    		ex.printStackTrace();	
+    	}
+    }
+    
+    
     if(e instanceof SimpleSearchEvent){
       System.out.println("[UserAppMainArea]: search for "+((SimpleSearchEvent)e).getSearchString());
       System.out.println("[UserAppMainArea]: searchType =  "+((SimpleSearchEvent)e).getSearchType());
@@ -73,9 +97,31 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
   public String getClassNameToShow(){
     return _class;
   }
+ 
 
   public void setClassNameToShow(String className){
     _class = className;
+  }
+
+  public Group getSelectedGroup(){
+    return _selectedGroup;
+  }
+  
+  public Collection getUserGroupPlugins(){
+    return _plugins;
+  }
+  
+  public GroupBusiness getGroupBusiness(IWApplicationContext iwc){
+    GroupBusiness business = null;
+    if(business == null){
+      try{
+        business = (GroupBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
+      }
+      catch(java.rmi.RemoteException rme){
+        throw new RuntimeException(rme.getMessage());
+      }
+    }
+    return business;
   }
 
 /*
