@@ -28,26 +28,29 @@ import com.idega.util.IWColor;
  */
 public class BasicUserOverViewToolbar extends Toolbar {
 
-	/**
-	 * Constructor for BasicUserOverViewToolbar.
-	 */
-	public BasicUserOverViewToolbar() {
-	    if(this.isChildOfOtherPage()){
-	      Page parent = this.getParentPage();
-	      parent.setAllMargins(0);
-	      parent.setBackgroundColor("#E6E6E6");
-	    } else {
-	      setAllMargins(0);
-	      setBackgroundColor("#E6E6E6");
-	    }
-	}
-	
+  /**
+   * Constructor for BasicUserOverViewToolbar.
+   */
+  public BasicUserOverViewToolbar() {
+  }
+
   public void main(IWContext iwc) throws Exception{
     iwb = getBundle(iwc);
 
     Table toolbarTable = new Table(1,1);
     toolbarTable.setCellpadding(0);
     toolbarTable.setCellspacing(0);
+    toolbarTable.setWidth("100%");
+    toolbarTable.setHeight("100%");
+    toolbarTable.setHeight(1,1);
+    toolbarTable.setHeight(3,1);
+
+    IWColor color = new IWColor(230,230,230);//jonni color
+
+    toolbarTable.setColor(color);
+    toolbarTable.setColor(1,1,color.brighter());
+    toolbarTable.setColor(1,3,color.darker());
+
     add(toolbarTable);
 
     Table toolbar1 = new Table();
@@ -58,7 +61,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
  	button.setCellpadding(0);
     Image iconCrUser = iwb.getImage("new_user.gif");
     button.add(iconCrUser,1,1);
-   	Text text = new Text("New User");
+   	Text text = new Text("Nýr félagi");
  	text.setFontFace(Text.FONT_FACE_VERDANA);
  	text.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink11 = new Link(text);
@@ -70,7 +73,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
  	button2.setCellpadding(0);
     Image iconCrGroup = iwb.getImage("new_group.gif");
     button2.add(iconCrGroup,1,1);
-	Text text2 = new Text("New Group");
+	Text text2 = new Text("Nýr hópur");
  	text2.setFontFace(Text.FONT_FACE_VERDANA);
  	text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink12 = new Link(text2);
@@ -83,19 +86,19 @@ public class BasicUserOverViewToolbar extends Toolbar {
    //group
    //user
    //calendar
-   toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Calendar", iwb.getImage("calendar.gif"), com.idega.block.news.presentation.News.class),4,1);
+   toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Kladdar", iwb.getImage("calendar.gif"), com.idega.block.news.presentation.News.class),4,1);
    //history
-   toolbar1.add( this.getToolbarButtonWithChangeClassEvent("History", iwb.getImage("history.gif"), com.idega.block.news.presentation.News.class),5,1);
-   //export
-   toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Export", iwb.getImage("export.gif"), com.idega.block.news.presentation.News.class),6,1);
+   toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Saga", iwb.getImage("history.gif"), com.idega.block.news.presentation.News.class),5,1);
    //import
-   toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Import", iwb.getImage("import.gif"), com.idega.block.news.presentation.News.class),7,1);
-   //bread crumbs
+   toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Import", iwb.getImage("import.gif"), com.idega.block.news.presentation.News.class),6,1);
+   //export
+   toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Export", iwb.getImage("export.gif"), com.idega.block.news.presentation.News.class),7,1);
+     //bread crumbs
 //VANTAR
 
 
 
-	toolbarTable.add(toolbar1,1,1);
+	toolbarTable.add(toolbar1,1,2);
 
   }
 

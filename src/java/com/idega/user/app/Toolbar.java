@@ -186,7 +186,7 @@ public class Toolbar extends Page implements IWBrowserView {
  	button.setCellpadding(0);
     Image iconCrUser = iwb.getImage("new_user.gif");
     button.add(iconCrUser,1,1);
-   	Text text = new Text("New User");
+   	Text text = new Text("Nýr félagi");
  	text.setFontFace(Text.FONT_FACE_VERDANA);
  	text.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink11 = new Link(text);
@@ -198,7 +198,7 @@ public class Toolbar extends Page implements IWBrowserView {
  	button2.setCellpadding(0);
     Image iconCrGroup = iwb.getImage("new_group.gif");
     button2.add(iconCrGroup,1,1);
-	Text text2 = new Text("New Group");
+	Text text2 = new Text("Ný hópur");
  	text2.setFontFace(Text.FONT_FACE_VERDANA);
  	text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink12 = new Link(text2);
@@ -215,17 +215,17 @@ public class Toolbar extends Page implements IWBrowserView {
    //Group
    //user
    //finance
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Finance", iwb.getImage("finance.gif"), com.idega.block.news.presentation.News.class),4,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Fjármál", iwb.getImage("finance.gif"), com.idega.block.news.presentation.News.class),4,1);
    //reports
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Reports", iwb.getImage("reports.gif"), com.idega.block.news.presentation.News.class),5,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Skýrslur", iwb.getImage("reports.gif"), com.idega.block.news.presentation.News.class),5,1);
    //To do - stickies
 //    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("To do", iwb.getImage("todo.gif"), com.idega.block.news.presentation.News.class),7,1);
    //settings
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Settings", iwb.getImage("settings.gif"), com.idega.block.news.presentation.News.class),6,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Stillingar", iwb.getImage("settings.gif"), com.idega.block.news.presentation.News.class),6,1);
 
    //view
    	//dropdownmenu
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Views", iwb.getImage("views.gif"), com.idega.block.news.presentation.News.class),7,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Yfirlit", iwb.getImage("views.gif"), com.idega.block.news.presentation.News.class),7,1);
    //search
    	//text input
    // toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Search", iwb.getImage("search.gif"), com.idega.block.news.presentation.News.class),8,1);
@@ -263,7 +263,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
   }
 
-  
+
  protected Table getToolbarButtonWithChangeClassEvent(String textOnButton, Image icon, Class changeClass){
 
  	Table button = new Table(2,1);

@@ -95,6 +95,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     Table userTable = null;
     Table returnTable = new Table(1,2);
     returnTable.setCellpaddingAndCellspacing(0);
+    returnTable.setWidth(Table.HUNDRED_PERCENT);
+    returnTable.setHeight(Table.HUNDRED_PERCENT);
     returnTable.setHeight(1,22);
 
     returnTable.add(toolbar,1,1);
@@ -204,7 +206,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             line++;
           }
 
-          userTable.add("&nsbsp;Dúfnahólar "+line+", 109 RVK",2,line);
+          userTable.add("&nbsp;Dúfnahólar "+line+", 109 RVK",2,line-1);
 
           if(delete && !adminUsers.contains(tempUser) && !userIsSuperAdmin && iwc.getAccessController().isAdmin(iwc)){
             Link delLink = new Link(new Text("Delete"));
