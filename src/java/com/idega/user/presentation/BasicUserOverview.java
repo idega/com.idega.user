@@ -188,8 +188,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		
 	}
 	/**
-	 * @param iwc
-	 * @return
+	 * @return BasicUserOverViewToolbar
 	 */
 	protected BasicUserOverViewToolbar getToolbar() {
 		if( toolbar == null){
@@ -477,7 +476,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 				add(iwrb.getLocalizedString("no.view.permission","You are not allowed to view the data for this group."));
 			}
 		}
-		else if(isCurrentUserSuperAdmin){
+		else{
 			this.add(getList(iwc));
 		}
 
