@@ -16,7 +16,10 @@ import com.idega.presentation.ui.AbstractChooser;
 
 
 public class UserChooserBrowser extends AbstractChooser {
-
+	
+	private String imgName = "open.gif";
+	private boolean isUserBundle = false;
+	
   public UserChooserBrowser(String chooserName) {
     addForm(false);
     setChooserParameter(chooserName);
@@ -29,8 +32,14 @@ public class UserChooserBrowser extends AbstractChooser {
 
   public void main(IWContext iwc){
     empty();
-    IWBundle iwb = iwc.getIWMainApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
-    setChooseButtonImage(iwb.getImage("open.gif","Choose"));
+    IWBundle iwb = null;
+    if(isUserBundle) {
+    		iwb = iwc.getIWMainApplication().getBundle("com.idega.user");
+    }
+    else{
+    		iwb = iwc.getIWMainApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
+    }
+    setChooseButtonImage(iwb.getImage(imgName,"Choose"));
   }
 
   public Class getChooserWindowClass() {
@@ -39,6 +48,12 @@ public class UserChooserBrowser extends AbstractChooser {
 
 	public void setSelectedUser(String userId, String userName) {
 		super.setChooserValue(userName,userId);
+	}
+	public void setImageName(String imgName) {
+		this.imgName = imgName;
+	}
+	public void setUserBundle(boolean isUserBundle) {
+		this.isUserBundle = isUserBundle;
 	}
 
 
