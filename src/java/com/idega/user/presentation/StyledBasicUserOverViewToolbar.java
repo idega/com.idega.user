@@ -48,15 +48,8 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
 		boolean showISStuff = iwc.getApplicationSettings().getProperty("temp_show_is_related_stuff") != null;
+		boolean showCashierTab = iwc.getApplicationSettings().getProperty("temp_show_isi_cashier_tab") != null;
 		AccessController access = iwc.getAccessController();
-
-//		if (selectedGroup != null) {
-//			setTitle(selectedGroup.getName() + Text.NON_BREAKING_SPACE);
-//		}
-
-
-
-//		add(toolbarTable);
 
 		Table toolbar1 = new Table();
 		toolbar1.setCellpadding(0);
@@ -228,7 +221,21 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 					toolbar1.add(button4, 9, 1);
 					toolbar1.setAlignment(9,1,"center");
 				}
+				else if (selectedGroup != null && showISStuff && showCashierTab && selectedGroup.getGroupType().equals("iwme_club")) {
+					Table button4 = new Table(1, 1);
+					button4.setStyleClass(styleButton);
+					button4.setAlignment(1,1,"center");
+					button4.setCellpadding(0);
+					Text text4 = new Text(iwrb.getLocalizedString("cashier", "Cashier"));
+					Link tLink15 = new Link(text4);
+					tLink15.setStyleClass(styledLinkClass);
+					tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
+					tLink15.setWindowToOpen("is.idega.idegaweb.member.isi.block.accounting.presentation.CashierWindow");
 
+					button4.add(tLink15, 1, 1);
+					toolbar1.add(button4, 8, 1);
+					toolbar1.setAlignment(8,1,"center");
+				}
 			}
 
 		}
