@@ -151,18 +151,18 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 
 		descriptionField = new TextArea(descriptionFieldName);
 		descriptionField.setHeight(5);
-		descriptionField.setWidth(43);
+		descriptionField.setWidth(Table.HUNDRED_PERCENT);
 		descriptionField.setWrap(true);
 
 		homepageField = new IBPageChooser(homepageFieldName);
 
 		//grouptypeField = new DropdownMenu(grouptypeFieldName);
-		grouptypeField = getTextObject();
+		grouptypeField = new Text();
 		grouptypeField.setBold(false);
 		
 		memberofFrame = new IFrame("ic_user_memberof_ic_group", GroupList.class);
 		memberofFrame.setHeight(150);
-		memberofFrame.setWidth(367);
+		memberofFrame.setWidth(Table.HUNDRED_PERCENT);
 		memberofFrame.setScrolling(IFrame.SCROLLING_YES);
 		//
 		IWContext iwc = IWContext.getInstance();
@@ -184,26 +184,26 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		nameText = new Text();// getTextObject();
-		nameText.setText(iwrb.getLocalizedString("gen_name","Name") + ":");
+		nameText = new Text(iwrb.getLocalizedString("gen_name","Name"));
+		nameText.setBold();
 
-		descriptionText = new Text();// getTextObject();
-		descriptionText.setText(iwrb.getLocalizedString("gen_desc","Description") + ":");
+		descriptionText = new Text(iwrb.getLocalizedString("gen_desc","Description"));
+		descriptionText.setBold();
 
-		homepageText = new Text();//getTextObject();
-		homepageText.setText(iwrb.getLocalizedString("gen_home","Home page") + ":");
+		homepageText = new Text(iwrb.getLocalizedString("gen_home","Home page"));
+		homepageText.setBold();
 
-		grouptypeText = new Text();//getTextObject();
-		grouptypeText.setText(iwrb.getLocalizedString("gen_type","Group type") + ":");
+		grouptypeText = new Text(iwrb.getLocalizedString("gen_type","Group type"));
+		grouptypeText.setBold();
 
-		memberof = new Text();//getTextObject();
-		memberof.setText(iwrb.getLocalizedString("gen_memberof","Member of") + ":");
+		memberof = new Text(iwrb.getLocalizedString("gen_memberof","Member of"));
+		memberof.setBold();
 		
-		shortNameText = new Text();//getTextObject();
-		shortNameText.setText(iwrb.getLocalizedString("gen_shortname","Short name") + ":");
+		shortNameText = new Text(iwrb.getLocalizedString("gen_shortname","Short name"));
+		shortNameText.setBold();
 		
-		abbrText = new Text();//getTextObject();
-		abbrText.setText(iwrb.getLocalizedString("gen_abbr","Abbrevation") + ":");		
+		abbrText = new Text(iwrb.getLocalizedString("gen_abbr","Abbrevation"));
+		abbrText.setBold();
 	}
 
 	public boolean store(IWContext iwc) {
@@ -232,61 +232,48 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	}
 
 	public void lineUpFields() {
-		resize(1, 8);
+		resize(1, 1);
 		setCellpadding(0);
 		setCellspacing(0);
 		
-		Table nameTable = new Table(2, 3);
-		nameTable.setCellpadding(0);
-		nameTable.setCellspacing(0);
-		nameTable.setWidth(1, 1, "50");
-		nameTable.setWidth(1, 2, "50");
-		nameTable.setWidth(1, 3, "50");
-		nameTable.add(nameText, 1, 1);
-		nameTable.add(nameField, 2, 1);
-		nameTable.add(shortNameText, 1, 2);
-		nameTable.add(shortNameField, 2, 2);
-		nameTable.add(abbrText, 1, 3);
-		nameTable.add(abbrField, 2, 3);
-	  add(nameTable, 1, 1);
+		Table table = new Table();
+		table.setCellpadding(5);
+		table.setCellspacing(0);
+		table.setWidth(Table.HUNDRED_PERCENT);
+		
+		table.add(nameText, 1, 1);
+		table.add(Text.getBreak(), 1, 1);
+		table.add(nameField, 1, 1);
+		
+		table.add(shortNameText, 2, 1);
+		table.add(Text.getBreak(), 2, 1);
+		table.add(shortNameField, 2, 1);
+		
+		table.add(abbrText, 1, 2);
+		table.add(Text.getBreak(), 1, 2);
+		table.add(abbrField, 1, 2);
+		
+		table.add(homepageText, 2, 2);
+		table.add(Text.getBreak(), 2, 2);
+		table.add(homepageField, 2, 2);
 
-		Table homepageTable = new Table(2, 1);
-		homepageTable.setCellpadding(0);
-		homepageTable.setCellspacing(0);
-		homepageTable.setWidth(1, "50");
-		homepageTable.add(homepageText, 1, 1);
-		homepageTable.add(homepageField, 2, 1);
-	  add(homepageTable, 1, 2);
+		table.add(grouptypeText, 1, 3);
+		table.add(Text.getBreak(), 1, 3);
+		table.add(grouptypeField, 1, 3);
 
-		Table grouptypeTable = new Table(2, 1);
-		grouptypeTable.setCellpadding(0);
-		grouptypeTable.setCellspacing(0);
-		grouptypeTable.setWidth(1, "50");
-		grouptypeTable.add(grouptypeText, 1, 1);
-		grouptypeTable.add(grouptypeField, 2, 1);
-		add(grouptypeTable, 1, 3);
+		table.mergeCells(1, 4, 2, 4);
+		table.add(descriptionText, 1, 4);
+		table.add(Text.getBreak(), 1, 4);
+		table.add(descriptionField, 1, 4);
 
-		Table descriptionTable = new Table(1, 2);
-		descriptionTable.setCellpadding(0);
-		descriptionTable.setCellspacing(0);
-		descriptionTable.setHeight(1, rowHeight);
-		descriptionTable.add(descriptionText, 1, 1);
-		descriptionTable.add(descriptionField, 1, 2);
-		add(descriptionTable, 1, 4);
+		table.mergeCells(1, 5, 2, 5);
+		table.add(memberof, 1, 5);
+		table.add(Text.getBreak(), 1, 5);
+		table.add(memberofFrame, 1, 5);
+		table.add(Text.getBreak(), 1, 5);
+		table.add(addLink, 1, 5);
 
-		add(memberof, 1, 5);
-		add(memberofFrame, 1, 6);
-
-		//		setHeight(3, "30");
-		setHeight(1, super.rowHeight);
-		setHeight(2, super.rowHeight);
-		setHeight(3, super.rowHeight);
-		setHeight(4, super.rowHeight);
-		//		setHeight(6, super.rowHeight);
-
-		add(addLink, 1, 7);
-		Help help = getHelpButton();
-		add(help,1,8);
+		add(table, 1, 1);
 	}
 
 	public boolean collect(IWContext iwc) {
@@ -361,6 +348,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	}
 
 	public void main(IWContext iwc) throws Exception {
+		getPanel().addHelpButton(getHelpButton());		
+
 		Object obj = getGroupBusiness(iwc).getParentGroups(getGroupId());
 		if (obj != null) {
 			iwc.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED, obj);
