@@ -1,5 +1,6 @@
 package com.idega.user.block.search.presentation;
 
+import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.*;
 import com.idega.presentation.*;
@@ -18,7 +19,7 @@ import com.idega.idegaweb.browser.presentation.IWBrowserView;
 
 public class SearchForm extends PresentationObjectContainer implements IWBrowserView
 {
-
+	private IWBundle iwb;
 	private TextInput _searchString;
 //	private SubmitButton _groupSearch;
 //	private SubmitButton _userSearch;
@@ -49,7 +50,13 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 		this.setStyle(_searchType);
 	}
 
+	public String getBundleIdentifier(){
+	    return "com.idega.user";
+	}
 	public void main(IWContext iwc) throws Exception {
+
+		iwb = getBundle(iwc);
+
 		Form form = new Form();
 		SimpleSearchEvent event = new SimpleSearchEvent();
 		Table table = new Table(3,1);
@@ -58,6 +65,8 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 		table.add(_searchType,1,1);
 		form.addEventModel(event);
 		form.add(table);
+		_search.setButtonImage(iwb.getImage("search.gif"));
+
 
 		if(_controlTarget != null){
 		    form.setTarget(_controlTarget);
