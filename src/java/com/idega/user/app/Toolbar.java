@@ -111,7 +111,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
     add(toolbarTable);
 
-    Table toolbar1 = new Table(1,7);
+    Table toolbar1 = new Table(7,1);
     toolbar1.setCellpadding(0);
     toolbar1.setCellspacing(0);
     toolbar1.setAlignment(Table.HORIZONTAL_ALIGN_LEFT);
