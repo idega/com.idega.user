@@ -163,7 +163,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 									while (childIter.hasNext()) {
 										Group childGroup = (Group) childIter.next();
 										//only if current user owns the group
-										if (access.isOwner(childGroup, iwc)) {
+										if (iwc.isSuperAdmin() || access.isOwner(childGroup, iwc)) {
 											access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, userGroupId.toString(), childGroup.getPrimaryKey().toString(), permissionTypeOwner, Boolean.FALSE);
 										}
 									}
@@ -178,7 +178,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 									while (childIter.hasNext()) {
 										Group childGroup = (Group) childIter.next();
 										//only if current user owns the group
-										if (access.isOwner(childGroup, iwc)) {
+										if (iwc.isSuperAdmin() || access.isOwner(childGroup, iwc)) {
 											access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, userGroupId.toString(), childGroup.getPrimaryKey().toString(), permissionTypeOwner, Boolean.TRUE);
 										}
 									}

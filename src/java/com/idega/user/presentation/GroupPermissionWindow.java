@@ -429,7 +429,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 								while (childIter.hasNext()) {
 									Group childGroup = (Group) childIter.next();
 									//only if current user owns the group
-									if(access.isOwner(childGroup,iwc)){
+									if(iwc.isSuperAdmin() || access.isOwner(childGroup,iwc)){
 										access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, selectedGroupId, childGroup.getPrimaryKey().toString(), key, Boolean.TRUE);
 									}
 								}
