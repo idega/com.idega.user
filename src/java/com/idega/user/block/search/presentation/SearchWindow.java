@@ -91,11 +91,6 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		searchEvent = new UserSearchEvent();
 		searchEvent.setSource(this);
 					
-		// set controller (added by Thomas) NOT NEEDED
-		String id = IWMainApplication.getEncryptedClassName( UserApplication.Top.class );
-		id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + id;
-		searchEvent.setController(id);
-
 		Form form = new Form();
 		form.addEventModel(searchEvent, iwc);
 
