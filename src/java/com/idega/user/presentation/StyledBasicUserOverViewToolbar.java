@@ -12,7 +12,9 @@ import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.app.Toolbar;
 import com.idega.user.data.Group;
 import com.idega.user.event.SelectGroupEvent;
-import com.idega.user.handler.UserPinLookupToGroupImportHandler;
+import com.idega.user.handler.plugin.UserPinLookupToGroupImportHandler;
+import com.idega.user.plugin.UserCashierWindow;
+import com.idega.user.plugin.UserUpdateClubDivisionTemplate;
 
 /**
  * 
@@ -254,7 +256,6 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                     tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
                     Class cashierWindow = ImplementorRepository.getInstance().getAnyClassImpl(UserCashierWindow.class,this.getClass());
                     if (cashierWindow != null) {
-        				logWarning("[StyledBasicUserOverviewToolbar] Implementation of UserCashierWindow could not be found. Implementing bundle was not loaded.");
         				tLink15.setWindowToOpen(cashierWindow);
         				button4.add(tLink15, 1, 1);
         				toolbar1.add(button4, 9, 1);
