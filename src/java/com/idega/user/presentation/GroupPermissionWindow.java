@@ -20,7 +20,6 @@ import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.event.IWPresentationState;
-import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.help.presentation.Help;
@@ -69,8 +68,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 	private StatefullPresentationImplHandler stateHandler = null;
 	private GroupBusiness groupBiz = null;
-	private Map cachedGroups = null;
-	private Map cachedParents = null;
+	private GroupComparator groupComparator = null;
 
 	private boolean saveChanges = false;
 
@@ -128,7 +126,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 	public void main(IWContext iwc) throws Exception {
 		iwrb = this.getResourceBundle(iwc);
-		addTitle(iwrb.getLocalizedString("group_permission_window", "Group Permission Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+		addTitle(iwrb.getLocalizedString("group_permission_window", "Group Permission Window"), TITLE_STYLECLASS);
 
 		//set initial variables
 		parseAction(iwc);
@@ -219,13 +217,11 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	    //get permission, order, sort alphabetically and use entitybrowser
 		Collection allPermissions = getAllPermissionForSelectedGroupAndCurrentUser(iwc);
 	    List entityList = orderAndGroupPermissionsByContextValue(allPermissions, iwc);
-		GroupComparator groupComparator = new GroupComparator(iwc);
+		groupComparator = new GroupComparator(iwc);
 		groupComparator.setObjectsAreICPermissions(true);
 		groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));		
-		groupComparator.setSortByParents(false);
+		groupComparator.setSortByParents(true);
 		Collections.sort(entityList, groupComparator); 
-	    setCachedParents(groupComparator.getCachedParents());
-	    setCachedGroups(groupComparator.getCachedGroups());
 		EntityBrowser browser = getEntityBrowser(permissionTypes, entityList);
 		//////////////////////////
 		
@@ -280,10 +276,21 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 				while (iterator.hasNext()) {
 					ICPermission perm = (ICPermission) iterator.next();
-					Group group;
+					Group group = null;
 					try {
 						Integer groupID = Integer.valueOf(perm.getContextValue());
-					    group = getGroupBusiness(iwc).getGroupByGroupID(groupID.intValue());
+					    if (getGroupComparator().getCachedGroups()!=null) {
+							if (getGroupComparator().getCachedGroups().containsKey(groupID))
+							    group = (Group)getGroupComparator().getCachedGroups().get(groupID);
+							else
+							{	
+							    group = getGroupBusiness(iwc).getGroupByGroupID(groupID.intValue());
+							    groupComparator.getCachedGroups().put(groupID, group);
+							}
+						}
+						else {
+						    group = getGroupBusiness(iwc).getGroupByGroupID(groupID.intValue());
+						}
 						
 						String name = group.getName();
 						String number = group.getMetaData(ICUserConstants.META_DATA_GROUP_NUMBER);
@@ -292,11 +299,12 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 						    name = number+" "+name;
 						}
 						else {
-						    name = getGroupBusiness(iwc).getNameOfGroupWithParentName(group);
+						    //name = getGroupBusiness(iwc).getNameOfGroupWithParentName(group);
 						}
 						 
 						
 						//the collection items all contain the same group so break here
+						name = getGroupComparator().getIndentString(groupID)+ name;
 						return new Text(name);
 					}
 					catch (RemoteException e) {
@@ -1032,27 +1040,15 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	}
 
     /**
-     * @return Returns the cachedGroups.
+     * @return Returns the groupComparator.
      */
-    public Map getCachedGroups() {
-        return cachedGroups;
+    public GroupComparator getGroupComparator() {
+        return groupComparator;
     }
     /**
-     * @param cachedGroups The cachedGroups to set.
+     * @param groupComparator The groupComparator to set.
      */
-    public void setCachedGroups(Map cachedGroups) {
-        this.cachedGroups = cachedGroups;
-    }
-    /**
-     * @return Returns the cachedParents.
-     */
-    public Map getCachedParents() {
-        return cachedParents;
-    }
-    /**
-     * @param cachedParents The cachedParents to set.
-     */
-    public void setCachedParents(Map cachedParents) {
-        this.cachedParents = cachedParents;
+    public void setGroupComparator(GroupComparator groupComparator) {
+        this.groupComparator = groupComparator;
     }
 }
