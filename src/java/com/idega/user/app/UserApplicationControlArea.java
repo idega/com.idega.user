@@ -280,6 +280,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		table.setCellpadding(1, 2, 7);
 		table.setCellpaddingLeft(1, 1, 12);
 		table.setStyleClass(1, 2, "back");
+		table.setBackgroundImage(1, 1, iwb.getImage("stripe_tiler.gif"));
 		
 		table.add(welcomeMessageTable(iwc), 1, 1);
 		table.add(displayTable(iwc), 1, 2);
