@@ -541,19 +541,19 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			}
 		};
 		// set default columns
-		String nameKey = User.class.toString()+".FIRST_NAME:" + User.class.toString()+".MIDDLE_NAME:"+User.class.toString()+".LAST_NAME";
+		String nameKey = User.class.getName()+".FIRST_NAME:" + User.class.getName()+".MIDDLE_NAME:"+User.class.getName()+".LAST_NAME";
 		String completeAddressKey =
-			Address.class.toString()+".STREET_NAME:"
-				+ Address.class.toString()+".STREET_NUMBER:"
-				+ Address.class.toString()+".P_O_BOX:"
-				+ PostalCode.class.toString()+".POSTAL_CODE_ID|POSTAL_CODE:"
-				+ Address.class.toString()+".CITY:"
-				+ Country.class.toString()+".IC_COUNTRY_ID|COUNTRY_NAME";
-		String emailKey = Email.class.toString()+".ADDRESS";
-		String phoneKey = PhoneType.class.toString()+".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + Phone.class.toString()+".PHONE_NUMBER";
-		String pinKey = User.class.toString()+".PERSONAL_ID";
+			Address.class.getName()+".STREET_NAME:"
+				+ Address.class.getName()+".STREET_NUMBER:"
+				+ Address.class.getName()+".P_O_BOX:"
+				+ PostalCode.class.getName()+".POSTAL_CODE_ID|POSTAL_CODE:"
+				+ Address.class.getName()+".CITY:"
+				+ Country.class.getName()+".IC_COUNTRY_ID|COUNTRY_NAME";
+		String emailKey = Email.class.getName()+".ADDRESS";
+		String phoneKey = PhoneType.class.getName()+".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + Phone.class.getName()+".PHONE_NUMBER";
+		String pinKey = User.class.getName()+".PERSONAL_ID";
     
-    String dateOfBirthKey = User.class.toString()+".DATE_OF_BIRTH";
+    String dateOfBirthKey = User.class.getName()+".DATE_OF_BIRTH";
 			
 		entityBrowser.setEntities(getEntityBrowserIdentifier(ps), users);
 		
@@ -585,13 +585,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		entityBrowser.setEntityToPresentationConverter(completeAddressKey, converterCompleteAddress);
     entityBrowser.setEntityToPresentationConverter(dateOfBirthKey, new DateConverter());
 		// set converter for all columns of this class
-		entityBrowser.setEntityToPresentationConverter(Address.class.toString(), converterAddress);
-		entityBrowser.setEntityToPresentationConverter(Email.class.toString(), converterEmail);
-		entityBrowser.setEntityToPresentationConverter(Phone.class.toString(), converterPhone);
+		entityBrowser.setEntityToPresentationConverter(Address.class.getName(), converterAddress);
+		entityBrowser.setEntityToPresentationConverter(Email.class.getName(), converterEmail);
+		entityBrowser.setEntityToPresentationConverter(Phone.class.getName(), converterPhone);
 		// set foreign entities
-		entityBrowser.addEntity(Address.class.toString());
-		entityBrowser.addEntity(Email.class.toString());
-		entityBrowser.addEntity(Phone.class.toString());
+		entityBrowser.addEntity(Address.class.getName());
+		entityBrowser.addEntity(Email.class.getName());
+		entityBrowser.addEntity(Phone.class.getName());
 		// change display
 		entityBrowser.setCellspacing(2);
 		
@@ -994,17 +994,17 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
     // set default columns
     String errorMessageKey = "errorMessageKey";
-    String nameKey = User.class.toString()+".FIRST_NAME:" + User.class.toString()+".MIDDLE_NAME:"+User.class.toString()+".LAST_NAME";
+    String nameKey = User.class.getName()+".FIRST_NAME:" + User.class.getName()+".MIDDLE_NAME:"+User.class.getName()+".LAST_NAME";
     String completeAddressKey =
-      Address.class.toString()+".STREET_NAME:"
-        + Address.class.toString()+".STREET_NUMBER:"
-        + Address.class.toString()+".P_O_BOX:"
-        + PostalCode.class.toString()+".POSTAL_CODE_ID|POSTAL_CODE:"
-        + Address.class.toString()+".CITY:"
-        + Country.class.toString()+".IC_COUNTRY_ID|COUNTRY_NAME";
-    String emailKey = Email.class.toString()+".ADDRESS";
-    String phoneKey = PhoneType.class.toString()+".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + Phone.class.toString()+".PHONE_NUMBER";
-    String pinKey = User.class.toString()+".PERSONAL_ID";
+      Address.class.getName()+".STREET_NAME:"
+        + Address.class.getName()+".STREET_NUMBER:"
+        + Address.class.getName()+".P_O_BOX:"
+        + PostalCode.class.getName()+".POSTAL_CODE_ID|POSTAL_CODE:"
+        + Address.class.getName()+".CITY:"
+        + Country.class.getName()+".IC_COUNTRY_ID|COUNTRY_NAME";
+    String emailKey = Email.class.getName()+".ADDRESS";
+    String phoneKey = PhoneType.class.getName()+".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + Phone.class.getName()+".PHONE_NUMBER";
+    String pinKey = User.class.getName()+".PERSONAL_ID";
         
     Iterator iterator = messageMap.keySet().iterator();
     String identifier = (iterator.hasNext()) ? iterator.next().toString() : "move";
@@ -1038,13 +1038,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     entityBrowser.setEntityToPresentationConverter(errorMessageKey, converterErrorMessage);
     entityBrowser.setEntityToPresentationConverter(completeAddressKey, converterCompleteAddress);
     // set converter for all columns of this class
-    entityBrowser.setEntityToPresentationConverter(Address.class.toString(), converterAddress);
-    entityBrowser.setEntityToPresentationConverter(Email.class.toString(), converterEmail);
-    entityBrowser.setEntityToPresentationConverter(Phone.class.toString(), converterPhone);
+    entityBrowser.setEntityToPresentationConverter(Address.class.getName(), converterAddress);
+    entityBrowser.setEntityToPresentationConverter(Email.class.getName(), converterEmail);
+    entityBrowser.setEntityToPresentationConverter(Phone.class.getName(), converterPhone);
     // set foreign entities
-    entityBrowser.addEntity(Address.class.toString());
-    entityBrowser.addEntity(Email.class.toString());
-    entityBrowser.addEntity(Phone.class.toString());
+    entityBrowser.addEntity(Address.class.getName());
+    entityBrowser.addEntity(Email.class.getName());
+    entityBrowser.addEntity(Phone.class.getName());
     // change display
     entityBrowser.setCellspacing(2);
     entityBrowser.setAcceptUserSettingsShowUserSettingsButton(false,false);

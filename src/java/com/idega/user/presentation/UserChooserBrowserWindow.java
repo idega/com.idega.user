@@ -142,8 +142,8 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
       }
     };
     // set default columns
-    String nameKey = User.class.toString()+".FIRST_NAME:" + User.class.toString()+".MIDDLE_NAME:"+User.class.toString()+".LAST_NAME";
-    String pinKey = User.class.toString()+".PERSONAL_ID";
+    String nameKey = User.class.getName()+".FIRST_NAME:" + User.class.getName()+".MIDDLE_NAME:"+User.class.getName()+".LAST_NAME";
+    String pinKey = User.class.getName()+".PERSONAL_ID";
     EntityBrowser browser = new EntityBrowser();
     // keep things simple
     browser.setUseEventSystem(false);
