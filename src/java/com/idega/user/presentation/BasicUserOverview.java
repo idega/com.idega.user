@@ -53,7 +53,6 @@ import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.PrintButton;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.servlet.IWCoreServlet;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
