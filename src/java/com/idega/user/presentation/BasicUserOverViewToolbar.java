@@ -154,14 +154,17 @@ public class BasicUserOverViewToolbar extends Toolbar {
 					tLink14.setParameter(Importer.PARAMETER_IMPORT_FILE, ColumnSeparatedImportFile.class.getName());
 
 					Class pinLookupToGroupImportHandler = ImplementorRepository.getInstance().getAnyClassImpl(UserPinLookupToGroupImportHandler.class, this.getClass());
-					tLink14.setParameter(Importer.PARAMETER_IMPORT_HANDLER, pinLookupToGroupImportHandler.getName());
+					if (pinLookupToGroupImportHandler == null) {
+						logWarning("[BasicUserOverViewToolbar]  Implementation of UserPinLookupToGroupHandler could not be found. Implementing bundle was not loaded.");
+						tLink14.setParameter(Importer.PARAMETER_IMPORT_HANDLER, pinLookupToGroupImportHandler.getName());
 
-					//setja import handler 
-					//setja import file
-					tLink14.setWindowToOpen(Importer.class);
+						//setja import handler 
+						//setja import file
+						tLink14.setWindowToOpen(Importer.class);
 
-					button3.add(tLink14, 2, 1);
-					toolbar1.add(button3, 6, 1);
+						button3.add(tLink14, 2, 1);
+						toolbar1.add(button3, 6, 1);
+					}
 				}
 
 				//mass registering button
@@ -190,10 +193,12 @@ public class BasicUserOverViewToolbar extends Toolbar {
 					tLink15.setStyleClass(styledLinkClass);
 					tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
                     Class updateClubDivisionTemplate = ImplementorRepository.getInstance().getAnyClassImpl(UserUpdateClubDivisionTemplate.class,this.getClass());
-					tLink15.setWindowToOpen(updateClubDivisionTemplate);
-
-					button4.add(tLink15, 2, 1);
-					toolbar1.add(button4, 8, 1);
+                    if (updateClubDivisionTemplate == null) {
+						logWarning("[BasicUserOverViewToolbar]  Implementation of UserUpdateClubDivisionTemplate  could not be found. Implementing bundle was not loaded.");
+						tLink15.setWindowToOpen(updateClubDivisionTemplate);
+						button4.add(tLink15, 2, 1);
+						toolbar1.add(button4, 8, 1);
+                    }
 				}
 
 			}

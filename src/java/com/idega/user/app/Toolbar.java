@@ -246,10 +246,13 @@ public class Toolbar extends Page implements IWBrowserView {
 			tLink15.setStyleClass(styledLink);
 
             Class clubMemberExchangeWindow = ImplementorRepository.getInstance().getAnyClassImpl(UserClubMemberExchangeWindow.class,this.getClass());
-			tLink15.setWindowToOpen(clubMemberExchangeWindow);
-			button5.setWidth(2,10);
-			button5.add(tLink15,2,1);
-			toolbar1.add(button5,6,1);
+            if (clubMemberExchangeWindow == null) {
+				logWarning("[Toolbar]  Implementation of UserClubMemberExchangeWindow could not be found. Implementing bundle was not loaded.");
+				tLink15.setWindowToOpen(clubMemberExchangeWindow);
+				button5.setWidth(2,10);
+				button5.add(tLink15,2,1);
+				toolbar1.add(button5,6,1);
+            }
 			
 //			dropdownMenu.addMenuElement(tLink15.getURL(),tLink15.toString());
 			
@@ -325,13 +328,16 @@ public class Toolbar extends Page implements IWBrowserView {
 			ImplementorRepository repository =  ImplementorRepository.getInstance();
 			Class nationalRegisterImportFile = repository.getAnyClassImpl(UserNationalRegisterImportFile.class,this.getClass());
 			Class nationalRegisterFileImportHandler = repository.getAnyClassImpl(UserNationalRegisterFileImportHandler.class, this.getClass());
-			tLink16.setParameter(Importer.PARAMETER_IMPORT_FILE, nationalRegisterImportFile.getName());
-			tLink16.setParameter(Importer.PARAMETER_IMPORT_HANDLER, nationalRegisterFileImportHandler.getName());
+            if (nationalRegisterImportFile == null || nationalRegisterFileImportHandler == null) {
+				logWarning("[Toolbar]  Implementation of UserNationalRegisterImportFile or UserNationalRegisterImportHandler could not be found. Implementing bundle(s) was not loaded.");
+				tLink16.setParameter(Importer.PARAMETER_IMPORT_FILE, nationalRegisterImportFile.getName());
+				tLink16.setParameter(Importer.PARAMETER_IMPORT_HANDLER, nationalRegisterFileImportHandler.getName());
 
-			tLink16.setWindowToOpen(Importer.class);
-			button6.setWidth(2,15);
-			button6.add(tLink16, 2, 1);
-			toolbar1.add(button6, 8, 1);
+				tLink16.setWindowToOpen(Importer.class);
+				button6.setWidth(2,15);
+				button6.add(tLink16, 2, 1);
+				toolbar1.add(button6, 8, 1);
+            }
 			
 //			String tLink16String = tLink16.toString();
 //			tLink16String = java.net.URLEncoder.encode(tLink16String);
@@ -399,10 +405,13 @@ public class Toolbar extends Page implements IWBrowserView {
 		 Link tLink15 = new Link(text5);
 		tLink15.setStyleClass(styledLink);
 		Class workReportWindow = ImplementorRepository.getInstance().getAnyClassImpl(UserWorkReportWindow.class, this.getClass());
-		 tLink15.setWindowToOpen(workReportWindow);
+        if (workReportWindow == null) {
+			logWarning("[Toolbar]  Implementation of UserWorkReportWindow could not be found. Implementing bundle was not loaded.");
+			tLink15.setWindowToOpen(workReportWindow);
 		 
-		 button5.add(tLink15,2,1);
-		 toolbar1.add(button5,10,1);
+			button5.add(tLink15,2,1);
+			toolbar1.add(button5,10,1);
+        }
 	 }
 	 if(showCalendar) {
 		 Table butt = new Table(2,1);

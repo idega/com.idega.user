@@ -162,14 +162,18 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                     tLink14.setParameter(Importer.PARAMETER_IMPORT_FILE, ColumnSeparatedImportFile.class.getName());
 
                     Class pinLookupToGroupImportHandler = ImplementorRepository.getInstance().getAnyClassImpl(UserPinLookupToGroupImportHandler.class, this.getClass());
-                    tLink14.setParameter(Importer.PARAMETER_IMPORT_HANDLER, pinLookupToGroupImportHandler.getName());
+                    if (pinLookupToGroupImportHandler == null) {
+        				logWarning("[StyledBasicUserOverviewToolbar] Implementation of UserPinLookupToGroupImportHandler could not be found. Implementing bundle was not loaded.");
+        				tLink14.setParameter(Importer.PARAMETER_IMPORT_HANDLER, pinLookupToGroupImportHandler.getName());
                     
-                    //setja import handler 
-                    //setja import file
-                    tLink14.setWindowToOpen(Importer.class);
+        				//setja import handler 
+        				//setja import file
+        				tLink14.setWindowToOpen(Importer.class);
                     
-                    button3.add(tLink14, 1, 1);
-                    toolbar1.add(button3, 7, 1);
+        				button3.add(tLink14, 1, 1);
+        				
+        				toolbar1.add(button3, 7, 1);
+                    }
                     toolbar1.setAlignment(7,1,"center");
                 }
                 
@@ -213,10 +217,14 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                         tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, aliasGroup.getPrimaryKey().toString());
                     }
                     Class updateClubDivisionTemplate = ImplementorRepository.getInstance().getAnyClassImpl(UserUpdateClubDivisionTemplate.class,this.getClass());
-                    tLink15.setWindowToOpen(updateClubDivisionTemplate);
+                    if (updateClubDivisionTemplate  == null) {
+        				logWarning("[StyledBasicUserOverviewToolbar] Implementation of UserUpdateClubDivisionTemplate could not be found. Implementing bundle was not loaded.");
+                
+        				tLink15.setWindowToOpen(updateClubDivisionTemplate);
                     
-                    button4.add(tLink15, 1, 1);
-                    toolbar1.add(button4, 9, 1);
+        				button4.add(tLink15, 1, 1);
+        				toolbar1.add(button4, 9, 1);
+                    }
                     toolbar1.setAlignment(9,1,"center");
                 }
                 
@@ -230,10 +238,12 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                     tLink15.setStyleClass(styledLinkClass);
                     tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
                     Class cashierWindow = ImplementorRepository.getInstance().getAnyClassImpl(UserCashierWindow.class,this.getClass());
-                    tLink15.setWindowToOpen(cashierWindow);
-                    
-                    button4.add(tLink15, 1, 1);
-                    toolbar1.add(button4, 9, 1);
+                    if (cashierWindow == null) {
+        				logWarning("[StyledBasicUserOverviewToolbar] Implementation of UserCashierWindow could not be found. Implementing bundle was not loaded.");
+        				tLink15.setWindowToOpen(cashierWindow);
+        				button4.add(tLink15, 1, 1);
+        				toolbar1.add(button4, 9, 1);
+                    }
                     toolbar1.setAlignment(9,1,"center");
                 }
             }
