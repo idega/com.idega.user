@@ -92,7 +92,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 		setWidth(width);
 		setHeight(height);
-		setScrollbar(true);
+		setScrollbar(false);
 		setResizable(true);
 
 	}
@@ -279,32 +279,22 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 					Group group = null;
 					try {
 						Integer groupID = Integer.valueOf(perm.getContextValue());
+						String key = groupID.toString();
 					    if (getGroupComparator().getCachedGroups()!=null) {
-							if (getGroupComparator().getCachedGroups().containsKey(groupID))
-							    group = (Group)getGroupComparator().getCachedGroups().get(groupID);
+							if (getGroupComparator().getCachedGroups().containsKey(key))
+							    group = (Group)getGroupComparator().getCachedGroups().get(key);
 							else
 							{	
 							    group = getGroupBusiness(iwc).getGroupByGroupID(groupID.intValue());
-							    groupComparator.getCachedGroups().put(groupID, group);
+							    groupComparator.getCachedGroups().put(key, group);
 							}
 						}
 						else {
 						    group = getGroupBusiness(iwc).getGroupByGroupID(groupID.intValue());
 						}
 						
-						String name = group.getName();
-						String number = group.getMetaData(ICUserConstants.META_DATA_GROUP_NUMBER);
-						
-						if(number!=null && !"".equals(number) && name!=null) {
-						    name = number+" "+name;
-						}
-						else {
-						    //name = getGroupBusiness(iwc).getNameOfGroupWithParentName(group);
-						}
-						 
-						
-						//the collection items all contain the same group so break here
-						name = getGroupComparator().getIndentString(groupID)+ name;
+						String name = getGroupComparator().getIndentedGroupName(group);
+//						String number = group.getMetaData(ICUserConstants.META_DATA_GROUP_NUMBER);
 						return new Text(name);
 					}
 					catch (RemoteException e) {
