@@ -9,7 +9,7 @@
  */
 package com.idega.user.presentation;
 
-import com.idega.core.builder.business.BuilderConstants;
+import com.idega.builder.business.BuilderConstants;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.ui.AbstractChooser;

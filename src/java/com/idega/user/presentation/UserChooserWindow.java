@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 import javax.ejb.FinderException;
 
-import com.idega.core.builder.business.BuilderConstants;
+import com.idega.builder.business.BuilderConstants;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
