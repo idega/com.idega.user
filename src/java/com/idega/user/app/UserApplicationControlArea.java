@@ -165,7 +165,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
     }
     else{
     	UserBusiness biz = getUserBusiness(iwc);
-    	Collection groups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser());
+    	Collection groups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
     	Collection groupNodes = convertGroupCollectionToGroupNodeCollection(groups,iwc.getApplicationContext());
 			groupTree.setFirstLevelNodes(groupNodes.iterator());
 

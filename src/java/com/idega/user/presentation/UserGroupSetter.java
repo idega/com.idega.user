@@ -106,7 +106,7 @@ import java.util.List;
  
 
         User user = iwc.getCurrentUser();
-        Collection notDirectGroups  = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user);
+        Collection notDirectGroups  = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwc);
         Iterator topGroupsIterator = notDirectGroups.iterator();
         List allGroups = new ArrayList();
         while (topGroupsIterator.hasNext())  {

@@ -89,7 +89,7 @@ import com.idega.util.IWColor;
       // former: Collection notDirectGroups = getGroupBusiness(iwc).getNonParentGroups(groupId);
       User user = iwc.getCurrentUser();
       UserBusiness userBusiness = getUserBusiness(iwc);
-      Collection notDirectGroups  = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user);
+      Collection notDirectGroups  = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwc);
       Iterator topGroupsIterator = notDirectGroups.iterator();
       List allGroups = new ArrayList();
       while (topGroupsIterator.hasNext())  {

@@ -70,7 +70,7 @@ public class GroupChooserWindow extends AbstractChooserWindow {
 			}
 			else{
 				UserBusiness biz = getUserBusiness(iwc);
-				Collection groups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser());
+				Collection groups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
 				Collection groupNodes = convertGroupCollectionToGroupNodeCollection(groups,iwc.getApplicationContext());
 				viewer.setFirstLevelNodes(groupNodes.iterator());
 
