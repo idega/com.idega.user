@@ -114,7 +114,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		memberofFrame.setHeight(280);
 		memberofFrame.setWidth(Table.HUNDRED_PERCENT);
 		memberofFrame.setScrolling(IFrame.SCROLLING_YES);
-		memberofFrame.setStyleAttribute("border", "1px #000000 solid;");
+		memberofFrame.setStyleAttribute("border", "1px #bbbbbb solid;");
 
 		primaryGroupField = new DropdownMenu(primaryGroupFieldName);
 		primaryGroupField.keepStatusOnAction();

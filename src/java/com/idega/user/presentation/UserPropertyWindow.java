@@ -156,7 +156,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			    this.addTitle(userName, TITLE_STYLECLASS);
 			}
 		}
-		addTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"), TITLE_STYLECLASS);
+		setTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"));
 
 	}
 
