@@ -112,8 +112,9 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	public void initializeFields() {
 		memberofFrame = new IFrame("ic_user_memberof_ic_group", GroupList.class);
 		memberofFrame.setHeight(280);
-		memberofFrame.setWidth(370);
+		memberofFrame.setWidth(Table.HUNDRED_PERCENT);
 		memberofFrame.setScrolling(IFrame.SCROLLING_YES);
+		memberofFrame.setStyleAttribute("border", "1px #000000 solid;");
 
 		primaryGroupField = new DropdownMenu(primaryGroupFieldName);
 		primaryGroupField.keepStatusOnAction();
@@ -133,11 +134,11 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		memberof = new Text();//this.getTextObject();
-		memberof.setText(iwrb.getLocalizedString("usr_grp_memberof","Member of") + ":");
+		memberof = new Text(iwrb.getLocalizedString("usr_grp_memberof","Member of") + ":");
+		memberof.setBold();
 
-		primaryGroupText = new Text();//this.getTextObject();
-		primaryGroupText.setText(iwrb.getLocalizedString(primaryGroupFieldName,"Primarygroup") + ":");
+		primaryGroupText = new Text(iwrb.getLocalizedString(primaryGroupFieldName,"Primarygroup") + ":");
+		primaryGroupText.setBold();
 	}
 	public boolean store(IWContext iwc) {
 		try {
@@ -165,23 +166,28 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		
 	}
 	public void lineUpFields() {
-		this.resize(1, 5);
+		this.resize(1, 1);
 
-		Table prTable = new Table(2, 1);
-		prTable.setBorder(1);
-
+		Table table = new Table(1, 3);
+		table.setCellspacing(0);
+		table.setCellpadding(5);
+		table.setWidth(Table.HUNDRED_PERCENT);
+		table.setBorder(0);
+		
+		Table prTable = new Table(3, 1);
+		prTable.setCellpaddingAndCellspacing(0);
+		prTable.setWidth(2, 3);
 		prTable.add(this.primaryGroupText, 1, 1);
-		prTable.add(this.primaryGroupField, 2, 1);
-		prTable.setHeight(1, "30");
-		prTable.setWidth(1, "100");
+		prTable.add(this.primaryGroupField, 3, 1);
+		table.add(prTable, 1, 1);
 
-		this.add(prTable, 1, 1);
-		this.add(memberof, 1, 2);
-		this.add(memberofFrame, 1, 3);
+		table.add(memberof, 1, 2);
+		table.add(Text.getBreak(), 1, 2);
+		table.add(memberofFrame, 1, 2);
 
-		this.setHeight(1, "30");
-
-		this.add(addLink, 1, 4);
+		table.add(addLink, 1, 3);
+		
+		add(table, 1, 1);
 	}
 
 	public boolean collect(IWContext iwc) {
