@@ -8,7 +8,7 @@ import com.idega.presentation.IWContext;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 public class CreateGroupEvent extends IWPresentationEvent {
@@ -133,17 +133,20 @@ public class CreateGroupEvent extends IWPresentationEvent {
 			}
 			
 		}
+		if(groupParentTypeAndID != null && !groupParentTypeAndID.equals("")) {
 
-		try {
-			int indexOf = groupParentTypeAndID.indexOf("_");
-			_groupParentType = Integer.parseInt(groupParentTypeAndID.substring(0, indexOf));
-			_groupParentID = Integer.parseInt(groupParentTypeAndID.substring(indexOf + 1));
+			try {
+				int indexOf = groupParentTypeAndID.indexOf("_");
+				_groupParentType = Integer.parseInt(groupParentTypeAndID.substring(0, indexOf));
+				_groupParentID = Integer.parseInt(groupParentTypeAndID.substring(indexOf + 1));
+			}
+			catch (Exception ex) {
+				System.err.println("[" + this +"]: > ");
+				System.err.println(ex + ": " + ex.getMessage());
+				return false;
+			}
 		}
-		catch (Exception ex) {
-			System.err.println("[" + this +"]: > ");
-			System.err.println(ex + ": " + ex.getMessage());
-			return false;
-		}
+
 
 		_groupCommit = iwc.getParameter(getIONameForCommit());
 		_groupCancel = iwc.getParameter(getIONameForCancel());
