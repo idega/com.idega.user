@@ -6,7 +6,7 @@ package com.idega.user.block.search.presentation;
 
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWException;
-import com.idega.user.block.search.event.SimpleSearchEvent;
+import com.idega.user.block.search.event.UserSearchEvent;
 import com.idega.user.presentation.BasicUserOverviewPS;
 
 /**
@@ -16,6 +16,7 @@ public class SearchResultsWindowPS extends BasicUserOverviewPS {
 	
 	private int searchType;
 	private String searchString;
+	private UserSearchEvent lastUserSearchEvent = null;
 
 
 	public SearchResultsWindowPS() {
@@ -37,9 +38,11 @@ public class SearchResultsWindowPS extends BasicUserOverviewPS {
 	public void actionPerformed(IWPresentationEvent e) throws IWException {
 		super.actionPerformed(e);
 		
-		if( e instanceof SimpleSearchEvent){
-			searchString = ((SimpleSearchEvent)e).getSearchString();
-			searchType = ((SimpleSearchEvent)e).getSearchType();
+		if( e instanceof UserSearchEvent){
+			lastUserSearchEvent = (UserSearchEvent) e;
+			
+			searchString = ((UserSearchEvent)e).getSearchString();
+			searchType = ((UserSearchEvent)e).getSearchType();
 			this._selectedDomain = null;
 			this._selectedGroup = null;
 			
@@ -57,6 +60,13 @@ public class SearchResultsWindowPS extends BasicUserOverviewPS {
 		super.reset();
 		searchString =null;
 		searchType=-1;	
+	}
+
+	/**
+	 * @return the last event caught
+	 */
+	public UserSearchEvent getLastUserSearchEvent() {
+		return lastUserSearchEvent;
 	}
 
 }

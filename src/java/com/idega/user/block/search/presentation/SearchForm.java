@@ -4,7 +4,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.*;
 import com.idega.presentation.*;
-import com.idega.user.block.search.event.SimpleSearchEvent;
+import com.idega.user.block.search.event.UserSearchEvent;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
 /**
@@ -40,12 +40,12 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
 		
-		searchInput = new TextInput(SimpleSearchEvent.FIELDNAME_TEXTINPUT);
+		searchInput = new TextInput(UserSearchEvent.SEARCH_FIELD_SIMPLE_SEARCH_STRING);
 		setStyle(searchInput);
 		searchButton = new SubmitButton(iwrb.getLocalizedString("searchform","Search"));
 		//setStyle(searchButton);
 		
-		HiddenInput type = new HiddenInput(SimpleSearchEvent.FIELDNAME_SEARCHTYPE, Integer.toString(SimpleSearchEvent.SEARCHTYPE_USER));
+		HiddenInput type = new HiddenInput(UserSearchEvent.SEARCH_FIELD_SEARCH_TYPE, Integer.toString(UserSearchEvent.SEARCHTYPE_SIMPLE));
 		
 		
 		/*searchTypeDropDown = new DropdownMenu(SimpleSearchEvent.FIELDNAME_SEARCHTYPE);
@@ -55,7 +55,7 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 		
 		Form form = new Form();
 		form.add(type);
-		SimpleSearchEvent event = new SimpleSearchEvent();
+		UserSearchEvent event = new UserSearchEvent();
 		Table table = new Table(3, 1);
 		table.setHorizontalAlignment(Table.HORIZONTAL_ALIGN_RIGHT);
 		table.setCellpadding(0);

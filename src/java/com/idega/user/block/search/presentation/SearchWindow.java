@@ -1,12 +1,15 @@
 package com.idega.user.block.search.presentation;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.Iterator;
 
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
@@ -14,15 +17,22 @@ import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.SelectionBox;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.app.ToolbarElement;
+import com.idega.user.app.UserApplication;
 import com.idega.user.app.UserApplicationMainArea;
 import com.idega.user.app.UserApplicationMainAreaPS;
-import com.idega.user.block.search.event.SimpleSearchEvent;
+import com.idega.user.block.search.event.UserSearchEvent;
+import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
+import com.idega.user.presentation.UserStatusDropdown;
+
 
 /**
  * <p>Title: idegaWeb User</p>
@@ -33,16 +43,20 @@ import com.idega.user.data.Group;
  * @version 1.0 
  */
 public class SearchWindow extends IWAdminWindow implements ToolbarElement {
+	
+	private UserBusiness userBiz;
+	private GroupBusiness groupBiz;
+
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
   
-	private SimpleSearchEvent searchEvent;
+	private UserSearchEvent searchEvent;
   private String userApplicationMainAreaPSId = null; 
   private Group selectedGroup = null;
 
 
 	public SearchWindow() {
-		setWidth(320);
-		setHeight(260);
+		setWidth(385);
+		setHeight(300);
 		setScrollbar(false);
 	}
 
@@ -68,14 +82,13 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 	public void main(IWContext iwc) throws Exception {
 		//this.debugParameters(iwc);
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		searchEvent = new SimpleSearchEvent();
+		searchEvent = new UserSearchEvent();
 		searchEvent.setSource(this);
-		
-		// set controller (added by Thomas)
-	/*	String id = IWMainApplication.getEncryptedClassName(UserApplication.Top.class);
+					
+		// set controller (added by Thomas) NOT NEEDED
+	String id = IWMainApplication.getEncryptedClassName( UserApplication.Top.class );
 		id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + id;
-		searchEvent.setController(id);*/
-
+		searchEvent.setController(id);
 
 		Form form = new Form();
 		form.addEventModel(searchEvent, iwc);
@@ -84,104 +97,129 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		addTitle(iwrb.getLocalizedString("searchwindow.title", "Search"), IWConstants.BUILDER_FONT_STYLE_TITLE);
 
 		add(form);
-		Table tab = new Table(2, 8);
-		tab.setColumnAlignment(1, "right");
-		tab.setColumnVerticalAlignment(1, "top");
-		tab.setWidth(1, "130");
-		tab.setCellspacing(3);
-		tab.setAlignment(2, 8, "right");
+		Table tab = new Table(2,11);
 		form.add(tab);
-		TextInput inputName = new TextInput(searchEvent.FIELDNAME_TEXTINPUT);
-		inputName.setLength(28);
+		
+		tab.setColumnVerticalAlignment(1, Table.VERTICAL_ALIGN_TOP);
+		tab.setColumnVerticalAlignment(2, Table.VERTICAL_ALIGN_TOP);
+
+		tab.setCellspacing(3);
+		tab.setAlignment(2, 11, Table.HORIZONTAL_ALIGN_RIGHT);
+		tab.mergeCells(1,4,1,10);
+		tab.setWidth(Table.HUNDRED_PERCENT);
+		tab.setHeight(Table.HUNDRED_PERCENT);
+		
+		//simple search param
+		TextInput inputName = new TextInput(searchEvent.SEARCH_FIELD_SIMPLE_SEARCH_STRING);
 		inputName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 
-      
-			Text inputText = new Text();
-			inputText.setText(iwrb.getLocalizedString("group_name", "Group name") + ":");
 
-			inputText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-			tab.add(inputText, 1, 1);
-			tab.add(inputName, 2, 1);
-			
-/*
-			TextArea descriptionTextArea = new TextArea(searchEvent.getIONameForDescription());
-			descriptionTextArea.setHeight(4);
-			descriptionTextArea.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-
-			Text descText = new Text(iwrb.getLocalizedString("group_description", "Description") + ":");
-			descText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-			tab.add(descText, 1, 2);
-			tab.add(descriptionTextArea, 2, 2); 
-
-			GroupChooser groupChooser = getGroupChooser(searchEvent.getIONameForParentID(), iwc);
-			Text createUnderText = new Text(iwrb.getLocalizedString("parent_group", "Create group under") + ":");
-			createUnderText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-
-			Layer layer = new Layer();
-			layer.add(createUnderText);
-			layer.setNoWrap();
-			tab.add(layer, 1, 3);
-			tab.add(groupChooser, 2, 3);
-
-			IBPageChooser pageChooser = new IBPageChooser(searchEvent.getIONameForHomePage(), IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-			Text pageText = new Text(iwrb.getLocalizedString("home_page", "Select homepage") + ":");
-			pageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-			tab.add(pageText, 1, 4);
-			tab.add(pageChooser, 2, 4);
-
-			DropdownMenu mnu = getGroupTypeMenu(iwrb, iwc);
-			
-			*/
-    /* 
-    new DropdownMenu(_createEvent.getIONameForGroupType());
-		try {
-			GroupTypeHome gtHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
-			Collection types = gtHome.findVisibleGroupTypes();
-			Iterator iter = types.iterator();
-			while (iter.hasNext()) {
-				GroupType item = (GroupType) iter.next();
-				String value = item.getType();
-				String name = item.getType(); //item.getName();
-				mnu.addMenuElement(value, iwrb.getLocalizedString(name, name));
-			}
+		Text inputText = new Text();
+		inputText.setText(iwrb.getLocalizedString("user.search.window.user_name", "Name"));
+		inputText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		tab.add(inputText, 1, 1);
+		tab.add(inputName, 1, 2);
+		
+		//user status dropdown
+		DropdownMenu statusMenu = new UserStatusDropdown(UserSearchEvent.SEARCH_FIELD_STATUS_ID);
+		statusMenu.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+		statusMenu.addMenuElement(-1,iwrb.getLocalizedString("user.search.window.all_statuses", "All statuses"));
+		statusMenu.setSelectedElement(-1);
+		
+		
+		Text status = new Text(iwrb.getLocalizedString("user.search.window.status", "Status"));
+		status.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		tab.add(status, 2, 1);
+		tab.add(statusMenu, 2, 2);
+		
+		//group selectionbox
+		
+		SelectionBox groupSel = new SelectionBox(UserSearchEvent.SEARCH_FIELD_GROUPS);
+		groupSel.setHeight(13);
+		//TODO Eiki temporary make a method that only returns all groups with view permission and owner (edit)
+		Collection groupsCol = getUserBusiness(iwc).getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(),iwc);
+		Iterator nodes = groupsCol.iterator();
+		while (nodes.hasNext()) {
+			Group group = (Group) nodes.next();
+			groupSel.addMenuElement( ((Integer)group.getPrimaryKey()).intValue(), getGroupBusiness(iwc).getNameOfGroupWithParentName(group) );
+			//getchildren
 		}
-		catch (RemoteException ex) {
-			throw new EJBException(ex);
-		}*/
-		//    mnu.setSelectedElement(type);
 		
-		/*mnu.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-
-		Text typeText = new Text(iwrb.getLocalizedString("select_type", "Select type") + ":");
-		typeText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(typeText, 1, 5);
-		tab.add(mnu, 2, 5);
-
-		GroupChooser aliasGroupChooser = getGroupChooser(searchEvent.getIONameForAliasID(), iwc);
-		Text aliasText = new Text(iwrb.getLocalizedString("alias_group", "Alias for group") + ":");
-		aliasText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-
-		Layer layer2 = new Layer();
-		layer2.add(aliasText);
-		layer2.setNoWrap();
-		tab.add(layer2, 1, 6);
-		tab.add(aliasGroupChooser, 2, 6);
-		*/
-		SubmitButton button = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"));
+		Text groups = new Text(iwrb.getLocalizedString("user.search.window.groups", "Groups"));
+		groups.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		tab.add(groups, 1, 3);
+		tab.add(groupSel, 1, 4); 
 		
-    
-   	SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close") );
+
+		//age
+		Table ageTable = new Table(3,1);
+		
+		TextInput ageFloor = new TextInput(searchEvent.SEARCH_FIELD_AGE_FLOOR,"0");
+		ageFloor.setLength(3);
+		ageFloor.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+		
+		TextInput ageCeil = new TextInput(searchEvent.SEARCH_FIELD_AGE_CEILING,"120");
+		ageCeil.setLength(3);
+		ageCeil.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+
+		ageTable.add(ageFloor,1,1);
+		ageTable.add(" - ",2,1);
+		ageTable.add(ageCeil,3,1);
+		
+		Text ages = new Text(iwrb.getLocalizedString("user.search.window.ages", "Age"));
+		ages.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		tab.add(ages, 2,3);
+		tab.add(ageTable, 2, 4); 
+		
+		//gender
+		Integer maleId = getUserBusiness(iwc).getGenderId("male");
+		Integer femaleId = getUserBusiness(iwc).getGenderId("female");	
+		DropdownMenu genders = new DropdownMenu(UserSearchEvent.SEARCH_FIELD_GENDER_ID);
+		genders.addMenuElement(maleId.intValue(),iwrb.getLocalizedString("user.search.window.females", "Women"));
+		genders.addMenuElement(femaleId.intValue(),iwrb.getLocalizedString("user.search.window.males", "Men"));
+		genders.addMenuElement(-1,iwrb.getLocalizedString("user.search.window.both.genders", "Both genders"));
+		genders.setSelectedElement(-1);
+		
+		Text gender = new Text(iwrb.getLocalizedString("user.search.window.gender", "Gender"));
+		gender.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		tab.add(gender, 2,5);
+		tab.add(genders, 2, 6); 
+		
+//	personal id
+		TextInput ssn = new TextInput(searchEvent.SEARCH_FIELD_PERSONAL_ID);
+		ssn.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+
+
+		Text ssnText = new Text();
+		ssnText.setText(iwrb.getLocalizedString("user.search.window.personal_id", "SSN"));
+		ssnText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		tab.add(ssnText, 2, 7);
+		tab.add(ssn, 2, 8);
+			
+			
+//	streetname search
+		TextInput address = new TextInput(searchEvent.SEARCH_FIELD_ADDRESS);
+		address.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+
+
+		Text addressText = new Text();
+		addressText.setText(iwrb.getLocalizedString("user.search.window.address", "Address"));
+		addressText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		tab.add(addressText, 2, 9);
+		tab.add(address, 2, 10);
+
+		//buttons
+		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("user.search.window.search", "Search"));
+   	SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("user.search.window.close", "Close") );
     close.setOnClick("window.close();return false;");
     
-		HiddenInput type = new HiddenInput(SimpleSearchEvent.FIELDNAME_SEARCHTYPE, Integer.toString(SimpleSearchEvent.SEARCHTYPE_USER));
+		HiddenInput type = new HiddenInput(UserSearchEvent.SEARCH_FIELD_SEARCH_TYPE, Integer.toString(UserSearchEvent.SEARCHTYPE_ADVANCED));
 	
-		tab.add(close, 2, 8);
-		tab.add(type,2,8);
-		tab.add(Text.getNonBrakingSpace(), 2, 8);
-		tab.add(button, 2, 8);
-		
-	
-		
+		tab.add(close, 2, 11);
+		tab.add(type,2,11);
+		tab.add(Text.getNonBrakingSpace(), 2, 11);
+		tab.add(save, 2, 11);
+				
 	}
 
 
@@ -202,6 +240,30 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 
 	public PresentationObject getPresentationObject(IWContext iwc) {
 		return this;
+	}
+	
+	public GroupBusiness getGroupBusiness(IWContext iwc) {
+		if(groupBiz==null){	
+			try {
+				groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+			}	
+		}	
+		return groupBiz;
+	}
+	
+	public UserBusiness getUserBusiness(IWContext iwc) {
+		if(userBiz==null){	
+			try {
+				userBiz = (UserBusiness) IBOLookup.getServiceInstance(iwc,UserBusiness.class);
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+			}	
+		}	
+		return userBiz;
 	}
   
 }

@@ -37,10 +37,7 @@ public class SearchResultsWindow extends BasicUserOverview {
 		SearchResultsWindowPS sPs = (SearchResultsWindowPS)ps;
 		 try {
 		 	SearchEngine engine = getSearchEngine(iwc);
-			if(sPs.getSearchString().length()>1){//so we cannot search for 'a' for example. temporary until better solution.
-				return engine.getResult( sPs.getSearchType() ,sPs.getSearchString()  );
-			}
-			else return null;
+			return engine.getResult( sPs.getLastUserSearchEvent() );
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();

@@ -5,7 +5,10 @@ import java.util.Collection;
 import java.util.Vector;
 import com.idega.business.IBOServiceBean;
 import com.idega.data.IDOLookup;
-import com.idega.user.block.search.event.SimpleSearchEvent;
+import com.idega.user.block.search.event.UserSearchEvent;
+import com.idega.user.data.Gender;
+import com.idega.user.data.Group;
+import com.idega.user.data.GroupHome;
 import com.idega.user.data.User;
 import com.idega.user.data.UserHome;
 import com.idega.util.ListUtil;
@@ -21,35 +24,50 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 	public SearchEngineBean() {
 	}
 	
-	public Collection getResult(SimpleSearchEvent e) throws RemoteException {
-		return getResult(e.getSearchType(), e.getSearchString());
+	public Collection getResult(UserSearchEvent e) throws RemoteException {
+		switch (e.getSearchType()) {
+			case UserSearchEvent.SEARCHTYPE_SIMPLE :
+				return getSimpleSearchResults(e.getSearchType(), e.getSearchString());
+			case UserSearchEvent.SEARCHTYPE_ADVANCED :
+				return getAdvancedSearchResults(e);
+			default :
+				throw new UnsupportedOperationException("SearchType not known");
+		}
+		
 	}
 	
-	public Class getResultType(SimpleSearchEvent e) {
+	/**
+	 * @param usersearchevent
+	 * @return the results of the search
+	 */
+	private Collection getAdvancedSearchResults(UserSearchEvent e) {
+		try {
+			UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
+						
+			Collection entities = userHome.findUsersByConditions(e.getSearchString(),e.getPersonalId()
+				,e.getAddress(),null,e.getGenderId(),e.getStatusId()
+				,e.getAgeFloor(),e.getAgeCeil(),e.getGroups(),null,true);
+			
+			return entities;
+		}
+		// Remote and FinderException
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+
+	public Class getResultType(UserSearchEvent e) {
 		return User.class;
 	}
 	
-	public Collection getResult(int searchType, String searchString) throws RemoteException {
-		if (searchString != null) {
-			switch (searchType) {
-				case SimpleSearchEvent.SEARCHTYPE_USER :
-					return getEntities(searchString);
-				case SimpleSearchEvent.SEARCHTYPE_GROUP :
-					System.out.println("[" + this.getClass() + "]: search for Group");
-					return new Vector();
-				default :
-					throw new UnsupportedOperationException("SearchType not known");
-			}
-		}
-		else {
-			//TODO implement for group
-			return ListUtil.getEmptyList();
-		}
+	public Collection getSimpleSearchResults(int searchType, String searchString) throws RemoteException {
+		return doSimpleSearch(searchString);
 	}
 	
-	private Collection getEntities(String searchString) {
-		if (searchString == null)
-			return new ArrayList();
+	private Collection doSimpleSearch(String searchString) {
+		if (searchString == null || searchString.length() <2)
+			return null;
 		try {
 			UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
 			Collection entities = userHome.findUsersBySearchCondition(searchString);
@@ -61,4 +79,12 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 		}
 		return null;
 	}
+
+	
+	
+	
+	
+	
+	
+	
 }
