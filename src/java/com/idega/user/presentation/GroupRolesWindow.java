@@ -127,7 +127,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         }
         
         //get the data
-        Collection rolesForTheSelectedGroup = access.getAllRolesForGroup(selectedGroup);
+        Collection rolesForTheSelectedGroup = access.getAllRolesWithRolePermissionsForGroup(selectedGroup);
         //setCurrentGroupsRolesInSession(iwc, rolesForTheSelectedGroup);
         
         Collection permissionsForBrowser = orderAndGroupPermissionsByPermissionString(rolesForTheSelectedGroup);
@@ -232,6 +232,8 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
                 CheckBox checkBox = new CheckBox(permissionKey, roleKey);
                 checkBox.setChecked(isSet);
                 
+                //todo add check to see if the current user has permissionKey permission to this group
+                //if(iwc.getAccessController().hasPermitPermissionFor())
                 
                 return checkBox;
                 
