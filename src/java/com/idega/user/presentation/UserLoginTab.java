@@ -13,7 +13,6 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.TextInput;
-import com.idega.user.business.UserConstants;
 import com.idega.util.IWTimestamp;
 
 /**

@@ -21,7 +21,6 @@ import com.idega.presentation.ui.PostalCodeDropdownMenu;
 import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.util.SelectorUtility;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.business.UserConstants;
 import com.idega.user.data.User;
 
 /**

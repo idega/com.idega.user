@@ -14,7 +14,6 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.business.UserConstants;
 import com.idega.user.data.User;
 
 /**
