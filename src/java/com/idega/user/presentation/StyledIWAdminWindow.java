@@ -206,13 +206,14 @@ private Image helpImage = null;
 		styleSrc = userBusiness.getUserApplicationStyleSheet(parentPage, iwc);
 		parentPage.addStyleSheetURL(styleSrc);
 		
-		helpImage = iwb.getImage("help.gif");
 		super._main(iwc);
 	}
 	public void main(IWContext iwc)throws Exception{
 	}
 	public Help getHelp(String helpTextKey) {
 	 	Help help = new Help();
+	 	helpImage = new Image();
+	 	helpImage.setSrc("/iw/idegaweb/bundles/com.idega.user.bundle/resources/help.gif");
  	  help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
 	  help.setHelpTextKey(helpTextKey);
 	  help.setImage(helpImage);
