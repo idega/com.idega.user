@@ -66,7 +66,7 @@ public class UserApplication extends IWBrowser {
 		
 		this.addToMenu(menuArea);
     this.showMenuFrame(true);
-    this.showBottomFrame(false); //changed from (true) - birna
+    this.showBottomFrame(true); //MUST BE TRUE!
 		this.addToLeftMain(treeArea);
     this.addToMain(mainArea);
     
