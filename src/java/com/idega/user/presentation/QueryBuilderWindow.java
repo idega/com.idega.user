@@ -1,6 +1,6 @@
 package com.idega.user.presentation;
 
-import com.idega.block.dataquery.presentation.QueryBuilder;
+import com.idega.block.dataquery.presentation.ReportQueryBuilder;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.IWAdminWindow;
@@ -29,7 +29,7 @@ public class QueryBuilderWindow extends IWAdminWindow {
     // get resource bundle 
     IWResourceBundle iwrb = getResourceBundle(iwc);
     addTitle(iwrb.getLocalizedString("user_report_report_builder", "ReportBuilder"), IWConstants.BUILDER_FONT_STYLE_TITLE);
-    QueryBuilder queryBuilder = new QueryBuilder();
+    ReportQueryBuilder queryBuilder = new ReportQueryBuilder();
     add(queryBuilder);
   }
     
