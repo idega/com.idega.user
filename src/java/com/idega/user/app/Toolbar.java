@@ -222,7 +222,7 @@ public class Toolbar extends Page implements IWBrowserView {
    //To do - stickies
 //    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("To do", iwb.getImage("todo.gif"), com.idega.block.news.presentation.News.class),7,1);
    //settings
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Stillingar", iwb.getImage("settings.gif"), com.idega.block.news.presentation.News.class),6,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Stillingar", iwb.getImage("settings.gif"), com.idega.block.reports.presentation.Reports.class),6,1);
 
    //view
    	//dropdownmenu
