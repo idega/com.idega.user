@@ -90,6 +90,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	protected Group aliasGroup;
 	protected AccessController accessController;
 	
+	private Page parentPage;
+	private String styleScript = "UserApplicationStyle.css";
+	private String styleSrc = "";
+	
 	public BasicUserOverview() {
 		super();
 	}
@@ -608,6 +612,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
 		selectedGroup = ps.getSelectedGroup();
 		selectedDomain = ps.getSelectedDomain();
+		
+//	added for stylesheet writout:
+			parentPage = this.getParentPage();
+			styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
+			parentPage.addStyleSheetURL(styleSrc);
 		
 		/*if(selectedGroup!=null){
 			iwc.setSessionAttribute(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID,selectedGroup.getPrimaryKey().toString());

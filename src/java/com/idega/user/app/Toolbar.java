@@ -123,7 +123,7 @@ public class Toolbar extends Page implements IWBrowserView {
 		
 //	added for stylesheet writout:
 			parentPage = this.getParentPage();
-			styleSrc = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/" + styleScript);
+			styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
 			parentPage.addStyleSheetURL(styleSrc);
 
     Table toolbarTable = new Table(3,3);
