@@ -11,6 +11,7 @@ import com.idega.business.InputHandler;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.presentation.GroupChooser;
 
@@ -21,6 +22,7 @@ public class GroopChooserInputHandler extends GroupChooser implements InputHandl
 
     private boolean isInitialized = false;
     protected GroupBusiness groupBiz = null;
+    protected UserBusiness userBiz = null;
 
 
     public GroopChooserInputHandler() {
@@ -59,6 +61,19 @@ public class GroopChooserInputHandler extends GroupChooser implements InputHandl
 		if (value != null) {
 			this.setValue(value);
 		}
+		Collection groups = null;
+		try {
+		    groups = this.getUserBusiness().getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
+		} catch (RemoteException e) {
+		    e.printStackTrace();
+		}
+		if (groups != null && !groups.isEmpty()) {
+		    //System.out.println(groups.iterator().next().getClass());
+		    Group group = (Group)groups.iterator().next();
+		    if (group != null) {
+		        this.setSelectedGroup(group.getPrimaryKey().toString(),group.getName());
+		    }
+		}
 		return this;
 	}
 
@@ -74,5 +89,12 @@ public class GroopChooserInputHandler extends GroupChooser implements InputHandl
 			groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), GroupBusiness.class);
 		}	
 		return groupBiz;
+	}
+
+	private UserBusiness getUserBusiness() throws RemoteException {
+		if (userBiz == null) {
+			userBiz = (UserBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), UserBusiness.class);
+		}	
+		return userBiz;
 	}
 }
