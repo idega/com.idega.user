@@ -157,6 +157,10 @@ public class UserApplication extends IWBrowser {
       }
     }
 
+    public String getBundleIdentifier(){
+      return "com.idega.user";
+    }
+
     public ChangeListener getChangeControler(){
       return (ChangeListener)this.getPresentationState(this.getIWUserContext());
     }

@@ -68,6 +68,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
 
   public Table getUsers(IWContext iwc) throws Exception{
+    this.empty();
     //List users = EntityFinder.findAllOrdered(com.idega.user.data.UserBMPBean.getStaticInstance(),com.idega.user.data.UserBMPBean.getColumnNameFirstName());
 //    Collection users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
     if( toolbar == null ) toolbar = new BasicUserOverViewToolbar();
