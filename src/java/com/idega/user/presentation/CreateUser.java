@@ -1,8 +1,6 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
-import java.util.Iterator;
-import java.util.Vector;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -23,7 +21,6 @@ import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
-import com.idega.presentation.ui.Window;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
@@ -190,7 +187,7 @@ public class CreateUser extends StyledIWAdminWindow {
 	}
 
 	public void lineUpElements(IWContext iwc) {
-		IWResourceBundle iwrb = getResourceBundle(iwc);
+		//IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		//mainTable begin	
 		mainTable = new Table(2,2);
