@@ -168,7 +168,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			int size = users.size();
 		
     
-      EntityBrowser entityBrowser =  new EntityBrowser();
+    /*  EntityBrowser entityBrowser =  new EntityBrowser();
       PresentationObject parentObject = this.getParentObject();
       entityBrowser.setArtificialCompoundId(parentObject.getCompoundId(),iwc);
       IWPresentationState presentationState = ((StatefullPresentation) parentObject).getPresentationState(iwc);
@@ -187,7 +187,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         "com.idega.user.data.User.MIDDLE_NAME"; 
       entityBrowser.setDefaultColumns(1, key);
       entityBrowser.setDefaultColumns(2, "com.idega.user.data.User.FIRST_NAME");
-      entityBrowser.setDefaultColumns(3, "com.idega.user.data.User.LAST_NAME");
+      entityBrowser.setDefaultColumns(3, "com.idega.user.data.User.LAST_NAME");*/
       
     
     
