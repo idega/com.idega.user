@@ -12,6 +12,7 @@ import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.app.IWBrowser;
 import com.idega.idegaweb.browser.presentation.IWBrowseControl;
@@ -56,12 +57,21 @@ public class UserApplication extends IWBrowser {
     this.setWidth(900);
     this.setHeight(750);
 
-    this.addToTop(new Top());
-    this.setSpanPixels(POS_TOP,50); 
+    IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
+    if(iwma.getProductInfo().isMajorVersionEqualOrHigherThan(3)){
+    		//Not add the top for new versions
+        this.addToTop(new Top());
+        this.setSpanPixels(POS_TOP,0); 
+    }
+    else{
+        this.addToTop(new Top());
+        this.setSpanPixels(POS_TOP,50); 
+    }
+    
     this.setSpanPixels(POS_LEFTMAIN, 230);
-    this.setSpanPixels(POS_MENU,29); 
-    this.setSpanPixels(POS_BOTTOM,35); 
-    this.setSpanPixels(POS_EVENT,1); 
+    this.setSpanPixels(POS_MENU,29);
+    this.setSpanPixels(POS_BOTTOM,35);
+    this.setSpanPixels(POS_EVENT,1);
 
     UserApplicationMenuArea menuArea = new UserApplicationMenuArea();
 		UserApplicationControlArea treeArea = new UserApplicationControlArea();
