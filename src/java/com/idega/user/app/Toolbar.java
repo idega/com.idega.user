@@ -133,6 +133,7 @@ public class Toolbar extends Page implements IWBrowserView {
 		//			parentPage.addStyleSheetURL(styleSrc);
 
 		Table toolbarTable = new Table(3, 3);
+		boolean useDropdown = false;
 
 		//	added for isi style
 		//		toolbarTable.setStyleClass(menuTableStyle); --- changed
@@ -267,7 +268,13 @@ public class Toolbar extends Page implements IWBrowserView {
 			button5.setCellpadding(0);
 			Image iconExchange = iwb.getImage("other_choises.gif");
 			button5.add(iconExchange, 1, 1);
-			Text text5 = new Text(iwrb.getLocalizedString("button.other_choices", "Other choices"));
+			Text text5 = null;
+			if (useDropdown) {
+				text5 = new Text(iwrb.getLocalizedString("button.other_choices", "Other choices"));
+			}
+			else {
+				text5 = new Text(iwrb.getLocalizedString("button.club_member_exchange","Club exchange"));
+			}
 			//			Text text5 = new
 			// Text(iwrb.getLocalizedString("button.club_member_exchange","Club
 			// exchange"));
@@ -289,9 +296,10 @@ public class Toolbar extends Page implements IWBrowserView {
 				exchange.setWindowToOpenOnSelect(clubMemberExchangeWindow, null);
 				menu.addOption(exchange);
 			}
-			toolbar1.setCellpaddingLeft(7, 1, 10);
-			toolbar1.add(form, 7, 1);
-
+			if (useDropdown) {
+				toolbar1.setCellpaddingLeft(7, 1, 10);
+				toolbar1.add(form, 7, 1);
+			}
 			//			dropdownMenu.addMenuElement(tLink15.getURL(),tLink15.toString());
 
 			//			Table button5 = new Table(2,1);
@@ -339,7 +347,9 @@ public class Toolbar extends Page implements IWBrowserView {
 			massOption.setWindowToOpenOnSelect(MassMovingWindow.class, parameters);
 			menu.addOption(massOption);
 			button4.add(tLink14, 1, 1);
-			//toolbar1.add(button4, 7, 1);
+			if (!useDropdown) {
+				toolbar1.add(button4, 7, 1);
+			}
 
 			//				dropdownMenu.addMenuElement(tLink14.getURL(),tLink14.toString());
 
@@ -393,7 +403,9 @@ public class Toolbar extends Page implements IWBrowserView {
 				tLink16.setWindowToOpen(Importer.class);
 				button6.setWidth(2, 15);
 				button6.add(tLink16, 2, 1);
-				//toolbar1.add(button6, 8, 1);
+				if (!useDropdown) {
+					toolbar1.add(button6, 8, 1);
+				}
 				SelectOption importer = new SelectOption(iwrb.getLocalizedString("nationRegister", "National Register"), "1");
 				importer.setWindowToOpenOnSelect(Importer.class, map);
 				menu.addOption(importer);
@@ -420,7 +432,9 @@ public class Toolbar extends Page implements IWBrowserView {
 			tLink16.setWindowToOpen(Importer.class);
 			button6.setWidth(2,15);
 			button6.add(tLink16, 2, 1);
-			//toolbar1.add(button6, 8, 1);
+			if (!useDropdown) {
+				toolbar1.add(button6, 8, 1);
+			}
 			
 			Map map = new HashMap();
 			map.put(Importer.PARAMETER_IMPORT_FILE, "is.idega.block.nationalregister.data.NationalRegisterImportFile");
@@ -478,7 +492,9 @@ public class Toolbar extends Page implements IWBrowserView {
 			tLink18.setStyleClass(styledLink);
 			tLink18.setWindowToOpen(com.idega.block.datareport.presentation.ReportOverviewWindow.class);
 			button8.add(tLink18, 2, 1);
-			//toolbar1.add(button8, 9, 1);
+			if (!useDropdown) {
+				toolbar1.add(button8, 9, 1);
+			}
 
 			SelectOption report = new SelectOption(iwrb.getLocalizedString("button.report_report_builder", "Report builder"), "1");
 			report.setWindowToOpenOnSelect(com.idega.block.datareport.presentation.ReportOverviewWindow.class, null);
@@ -517,7 +533,9 @@ public class Toolbar extends Page implements IWBrowserView {
 				tLink15.setWindowToOpen(workReportWindow);
 
 				button5.add(tLink15, 2, 1);
-				//toolbar1.add(button5, 10, 1);
+				if (!useDropdown) {
+					toolbar1.add(button5, 10, 1);
+				}
 
 				SelectOption workReport = new SelectOption(iwrb.getLocalizedString("button.work_reports", "Work Reports"), "1");
 				workReport.setWindowToOpenOnSelect(workReportWindow, null);
@@ -532,7 +550,9 @@ public class Toolbar extends Page implements IWBrowserView {
 			tLin.setStyleClass(styledLink);
 			tLin.setWindowToOpen(com.idega.block.cal.presentation.CalendarWindow.class);
 			butt.add(tLin, 2, 1);
-			//toolbar1.add(butt, 11, 1);
+			if (!useDropdown) {
+				toolbar1.add(butt, 11, 1);
+			}
 
 			SelectOption calendar = new SelectOption(iwrb.getLocalizedString("button.calendar", "Calendar Window"), "1");
 			calendar.setWindowToOpenOnSelect(com.idega.block.cal.presentation.CalendarWindow.class, null);
