@@ -1,12 +1,19 @@
 package com.idega.user.block.search.presentation;
+import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.*;
-import com.idega.presentation.*;
-import com.idega.user.block.search.event.UserSearchEvent;
-import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.PresentationObjectContainer;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.TextInput;
+import com.idega.user.block.search.event.UserSearchEvent;
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description: </p>
@@ -26,7 +33,7 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 	public final static String STYLE = "font-family:arial; font-size:7pt; color:#000000; text-align: justify; border: 1 solid #000000;";
 	public final static String STYLE_2 = "font-family:arial; font-size:7pt; color:#000000; text-align: justify;";
 	private String _controlTarget = null;
-	private IWPresentationEvent _contolEvent = null;
+	private IWPresentationEvent _controlEvent = null;
 	private String textValue = null;
 	
 	
@@ -66,6 +73,9 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 		table.add(searchButton, 3, 1);
 		//table.add(searchTypeDropDown, 1, 1);
 		
+		 // get the source from the controlEvent (this is a hack that this works with newer core versions)
+		String sourceParameterValue = (_controlEvent == null) ? "" : _controlEvent.getSourceParameterValue();
+		event.setSource(sourceParameterValue);
 		form.addEventModel(event, iwc);
 		form.add(table);
 		searchButton.setButtonImage(iwb.getImage("search.gif"));
@@ -74,17 +84,17 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 			searchInput.setContent(textValue);
 			searchInput.setOnFocus("if(this.value==\'" + iwrb.getLocalizedString("insert_search_string","Insert a search string") + "\')this.value=\'\' ");
 		}
-		
-		if (_controlTarget != null) {
-			form.setTarget(_controlTarget);
-		}
-		if (_contolEvent != null) {
-			form.addEventModel(_contolEvent, iwc);
-		}
+// do not set the controlEvent (this is a hack that this works with newer core versions)
+//		if (_controlTarget != null) {
+//			form.setTarget(_controlTarget);
+//		}
+//		if (_controlEvent != null) {
+//			form.addEventModel(_controlEvent, iwc);
+//		}
 		this.add(form);
 	}
 	public void setControlEventModel(IWPresentationEvent model) {
-		_contolEvent = model;
+		_controlEvent = model;
 	}
 	public void setControlTarget(String controlTarget) {
 		_controlTarget = controlTarget;
