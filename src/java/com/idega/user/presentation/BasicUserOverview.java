@@ -13,6 +13,7 @@ import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.presentation.IWContext;
@@ -44,9 +45,12 @@ import com.idega.util.ListUtil;
 public class BasicUserOverview extends Page implements IWBrowserView, StatefullPresentation {
 
   private static final String PARAMETER_DELETE_USER =  "delete_ic_user";
+  private static final String ALWAYS_LIST_ALL_USERS =  "iwme_list_all";
+    
   private String _controlTarget = null;
   private IWPresentationEvent _controlEvent = null;
   private IWResourceBundle iwrb = null ;
+  private IWBundle iwb = null;
 
   private BasicUserOverviewPS _presentationState = null;
   private BasicUserOverViewToolbar toolbar = null;
@@ -75,9 +79,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
   public Table getUsers(IWContext iwc) throws Exception{
     this.empty();
+	iwb = this.getBundle(iwc);
     iwrb = this.getResourceBundle(iwc);
-    //List users = EntityFinder.findAllOrdered(com.idega.user.data.UserBMPBean.getStaticInstance(),com.idega.user.data.UserBMPBean.getColumnNameFirstName());
-//    Collection users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
+    
+    boolean listAll = (iwb.getProperty(ALWAYS_LIST_ALL_USERS)!=null);//temporary solutions
+    
+
     if( toolbar == null ) toolbar = new BasicUserOverViewToolbar();
     
     BasicUserOverviewPS ps = (BasicUserOverviewPS)this.getPresentationState(iwc);
@@ -88,7 +95,6 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     int userCount = 0;
     if(selectedGroup  != null){
       toolbar.setSelectedGroup(selectedGroup);
-//      System.out.println("[BasicUserOverview]: selectedGroup = "+selectedGroup);
       users = this.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
       if(users == null) {
       	userCount = 0;
@@ -98,13 +104,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     } else if(selectedDomain != null){
 //      System.out.println("[BasicUserOverview]: selectedDomain = "+selectedDomain);
       users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
-//      userCount = ((UserHome)IDOLookup.getHome(User.class)).getUserCount();
       userCount = users.size();
-    } else {
-//      System.out.println("[BasicUserOverview]: selectedGroup = All");
-
-//      users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
-    }
+    } 
 
     Table userTable = null;
     Table returnTable = new Table(1,2);
@@ -130,13 +131,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         adminUsers = new Vector(0);
       }
 
+
+
+	if( !listAll ){//temporary solutions
 		int parSize = ps.getPartitionSize();
 		int sel = ps.getSelectedPartition();
 		int firstIndex = ps.getFirstPartitionIndex();
-		//debug
-System.out.println(" parSize = "+parSize);
-System.out.println(" sel = "+sel);
-System.out.println(" firstIndex = "+firstIndex);
 
 		SubsetSelector selector = new SubsetSelector(parSize,userCount,6);
 		selector.setControlEventModel(_controlEvent);
@@ -147,15 +147,13 @@ System.out.println(" firstIndex = "+firstIndex);
 		selector.setSelectedSubset(sel);
 		selector.setFirstSubset(firstIndex);
 
-		this.add(selector);
-
-
-
-
-
-//      System.out.println("BasicUserOverview: sel = "+sel+" & parSize = "+parSize);
-      users = ListUtil.convertCollectionToList(users).subList( (sel*parSize), Math.min(users.size(),((sel+1)*parSize)) );
-//      this.add(" ("+sel+")");
+		add(selector);
+      	users = ListUtil.convertCollectionToList(users).subList( (sel*parSize), Math.min(users.size(),((sel+1)*parSize)) );
+	
+	}
+	else{
+		users = ListUtil.convertCollectionToList(users);
+	}
 
       userTable = new Table(3, ((users.size()>33)?users.size():33)+1  );
       returnTable.add(userTable,1,2);
