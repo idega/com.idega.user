@@ -78,12 +78,12 @@ public class UserApplication extends IWBrowser {
 
 
 //    BasicGroupOverview bgo = new BasicGroupOverview();
-    BasicUserOverview buo = new BasicUserOverview();
+    //BasicUserOverview buo = new BasicUserOverview();
 
 //    this.addToLeftMain(bgo);
     this.addToLeftMain(new UserApplicationControlArea());
-    this.addToMain(buo);
-//	this.addToMain(new UserApplicationMainArea());
+   // this.addToMain(buo);
+	this.addToMain(new UserApplicationMainArea());
 
 
 
