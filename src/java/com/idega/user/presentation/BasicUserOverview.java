@@ -85,9 +85,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		toolbar.setControlTarget(controlTarget);
 	}
 	
-	public Table getUsers(IWContext iwc) throws Exception {
-
-		boolean listAll = (iwb.getProperty(ALWAYS_LIST_ALL_USERS) != null); //temporary solutions
+	protected Table getUsers(IWContext iwc) throws Exception {
+		
 		if (toolbar == null) toolbar = new BasicUserOverViewToolbar();
 		BasicUserOverviewPS ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
 		
@@ -97,7 +96,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		if (selectedGroup != null && selectedGroup.getGroupType().equals("alias")) {
 			aliasGroup = selectedGroup.getAlias();
 		}
-		
+
 		IBDomain selectedDomain = ps.getSelectedDomain();
 		Collection users = null;
 		int userCount = 0;
@@ -561,12 +560,18 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		BasicUserOverviewPS ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
 		Group selectedGroup = ps.getSelectedGroup();
 		
-		//if(access.hasViewPermissionFor(selectedGroup,iwc)){
+		if(selectedGroup!=null && !iwc.isSuperAdmin()){
+			if(access.hasViewPermissionFor(selectedGroup,iwc) || access.isOwner(selectedGroup,iwc)){
+				this.add(getUsers(iwc));
+			}
+			else{
+				add(iwrb.getLocalizedString("no.view.permission","You are not allowed to view the data for this group."));
+			}
+		}
+		else if(iwc.isSuperAdmin()){
 			this.add(getUsers(iwc));
-	//	}
-	//	else{
-	//		add(iwrb.getLocalizedString("no.view.permission","You are not allowed to view the data for this group."));
-	//	}
+		}
+	
 		
 		
 		
@@ -725,4 +730,4 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	public String getBundleIdentifier() {
 		return "com.idega.user";
 	}
-} //Class end
+}
