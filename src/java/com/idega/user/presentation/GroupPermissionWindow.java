@@ -69,6 +69,8 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 	private StatefullPresentationImplHandler stateHandler = null;
 	private GroupBusiness groupBiz = null;
+	private Map cachedGroups = null;
+	private Map cachedParents = null;
 
 	private boolean saveChanges = false;
 
@@ -215,10 +217,13 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	    //get permission, order, sort alphabetically and use entitybrowser
 		Collection allPermissions = getAllPermissionForSelectedGroupAndCurrentUser(iwc);
 	    List entityList = orderAndGroupPermissionsByContextValue(allPermissions, iwc);
-		GroupComparator groupComparator = new GroupComparator(iwc.getCurrentLocale());
+		GroupComparator groupComparator = new GroupComparator(iwc);
 		groupComparator.setObjectsAreICPermissions(true);
 		groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));		
+		groupComparator.setSortByParents(false);
 		Collections.sort(entityList, groupComparator); 
+	    setCachedParents(groupComparator.getCachedParents());
+	    setCachedGroups(groupComparator.getCachedGroups());
 		EntityBrowser browser = getEntityBrowser(permissionTypes, entityList);
 		//////////////////////////
 		
@@ -272,7 +277,8 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 					ICPermission perm = (ICPermission) iterator.next();
 					Group group;
 					try {
-						group = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(perm.getContextValue()));
+						Integer groupID = Integer.valueOf(perm.getContextValue());
+					    group = getGroupBusiness(iwc).getGroupByGroupID(groupID.intValue());
 						
 						String name = group.getName();
 						String number = group.getMetaData(ICUserConstants.META_DATA_GROUP_NUMBER);
@@ -1020,4 +1026,28 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		return "Group permissions";
 	}
 
+    /**
+     * @return Returns the cachedGroups.
+     */
+    public Map getCachedGroups() {
+        return cachedGroups;
+    }
+    /**
+     * @param cachedGroups The cachedGroups to set.
+     */
+    public void setCachedGroups(Map cachedGroups) {
+        this.cachedGroups = cachedGroups;
+    }
+    /**
+     * @return Returns the cachedParents.
+     */
+    public Map getCachedParents() {
+        return cachedParents;
+    }
+    /**
+     * @param cachedParents The cachedParents to set.
+     */
+    public void setCachedParents(Map cachedParents) {
+        this.cachedParents = cachedParents;
+    }
 }
