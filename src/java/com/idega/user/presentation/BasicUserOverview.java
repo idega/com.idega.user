@@ -25,7 +25,6 @@ import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
@@ -250,7 +249,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	}
   
   private DropdownMenu getGroupList(IWContext iwc) {
-    Group selfGroup = selectedGroup;
+    //Group selfGroup = selectedGroup;
     String selfGroupId = "";
     if (selectedGroup != null)  {
       selfGroupId = ((Integer) selectedGroup.getPrimaryKey()).toString();
