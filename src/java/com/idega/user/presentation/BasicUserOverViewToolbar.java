@@ -168,7 +168,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
         button5.setCellpadding(0);
         Image iconDeleteGroup = iwb.getImage("toolbar_delete.gif");
         button5.add(iconDeleteGroup, 1, 1);
-        Text text5 = new Text(iwrb.getLocalizedString("Delete", "Delete"));
+        Text text5 = new Text(iwrb.getLocalizedString("Delete.group", "Delete group"));
         text5.setFontFace(Text.FONT_FACE_VERDANA);
         text5.setFontSize(Text.FONT_SIZE_7_HTML_1);
         Link tLink5 = new Link(text5);
