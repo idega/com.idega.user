@@ -66,7 +66,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 
 	public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
 		int count = 0;
-		
+		IWResourceBundle iwrb = getResourceBundle(iwc);
 
 		try { //temporary before plugins work
 			UserTab userInfo = new GeneralUserInfoTab();
@@ -89,6 +89,14 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			
 			//get the user
 			User user = getUserBusiness(iwc).getUser(userId);
+			// ask one of the tab for the user id because the user id parameter is not set when navigating within the user property window 
+			// that is switching from one tab to another
+			String userName = user.getName();
+			if(userName!=null) {
+			    this.addTitle(userName, TITLE_STYLECLASS);
+			}
+			setTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"));
+
 			
 			
 			//get plugins
@@ -122,13 +130,9 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 	}
 
 	public void main(IWContext iwc) throws Exception {
-		IWResourceBundle iwrb = getResourceBundle(iwc);
-		
 		String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
 		String grpid = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
 		
-		
-
 		PresentationObject[] obj = this.getAddedTabs();
 
 		int iGrpId = -1;
@@ -146,18 +150,6 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 				}
 			}
 		}
-		// ask one of the tab for the user id because the user id parameter is not set when navigating within the user property window 
-		// that is switching from one tab to another
-		if (obj.length > 0) {
-			userId = ((UserTab) obj[0]).getUserId();
-			User user = getUserBusiness(iwc).getUser(userId);
-			String userName = user.getName();
-			if(userName!=null) {
-			    this.addTitle(userName, TITLE_STYLECLASS);
-			}
-		}
-		setTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"));
-
 	}
 
 	/**
