@@ -63,7 +63,7 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 		table.add(_searchString,2,1);
 		table.add(_search,3,1);
 		table.add(_searchType,1,1);
-		form.addEventModel(event);
+		form.addEventModel(event, iwc);
 		form.add(table);
 		_search.setButtonImage(iwb.getImage("search.gif"));
 
@@ -73,7 +73,7 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 		}
 
 		if(_contolEvent != null){
-		    form.addEventModel(_contolEvent);
+		    form.addEventModel(_contolEvent, iwc);
 		}
 
 		this.add(form);

@@ -78,7 +78,7 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 
       IWResourceBundle iwrb = iwc.getApplication().getBundle(BuilderLogic.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
       Form form = new Form();
-      form.addEventModel(_createEvent);
+      form.addEventModel(_createEvent, iwc);
 
       setTitle(iwrb.getLocalizedString("create_new_group","Create a new Group"));
       addTitle(iwrb.getLocalizedString("create_new_group","Create a new Group"),IWConstants.BUILDER_FONT_STYLE_TITLE);
