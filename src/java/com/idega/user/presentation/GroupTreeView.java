@@ -228,6 +228,14 @@ public class GroupTreeView extends IWTreeControl {
           case GroupTreeNode.TYPE_GROUP:
             SelectGroupEvent grSelect = new SelectGroupEvent();
             grSelect.setGroupToSelect(node.getNodeID());
+            if (node.getParentNode() != null) {
+              if (((GroupTreeNode) node.getParentNode()).getNodeType() == GroupTreeNode.TYPE_DOMAIN)  {
+                grSelect.setParentDomainOfSelection(node.getParentNode().getNodeID());
+              }
+              else  {
+                grSelect.setParentGroupOfSelection(node.getParentNode().getNodeID());
+              }
+            }
             l.addEventModel(grSelect);
             break;
         }
