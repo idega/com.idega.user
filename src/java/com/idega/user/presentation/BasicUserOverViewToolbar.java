@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Vector;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -37,6 +38,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
   public void main(IWContext iwc) throws Exception{
     this.empty();
     iwb = getBundle(iwc);
+    iwrb = getResourceBundle(iwc);
 
     Table toolbarTable = new Table(1,3);
     toolbarTable.setCellpadding(0);
@@ -62,7 +64,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
  	button.setCellpadding(0);
     Image iconCrUser = iwb.getImage("new_user.gif");
     button.add(iconCrUser,1,1);
-   	Text text = new Text("Nýr félagi");
+   	Text text = new Text(iwrb.getLocalizedString("new.member","New member"));
  	text.setFontFace(Text.FONT_FACE_VERDANA);
  	text.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink11 = new Link(text);
@@ -74,7 +76,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
  	button2.setCellpadding(0);
     Image iconCrGroup = iwb.getImage("new_group.gif");
     button2.add(iconCrGroup,1,1);
-	Text text2 = new Text("Nýr hópur");
+	Text text2 = new Text(iwrb.getLocalizedString("new.group","New group"));
  	text2.setFontFace(Text.FONT_FACE_VERDANA);
  	text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink12 = new Link(text2);
@@ -87,13 +89,13 @@ public class BasicUserOverViewToolbar extends Toolbar {
    //group
    //user
    //calendar
-   toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Kladdar", iwb.getImage("calendar.gif"), com.idega.block.news.presentation.News.class),4,1);
+   toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("calendar","Calendar"), iwb.getImage("calendar.gif"), com.idega.block.news.presentation.News.class),4,1);
    //history
-   toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Saga", iwb.getImage("history.gif"), com.idega.block.news.presentation.News.class),5,1);
+   toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("history","History"), iwb.getImage("history.gif"), com.idega.block.news.presentation.News.class),5,1);
    //import
-   toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Import", iwb.getImage("import.gif"), com.idega.block.news.presentation.News.class),6,1);
+   toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("import","Import"), iwb.getImage("import.gif"), com.idega.block.news.presentation.News.class),6,1);
    //export
-   toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Export", iwb.getImage("export.gif"), com.idega.block.news.presentation.News.class),7,1);
+   toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("export","Export"), iwb.getImage("export.gif"), com.idega.block.news.presentation.News.class),7,1);
      //bread crumbs
 //VANTAR
 

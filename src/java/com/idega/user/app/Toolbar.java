@@ -1,5 +1,6 @@
 package com.idega.user.app;
 
+import com.idega.idegaweb.IWResourceBundle;
 import java.util.List;
 import java.util.Vector;
 import com.idega.event.IWPresentationEvent;
@@ -30,6 +31,7 @@ import com.idega.util.IWColor;
 public class Toolbar extends Page implements IWBrowserView {
 
   protected IWBundle iwb;
+  protected IWResourceBundle iwrb;
   protected String _controlTarget = null;
   protected IWPresentationEvent _controlEvent = null;
 
@@ -140,6 +142,7 @@ public class Toolbar extends Page implements IWBrowserView {
   public void main(IWContext iwc) throws Exception{
     this.empty();
     iwb = getBundle(iwc);
+    iwrb = getResourceBundle(iwc);
 
     Table toolbarTable = new Table(1,1);
     toolbarTable.setCellpadding(0);
@@ -187,7 +190,7 @@ public class Toolbar extends Page implements IWBrowserView {
  	button.setCellpadding(0);
     Image iconCrUser = iwb.getImage("new_user.gif");
     button.add(iconCrUser,1,1);
-   	Text text = new Text("Nýr félagi");
+   	Text text = new Text(iwrb.getLocalizedString("new.member","New member"));
  	text.setFontFace(Text.FONT_FACE_VERDANA);
  	text.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink11 = new Link(text);
@@ -199,7 +202,7 @@ public class Toolbar extends Page implements IWBrowserView {
  	button2.setCellpadding(0);
     Image iconCrGroup = iwb.getImage("new_group.gif");
     button2.add(iconCrGroup,1,1);
-	Text text2 = new Text("Nýr hópur");
+	Text text2 = new Text(iwrb.getLocalizedString("new.group","New group"));
  	text2.setFontFace(Text.FONT_FACE_VERDANA);
  	text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink12 = new Link(text2);
@@ -216,13 +219,13 @@ public class Toolbar extends Page implements IWBrowserView {
    //Group
    //user
    //finance
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Fjármál", iwb.getImage("finance.gif"), com.idega.block.news.presentation.News.class),4,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("finance","Finance"), iwb.getImage("finance.gif"), com.idega.block.news.presentation.News.class),4,1);
    //reports
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Skýrslur", iwb.getImage("reports.gif"), com.idega.block.news.presentation.News.class),5,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("reports","Reports"), iwb.getImage("reports.gif"), com.idega.block.news.presentation.News.class),5,1);
    //To do - stickies
 //    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("To do", iwb.getImage("todo.gif"), com.idega.block.news.presentation.News.class),7,1);
    //settings
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Stillingar", iwb.getImage("settings.gif"), com.idega.block.reports.presentation.Reports.class),6,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("setttings","Settings"), iwb.getImage("settings.gif"), com.idega.block.reports.presentation.Reports.class),6,1);
 
    //view
    	//dropdownmenu
