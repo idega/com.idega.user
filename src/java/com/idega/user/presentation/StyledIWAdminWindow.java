@@ -147,7 +147,7 @@ private Image helpImage = null;
 		adminTitle.setFontColor("#FFFFFF");
 //		adminTitle.setFontSize("3");
 //		adminTitle.setFontFace(Text.FONT_FACE_ARIAL);
-		super.setTitle(title);
+//		super.setTitle(title);
 		titleIsSet = true;
 
 		headerTable.add(adminTitle,2,1);
