@@ -90,6 +90,16 @@ public class UserSearchEvent extends IWPresentationEvent
 					if( iwc.isParameterSet(SEARCH_FIELD_AGE_CEILING)){
 						ageCeil = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_AGE_CEILING));
 					}
+					
+					if( iwc.isParameterSet(SEARCH_FIELD_PERSONAL_ID)){
+						personalId = iwc.getParameter(SEARCH_FIELD_PERSONAL_ID);
+					}
+					
+					if( iwc.isParameterSet(SEARCH_FIELD_ADDRESS)){
+						address = iwc.getParameter(SEARCH_FIELD_ADDRESS);
+					}		
+					
+					
 				}
 				else return false;//NO TYPE
 				

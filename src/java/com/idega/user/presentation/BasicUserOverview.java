@@ -503,7 +503,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		String identifier = (selectedGroup==null)? "" : selectedGroup.getName();
 		identifier += (ps.getSelectedDomain() != null) ? ps.getSelectedDomain().getPrimaryKey().toString() : "";
 			
-		entityBrowser.setEntities(identifier, users);
+		entityBrowser.setEntities(getEntityBrowserIdentifier(), users);
+		
+		
 		entityBrowser.setDefaultNumberOfRows(Math.min(users.size(), 30));
 		//entityBrowser.setLineColor("#DBDCDF");
 		entityBrowser.setWidth(Table.HUNDRED_PERCENT);
@@ -985,6 +987,16 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     entityBrowser.setAcceptUserSettingsShowUserSettingsButton(false,false);
     
     return entityBrowser;
+  }
+  
+  protected String getEntityBrowserIdentifier(){
+  	
+		String identifier = (selectedGroup==null)? "" : selectedGroup.getPrimaryKey().toString();
+		identifier +="_";
+		identifier += (ps.getSelectedDomain() != null) ? ps.getSelectedDomain().getPrimaryKey().toString() : "";
+		
+		
+		return identifier;
   }
 
     

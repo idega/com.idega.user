@@ -45,6 +45,15 @@ public class SearchResultsWindow extends BasicUserOverview {
 		return null;
 	}
 	
+	protected String getEntityBrowserIdentifier(){
+		String identifier = "search-";
+		SearchResultsWindowPS sPs = (SearchResultsWindowPS)ps;
+		if(sPs!=null){
+			identifier+= sPs.getSearchString();
+		}	
+		
+		return identifier;
+	}
 	
 	protected PresentationObject getEmptyListPresentationObject() {
 		Text text = new Text(iwrb.getLocalizedString("searchresultswindow.search_had_no_match", "The search did not return any results"));
