@@ -112,7 +112,6 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		}
 
 		UserLoginTab ult = new UserLoginTab();
-		ult.displayLoginInfoSettings();
 		panel.addTab(ult, ++count, iwc);
 
 	}

@@ -63,17 +63,7 @@ public class UserLoginTab extends UserTab {
 	public static String _PARAM_CANNOT_CHANGE_PASSWORD = "cannotChange";
 	public static String _PARAM_PASSWORD_NEVER_EXPIRES = "neverExpires";
 	public static String _PARAM_DISABLE_ACCOUNT = "disableAccount";
-
-	private boolean _displayLoginInfoSettings = true;
-
-	public void doNotDisplayLoginInfoSettings() {
-		_displayLoginInfoSettings = false;
-	}
-
-	public void displayLoginInfoSettings() {
-		_displayLoginInfoSettings = true;
-	}
-
+	
 	public UserLoginTab() {
 		super();
 		IWContext iwc = IWContext.getInstance();
@@ -249,35 +239,30 @@ public class UserLoginTab extends UserTab {
 					if (updateLoginTable) {
 						LoginDBHandler.updateLogin(this.getUserId(), login, passw);
 					}
-					if (_displayLoginInfoSettings) {
-						LoginDBHandler.updateLoginInfo(
-							loginTable.getID(),
-							accountEnabled,
-							IWTimestamp.RightNow(),
-							5000,
-							passwExpires,
-							canChangePassw,
-							mustChangePassw,
-							null);
-					}
+					LoginDBHandler.updateLoginInfo(
+						loginTable.getID(),
+						accountEnabled,
+						IWTimestamp.RightNow(),
+						5000,
+						passwExpires,
+						canChangePassw,
+						mustChangePassw,
+						null);
 				}
 				else if (updateLoginTable) {
-					if (_displayLoginInfoSettings) {
-						LoginDBHandler.createLogin(
-							this.getUserId(),
-							login,
-							passw,
-							accountEnabled,
-							IWTimestamp.RightNow(),
-							5000,
-							passwExpires,
-							canChangePassw,
-							mustChangePassw,
-							null);
-					}
-					else {
+					LoginDBHandler.createLogin(
+						this.getUserId(),
+						login,
+						passw,
+						accountEnabled,
+						IWTimestamp.RightNow(),
+						5000,
+						passwExpires,
+						canChangePassw,
+						mustChangePassw,
+						null);
+				} else {
 						LoginDBHandler.createLogin(this.getUserId(), login, passw);
-					}
 				}
 				return true;
 			}
@@ -338,9 +323,7 @@ public class UserLoginTab extends UserTab {
 		frameTable.add(Text.getBreak(), 2, 1);
 		frameTable.add(loginTable, 2, 1);
 		frameTable.add(Text.getBreak(), 2, 1);
-		if (_displayLoginInfoSettings) {
-			frameTable.add(AccountPropertyTable, 2, 1);
-		}
+		frameTable.add(AccountPropertyTable, 2, 1);
 		frameTable.add(errorMessageTable, 2, 1);
 
 		this.add(frameTable);
@@ -411,42 +394,40 @@ public class UserLoginTab extends UserTab {
 				fieldValues.put(this._PARAM_CONFIRM_PASSWORD, "");
 			}
 
-			if (_displayLoginInfoSettings) {
-				if (cannotChangePassw != null && mustChangePassw != null) {
-					this.addErrorMessage(
-					iwrb.getLocalizedString("usr_log_pwdNotTwoCheck","'User must change password at next login' and 'User cannot change password' cannot both be checked"));
+			if (cannotChangePassw != null && mustChangePassw != null) {
+				this.addErrorMessage(
+				iwrb.getLocalizedString("usr_log_pwdNotTwoCheck","'User must change password at next login' and 'User cannot change password' cannot both be checked"));
+				fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD, Boolean.TRUE);
+				fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD, Boolean.FALSE);
+			}
+			else {
+				if (mustChangePassw != null) {
 					fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD, Boolean.TRUE);
+				}
+				else {
+					fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD, Boolean.FALSE);
+				}
+
+				if (cannotChangePassw != null) {
+					fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD, Boolean.TRUE);
+				}
+				else {
 					fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD, Boolean.FALSE);
 				}
-				else {
-					if (mustChangePassw != null) {
-						fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD, Boolean.TRUE);
-					}
-					else {
-						fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD, Boolean.FALSE);
-					}
+			}
 
-					if (cannotChangePassw != null) {
-						fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD, Boolean.TRUE);
-					}
-					else {
-						fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD, Boolean.FALSE);
-					}
-				}
+			if (passwExpires != null) {
+				fieldValues.put(this._PARAM_PASSWORD_NEVER_EXPIRES, Boolean.TRUE);
+			}
+			else {
+				fieldValues.put(this._PARAM_PASSWORD_NEVER_EXPIRES, Boolean.FALSE);
+			}
 
-				if (passwExpires != null) {
-					fieldValues.put(this._PARAM_PASSWORD_NEVER_EXPIRES, Boolean.TRUE);
-				}
-				else {
-					fieldValues.put(this._PARAM_PASSWORD_NEVER_EXPIRES, Boolean.FALSE);
-				}
-
-				if (accountDisabled != null) {
-					fieldValues.put(this._PARAM_DISABLE_ACCOUNT, Boolean.TRUE);
-				}
-				else {
-					fieldValues.put(this._PARAM_DISABLE_ACCOUNT, Boolean.FALSE);
-				}
+			if (accountDisabled != null) {
+				fieldValues.put(this._PARAM_DISABLE_ACCOUNT, Boolean.TRUE);
+			}
+			else {
+				fieldValues.put(this._PARAM_DISABLE_ACCOUNT, Boolean.FALSE);
 			}
 
 			this.updateFieldsDisplayStatus();
@@ -511,7 +492,9 @@ public class UserLoginTab extends UserTab {
 		fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD, Boolean.FALSE);
 		fieldValues.put(this._PARAM_PASSWORD_NEVER_EXPIRES, Boolean.FALSE);
 		fieldValues.put(this._PARAM_DISABLE_ACCOUNT, Boolean.FALSE);
-
+		
+		initFieldContents();
+		
 		this.updateFieldsDisplayStatus();
 	}
 
