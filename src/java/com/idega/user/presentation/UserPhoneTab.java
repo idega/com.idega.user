@@ -198,25 +198,25 @@ public class UserPhoneTab extends UserTab {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		homePhoneText = new Text(iwrb.getLocalizedString(homePhoneFieldName,"Phone 1") + ":");
-		homePhoneText.setFontSize(fontSize);
+//		homePhoneText.setFontSize(fontSize);
 
 		workPhoneText = new Text(iwrb.getLocalizedString(workPhoneFieldName,"Phone 2") + ":");
-		workPhoneText.setFontSize(fontSize);
+//		workPhoneText.setFontSize(fontSize);
 
 		mobilePhoneText = new Text(iwrb.getLocalizedString(mobilePhoneFieldName,"Phone 3") + ":");
-		mobilePhoneText.setFontSize(fontSize);
+//		mobilePhoneText.setFontSize(fontSize);
 
 		faxPhoneText = new Text(iwrb.getLocalizedString(faxPhoneFieldName,"Phone 4") + ":");
-		faxPhoneText.setFontSize(fontSize);
+//		faxPhoneText.setFontSize(fontSize);
 
 		emailText = new Text(iwrb.getLocalizedString(emailFieldName,"E-mail") + ":");
-		emailText.setFontSize(fontSize);
+//		emailText.setFontSize(fontSize);
     
     jobText = new Text(iwrb.getLocalizedString(jobFieldName, "Job") + ":");
-    jobText.setFontSize(fontSize);
+//    jobText.setFontSize(fontSize);
 
 		workPlaceText = new Text(iwrb.getLocalizedString(workPlaceFieldName, "Workplace") + ":");
-		workPlaceText.setFontSize(fontSize);
+//		workPlaceText.setFontSize(fontSize);
 	}
 
 	public void lineUpFields() {

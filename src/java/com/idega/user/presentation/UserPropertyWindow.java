@@ -118,9 +118,9 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
 	}
 
-	public UserBusiness getUserBusiness(IWApplicationContext iwac) throws RemoteException {
-		return (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, UserBusiness.class);
-	}
+//	public UserBusiness getUserBusiness(IWApplicationContext iwac) throws RemoteException {
+//		return (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+//	}
 
 	/**
 	 * @see com.idega.presentation.TabbedPropertyWindow#disposeOfPanel(com.idega.presentation.IWContext)

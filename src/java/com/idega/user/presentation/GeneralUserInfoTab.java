@@ -219,43 +219,43 @@ public class GeneralUserInfoTab extends UserTab {
 
 		idText = new Text();//getTextObject();
 		idText.setText(iwrb.getLocalizedString(idFieldName,"ID") + ":");
-		idText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+//		idText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
 		fullNameText = new Text();//getTextObject();		
 		fullNameText.setText(iwrb.getLocalizedString(fullNameFieldName,"Name") + ":");
-		fullNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+//		fullNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
 		displayNameText = new Text();//getTextObject();
 		displayNameText.setText(iwrb.getLocalizedString(displayNameFieldName,"Display name") + ":");
-		displayNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+//		displayNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
 		descriptionText = new Text();//getTextObject();
 		descriptionText.setText(iwrb.getLocalizedString(descriptionFieldName,"Description") + ":");
-		descriptionText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+//		descriptionText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
 		dateOfBirthText = new Text();// getTextObject();
 		dateOfBirthText.setText(iwrb.getLocalizedString(dateOfBirthFieldName,"Date of birth") + ":");
-		dateOfBirthText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+//		dateOfBirthText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
 		genderText = new Text(); //getTextObject();
 		genderText.setText(iwrb.getLocalizedString(genderFieldName,"Gender") + ":");
-		genderText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+//		genderText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
 		personalIDText = new Text();//getTextObject();
 		personalIDText.setText(iwrb.getLocalizedString(personalIDFieldName,"Personal ID") + ":");
-		personalIDText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+//		personalIDText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
 		createdText = new Text();//getTextObject();
 		createdText.setText(iwrb.getLocalizedString(createdFieldName,"Created") + ":");
-		createdText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+//		createdText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 		
 		imageText = new Text();//getTextObject();
 		imageText.setText(iwrb.getLocalizedString(imageFieldName, "Image") + ":");
-		imageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+//		imageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 		
 		removeImageText = new Text();//getTextObject();
 		removeImageText.setText(iwrb.getLocalizedString(removeImageFieldName, "do not show an image"));
-		removeImageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+//		removeImageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 	}
 
 	public void lineUpFields() {

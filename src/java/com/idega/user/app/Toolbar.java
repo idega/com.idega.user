@@ -61,6 +61,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //			private String styleScript = "UserApplicationStyle.css";
 //			private String styleSrc = "";
 			private String menuTableStyle = "menu";
+			private String styledLink = "styledLink";
 
 
   public Toolbar(){
@@ -181,6 +182,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //    text.setFontFace(Text.FONT_FACE_VERDANA);
 //    text.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink11 = new Link(text);
+		tLink11.setStyleClass(styledLink);
     tLink11.setWindowToOpen(CreateUser.class);
     button.add(tLink11,2,1);
     toolbar1.add(button,2,1);
@@ -194,6 +196,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //    text2.setFontFace(Text.FONT_FACE_VERDANA);
 //    text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink12 = new Link(text2);
+		tLink12.setStyleClass(styledLink);
     tLink12.setWindowToOpen(CreateGroupWindow.class);
     if (selectedGroupProviderStateId != null)
       tLink12.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
@@ -209,6 +212,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //		text3.setFontFace(Text.FONT_FACE_VERDANA);
 //		text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
 		Link tLink13 = new Link(text3);
+		tLink13.setStyleClass(styledLink);
 		if (userApplicationMainAreaStateId != null)
 			tLink13.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, userApplicationMainAreaStateId);
 		tLink13.setWindowToOpen(SearchWindow.class);
@@ -227,6 +231,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //			text5.setFontFace(Text.FONT_FACE_VERDANA);
 //			text5.setFontSize(Text.FONT_SIZE_7_HTML_1);
 			Link tLink15 = new Link(text5);
+			tLink15.setStyleClass(styledLink);
 			//TODO Eiki add somekind of plugin lookup for toolbar items
 			tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.ClubMemberExchangeWindow");
 			button5.add(tLink15,2,1);
@@ -255,6 +260,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //					text4.setFontFace(Text.FONT_FACE_VERDANA);
 //					text4.setFontSize(Text.FONT_SIZE_7_HTML_1);
 					Link tLink14 = new Link(text4);
+				tLink14.setStyleClass(styledLink);
 					if (userApplicationMainAreaStateId != null) {
 						tLink14.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, userApplicationMainAreaStateId);
 					}
@@ -294,6 +300,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //			text6.setFontFace(Text.FONT_FACE_VERDANA);
 //			text6.setFontSize(Text.FONT_SIZE_7_HTML_1);
 			Link tLink16 = new Link(text6);
+			tLink16.setStyleClass(styledLink);
 
 			//TODO: Eiki make plugin based
 			tLink16.setParameter(Importer.PARAMETER_IMPORT_FILE, "is.idega.block.nationalregister.data.NationalRegisterImportFile");
@@ -329,6 +336,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //      text8.setFontFace(Text.FONT_FACE_VERDANA);
 //      text8.setFontSize(Text.FONT_SIZE_7_HTML_1);
       Link tLink18 = new Link(text8);
+			tLink18.setStyleClass(styledLink);
       tLink18.setWindowToOpen(com.idega.block.datareport.presentation.ReportOverviewWindow.class);
       ICFile queryFolder = lookUpFile(QUERY_FOLDER_NAME);
       ICFile layoutFolder = lookUpFile(LAYOUT_FOLDER_NAME);
@@ -363,6 +371,7 @@ public class Toolbar extends Page implements IWBrowserView {
 		 tLink15.setAsPopup(iwrb.getLocalizedString("button.work_reports","Work Reports"),"800","600");*/
 		 
 		 Link tLink15 = new Link(text5);
+		tLink15.setStyleClass(styledLink);
 		 tLink15.setWindowToOpen("is.idega.idegaweb.member.isi.block.reports.presentation.WorkReportWindow");
 		 
 		 button5.add(tLink15,2,1);

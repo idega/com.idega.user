@@ -175,25 +175,25 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		nameText = getTextObject();
+		nameText = new Text();// getTextObject();
 		nameText.setText(iwrb.getLocalizedString("gen_name","Name") + ":");
 
-		descriptionText = getTextObject();
+		descriptionText = new Text();// getTextObject();
 		descriptionText.setText(iwrb.getLocalizedString("gen_desc","Description") + ":");
 
-		homepageText = getTextObject();
+		homepageText = new Text();//getTextObject();
 		homepageText.setText(iwrb.getLocalizedString("gen_home","Home page") + ":");
 
-		grouptypeText = getTextObject();
+		grouptypeText = new Text();//getTextObject();
 		grouptypeText.setText(iwrb.getLocalizedString("gen_type","Group type") + ":");
 
-		memberof = getTextObject();
+		memberof = new Text();//getTextObject();
 		memberof.setText(iwrb.getLocalizedString("gen_memberof","Member of") + ":");
 		
-		shortNameText = getTextObject();
+		shortNameText = new Text();//getTextObject();
 		shortNameText.setText(iwrb.getLocalizedString("gen_shortname","Short name") + ":");
 		
-		abbrText = getTextObject();
+		abbrText = new Text();//getTextObject();
 		abbrText.setText(iwrb.getLocalizedString("gen_abbr","Abbrevation") + ":");		
 	}
 

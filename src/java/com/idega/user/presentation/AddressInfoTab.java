@@ -230,22 +230,22 @@ public class AddressInfoTab extends UserTab {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
 		streetText = new Text(iwrb.getLocalizedString(streetFieldName,"Street"));
-		streetText.setFontSize(fontSize);
+//		streetText.setFontSize(fontSize);
 
 		cityText = new Text(iwrb.getLocalizedString(cityFieldName,"City"));
-		cityText.setFontSize(fontSize);
+//		cityText.setFontSize(fontSize);
 
 		provinceText = new Text(iwrb.getLocalizedString(provinceFieldName,"Province"));
-		provinceText.setFontSize(fontSize);
+//		provinceText.setFontSize(fontSize);
 
 		postalCodeText = new Text(iwrb.getLocalizedString(postalCodeFieldName,"Postal"));
-		postalCodeText.setFontSize(fontSize);
+//		postalCodeText.setFontSize(fontSize);
 
 		countryText = new Text(iwrb.getLocalizedString(countryFieldName,"Country"));
-		countryText.setFontSize(fontSize);
+//		countryText.setFontSize(fontSize);
 
 		poBoxText = new Text(iwrb.getLocalizedString(poBoxFieldName,"P.O.Box"));
-		poBoxText.setFontSize(fontSize);
+//		poBoxText.setFontSize(fontSize);
     // the same texts are used for the second address
 		
 		communeText = new Text(iwrb.getLocalizedString(communeFieldName, "Commune"));

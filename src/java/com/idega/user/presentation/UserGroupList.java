@@ -115,6 +115,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
 		addLink = new Link("  " + iwrb.getLocalizedString("addRemove","Add/Remove")+"  ");
+		//this is added for the link style of UserApplicationStyle.css
+		addLink.setStyleClass("styledLink"); 
 	}
 
 	public void actionPerformed(IWLinkEvent e) {
@@ -125,10 +127,10 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		memberof = this.getTextObject();
+		memberof = new Text();//this.getTextObject();
 		memberof.setText(iwrb.getLocalizedString("usr_grp_memberof","Member of") + ":");
 
-		primaryGroupText = this.getTextObject();
+		primaryGroupText = new Text();//this.getTextObject();
 		primaryGroupText.setText(iwrb.getLocalizedString(primaryGroupFieldName,"Primarygroup") + ":");
 	}
 	public boolean store(IWContext iwc) {

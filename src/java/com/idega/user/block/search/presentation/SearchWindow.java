@@ -98,7 +98,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		addTitle(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"), IWConstants.BUILDER_FONT_STYLE_TITLE);
 		setName(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"));
 		
-		add(form, iwc);
+		add(form,iwc);
 		Table tab = new Table(3,13);
 		form.add(tab);
 		
