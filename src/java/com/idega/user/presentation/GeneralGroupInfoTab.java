@@ -1,28 +1,22 @@
 package com.idega.user.presentation;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.idega.builder.business.PageTreeNode;
 import com.idega.builder.presentation.IBPageChooser;
 import com.idega.business.IBOLookup;
-
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-
-import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
-import com.idega.user.data.GroupType;
 import com.idega.util.Disposable;
 
 /**
@@ -61,8 +55,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private IFrame memberofFrame;
 	public static final String PARAMETER_GROUP_ID = "ic_group_id";
   public static final String PARENT_GROUP_ID = "parent_group_id";
-	public static final String SESSIONADDRESS_GROUPS_DIRECTLY_RELATED = "ic_group_ic_group_direct_GGIT";
-	public static final String SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED = "ic_group_ic_group_not_direct_GGIT";
+	public static final String SESSIONADDRESS_GROUPS_DIRECTLY_RELATED = UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED;//"ic_group_ic_group_direct_GGIT";
+	public static final String SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED = UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED;//"ic_group_ic_group_not_direct_GGIT";
 
 	protected Text memberof;
 
