@@ -236,7 +236,7 @@ public class GroupTreeView extends IWTreeControl {
         if(_usesOnClick){
           String nodeName = node.getNodeName();
           l.setURL("#");
-          l.setOnClick(ONCLICK_FUNCTION_NAME+"('"+nodeName+"','"+node.getNodeID()+"')");
+          l.setOnClick(ONCLICK_FUNCTION_NAME+"('"+nodeName+"','"+node.getNodeType()+"_"+node.getNodeID()+"')");
         }
 //        else if(nodeActionPrm != null){
 //          l.addParameter(nodeActionPrm,node.getNodeID());
@@ -316,16 +316,18 @@ public class GroupTreeView extends IWTreeControl {
     l.setText(text);
     if(this.getControlEventModel() != null){
       l.addEventModel(this.getControlEventModel());
-    } else {
-      System.out.println("GROUPTREEVIEW: eventmodel == null");
     }
+//     else {
+//      System.out.println("GROUPTREEVIEW: eventmodel == null");
+//    }
 
 
     if(this.getControlTarget() != null){
       l.setTarget(this.getControlTarget());
-    } else {
-      System.out.println("GROUPTREEVIEW: controlTarget == null");
     }
+//     else {
+//      System.out.println("GROUPTREEVIEW: controlTarget == null");
+//    }
     return l;
   }
 
@@ -350,19 +352,19 @@ public class GroupTreeView extends IWTreeControl {
   }
 
 
-//  public void setToUseOnClick(){
-//    setToUseOnClick(ONCLICK_DEFAULT_NODE_NAME_PARAMETER_NAME,ONCLICK_DEFAULT_NODE_ID_PARAMETER_NAME);
-//  }
-//
-//  public void setToUseOnClick(String NodeNameParameterName,String NodeIDParameterName){
-//    _usesOnClick=true;
-//    getAssociatedScript().addFunction(ONCLICK_FUNCTION_NAME,"function "+ONCLICK_FUNCTION_NAME+"("+NodeNameParameterName+","+NodeIDParameterName+"){ }");
-//
-//  }
-//
-//  public void setOnClick(String action){
-//     this.getAssociatedScript().addToFunction(ONCLICK_FUNCTION_NAME,action);
-//  }
+  public void setToUseOnClick(){
+    setToUseOnClick(ONCLICK_DEFAULT_NODE_NAME_PARAMETER_NAME,ONCLICK_DEFAULT_NODE_ID_PARAMETER_NAME);
+  }
+
+  public void setToUseOnClick(String NodeNameParameterName,String NodeIDParameterName){
+    _usesOnClick=true;
+    getAssociatedScript().addFunction(ONCLICK_FUNCTION_NAME,"function "+ONCLICK_FUNCTION_NAME+"("+NodeNameParameterName+","+NodeIDParameterName+"){ }");
+
+  }
+
+  public void setOnClick(String action){
+     this.getAssociatedScript().addToFunction(ONCLICK_FUNCTION_NAME,action);
+  }
 
 
   public void setControlTarget(String controlTarget){

@@ -1,5 +1,6 @@
 package com.idega.user.app;
 
+import com.idega.user.presentation.*;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
@@ -24,9 +25,6 @@ import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
-import com.idega.user.presentation.BasicUserOverview;
-import com.idega.user.presentation.CreateUser;
-import com.idega.user.presentation.CreateUserGroup;
 import com.idega.util.IWColor;
 import java.rmi.RemoteException;
 import java.util.Iterator;
@@ -63,7 +61,14 @@ public class UserApplication extends IWBrowser {
     this.setSpanPixels(POS_MENU,28);
     this.setSpanPixels(POS_BOTTOM,28);
 
-    this.addToMenu(new Toolbar());
+
+    Toolbar toolbar = new Toolbar();
+
+    CreateGroupWindow createGroup = new CreateGroupWindow();
+
+    toolbar.add((ToolbarElement)createGroup);
+
+    this.addToMenu(toolbar);
 
 
     this.showMenuFrame(true);
@@ -118,6 +123,7 @@ public class UserApplication extends IWBrowser {
 
     this.addIWActionListener(POS_LEFTMAIN,l);
     this.addIWActionListener(POS_MENU,l);
+    this.addIWActionListener(POS_MAIN,l);
 
 
     Frame left = this.getFrame(this.getFrameName(POS_LEFTMAIN));
@@ -251,113 +257,113 @@ public class UserApplication extends IWBrowser {
 
   }
 
-  public class Toolbar extends Page implements IWBrowserView {
-
-    private IWBundle iwb;
-    private String _controlTarget = null;
-    private IWPresentationEvent _contolEvent = null;
-
-    public Toolbar(){
-      if(this.isChildOfOtherPage()){
-        Page parent = this.getParentPage();
-        parent.setAllMargins(0);
-        parent.setBackgroundColor(IWColor.getHexColorString(212,208,200));
-      } else {
-        setAllMargins(0);
-        setBackgroundColor(IWColor.getHexColorString(212,208,200));
-      }
-
-    }
-
-    public String getBundleIdentifier(){
-      return "com.idega.user";
-    }
-
-    public void setControlEventModel(IWPresentationEvent model){
-      _contolEvent = model;
-    }
-
-    public void setControlTarget(String controlTarget){
-      _controlTarget = controlTarget;
-    }
-
-
-    public void main(IWContext iwc) throws Exception{
-      iwb = getBundle(iwc);
-
-      Table toolbarTable = new Table(1,3);
-      toolbarTable.setCellpadding(0);
-      toolbarTable.setCellspacing(0);
-      toolbarTable.setWidth("100%");
-      toolbarTable.setHeight("100%");
-      toolbarTable.setHeight(1,1);
-      toolbarTable.setHeight(3,1);
-      //footerTable.setWidth(2,1,"20");
-
-      IWColor color = new IWColor(212,208,200);
-      toolbarTable.setColor(color);
-      toolbarTable.setColor(1,1,color.brighter());
-      toolbarTable.setColor(1,3,color.darker());
-
-
-      toolbarTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_RIGHT);
-
-      add(toolbarTable);
-
-      Table toolbar1 = new Table();
-      toolbar1.setCellpadding(0);
-      toolbar1.setCellspacing(0);
-
-
-      Table table = new Table(4,3);
-      table.setCellpadding(0);
-      table.setCellspacing(0);
-      table.setWidth(1,"5");
-      table.setWidth(2,"1");
-      table.setWidth(3,"1");
-      table.setWidth(4,"4");
-      table.setHeight(1,"2");
-      table.setHeight(2,"20");
-      table.setHeight(3,"2");
-      table.setColor(2,2,color.brighter());
-      table.setColor(3,2,color.darker());
-      toolbar1.add(table,1,1);
-
-      int iconDimentions = 20;
-
-      Image iconCrUser = iwb.getImage("group.gif");
-      iconCrUser.setHeight(iconDimentions);
-      iconCrUser.setWidth(iconDimentions);
-      Link tLink12 = new Link(iconCrUser);
-      tLink12.setWindowToOpen(CreateUserGroup.class);
-      toolbar1.add(tLink12,2,1);
-
-      Image iconCrGroup = iwb.getImage("user.gif");
-      iconCrGroup.setHeight(iconDimentions);
-      iconCrGroup.setWidth(iconDimentions);
-      Link tLink11 = new Link(iconCrGroup);
-      tLink11.setWindowToOpen(CreateUser.class);
-      toolbar1.add(tLink11,3,1);
-
-      toolbarTable.add(toolbar1,1,2);
-
-      toolbar1.setWidth(2,"26");
-      toolbar1.setWidth(3,"26");
-
-
-      Link resetLink = new Link("reset");
-      resetLink.addEventModel(new ResetPresentationEvent());
-      if(_contolEvent != null){
-        resetLink.addEventModel(_contolEvent);
-      }
-      if(_controlTarget != null){
-        resetLink.setTarget(_controlTarget);
-      }
-
-      toolbar1.add(resetLink,4,1);
-
-    }
-
-
-  }
+//  public class Toolbar extends Page implements IWBrowserView {
+//
+//    private IWBundle iwb;
+//    private String _controlTarget = null;
+//    private IWPresentationEvent _contolEvent = null;
+//
+//    public Toolbar(){
+//      if(this.isChildOfOtherPage()){
+//        Page parent = this.getParentPage();
+//        parent.setAllMargins(0);
+//        parent.setBackgroundColor(IWColor.getHexColorString(212,208,200));
+//      } else {
+//        setAllMargins(0);
+//        setBackgroundColor(IWColor.getHexColorString(212,208,200));
+//      }
+//
+//    }
+//
+//    public String getBundleIdentifier(){
+//      return "com.idega.user";
+//    }
+//
+//    public void setControlEventModel(IWPresentationEvent model){
+//      _contolEvent = model;
+//    }
+//
+//    public void setControlTarget(String controlTarget){
+//      _controlTarget = controlTarget;
+//    }
+//
+//
+//    public void main(IWContext iwc) throws Exception{
+//      iwb = getBundle(iwc);
+//
+//      Table toolbarTable = new Table(1,3);
+//      toolbarTable.setCellpadding(0);
+//      toolbarTable.setCellspacing(0);
+//      toolbarTable.setWidth("100%");
+//      toolbarTable.setHeight("100%");
+//      toolbarTable.setHeight(1,1);
+//      toolbarTable.setHeight(3,1);
+//      //footerTable.setWidth(2,1,"20");
+//
+//      IWColor color = new IWColor(212,208,200);
+//      toolbarTable.setColor(color);
+//      toolbarTable.setColor(1,1,color.brighter());
+//      toolbarTable.setColor(1,3,color.darker());
+//
+//
+//      toolbarTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_RIGHT);
+//
+//      add(toolbarTable);
+//
+//      Table toolbar1 = new Table();
+//      toolbar1.setCellpadding(0);
+//      toolbar1.setCellspacing(0);
+//
+//
+//      Table table = new Table(4,3);
+//      table.setCellpadding(0);
+//      table.setCellspacing(0);
+//      table.setWidth(1,"5");
+//      table.setWidth(2,"1");
+//      table.setWidth(3,"1");
+//      table.setWidth(4,"4");
+//      table.setHeight(1,"2");
+//      table.setHeight(2,"20");
+//      table.setHeight(3,"2");
+//      table.setColor(2,2,color.brighter());
+//      table.setColor(3,2,color.darker());
+//      toolbar1.add(table,1,1);
+//
+//      int iconDimentions = 20;
+//
+//      Image iconCrUser = iwb.getImage("group.gif");
+//      iconCrUser.setHeight(iconDimentions);
+//      iconCrUser.setWidth(iconDimentions);
+//      Link tLink12 = new Link(iconCrUser);
+//      tLink12.setWindowToOpen(CreateGroupWindow.class);
+//      toolbar1.add(tLink12,2,1);
+//
+//      Image iconCrGroup = iwb.getImage("user.gif");
+//      iconCrGroup.setHeight(iconDimentions);
+//      iconCrGroup.setWidth(iconDimentions);
+//      Link tLink11 = new Link(iconCrGroup);
+//      tLink11.setWindowToOpen(CreateUser.class);
+//      toolbar1.add(tLink11,3,1);
+//
+//      toolbarTable.add(toolbar1,1,2);
+//
+//      toolbar1.setWidth(2,"26");
+//      toolbar1.setWidth(3,"26");
+//
+//
+//      Link resetLink = new Link("reset");
+//      resetLink.addEventModel(new ResetPresentationEvent());
+//      if(_contolEvent != null){
+//        resetLink.addEventModel(_contolEvent);
+//      }
+//      if(_controlTarget != null){
+//        resetLink.setTarget(_controlTarget);
+//      }
+//
+//      toolbar1.add(resetLink,4,1);
+//
+//    }
+//
+//
+//  }
 }

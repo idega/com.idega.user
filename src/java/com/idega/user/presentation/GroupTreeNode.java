@@ -1,12 +1,14 @@
 package com.idega.user.presentation;
 
+import com.idega.data.IDOLookup;
+import com.idega.user.data.*;
+import com.idega.user.event.CreateGroupEvent;
 import java.util.*;
 import com.idega.builder.data.IBDomainHome;
 import java.rmi.RemoteException;
 import javax.ejb.EJBException;
 import com.idega.data.IDORelationshipException;
 import javax.ejb.FinderException;
-import com.idega.user.data.Group;
 import com.idega.builder.data.IBDomain;
 import com.idega.core.ICTreeNode;
 
@@ -26,8 +28,8 @@ public class GroupTreeNode implements ICTreeNode {
   private IBDomain _domain = null;
   private Group _group = null;
   private int _nodeType;
-  public static final int TYPE_DOMAIN = 0;
-  public static final int TYPE_GROUP = 1;
+  public static final int TYPE_DOMAIN = CreateGroupEvent.TYPE_DOMAIN;
+  public static final int TYPE_GROUP = CreateGroupEvent.TYPE_GROUP;
 
   public GroupTreeNode(IBDomain domain) {
     _domain = domain;
@@ -38,6 +40,14 @@ public class GroupTreeNode implements ICTreeNode {
     _group = group;
     _nodeType = TYPE_GROUP;
   }
+
+  private GroupTypeHome getGroupTypeHome() throws RemoteException {
+    return ((GroupTypeHome)IDOLookup.getHome(GroupType.class));
+  }
+  private GroupHome getGroupHome() throws RemoteException {
+    return ((GroupHome)IDOLookup.getHome(Group.class));
+  }
+
 
   public int getNodeType(){
     return _nodeType;
@@ -60,9 +70,14 @@ public class GroupTreeNode implements ICTreeNode {
   public Iterator getChildren() {
     switch (_nodeType) {
       case TYPE_DOMAIN:
+        /**
+         * @todo optimize
+         */
         try {
           List l = new Vector();
-          Iterator iter = _domain.getTopLevelGroupsUnderDomain().iterator();
+//          Iterator iter = _domain.getTopLevelGroupsUnderDomain().iterator();
+          Collection groupTypes = this.getGroupTypeHome().findVisibleGroupTypes();
+          Iterator iter = this.getGroupHome().findTopNodeGroupsContained(_domain,groupTypes,true).iterator();
           GroupTreeNode node = null;
           while (iter.hasNext()) {
             Group item = (Group)iter.next();
@@ -147,7 +162,12 @@ public class GroupTreeNode implements ICTreeNode {
     switch (_nodeType) {
       case TYPE_DOMAIN:
         try {
-          return _domain.getTopLevelGroupsUnderDomain().size();
+          /**
+           * @todo optimize
+           */
+          Collection groupTypes = this.getGroupTypeHome().findVisibleGroupTypes();
+          return this.getGroupHome().getNumberOfTopNodeGroupsContained(_domain,groupTypes,true);
+//          return _domain.getTopLevelGroupsUnderDomain().size();
         }
         catch(Exception e){
           throw new RuntimeException(e.getMessage());
@@ -185,7 +205,8 @@ public class GroupTreeNode implements ICTreeNode {
       case TYPE_DOMAIN:
         return false;
       case TYPE_GROUP:
-        return _group.isLeaf();
+//        return _group.isLeaf();
+        return false;
       default:
         throw new UnsupportedOperationException("Operation not supported for type:"+ getNodeType());
     }

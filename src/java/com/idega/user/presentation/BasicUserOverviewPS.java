@@ -1,10 +1,9 @@
 package com.idega.user.presentation;
 
+import com.idega.user.event.*;
 import com.idega.builder.data.IBDomain;
-import com.idega.user.event.SelectDomainEvent;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.user.data.Group;
-import com.idega.user.event.SelectGroupEvent;
 import com.idega.presentation.event.TreeViewerEvent;
 import com.idega.idegaweb.browser.event.IWBrowseEvent;
 import java.util.Iterator;
@@ -33,8 +32,28 @@ public class BasicUserOverviewPS extends IWPresentationStateImpl implements IWAc
   Group _selectedGroup = null;
   IBDomain _selectedDomain = null;
 
+  private int _selectedPartitionDefaultValue = 0;
+  private int _partitionSizeDefaultValue = 30;
+  private int _firstPartitionIndexDefaultValue = 0;
+
+  private int _selectedPartition = _selectedPartitionDefaultValue;
+  private int _partitionSize = _partitionSizeDefaultValue;
+  private int _firstPartitionIndex = _firstPartitionIndexDefaultValue;
+
   public BasicUserOverviewPS() {
 
+  }
+
+  public int getSelectedPartition(){
+    return _selectedPartition;
+  }
+
+  public int getPartitionSize(){
+    return _partitionSize;
+  }
+
+  public int getFirstPartitionIndex(){
+    return _firstPartitionIndex;
   }
 
   public Group getSelectedGroup(){
@@ -49,6 +68,9 @@ public class BasicUserOverviewPS extends IWPresentationStateImpl implements IWAc
     super.reset();
     _selectedGroup = null;
     _selectedDomain = null;
+    _selectedPartition = _selectedPartitionDefaultValue;
+    _partitionSize = _partitionSizeDefaultValue;
+    _firstPartitionIndex = _firstPartitionIndexDefaultValue;
   }
 
 
@@ -65,47 +87,31 @@ public class BasicUserOverviewPS extends IWPresentationStateImpl implements IWAc
       this.fireStateChanged();
     }
 
-//    System.out.println("!!!!ÍJHHAAAAAAAAA!!!!!!!!!!!!!!");
-
-//    Page pg = e.getPage();
-//     boolean remove = false;
-//    if(e.getPage() instanceof ChangeListener ){
-//      System.out.println("is ChangeListener: true");
-//      this.addChangeListener((ChangeListener)e.getPage());
-//      remove = true;
-//    }
-
-//    else {
-//      System.out.println("is ChangeListener: false");
-//      List l = pg.getAllContainingObjects();
-//      if(l != null){
-//        Iterator iter = l.iterator();
-//        while (iter.hasNext()) {
-//          Object item = iter.next();
-//          if(item instanceof ChangeListener ){
-//            this.addChangeListener((ChangeListener)item);
-//          }
-//        }
-//      }
-//    }
-//    System.out.println("[BasicUserOverviewPS]: e = "+e);
-
     if(e instanceof SelectGroupEvent){
       _selectedGroup = ((SelectGroupEvent)e).getSelectedGroup();
       _selectedDomain = null;
+      _selectedPartition = _selectedPartitionDefaultValue;
+      _partitionSize = _partitionSizeDefaultValue;
+      _firstPartitionIndex = _firstPartitionIndexDefaultValue;
       this.fireStateChanged();
     }
 
     if(e instanceof SelectDomainEvent){
       _selectedDomain = ((SelectDomainEvent)e).getSelectedDomain();
       _selectedGroup = null;
+      _selectedPartition = _selectedPartitionDefaultValue;
+      _partitionSize = _partitionSizeDefaultValue;
+      _firstPartitionIndex = _firstPartitionIndexDefaultValue;
       this.fireStateChanged();
     }
 
+    if(e instanceof PartitionSelectEvent){
+      _selectedPartition = ((PartitionSelectEvent)e).getSelectedPartition();
+      _partitionSize = ((PartitionSelectEvent)e).getPartitionSize();
+      _firstPartitionIndex = ((PartitionSelectEvent)e).getFirstPartitionIndex();
+      this.fireStateChanged();
+    }
 
-//    if(remove){
-//      this.removeChangeListener((ChangeListener)e.getPage());
-//    }
   }
 
 

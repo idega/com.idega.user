@@ -1,5 +1,10 @@
 package com.idega.user.presentation;
 
+import com.idega.util.ListUtil;
+import com.idega.user.data.*;
+import com.idega.data.IDOLookup;
+import com.idega.presentation.*;
+import com.idega.user.event.PartitionSelectEvent;
 import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWPresentationEvent;
@@ -8,10 +13,6 @@ import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.Page;
-import com.idega.presentation.StatefullPresentation;
-import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
@@ -19,8 +20,6 @@ import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.Window;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.data.Group;
-import com.idega.user.data.User;
 import com.idega.util.IWColor;
 import java.rmi.RemoteException;
 import java.util.Collection;
@@ -69,15 +68,20 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     Group selectedGroup = ps.getSelectedGroup();
     IBDomain selectedDomain = ps.getSelectedDomain();
     Collection users = null;
+    int userCount = 0;
     if(selectedGroup  != null){
-      System.out.println("[BasicUserOverview]: selectedGroup = "+selectedGroup);
+//      System.out.println("[BasicUserOverview]: selectedGroup = "+selectedGroup);
       users = this.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
+      userCount = users.size();
     } else if(selectedDomain != null){
-      System.out.println("[BasicUserOverview]: selectedDomain = "+selectedDomain);
+//      System.out.println("[BasicUserOverview]: selectedDomain = "+selectedDomain);
       users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
+//      userCount = ((UserHome)IDOLookup.getHome(User.class)).getUserCount();
+      userCount = users.size();
     } else {
-      System.out.println("[BasicUserOverview]: selectedGroup = All");
-      users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
+//      System.out.println("[BasicUserOverview]: selectedGroup = All");
+
+//      users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
     }
 
     Table userTable = null;
@@ -94,6 +98,100 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
       if(adminUsers == null){
         adminUsers = new Vector(0);
       }
+
+
+
+//      System.out.println("BasicUserOverview: userCount = "+userCount);
+      int usersPerPage = ps.getPartitionSize();
+      int maxShowedPartitions = 6;
+      int maxPartitions = userCount/usersPerPage + ((userCount%usersPerPage > 0)?1:0);
+//      System.out.println("BasicUserOverview: maxPartitions = "+maxPartitions);
+      int firstPartition = ps.getFirstPartitionIndex();
+
+      int sel = ps.getSelectedPartition();
+//      sel = Math.min(sel,maxPartitions);
+//      sel = Math.max(sel,0);
+      int parSize = ps.getPartitionSize();
+
+      String spacer = " ";
+
+      Layer partitionSelection = new Layer();
+      partitionSelection.setHorizontalAlignment("center");
+//      partitionSelection.setWidth("400");
+      this.add(partitionSelection);
+
+//      Table partitionSelection = new Table();
+//      partitionSelection.setWidth("400");
+//      partitionSelection.setHorizontalAlignment("center");
+//      this.add(partitionSelection);
+
+
+      if (userCount != 0) {
+        int partitionCount = 0;
+        for( int i = firstPartition; ((i < maxPartitions)&&((i-firstPartition) < maxShowedPartitions)); i++) {
+          if(firstPartition == i && firstPartition != 0){
+            Link begin = new Link();
+
+            begin.setText("<");
+            PartitionSelectEvent event = new PartitionSelectEvent();
+            event.setSource(this.getLocation());
+            int newFirstPartition = Math.max(0,firstPartition-maxShowedPartitions);
+            event.setFirstPartitionIndex(newFirstPartition);
+            event.setPartitionSize(parSize);
+//            int newSelectedPartition = Math.min(newFirstPartition+maxShowedPartitions,maxPartitions);
+            int newSelectedPartition = newFirstPartition+maxShowedPartitions-1;
+            event.setSelectedPartition(newSelectedPartition);
+            begin.addEventModel(event);
+            begin.setTarget(_controlTarget);
+            begin.addEventModel(_contolEvent);
+
+            partitionSelection.add(begin);
+
+            partitionSelection.add(spacer);
+          }
+
+          Link l = new Link();
+          if(i != firstPartition){
+            partitionSelection.add(spacer);
+          }
+          l.setText(((i*usersPerPage)+1)+"-"+(((i+1)*usersPerPage)));
+          PartitionSelectEvent event = new PartitionSelectEvent();
+          event.setSource(this.getLocation());
+          event.setPartitionSize(usersPerPage);
+          event.setFirstPartitionIndex(firstPartition);
+          event.setSelectedPartition(i);
+          l.addEventModel(event);
+          l.setTarget(_controlTarget);
+          l.addEventModel(_contolEvent);
+          if(i == sel){
+            l.setBold();
+          }
+          partitionSelection.add(l);
+
+
+          if(((i == maxPartitions-1)||((i-firstPartition) == maxShowedPartitions-1)) && maxPartitions > (i+1)){
+            partitionSelection.add(spacer);
+            Link end = new Link();
+            end.setText(">");
+            PartitionSelectEvent event2 = new PartitionSelectEvent();
+            event2.setSource(this.getLocation());
+            int newFirstPartition = Math.min(maxPartitions-maxShowedPartitions,firstPartition+maxShowedPartitions);
+            event2.setFirstPartitionIndex(newFirstPartition);
+            event2.setPartitionSize(parSize);
+            event2.setSelectedPartition(newFirstPartition);
+            end.addEventModel(event2);
+            end.setTarget(_controlTarget);
+            end.addEventModel(_contolEvent);
+            partitionSelection.add(end);
+          }
+        }
+      }
+
+
+//      System.out.println("BasicUserOverview: sel = "+sel+" & parSize = "+parSize);
+      users = ListUtil.convertCollectionToList(users).subList( (sel*parSize), Math.min((users.size()),((sel+1)*parSize)) );
+//      this.add(" ("+sel+")");
+
       userTable = new Table(3,(users.size()>33)?users.size():33);
 //      userTable = new Table(3,(users.size()>16)?users.size():16);
       userTable.setCellspacing(0);
@@ -103,6 +201,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
       for (int i = 1; i <= userTable.getRows() ; i++) {
         userTable.setHeight(i,"20");
       }
+
 
       int line = 1;
       Iterator iter = users.iterator();
