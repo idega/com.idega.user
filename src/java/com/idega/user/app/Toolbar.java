@@ -19,8 +19,6 @@ import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.block.search.presentation.SearchForm;
 import com.idega.user.block.search.presentation.SearchWindow;
 import com.idega.user.event.ChangeClassEvent;
-import com.idega.user.handler.UserNationalRegisterFileImportHandler;
-import com.idega.user.handler.UserNationalRegisterImportFile;
 import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.CreateUser;
 import com.idega.user.presentation.MassMovingWindow;
@@ -325,19 +323,29 @@ public class Toolbar extends Page implements IWBrowserView {
 			Link tLink16 = new Link(text6);
 			tLink16.setStyleClass(styledLink);
 
-			ImplementorRepository repository =  ImplementorRepository.getInstance();
-			Class nationalRegisterImportFile = repository.getAnyClassImpl(UserNationalRegisterImportFile.class,this.getClass());
-			Class nationalRegisterFileImportHandler = repository.getAnyClassImpl(UserNationalRegisterFileImportHandler.class, this.getClass());
-            if (nationalRegisterImportFile == null || nationalRegisterFileImportHandler == null) {
-				logWarning("[Toolbar]  Implementation of UserNationalRegisterImportFile or UserNationalRegisterImportHandler could not be found. Implementing bundle(s) was not loaded.");
-				tLink16.setParameter(Importer.PARAMETER_IMPORT_FILE, nationalRegisterImportFile.getName());
-				tLink16.setParameter(Importer.PARAMETER_IMPORT_HANDLER, nationalRegisterFileImportHandler.getName());
+			//DOES NOT WORK - and should be plugin based
+//			ImplementorRepository repository =  ImplementorRepository.getInstance();
+//			Class nationalRegisterImportFile = repository.getAnyClassImpl(UserNationalRegisterImportFile.class,this.getClass());
+//			Class nationalRegisterFileImportHandler = repository.getAnyClassImpl(UserNationalRegisterFileImportHandler.class, this.getClass());
+//            if (nationalRegisterImportFile == null || nationalRegisterFileImportHandler == null) {
+//				logWarning("[Toolbar]  Implementation of UserNationalRegisterImportFile or UserNationalRegisterImportHandler could not be found. Implementing bundle(s) was not loaded.");
+//				tLink16.setParameter(Importer.PARAMETER_IMPORT_FILE, nationalRegisterImportFile.getName());
+//				tLink16.setParameter(Importer.PARAMETER_IMPORT_HANDLER, nationalRegisterFileImportHandler.getName());
+//
+//				tLink16.setWindowToOpen(Importer.class);
+//				button6.setWidth(2,15);
+//				button6.add(tLink16, 2, 1);
+//				toolbar1.add(button6, 8, 1);
+//           }
+			
+			//TODO: Eiki make plugin based
+			tLink16.setParameter(Importer.PARAMETER_IMPORT_FILE, "is.idega.block.nationalregister.data.NationalRegisterImportFile");
+			tLink16.setParameter(Importer.PARAMETER_IMPORT_HANDLER, "is.idega.block.nationalregister.business.NationalRegisterFileImportHandler");
 
-				tLink16.setWindowToOpen(Importer.class);
-				button6.setWidth(2,15);
-				button6.add(tLink16, 2, 1);
-				toolbar1.add(button6, 8, 1);
-            }
+			tLink16.setWindowToOpen(Importer.class);
+			button6.setWidth(2,15);
+			button6.add(tLink16, 2, 1);
+			toolbar1.add(button6, 8, 1);
 			
 //			String tLink16String = tLink16.toString();
 //			tLink16String = java.net.URLEncoder.encode(tLink16String);
