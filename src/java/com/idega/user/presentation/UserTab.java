@@ -4,7 +4,9 @@ import com.idega.presentation.Table;
 import com.idega.presentation.IWContext;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.text.Text;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.datastructures.Collectable;
 
@@ -13,6 +15,8 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.List;
 import java.util.Iterator;
+
+import javax.ejb.FinderException;
 
 
 /**
@@ -25,8 +29,9 @@ import java.util.Iterator;
 
 public abstract class UserTab extends Table implements Collectable{
 
-  private int userId = -1;
-	private int groupId = -1;
+
+	private int userId = -1;
+	private int selectedGroupId = -1;
 
   private List errorStrings;
 
@@ -35,7 +40,7 @@ public abstract class UserTab extends Table implements Collectable{
 
   protected Text proxyText;
 	protected UserBusiness business = null;
-	
+	protected GroupBusiness groupBusiness = null;
 
   //protected UserBusiness business;
 
@@ -89,11 +94,11 @@ public abstract class UserTab extends Table implements Collectable{
   }
 
 	public void setGroupID(int id) {
-		groupId = id;
+		selectedGroupId = id;
 	}
 	
 	public int getGroupID() {
-		return groupId;
+		return selectedGroupId;
 	}
 
   public void setUserID(int id){
@@ -118,6 +123,19 @@ public abstract class UserTab extends Table implements Collectable{
 		return null;
   }
 
+	protected Group getGroup(){
+		try {
+			return this.getGroupBusiness(this.getIWApplicationContext()).getGroupByGroupID(getGroupID());
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
   public void addErrorMessage(String message){
     errorStrings.add(message);
   }
@@ -152,5 +170,17 @@ public abstract class UserTab extends Table implements Collectable{
     }
     return business;
   }
+  
+	public GroupBusiness getGroupBusiness(IWApplicationContext iwc){
+		if(groupBusiness == null){
+			try{
+				groupBusiness = (GroupBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
+			}
+			catch(java.rmi.RemoteException rme){
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return groupBusiness;
+	}
 
 } // Class GeneralUserInfoTab

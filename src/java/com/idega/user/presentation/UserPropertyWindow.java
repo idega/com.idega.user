@@ -61,13 +61,6 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
 			int userId = Integer.parseInt(id);
 			User user = getUserBusiness(iwc).getUser(userId);
-			String grpid = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
-		
-			
-			int iGrpId = -1;
-			if (grpid != null) 
-				iGrpId = Integer.parseInt(grpid);
-			
 
 			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
 			Iterator iter = plugins.iterator();
@@ -81,8 +74,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 				if (tabs != null) {
 					Iterator tab = tabs.iterator();
 					while (tab.hasNext()) {
-						UserTab el = (UserTab) tab.next();
-						el.setGroupID(iGrpId);						
+						UserTab el = (UserTab) tab.next();						
 						panel.addTab(el, ++count, iwc);
 					}
 				}
@@ -100,6 +92,10 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 
 	public void main(IWContext iwc) throws Exception {
 		String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
+		String grpid = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
+		int iGrpId = -1;
+		if (grpid != null) iGrpId = Integer.parseInt(grpid);
+	
 		if (id != null) {
 			int newId = Integer.parseInt(id);
 			PresentationObject[] obj = this.getAddedTabs();
@@ -108,6 +104,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 				if (mo instanceof UserTab && ((UserTab) mo).getUserId() != newId) {
 					mo.setIWContext(iwc);
 					((UserTab) mo).setUserID(newId);
+					((UserTab) mo).setGroupID(iGrpId);
 				}
 			}
 		}
