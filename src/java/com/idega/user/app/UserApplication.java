@@ -6,7 +6,6 @@ import java.util.Set;
 
 import javax.swing.event.ChangeListener;
 
-import com.idega.block.login.presentation.Login;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;

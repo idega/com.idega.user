@@ -10,7 +10,6 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.PrintButton;
 import com.idega.user.app.Toolbar;
 import com.idega.user.app.UserApplication;
 import com.idega.user.data.Group;
