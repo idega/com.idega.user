@@ -1,13 +1,8 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.ejb.CreateException;
-import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
 import com.idega.idegaweb.IWApplicationContext;
@@ -29,7 +24,6 @@ import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
-import com.idega.util.IWTimestamp;
 /**
  * Title:        User
  * Description:
