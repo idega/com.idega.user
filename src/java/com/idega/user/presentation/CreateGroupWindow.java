@@ -336,6 +336,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
   
   private Collection getGroupTypes(IWContext iwc)  {
     Collection groupTypes = new ArrayList();
+    //TODO make sure no duplications and order alphabetically by localizedname
     // get group types
     GroupBusiness groupBusiness;
     try {
@@ -344,6 +345,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
     catch (RemoteException ex)  {
       throw new RuntimeException(ex.getMessage());
     }
+    
     Iterator iterator = groupBusiness.getAllAllowedGroupTypesForChildren(selectedGroup, iwc).iterator();
     while (iterator.hasNext())  {
       GroupType item = (GroupType) iterator.next();
