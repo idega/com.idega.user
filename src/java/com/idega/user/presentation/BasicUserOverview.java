@@ -41,6 +41,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
+import com.idega.presentation.Layer;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
@@ -795,15 +796,23 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         				frameTable.setHeight(1, 41);
         				frameTable.setStyleClass(1, 2, "main");
         				frameTable.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_CENTER);
+        				frameTable.setLeftCellBorderWidth(1, 2, 0);
+        				frameTable.setRightCellBorderWidth(1, 2, 0);
         
+        				Layer layer = new Layer(Layer.DIV);
+        				layer.setWidth("100%");
+        				layer.setHeight("100%");
+        				layer.setOverflow("auto");
+                frameTable.add(layer, 1, 2);
+        				
         String frontPageId = getBundle(iwc).getProperty(USER_APPLICATION_FRONT_PAGE_ID);
         if(frontPageId!=null && !"-1".equals(frontPageId)) {
             IFrame frontPage = new IFrame();
-            frontPage.setHeight("95%");
-            frontPage.setWidth("95%");
+            frontPage.setHeight("100%");
+            frontPage.setWidth("100%");
             frontPage.setIBPage(Integer.parseInt(frontPageId));
             frontPage.setScrolling(IFrame.SCROLLING_AUTO);
-            frameTable.add(frontPage, 1, 2);
+            layer.add(frontPage);
         }
         add(frameTable);
     }
