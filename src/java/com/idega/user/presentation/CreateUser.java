@@ -389,6 +389,11 @@ public class CreateUser extends Window {
 				t.setMinute(0);
 				t.setSecond(0);
 				t.setMilliSecond(0);
+				t.setDay(iDay);
+				t.setMonth(iMonth);
+				t.setYear(iYear);
+				
+				
 			}
 			newUser =
 				getUserBusiness(iwc).createUserWithLogin(
