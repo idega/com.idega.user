@@ -8,7 +8,6 @@ import java.util.Vector;
 
 import javax.swing.event.ChangeListener;
 
-import com.idega.block.banner.presentation.Banner;
 import com.idega.block.login.presentation.WelcomeMessage;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICDomain;
@@ -226,6 +225,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		table.setWidth(Table.HUNDRED_PERCENT);
 		table.setHeight(Table.HUNDRED_PERCENT);
 		table.setHeight(1, 1, Table.HUNDRED_PERCENT);
+		table.setAlignment(3, 1, Table.HORIZONTAL_ALIGN_CENTER);
 		table.setStyleClass(1, 1, "main");
 		table.setStyleClass(1, 3, "main");
 		table.setHeight(2, 1);
@@ -237,7 +237,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		layer.setOverflow("auto");
 		table.add(layer, 1, 1);
 
-		Banner banner = new Banner("userApplicationBanner");
+		Image banner = getResourceBundle(iwc).getImage("shared/banner.gif");
 		table.add(banner, 1, 3);
 		
 		return table;
