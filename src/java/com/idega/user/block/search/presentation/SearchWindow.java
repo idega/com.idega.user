@@ -9,7 +9,6 @@ import com.idega.event.IWActionListener;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
