@@ -261,12 +261,13 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 						String name = group.getName();
 						String number = group.getMetaData(ICUserConstants.META_DATA_GROUP_NUMBER);
 						
-						if(number!=null && !"".equals(name)) {
-						    name = number + " "+name;
+						if(number!=null && !"".equals(number) && name!=null) {
+						    name = number+" "+name;
 						}
 						else {
 						    name = getGroupBusiness(iwc).getNameOfGroupWithParentName(group);
 						}
+						 
 						
 						//the collection items all contain the same group so break here
 						return new Text(name);
