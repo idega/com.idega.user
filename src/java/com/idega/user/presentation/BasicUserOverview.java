@@ -370,9 +370,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		};
 		// define checkbox button converter class
 		EntityToPresentationObjectConverter converterToDeleteButton = new EntityToPresentationObjectConverter() {
-			
+    
       public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
-        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+        CheckBox checkAllCheckBox = new CheckBox("checkAll");
+        checkAllCheckBox.setToCheckOnClick(BasicUserOverview.PARAMETER_DELETE_USERS, "this.checked");
+        return checkAllCheckBox;
       } 
       
       public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
