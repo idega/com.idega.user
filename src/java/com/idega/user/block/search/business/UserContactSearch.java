@@ -1,5 +1,5 @@
 /*
- * $Id: UserContactSearch.java,v 1.7 2005/02/14 17:42:32 eiki Exp $ Created on
+ * $Id: UserContactSearch.java,v 1.8 2005/03/20 11:09:47 eiki Exp $ Created on
  * Jan 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -33,7 +33,7 @@ import com.idega.util.ListUtil;
 
 /**
  * 
- * Last modified: $Date: 2005/02/14 17:42:32 $ by $Author: eiki $ This class
+ * Last modified: $Date: 2005/03/20 11:09:47 $ by $Author: eiki $ This class
  * implements the Searchplugin interface and can therefore be used in a Search
  * block (com.idega.core.search). <br>
  * It searches lots of user related info like name, personalid,email etc. and
@@ -42,7 +42,7 @@ import com.idega.util.ListUtil;
  * bundle.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class UserContactSearch implements SearchPlugin {
 
@@ -177,9 +177,14 @@ public class UserContactSearch implements SearchPlugin {
 		try {
 			SearchEngine userSearch = (SearchEngine) IBOLookup.getServiceInstance(iwma.getIWApplicationContext(),
 					SearchEngine.class);
-			Collection users = userSearch.getSimpleSearchResults(((SimpleSearchQuery) searchQuery).getSimpleSearchQuery().replace(
-					'*', '%'));
-			return users;
+			String query = ((SimpleSearchQuery) searchQuery).getSimpleSearchQuery();
+			if(query!=null){
+				query = query.replace('*', '%');
+				return userSearch.getSimpleSearchResults(query);
+			}
+			else{
+				return ListUtil.getEmptyList();
+			}
 		}
 		catch (IBOLookupException e) {
 			e.printStackTrace();
