@@ -592,7 +592,7 @@ public class GeneralUserInfoTab extends UserTab {
 				
 				while (iter.hasNext()) {
 					User thingy = (User) iter.next();
-					if(thingy.equals(user)){
+					if(thingy.getPrimaryKey().equals(user.getPrimaryKey())){
 						setNumber = true;//updating
 					}
 					break;//only one user should have this number

@@ -579,7 +579,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 Link aLink = new Link(text);
                 //added to match new style links
                 aLink.setStyleClass(styledLinkUnderline);
-                if (!user.equals(administratorUser)) {
+                boolean isUserSuperAdmin = user.getPrimaryKey().equals(administratorUser.getPrimaryKey());
+                
+                if ( !isUserSuperAdmin) {
                     aLink.setWindowToOpen(UserPropertyWindow.class);
                     aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
                     
@@ -589,7 +591,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                     
                 }
                 else
-                    if (user.equals(administratorUser) && isCurrentUserSuperAdmin) {
+                    if (isUserSuperAdmin && isCurrentUserSuperAdmin) {
                         aLink.setWindowToOpen(AdministratorPropertyWindow.class);
                         aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
                     }
@@ -609,7 +611,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 User user = (User) entity;
                 
-                if (!user.equals(administratorUser)) {
+                if (!user.getPrimaryKey().equals(administratorUser.getPrimaryKey())) {
                     CheckBox checkBox = new CheckBox(BasicUserOverview.SELECTED_USERS_KEY, Integer.toString(user.getID()));
                     return checkBox;
                 }

@@ -266,7 +266,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 					}
 					
 					Link aLink = new Link(user.getName());
-					if (!user.equals(administrator)) {
+					if (!user.getPrimaryKey().equals(administrator.getPrimaryKey())) {
 						aLink.setWindowToOpen(UserPropertyWindow.class);
 						aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
 					}

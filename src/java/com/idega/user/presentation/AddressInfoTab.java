@@ -381,7 +381,7 @@ public class AddressInfoTab extends UserTab {
     secondAddressTable.add(postalCodeText,1,row);
     secondAddressTable.add(secondPostalCodeField,2,row);
 		secondAddressTable.add(Text.getNonBrakingSpace(2), 2, row);
-		if(user.equals(adminUser)) {
+		if(user.getPrimaryKey().equals(adminUser.getPrimaryKey())) {
 			Link editPostalCodeLink = new Link(iwrb.getLocalizedImageButton("AddressInfoTab.postalcodewindow.add","Add"));
 			editPostalCodeLink.setWindowToOpen(PostalCodeEditorWindow.class);
 			secondAddressTable.add(editPostalCodeLink, 2, row);			
