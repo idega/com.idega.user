@@ -8,7 +8,6 @@ import java.util.Vector;
 
 import javax.swing.event.ChangeListener;
 
-import com.idega.block.login.presentation.Login;
 import com.idega.block.login.presentation.WelcomeMessage;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICDomain;
