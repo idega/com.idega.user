@@ -2,13 +2,16 @@ package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
 
+import com.idega.block.help.presentation.Help;
 import com.idega.builder.presentation.IBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -33,6 +36,9 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 
 	private static final String TAB_NAME = "gen_tab_name";
 	private static final String DEFAULT_TAB_NAME = "General";
+	
+	private static final String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
+	private static final String HELP_TEXT_KEY = "general_group_info_tab";
 
 	private TextInput nameField;
 	private TextArea descriptionField;
@@ -55,7 +61,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private String grouptypeFieldName;
 	private String shortNameFieldName;
 	private String abbrFieldName;
-
+	
 	private IWResourceBundle _iwrb = null;
 
 	private Link addLink;
@@ -68,6 +74,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	protected Text memberof;
 	
 	private String underTableStyle = "main";
+	private String linkStyle = "styledLinkGeneral";
 
 	public GeneralGroupInfoTab() {
 		super();
@@ -83,6 +90,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
     IWResourceBundle iwrb = getResourceBundle(iwc);
     fillGroupTypeMenu(iwc, iwrb);
 		addLink.setWindowToOpen(GroupGroupSetter.class);
+		addLink.setStyleClass(linkStyle);
 		addLink.addParameter(PARAMETER_GROUP_ID, getGroupId());
     addLink.addParameter(PARENT_GROUP_ID, getSelectedParentGroupId());
 
@@ -165,6 +173,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		String addRemove = "  " + iwrb.getLocalizedString("gen_addremove","Add/Remove") + "  ";
 
 		addLink = new Link(addRemove);
+
 		
 		shortNameField = new TextInput(shortNameFieldName);
 		shortNameField.setLength(26);
@@ -225,7 +234,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	}
 
 	public void lineUpFields() {
-		resize(1, 7);
+		resize(1, 8);
 		setCellpadding(0);
 		setCellspacing(0);
 		
@@ -278,6 +287,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		//		setHeight(6, super.rowHeight);
 
 		add(addLink, 1, 7);
+		Help help = getHelpButton();
+		add(help,1,8);
 	}
 
 	public boolean collect(IWContext iwc) {
@@ -403,4 +414,15 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
       
       
   }
+	public Help getHelpButton() {
+		IWContext iwc = IWContext.getInstance();
+		IWBundle iwb = getBundle(iwc);
+		Help help = new Help();
+		Image helpImage = iwb.getImage("help.gif");
+		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+		help.setHelpTextKey(HELP_TEXT_KEY);
+		help.setImage(helpImage);
+		return help;
+		
+	}
 }
