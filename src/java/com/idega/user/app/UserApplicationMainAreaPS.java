@@ -1,9 +1,6 @@
-
-
 package com.idega.user.app;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.EventListenerList;
@@ -20,7 +17,6 @@ import com.idega.presentation.text.Link;
 import com.idega.user.block.search.event.SimpleSearchEvent;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
-import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.event.SelectGroupEvent;
 import com.idega.user.presentation.CreateGroupWindowPS;
@@ -29,10 +25,9 @@ import com.idega.user.presentation.GroupPropertyWindow;
 import com.idega.user.presentation.UserPropertyWindow;
 
 /**
- * <p>Title: idegaWeb</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: idega Software</p>
+ * <p>Description: The main actionlistener for the main area of the user application</p>
+ * <p>Copyright: Idega Software Copyright (c) 2002</p>
+ * <p>Company: Idega Software</p>
  * @author <a href="gummi@idega.is">Gudmundur Saemundsson</a>
  * @author <a href="eiki@idega.is">Eirikur Hrafnsson</a>
  * @version 1.0
@@ -76,14 +71,14 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
     
     if(e instanceof SelectGroupEvent){
     	try{
-    		System.out.println("Select group event! getting plugins");
+    		//System.out.println("Select group event! getting plugins");
 	    	_selectedGroup = ((SelectGroupEvent)e).getSelectedGroup();
 	    	String groupType = _selectedGroup.getGroupType();
-	    	System.out.println("Selected group type = "+groupType);
+	    	//System.out.println("Selected group type = "+groupType);
 	    	
 	    	_plugins = getGroupBusiness( e.getIWContext()).getUserGroupPluginsForGroupTypeString(groupType);
 	    	
-	    	if( _plugins==null ) System.out.println("Plugins are null fro group_type ="+groupType);
+	    	/*if( _plugins==null ) System.out.println("Plugins are null fro group_type ="+groupType);
 	    	
 	    	Iterator iter = _plugins.iterator();
     	
@@ -93,7 +88,7 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
 				String className = plugin.getBusinessICObject().getClassName();
 				System.out.println("Plugin business class : "+className);
 
-			}
+			}*/
 		
       		this.fireStateChanged();
     	}
@@ -106,6 +101,9 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
     if(e instanceof SimpleSearchEvent){
       System.out.println("[UserAppMainArea]: search for "+((SimpleSearchEvent)e).getSearchString());
       System.out.println("[UserAppMainArea]: searchType =  "+((SimpleSearchEvent)e).getSearchType());
+      
+      
+      
       this.fireStateChanged();
     }
     
