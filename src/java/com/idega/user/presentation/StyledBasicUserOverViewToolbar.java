@@ -14,7 +14,6 @@ import com.idega.user.app.Toolbar;
 import com.idega.user.app.UserApplication;
 import com.idega.user.data.Group;
 import com.idega.user.event.SelectGroupEvent;
-import com.inet.pool.i;
 
 /**
  * 
