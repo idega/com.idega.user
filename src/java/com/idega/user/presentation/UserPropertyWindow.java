@@ -78,9 +78,9 @@ public class UserPropertyWindow extends TabbedPropertyWindow implements CalPrope
 			panel.addTab(new UserPhoneTab(), ++count, iwc);
 			panel.addTab(new UserGroupList(), ++count, iwc);
 			PresentationObject familyTab = (PresentationObject) ImplementorRepository.getInstance().newInstanceOrNull(FamilyTab.class, this.getClass());
-			if(familyTab!=null)
+			if(familyTab!=null) {
 				panel.addTab(familyTab, ++count, iwc);
-				
+			}
 			//panel.addTab((PresentationObject) Class.forName("is.idega.idegaweb.member.presentation.UserFamilyTab").newInstance(), ++count, iwc);
 			// if the other tabs are added do it in the same way like above!
 			//panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFinanceTab").newInstance() ,++count,iwc);
