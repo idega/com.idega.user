@@ -8,6 +8,7 @@ import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Link;
+import com.idega.user.business.GroupTreeNode;
 import com.idega.user.event.SelectDomainEvent;
 import com.idega.user.event.SelectGroupEvent;
 

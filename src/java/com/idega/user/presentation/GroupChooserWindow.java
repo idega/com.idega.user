@@ -18,6 +18,7 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.AbstractChooser;
 import com.idega.presentation.ui.StyledAbstractChooserWindow;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;

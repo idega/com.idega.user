@@ -31,11 +31,11 @@ import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
+import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.presentation.BasicUserOverview;
 import com.idega.user.presentation.BasicUserOverviewPS;
-import com.idega.user.presentation.GroupTreeNode;
 import com.idega.user.presentation.GroupTreeView;
 import com.idega.util.IWTimestamp;
 

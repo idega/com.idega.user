@@ -4,6 +4,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.ui.AbstractChooser;
+import com.idega.user.business.GroupTreeNode;
 
 /**
  * <p>Title: idegaWeb</p>

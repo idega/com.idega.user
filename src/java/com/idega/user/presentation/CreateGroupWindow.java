@@ -35,6 +35,7 @@ import com.idega.presentation.ui.TextInput;
 import com.idega.user.app.ToolbarElement;
 import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.GroupTreeNode;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
 import com.idega.user.event.CreateGroupEvent;

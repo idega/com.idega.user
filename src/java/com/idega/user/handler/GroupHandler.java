@@ -1,5 +1,5 @@
 /*
- * $Id: GroupHandler.java,v 1.3 2004/06/28 14:07:04 thomas Exp $
+ * $Id: GroupHandler.java,v 1.4 2004/09/07 11:42:07 sigtryggur Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.util.List;
 import com.idega.core.builder.presentation.ICPropertyHandler;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
+import com.idega.user.business.GroupTreeNode;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 import com.idega.user.presentation.GroupChooser;
-import com.idega.user.presentation.GroupTreeNode;
 
 /**
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>

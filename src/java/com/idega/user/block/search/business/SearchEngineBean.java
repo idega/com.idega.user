@@ -1,6 +1,8 @@
 package com.idega.user.block.search.business;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.StringTokenizer;
 
 import com.idega.business.IBOServiceBean;
 import com.idega.data.IDOLookup;
@@ -65,7 +67,19 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 			return null;
 		try {
 			UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
-			Collection entities = userHome.findUsersBySearchCondition(searchString, false);
+			Collection entities = new ArrayList();
+			StringTokenizer tokenizer = new StringTokenizer(searchString, " ");
+			while (tokenizer.hasMoreElements()) {
+				String element = (String) tokenizer.nextElement();
+				Collection tempResults = new ArrayList();
+				tempResults = userHome.findUsersBySearchCondition(element, false);;
+				if (tempResults != null) {
+					if (entities.isEmpty())
+						entities.addAll(tempResults);	
+					else
+						entities.retainAll(tempResults);
+				}
+			}
 			return entities;
 		}
 		// Remote and FinderException
