@@ -625,8 +625,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	 */
 	public List getAllPermissionTypes(Collection permissions) {
 
-		Iterator iter = permissions.iterator();
-
 		List permissionTypes = new ArrayList();
 
 		permissionTypes.add(0, "view");
@@ -637,6 +635,8 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 		//we shall only support these group permission for now. Use roles for other stuff.
 		/*
+		Iterator iter = permissions.iterator();
+
 		String permissionType;
 		while (iter.hasNext()) {
 			ICPermission perm = (ICPermission) iter.next();
