@@ -792,17 +792,17 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         				frameTable.setCellpaddingAndCellspacing(0);
         				frameTable.setHeight("100%");
         				frameTable.setWidth("100%");
-        				frameTable.setHeight(1, 40);
+        				frameTable.setHeight(1, 41);
+        				frameTable.setStyleClass(1, 2, "main");
+        				frameTable.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_CENTER);
         
         String frontPageId = getBundle(iwc).getProperty(USER_APPLICATION_FRONT_PAGE_ID);
         if(frontPageId!=null && !"-1".equals(frontPageId)) {
             IFrame frontPage = new IFrame();
-            frontPage.setHeight("100%");
-            frontPage.setWidth("100%");
-            frontPage.setStyleClass("main");
+            frontPage.setHeight("95%");
+            frontPage.setWidth("95%");
             frontPage.setIBPage(Integer.parseInt(frontPageId));
             frontPage.setScrolling(IFrame.SCROLLING_AUTO);
-            //			frontPage.setBorder(1);
             frameTable.add(frontPage, 1, 2);
         }
         add(frameTable);
