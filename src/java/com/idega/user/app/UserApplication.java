@@ -221,6 +221,7 @@ public class UserApplication extends IWBrowser {
 
    public void main(IWContext iwc) throws Exception{
     Table toolbarTable = new Table(1,3);
+    
     toolbarTable.setCellpadding(0);
     toolbarTable.setCellspacing(0);
     toolbarTable.setWidth("100%");
