@@ -114,6 +114,8 @@ public class BasicUserOverViewToolbar extends Toolbar {
 		if (selectedGroup != null) {
 			AccessController access = iwc.getAccessController();
 			boolean isOwner = access.isOwner(selectedGroup, iwc);
+			
+			if(!isOwner) isOwner = iwc.isSuperAdmin();
 
 			if (isOwner) {
 				Table button4 = new Table(2, 1);
