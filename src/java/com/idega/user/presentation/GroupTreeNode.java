@@ -149,6 +149,9 @@ public class GroupTreeNode implements ICTreeNode {
 				Group g = null;
 				if (isAlias()) {
 					g = getAlias();
+					if( g == null){
+						return null;
+					}
 				}
 				else {
 					g = _group;
