@@ -47,10 +47,10 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
 //this has been changed to match the styles in UserApplicationStyle.css:
 	//private final static String LINK_STYLE = "font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#000000;text-decoration:none;";
-	private final static String LINK_STYLE = "font-family: verdana,helvetica,arial,sans-serif;font-size:8px;text-decoration:none;";
+	private final static String LINK_STYLE = "font-family: verdana,helvetica,arial,sans-serif;font-size:9px;text-decoration:none;";
 	
 	//private final static String LINK_HOVER_STYLE = "font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#FF8008;text-decoration:none;";
-	private final static String LINK_HOVER_STYLE = "font-family: verdana,helvetica,arial,sans-serif;font-size:8px;text-decoration:none;";
+	private final static String LINK_HOVER_STYLE = "font-family: verdana,helvetica,arial,sans-serif;font-size:9px;text-decoration:none;";
 	
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
