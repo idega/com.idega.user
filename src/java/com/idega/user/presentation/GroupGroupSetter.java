@@ -155,7 +155,7 @@ import com.idega.util.IWColor;
             Iterator iter = currentRelationShip.iterator();
             while (iter.hasNext()) {
               Object item = iter.next();
-              ((Group)item).removeGroup(group);
+              ((Group)item).removeGroup(group, iwc.getCurrentUser());
             }
 
           } else{
@@ -170,7 +170,7 @@ import com.idega.util.IWColor;
             Iterator iter = currentRelationShip.iterator();
             while (iter.hasNext()) {
               Object item = iter.next();
-              ((Group)item).removeGroup(group);
+              ((Group)item).removeGroup(group, iwc.getCurrentUser());
             }
           }
 

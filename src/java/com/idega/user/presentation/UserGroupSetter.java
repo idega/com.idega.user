@@ -174,7 +174,7 @@ import java.util.List;
             while (iter.hasNext()) {
               Object item = iter.next();
               //user.removeFrom((Group)item);
-              ((Group)item).removeUser(user);
+              ((Group)item).removeUser(user, iwc.getCurrentUser());
             }
 
           } else{
@@ -191,7 +191,7 @@ import java.util.List;
             Iterator iter = currentRelationShip.iterator();
             while (iter.hasNext()) {
               Object item = iter.next();
-              ((Group)item).removeUser(user);
+              ((Group)item).removeUser(user, iwc.getCurrentUser());
             }
           }
 

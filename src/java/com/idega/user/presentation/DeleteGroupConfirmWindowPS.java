@@ -17,6 +17,7 @@ import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationHome;
+import com.idega.user.data.User;
 import com.idega.user.event.DeleteGroupEvent;
 
 /**
@@ -42,9 +43,9 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
           try {
             // remove group
             if (parentGroup != null)
-              parentGroup.removeGroup(group);
+              parentGroup.removeGroup(group, e.getIWContext().getCurrentUser());
             else if (parentDomain != null)  {
-              removeRelation( parentDomain, group);
+              removeRelation( parentDomain, group, e.getIWContext().getCurrentUser());
             }
             //TODO fix this
 				    e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
@@ -58,7 +59,7 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
     }
 	}
   
-  private void removeRelation(IBDomain domain, Group group)  {
+  private void removeRelation(IBDomain domain, Group group, User currentUser)  {
     try {
       GroupDomainRelationHome home = (GroupDomainRelationHome) 
         IDOLookup.getHome(GroupDomainRelation.class);
@@ -66,7 +67,7 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
       Iterator iterator = coll.iterator();
       while (iterator.hasNext())  {
         GroupDomainRelation relation = (GroupDomainRelation) iterator.next();
-        relation.remove();
+        relation.removeBy(currentUser);
       }
     }
     catch (Exception ex)  {
