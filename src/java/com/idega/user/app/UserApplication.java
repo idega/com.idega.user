@@ -36,8 +36,8 @@ import javax.swing.event.ChangeListener;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
- * @modified <a href="eiki@idega.is">Eiríkur S. Hrafnsson</a>
+ * @author <a href="gummi@idega.is">Gudmundur A. Saemundsson</a>
+ * @modified <a href="eiki@idega.is">Eirikur S. Hrafnsson</a>
  * @version 1.1
  */
 
@@ -64,9 +64,9 @@ public class UserApplication extends IWBrowser {
     this.showBottomFrame(true);
     this.addToLeftMain(new UserApplicationControlArea());
     
-    this.addToMain(new BasicUserOverview());
+    //this.addToMain(new BasicUserOverview());
     
-    //this.addToMain(new UserApplicationMainArea());
+    this.addToMain(new UserApplicationMainArea());
 
     this.addToBottom(new Bottom());
 
