@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.builder.data.ICDomain;
@@ -33,11 +32,11 @@ import com.idega.user.event.SelectGroupEvent;
 public class StyledBasicUserOverViewToolbar extends Toolbar {
     private Group aliasGroup;
     private boolean hasCreatePermissionForRealGroup = false;
-    private boolean hasDeletePermissionForRealGroup = false;
+  //  private boolean hasDeletePermissionForRealGroup = false;
     private boolean hasEditPermissionForRealGroup = false;
     private boolean hasOwnerPermissionForRealGroup = false;
     private boolean hasPermitPermissionForRealGroup = false;
-    private boolean hasViewPermissionForRealGroup = false;
+    //private boolean hasViewPermissionForRealGroup = false;
     private boolean isCurrentUserSuperAdmin = false;
     private boolean isRoleMaster = false;
     private ICDomain parentDomain;
@@ -45,12 +44,13 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
     private Group selectedGroup;
     private String styleButton = "overviewButton";
     private String styledLinkClass = "styledLink";
-    private String styleSelectedBox = "selectedBox";
+    //private String styleSelectedBox = "selectedBox";
     
     /**
      * Constructor for StyledBasicUserOverViewToolbar.
      */
     public StyledBasicUserOverViewToolbar() {
+    	// default
     }
     
     public StyledBasicUserOverViewToolbar(Group selectedGroup) {
@@ -250,14 +250,16 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 ///
                 // Assertion: selectedGroup is not null
                 ///
-            	String selectedGroupID = (aliasGroup == null) ? selectedGroup.getPrimaryKey().toString() : aliasGroup.getPrimaryKey().toString();
+
         		List  toolbarElements = new ArrayList();
-        		Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForGroupTypeString(selectedGroup.getGroupType());
+        		Group realGroup = (aliasGroup == null) ? selectedGroup : aliasGroup;
+            	String selectedGroupID = realGroup.getPrimaryKey().toString();
+        		Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForGroup(realGroup);
         		Iterator iter = plugins.iterator();
         		while (iter.hasNext()) {
         			UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
         			UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) IBOLookup.getServiceInstance(iwc, Class.forName(element.getBusinessICObject().getClassName()));
-        			List list = pluginBiz.getGroupToolbarElements(selectedGroup);
+        			List list = pluginBiz.getGroupToolbarElements(realGroup);
         			if (list != null) {
         				toolbarElements.addAll(list);
         			}
@@ -368,9 +370,9 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
         AccessController accessController = iwc.getAccessController();
         isCurrentUserSuperAdmin = iwc.isSuperAdmin();
         
-        hasViewPermissionForRealGroup = isCurrentUserSuperAdmin;
+      //  hasViewPermissionForRealGroup = isCurrentUserSuperAdmin;
         hasEditPermissionForRealGroup = isCurrentUserSuperAdmin;
-        hasDeletePermissionForRealGroup = isCurrentUserSuperAdmin;
+        //hasDeletePermissionForRealGroup = isCurrentUserSuperAdmin;
         hasOwnerPermissionForRealGroup = isCurrentUserSuperAdmin;
         hasCreatePermissionForRealGroup = isCurrentUserSuperAdmin;
         hasPermitPermissionForRealGroup = isCurrentUserSuperAdmin;
@@ -384,17 +386,17 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
             if(aliasGroup!=null){//thats the real group
                 hasOwnerPermissionForRealGroup = accessController.isOwner(aliasGroup, iwc); 
                 if(!hasOwnerPermissionForRealGroup) {
-                    hasViewPermissionForRealGroup = accessController.hasViewPermissionFor(aliasGroup, iwc);
+          //          hasViewPermissionForRealGroup = accessController.hasViewPermissionFor(aliasGroup, iwc);
                     hasEditPermissionForRealGroup = accessController.hasEditPermissionFor(aliasGroup, iwc);
-                    hasDeletePermissionForRealGroup = accessController.hasDeletePermissionFor(aliasGroup, iwc);
+            //        hasDeletePermissionForRealGroup = accessController.hasDeletePermissionFor(aliasGroup, iwc);
                     hasCreatePermissionForRealGroup = accessController.hasCreatePermissionFor(aliasGroup, iwc);
                     hasPermitPermissionForRealGroup = accessController.hasPermitPermissionFor(aliasGroup, iwc);
                 }
                 else {
                     //the user is the owner so he can do anything
-                    hasViewPermissionForRealGroup = true;
+              //      hasViewPermissionForRealGroup = true;
                     hasEditPermissionForRealGroup = true;
-                    hasDeletePermissionForRealGroup = true;
+                //    hasDeletePermissionForRealGroup = true;
                     hasCreatePermissionForRealGroup = true;
                     hasPermitPermissionForRealGroup = true;
                 }
@@ -402,17 +404,17 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
             else if(selectedGroup!=null){//the third case: selectedGroup == null happens when doing a search for example
                 hasOwnerPermissionForRealGroup = accessController.isOwner(selectedGroup, iwc); 
                 if(!hasOwnerPermissionForRealGroup) {
-                    hasViewPermissionForRealGroup = accessController.hasViewPermissionFor(selectedGroup, iwc);
+                  //  hasViewPermissionForRealGroup = accessController.hasViewPermissionFor(selectedGroup, iwc);
                     hasEditPermissionForRealGroup = accessController.hasEditPermissionFor(selectedGroup, iwc);
-                    hasDeletePermissionForRealGroup = accessController.hasDeletePermissionFor(selectedGroup, iwc);
+                   // hasDeletePermissionForRealGroup = accessController.hasDeletePermissionFor(selectedGroup, iwc);
                     hasCreatePermissionForRealGroup = accessController.hasCreatePermissionFor(selectedGroup, iwc);
                     hasPermitPermissionForRealGroup = accessController.hasPermitPermissionFor(selectedGroup, iwc);
                 }
                 else {
                     //the user is the owner so he can do anything
-                    hasViewPermissionForRealGroup = true;
+                  //  hasViewPermissionForRealGroup = true;
                     hasEditPermissionForRealGroup = true;
-                    hasDeletePermissionForRealGroup = true;
+                  //  hasDeletePermissionForRealGroup = true;
                     hasCreatePermissionForRealGroup = true;
                     hasPermitPermissionForRealGroup = true;
                 }
