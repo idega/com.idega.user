@@ -13,6 +13,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.TabbedPropertyPanel;
 import com.idega.presentation.TabbedPropertyWindow;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.User;
 import com.idega.user.data.UserGroupPlugIn;
@@ -129,7 +130,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			userId = ((UserTab) obj[0]).getUserId();
 			User user = getUserBusiness(iwc).getUser(userId);
 			String userName = user.getName();
-			addTitle(iwrb.getLocalizedString("user","User: ") + " " + userName);
+			addTitle(userName);
 		}
 		addTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
 
