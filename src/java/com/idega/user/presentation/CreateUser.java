@@ -22,6 +22,7 @@ import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.User;
 import com.idega.user.data.UserGroupRepresentative;
+import com.idega.util.IWColor;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -105,7 +106,7 @@ public class CreateUser extends Window {
 		this.setName("idegaWeb Builder - Stofna félaga");
 		this.setHeight(490);
 		this.setWidth(390);
-		this.setBackgroundColor("#d4d0c8");
+		this.setBackgroundColor(new IWColor(207,208,210));
 		this.setScrollbar(false);
 		myForm = new Form();
 		this.add(myForm);

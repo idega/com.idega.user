@@ -1,6 +1,10 @@
 package com.idega.user.presentation;
 
-import com.idega.presentation.*;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.TabbedPropertyPanel;
+import com.idega.presentation.TabbedPropertyWindow;
+import com.idega.util.IWColor;
 
 
 /**
@@ -19,7 +23,7 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 
   public GroupPropertyWindow(){
     super();
-    this.setBackgroundColor("#d4d0c8");
+    this.setBackgroundColor(new IWColor(207,208,210));
   }
 
   public String getSessionAddressString(){

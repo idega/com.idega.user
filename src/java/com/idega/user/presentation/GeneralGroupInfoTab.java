@@ -10,12 +10,11 @@ import com.idega.builder.business.PageTreeNode;
 import com.idega.builder.presentation.IBPageChooser;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
-import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
-import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.data.Group;
@@ -47,14 +46,16 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private String descriptionFieldName;
 	private String homepageFieldName;
 	private String grouptypeFieldName;
+	
+	private IWResourceBundle _iwrb = null;
 
-	private Link addLink;
-	private IFrame memberofFrame;
+//	private Link addLink;
+//	private IFrame memberofFrame;
 	public static final String PARAMETER_GROUP_ID = "ic_group_id";
 	public static final String SESSIONADDRESS_GROUPS_DIRECTLY_RELATED = "ic_group_ic_group_direct_GGIT";
 	public static final String SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED = "ic_group_ic_group_not_direct_GGIT";
 
-	protected Text memberof;
+//	protected Text memberof;
 
 	public GeneralGroupInfoTab() {
 		super();
@@ -62,8 +63,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	}
 
 	public void initFieldContents() {
-		addLink.setWindowToOpen(GroupGroupSetter.class);
-		addLink.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID, getGroupId());
+//		addLink.setWindowToOpen(GroupGroupSetter.class);
+//		addLink.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID, getGroupId());
 
 		try {
 			Group group = (Group) (((GroupHome) com.idega.data.IDOLookup.getHome(Group.class)).findByPrimaryKey(new Integer(getGroupId())));
@@ -112,6 +113,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 
 		grouptypeField = new DropdownMenu(grouptypeFieldName);
 		try {
+//			IWResourceBundle iwrb = 
 			GroupTypeHome gtHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
 			Collection types = gtHome.findVisibleGroupTypes();
 			Iterator iter = types.iterator();
@@ -119,19 +121,22 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 				GroupType item = (GroupType) iter.next();
 				String value = item.getType();
 				String name = item.getType(); //item.getName();
-				grouptypeField.addMenuElement(value, name);
+				if (_iwrb != null)
+					grouptypeField.addMenuElement(value, _iwrb.getLocalizedString(name,name));
+				else
+					grouptypeField.addMenuElement(value,name);
 			}
 		}
 		catch (Exception ex) {
 			throw new EJBException(ex);
 		}
 
-		memberofFrame = new IFrame("ic_user_memberof_ic_group", GroupList.class);
-		memberofFrame.setHeight(150);
-		memberofFrame.setWidth(367);
-		memberofFrame.setScrolling(IFrame.SCROLLING_YES);
-
-		addLink = new Link("  Add/Remove  ");
+//		memberofFrame = new IFrame("ic_user_memberof_ic_group", GroupList.class);
+//		memberofFrame.setHeight(150);
+//		memberofFrame.setWidth(367);
+//		memberofFrame.setScrolling(IFrame.SCROLLING_YES);
+//
+//		addLink = new Link("  Add/Remove  ");
 	}
 	
 	public void initializeTexts() {
@@ -147,8 +152,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		grouptypeText = getTextObject();
 		grouptypeText.setText("Group type:");
 
-		memberof = getTextObject();
-		memberof.setText("Member of:");
+//		memberof = getTextObject();
+//		memberof.setText("Member of:");
 	}
 	
 	public boolean store(IWContext iwc) {
@@ -174,7 +179,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	}
 	
 	public void lineUpFields() {
-		resize(1, 6);
+		resize(1, 4);
 		setCellpadding(0);
 		setCellspacing(0);
 
@@ -186,15 +191,21 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		nameTable.add(nameField, 2, 1);
 		add(nameTable, 1, 1);
 
-		Table homepageTable = new Table(2, 2);
+		Table homepageTable = new Table(2, 1);
 		homepageTable.setCellpadding(0);
 		homepageTable.setCellspacing(0);
 		homepageTable.setWidth(1, "50");
 		homepageTable.add(homepageText, 1, 1);
 		homepageTable.add(homepageField, 2, 1);
-		homepageTable.add(grouptypeText, 1, 2);
-		homepageTable.add(grouptypeField, 2, 2);
 		add(homepageTable, 1, 2);
+		
+		Table grouptypeTable = new Table(2,1);
+		grouptypeTable.setCellpadding(0);
+		grouptypeTable.setCellspacing(0);
+		grouptypeTable.setWidth(1, "50");
+		grouptypeTable.add(grouptypeText, 1, 1);
+		grouptypeTable.add(grouptypeField, 2, 1);
+		add(grouptypeTable,1,3);
 
 		Table descriptionTable = new Table(1, 2);
 		descriptionTable.setCellpadding(0);
@@ -202,16 +213,18 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		descriptionTable.setHeight(1, rowHeight);
 		descriptionTable.add(descriptionText, 1, 1);
 		descriptionTable.add(descriptionField, 1, 2);
-		add(descriptionTable, 1, 3);
+		add(descriptionTable, 1, 4);
 
-		add(memberof, 1, 4);
-		add(memberofFrame, 1, 5);
+//		add(memberof, 1, 4);
+//		add(memberofFrame, 1, 5);
 
-		setHeight(3, "30");
+//		setHeight(3, "30");
 		setHeight(1, super.rowHeight);
-		setHeight(6, super.rowHeight);
+		setHeight(2, super.rowHeight);
+		setHeight(3, super.rowHeight);
+//		setHeight(6, super.rowHeight);
 
-		add(addLink, 1, 6);
+//		add(addLink, 1, 6);
 	}
 
 	public boolean collect(IWContext iwc) {
@@ -283,5 +296,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		else {
 			iwc.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
 		}
+		
+		_iwrb = iwc.getApplication().getBundle("com.idega.user").getResourceBundle(iwc);
 	}
 }

@@ -166,7 +166,6 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
       tab.add(pageText,1,4);
       tab.add(pageChooser,2,4);
 
-
       DropdownMenu mnu = new DropdownMenu(_createEvent.getIONameForGroupType());
       try {
         GroupTypeHome gtHome = (GroupTypeHome)IDOLookup.getHome(GroupType.class);
@@ -176,7 +175,7 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
           GroupType item = (GroupType)iter.next();
           String value = item.getType();
           String name = item.getType(); //item.getName();
-          mnu.addMenuElement(value,name);
+          mnu.addMenuElement(value,iwrb.getLocalizedString(name,name));
         }
       }
       catch (RemoteException ex) {
