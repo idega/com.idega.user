@@ -70,7 +70,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 		_stateHandler = new StatefullPresentationImplHandler();
 		_stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
 		setWidth(470);//380
-		setHeight(390);//320
+		setHeight(410);//320
 		setResizable(true);
 		setScrollbar(false);
 		getLocation().setApplicationClass(CreateGroupWindow.class);

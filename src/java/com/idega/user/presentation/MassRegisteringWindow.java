@@ -13,9 +13,10 @@ import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
-import com.idega.idegaweb.presentation.*;
+import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.BackButton;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.Form;
@@ -47,7 +48,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
     private List failedInserts;
     private Group group;
     private IWResourceBundle iwrb;
-    private String mainStyleClass = "main";
+    private String mainTableStyle = "main";
     private int numberOfRows = 18;
     private String PARAMETER_PID = "mrw_pid";
     private String PARAMETER_SAVE = "mrw_sv";
@@ -56,8 +57,8 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
     private UserHome uHome;
     
     public MassRegisteringWindow() {
-        setHeight(620);
-        setWidth(400);
+        setHeight(650);
+        setWidth(420);
         setResizable(true);	
     }
     
@@ -99,11 +100,18 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
         Help help = getHelp(HELP_TEXT_KEY);
         Form form = new Form();
         form.maintainParameter(PARAMETER_GROUP_ID);
-        Table table = new Table();
+        
+	    		Table mainTable = new Table();
+	    		mainTable.setWidth(380);
+	    		mainTable.setHeight(290);
+	    		mainTable.setCellpadding(0);
+	    		mainTable.setCellspacing(0);
+	        
+    			Table table = new Table();
         table.setCellpadding(2);
         table.setCellspacing(0);
-        table.setStyleClass(mainStyleClass);
-        table.setWidth(380);
+        table.setStyleClass(mainTableStyle);
+        table.setWidth(Table.HUNDRED_PERCENT);
         //table.setHeight(560);
         table.setBorder(0);
         
@@ -178,21 +186,37 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
         
         ++row;
         ++row;
+        
+    		Table bottomTable = new Table();
+    		bottomTable.setCellpadding(0);
+    		bottomTable.setCellspacing(5);
+    		bottomTable.setWidth(Table.HUNDRED_PERCENT);
+    		bottomTable.setHeight(39);
+    		bottomTable.setStyleClass(mainTableStyle);
+    		bottomTable.add(help,1,1);
+    		bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
+    		
+    		bottomTable.add(new SubmitButton(iwrb.getLocalizedImageButton("cancel", "Cancel"), ACTION, ACTION_CANCEL), 2, 1 );
+    		bottomTable.add(Text.getNonBrakingSpace(),2,1);
+    		  
         table.setAlignment(5, row, Table.HORIZONTAL_ALIGN_RIGHT);
         table.setRowVerticalAlignment(row,Table.VERTICAL_ALIGN_TOP);
-        table.add(help,1,row);
         if (verifyForm) {
             table.mergeCells(1, row, 2, row);
-            table.add(new BackButton(iwrb.getLocalizedImageButton("back", "Back")), 1 , row);
+            bottomTable.add(new BackButton(iwrb.getLocalizedImageButton("back", "Back")), 1 , 1);
             if (foundUser) {
-                table.add(new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), ACTION, ACTION_SAVE), 5, row);
+            	bottomTable.add(new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), ACTION, ACTION_SAVE), 2, 1);
             }
         }else {		
-            table.add(new SubmitButton(iwrb.getLocalizedImageButton("next", "Next"), ACTION, ACTION_NEXT), 5, row);
+        	bottomTable.add(new SubmitButton(iwrb.getLocalizedImageButton("next", "Next"), ACTION, ACTION_NEXT), 2, 1);
         }
         // add close button
-        table.add(new SubmitButton(iwrb.getLocalizedImageButton("cancel", "Cancel"), ACTION, ACTION_CANCEL), 4, row );
-        form.add(table);
+        
+	    		mainTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
+	    		mainTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
+        mainTable.add(table,1,1);
+        mainTable.add(bottomTable,1,3);
+        form.add(mainTable);
         add(form,iwc);
     }
     

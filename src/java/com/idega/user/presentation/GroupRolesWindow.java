@@ -61,8 +61,8 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
     
     private boolean saveChanges = false;
     
-    protected int width = 800;
-    protected int height = 600;
+    protected int width = 750;
+    protected int height = 550;
     
     private String selectedGroupId = null;
     private Integer integerSelectedGroupId = null;
@@ -538,6 +538,12 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
         close.setOnClick("window.close()");
         
+        Table mainTable = new Table();
+	    		mainTable.setWidth(600);
+	    		mainTable.setHeight(410);
+	    		mainTable.setCellpadding(0);
+	    		mainTable.setCellspacing(0);
+	        
         Table table = new Table(2, 3);
         table.setRowHeight(1, "20");
         table.setStyleClass(mainStyleClass);
@@ -557,20 +563,29 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         table.add(new Text(iwrb.getLocalizedString("groupownerswindow.new_role", "New role key : "), true, false, false), 1, 2);
         table.add(new TextInput(PARAM_NEW_ROLE), 1, 2);
         
-        table.setVerticalAlignment(1, 3, "bottom");
-        table.setVerticalAlignment(2, 3, "bottom");
-        table.add(help, 1, 3);
-        table.add(save, 2, 3);
-        table.add(Text.NON_BREAKING_SPACE, 2, 3);
-        table.add(close, 2, 3);
-        table.setWidth(600);
-        table.setHeight(410);
+        Table bottomTable = new Table();
+	    		bottomTable.setCellpadding(0);
+	    		bottomTable.setCellspacing(5);
+	    		bottomTable.setWidth(Table.HUNDRED_PERCENT);
+	    		bottomTable.setHeight(39);
+	    		bottomTable.setStyleClass(mainStyleClass);
+	    		bottomTable.add(help,1,1);
+	    		bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
+	    		bottomTable.add(save, 2, 1);
+	    		bottomTable.add(Text.NON_BREAKING_SPACE, 2, 1);
+	    		bottomTable.add(close, 2, 1);
+
+	    		table.setWidth(Table.HUNDRED_PERCENT);
+        table.setHeight(370);
         table.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
         table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
-        table.setAlignment(2, 3, Table.HORIZONTAL_ALIGN_RIGHT);
         
+        mainTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
+        mainTable.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_TOP);
+        mainTable.add(table,1,1);
+        mainTable.add(bottomTable,1,3);
         Form form = new Form();
-        form.add(table);
+        form.add(mainTable);
         
         return form;
     }

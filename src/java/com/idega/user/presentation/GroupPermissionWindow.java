@@ -73,7 +73,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	private boolean saveChanges = false;
 
 	protected int width = 670;
-	protected int height = 545;
+	protected int height = 555;
 
 	private String selectedGroupId = null;
 
@@ -158,11 +158,17 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		
 		Text permissionControlGroupName = new Text(selectedGroup.getPermissionControllingGroup().getName(),true,false,false);
 		
+		Table mainTable = new Table();
+		mainTable.setWidth(620);
+		mainTable.setHeight(480);
+		mainTable.setCellpadding(0);
+		mainTable.setCellspacing(0);
+		
 		Table table = new Table(1, 3);
 		table.setRowHeight(1,"20");
 		table.setStyleClass(mainStyleClass);
-		table.setWidth(620);
-		table.setHeight(480);
+		table.setWidth(Table.HUNDRED_PERCENT);
+		table.setHeight(440);
 		table.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
 		table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
 		table.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_BOTTOM);
@@ -182,13 +188,26 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 				owners.setAsImageButton(true);
 				owners.addParameter(PARAM_SELECTED_GROUP_ID, selectedGroupId);
 				
-		table.add(override,1,3);
-		table.add(Text.NON_BREAKING_SPACE,1,3);
-		table.add(owners,1,3);
-		table.add(Text.NON_BREAKING_SPACE,1,3);
-		table.add(close,1,3);
+    		Table bottomTable = new Table();
+    		bottomTable.setCellpadding(0);
+    		bottomTable.setCellspacing(5);
+    		bottomTable.setWidth(Table.HUNDRED_PERCENT);
+    		bottomTable.setHeight(39);
+    		bottomTable.setStyleClass(mainStyleClass);
+    		bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
+    		
+    		bottomTable.add(override,1,2);
+    		bottomTable.add(Text.NON_BREAKING_SPACE,1,2);
+    		bottomTable.add(owners,1,2);
+    		bottomTable.add(Text.NON_BREAKING_SPACE,1,2);
+    		bottomTable.add(close,1,2);
 		
-		form.add(table);
+		mainTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
+		mainTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
+		mainTable.add(table,1,1);
+		mainTable.add(bottomTable,1,3);
+				
+		form.add(mainTable);
 		add(form,iwc);
 	}
 	
@@ -819,11 +838,17 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		owners.setAsImageButton(true);
 		owners.addParameter(PARAM_SELECTED_GROUP_ID, selectedGroupId);
 
+		Table mainTable = new Table();
+		mainTable.setWidth(620);
+		mainTable.setHeight(480);
+		mainTable.setCellpadding(0);
+		mainTable.setCellspacing(0);
+		
 		Table table = new Table(2, 3);
 		table.setRowHeight(1,"20");
 		table.setStyleClass(mainStyleClass);
-		table.setWidth(620);
-		table.setHeight(480);
+		table.setWidth(Table.HUNDRED_PERCENT);
+		table.setHeight(440);
 		table.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
 		table.setVerticalAlignment(2, 1, Table.VERTICAL_ALIGN_TOP);
 		table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
@@ -845,18 +870,28 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		
 		
 		table.add(browser, 1, 2);
-		table.setVerticalAlignment(1, 3, "bottom");
-		table.setVerticalAlignment(2, 3, "bottom");
-		table.add(help, 1, 3);
-		table.add(owners, 2, 3);
-		table.add(Text.NON_BREAKING_SPACE, 2, 3);
-		table.add(save, 2, 3);
-		table.add(Text.NON_BREAKING_SPACE, 2, 3);
-		table.add(close, 2, 3);
 		
-
-		Form form = new Form();
-		form.add(table);
+    Table bottomTable = new Table();
+		bottomTable.setCellpadding(0);
+		bottomTable.setCellspacing(5);
+		bottomTable.setWidth(Table.HUNDRED_PERCENT);
+		bottomTable.setHeight(39);
+		bottomTable.setStyleClass(mainStyleClass);
+		bottomTable.add(help,1,1);
+		bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
+		bottomTable.add(owners,2,1);
+		bottomTable.add(Text.NON_BREAKING_SPACE,2,1);
+		bottomTable.add(save, 2, 1);
+		bottomTable.add(Text.NON_BREAKING_SPACE, 2, 1);
+		bottomTable.add(close, 2, 1);
+		
+		 mainTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
+	   mainTable.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_TOP);
+	   mainTable.add(table,1,1);
+	   mainTable.add(bottomTable,1,3);
+	   Form form = new Form();
+	   form.add(mainTable);
+		
 //		form.maintainParameter(PARAM_PERMISSIONS_SET_TO_CHILDREN);
 
 		return form;

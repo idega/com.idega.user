@@ -135,7 +135,7 @@ public class CreateUser extends StyledIWAdminWindow {
 
 	public CreateUser() {
 		super();
-		setHeight(290);
+		setHeight(300);
 		setWidth(320);
 	//	setBackgroundColor(new IWColor(207, 208, 210));
 		setScrollbar(false);

@@ -59,12 +59,19 @@ public class MassMovingWindow extends StyledIWAdminWindow implements ToolbarElem
   
   private static final String HELP_TEXT_KEY = "mass_moving_window";
   
+  private String mainTableStyle = "main";
+  
   // display settings
   private final int NUMBER_OF_ROWS = 40;
   
   private Group group;
   private UserApplicationMenuAreaPS groupProviderState;
   private BasicUserOverviewPS actionListener;
+  
+  public MassMovingWindow() {
+  		setWidth(440);
+  		setHeight(300);
+  }
     
 
   /* (non-Javadoc)
@@ -192,15 +199,43 @@ public class MassMovingWindow extends StyledIWAdminWindow implements ToolbarElem
     close.setOnClick("window.close(); return false;");
     move.setOnClick("window.opener.parent.frames['iw_event_frame'].document.write('"+wait+"'); mass_form.submit(); window.close();");
     // assemble table
-    Table table = new Table(1,3);
-    Table buttons = new Table(3,1);
-    buttons.add(help,1,1);
-    buttons.add(close, 2, 1);
-    buttons.add(move, 3, 1);
+
+    Table mainTable = new Table();
+		mainTable.setWidth(380);
+		mainTable.setHeight(200);
+		mainTable.setCellpadding(0);
+		mainTable.setCellspacing(0);
+    
+		Table table = new Table(1,3);
+    table.setStyleClass(mainTableStyle);
+    table.setWidth(Table.HUNDRED_PERCENT);
+    table.setHeight(160);
+    table.setCellpadding(0);
+    table.setCellspacing(5);
+    table.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
+    table.setVerticalAlignment(1,2,Table.VERTICAL_ALIGN_TOP);
     table.add(headline,1 ,1);
     table.add(browser,1,2);
-    table.add(buttons,1,3);    
-    form.add(table);
+    
+    Table buttons = new Table();
+    buttons.setStyleClass(mainTableStyle);
+    
+    buttons.setCellpadding(0);
+		buttons.setCellspacing(5);
+		buttons.setWidth(Table.HUNDRED_PERCENT);
+		buttons.setHeight(39);
+		buttons.add(help,1,1);
+		buttons.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
+		buttons.add(move,2,1);
+		buttons.add(Text.NON_BREAKING_SPACE,2,1);
+		buttons.add(close,2,1);
+   
+    mainTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
+		mainTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
+		mainTable.add(table,1,1);
+		mainTable.add(buttons,1,3);
+    
+    form.add(mainTable);
     add(form,iwc);
     // add action listener
     addActionListener(actionListener);
@@ -215,6 +250,7 @@ public class MassMovingWindow extends StyledIWAdminWindow implements ToolbarElem
     close.setOnClick("window.close(); return false;");
     // assemble table
     Table table = new Table(1,2);
+    table.setStyleClass(mainTableStyle);
     table.add(error,1,1);
     table.add(close,1,2);   
     Form form = new Form(); 
