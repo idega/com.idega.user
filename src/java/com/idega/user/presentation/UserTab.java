@@ -1,12 +1,11 @@
 package com.idega.user.presentation;
 import java.rmi.RemoteException;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
-
+import java.util.Map;
 import javax.ejb.FinderException;
-
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.TabbedPropertyPanel;
@@ -32,25 +31,20 @@ public abstract class UserTab extends Table implements Collectable {
 	protected UserBusiness business = null;
 	protected GroupBusiness groupBusiness = null;
 	//protected UserBusiness business;
-	protected Hashtable fieldValues;
+	protected Map fieldValues;
 	private boolean _isInitialized = false;
 	private TabbedPropertyPanel panel;
 	
 	public UserTab() {
 		super();
-		errorStrings = new Vector();
+		errorStrings = new ArrayList();
 		//business = new UserBusiness();
-		fieldValues = new Hashtable();
+		fieldValues = new HashMap();
 		init();
 		this.setStyleClass("main"); //added for isi styles - birna
 		this.setCellpadding(0);
 		this.setCellspacing(0);
 		this.setWidth(Table.HUNDRED_PERCENT); //changed from 370
-		initializeFieldNames();
-		initializeFields();
-		initializeTexts();
-		initializeFieldValues();
-		lineUpFields();
 	}
 	
 	/*public void main(IWContext iwc) throws Exception {
@@ -69,7 +63,21 @@ public abstract class UserTab extends Table implements Collectable {
 		this.setUserID(userId);
 	}
 	
+	/**
+	 * Calls all the "necessary" setup methods
+	 * The calling order goes like this: <br>
+	 * 1. initializeFieldNames();<br>
+	 * 2. initializeFields();<br>
+	 * 3. initializeTexts();<br>
+	 * 4. initializeFieldValues();<br>
+	 * 5. lineUpFields();<br>
+	 */
 	public void init() {
+		initializeFieldNames();
+		initializeFields();
+		initializeTexts();
+		initializeFieldValues();
+		lineUpFields();
 	}
 	
 	public abstract void initializeFieldNames();

@@ -77,6 +77,7 @@ public class UserLoginTab extends UserTab {
 		errorMessageTable = new Table();
 		errorText = new Text();
 		errorText.setFontColor("red");
+		super.init();
 	}
 
 	public void initFieldContents() {

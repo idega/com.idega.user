@@ -1,14 +1,15 @@
 package com.idega.user.presentation;
 
+import java.util.HashMap;
+import java.util.Map;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.presentation.IWContext;
 import com.idega.presentation.TabbedPropertyPanel;
 import com.idega.presentation.Table;
-import com.idega.presentation.IWContext;
-import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.text.Text;
-import com.idega.user.business.UserBusiness;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserBusiness;
 import com.idega.util.datastructures.Collectable;
-import java.util.Hashtable;
 
 /**
  * Title:        User
@@ -25,30 +26,41 @@ public abstract class UserGroupTab extends Table implements Collectable {
  private int selectedParentGroupId = -1;
 
   protected Text proxyText;
-
-  //protected UserBusiness business;
-
-  protected Hashtable fieldValues;
-	private TabbedPropertyPanel panel;
+  protected Map fieldValues;
+  private TabbedPropertyPanel panel;
 
 
   public UserGroupTab() {
     super();
     //business = new UserBusiness();
-    init();
+
     this.setCellpadding(0);
     this.setCellspacing(0);
-		this.setWidth(Table.HUNDRED_PERCENT); //changed from 370
+	this.setWidth(Table.HUNDRED_PERCENT); //changed from 370
     this.setStyleClass("main");
-    fieldValues = new Hashtable();
+    fieldValues = new HashMap();
+    init();
+
+  }
+
+  /**
+   * Calls all the "necessary" setup methods.<br>
+   * The calling order goes like this: <br>
+   * 1. initializeFieldNames();<br>
+   * 2. initializeFields();<br>
+   * 3. initializeTexts();<br>
+   * 4. initializeFieldValues();<br>
+   * 5. lineUpFields();<br>
+   *
+   */
+  public void init(){
     initializeFieldNames();
     initializeFields();
     initializeTexts();
     initializeFieldValues();
     lineUpFields();
   }
-
-  public void init(){}
+  
   public abstract void initializeFieldNames();
   public abstract void initializeFieldValues();
   public abstract void updateFieldsDisplayStatus();
