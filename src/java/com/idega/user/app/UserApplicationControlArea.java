@@ -37,6 +37,9 @@ import com.idega.user.presentation.GroupTreeView;
 
 public class UserApplicationControlArea extends Page implements IWBrowserView, StatefullPresentation {
 
+	private final static String LINK_STYLE = "font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#000000;text-decoration:none;";
+	private final static String LINK_HOVER_STYLE = "font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#FF8008;text-decoration:none;";
+
   private IWBundle iwb;
 	private IWResourceBundle iwrb;
   private StatefullPresentationImplHandler _stateHandler = null;
@@ -133,6 +136,11 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
     if(gtState instanceof IWActionListener){
       ((UserApplicationControlAreaPS)this.getPresentationState(iwc)).addIWActionListener((IWActionListener)gtState);
     }
+    
+		if (getParentPage() != null) {
+			getParentPage().setStyleDefinition("A", LINK_STYLE);
+			getParentPage().setStyleDefinition("A:hover", LINK_HOVER_STYLE);
+		}
 
     groupTree.setToShowSuperRootNode(true);
     groupTree.setDefaultOpenLevel(0);
