@@ -906,7 +906,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	  		return business;
 	  	}
     
-    public static List removeUsers(Collection userIds, Group parentGroup, IWContext iwc) {
+    public static List removeUsers(Collection userIds, Group parentGroup, IWContext iwc) throws RemoteException {
         UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
         ArrayList notRemovedUsers = new ArrayList();
         Iterator iterator = userIds.iterator();
@@ -927,7 +927,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         return notRemovedUsers;
     }
     
-    public static Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, IWContext iwc) {
+    public static Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, IWContext iwc) throws RemoteException {
         UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
         //User currentUser = iwc.getCurrentUser();
         Map resultMap = new HashMap();
@@ -945,7 +945,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         return resultMap;
     }
     
-    public static synchronized Map moveContentOfGroups(Collection groups, Collection groupTypesToMoveAmong, IWContext iwc) {
+    public static synchronized Map moveContentOfGroups(Collection groups, Collection groupTypesToMoveAmong, IWContext iwc) throws RemoteException {
         UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
         return userBusiness.moveUsers(iwc,groups, groupTypesToMoveAmong);
     }

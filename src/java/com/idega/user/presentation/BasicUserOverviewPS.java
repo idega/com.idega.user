@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -102,106 +103,112 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 
 
 
-        if (e instanceof ResetPresentationEvent) {
-            this.reset();
-            this.fireStateChanged();
-            
-        }
-        
-        if (e instanceof UserSearchEvent) {
-            _selectedGroup = null;
-            resultOfMovingUsers = null;
-        } 
-        
+        try {
+			if (e instanceof ResetPresentationEvent) {
+			    this.reset();
+			    this.fireStateChanged();
+			    
+			}
+			
+			if (e instanceof UserSearchEvent) {
+			    _selectedGroup = null;
+			    resultOfMovingUsers = null;
+			} 
+			
 
-        if (e instanceof SelectGroupEvent) {
-            _selectedGroup = ((SelectGroupEvent) e).getSelectedGroup();
-            _selectedDomain = null;
-            parentGroupOfSelection = ((SelectGroupEvent) e).getParentGroupOfSelection();
-            parentDomainOfSelection = ((SelectGroupEvent) e).getParentDomainOfSelection();
-            resultOfMovingUsers = null;
-            showSearchResult = false;
-            this.fireStateChanged();
-        }
+			if (e instanceof SelectGroupEvent) {
+			    _selectedGroup = ((SelectGroupEvent) e).getSelectedGroup();
+			    _selectedDomain = null;
+			    parentGroupOfSelection = ((SelectGroupEvent) e).getParentGroupOfSelection();
+			    parentDomainOfSelection = ((SelectGroupEvent) e).getParentDomainOfSelection();
+			    resultOfMovingUsers = null;
+			    showSearchResult = false;
+			    this.fireStateChanged();
+			}
 
-        if (e instanceof SelectDomainEvent) {
-            _selectedDomain = ((SelectDomainEvent) e).getSelectedDomain();
-            _selectedGroup = null;
-            resultOfMovingUsers = null;
-            showSearchResult = false;
-            this.fireStateChanged();
-        }
+			if (e instanceof SelectDomainEvent) {
+			    _selectedDomain = ((SelectDomainEvent) e).getSelectedDomain();
+			    _selectedGroup = null;
+			    resultOfMovingUsers = null;
+			    showSearchResult = false;
+			    this.fireStateChanged();
+			}
 
-        if (e instanceof EntityBrowserEvent) {
-            IWContext mainIwc = e.getIWContext();
-            String[] userIds;
-            if (mainIwc.isParameterSet(BasicUserOverview.DELETE_USERS_KEY) && mainIwc.isParameterSet(BasicUserOverview.SELECTED_USERS_KEY)) {
-                userIds = mainIwc.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
-                // delete users (if something has been chosen)
+			if (e instanceof EntityBrowserEvent) {
+			    IWContext mainIwc = e.getIWContext();
+			    String[] userIds;
+			    if (mainIwc.isParameterSet(BasicUserOverview.DELETE_USERS_KEY) && mainIwc.isParameterSet(BasicUserOverview.SELECTED_USERS_KEY)) {
+			        userIds = mainIwc.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
+			        // delete users (if something has been chosen)
 
-                if (_selectedGroup.isAlias()) {
-                    BasicUserOverview.removeUsers(Arrays.asList(userIds),_selectedGroup.getAlias(), mainIwc);
-                } else {
-                    BasicUserOverview.removeUsers(Arrays.asList(userIds),_selectedGroup, mainIwc);
-                }
+			        if (_selectedGroup.isAlias()) {
+			            BasicUserOverview.removeUsers(Arrays.asList(userIds),_selectedGroup.getAlias(), mainIwc);
+			        } else {
+			            BasicUserOverview.removeUsers(Arrays.asList(userIds),_selectedGroup, mainIwc);
+			        }
 
-            }
-        }
-        
-        if (e instanceof EntityBrowserEvent) {
-            IWContext mainIwc = e.getIWContext();
-            String[] userIds;
-            if (mainIwc.isParameterSet(BasicUserOverview.MOVE_USERS_KEY) && mainIwc.isParameterSet(BasicUserOverview.SELECTED_USERS_KEY) && mainIwc.isParameterSet(BasicUserOverview.SELECTED_TARGET_GROUP_KEY)) {
-                userIds = mainIwc.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
+			    }
+			}
+			
+			if (e instanceof EntityBrowserEvent) {
+			    IWContext mainIwc = e.getIWContext();
+			    String[] userIds;
+			    if (mainIwc.isParameterSet(BasicUserOverview.MOVE_USERS_KEY) && mainIwc.isParameterSet(BasicUserOverview.SELECTED_USERS_KEY) && mainIwc.isParameterSet(BasicUserOverview.SELECTED_TARGET_GROUP_KEY)) {
+			        userIds = mainIwc.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
 
-                String targetGroupNodeString = mainIwc.getParameter(BasicUserOverview.SELECTED_TARGET_GROUP_KEY);
-                //cut it down because it is in the form "domain_id"_"group_id"
-                targetGroupNodeString = targetGroupNodeString.substring(Math.max(targetGroupNodeString.indexOf("_") + 1, 0),targetGroupNodeString.length());
-                int targetGroupId = Integer.parseInt(targetGroupNodeString);
+			        String targetGroupNodeString = mainIwc.getParameter(BasicUserOverview.SELECTED_TARGET_GROUP_KEY);
+			        //cut it down because it is in the form "domain_id"_"group_id"
+			        targetGroupNodeString = targetGroupNodeString.substring(Math.max(targetGroupNodeString.indexOf("_") + 1, 0),targetGroupNodeString.length());
+			        int targetGroupId = Integer.parseInt(targetGroupNodeString);
 
-                // move users to a group
-                if (_selectedGroup!=null && _selectedGroup.isAlias()) {
-                    resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup.getAlias(),targetGroupId, mainIwc);
-                } else {
-                    resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup, targetGroupId,mainIwc);
-                }
+			        // move users to a group
+			        if (_selectedGroup!=null && _selectedGroup.isAlias()) {
+			            resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup.getAlias(),targetGroupId, mainIwc);
+			        } else {
+			            resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup, targetGroupId,mainIwc);
+			        }
 
-                this.targetGroupId = targetGroupId;
-            }
-        }
+			        this.targetGroupId = targetGroupId;
+			    }
+			}
 
-        if (e instanceof EntityBrowserEvent && (MassMovingWindow.EVENT_NAME.equals(((EntityBrowserEvent) e).getEventName()))) {
-            IWContext mainIwc = e.getIWContext();
-            String[] groupIds;
-            if (mainIwc.isParameterSet(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY) && mainIwc.isParameterSet(MassMovingWindow.MOVE_SELECTED_GROUPS)) {
-                groupIds = mainIwc.getParameterValues(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY);
-                String parentGroupType = mainIwc.getParameter(MassMovingWindow.PRM_PARENT_GROUP_TYPE);
-                
-                try {
-					GroupHome grHome = (GroupHome)IDOLookup.getHome(Group.class);
-					Collection groupCollection = grHome.findByPrimaryKeyCollection(grHome.decode(groupIds));
-					Collection groupTypes = Collections.singleton(MassMovingWindow.GROUP_TYPE_CLUB_PLAYER);
-					
-					// move users
-					if(parentGroupType.equals(MassMovingWindow.GROUP_TYPE_CLUB_DIVISION)){
-						resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(groupCollection,groupTypes, mainIwc);
-					} else {
-						resultOfMovingUsers = new HashMap();
-						for (Iterator iter = groupCollection.iterator(); iter.hasNext();) {
-							Group divGroups = (Group) iter.next();
-							resultOfMovingUsers.putAll(BasicUserOverview.moveContentOfGroups(Collections.singleton(divGroups),groupTypes, mainIwc));
-						}
+			if (e instanceof EntityBrowserEvent && (MassMovingWindow.EVENT_NAME.equals(((EntityBrowserEvent) e).getEventName()))) {
+			    IWContext mainIwc = e.getIWContext();
+			    String[] groupIds;
+			    if (mainIwc.isParameterSet(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY) && mainIwc.isParameterSet(MassMovingWindow.MOVE_SELECTED_GROUPS)) {
+			        groupIds = mainIwc.getParameterValues(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY);
+			        String parentGroupType = mainIwc.getParameter(MassMovingWindow.PRM_PARENT_GROUP_TYPE);
+			        
+			        try {
+						GroupHome grHome = (GroupHome)IDOLookup.getHome(Group.class);
+						Collection groupCollection = grHome.findByPrimaryKeyCollection(grHome.decode(groupIds));
+						Collection groupTypes = Collections.singleton(MassMovingWindow.GROUP_TYPE_CLUB_PLAYER);
 						
+						// move users
+						if(parentGroupType.equals(MassMovingWindow.GROUP_TYPE_CLUB_DIVISION)){
+							resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(groupCollection,groupTypes, mainIwc);
+						} else {
+							resultOfMovingUsers = new HashMap();
+							for (Iterator iter = groupCollection.iterator(); iter.hasNext();) {
+								Group divGroups = (Group) iter.next();
+								resultOfMovingUsers.putAll(BasicUserOverview.moveContentOfGroups(Collections.singleton(divGroups),groupTypes, mainIwc));
+							}
+							
+						}
+					} catch (IDOLookupException e1) {
+						e1.printStackTrace();
+					} catch (FinderException e1) {
+						e1.printStackTrace();
 					}
-				} catch (IDOLookupException e1) {
-					e1.printStackTrace();
-				} catch (FinderException e1) {
-					e1.printStackTrace();
-				}
-                targetGroupId = -1;
-                fireStateChanged();
-            }
-        }
+			        targetGroupId = -1;
+			        fireStateChanged();
+			    }
+			}
+		}
+		catch (RemoteException e1) {
+			//something really bad happened
+			e1.printStackTrace();
+		}
     }
 
     /**
