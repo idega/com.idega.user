@@ -3,7 +3,9 @@ package com.idega.user.presentation;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.AbstractChooser;
+import com.idega.presentation.ui.Form;
 import com.idega.user.business.GroupTreeNode;
 
 /**
@@ -19,6 +21,7 @@ public class GroupChooser extends AbstractChooser {
   private String style;
   private Image chooserButtonImage = null;
   private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
+private boolean submitForm;
   
   public GroupChooser() {
   	addForm(false);
@@ -65,7 +68,28 @@ public class GroupChooser extends AbstractChooser {
   public String getBundleIdentifier(){
     return IW_BUNDLE_IDENTIFIER;
   }
+  
 
   
 
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.ui.AbstractChooser#addParametersToForm(com.idega.presentation.ui.Form)
+	 */
+	protected void addParametersToForm(Form form) {
+		if(submitForm){
+			form.addParameter(GroupChooserWindow.SUBMIT_PARENT_FORM_AFTER_CHANGE, "true");
+		}
+	}
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.ui.AbstractChooser#addParametersToLink(com.idega.presentation.text.Link)
+	 */
+	protected void addParametersToLink(Link link) {
+		if(submitForm){
+			link.addParameter(GroupChooserWindow.SUBMIT_PARENT_FORM_AFTER_CHANGE, "true");
+		}
+	}
+	
+	public void setToSubmitParentFormOnChange(){
+		submitForm = true;
+	}
 }

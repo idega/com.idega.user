@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.swing.event.ChangeListener;
-
 import com.idega.builder.presentation.StyledIBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
@@ -43,11 +41,11 @@ import com.idega.user.util.ICUserConstants;
 
 /**
  *
- * <p>Title: idegaWeb User</p>
- * <p>Description: </p>
+ * <p>Title: CreateGroupWindow</p>
+ * <p>Description: This window is used to create a group under a certain parent group. It has numerous info fields.</p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Gu�mundur �g�st S�mundsson</a>
+ * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>
  * @version 1.0 
  */
 public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullPresentation, ToolbarElement { //changed from extends IWAdminWindow
@@ -62,10 +60,10 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	private CreateGroupEvent _createEvent;
 	private String selectedGroupProviderStateId = null; 
 	private Group selectedGroup = null;
-	private Collection groupTypes = null;
-	
 	private String mainTableStyle = "main";
-	
+
+	private CreateGroupWindowPS _ps;
+
 	public CreateGroupWindow() {
 		_stateHandler = new StatefullPresentationImplHandler();
 		_stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
@@ -104,17 +102,11 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 		while (iterator.hasNext())  {
 			state.addChangeListener((ChangeListener) iterator.next());
 		}
-		// fill collection of grouptypes stored as strings
-		// used for drop down menu group type
-		// used for alias group 
-		groupTypes = getGroupTypes(iwc);
+
 	}
 	
 	public void main(IWContext iwc) throws Exception {
-		//this.debugParameters(iwc);
-		//IWBundle iwb = getBundle(iwc);
-		CreateGroupWindowPS _ps = (CreateGroupWindowPS) this.getPresentationState(iwc);
-		
+		_ps = (CreateGroupWindowPS) this.getPresentationState(iwc);
 		
 		if (_ps.doClose()) {
 			close();
@@ -124,8 +116,13 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			_createEvent = new CreateGroupEvent();
 			//_createEvent.setSource(this.getLocation());
 			_createEvent.setSource(this);
+			Group parentFromPS = _ps.getParentGroup();
+			if( (selectedGroup==null) || (parentFromPS!=null && !selectedGroup.equals(parentFromPS)) ){
+				selectedGroup = parentFromPS;
+			}
 			
 			IWResourceBundle iwrb = getResourceBundle(iwc);
+			
 			Form form = new Form();
 			form.addEventModel(_createEvent, iwc);
 			
@@ -148,7 +145,12 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			tab.setCellpadding(0);
 			
 			TextInput inputName = new TextInput(_createEvent.getIONameForName());
-			inputName.setAsNotEmpty(iwrb.getLocalizedString("new_group.group_name_required","Group name must be selected"));
+			String name = _ps.getGroupName();
+			if(name!=null){
+				inputName.setValue(name);
+			}
+			
+			inputName.setAsNotEmpty(iwrb.getLocalizedString("new_group.group_name_required","A group name is required"));
 			inputName.setStyleClass("text");
 			//inputName.setLength(20);
 			inputName.setWidth(Table.HUNDRED_PERCENT);
@@ -164,6 +166,10 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			descriptionTextArea.setHeight("200"); //changed from (4)
 			descriptionTextArea.setWidth(Table.HUNDRED_PERCENT);
 			descriptionTextArea.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+			String desc = _ps.getGroupDescription();
+			if(desc!=null){
+				descriptionTextArea.setValue(desc);
+			}
 			
 			Text descText = new Text(iwrb.getLocalizedString("group_description", "Description") + ":");
 			tab.add(descText, 2, 1); // changed from (descText,1,2); - birna
@@ -175,6 +181,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			GroupChooser groupChooser = getGroupChooser(_createEvent.getIONameForParentID(), true, iwc);
 			groupChooser.setStyleClassName("text");
 			groupChooser.setInputLength(17);
+			groupChooser.setToSubmitParentFormOnChange();
+			
 			Text createUnderText = new Text(iwrb.getLocalizedString("parent_group", "Create group under") + ":");
 			
 			tab.add(createUnderText, 1, 2);
@@ -184,6 +192,9 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			StyledIBPageChooser pageChooser = new StyledIBPageChooser(_createEvent.getIONameForHomePage(), IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 			pageChooser.setStyleClassName("text");
 			pageChooser.setInputLength(17);
+			if(_ps.getHomePageID()>0){
+				pageChooser.setSelectedPage(_ps.getHomePage());
+			}
 			Text pageText = new Text(iwrb.getLocalizedString("home_page", "Select homepage") + ":");
 
 			tab.add(pageText, 1, 3); //changed from (pageText,1,4) - birna
@@ -201,6 +212,10 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			GroupChooser aliasGroupChooser = getGroupChooser(_createEvent.getIONameForAliasID(), false, iwc);
 			aliasGroupChooser.setStyleClassName("text");
 			aliasGroupChooser.setInputLength(17);
+			if(_ps.getAliasID()>0){
+				aliasGroupChooser.setSelectedNode(new GroupTreeNode(getGroup(new Integer(_ps.getAliasID()))));
+			}
+			
 			String filter = NO_GROUP_SELECTED;
 			if (selectedGroup != null)  {
 				filter = selectedGroup.getPrimaryKey().toString();
@@ -240,17 +255,34 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			mainTable.add(bottomTable, 1, 3);
 			form.add(mainTable);
 			
+			//if the last creation failed
+			if(_ps.hasFailedToCreateGroup()){
+				this.setAlertOnLoad(iwrb.getLocalizedString("cannot.create.group.no.edit.permission","You cannot create a group under that group, you do not have edit permission for it."));
+				
+			}
+			
+			_ps.reset();
+			
 		}
 	}
 	
 	private DropdownMenu getGroupTypeMenu(IWResourceBundle iwrb, IWContext iwc)  {
 		DropdownMenu menu = new DropdownMenu(_createEvent.getIONameForGroupType());
+		// fill collection of grouptypes stored as strings
+		// used for drop down menu group type
+		// used for alias group 
+		Collection groupTypes = getGroupTypes(iwc);
 		Iterator iterator = groupTypes.iterator();
 		while (iterator.hasNext())  {
 			String value = (String) iterator.next();
 			menu.addMenuElement(value, iwrb.getLocalizedString(value, value));
 		}
-		if(groupTypes.contains(ICUserConstants.GROUP_TYPE_GENERAL)){
+		
+		String typeBefore = _ps.getGroupType();
+		if(groupTypes.contains(typeBefore)){
+			menu.setSelectedElement(typeBefore);
+		}
+		else if(groupTypes.contains(ICUserConstants.GROUP_TYPE_GENERAL)){
 			menu.setSelectedElement(ICUserConstants.GROUP_TYPE_GENERAL);
 		}
 		return menu;
@@ -269,12 +301,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 		chooser.setChooseButtonImage(chooserImage);
 		
 		try {
-			//IBDomain domain = iwc.getDomain();
-			if (selectedGroup != null && preselectSelectedGroup)  {
+			if ( selectedGroup != null && preselectSelectedGroup )  {
 				chooser.setSelectedNode(new GroupTreeNode(selectedGroup));
-			}
-			else  {
-				//chooser.setSelectedNode(new GroupTreeNode(domain,iwc.getApplicationContext()));
 			}
 		}
 		catch (Exception e) {
@@ -341,24 +369,26 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	
 	private Collection getGroupTypes(IWContext iwc)  {
 		Collection groupTypes = new ArrayList();
-		//TODO make sure no duplications and order alphabetically by localizedname
+		
 		// get group types
-		GroupBusiness groupBusiness;
+		GroupBusiness groupBusiness = null;
 		try {
 			groupBusiness =(GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+			
+			Iterator iterator = groupBusiness.getAllAllowedGroupTypesForChildren(selectedGroup, iwc).iterator();
+			while (iterator.hasNext())  {
+				GroupType item = (GroupType) iterator.next();
+				String value = item.getType();
+				if(!groupTypes.contains(value)){
+					groupTypes.add(value);
+				}
+			}
+			
 		}
 		catch (RemoteException ex)  {
 			throw new RuntimeException(ex.getMessage());
 		}
 		
-		Iterator iterator = groupBusiness.getAllAllowedGroupTypesForChildren(selectedGroup, iwc).iterator();
-		while (iterator.hasNext())  {
-			GroupType item = (GroupType) iterator.next();
-			String value = item.getType();
-			if(!groupTypes.contains(value)){
-				groupTypes.add(value);
-			}
-		}
 		return groupTypes;
 	}
 
