@@ -89,7 +89,7 @@ import java.util.List;
         //frameTable.setBorder(1);
 
 
-        SelectionDoubleBox sdb = new SelectionDoubleBox(FIELDNAME_SELECTION_DOUBLE_BOX,iwrb.getLocalizedString("groupgroupsetter.in","Not in"),iwrb.getLocalizedString("groupgroupsetter.not_in","In"));
+        SelectionDoubleBox sdb = new SelectionDoubleBox(FIELDNAME_SELECTION_DOUBLE_BOX,iwrb.getLocalizedString("usergroupsetter.in","Not in"),iwrb.getLocalizedString("usergroupsetter.not_in","In"));
 
         SelectionBox left = sdb.getLeftBox();
         left.setHeight(15);
@@ -151,7 +151,7 @@ import java.util.List;
         frameTable.add(sdb,2,2);
 				SubmitButton save = new SubmitButton(iwrb.getLocalizedString("usergroupsetter.save","save"),"save","true");
         save.setAsImageButton(true);
-				CloseButton close = new CloseButton(iwrb.getLocalizedString("groupgroupsetter.close","close"));
+				CloseButton close = new CloseButton(iwrb.getLocalizedString("usergroupsetter.close","close"));
 				close.setAsImageButton(true);
 				frameTable.add(close,2,3);
         frameTable.add(save,2,3);
