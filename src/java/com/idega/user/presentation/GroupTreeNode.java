@@ -1,6 +1,7 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -277,19 +278,17 @@ public class GroupTreeNode implements ICTreeNode {
 			case TYPE_GROUP :
 				if (isAlias()){
 					Group aliasGroup = getAlias();
-//TODO Sigtryggur enable this bugfix, but cache the values
-//					Collection allAncestors = null;
-//					try {
-//						allAncestors = getGroupBusiness(_iwc).getParentGroupsRecursive(this.getNodeID());
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-//					if (allAncestors.contains(aliasGroup)) {
-//						System.out.println("Alias with ID = "+this.getNodeID()+" links to an ancestor with ID = "+aliasGroup.getPrimaryKey()+" The relationship is disabled to avoid endless loop");
-//						return 0;
-//					}
-//					else 
-					if(aliasGroup!=null) return aliasGroup.getChildCount();
+					Collection allAncestors = null;
+					try {
+						allAncestors = getGroupBusiness(_iwc).getParentGroupsRecursive(this.getNodeID());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if (allAncestors.contains(aliasGroup)) {
+						System.out.println("Alias with ID = "+this.getNodeID()+" links to an ancestor with ID = "+aliasGroup.getPrimaryKey()+" The relationship is disabled to avoid endless loop");
+						return 0;
+					}
+					else if(aliasGroup!=null) return aliasGroup.getChildCount();
 					else{
 						System.err.println("GroupTreeNode: Error - no alias for group :"+getNodeName()+" id: "+getNodeID());
 						return 0;
