@@ -13,13 +13,7 @@
   </classpathentry>
   <classpathentry kind="src" path="/com.idega.block.entity">
   </classpathentry>
-  <classpathentry kind="src" path="/com.idega.developer">
-  </classpathentry>
   <classpathentry kind="src" path="/com.idega.block.media">
-  </classpathentry>
-  <classpathentry kind="src" path="/com.idega.block.staff">
-  </classpathentry>
-  <classpathentry kind="src" path="/com.idega.block.dataquery">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar">
   </classpathentry>

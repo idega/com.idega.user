@@ -91,51 +91,10 @@
     </dependency>
     <dependency>
       <groupId>bundles</groupId>
-      <artifactId>com.idega.developer</artifactId>
-      <!--<version>1.0</version>-->
-      <version>SNAPSHOT</version>
-      
-      <type>jar</type>
-      <url>http://www.idega.com/</url>
-      <properties>
-        <eclipse.dependency>true</eclipse.dependency>
-      </properties>
-    </dependency>
-    <dependency>
-      <groupId>bundles</groupId>
       <artifactId>com.idega.block.media</artifactId>
       <!--<version>1.0</version>-->
       <version>SNAPSHOT</version>
       
-      <type>jar</type>
-      <url>http://www.idega.com/</url>
-      <properties>
-        <eclipse.dependency>true</eclipse.dependency>
-      </properties>
-    </dependency>
-    <!-- there is no direct reference to the staff bundle within the user bundle 
-    but through builder pages
-    that is the user bundle is registering an application for the staff bundle 
-    see IWBundleStarter 
-    (perhaps an IWBundleStarter of another application bundle should do that?) -->
-    <dependency>
-      <groupId>bundles</groupId>
-      <artifactId>com.idega.block.staff</artifactId>
-      <!--<version>1.0</version>-->
-      <version>SNAPSHOT</version>
-      
-      <type>jar</type>
-      <url>http://www.idega.com/</url>
-      <properties>
-        <eclipse.dependency>true</eclipse.dependency>
-      </properties>
-    </dependency>
-    <dependency>
-      <groupId>bundles</groupId>
-      <artifactId>com.idega.block.dataquery</artifactId>
-      <!--<version>1.0</version>-->
-      <version>SNAPSHOT</version>
-
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>

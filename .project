@@ -9,10 +9,7 @@
     <project>com.idega.block.login</project>
     <project>com.idega.builder</project>
     <project>com.idega.block.entity</project>
-    <project>com.idega.developer</project>
     <project>com.idega.block.media</project>
-    <project>com.idega.block.staff</project>
-    <project>com.idega.block.dataquery</project>
   </projects>
   <buildSpec>
     <buildCommand>
