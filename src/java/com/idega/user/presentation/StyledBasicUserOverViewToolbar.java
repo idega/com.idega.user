@@ -91,9 +91,9 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 				Link tLink11 = new Link(text);
 				tLink11.setStyleClass(styledLinkClass);
 				tLink11.setWindowToOpen(CreateUser.class);
-				if (selectedGroup.getGroupType().equals("alias"))
-					tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getAlias().getPrimaryKey()).toString());
-				else
+//				if (selectedGroup.getGroupType().equals("alias"))
+//					tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getAlias().getPrimaryKey()).toString());
+//				else
 					tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
 
 				button.add(tLink11, 1, 1);
