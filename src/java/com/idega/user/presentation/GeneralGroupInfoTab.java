@@ -164,6 +164,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		memberofFrame.setHeight(150);
 		memberofFrame.setWidth(Table.HUNDRED_PERCENT);
 		memberofFrame.setScrolling(IFrame.SCROLLING_YES);
+		memberofFrame.setStyleAttribute("border", "1px #b2b2b2 solid");
 		//
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);

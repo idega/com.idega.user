@@ -47,11 +47,13 @@ public class GroupMembershipTab extends UserGroupTab {
     groupMembersFrame.setHeight(140);
     groupMembersFrame.setWidth(Table.HUNDRED_PERCENT);
     groupMembersFrame.setScrolling(IFrame.SCROLLING_YES);
+    groupMembersFrame.setStyleAttribute("border", "1px #b2b2b2 solid");
 
     userMembersFrame = new IFrame("ic_user_group_members",UserList.class);
     userMembersFrame.setHeight(140);
     userMembersFrame.setWidth(Table.HUNDRED_PERCENT);
     userMembersFrame.setScrolling(IFrame.SCROLLING_YES);
+    userMembersFrame.setStyleAttribute("border", "1px #b2b2b2 solid");
 
     //addLink = new Link("  Add  ");
 
