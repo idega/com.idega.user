@@ -3,8 +3,9 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.user.data.Group;
+
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class GroupList extends Page {
 
-    private List groups = null;
+    private Collection groups = null;
 
     public GroupList(){
       super();
@@ -29,8 +30,8 @@ public class GroupList extends Page {
 
     public Table getGroupTable(IWContext iwc){
 
-      List direct = (List)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
-      List notDirect = (List)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
+      Collection direct = (Collection)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
+      Collection notDirect = (Collection)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
 
       Table table = null;
         try{
