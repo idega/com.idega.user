@@ -58,21 +58,18 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 			Iterator iter = plugins.iterator();
 	  
 			while (iter.hasNext()) {
-			UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
-		
-			UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness)
-					 com.idega.business.IBOLookup.getServiceInstance(iwc,Class.forName(element.getBusinessICObject().getClassName()));
+				UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
 			
-		
-		
-		
-			List tabs = pluginBiz.getGroupPropertiesTabs(group);
-			Iterator tab = tabs.iterator();
-			while (tab.hasNext()) {
-				UserTab el = (UserTab) tab.next();
-				panel.addTab(el,count++,iwc);
-			}
-		
+				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness)
+						 com.idega.business.IBOLookup.getServiceInstance(iwc,Class.forName(element.getBusinessICObject().getClassName()));
+				
+				List tabs = pluginBiz.getGroupPropertiesTabs(group);
+				Iterator tab = tabs.iterator();
+				while (tab.hasNext()) {
+					UserGroupTab el = (UserGroupTab) tab.next();
+					panel.addTab(el,count++,iwc);
+				}
+			
 			}
 		
 		} catch (Exception e) {
