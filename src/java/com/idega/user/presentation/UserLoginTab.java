@@ -294,11 +294,11 @@ public class UserLoginTab extends UserTab {
 		loginTable.add(this.passwordField, 2, 2);
 		loginTable.add(this.confirmPasswordText, 1, 3);
 		loginTable.add(this.confirmPasswordField, 2, 3);
-		loginTable.add(getHelpButton(),1,4);
+//		loginTable.add(getHelpButton(),1,4);
 		// loginTable end
 
 		// AccountPropertyTable begin
-		Table AccountPropertyTable = new Table(2, 4);
+		Table AccountPropertyTable = new Table(2, 5);
 		AccountPropertyTable.setCellpadding(0);
 		AccountPropertyTable.setCellspacing(0);
 		AccountPropertyTable.setHeight(1, rowHeight);
@@ -314,6 +314,7 @@ public class UserLoginTab extends UserTab {
 		AccountPropertyTable.add(this.passwordNeverExpiresText, 2, 3);
 		AccountPropertyTable.add(this.disableAccountField, 1, 4);
 		AccountPropertyTable.add(this.disableAccountText, 2, 4);
+		AccountPropertyTable.add(getHelpButton(),1,5);
 		// AccountPropertyTable end
 
 		errorMessageTable.setHeight(1);

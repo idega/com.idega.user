@@ -241,8 +241,8 @@ public class UserPhoneTab extends UserTab {
 
 		Table staffTable = new Table(3, 4);
 		staffTable.setWidth("100%");
-		staffTable.setCellpadding(0);
-		staffTable.setCellspacing(0);
+		staffTable.setCellpadding(3);
+		staffTable.setCellspacing(3);
 		staffTable.setHeight(1, rowHeight);
 		staffTable.setHeight(2, rowHeight);
 		staffTable.setHeight(3, rowHeight);
@@ -264,8 +264,8 @@ public class UserPhoneTab extends UserTab {
 
 		Table mailTable = new Table(2, 3);
 		mailTable.setWidth("100%");
-		mailTable.setCellpadding(0);
-		mailTable.setCellspacing(0);
+		mailTable.setCellpadding(3);
+		mailTable.setCellspacing(3);
 		mailTable.setHeight(1, rowHeight);
     mailTable.setHeight(2, rowHeight);
 

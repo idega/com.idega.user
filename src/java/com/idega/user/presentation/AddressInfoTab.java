@@ -28,7 +28,7 @@ import com.idega.user.data.User;
  * Title:        User
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @author 2002 <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  * @version 1.0
  */
@@ -306,8 +306,8 @@ public class AddressInfoTab extends UserTab {
 		//    FramePane fpane = new FramePane();
 
 		addressTable.setWidth("100%");
-		addressTable.setCellpadding(0);
-		addressTable.setCellspacing(0);
+		addressTable.setCellpadding(3);
+		addressTable.setCellspacing(3);
     int i;
     for (i= 1; i <= totalRows; i++) {
 		  addressTable.setHeight(i, rowHeight);
@@ -335,8 +335,8 @@ public class AddressInfoTab extends UserTab {
 		Table addressTable2 = new Table(4, 1);
 		
 		addressTable2.setWidth("100%");
-		addressTable2.setCellpadding(0);
-		addressTable2.setCellspacing(0);
+		addressTable2.setCellpadding(3);
+		addressTable2.setCellspacing(3);
 		addressTable2.setHeight(1, rowHeight);
 		addressTable2.setWidth(1, "70");
 		addressTable2.setWidth(2, "70");
@@ -353,13 +353,13 @@ public class AddressInfoTab extends UserTab {
 		//    this.add(fpane);
 
     // second address
-    Table secondAddressTable = new Table(2, totalRows);
+    Table secondAddressTable = new Table(3, totalRows);
     row = 1;
     //    FramePane fpane = new FramePane();
 
     secondAddressTable.setWidth("100%");
-    secondAddressTable.setCellpadding(0);
-    secondAddressTable.setCellspacing(0);
+    secondAddressTable.setCellpadding(3);
+    secondAddressTable.setCellspacing(3);
 
     for (i= 1; i <= totalRows; i++) {
       secondAddressTable.setHeight(i, rowHeight);
@@ -384,7 +384,8 @@ public class AddressInfoTab extends UserTab {
 		if(user.getPrimaryKey().equals(adminUser.getPrimaryKey())) {
 			Link editPostalCodeLink = new Link(iwrb.getLocalizedImageButton("AddressInfoTab.postalcodewindow.add","Add"));
 			editPostalCodeLink.setWindowToOpen(PostalCodeEditorWindow.class);
-			secondAddressTable.add(editPostalCodeLink, 2, row);			
+			secondAddressTable.setVerticalAlignment(3,row,Table.VERTICAL_ALIGN_MIDDLE);
+			secondAddressTable.add(editPostalCodeLink, 3, row);			
 		}
 
     //    fpane.add(secondAddressTable);
@@ -392,8 +393,8 @@ public class AddressInfoTab extends UserTab {
     Table secondAddressTable2 = new Table(4, 1);
 
     secondAddressTable2.setWidth("100%");
-    secondAddressTable2.setCellpadding(0);
-    secondAddressTable2.setCellspacing(0);
+    secondAddressTable2.setCellpadding(3);
+    secondAddressTable2.setCellspacing(3);
     secondAddressTable2.setHeight(1, rowHeight);
     secondAddressTable2.setWidth(1, "70");
     secondAddressTable2.setWidth(2, "70");

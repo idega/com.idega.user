@@ -32,7 +32,7 @@ import com.idega.util.IWTimestamp;
  * Title:        User
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 public class GeneralUserInfoTab extends UserTab {
@@ -281,8 +281,8 @@ public class GeneralUserInfoTab extends UserTab {
 		//First Part (names)
 		Table nameTable = new Table(3, 6); //changed from (2,5) - birna
 		nameTable.setWidth("100%");
-		nameTable.setCellpadding(2);
-		nameTable.setCellspacing(2);
+		nameTable.setCellpadding(3);
+		nameTable.setCellspacing(3);
 //		nameTable.setHeight(1, rowHeight);
 //		nameTable.setHeight(2, rowHeight);
 //		nameTable.setHeight(3, rowHeight);
@@ -309,8 +309,8 @@ public class GeneralUserInfoTab extends UserTab {
 
 		//Second Part (Date of birth)
 		Table dateofbirthTable = new Table(2, 4);
-		dateofbirthTable.setCellpadding(0);
-		dateofbirthTable.setCellspacing(2);//changed from (0)
+		dateofbirthTable.setCellpadding(3);
+		dateofbirthTable.setCellspacing(3);//changed from (0)
 //		dateofbirthTable.setHeight(1, rowHeight);
 //		dateofbirthTable.setHeight(2, rowHeight);
 		dateofbirthTable.add(dateOfBirthText, 1, 1);
@@ -322,8 +322,8 @@ public class GeneralUserInfoTab extends UserTab {
 
 		//Third Part (description)
 		Table descriptionTable = new Table(1, 2);
-		descriptionTable.setCellpadding(0);
-		descriptionTable.setCellspacing(0);
+		descriptionTable.setCellpadding(3);
+		descriptionTable.setCellspacing(3);
 		descriptionTable.setHeight(1, rowHeight);
 		descriptionTable.add(descriptionText, 1, 1);
 		descriptionTable.addBreak();
@@ -332,8 +332,8 @@ public class GeneralUserInfoTab extends UserTab {
 		//Third Part ends
 		
 		Table helpTable = new Table(1,1);
-		helpTable.setCellpadding(0);
-		helpTable.setCellspacing(0);
+		helpTable.setCellpadding(3);
+		helpTable.setCellspacing(3);
 		helpTable.add(getHelpButton());
 		add(helpTable,1,4);
 	}
