@@ -121,6 +121,11 @@ public class GeneralUserInfoTab extends UserTab {
 		genderField.setSelectedElement((String) fieldValues.get(genderFieldName));
 		personalIDField.setContent((String) fieldValues.get(personalIDFieldName));
 
+		IWContext iwc = IWContext.getInstance();
+		boolean showISStuff = iwc.getApplicationSettings().getProperty("temp_show_is_related_stuff")!=null;
+		if (showISStuff)
+			personalIDField.setDisabled(true);
+
 		StringTokenizer created = new StringTokenizer((String) fieldValues.get(createdFieldName), " -");
 		if (created.hasMoreTokens()) {
 			createdField.setYear(created.nextToken());
