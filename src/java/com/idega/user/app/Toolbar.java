@@ -115,6 +115,7 @@ public class Toolbar extends Page implements IWBrowserView {
     iwrb = getResourceBundle(iwc);
     boolean showISStuff = iwc.getApplicationSettings().getProperty("temp_show_is_related_stuff")!=null;
 		boolean showReportGenerator = iwc.getApplicationSettings().getProperty("temp_show_report_generator")!=null;
+		boolean showCalendar = iwc.getApplicationSettings().getProperty("temp_show_calendar")!=null;
 		
 //	added for stylesheet writout:
 //			parentPage = this.getParentPage();
@@ -405,14 +406,16 @@ public class Toolbar extends Page implements IWBrowserView {
 		 button5.add(tLink15,2,1);
 		 toolbar1.add(button5,10,1);
 	 }
-	 Table butt = new Table(2,1);
-	 butt.setCellpadding(0);
-	 Text tex = new Text(iwrb.getLocalizedString("button.calendar","Calendar Window"));
-	 Link tLin = new Link(tex);
-	 tLin.setStyleClass(styledLink);
-	 tLin.setWindowToOpen(com.idega.block.cal.presentation.CalendarWindow.class);
-	 butt.add(tLin,2,1);
-	 toolbar1.add(butt,11,1);
+	 if(showCalendar) {
+		 Table butt = new Table(2,1);
+		 butt.setCellpadding(0);
+		 Text tex = new Text(iwrb.getLocalizedString("button.calendar","Calendar Window"));
+		 Link tLin = new Link(tex);
+		 tLin.setStyleClass(styledLink);
+		 tLin.setWindowToOpen(com.idega.block.cal.presentation.CalendarWindow.class);
+		 butt.add(tLin,2,1);
+		 toolbar1.add(butt,11,1);
+	 }
 	 
 	 
 	 
