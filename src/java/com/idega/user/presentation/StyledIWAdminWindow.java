@@ -231,7 +231,7 @@ public Image felix;
 		 * sets the reference to the isi-stylesheet
 		 */
 		parentPage = this.getParentPage();
-		styleSrc = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/" + styleScript);
+		styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
 		parentPage.addStyleSheetURL(styleSrc);
 
 		super._main(iwc);
