@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
@@ -14,6 +15,7 @@ import com.idega.presentation.ui.SelectionDoubleBox;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.Window;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
 import com.idega.util.IWColor;
@@ -88,7 +90,7 @@ import com.idega.util.IWColor;
         iter = notDirectGroups.iterator();
         while (iter.hasNext()) {
           Group item = (Group) iter.next();
-          if (! map.containsKey(group.getGroupType()))
+          if (map.containsKey(group.getGroupType()))
             left.addElement(item.getPrimaryKey().toString(),item.getName());
         }
       }
@@ -107,7 +109,6 @@ import com.idega.util.IWColor;
     }
 
     public void main(IWContext iwc) throws Exception {
-//TODO only display allowed ggroups
 
       String save = iwc.getParameter("save");
       if(save != null){
@@ -183,17 +184,25 @@ import com.idega.util.IWColor;
 */
     }
   
-    public GroupBusiness getGroupBusiness(IWApplicationContext iwc){
-    GroupBusiness business = null;
-    if(business == null){
-      try{
-        business = (GroupBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
-      }
-      catch(java.rmi.RemoteException rme){
-        throw new RuntimeException(rme.getMessage());
-      }
+  private GroupBusiness getGroupBusiness(IWApplicationContext iwc){
+    GroupBusiness business;
+    try {
+      business = (GroupBusiness) IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
+    }
+    catch(java.rmi.RemoteException rme){
+      throw new RuntimeException(rme.getMessage());
     }
     return business;
   }
   
+  private UserBusiness getUserBusiness(IWApplicationContext iwc) {
+    UserBusiness business;
+    try {
+      business = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+    }
+    catch(java.rmi.RemoteException rme) {
+      throw new RuntimeException(rme.getMessage());
+    }
+    return business;
   } 
+}
