@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -27,129 +26,129 @@ import com.idega.user.data.UserGroupPlugIn;
 
 public class GroupPropertyWindow extends TabbedPropertyWindow {
 
-    public static final String PARAMETERSTRING_GROUP_ID = "ic_group_id";
-    public static final String PARENT_GROUP_ID_KEY = "parent_group_id";
-    public static final String SESSION_ADDRESS = "ic_group_property_window";
-    private final int height = 600;
-    private final int width = 500;
+	public static final String PARAMETERSTRING_GROUP_ID = "ic_group_id";
 
-    public GroupPropertyWindow() {
-        super();
-        //      setBackgroundColor(new IWColor(207, 208, 210));
-        setWidth(width);
-        setHeight(height);
-        setResizable(true);
-    }
+	public static final String PARENT_GROUP_ID_KEY = "parent_group_id";
 
-    /**
-     * @see com.idega.presentation.TabbedPropertyWindow#disposeOfPanel(com.idega.presentation.IWContext)
-     */
-    public boolean disposeOfPanel(IWContext iwc) {
-        return iwc.isParameterSet(PARAMETERSTRING_GROUP_ID);
-    }
+	public static final String SESSION_ADDRESS = "ic_group_property_window";
 
-    public GroupBusiness getGroupBusiness(IWApplicationContext iwac)
-            throws RemoteException {
-        return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(
-                iwac, GroupBusiness.class);
-    }
+	private final int height = 600;
 
-    public String getSessionAddressString() {
-        return SESSION_ADDRESS;
-    }
+	private final int width = 500;
 
-    public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
-        try {
-            int count = 0;
-            panel.addTab(new GeneralGroupInfoTab(), count++, iwc);
+	public GroupPropertyWindow() {
+		super();
+		//      setBackgroundColor(new IWColor(207, 208, 210));
+		setWidth(width);
+		setHeight(height);
+		setResizable(true);
+	}
 
-            //	temp shit
-            String id = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
-            int groupId = Integer.parseInt(id);
-            Group group = getGroupBusiness(iwc).getGroupByGroupID(groupId);
+	/**
+	 * @see com.idega.presentation.TabbedPropertyWindow#disposeOfPanel(com.idega.presentation.IWContext)
+	 */
+	public boolean disposeOfPanel(IWContext iwc) {
+		return iwc.isParameterSet(PARAMETERSTRING_GROUP_ID);
+	}
 
-            Collection plugins = getGroupBusiness(iwc)
-                    .getUserGroupPluginsForGroupTypeString(group.getGroupType());
-            Iterator iter = plugins.iterator();
+	public GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws RemoteException {
+		return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+	}
 
-            while (iter.hasNext()) {
-                UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
+	public String getSessionAddressString() {
+		return SESSION_ADDRESS;
+	}
 
-                UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) com.idega.business.IBOLookup
-                        .getServiceInstance(iwc, Class.forName(element
-                                .getBusinessICObject().getClassName()));
+	public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
+		try {
+			int count = 0;
+			GeneralGroupInfoTab info = new GeneralGroupInfoTab();
+			info.setPanel(panel);
+			panel.addTab(info, count++, iwc);
 
-                List tabs = pluginBiz.getGroupPropertiesTabs(group);
+			//	temp shit
+			String id = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
+			int groupId = Integer.parseInt(id);
+			Group group = getGroupBusiness(iwc).getGroupByGroupID(groupId);
 
-                if (tabs != null) {
-                    Iterator tab = tabs.iterator();
-                    while (tab.hasNext()) {
-                        UserGroupTab el = (UserGroupTab) tab.next();
-                        panel.addTab(el, count++, iwc);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+			IWResourceBundle iwrb = getResourceBundle(iwc);
+			setTitle(iwrb.getLocalizedString("group_property_window", "Group Property Window"));
+			addTitle(group.getName(), TITLE_STYLECLASS);
 
-    public void main(IWContext iwc) throws Exception {
-        IWResourceBundle iwrb = getResourceBundle(iwc);
-        addTitle(iwrb.getLocalizedString("group_property_window",
-                "Group Property Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
-        int parentGroupId = -1;
-        if (iwc.isParameterSet(PARENT_GROUP_ID_KEY))
-                parentGroupId = Integer.parseInt(iwc
-                        .getParameter(PARENT_GROUP_ID_KEY));
-        String id = iwc
-                .getParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID);
-        if (id != null) {
-            int newId = Integer.parseInt(id);
-            PresentationObject[] obj = this.getAddedTabs();
-            for (int i = 0; i < obj.length; i++) {
-                PresentationObject mo = obj[i];
-                if (mo instanceof UserGroupTab
-                        && ((UserGroupTab) mo).getGroupId() != newId) {
-                    ((UserGroupTab) mo).setGroupIds(newId, parentGroupId);
-                }
-            }
-        }
-    }
+			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForGroupTypeString(group.getGroupType());
+			Iterator iter = plugins.iterator();
 
+			while (iter.hasNext()) {
+				UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
+
+				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, Class.forName(element.getBusinessICObject().getClassName()));
+
+				List tabs = pluginBiz.getGroupPropertiesTabs(group);
+
+				if (tabs != null) {
+					Iterator tab = tabs.iterator();
+					while (tab.hasNext()) {
+						UserGroupTab el = (UserGroupTab) tab.next();
+						el.setPanel(panel);
+						panel.addTab(el, count++, iwc);
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void main(IWContext iwc) throws Exception {
+		int parentGroupId = -1;
+		if (iwc.isParameterSet(PARENT_GROUP_ID_KEY))
+			parentGroupId = Integer.parseInt(iwc.getParameter(PARENT_GROUP_ID_KEY));
+		String id = iwc.getParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID);
+		if (id != null) {
+			int newId = Integer.parseInt(id);
+			PresentationObject[] obj = this.getAddedTabs();
+			for (int i = 0; i < obj.length; i++) {
+				PresentationObject mo = obj[i];
+				if (mo instanceof UserGroupTab && ((UserGroupTab) mo).getGroupId() != newId) {
+					((UserGroupTab) mo).setGroupIds(newId, parentGroupId);
+				}
+			}
+		}
+	}
 
 	/**
 	 * overrides the default behaviour to check for edit permissions
 	 */
 	protected TabbedPropertyPanel getPanelInstance(IWContext iwc) {
-        boolean useOkButton = false;
-        boolean useApplyButton = false;
-        boolean useCancelButton = true;
-        
-//		check if we have edit permissions, otherwise disable saving
+		boolean useOkButton = false;
+		boolean useApplyButton = false;
+		boolean useCancelButton = true;
+
+		//		check if we have edit permissions, otherwise disable saving
 		String groupId = iwc.getParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID);
-		
+
 		boolean isAdmin = iwc.isSuperAdmin();
-		if(groupId!=null && !"-1".equals(groupId) && !isAdmin) {
-		    try {
-                useOkButton = iwc.getAccessController().hasEditPermissionFor(getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(groupId)), iwc);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            
-		    useApplyButton = useOkButton;
+		if (groupId != null && !"-1".equals(groupId) && !isAdmin) {
+			try {
+				useOkButton = iwc.getAccessController().hasEditPermissionFor(getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(groupId)), iwc);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			useApplyButton = useOkButton;
 		}
 		else {
-		    if(isAdmin) {//only super admin can edit without permission
-		        useOkButton = true;
-		        useApplyButton = true;
-		    }
-		    
+			if (isAdmin) {//only super admin can edit without permission
+				useOkButton = true;
+				useApplyButton = true;
+			}
+
 		}
-		
-		
-		return new TabbedPropertyPanel(getSessionAddressString(),iwc,useOkButton,useCancelButton,useApplyButton);
-		   
-    }
+
+		return new TabbedPropertyPanel(getSessionAddressString(), iwc, useOkButton, useCancelButton, useApplyButton);
+
+	}
 
 }
