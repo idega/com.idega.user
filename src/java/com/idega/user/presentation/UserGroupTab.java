@@ -58,6 +58,8 @@ public abstract class UserGroupTab extends Table implements Collectable {
   public abstract boolean collect(IWContext iwc);
   public abstract boolean store(IWContext iwc);
   public abstract void initFieldContents();
+  
+//  public abstract String getLocalizedLabel(IWContext iwc);
 
   private void initProxyText(){
     proxyText = new Text("");

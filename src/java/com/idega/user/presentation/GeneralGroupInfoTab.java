@@ -48,8 +48,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private String nameFieldName;
 	private String descriptionFieldName;
 	private String homepageFieldName;
-	private String grouptypeFieldName; 
-	
+	private String grouptypeFieldName;
+
 	private IWResourceBundle _iwrb = null;
 
 	private Link addLink;
@@ -82,7 +82,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 			System.err.println("GeneralGroupInfoTab error initFieldContents, GroupId : " + getGroupId());
 		}
 	}
-	
+
 	public void updateFieldsDisplayStatus() {
 		nameField.setContent((String) fieldValues.get(nameFieldName));
 
@@ -102,7 +102,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		String type = (String) fieldValues.get(grouptypeFieldName);
 		grouptypeField.setSelectedElement(type);
 	}
-	
+
 	public void initializeFields() {
 		nameField = new TextInput(nameFieldName);
 		nameField.setLength(26);
@@ -116,7 +116,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 
 		grouptypeField = new DropdownMenu(grouptypeFieldName);
 		try {
-//			IWResourceBundle iwrb = 
+			//			IWResourceBundle iwrb = 
 			GroupTypeHome gtHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
 			Collection types = gtHome.findVisibleGroupTypes();
 			Iterator iter = types.iterator();
@@ -125,9 +125,9 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 				String value = item.getType();
 				String name = item.getType(); //item.getName();
 				if (_iwrb != null)
-					grouptypeField.addMenuElement(value, _iwrb.getLocalizedString(name,name));
+					grouptypeField.addMenuElement(value, _iwrb.getLocalizedString(name, name));
 				else
-					grouptypeField.addMenuElement(value,name);
+					grouptypeField.addMenuElement(value, name);
 			}
 		}
 		catch (Exception ex) {
@@ -138,10 +138,10 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		memberofFrame.setHeight(150);
 		memberofFrame.setWidth(367);
 		memberofFrame.setScrolling(IFrame.SCROLLING_YES);
-//
+		//
 		addLink = new Link("  Add/Remove  ");
 	}
-	
+
 	public void initializeTexts() {
 		nameText = getTextObject();
 		nameText.setText("Name:");
@@ -158,7 +158,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		memberof = getTextObject();
 		memberof.setText("Member of:");
 	}
-	
+
 	public boolean store(IWContext iwc) {
 		try {
 			if (getGroupId() > -1) {
@@ -168,7 +168,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 				group.setDescription((String) fieldValues.get(descriptionFieldName));
 				group.setHomePageID((Integer) fieldValues.get(homepageFieldName));
 				group.setGroupType((String) fieldValues.get(grouptypeFieldName));
-			  group.store();
+				group.store();
 			}
 		}
 		catch (Exception e) {
@@ -178,7 +178,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		}
 		return true;
 	}
-	
+
 	public void lineUpFields() {
 		resize(1, 7);
 		setCellpadding(0);
@@ -199,14 +199,14 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		homepageTable.add(homepageText, 1, 1);
 		homepageTable.add(homepageField, 2, 1);
 		add(homepageTable, 1, 2);
-		
-		Table grouptypeTable = new Table(2,1);
+
+		Table grouptypeTable = new Table(2, 1);
 		grouptypeTable.setCellpadding(0);
 		grouptypeTable.setCellspacing(0);
 		grouptypeTable.setWidth(1, "50");
 		grouptypeTable.add(grouptypeText, 1, 1);
 		grouptypeTable.add(grouptypeField, 2, 1);
-		add(grouptypeTable,1,3);
+		add(grouptypeTable, 1, 3);
 
 		Table descriptionTable = new Table(1, 2);
 		descriptionTable.setCellpadding(0);
@@ -219,12 +219,12 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		add(memberof, 1, 5);
 		add(memberofFrame, 1, 6);
 
-//		setHeight(3, "30");
+		//		setHeight(3, "30");
 		setHeight(1, super.rowHeight);
 		setHeight(2, super.rowHeight);
 		setHeight(3, super.rowHeight);
 		setHeight(4, super.rowHeight);
-//		setHeight(6, super.rowHeight);
+		//		setHeight(6, super.rowHeight);
 
 		add(addLink, 1, 7);
 	}
@@ -253,14 +253,14 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 			if (grouptype != null) {
 				fieldValues.put(grouptypeFieldName, grouptype);
 			}
-			
+
 			updateFieldsDisplayStatus();
 
 			return true;
 		}
 		return false;
 	}
-	
+
 	public void initializeFieldNames() {
 		descriptionFieldName = "UM_group_desc";
 		nameFieldName = "UM_group_name";
@@ -298,7 +298,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		else {
 			iwc.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
 		}
-		
+
 		_iwrb = getResourceBundle(iwc);
 	}
 }

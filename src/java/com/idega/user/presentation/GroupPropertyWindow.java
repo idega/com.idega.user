@@ -44,8 +44,6 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 		try {
 			int count = 0;
 			panel.addTab(new GeneralGroupInfoTab(), count++, iwc);
-			//panel.addTab(new GroupMembershipTab(), 1, iwc);
-			//  panel.addTab(new ExtendedGroupMembershipTab(),2,iwc);
 
 			//	temp shit
 			String id = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
