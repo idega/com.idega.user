@@ -73,7 +73,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     if(selectedGroup  != null){
 //      System.out.println("[BasicUserOverview]: selectedGroup = "+selectedGroup);
       users = this.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
-      userCount = users.size();
+      if(users == null) {
+      	userCount = 0;
+      }
+      else userCount = users.size();
+      
     } else if(selectedDomain != null){
 //      System.out.println("[BasicUserOverview]: selectedDomain = "+selectedDomain);
       users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
