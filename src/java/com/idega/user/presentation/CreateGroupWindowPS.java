@@ -29,386 +29,400 @@ import com.idega.user.data.GroupType;
 import com.idega.user.data.User;
 import com.idega.user.event.CreateGroupEvent;
 
-
 /**
- * <p>Title: idegaWeb</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Gu�mundur �g�st S�mundsson</a>
+ * <p>
+ * Title: idegaWeb
+ * </p>
+ * <p>
+ * Description:
+ * </p>
+ * <p>
+ * Copyright: Copyright (c) 2004
+ * </p>
+ * <p>
+ * Company: idega Software
+ * </p>
+ * 
+ * @author <a href="eiki@idega.is">Eirikur Hrafnsson </a>
  * @version 1.0
  */
 
-public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWActionListener{
+public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWActionListener {
 
-  private boolean _close = false ;
-  
-  public boolean parentGropuNotSet = false; 
-  
-  private Integer groupId = null;
-  private IWContext eventContext = null;
+    private boolean _close = false;
+    private Integer groupId = null;
+    private IWContext eventContext = null;
+    private String _groupName = null;
+    private String _groupDescription = null;
+    private String _groupType = null;
+    private IWResourceBundle iwrb;
+    private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
-  private String _groupName = null;
-  private String _groupDescription = null;
-  private String _groupType = null;
-  private IWResourceBundle iwrb;
-	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-//  private String _groupParentID = null;
+    public CreateGroupWindowPS() {
+    }
 
+    public void reset() {
+        _groupName = null;
+        _groupDescription = null;
+        _groupType = null;
+        _close = false;
+        groupId = null;
+        eventContext = null;
+    }
 
-  public CreateGroupWindowPS() {
-  }
+    public String getGroupName() {
+        return _groupName;
+    }
 
+    public String getGroupDescription() {
+        return _groupDescription;
+    }
 
-  public void reset(){
-    _groupName = null;
-    _groupDescription = null;
-    _groupType = null;
-    _close = false;
-    groupId = null;
-    eventContext = null;
-  }
+    public String getGroupType() {
+        return _groupType;
+    }
 
+    public Integer getGroupId() {
+        return groupId;
+    }
 
-  public String getGroupName(){
-    return _groupName;
-  }
+    public IWContext getEventContext() {
+        return eventContext;
+    }
 
-  public String getGroupDescription(){
-    return _groupDescription;
-  }
+    public boolean doClose() {
+        return _close;
+    }
 
-  public String getGroupType(){
-    return _groupType;
-  }
-  
-  public Integer getGroupId() {
-    return groupId;
-  }
-  
-  public IWContext getEventContext()  {
-    return eventContext;
-  }
+    public void doneClosing() {
+        _close = false;
+    }
 
-  public boolean doClose(){
-    return _close;
-  }
+    public void actionPerformed(IWPresentationEvent e) throws IWException {
+       
+        iwrb = e.getIWContext().getIWMainApplication().getBundle(
+                IW_BUNDLE_IDENTIFIER).getResourceBundle(e.getIWContext());
 
+        if (e instanceof CreateGroupEvent) {
+            CreateGroupEvent event = (CreateGroupEvent) e;
 
-  public void doneClosing(){
-    _close = false;
-  }
+            //create group, subgroups and give permissions
+            if (event.doCommit()) {
+                try {
+                    IWContext iwc = e.getIWContext();
+                    GroupBusiness business = getGroupBusiness(iwc);
 
+                    Group group = null;
+                    Group parentGroup = null;
 
+                    //deside how to create the group
+                    if (event.getParentType() == CreateGroupEvent.TYPE_DOMAIN) {
+                        // create the group under the default Domain (it's a
+                        // top node (as super user))
+                        group = business.createGroup(event.getName(), event
+                                .getDescription(), event.getGroupType(), event
+                                .getHomePageID(), event.getAliasID());
+                    } else if (event.getParentType() == CreateGroupEvent.TYPE_GROUP) {
+                        // create under the supplied parent group
+                        int parentGroupId = event.getParentID();
 
+                        parentGroup = business.getGroupByGroupID(parentGroupId);
+                        group = business.createGroupUnder(event.getName(),
+                                event.getDescription(), event.getGroupType(),
+                                event.getHomePageID(), event.getAliasID(),
+                                parentGroup);
 
+                    } else {
+                        //why this would happen I don't know
+                        System.err
+                                .println("[CreateGroupWindow]: parentGroupType "
+                                        + event.getParentType() + "not found");
+                    }
 
-  public void actionPerformed(IWPresentationEvent e) throws IWException {
-//    System.out.println("[CreateGroupWindowPS]: ps = "+this);
-//    System.out.println("[CreateGroupWindowPS] : event = " + e);
-		iwrb = e.getIWContext().getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(e.getIWContext());
+                    // store group id and context, so change listners are able
+                    // to open windows (e.g. the group property window)
+                    groupId = (Integer) group.getPrimaryKey();
+                    eventContext = e.getIWContext();
 
-    if(e instanceof CreateGroupEvent ){
-//      System.out.println("[CreateGroupWindowPS] : (e instanceof CreateGroupEvent) = true");
-      CreateGroupEvent event = (CreateGroupEvent)e;
+                    //Apply permission stuff
+                    applyPermissionSetting(iwc, parentGroup, group);
 
-//      System.out.println("[CreateGroupWindowPS] : event.doCommit() = "+event.doCommit());
-//      System.out.println("[CreateGroupWindowPS] : event.doCancel() = "+event.doCancel());
+                    // get groupType tree and iterate through it and create default sub groups.
+                    createDefaultSubGroups(group, business, e.getIWContext());
 
-      if(event.doCommit()){
-		try
-		{
-			IWContext iwc = e.getIWContext();
-			GroupBusiness business = getGroupBusiness(iwc);
+                    //TODO fix this what is it doing? some caching stuff?
+                    e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
+                    e.getIWContext().getApplicationContext().removeApplicationAttribute("group_tree");
+                    
+                    
+                } catch (CreateException ce) {
+                    throw new EJBException(ce);
+                } catch (RemoteException ex) {
+                    throw new EJBException(ex);
+                } catch (FinderException fe) {
+                    throw new EJBException(fe);
+                }
 
-			// Create under
-			Group group=null;
-			if(event.getParentType() == 0) {
-				parentGropuNotSet = true;
-			}
-			if(event.getParentType() == CreateGroupEvent.TYPE_DOMAIN){  // under Domain
-				group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID(),event.getAliasID());
-				//GroupDomainRelationTypeHome gdrHome = (GroupDomainRelationTypeHome)IDOLookup.getHome(GroupDomainRelationType.class);
-				//ICDomain domain = (ICDomain)IDOLookup.findByPrimaryKey(ICDomain.class,event.getParentID());
-				//business.addGroupUnderDomain(domain,group,gdrHome.getTopNodeRelationType());
-			} else if(event.getParentType() == CreateGroupEvent.TYPE_GROUP){ // under other group
-				int parentGroupId = event.getParentID();
-				GroupHome gHome = (GroupHome)IDOLookup.getHome(Group.class);
-				Group parentGroup = gHome.findByPrimaryKey(new Integer(parentGroupId));
-				group = business.createGroupUnder(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID(),event.getAliasID(),parentGroup);
-				
-				//do some permission stuff
-				//check if to inherit permissions from parent or its permission controller
-				checkForPermissionInheritance(eventContext,parentGroup,group);
-				
-				
-				
-				
-				//Group parentGroup = (Group)IDOLookup.findByPrimaryKey(Group.class,event.getParentID());
-				//parentGroup.addGroup(group);
-			} else {
-			  System.err.println("[CreateGroupWindow]: parentGroupType "+event.getParentType()+"not found");
-			}
-			
-			//Group group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID(),event.getAliasID());
-			// store group id and context, so change listners are able to open windows (e.g. the group property window)
-			groupId = (Integer) group.getPrimaryKey();
-			eventContext = e.getIWContext();
-			//set current user a owner of group
-			setCurrentUserAsOwnerOfGroup(eventContext, group);
-			setCurrentUsersPrimaryGroupPermissionsForGroup(eventContext,group);
-			
-			//owners should get the permission to give permission for this group
-			giveGroupsParentGroupOwnersPermitPermission(eventContext,group);
-			
-			
-			//get groupType tree and iterate through it and create default sub groups.
-			createDefaultSubGroups(group,business,e.getIWContext());
-					
-			
+                this.fireStateChanged();
+                // forget everything
+                reset();
 
-			
-			//TODO fix this
-			e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
-			e.getIWContext().getApplicationContext().removeApplicationAttribute("group_tree");			
-		}
-		catch (CreateException ce)
-		{
-			throw new EJBException(ce);
-		}
-		catch (RemoteException ex)
-		{
-			throw new EJBException(ex);
-		}
-		catch (FinderException fe)
-		{
-			throw new EJBException(fe);
-		}
+            } else if (event.doCancel()) {
+                this.reset();
+                _close = true;
+                this.fireStateChanged();
+            } else {
+                _groupName = event.getName();
+                _groupDescription = event.getDescription();
+                _groupType = event.getGroupType();
+            }
 
-    this.fireStateChanged();
-    // forget everything
-    reset();
+        }
+    }
 
+    private GroupBusiness getGroupBusiness(IWContext iwc) {
+        GroupBusiness business = null;
+        try {
+            business = (GroupBusiness) IBOLookup.getServiceInstance(iwc,
+                    GroupBusiness.class);
+        } catch (IBOLookupException e) {
+            e.printStackTrace();
+        }
+        return business;
+    }
 
-      } else if(event.doCancel()){
-        this.reset();
-        _close = true;
-        this.fireStateChanged();
-      } else {
-      	parentGropuNotSet = true;
-        _groupName = event.getName();
-        _groupDescription = event.getDescription();
-        _groupType = event.getGroupType();
-      }
+    private UserBusiness getUserBusiness(IWContext iwc) {
+        UserBusiness business = null;
+        try {
+            business = (UserBusiness) IBOLookup.getServiceInstance(iwc,
+                    UserBusiness.class);
+        } catch (IBOLookupException e) {
+            e.printStackTrace();
+        }
+        return business;
+    }
+
+    /*
+     * gives the owner of a parent and his main group permit permission to this
+     * group
+     */
+    private void giveGroupsParentGroupOwnersPermitPermission(IWContext iwc,
+            Group group) throws RemoteException {
+
+        GroupBusiness groupBiz = getGroupBusiness(iwc);
+        UserBusiness userBiz = getUserBusiness(iwc);
+        String groupId = group.getPrimaryKey().toString();
+        AccessController access = iwc.getAccessController();
+
+        Collection col = groupBiz.getParentGroupsRecursive(group);
+        if (col != null && !col.isEmpty()) {
+            Iterator iter = col.iterator();
+            while (iter.hasNext()) {
+                Group parent = (Group) iter.next();
+                Collection owners = AccessControl
+                        .getAllOwnerGroupPermissionsReverseForGroup(parent);
+
+                if (owners != null && !owners.isEmpty()) {
+                    Iterator iter2 = owners.iterator();
+                    while (iter2.hasNext()) {
+
+                        ICPermission perm = (ICPermission) iter2.next();
+                        User user = userBiz.getUser(perm.getGroupID());
+                        Group primary = user.getPrimaryGroup();
+                        String primaryGroupId = primary.getPrimaryKey()
+                                .toString();
+                        try {
+                            //the owners primary group
+                            access.setPermission(
+                                    AccessController.CATEGORY_GROUP_ID, iwc,
+                                    primaryGroupId, groupId,
+                                    access.PERMISSION_KEY_PERMIT, Boolean.TRUE);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Method createDefaultSubGroups.
+     * 
+     * @param group
+     * @param business
+     * @param iWContext
+     */
+    private void createDefaultSubGroups(Group group, GroupBusiness business,
+            IWContext iwc) throws RemoteException {
+        GroupType type;
+        try {
+            type = business.getGroupTypeHome().findByPrimaryKey(
+                    group.getGroupType());
+        } catch (FinderException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        Iterator iterator = type.getChildren();
+
+        while (iterator != null && iterator.hasNext()) {
+            GroupType gType = (GroupType) iterator.next();
+            String name = gType.getDefaultGroupName();
+
+            if (gType.getAutoCreate()) {
+                Integer numberOfInstances = gType
+                        .getNumberOfInstancesToAutoCreate();
+                int nrOfGroupsToCreate = 1;
+
+                if ((numberOfInstances != null)
+                        && (numberOfInstances.intValue() > 1)) {
+                    nrOfGroupsToCreate = numberOfInstances.intValue();
+                }
+
+                for (int i = 1; i <= nrOfGroupsToCreate; i++) {
+                    String typeString = gType.getType();
+                    String typeLocalizingKey = "auto.create.name." + typeString;
+                    String defaultValue = gType.getDescription();
+                    if ((defaultValue == null) || ("".equals(defaultValue)))
+                            defaultValue = typeString;
+
+                    //to avoid circular reference with beginning type
+                    //if( this.getGroupType().equals(typeString) ) continue;
+                    // rather add all types to a map to check
+
+                    if (name == null) {
+                        if (nrOfGroupsToCreate > 1) {
+                            typeLocalizingKey = typeLocalizingKey + " " + i;
+                            defaultValue = defaultValue + " " + i;
+                        }
+                        name = iwrb.getLocalizedString(typeLocalizingKey,
+                                defaultValue);
+                    } else {
+                        if (nrOfGroupsToCreate > 1) {
+                            name = name + " " + i;
+                        }
+
+                    }
+
+                    //create group then call recursive
+                    try {
+                        Group newGroup = business.createGroupUnder(name, "",
+                                typeString, group);
+
+                        applyPermissionSetting(iwc, group, newGroup);
+
+                        if (!type.isLeaf()) {
+                            createDefaultSubGroups(newGroup, business, iwc);
+                        }
+
+                    } catch (CreateException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+
+                }
+
+            }
+        }
+    }
+
+    private void applyPermissionSetting(IWContext iwc, Group parentGroup,
+            Group childGroup) throws RemoteException {
+
+        //set current user a owner of group
+        setCurrentUserAsOwnerOfGroup(iwc, childGroup);
+
+        //give the current users primary group all permission except for owner
+        giveCurrentUsersPrimaryGroupPermissionsForGroup(iwc, childGroup);
+
+        //owners should get the permission to give permission for this group
+        giveGroupsParentGroupOwnersPermitPermission(iwc, childGroup);
+
+        //check if to inherit permissions from parent or its permission
+        // controller
+        if (parentGroup != null) {
+            checkForPermissionInheritance(iwc, parentGroup, childGroup);
+        }
 
     }
-  }
 
-  
-private GroupBusiness getGroupBusiness(IWContext iwc) {
-	GroupBusiness business = null;
-	try {
-		business = (GroupBusiness)IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
-	} catch (IBOLookupException e) {
-		e.printStackTrace();
-	}
-	return business;
-}
+    /**
+     * If the groups parent has inherited permission this will also have it, or
+     * if the parent is a permission controlling group this group inherits.
+     * 
+     * @param iwc
+     * @param parentGroup
+     * @param newlyCreatedGroup
+     */
+    private void checkForPermissionInheritance(IWContext iwc,
+            Group parentGroup, Group newlyCreatedGroup) {
 
-private UserBusiness getUserBusiness(IWContext iwc) {
-	UserBusiness business = null;
-	try {
-		business = (UserBusiness)IBOLookup.getServiceInstance(iwc,UserBusiness.class);
-	} catch (IBOLookupException e) {
-		e.printStackTrace();
-	}
-	return business;
-}
+        if (parentGroup != null) {
+            //is controller
+            if (parentGroup.isPermissionControllingGroup()) {
+                newlyCreatedGroup.setPermissionControllingGroup(parentGroup);
+                newlyCreatedGroup.store();
+            }
+            //is being controlled
+            if (parentGroup.getPermissionControllingGroupID() > 0) {
+                newlyCreatedGroup.setPermissionControllingGroup(parentGroup
+                        .getPermissionControllingGroup());
+                newlyCreatedGroup.store();
+            }
 
-/*
- * gives the owner of a parent and his main group permit permission to this group
- */
-private void giveGroupsParentGroupOwnersPermitPermission(IWContext iwc, Group group) throws RemoteException {
-	
-	GroupBusiness groupBiz = getGroupBusiness(iwc);
-	UserBusiness userBiz = getUserBusiness(iwc);
-	String groupId = group.getPrimaryKey().toString();
-	AccessController access = iwc.getAccessController();
-	
-	
-	Collection col = groupBiz.getParentGroupsRecursive(group);
-	if(col!=null && !col.isEmpty()){
-		Iterator iter = col.iterator();
-		while (iter.hasNext()) {
-			Group parent = (Group) iter.next();
-			Collection owners = AccessControl.getAllOwnerGroupPermissionsReverseForGroup(parent);
-			
-			if(owners!=null && !owners.isEmpty()){
-				Iterator iter2 = owners.iterator();
-				while (iter2.hasNext()) {
-					
-					ICPermission perm = (ICPermission) iter2.next();
-					User user = userBiz.getUser(perm.getGroupID());
-					Group primary = user.getPrimaryGroup();
-					String primaryGroupId = primary.getPrimaryKey().toString();
-					try {
-						//the owner
-						access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,user.getPrimaryKey().toString(),groupId,access.PERMISSION_KEY_PERMIT,Boolean.TRUE);
-						//the owners primary group
-						access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,groupId,access.PERMISSION_KEY_PERMIT,Boolean.TRUE);	
-					} catch (Exception e) {			
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
-}
+        }
 
+    }
 
-	/**
-	 * Method createDefaultSubGroups.
-	 * @param group
-	 * @param business
-	 * @param iWContext
-	 */
-	private void createDefaultSubGroups(Group group, GroupBusiness business, IWContext iwc) throws RemoteException{
-		GroupType type;
-		try {
-			type = business.getGroupTypeHome().findByPrimaryKey(group.getGroupType());
-		}
-		catch (FinderException e) {
-			e.printStackTrace();
-			return;
-		}
-		
-		
-		Iterator iterator = type.getChildren();
-			
-		while (iterator!=null && iterator.hasNext()) {
-			GroupType gType = (GroupType) iterator.next();
-			String name = gType.getDefaultGroupName();
-			
-			if(gType.getAutoCreate()){
-				Integer numberOfInstances = gType.getNumberOfInstancesToAutoCreate();
-				int nrOfGroupsToCreate = 1;
-				
-				if( (numberOfInstances != null) && (numberOfInstances.intValue()>1) ){
-					nrOfGroupsToCreate = numberOfInstances.intValue();
-				}
-				
-				for(int i = 1 ; i<=nrOfGroupsToCreate ; i++){
-					String typeString = gType.getType();
-					String typeLocalizingKey = "auto.create.name."+typeString;
-					String defaultValue = gType.getDescription();
-					if( (defaultValue == null ) || ("".equals(defaultValue)) ) defaultValue = typeString;
-		
-					//to avoid circular reference with beginning type
-					//if( this.getGroupType().equals(typeString) ) continue; rather add all types to a map to check
-					
-					if(name==null){
-						if(nrOfGroupsToCreate>1){
-							typeLocalizingKey=typeLocalizingKey+" "+i;
-							defaultValue = defaultValue +" "+i;
-						}
-						name =  iwrb.getLocalizedString(typeLocalizingKey,defaultValue);
-					}
-					else{
-						if(nrOfGroupsToCreate>1){
-							name=name+" "+i;
-						}
-						
-					}
-					//create group then call recursive
-					try {
-						Group newGroup = business.createGroupUnder(name,"",typeString,group);
-						setCurrentUserAsOwnerOfGroup(iwc,newGroup);
-						setCurrentUsersPrimaryGroupPermissionsForGroup(iwc,newGroup);
-						
-						checkForPermissionInheritance(iwc,group,newGroup);
-						
-						
-						if(!type.isLeaf()){
-							createDefaultSubGroups(newGroup,business,iwc);
-						}
-									
-						
-					}
-					catch (CreateException e) {
-						e.printStackTrace();
-						return;
-					}
-				
-				}
-			
-			}
-		}
-	}
-  
-  /**
-   * If the groups parent has inherited permission this will also have it, or if the parent is a permission controlling group this group inherits.
-	 * @param iwc
-	 * @param parentGroup
-	 * @param newlyCreatedGroup
-	 */
-	private void checkForPermissionInheritance(IWContext iwc, Group parentGroup, Group newlyCreatedGroup) {
-		
-		if(parentGroup!=null ){
-			//is controller
-			if(parentGroup.isPermissionControllingGroup()){
-				newlyCreatedGroup.setPermissionControllingGroup(parentGroup);
-				newlyCreatedGroup.store();
-			}
-			//is being controlled
-			if(parentGroup.getPermissionControllingGroupID()>0){
-				newlyCreatedGroup.setPermissionControllingGroup(parentGroup.getPermissionControllingGroup());
-				newlyCreatedGroup.store();
-			}
-			
-		}
-		
-		
-	}
+    private void setCurrentUserAsOwnerOfGroup(IWUserContext iwc, Group group) {
+        User user = iwc.getCurrentUser();
+        AccessController access = iwc.getAccessController();
 
+        try {
+            access.setAsOwner(group, ((Integer) user.getPrimaryKey())
+                    .intValue(), iwc);
+        } catch (Exception ex) {
+            ex.printStackTrace();
 
-private void setCurrentUserAsOwnerOfGroup(IWUserContext iwc, Group group){
-		User user = iwc.getCurrentUser();
-		AccessController access = iwc.getAccessController();
-		//get users and add them as owners also, user.getPrimaryGroup();
-		
-		try {
-			access.setAsOwner(group,((Integer)user.getPrimaryKey()).intValue(), iwc);
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		
-		}
-  }
-  
-	private void setCurrentUsersPrimaryGroupPermissionsForGroup(IWUserContext iwc, Group group){
-		User user = iwc.getCurrentUser();
-		AccessController access = iwc.getAccessController();
-		try {
-			Group primary = user.getPrimaryGroup();
-			String primaryGroupId = primary.getPrimaryKey().toString();
-			String newGroupId = group.getPrimaryKey().toString();
-			//TODO Eiki create methods for this in accesscontrol
-			//create permission
-			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_CREATE,Boolean.TRUE);
-			//edit permission
-			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_EDIT,Boolean.TRUE);
-			//delete permission
-			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_DELETE,Boolean.TRUE);
-			//view permission
-			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_VIEW,Boolean.TRUE);
-			//permission to give other permission
-			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_PERMIT,Boolean.TRUE);
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		
-		}
-	}
-	
+        }
+    }
+
+    private void giveCurrentUsersPrimaryGroupPermissionsForGroup(
+            IWUserContext iwc, Group group) {
+        User user = iwc.getCurrentUser();
+        AccessController access = iwc.getAccessController();
+        try {
+            Group usersPrimaryGroup = user.getPrimaryGroup();
+            String usersPrimaryGroupId = usersPrimaryGroup.getPrimaryKey()
+                    .toString();
+            String theGroupIDToSetPermissionTo = group.getPrimaryKey()
+                    .toString();
+
+            //create permission
+            access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc,
+                    usersPrimaryGroupId, theGroupIDToSetPermissionTo,
+                    access.PERMISSION_KEY_CREATE, Boolean.TRUE);
+            //edit permission
+            access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc,
+                    usersPrimaryGroupId, theGroupIDToSetPermissionTo,
+                    access.PERMISSION_KEY_EDIT, Boolean.TRUE);
+            //delete permission
+            access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc,
+                    usersPrimaryGroupId, theGroupIDToSetPermissionTo,
+                    access.PERMISSION_KEY_DELETE, Boolean.TRUE);
+            //view permission
+            access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc,
+                    usersPrimaryGroupId, theGroupIDToSetPermissionTo,
+                    access.PERMISSION_KEY_VIEW, Boolean.TRUE);
+            //permission to give other permission
+            access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc,
+                    usersPrimaryGroupId, theGroupIDToSetPermissionTo,
+                    access.PERMISSION_KEY_PERMIT, Boolean.TRUE);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+        }
+    }
 
 }
