@@ -20,6 +20,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
+import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupDomainRelationTypeHome;
 import com.idega.user.data.GroupType;
@@ -113,10 +114,29 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 		try
 		{
 			GroupBusiness business = (GroupBusiness)IBOLookup.getServiceInstance(e.getIWContext(),GroupBusiness.class);
-			Group group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID(),event.getAliasID());
-      // store group id and context, so change listners are able to open windows (e.g. the group property window)
-      groupId = (Integer) group.getPrimaryKey();
-      eventContext = e.getIWContext();
+
+			// Create under
+			Group group=null;
+			if(event.getParentType() == CreateGroupEvent.TYPE_DOMAIN){  // under Domain
+				group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID(),event.getAliasID());
+				//GroupDomainRelationTypeHome gdrHome = (GroupDomainRelationTypeHome)IDOLookup.getHome(GroupDomainRelationType.class);
+				//ICDomain domain = (ICDomain)IDOLookup.findByPrimaryKey(ICDomain.class,event.getParentID());
+				//business.addGroupUnderDomain(domain,group,gdrHome.getTopNodeRelationType());
+			} else if(event.getParentType() == CreateGroupEvent.TYPE_GROUP){ // under other group
+				int parentGroupId = event.getParentID();
+				GroupHome gHome = (GroupHome)IDOLookup.getHome(Group.class);
+				Group parentGroup = gHome.findByPrimaryKey(new Integer(parentGroupId));
+				group = business.createGroupUnder(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID(),event.getAliasID(),parentGroup);
+				//Group parentGroup = (Group)IDOLookup.findByPrimaryKey(Group.class,event.getParentID());
+				//parentGroup.addGroup(group);
+			} else {
+			  System.err.println("[CreateGroupWindow]: parentGroupType "+event.getParentType()+"not found");
+			}
+			
+			//Group group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID(),event.getAliasID());
+			// store group id and context, so change listners are able to open windows (e.g. the group property window)
+			groupId = (Integer) group.getPrimaryKey();
+			eventContext = e.getIWContext();
 			//set current user a owner of group
 			setCurrentUserAsOwnerOfGroup(e.getIWContext(), group);
 			
@@ -124,17 +144,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 			createDefaultSubGroups(group,business,e.getIWContext());
 					
 			
-			// Create under
-			if(event.getParentType() == CreateGroupEvent.TYPE_DOMAIN){  // under Domain
-			  GroupDomainRelationTypeHome gdrHome = (GroupDomainRelationTypeHome)IDOLookup.getHome(GroupDomainRelationType.class);
-			  ICDomain domain = (ICDomain)IDOLookup.findByPrimaryKey(ICDomain.class,event.getParentID());
-			  business.addGroupUnderDomain(domain,group,gdrHome.getTopNodeRelationType());
-			} else if(event.getParentType() == CreateGroupEvent.TYPE_GROUP){ // under other group
-			  Group parentGroup = (Group)IDOLookup.findByPrimaryKey(Group.class,event.getParentID());
-			  parentGroup.addGroup(group);
-			} else {
-			  System.err.println("[CreateGroupWindow]: parentGroupType "+event.getParentType()+"not found");
-			}
+
 			
 			//TODO fix this
 			e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
@@ -225,10 +235,9 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 					}
 					//create group then call recursive
 					try {
-						Group newGroup = business.createGroup(name,"",typeString);
+						Group newGroup = business.createGroupUnder(name,"",typeString,group);
 						setCurrentUserAsOwnerOfGroup(iwc,newGroup);
 						setCurrentUsersPrimaryGroupPermissionsForGroup(iwc,newGroup);
-						group.addGroup(newGroup);
 						if(!type.isLeaf()){
 							createDefaultSubGroups(newGroup,business,iwc);
 						}
