@@ -4,6 +4,7 @@ import com.idega.presentation.TabbedPropertyWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.TabbedPropertyPanel;
 import com.idega.presentation.PresentationObject;
+import com.idega.util.IWColor;
 
 /**
  * Title:        User
@@ -19,7 +20,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
 
   public UserPropertyWindow(){
     super();
-    this.setBackgroundColor("#e6e6e6");
+    this.setBackgroundColor(new IWColor(207,208,210));
   }
 
   public String getSessionAddressString(){
