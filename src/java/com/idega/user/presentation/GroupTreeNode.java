@@ -321,6 +321,17 @@ public class GroupTreeNode implements ICTreeNode {
 				throw new UnsupportedOperationException("Operation not supported for type:" + getNodeType());
 		}
 	}
+	
+	public String getGroupType() {
+		try {
+			if (this._nodeType == TYPE_GROUP)
+				return _group.getGroupType();
+			return null;
+		}
+		catch (RemoteException e) {
+			return null;
+		}
+	}
 
 	public int getNodeID() {
 		switch (_nodeType) {

@@ -118,14 +118,9 @@ public class GroupTreeView extends IWTreeControl {
 
 	public PresentationObject getObjectToAddToColumn(int colIndex, GroupTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
 		//System.out.println("adding into column "+ colIndex + " for node " + node);
-		Group group = (Group) node;
 		String image = "treeviewer_node_leaf";
-		try {
-			image = group.getGroupType();
-		}
-		catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		if (node.getGroupType() != null)
+			image = node.getGroupType();
 		
 		switch (colIndex) {
 			case 1 :
@@ -237,6 +232,7 @@ public class GroupTreeView extends IWTreeControl {
 				}
 			case 2 :
 				Link l = this.getLinkPrototypeClone(node.getNodeName());
+				l.setOnClick("this.style.fontWeight='bold';");
 
 				switch (node.getNodeType()) {
 					case GroupTreeNode.TYPE_DOMAIN :
@@ -263,7 +259,6 @@ public class GroupTreeView extends IWTreeControl {
 					String nodeName = node.getNodeName();
 					l.setURL("#");
 					l.setOnClick(ONCLICK_FUNCTION_NAME + "('" + nodeName + "','" + node.getNodeType() + "_" + node.getNodeID() + "')");
-					l.setOnClick("this.style.fontWeight='bold';");
 				}
 				//        else if(nodeActionPrm != null){
 				//          l.addParameter(nodeActionPrm,node.getNodeID());
