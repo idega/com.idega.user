@@ -2,8 +2,11 @@ package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 
 import com.idega.business.IBOLookup;
 import com.idega.presentation.IWContext;
@@ -19,6 +22,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	
 	private List selectedGroups = null;
 	private List availableGroups = null;
+	private Map namedAvailableGroups = null;
 	private String selectedGroupsParameter = null;
 	private static final String selectedGroupsParameterDefaultValue = "iw_us_sel_group_id";
 	private Group rootGroup = null;
@@ -69,8 +73,18 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 		if( rootGroup!=null ){
 			setAvailableGroups( com.idega.util.ListUtil.convertCollectionToList(getGroupBusiness(iwc).getGroupsContained(rootGroup)) );
 		}
+		else if( namedAvailableGroups!=null ){
+			Iterator iter = namedAvailableGroups.keySet().iterator();
+			
+			while (iter.hasNext()) {
+				String key = (String) iter.next();
+				
+				Group group = (Group)  namedAvailableGroups.get(key) ;
+				this.addToAvailableBox( ((Integer)group.getPrimaryKey()).toString() , key );
+			}
 		
-		if( (availableGroups != null) &&  !availableGroups.isEmpty() ){
+		}
+		else if( (availableGroups != null) &&  !availableGroups.isEmpty() ){
 			Iterator iter = availableGroups.iterator();
 			while (iter.hasNext()) {
 				Group group = (Group) iter.next();
@@ -177,7 +191,8 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 		 * Had to add this method because the former one doesn't work as multivalued.
 		 * FIX!!!
 		 */
-		setAddToAvailableGroups(group);
+		if( namedAvailableGroups==null ) namedAvailableGroups = new HashMap();
+		namedAvailableGroups.put(name, group);
 	
 		
 	}
