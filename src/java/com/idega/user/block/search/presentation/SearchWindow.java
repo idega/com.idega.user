@@ -2,7 +2,9 @@ package com.idega.user.block.search.presentation;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
@@ -155,10 +157,12 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		Collection groupsCol = getUserBusiness(iwc).getAllGroupsWithViewPermission(iwc.getCurrentUser(),iwc);
 		
 		Iterator nodes = groupsCol.iterator();
+		Map cachedParents = new HashMap();
+		Map cachedGroups = new HashMap();
 		for(int i = 0;nodes.hasNext();i++) {
 			Group group = (Group) nodes.next();
 			try {
-				groupSel.addMenuElement( ((Integer)group.getPrimaryKey()).intValue(), getGroupBusiness(iwc).getNameOfGroupWithParentName(group) );
+				groupSel.addMenuElement( ((Integer)group.getPrimaryKey()).intValue(), getGroupBusiness(iwc).getNameOfGroupWithParentName(group,cachedParents,cachedGroups) );
 				//getchildren
 			} catch (NullPointerException e) {
 				System.out.println("[SearchWindow]: null in group list index "+ i);
