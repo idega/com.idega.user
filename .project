@@ -14,8 +14,6 @@
     <project>com.idega.block.staff</project>
     <project>com.idega.block.importer</project>
     <project>com.idega.block.dataquery</project>
-    <project>com.idega.block.datareport</project>
-    <project>com.idega.block.cal</project>
   </projects>
   <buildSpec>
     <buildCommand>
