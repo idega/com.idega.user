@@ -426,7 +426,8 @@ public class CreateUser extends Window {
 			Link gotoLink = new Link();
 			gotoLink.setWindowToOpen(UserPropertyWindow.class);
 			gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, newUser.getPrimaryKey().toString());
-			setWindowToOpenOnLoad(gotoLink, iwc);
+      String script = "window.opener."+ gotoLink.getWindowToOpenCallingScript(iwc);
+      setOnLoad(script);
 		}
 
 	}
