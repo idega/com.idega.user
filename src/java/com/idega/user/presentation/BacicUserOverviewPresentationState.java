@@ -34,7 +34,7 @@ public class BacicUserOverviewPresentationState extends IWPresentationStateImpl 
 
 
 
-  public boolean actionPerformed(IWPresentationEvent e)throws IWException{
+  public void actionPerformed(IWPresentationEvent e)throws IWException{
 //    System.out.println("!!!!ÍJHHAAAAAAAAA!!!!!!!!!!!!!!");
 
     if(color == color1){
@@ -68,7 +68,6 @@ public class BacicUserOverviewPresentationState extends IWPresentationStateImpl 
 //    if(remove){
 //      this.removeChangeListener((ChangeListener)e.getPage());
 //    }
-    return true;
   }
 
 
