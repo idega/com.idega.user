@@ -59,7 +59,7 @@ public class UserApplication extends IWBrowser {
     this.setSpanPixels(POS_TOP,51); //changed from (POS_TOP, 68);
     this.setSpanPixels(POS_LEFTMAIN, 200);
     this.setSpanPixels(POS_MENU,30); //changed from (POS_MENU,26);
-    this.setSpanPixels(POS_BOTTOM,26); //changed from (POS_MENU,26);
+    this.setSpanPixels(POS_BOTTOM,1); //changed from (POS_MENU,26)
 
     UserApplicationMenuArea menuArea = new UserApplicationMenuArea();
 		UserApplicationControlArea treeArea = new UserApplicationControlArea();

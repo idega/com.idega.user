@@ -99,7 +99,9 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
     iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
-
+    
+	
+	
     IWLocation location = (IWLocation)this.getLocation().clone();
     location.setSubID(1);
     groupTree.setLocation(location,iwc);
@@ -189,7 +191,14 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
   public void main(IWContext iwc) throws Exception {
     this.empty();
+	String styleScript = "UserApplicationStyle.css";
+	IWBundle iwb = getBundle(iwc);
+	Page parentPage = this.getParentPage();
+	String styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
+	parentPage.addStyleSheetURL(styleSrc);
+	
     this.add(groupTree);
+    
     
     if(iwc.isSuperAdmin()){
     	GroupTreeNode node = new GroupTreeNode(iwc.getDomain(),iwc.getApplicationContext());
