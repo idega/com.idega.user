@@ -5,13 +5,16 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
 import javax.ejb.RemoveException;
 import javax.swing.event.ChangeListener;
+
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.data.Address;
 import com.idega.core.data.Email;
 import com.idega.core.data.Phone;
@@ -22,8 +25,6 @@ import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWLocation;
-import com.idega.idegaweb.IWPresentationLocation;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
@@ -43,7 +44,6 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWColor;
-import com.idega.util.ListUtil;
 /**
  * Title:        User
  * Description:
@@ -70,31 +70,33 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	public BasicUserOverview() {
 		super();
 	}
+	
 	public void setControlEventModel(IWPresentationEvent model) {
 		_controlEvent = model;
 		if (toolbar == null)
 			toolbar = new BasicUserOverViewToolbar();
 		toolbar.setControlEventModel(model);
 	}
+	
 	public void setControlTarget(String controlTarget) {
 		_controlTarget = controlTarget;
 		if (toolbar == null)
 			toolbar = new BasicUserOverViewToolbar();
 		toolbar.setControlTarget(controlTarget);
 	}
+	
 	public Table getUsers(IWContext iwc) throws Exception {
-		this.empty();
-		iwb = this.getBundle(iwc);
-		iwrb = this.getResourceBundle(iwc);
+
 		boolean listAll = (iwb.getProperty(ALWAYS_LIST_ALL_USERS) != null); //temporary solutions
-		if (toolbar == null)
-			toolbar = new BasicUserOverViewToolbar();
+		if (toolbar == null) toolbar = new BasicUserOverViewToolbar();
 		BasicUserOverviewPS ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
+		
 		Group selectedGroup = ps.getSelectedGroup();
 		IBDomain selectedDomain = ps.getSelectedDomain();
 		Collection users = null;
 		int userCount = 0;
 		if (selectedGroup != null) {
+			
 			toolbar.setSelectedGroup(selectedGroup);
 			users = this.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
 			if (users == null) {
@@ -116,7 +118,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		returnTable.setHeight(2, Table.HUNDRED_PERCENT);
 		returnTable.setHeight(1, 22);
 		returnTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
-		returnTable.add(toolbar, 1, 1);
+		
+		if(selectedGroup!=null) returnTable.add(toolbar, 1, 1);
+		
 		/**
 		 * @todo important: change back to  List adminUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
 		 */
@@ -541,8 +545,24 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	}
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
-		this.add(getUsers(iwc));
+		iwb = this.getBundle(iwc);
+		iwrb = this.getResourceBundle(iwc);
 		this.getParentPage().setAllMargins(0);
+		
+		AccessController access = iwc.getAccessController();
+		BasicUserOverviewPS ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
+		Group selectedGroup = ps.getSelectedGroup();
+		
+		//if(access.hasViewPermissionFor(selectedGroup,iwc)){
+			this.add(getUsers(iwc));
+	//	}
+	//	else{
+	//		add(iwrb.getLocalizedString("no.view.permission","You are not allowed to view the data for this group."));
+	//	}
+		
+		
+		
+		
 		//    this.getParentPage().setBackgroundColor("#d4d0c8");
 		// this.getParentPage().setBackgroundColor(IWColor.getHexColorString(250,245,240));
 		//    this.getParentPage().setBackgroundColor(((BasicUserOverviewPS)this.getPresentationState(iwc)).getColor());
@@ -663,7 +683,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			if ((userId = (String) iterator.next()) != null) {
 				try {
 					User currentUser = iwc.getCurrentUser();
-					userBusiness.deleteUser(Integer.parseInt(userId)); //, currentUser);
+					userBusiness.deleteUser(Integer.parseInt(userId), currentUser);
 				}
 				catch (RemoveException e) {
 					System.err.println("[BasicUserOverview] user with id " + userId + " could not be removed" + e.getMessage());
