@@ -117,7 +117,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	
 	protected Table getList(IWContext iwc) throws Exception {		
 		
-		if (toolbar == null) toolbar = getToolbar();
+		toolbar = getToolbar();
 		//	create the return table
 		Table returnTable = new Table(1, 2);
 		returnTable.setCellpaddingAndCellspacing(0);
