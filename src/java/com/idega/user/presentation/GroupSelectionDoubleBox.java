@@ -1,10 +1,13 @@
 package com.idega.user.presentation;
 
+import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.idega.business.IBOLookup;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.ui.SelectionDoubleBox;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 
 /**
@@ -17,6 +20,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	private Collection availableGroups = null;
 	private String selectedGroupsParameter = null;
 	private static final String selectedGroupsParameterDefaultValue = "iw_us_sel_group_id";
+	private Group rootGroup = null;
 
 	/**
 	 * Constructor for GroupSelectionDoubleBox.
@@ -61,6 +65,10 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	public void main(IWContext iwc) throws Exception {
 		super.main(iwc);
 		
+		if( rootGroup!=null ){
+			setAvailableGroups(getGroupBusiness(iwc).getGroupsContained(rootGroup));
+		}
+		
 		if( (availableGroups != null) &&  !availableGroups.isEmpty() ){
 			Iterator iter = availableGroups.iterator();
 			while (iter.hasNext()) {
@@ -73,7 +81,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 			Iterator iter = selectedGroups.iterator();
 			while (iter.hasNext()) {
 				Group group = (Group) iter.next();
-				this.addToAvailableBox( ((Integer)group.getPrimaryKey()).toString() , group.getName() );
+				this.addToSelectedBox( ((Integer)group.getPrimaryKey()).toString() , group.getName() );
 			}
 		}
 		
@@ -128,6 +136,26 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	public void setSelectedGroupsParameter(String selectedGroupsParameter) {
 		this.selectedGroupsParameter = selectedGroupsParameter;
 		this.getRightBox().setName(selectedGroupsParameter);
+	}
+
+	/**
+	 * Returns the rootGroup.
+	 * @return Group
+	 */
+	public Group getRootGroup() {
+		return rootGroup;
+	}
+
+	/**
+	 * Sets the rootGroup.
+	 * @param rootGroup The rootGroup to set
+	 */
+	public void setRootGroup(Group rootGroup) {
+		this.rootGroup = rootGroup;
+	}
+	
+	private GroupBusiness getGroupBusiness(IWContext iwc) throws RemoteException {
+		return (GroupBusiness) IBOLookup.getServiceInstance(iwc,GroupBusiness.class);	
 	}
 
 }
