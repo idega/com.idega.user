@@ -9,6 +9,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.PrintButton;
 import com.idega.user.app.Toolbar;
 import com.idega.user.app.UserApplication;
 import com.idega.user.data.Group;
@@ -57,13 +58,16 @@ public class BasicUserOverViewToolbar extends Toolbar {
 		toolbarTable.setAlignment(2, 2, Table.HORIZONTAL_ALIGN_RIGHT);
 
 		if (selectedGroup != null) {
-			Text groupName = new Text(selectedGroup.getName() + Text.NON_BREAKING_SPACE);
-			groupName.setFontFace(Text.FONT_FACE_VERDANA);
-			groupName.setFontSize(Text.FONT_SIZE_7_HTML_1);
-			groupName.setBold();
+			setTitle(selectedGroup.getName() + Text.NON_BREAKING_SPACE);
+		}
+		
+		if( title!=null ){
+			Text text = new Text(title);
+			text.setFontFace(Text.FONT_FACE_VERDANA);
+			text.setFontSize(Text.FONT_SIZE_7_HTML_1);
+			text.setBold();
 
-			toolbarTable.add(groupName, 2, 2);
-
+			toolbarTable.add(title, 2, 2);
 		}
 
 		IWColor color = new IWColor(230, 230, 230); //jonni color
@@ -184,6 +188,8 @@ public class BasicUserOverViewToolbar extends Toolbar {
 			}
 		}
 
+		toolbar1.add(new PrintButton(),6,1);
+		
 		//calendar
 		// toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("calendar","Calendar"), iwb.getImage("calendar.gif"), com.idega.block.news.presentation.News.class),4,1);
 		//history

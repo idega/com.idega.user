@@ -56,7 +56,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	public static final String DELETE_USERS_KEY = "delete_selected_users";
 	private String _controlTarget = null;
 	private IWPresentationEvent _controlEvent = null;
-	private IWResourceBundle iwrb = null;
+	protected IWResourceBundle iwrb = null;
 	private IWBundle iwb = null;
 	protected BasicUserOverviewPS _presentationState = null;
 	private BasicUserOverViewToolbar toolbar = null;
@@ -148,7 +148,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		Collection users = getEntries(iwc);
 
 //fill the returnTable
-		if (users != null) {
+		if (users != null && !users.isEmpty()) {
 			
 			EntityBrowser entityBrowser = getEntityBrowser(users,iwc);
 			// put browser into a form
@@ -184,9 +184,24 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			return returnTable;
 	
 		}
-		else return returnTable;  //users == null
+		else{
+			PresentationObject po = getEmptyListPresentationObject();
+			if( po != null ){
+				returnTable.add(po,1,2); 
+			}
+			
+			return returnTable;
+		}
 		
 	}
+	/**
+	 * This method is called everytime the getEntities method returns null or empty list.
+	 * @return a presentation object
+	 */
+	protected PresentationObject getEmptyListPresentationObject() {
+		return null;
+	}
+
 	/**
 	 * @return BasicUserOverViewToolbar
 	 */

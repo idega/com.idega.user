@@ -39,31 +39,13 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
 	protected Group _selectedGroup = null;
 	protected IBDomain _selectedDomain = null;
 
-  private int _selectedPartitionDefaultValue = 0;
-  private int _partitionSizeDefaultValue = 30;
-  private int _firstPartitionIndexDefaultValue = 0;
-
-  private int _selectedPartition = _selectedPartitionDefaultValue;
-  private int _partitionSize = _partitionSizeDefaultValue;
-  private int _firstPartitionIndex = _firstPartitionIndexDefaultValue;
+ 
 
   public BasicUserOverviewPS() {
 
   }
   
 
-
-  public int getSelectedPartition(){
-    return _selectedPartition;
-  }
-
-  public int getPartitionSize(){
-    return _partitionSize;
-  }
-
-  public int getFirstPartitionIndex(){
-    return _firstPartitionIndex;
-  }
 
   public Group getSelectedGroup(){
     return _selectedGroup;
@@ -77,9 +59,6 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
     super.reset();
     _selectedGroup = null;
     _selectedDomain = null;
-    _selectedPartition = _selectedPartitionDefaultValue;
-    _partitionSize = _partitionSizeDefaultValue;
-    _firstPartitionIndex = _firstPartitionIndexDefaultValue;
   }
 
 
@@ -99,9 +78,6 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
     if(e instanceof SelectGroupEvent){
       _selectedGroup = ((SelectGroupEvent)e).getSelectedGroup();
       _selectedDomain = null;
-      _selectedPartition = _selectedPartitionDefaultValue;
-      _partitionSize = _partitionSizeDefaultValue;
-      _firstPartitionIndex = _firstPartitionIndexDefaultValue;
       parentGroupOfSelection = ((SelectGroupEvent)e).getParentGroupOfSelection();
       parentDomainOfSelection = ((SelectGroupEvent)e).getParentDomainOfSelection();
       this.fireStateChanged();
@@ -110,19 +86,10 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
     if(e instanceof SelectDomainEvent){
       _selectedDomain = ((SelectDomainEvent)e).getSelectedDomain();
       _selectedGroup = null;
-      _selectedPartition = _selectedPartitionDefaultValue;
-      _partitionSize = _partitionSizeDefaultValue;
-      _firstPartitionIndex = _firstPartitionIndexDefaultValue;
       this.fireStateChanged();
     }
 
-    if(e instanceof PartitionSelectEvent){
-      _selectedPartition = ((PartitionSelectEvent)e).getSelectedPartition();
-      _partitionSize = ((PartitionSelectEvent)e).getPartitionSize();
-      _firstPartitionIndex = ((PartitionSelectEvent)e).getFirstPartitionIndex();
-      this.fireStateChanged();
-    }
-    
+
     if (e instanceof EntityBrowserEvent)  {
       IWContext mainIwc = e.getIWContext();
       String[] userIds;
