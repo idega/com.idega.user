@@ -42,8 +42,9 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private TextInput nameField;
 	private TextArea descriptionField;
 	private IBPageChooser homepageField;
-	private DropdownMenu grouptypeField;
-
+//	private DropdownMenu grouptypeField;
+	private Text grouptypeField;
+	
 	private Text nameText;
 	private Text descriptionText;
 	private Text homepageText;
@@ -113,7 +114,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		}
 
 		String type = (String) fieldValues.get(grouptypeFieldName);
-		grouptypeField.setSelectedElement(type);
+		//grouptypeField.setSelectedElement(type);
+		grouptypeField.setText(type);
 	}
 
 	public void initializeFields() {
@@ -127,7 +129,10 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 
 		homepageField = new IBPageChooser(homepageFieldName);
 
-		grouptypeField = new DropdownMenu(grouptypeFieldName);
+		//grouptypeField = new DropdownMenu(grouptypeFieldName);
+		grouptypeField = getTextObject();
+		grouptypeField.setBold(false);
+		
 		memberofFrame = new IFrame("ic_user_memberof_ic_group", GroupList.class);
 		memberofFrame.setHeight(150);
 		memberofFrame.setWidth(367);
@@ -321,6 +326,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
     catch (Exception ex)  {
       throw new RuntimeException(ex.getMessage());
     }
+    /*
     Collection groupTypes = groupBusiness.getAllAllowedGroupTypesForChildren(getSelectedParentGroupId(), iwc);
     boolean groupTypeOfCurrentGroupIsInList = false;
     Iterator iterator = groupTypes.iterator();
@@ -334,5 +340,9 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
     }  
     if (!groupTypeOfCurrentGroupIsInList)
       grouptypeField.addMenuElementFirst(groupTypeString, iwrb.getLocalizedString(groupTypeString, groupTypeString));
+      */
+		grouptypeField.setText(iwrb.getLocalizedString(groupTypeString, groupTypeString));
+      
+      
   }
 }
