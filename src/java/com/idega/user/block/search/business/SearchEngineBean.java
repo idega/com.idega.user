@@ -7,6 +7,7 @@ import com.idega.data.IDOLookup;
 import com.idega.user.block.search.event.UserSearchEvent;
 import com.idega.user.data.User;
 import com.idega.user.data.UserHome;
+import com.idega.util.text.TextSoap;
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description: </p>
@@ -64,6 +65,7 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 		if (searchString == null || searchString.length() <2)
 			return null;
 		try {
+			searchString = TextSoap.removeWhiteSpaceFromBeginningAndEndOfString(searchString);
 			UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
 			Collection entities = userHome.findUsersBySearchCondition(searchString, false);
 			return entities;
