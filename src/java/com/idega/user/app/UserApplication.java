@@ -105,6 +105,7 @@ public class UserApplication extends IWBrowser {
   }
 
   public void main(IWContext iwc) throws Exception {
+  		setTitle(getResourceBundle(iwc).getLocalizedString("user_application.title", "User Application"));
 
     Frame f = this.getFrame(this.getFrameName(POS_MAIN));
 
