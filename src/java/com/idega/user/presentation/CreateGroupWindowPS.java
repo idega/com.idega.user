@@ -146,7 +146,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 						// create under the supplied parent group
 						//if (false) {
 						
-						List errors = canCreateSubGroupPluginCheck(_parentGroup,eventContext);
+						List errors = canCreateSubGroupPluginCheck(_parentGroup,_groupType,eventContext);
 						
 						if (errors.isEmpty() && eventContext.getAccessController().hasEditPermissionFor(_parentGroup, eventContext)) {
 							group = groupBusiness.createGroupUnder(_groupName, _groupDescription,
@@ -270,7 +270,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 	 * @param eventContext2
 	 * @return A list of messages why we cannot create a sub group
 	 */
-	protected List canCreateSubGroupPluginCheck(Group parentGroup, IWContext iwc) {
+	protected List canCreateSubGroupPluginCheck(Group parentGroup, String groupTypeOfNewGroup, IWContext iwc) {
 		GroupBusiness groupBiz = getGroupBusiness(iwc);
 		List errors = new ArrayList();
 		try {
@@ -278,7 +278,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 			Iterator iter = plugins.iterator();
 			while(iter.hasNext()){
 				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness)iter.next();
-				String error = pluginBiz.canCreateSubGroup(parentGroup);
+				String error = pluginBiz.canCreateSubGroup(parentGroup,groupTypeOfNewGroup);
 				if(error!=null){
 					errors.add(error);
 				}

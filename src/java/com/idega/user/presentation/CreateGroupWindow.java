@@ -270,10 +270,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 							allReasons.append(",");
 						}
 					}
-					
-					this.setAlertOnLoad(allReasons.toString());
-					
-					
+					this.setAlertOnLoad(allReasons.toString());	
 				}
 				else{
 					this.setAlertOnLoad(iwrb.getLocalizedString("cannot.create.group.no.edit.permission","You cannot create a group under that group, you do not have edit permission for it."));
