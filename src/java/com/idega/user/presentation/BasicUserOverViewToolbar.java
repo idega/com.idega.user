@@ -14,8 +14,7 @@ import com.idega.presentation.Table;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.user.presentation.CreateGroupWindow;
-import com.idega.user.presentation.CreateUser;
+import com.idega.user.data.Group;
 import com.idega.user.event.ChangeClassEvent;
 import com.idega.util.IWColor;
 
@@ -28,11 +27,16 @@ import com.idega.util.IWColor;
  * Window>Preferences>Java>Code Generation.
  */
 public class BasicUserOverViewToolbar extends Toolbar {
+	private Group selectedGroup;
 
   /**
    * Constructor for BasicUserOverViewToolbar.
    */
   public BasicUserOverViewToolbar() {
+  }
+  
+  public BasicUserOverViewToolbar(Group selectedGroup) {
+	this.selectedGroup = selectedGroup;
   }
 
   public void main(IWContext iwc) throws Exception{
@@ -76,13 +80,17 @@ public class BasicUserOverViewToolbar extends Toolbar {
  	button2.setCellpadding(0);
     Image iconCrGroup = iwb.getImage("new_group.gif");
     button2.add(iconCrGroup,1,1);
-	Text text2 = new Text(iwrb.getLocalizedString("new.group","New group"));
+	Text text2 = new Text(iwrb.getLocalizedString("new.group","Edit group"));
  	text2.setFontFace(Text.FONT_FACE_VERDANA);
  	text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink12 = new Link(text2);
-    tLink12.setWindowToOpen(CreateGroupWindow.class);
+    tLink12.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID,((Integer)selectedGroup.getPrimaryKey()).toString() );
+   // tLink12.setWindowToOpen(CreateGroupWindow.class);
+   	tLink12.setWindowToOpen(GroupPropertyWindow.class);
     button2.add(tLink12,2,1);
     toolbar1.add(button2,3,1);
+    
+    
 
 
    //hitt
