@@ -173,7 +173,6 @@ public class GeneralUserInfoTab extends UserTab {
 
 		personalIDField = new TextInput(personalIDFieldName);
 		personalIDField.setLength(12);
-		//TODO subclass this tab to be able to set this : personalIDField.setAsIcelandicSSNumber(iwrb.getLocalizedString("personal_id.is.wrong","The personal id is not correct."));
 		
 		createdField = new DateInput(createdFieldName);
 		createdField.setYearRange(time.getYear(), time.getYear() - 50);
