@@ -27,15 +27,17 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
+import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.Form;
-import com.idega.presentation.ui.Window;
+import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.app.UserApplication;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
-import com.idega.user.data.User;
 import com.idega.user.event.SelectGroupEvent;
+import com.idega.util.IWColor;
 
 /**
  * Description: An editor window for the selected groups permissions.<br>
@@ -48,10 +50,12 @@ import com.idega.user.event.SelectGroupEvent;
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
  * 
  */
-public class GroupPermissionWindow extends IWAdminWindow implements StatefullPresentation{
+public class GroupPermissionWindow extends IWAdminWindow {//implements StatefullPresentation{
 	
 	private static final String IW_BUNDLE_IDENTIFIER  = "com.idega.user";
 	private static final String PARAM_SELECTED_GROUP_ID  = SelectGroupEvent.PRM_GROUP_ID; //todo remove when using event system
+	private static final String PARAM_SAVING  = "gpw_save";
+	
 	//private static final String PARA  = "com.idega.user";
 	
 	private StatefullPresentationImplHandler stateHandler = null;
@@ -67,6 +71,7 @@ public class GroupPermissionWindow extends IWAdminWindow implements StatefullPre
 	private String selectedGroupId = null;
 	
 	private List permissionType;
+	private IWResourceBundle iwrb = null;
 	
 	
 	
@@ -76,13 +81,17 @@ public class GroupPermissionWindow extends IWAdminWindow implements StatefullPre
 	 */
 	public GroupPermissionWindow() {
 		super();
+		
+		
+		/*
 		stateHandler = new StatefullPresentationImplHandler();
 		stateHandler.setPresentationStateClass(GroupPermissionWindowPS.class);
 		this.getLocation().setApplicationClass(GroupPermissionWindow.class);
-		this.getLocation().isInPopUpWindow(true);
+		this.getLocation().isInPopUpWindow(true);*/
 			
 		setWidth(width);
 		setHeight(height);
+
 	}
 	/**
 	 * Constructor for GroupPermissionWindow.
@@ -111,33 +120,82 @@ public class GroupPermissionWindow extends IWAdminWindow implements StatefullPre
 
 	
 	public void main(IWContext iwc) throws Exception {
+		iwrb = this.getResourceBundle(iwc);
+		
 		parseAction(iwc);
 		//use GroupPermissionWindowPS	
+	/*
 		GroupPermissionWindowPS listener = (GroupPermissionWindowPS) this.getPresentationState(iwc);
 		
 		SelectGroupEvent selGroup = new SelectGroupEvent();
-		//_createEvent.setSource(this.getLocation());
 		selGroup.setSource(this);
 		// set controller (added by Thomas)
 		String id = IWMainApplication.getEncryptedClassName(UserApplication.Top.class);
 		id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + id;
 		selGroup.setController(id);
-		selGroup.setGroupToSelect(new Integer(selectedGroupId));
+		selGroup.setGroupToSelect(new Integer(selectedGroupId));*/
 		
-		//getall the selected groups permissions for other groups
-		//ejbFindAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(String contextType, Group permissionGroup) throws FinderException{
-		
+
+	//get permission, order and use entitybrowser
 		
 		Collection allPermissions = getAllPermissionForSelectedGroupAndCurrentUser(iwc);
 		List permissionTypes = getAllPermissionTypes(allPermissions);
 		Collection entityCollection = orderAndGroupPermissionsByContextValue(allPermissions);
+		
+		
+		if(saveChanges){
+			
+			AccessController access = iwc.getAccessController();
+	
+			try {
+				Iterator iterator = permissionTypes.iterator();
+				
+				while (iterator.hasNext()) {
+					String key = (String) iterator.next();
+					String[] values = iwc.getParameterValues(key);
+					if(values!=null && values.length>0){
+						
+						for (int i = 0; i < values.length; i++) {
+							access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,selectedGroupId,values[i],key,Boolean.TRUE);
+						}
+						
+					}
+					
+				}
+				
+				 
+				
+				
+				
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			//refetch
+			allPermissions = getAllPermissionForSelectedGroupAndCurrentUser(iwc);
+			permissionTypes = getAllPermissionTypes(allPermissions);
+			entityCollection = orderAndGroupPermissionsByContextValue(allPermissions);
+			
+		}
+				
 	
 		EntityBrowser browser = new EntityBrowser();
 		browser.setEntities("gpw_"+selectedGroupId,entityCollection);
 		browser.setDefaultNumberOfRows(entityCollection.size());
 		browser.setShowSettingButton(false);
 		browser.setWidth(browser.HUNDRED_PERCENT);
+		browser.setUseExternalForm(true);
 		
+		
+//	fonts
+		Text columnText = new Text();
+		columnText.setBold();
+		browser.setColumnTextProxy(columnText);
+				
+		//		set color of rows
+		browser.setColorForEvenRows("#FFFFFF");
+		browser.setColorForOddRows(IWColor.getHexColorString(246, 246, 247));
 		
 		int column = 1;
 		String groupIdColumn = "ICPermission.PERMISSION_CONTEXT_VALUE";
@@ -195,17 +253,17 @@ public class GroupPermissionWindow extends IWAdminWindow implements StatefullPre
 					
 						boolean active = false;
 						String columnName = path.getShortKey();
-						
+						String groupId = null;
 						
 						while (iterator.hasNext() && !active) {
 							ICPermission perm = (ICPermission) iterator.next();
-						
+							groupId = perm.getContextValue();
 							active = columnName.equals(perm.getPermissionString());
 						
 						}
 					
 						
-						CheckBox checkBox = new CheckBox();
+						CheckBox checkBox = new CheckBox(columnName,groupId);
 						checkBox.setChecked(active);
 						
 						return checkBox;
@@ -254,8 +312,10 @@ public class GroupPermissionWindow extends IWAdminWindow implements StatefullPre
 				
 		
 		
-		
-		add(browser);
+		Form form = getGroupPermissionForm(browser);
+		form.add(new HiddenInput(PARAM_SELECTED_GROUP_ID,selectedGroupId));
+		form.add(new HiddenInput(PARAM_SAVING,"TRUE"));
+		add(form);
 		
 		
 		
@@ -350,6 +410,12 @@ public class GroupPermissionWindow extends IWAdminWindow implements StatefullPre
 	
 		List permissionTypes = new ArrayList();
 		
+		permissionTypes.add(0,"read");
+		permissionTypes.add(1,"write");
+		permissionTypes.add(2,"create");
+		permissionTypes.add(3,"delete");
+
+		
 		String permissionType;
 		while (iter.hasNext()) {
 			ICPermission perm = (ICPermission) iter.next();
@@ -373,39 +439,37 @@ public class GroupPermissionWindow extends IWAdminWindow implements StatefullPre
 	 * Method addGroupPermissionForm.
 	 * @param iwc
 	 */
-	private Form getGroupPermissionForm(IWContext iwc) throws Exception{
+	private Form getGroupPermissionForm(EntityBrowser browser) throws Exception{
+		
+		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"));
+		save.setSubmitConfirm("Change selected permissions?");
+		
+		SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
+		close.setOnClick("window.close()");
+				
+		Table table = new Table(1,2);
+		table.add(browser,1,1);
+		table.add(close,1,2);
+		table.add(save,1,2);
+		table.setWidth(Table.HUNDRED_PERCENT);
+		table.setHeight(Table.HUNDRED_PERCENT);
+		table.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
+		table.setAlignment(1,2,Table.HORIZONTAL_ALIGN_RIGHT);
 
-		
-		AccessController access = iwc.getAccessController();
-		Collection col = access.getAllPermissionGroups();
-		
-	
-		
-		
-		/*Iterator iter = col.iterator();
-		
-		
-		while (iter.hasNext()) {
-			GenericGroup group = (GenericGroup) iter.next();
-			table.addGroup(group);
-		}*/
-		
-		
 		Form form = new Form();
+		form.add(table);
 
 		return form;
 	}
 	
-	public void parseAction(IWContext iwc){
+	private void parseAction(IWContext iwc){
 		selectedGroupId = iwc.getParameter(GroupPermissionWindow.PARAM_SELECTED_GROUP_ID);
+		saveChanges = iwc.isParameterSet(PARAM_SAVING);
 		
 		if(selectedGroupId!=null){
 			viewGroupPermissions = true;
 		}
-		
-		
-		
-		
+
 		
 	}
 
@@ -427,7 +491,8 @@ public class GroupPermissionWindow extends IWAdminWindow implements StatefullPre
 	 */
 	public void initializeInMain(IWContext iwc) throws Exception{
 		
-		this.addActionListener((IWActionListener)this.getPresentationState(iwc));
+	//	this.addActionListener((IWActionListener)this.getPresentationState(iwc));
+		  
 	}
 	
 
@@ -468,6 +533,14 @@ public class GroupPermissionWindow extends IWAdminWindow implements StatefullPre
 		
 	}
 	
+	
+
+	/**
+	 * @see com.idega.presentation.PresentationObject#getName()
+	 */
+	public String getName() {
+		return "Group permissions";
+	}
 
 }
 
