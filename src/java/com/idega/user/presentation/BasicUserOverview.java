@@ -787,10 +787,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	
 		if (selectedGroup != null && !isCurrentUserSuperAdmin) {
 			//TODO eiki find out why this only works for owner if second isOwner is called? because basicusero. is stored?
-			if (aliasGroup == null && accessController.hasViewPermissionFor(selectedGroup, iwc)|| accessController.isOwner(selectedGroup, iwc) ) {//|| accessController.isOwner(selectedGroup, iwc) not needed checked in hasview
+			if (aliasGroup == null && (accessController.hasViewPermissionFor(selectedGroup, iwc)|| accessController.isOwner(selectedGroup, iwc) )) {//|| accessController.isOwner(selectedGroup, iwc) not needed checked in hasview
 				this.add(getList(iwc));
 			}
-			else if( aliasGroup!=null  && accessController.hasViewPermissionFor(aliasGroup, iwc)|| accessController.isOwner(aliasGroup, iwc)  ){
+			else if( aliasGroup!=null  && (accessController.hasViewPermissionFor(aliasGroup, iwc)|| accessController.isOwner(aliasGroup, iwc) ) ){
 				this.add(getList(iwc));
 			}
 			else{
