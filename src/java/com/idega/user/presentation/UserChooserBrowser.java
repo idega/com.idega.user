@@ -12,10 +12,7 @@ package com.idega.user.presentation;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.PresentationObject;
-import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.AbstractChooser;
-import com.idega.presentation.ui.TextInput;
 
 
 public class UserChooserBrowser extends AbstractChooser {

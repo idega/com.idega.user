@@ -9,7 +9,6 @@ import javax.ejb.FinderException;
 
 import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
-import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;

@@ -1,6 +1,5 @@
 package com.idega.user.block.search.business;
 
-import javax.ejb.*;
 
 public interface SearchEngine extends com.idega.business.IBOService
 {

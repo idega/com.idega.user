@@ -1,28 +1,23 @@
 package com.idega.user.presentation;
 
-import com.idega.presentation.ui.Window;
-import com.idega.presentation.ui.TextInput;
-import com.idega.presentation.ui.TextArea;
-import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.RadioGroup;
-import com.idega.presentation.ui.Form;
-import com.idega.presentation.ui.HiddenInput;
-import com.idega.presentation.Table;
-import com.idega.presentation.ui.FramePane;
-import com.idega.presentation.IWContext;
-import com.idega.idegaweb.IWApplicationContext;
-import com.idega.presentation.text.Text;
-import com.idega.core.accesscontrol.business.LoginDBHandler;
-import com.idega.user.business.UserBusiness;
-import com.idega.user.business.GroupBusiness;
-
-import com.idega.user.data.User;
-import com.idega.util.IWTimestamp;
-import com.idega.user.data.Group;
-import com.idega.core.accesscontrol.data.PermissionGroup;
-
-import java.sql.SQLException;
 import java.util.Vector;
+
+import com.idega.core.accesscontrol.data.PermissionGroup;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.FramePane;
+import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.RadioGroup;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.TextArea;
+import com.idega.presentation.ui.TextInput;
+import com.idega.presentation.ui.Window;
+import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.data.Group;
 
 /**
  * Title:        User

@@ -9,18 +9,13 @@
  */
 package com.idega.user.presentation;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
-import com.idega.builder.business.BuilderLogic;
-import com.idega.business.IBOLookup;
-import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
-import com.idega.data.IDOQuery;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -28,13 +23,11 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.AbstractChooserWindow;
-import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.RadioButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.data.User;
-import com.idega.user.data.UserBMPBean;
 import com.idega.user.data.UserHome;
 import com.idega.util.IWColor;
 

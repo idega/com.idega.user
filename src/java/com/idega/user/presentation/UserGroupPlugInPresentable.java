@@ -1,7 +1,7 @@
 package com.idega.user.presentation;
 
-import com.idega.user.business.*;
-import com.idega.user.data.*;
+import com.idega.user.data.Group;
+import com.idega.user.data.UserGroupPlugIn;
 
 /**
  * Title:        idegaWeb User Subsystem

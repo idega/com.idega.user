@@ -1,26 +1,22 @@
 package com.idega.user.presentation;
 
-import com.idega.user.event.*;
-import com.idega.block.entity.event.EntityBrowserEvent;
-import com.idega.builder.data.IBDomain;
-import com.idega.presentation.event.ResetPresentationEvent;
-import com.idega.user.data.Group;
-import com.idega.presentation.event.TreeViewerEvent;
-import com.idega.idegaweb.browser.event.IWBrowseEvent;
-import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
-
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
-import com.idega.presentation.IWContext; 
-import com.idega.presentation.IWTabbedPane;
-import com.idega.presentation.Page;
-
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+
+import com.idega.block.entity.event.EntityBrowserEvent;
+import com.idega.builder.data.IBDomain;
+import com.idega.event.IWActionListener;
+import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWException;
-import com.idega.event.*;
+import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.event.ResetPresentationEvent;
+import com.idega.user.data.Group;
+import com.idega.user.event.PartitionSelectEvent;
+import com.idega.user.event.SelectDomainEvent;
+import com.idega.user.event.SelectGroupEvent;
 
 /**
  * <p>Title: idegaWeb</p>

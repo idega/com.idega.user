@@ -1,14 +1,5 @@
 package com.idega.user.presentation;
 
-import java.rmi.RemoteException;
-
-import com.idega.user.event.SelectDomainEvent;
-import com.idega.user.data.Group;
-import com.idega.user.data.User;
-import com.idega.builder.data.IBDomain;
-import com.idega.user.event.SelectGroupEvent;
-import com.idega.util.text.TextStyler;
-import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.core.ICTreeNode;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.browser.presentation.IWTreeControl;
@@ -17,6 +8,8 @@ import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Link;
+import com.idega.user.event.SelectDomainEvent;
+import com.idega.user.event.SelectGroupEvent;
 
 /**
  * <p>Title: idegaWeb</p>

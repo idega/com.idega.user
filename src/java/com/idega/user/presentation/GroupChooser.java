@@ -4,9 +4,6 @@ import com.idega.builder.business.BuilderLogic;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.ui.AbstractChooser;
-import com.idega.user.data.Group;
-
-import java.rmi.RemoteException;
 
 /**
  * <p>Title: idegaWeb</p>
