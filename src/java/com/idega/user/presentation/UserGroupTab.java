@@ -36,8 +36,8 @@ public abstract class UserGroupTab extends Table implements Collectable {
     super();
     //business = new UserBusiness();
     init();
-    this.setCellpadding(3);
-    this.setCellspacing(10);
+    this.setCellpadding(0);
+    this.setCellspacing(0);
 		this.setWidth(Table.HUNDRED_PERCENT); //changed from 370
     this.setStyleClass("main");
     fieldValues = new Hashtable();
