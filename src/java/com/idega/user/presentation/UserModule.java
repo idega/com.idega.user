@@ -25,7 +25,6 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
 
   boolean justConstructed = true;
 
-
   public UserModule() {
     super();
     this.setName("idegaWeb User");
@@ -48,7 +47,7 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
 
   public static class UserModulePage extends Table{//Page{
 
-		private IWBundle iwb;
+
 
     public UserModulePage(){
       /*this.setMarginHeight(0);
@@ -72,7 +71,7 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
 
     public void main(IWContext iwc)throws Exception{
 
-		  iwb = getBundle(iwc);
+      IWBundle iwb = getBundle(iwc);
 
 
       Table tb = new Table(2,4);

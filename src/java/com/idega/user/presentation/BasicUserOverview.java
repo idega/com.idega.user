@@ -1,5 +1,7 @@
 package com.idega.user.presentation;
 
+import com.idega.user.data.Group;
+import com.idega.util.IWColor;
 import com.idega.idegaweb.IWUserContext;
 import java.rmi.RemoteException;
 import com.idega.business.IBOLookup;
@@ -34,7 +36,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
   private String _controlTarget = null;
   private IWPresentationEvent _contolEvent = null;
 
-  private BacicUserOverviewPresentationState _presentationState = null;
+  private BasicUserOverviewPS _presentationState = null;
 
   public BasicUserOverview(IWContext iwc) throws Exception {
     //this.empty();
@@ -49,8 +51,6 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     _contolEvent = model;
   }
 
-  public IWActionListener getListener(){return null;}
-
   public void setControlTarget(String controlTarget){
     _controlTarget = controlTarget;
   }
@@ -58,20 +58,37 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
   public Table getUsers(IWContext iwc) throws Exception{
     //List users = EntityFinder.findAllOrdered(com.idega.user.data.UserBMPBean.getStaticInstance(),com.idega.user.data.UserBMPBean.getColumnNameFirstName());
-    Collection users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
+//    Collection users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
+    BasicUserOverviewPS ps = (BasicUserOverviewPS)this.getPresentationState(iwc);
+    Group selectedGroup = ps.getSelectedGroup();
+    Collection users = null;
+    if(selectedGroup  != null){
+      System.out.println("[BasicUserOverview]: selectedGroup = "+selectedGroup);
+      users = this.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
+    } else {
+      System.out.println("[BasicUserOverview]: selectedGroup = All");
+      users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
+    }
+
     Table userTable = null;
     /**
      * @todo important: change back to  List adminUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
      */
     Collection adminUsers = null; // UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
 
+
+    if(users == null){
+      users = new Vector();
+    }
     if(users != null){
       if(adminUsers == null){
         adminUsers = new Vector(0);
       }
-      userTable = new Table(3,(users.size()>8)?users.size():8);
+      userTable = new Table(3,(users.size()>33)?users.size():33);
+//      userTable = new Table(3,(users.size()>16)?users.size():16);
       userTable.setCellspacing(0);
-      userTable.setHorizontalZebraColored("D8D4CD","C3BEB5");
+//      userTable.setHorizontalZebraColored("D8D4CD","C3BEB5");
+      userTable.setHorizontalZebraColored(IWColor.getHexColorString(250,245,240),IWColor.getHexColorString(242,237,232));
       userTable.setWidth("100%");
       for (int i = 1; i <= userTable.getRows() ; i++) {
         userTable.setHeight(i,"20");
@@ -133,8 +150,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
 
 
-    this.getParentPage().setBackgroundColor("#d4d0c8");
-    //this.getParentPage().setBackgroundColor(((BacicUserOverviewPresentationState)this.getPresentationState(iwc)).getColor());
+//    this.getParentPage().setBackgroundColor("#d4d0c8");
+      this.getParentPage().setBackgroundColor(IWColor.getHexColorString(250,245,240));
+
+//    this.getParentPage().setBackgroundColor(((BasicUserOverviewPS)this.getPresentationState(iwc)).getColor());
   }
 
 
@@ -286,7 +305,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     if(_presentationState == null){
       try {
         IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-        _presentationState = (BacicUserOverviewPresentationState)stateMachine.getStateFor(this.getLocation(),this.getPresentationStateClass());
+        _presentationState = (BasicUserOverviewPS)stateMachine.getStateFor(this.getLocation(),this.getPresentationStateClass());
       }
       catch (RemoteException re) {
         throw new RuntimeException(re.getMessage());
@@ -296,7 +315,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
   }
 
   public Class getPresentationStateClass(){
-    return BacicUserOverviewPresentationState.class;
+    return BasicUserOverviewPS.class;
   }
 
 

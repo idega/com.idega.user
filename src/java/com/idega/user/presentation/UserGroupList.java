@@ -1,29 +1,20 @@
 package com.idega.user.presentation;
 
-import com.idega.presentation.ui.IFrame;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.text.Link;
-import com.idega.presentation.Page;
-import com.idega.presentation.Table;
-import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.Window;
-import com.idega.presentation.ui.SelectionDoubleBox;
-import com.idega.presentation.ui.SelectionBox;
-import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.Form;
-import com.idega.presentation.ui.DropdownMenu;
+import com.idega.event.IWLinkEvent;
+import com.idega.event.IWLinkListener;
 import com.idega.presentation.ExceptionWrapper;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.IFrame;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
-import java.util.List;
+import com.idega.util.Disposable;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Enumeration;
-import com.idega.util.Disposable;
-import java.sql.SQLException;
-import com.idega.event.IWLinkListener;
-import com.idega.event.IWLinkEvent;
 
 /**
  * Title:        User
@@ -57,7 +48,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
   }
   public void initFieldContents(){
-    addLink.setWindowToOpen(UserGroupList.UserGroupSetter.class);
+    addLink.setWindowToOpen(UserGroupSetter.class);
     addLink.addParameter(UserGroupList.PARAMETER_USER_ID,this.getUserId());
     try{
       UserBusiness userBusiness = this.getUserBusiness(this.getEventIWContext());
@@ -84,7 +75,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
     primaryGroupField.setSelectedElement((String)fieldValues.get(primaryGroupFieldName));
   }
   public void initializeFields() {
-    memberofFrame = new IFrame("ic_user_memberof_ic_group",UserGroupList.GroupList.class);
+    memberofFrame = new IFrame("ic_user_memberof_ic_group",GroupList.class);
     memberofFrame.setHeight(280);
     memberofFrame.setWidth(370);
     memberofFrame.setScrolling(IFrame.SCROLLING_YES);
@@ -189,239 +180,239 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
   }
 
 
-  public class GroupList extends Page {
-
-    private List groups = null;
-
-    public GroupList(){
-      super();
-    }
-
-    public Table getGroupTable(IWContext iwc){
-
-      List direct = (List)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
-      List notDirect = (List)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
-
-      Table table = null;
-        try{
-        Iterator iter = null;
-        int row = 1;
-        if(direct != null && notDirect != null){
-          table = new Table(5,direct.size()+notDirect.size());
-
-          iter = direct.iterator();
-          while (iter.hasNext()) {
-            Object item = iter.next();
-            table.add("D",1,row);
-            table.add(((Group)item).getName(),3,row++);
-          }
-
-          iter = notDirect.iterator();
-          while (iter.hasNext()) {
-            Object item = iter.next();
-            table.add("E",1,row);
-            table.add(((Group)item).getName(),3,row++);
-          }
-
-        } else if(direct != null){
-          table = new Table(5,direct.size());
-          iter = direct.iterator();
-          while (iter.hasNext()) {
-            Object item = iter.next();
-            table.add("D",1,row);
-            table.add(((Group)item).getName(),3,row++);
-          }
-        }
-      }
-      catch(Exception e){
-        add("Error: "+e.getMessage());
-        e.printStackTrace();
-      }
-
-      if(table != null){
-        table.setWidth("100%");
-        table.setWidth(1,"10");
-        table.setWidth(2,"3");
-        table.setWidth(4,"10");
-        table.setWidth(5,"10");
-      }
-
-
-
-      return table;
-    }
-
-    public void main(IWContext iwc) throws Exception {
-      this.getParentPage().setAllMargins(0);
-      Table tb = getGroupTable(iwc);
-      if(tb != null){
-        this.add(tb);
-      }
-    }
-
-
-
-  } // InnerClass
-
-
-  public class UserGroupSetter extends Window {
-
-    private static final String FIELDNAME_SELECTION_DOUBLE_BOX = "related_groups";
-
-    public UserGroupSetter(){
-      super("add user to groups");
-      this.setAllMargins(0);
-      this.setWidth(400);
-      this.setHeight(300);
-      this.setBackgroundColor("#d4d0c8");
-    }
+//  public class GroupList extends Page {
+//
+//    private List groups = null;
+//
+//    public GroupList(){
+//      super();
+//    }
+//
+//    public Table getGroupTable(IWContext iwc){
+//
+//      List direct = (List)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
+//      List notDirect = (List)iwc.getSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
+//
+//      Table table = null;
+//        try{
+//        Iterator iter = null;
+//        int row = 1;
+//        if(direct != null && notDirect != null){
+//          table = new Table(5,direct.size()+notDirect.size());
+//
+//          iter = direct.iterator();
+//          while (iter.hasNext()) {
+//            Object item = iter.next();
+//            table.add("D",1,row);
+//            table.add(((Group)item).getName(),3,row++);
+//          }
+//
+//          iter = notDirect.iterator();
+//          while (iter.hasNext()) {
+//            Object item = iter.next();
+//            table.add("E",1,row);
+//            table.add(((Group)item).getName(),3,row++);
+//          }
+//
+//        } else if(direct != null){
+//          table = new Table(5,direct.size());
+//          iter = direct.iterator();
+//          while (iter.hasNext()) {
+//            Object item = iter.next();
+//            table.add("D",1,row);
+//            table.add(((Group)item).getName(),3,row++);
+//          }
+//        }
+//      }
+//      catch(Exception e){
+//        add("Error: "+e.getMessage());
+//        e.printStackTrace();
+//      }
+//
+//      if(table != null){
+//        table.setWidth("100%");
+//        table.setWidth(1,"10");
+//        table.setWidth(2,"3");
+//        table.setWidth(4,"10");
+//        table.setWidth(5,"10");
+//      }
+//
+//
+//
+//      return table;
+//    }
+//
+//    public void main(IWContext iwc) throws Exception {
+//      this.getParentPage().setAllMargins(0);
+//      Table tb = getGroupTable(iwc);
+//      if(tb != null){
+//        this.add(tb);
+//      }
+//    }
+//
+//
+//
+//  } // InnerClass
 
 
-    private void LineUpElements(IWContext iwc){
-
-      Form form = new Form();
-        try{
-        UserBusiness userBusiness = getUserBusiness(iwc);
-
-        Table frameTable = new Table(3,3);
-        frameTable.setWidth("100%");
-        frameTable.setHeight("100%");
-        //frameTable.setBorder(1);
-
-
-        SelectionDoubleBox sdb = new SelectionDoubleBox(FIELDNAME_SELECTION_DOUBLE_BOX,"Not in","In");
-
-        SelectionBox left = sdb.getLeftBox();
-        left.setHeight(8);
-        left.selectAllOnSubmit();
-
-
-        SelectionBox right = sdb.getRightBox();
-        right.setHeight(8);
-        right.selectAllOnSubmit();
-
-
-
-        String stringUserId = iwc.getParameter(UserGroupList.PARAMETER_USER_ID);
-        int userId = Integer.parseInt(stringUserId);
-        form.addParameter(UserGroupList.PARAMETER_USER_ID,stringUserId);
-
-        Collection directGroups = userBusiness.getUserGroupsDirectlyRelated(userId);
-
-        Iterator iter = null;
-        if(directGroups != null){
-          iter = directGroups.iterator();
-          while (iter.hasNext()) {
-            Object item = iter.next();
-            right.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
-          }
-        }
-        Collection notDirectGroups = userBusiness.getAllGroupsNotDirectlyRelated(userId,iwc);
-        if(notDirectGroups != null){
-          iter = notDirectGroups.iterator();
-          while (iter.hasNext()) {
-            Object item = iter.next();
-            left.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
-          }
-        }
-
-
-        frameTable.setAlignment(2,2,"center");
-        frameTable.add("UserId: "+userId,2,1);
-        frameTable.add(sdb,2,2);
-        frameTable.add(new SubmitButton("  Save  ","save","true"),2,3);
-        frameTable.setAlignment(2,3,"right");
-        form.add(frameTable);
-      }
-      catch(Exception e){
-        add(new ExceptionWrapper(e,this));
-        e.printStackTrace();
-      }
-      this.add(form);
-    }
-
-    public void main(IWContext iwc) throws Exception {
-
-      UserBusiness userBusiness = getUserBusiness(iwc);
-      String save = iwc.getParameter("save");
-      if(save != null){
-        String stringUserId = iwc.getParameter(UserGroupList.PARAMETER_USER_ID);
-        int userId = Integer.parseInt(stringUserId);
-
-        String[] related = iwc.getParameterValues(UserGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
-
-        //User user = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId);
-        User user = userBusiness.getUser(userId);
-        Collection currentRelationShip = userBusiness.getUserGroupsDirectlyRelated(user);
-
-
-        if(related != null){
-
-          if(currentRelationShip != null){
-            for (int i = 0; i < related.length; i++) {
-              int id = Integer.parseInt(related[i]);
-              //Group gr = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(id);
-              Group gr = userBusiness.getGroupHome().findByPrimaryKey(new Integer(id));
-              if(!currentRelationShip.remove(gr)){
-                //user.addTo(gr);
-                gr.addUser(user);
-              }
-            }
-
-            Iterator iter = currentRelationShip.iterator();
-            while (iter.hasNext()) {
-              Object item = iter.next();
-              //user.removeFrom((Group)item);
-              ((Group)item).removeUser(user);
-            }
-
-          } else{
-            for (int i = 0; i < related.length; i++) {
-              //user.addTo(Group.class,Integer.parseInt(related[i]));
-              //((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(Integer.parseInt(related[i])).addUser(user);
-              //com.idega.user.data.GroupBMPBean.addUser(Integer.parseInt(related[i]),user);
-              Group gr = userBusiness.getGroupHome().findByPrimaryKey(new Integer(related[i]));
-              gr.addUser(user);
-            }
-          }
-
-        }else if (currentRelationShip != null){
-            Iterator iter = currentRelationShip.iterator();
-            while (iter.hasNext()) {
-              Object item = iter.next();
-              ((Group)item).removeUser(user);
-            }
-          }
-
-        this.close();
-        this.setParentToReload();
-      } else {
-        LineUpElements(iwc);
-      }
-
-/*
-      Enumeration enum = iwc.getParameterNames();
-       System.err.println("--------------------------------------------------");
-      if(enum != null){
-        while (enum.hasMoreElements()) {
-          Object item = enum.nextElement();
-          if(item.equals("save")){
-            this.close();
-          }
-          String val[] = iwc.getParameterValues((String)item);
-          System.err.print(item+" = ");
-          if(val != null){
-            for (int i = 0; i < val.length; i++) {
-              System.err.print(val[i]+", ");
-            }
-          }
-          System.err.println();
-        }
-      }
-*/
-    }
-
-  } // InnerClass
+//  public class UserGroupSetter extends Window {
+//
+//    private static final String FIELDNAME_SELECTION_DOUBLE_BOX = "related_groups";
+//
+//    public UserGroupSetter(){
+//      super("add user to groups");
+//      this.setAllMargins(0);
+//      this.setWidth(400);
+//      this.setHeight(300);
+//      this.setBackgroundColor("#d4d0c8");
+//    }
+//
+//
+//    private void LineUpElements(IWContext iwc){
+//
+//      Form form = new Form();
+//        try{
+//        UserBusiness userBusiness = getUserBusiness(iwc);
+//
+//        Table frameTable = new Table(3,3);
+//        frameTable.setWidth("100%");
+//        frameTable.setHeight("100%");
+//        //frameTable.setBorder(1);
+//
+//
+//        SelectionDoubleBox sdb = new SelectionDoubleBox(FIELDNAME_SELECTION_DOUBLE_BOX,"Not in","In");
+//
+//        SelectionBox left = sdb.getLeftBox();
+//        left.setHeight(8);
+//        left.selectAllOnSubmit();
+//
+//
+//        SelectionBox right = sdb.getRightBox();
+//        right.setHeight(8);
+//        right.selectAllOnSubmit();
+//
+//
+//
+//        String stringUserId = iwc.getParameter(UserGroupList.PARAMETER_USER_ID);
+//        int userId = Integer.parseInt(stringUserId);
+//        form.addParameter(UserGroupList.PARAMETER_USER_ID,stringUserId);
+//
+//        Collection directGroups = userBusiness.getUserGroupsDirectlyRelated(userId);
+//
+//        Iterator iter = null;
+//        if(directGroups != null){
+//          iter = directGroups.iterator();
+//          while (iter.hasNext()) {
+//            Object item = iter.next();
+//            right.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
+//          }
+//        }
+//        Collection notDirectGroups = userBusiness.getAllGroupsNotDirectlyRelated(userId,iwc);
+//        if(notDirectGroups != null){
+//          iter = notDirectGroups.iterator();
+//          while (iter.hasNext()) {
+//            Object item = iter.next();
+//            left.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
+//          }
+//        }
+//
+//
+//        frameTable.setAlignment(2,2,"center");
+//        frameTable.add("UserId: "+userId,2,1);
+//        frameTable.add(sdb,2,2);
+//        frameTable.add(new SubmitButton("  Save  ","save","true"),2,3);
+//        frameTable.setAlignment(2,3,"right");
+//        form.add(frameTable);
+//      }
+//      catch(Exception e){
+//        add(new ExceptionWrapper(e,this));
+//        e.printStackTrace();
+//      }
+//      this.add(form);
+//    }
+//
+//    public void main(IWContext iwc) throws Exception {
+//
+//      UserBusiness userBusiness = getUserBusiness(iwc);
+//      String save = iwc.getParameter("save");
+//      if(save != null){
+//        String stringUserId = iwc.getParameter(UserGroupList.PARAMETER_USER_ID);
+//        int userId = Integer.parseInt(stringUserId);
+//
+//        String[] related = iwc.getParameterValues(UserGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
+//
+//        //User user = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId);
+//        User user = userBusiness.getUser(userId);
+//        Collection currentRelationShip = userBusiness.getUserGroupsDirectlyRelated(user);
+//
+//
+//        if(related != null){
+//
+//          if(currentRelationShip != null){
+//            for (int i = 0; i < related.length; i++) {
+//              int id = Integer.parseInt(related[i]);
+//              //Group gr = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(id);
+//              Group gr = userBusiness.getGroupHome().findByPrimaryKey(new Integer(id));
+//              if(!currentRelationShip.remove(gr)){
+//                //user.addTo(gr);
+//                gr.addUser(user);
+//              }
+//            }
+//
+//            Iterator iter = currentRelationShip.iterator();
+//            while (iter.hasNext()) {
+//              Object item = iter.next();
+//              //user.removeFrom((Group)item);
+//              ((Group)item).removeUser(user);
+//            }
+//
+//          } else{
+//            for (int i = 0; i < related.length; i++) {
+//              //user.addTo(Group.class,Integer.parseInt(related[i]));
+//              //((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(Integer.parseInt(related[i])).addUser(user);
+//              //com.idega.user.data.GroupBMPBean.addUser(Integer.parseInt(related[i]),user);
+//              Group gr = userBusiness.getGroupHome().findByPrimaryKey(new Integer(related[i]));
+//              gr.addUser(user);
+//            }
+//          }
+//
+//        }else if (currentRelationShip != null){
+//            Iterator iter = currentRelationShip.iterator();
+//            while (iter.hasNext()) {
+//              Object item = iter.next();
+//              ((Group)item).removeUser(user);
+//            }
+//          }
+//
+//        this.close();
+//        this.setParentToReload();
+//      } else {
+//        LineUpElements(iwc);
+//      }
+//
+///*
+//      Enumeration enum = iwc.getParameterNames();
+//       System.err.println("--------------------------------------------------");
+//      if(enum != null){
+//        while (enum.hasMoreElements()) {
+//          Object item = enum.nextElement();
+//          if(item.equals("save")){
+//            this.close();
+//          }
+//          String val[] = iwc.getParameterValues((String)item);
+//          System.err.print(item+" = ");
+//          if(val != null){
+//            for (int i = 0; i < val.length; i++) {
+//              System.err.print(val[i]+", ");
+//            }
+//          }
+//          System.err.println();
+//        }
+//      }
+//*/
+//    }
+//
+//  } // InnerClass
 
 
 

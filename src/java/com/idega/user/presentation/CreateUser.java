@@ -1,5 +1,9 @@
 package com.idega.user.presentation;
 
+import java.util.*;
+import com.idega.data.IDOLookup;
+import java.rmi.RemoteException;
+import com.idega.user.data.*;
 import com.idega.presentation.ui.Window;
 import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.CheckBox;
@@ -14,16 +18,11 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.data.User;
-import com.idega.user.data.UserGroupRepresentative;
 import com.idega.user.presentation.UserPropertyWindow;
-import com.idega.user.data.Group;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.util.idegaTimestamp;
 import com.idega.transaction.IdegaTransactionManager;
 import javax.transaction.TransactionManager;
-import java.util.List;
-import java.util.Iterator;
 
 
 import java.sql.SQLException;
@@ -167,7 +166,9 @@ public class CreateUser extends Window {
     try {
       String[] gr = new String[1];
       gr[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
-      List groups = com.idega.user.data.GroupBMPBean.getAllGroups(gr,false);
+      GroupHome home = (GroupHome)IDOLookup.getHome(Group.class);
+      Collection groups = home.findAllGroups(gr,false);
+//      List groups = com.idega.user.data.GroupBMPBean.getAllGroups(gr,false);
       if(groups != null){
         /**
          * @todo filter standardGroups
@@ -180,8 +181,11 @@ public class CreateUser extends Window {
         }
       }
     }
-    catch (Exception ex) {
-
+    catch (RemoteException ex) {
+      throw new RuntimeException(ex.getMessage());
+    }
+    catch (Exception e){
+      e.printStackTrace();
     }
 
     okButton = new SubmitButton("     OK     ",submitButtonParameterName,okButtonParameterValue);

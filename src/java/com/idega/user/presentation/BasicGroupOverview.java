@@ -1,5 +1,8 @@
 package com.idega.user.presentation;
 
+import com.idega.user.data.*;
+import java.util.*;
+import com.idega.data.IDOLookup;
 import java.rmi.RemoteException;
 import com.idega.business.IBOLookup;
 import com.idega.event.*;
@@ -14,10 +17,6 @@ import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.Window;
-import com.idega.user.data.UserGroupRepresentative;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
 
 /**
  * Title:        User
@@ -35,7 +34,7 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
   int counter = 0;
   private IWPresentationEvent _contolEvent = null;
 
-  private BacicUserOverviewPresentationState _presentationState = null;
+  private BasicUserOverviewPS _presentationState = null;
 
   public BasicGroupOverview(){
     super();
@@ -47,7 +46,6 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
 //    _contolEvent.setSource(this.getLocation());
   }
 
-  public IWActionListener getListener(){return null;}
 
   public void setControlTarget(String controlTarget){
     _controlTarget = controlTarget;
@@ -56,7 +54,9 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
   public Table getGroups(IWContext iwc) throws Exception{
     String[] types = new String[1];
     types[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
-    List groups = com.idega.user.data.GroupBMPBean.getAllGroups(types,false);
+    GroupHome home = (GroupHome)IDOLookup.getHome(Group.class);
+    Collection groups = home.findAllGroups(types,false);
+//    List groups = com.idega.user.data.GroupBMPBean.getAllGroups(types,false);
 
 
 
@@ -74,25 +74,31 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
       for (int i = 1; i <= groupTable.getRows() ; i++) {
         groupTable.setHeight(i,"20");
       }
-
-      for (int i = 0; i < groups.size(); i++) {
-        GenericGroup tempGroup = (GenericGroup)groups.get(i);
+      Iterator iter = groups.iterator();
+      int i = 0;
+      while (iter.hasNext()) {
+        i++;
+        GenericGroup tempGroup = (GenericGroup)iter.next();
+//      }
+//      for (int i = 0; i < groups.size(); i++) {
+//        GenericGroup tempGroup = (GenericGroup)groups.get(i);
         if(tempGroup != null){
 
           Link aLink = new Link(new Text(tempGroup.getName()));
           aLink.setWindowToOpen(GroupPropertyWindow.class);
           aLink.addParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, tempGroup.getPrimaryKey().toString());
-          groupTable.add(aLink,2,i+1);
+          groupTable.add(aLink,2,i);
 
           //if(!tempGroup.equals(AccessControl.getPermissionGroupAdministrator()) && !tempGroup.equals(AccessControl.getPermissionGroupEveryOne()) && !tempGroup.equals(AccessControl.getPermissionGroupUsers())){
           if(!notDelet.contains(tempGroup) && iwc.getAccessController().isAdmin(iwc)){
             Link delLink = new Link(new Text("Delete"));
             delLink.setWindowToOpen(ConfirmWindowBGO.class);
             delLink.addParameter(BasicGroupOverview.PARAMETER_DELETE_GROUP , tempGroup.getPrimaryKey().toString());
-            groupTable.add(delLink,3,i+1);
+            groupTable.add(delLink,3,i);
           }
 
         }
+
       }
     }
 
@@ -136,7 +142,7 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
     if(_presentationState == null){
       try {
         IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-        _presentationState = (BacicUserOverviewPresentationState)stateMachine.getStateFor(this.getLocation(),this.getPresentationStateClass());
+        _presentationState = (BasicUserOverviewPS)stateMachine.getStateFor(this.getLocation(),this.getPresentationStateClass());
       }
       catch (RemoteException re) {
         throw new RuntimeException(re.getMessage());
@@ -146,7 +152,7 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
   }
 
   public Class getPresentationStateClass(){
-    return BacicUserOverviewPresentationState.class;
+    return BasicUserOverviewPS.class;
   }
 
 
