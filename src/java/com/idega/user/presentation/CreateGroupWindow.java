@@ -50,7 +50,7 @@ import com.idega.user.event.CreateGroupEvent;
  * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0 
  */
-public class CreateGroupWindow extends IWAdminWindow implements StatefullPresentation, ToolbarElement {
+public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullPresentation, ToolbarElement { //changed from extends IWAdminWindow
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
   public static final String SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY = "selected_group_pp_id_key";
@@ -65,8 +65,9 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 	public CreateGroupWindow() {
 		_stateHandler = new StatefullPresentationImplHandler();
 		_stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
-		setWidth(330);
-		setHeight(270);
+		setWidth(380);
+		setHeight(320);
+		setResizable(true);
 		setScrollbar(false);
 		getLocation().setApplicationClass(CreateGroupWindow.class);
 		getLocation().isInPopUpWindow(true);
@@ -130,15 +131,22 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			addTitle(iwrb.getLocalizedString("create_new_group", "Create a new Group"), IWConstants.BUILDER_FONT_STYLE_TITLE);
 
 			add(form);
-			Table tab = new Table(2, 8);
-			tab.setColumnAlignment(1, "right");
+			Table tab = new Table(2, 11); //changed from Table(2,8) - birna
+			
+			//setting alignment for all the cells in the main table:
+			tab.setColumnAlignment(1, "left"); //changed from (1,"right") - birna
+//			tab.setColumnAlignment(2,"right"); //added - birna
 			tab.setColumnVerticalAlignment(1, "top");
+			tab.setColumnVerticalAlignment(2, "top"); //added - birna
+			tab.setAlignment(2, 11, "right"); // changed from (2,8,"right");
+				
 			tab.setWidth(1, "130");
 			tab.setCellspacing(3);
-			tab.setAlignment(2, 8, "right");
 			form.add(tab);
 			TextInput inputName = new TextInput(_createEvent.getIONameForName());
-			inputName.setLength(28);
+		//	inputName.setLength(28); //commented out - birna
+			//added for isi styles - birna:
+			inputName.setStyleClass("text");
 			inputName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
       
 			Text inputText = new Text();
@@ -146,15 +154,16 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 
 			inputText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 			tab.add(inputText, 1, 1);
-			tab.add(inputName, 2, 1);
+			tab.add(inputName, 1, 2); //changed from (inputName, 2,1) - birna
 
 			TextArea descriptionTextArea = new TextArea(_createEvent.getIONameForDescription());
-			descriptionTextArea.setHeight(4);
+			descriptionTextArea.setHeight(6); //changed from (4)
 			descriptionTextArea.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 
 			Text descText = new Text(iwrb.getLocalizedString("group_description", "Description") + ":");
 			descText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-			tab.add(descText, 1, 2);
+			tab.add(descText, 2, 1); // changed from (descText,1,2); - birna
+			tab.mergeCells(2,2,2,6); //added - birna
 			tab.add(descriptionTextArea, 2, 2); 
 
 			GroupChooser groupChooser = getGroupChooser(_createEvent.getIONameForParentID(), true, iwc);
@@ -165,13 +174,13 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			layer.add(createUnderText);
 			layer.setNoWrap();
 			tab.add(layer, 1, 3);
-			tab.add(groupChooser, 2, 3);
+			tab.add(groupChooser, 1, 4); //changed from (groupChooser, 2,3) - birna
 
 			IBPageChooser pageChooser = new IBPageChooser(_createEvent.getIONameForHomePage(), IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 			Text pageText = new Text(iwrb.getLocalizedString("home_page", "Select homepage") + ":");
 			pageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-			tab.add(pageText, 1, 4);
-			tab.add(pageChooser, 2, 4);
+			tab.add(pageText, 1, 5); //changed from (pageText,1,4) - birna
+			tab.add(pageChooser, 1, 6); //changed from (pageChooser, 2,4) - birna
 
 			DropdownMenu mnu = getGroupTypeMenu(iwrb, iwc);
       /* 
@@ -195,8 +204,8 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 
 			Text typeText = new Text(iwrb.getLocalizedString("select_type", "Select type") + ":");
 			typeText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-			tab.add(typeText, 1, 5);
-			tab.add(mnu, 2, 5);
+			tab.add(typeText, 1, 7); //changed from (typeText,1,5) - birna
+			tab.add(mnu, 1, 8); //changed from (mnu,2,5) - birna
 
 			GroupChooser aliasGroupChooser = getGroupChooser(_createEvent.getIONameForAliasID(), false, iwc);
       String filter = NO_GROUP_SELECTED;
@@ -210,8 +219,8 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			Layer layer2 = new Layer();
 			layer2.add(aliasText);
 			layer2.setNoWrap();
-			tab.add(layer2, 1, 6);
-			tab.add(aliasGroupChooser, 2, 6);
+			tab.add(layer2, 1, 9); //changed from (layer2,1,6) - birna
+			tab.add(aliasGroupChooser, 1, 10); //changed from (aliasGroupPhooser,2,3) - birna
  			SubmitButton button = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), _createEvent.getIONameForCommit());
       String message = iwrb.getLocalizedString("group_please_set_name_choose_group", "Please set name and choose a group as parent");
       getAssociatedScript().addFunction("mandatoryCheck", "function mandatoryCheck(form) { " +
@@ -226,9 +235,9 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
       SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"), _createEvent.getIONameForCancel());
       //button.setOnClick("mandatoryCheck(this)")
       close.setOnClick("window.close();return false;");
-			tab.add(close, 2, 8);
-			tab.add(Text.getNonBrakingSpace(), 2, 8);
-			tab.add(button, 2, 8);
+			tab.add(close, 2, 11); //changed from (close,2,8) - birna
+			tab.add(Text.getNonBrakingSpace(), 2, 11); //changed from (Text.getNonBrakingSpace(),2,8) - birna
+			tab.add(button, 2, 11); //changed from (button,2,8)
 		}
 	}
   

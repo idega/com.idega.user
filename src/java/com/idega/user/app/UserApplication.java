@@ -55,7 +55,7 @@ public class UserApplication extends IWBrowser {
     this.setHeight(600);
 
     this.addToTop(new Top());
-    this.setSpanPixels(POS_TOP,44); //changed from (POS_TOP, 68);
+    this.setSpanPixels(POS_TOP,51); //changed from (POS_TOP, 68);
     this.setSpanPixels(POS_LEFTMAIN, 200);
     this.setSpanPixels(POS_MENU,30); //changed from (POS_MENU,26);
     this.setSpanPixels(POS_BOTTOM,26); //changed from (POS_MENU,26);
@@ -66,7 +66,7 @@ public class UserApplication extends IWBrowser {
 		
 		this.addToMenu(menuArea);
     this.showMenuFrame(true);
-    this.showBottomFrame(true);
+    this.showBottomFrame(false); //changed from (true) - birna
 		this.addToLeftMain(treeArea);
     this.addToMain(mainArea);
     

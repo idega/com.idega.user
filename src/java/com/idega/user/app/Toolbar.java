@@ -126,7 +126,7 @@ public class Toolbar extends Page implements IWBrowserView {
 			styleSrc = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/" + styleScript);
 			parentPage.addStyleSheetURL(styleSrc);
 
-    Table toolbarTable = new Table(2,3);
+    Table toolbarTable = new Table(3,3);
 
 //	added for isi style
 		toolbarTable.setStyleClass(menuTableStyle);
@@ -457,7 +457,7 @@ public class Toolbar extends Page implements IWBrowserView {
    // toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Yfirlit", iwb.getImage("views.gif"), com.idega.block.news.presentation.News.class),7,1);
 
    //search
-   Table button9 = new Table(1,1);
+   Table button9 = new Table(2,1);
    Image fastSearch = iwb.getImage("isi_fast_search.gif");
    button9.add(fastSearch,1,1);
    button9.setHorizontalAlignment("right");
@@ -466,9 +466,10 @@ public class Toolbar extends Page implements IWBrowserView {
    searchForm.setLocation(location,iwc);
    searchForm.setArtificialCompoundId(getCompoundId(),iwc);
    searchForm.setHorizontalAlignment("right");
-   toolbar1.add(button9,10,1);
-   toolbarTable.add(searchForm,2,2);
-
+   //toolbar1.add(button9,10,1);
+   toolbarTable.add(fastSearch,2,2);
+   toolbarTable.add(searchForm,3,2);
+   
 /*
    Text text3 = new Text("&nbsp;Reset");
    text3.setFontFace(Text.FONT_FACE_VERDANA);
