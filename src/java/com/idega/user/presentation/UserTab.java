@@ -95,10 +95,12 @@ public abstract class UserTab extends Table implements Collectable{
 
 	public void setGroupID(int id) {
 		selectedGroupId = id;
+		initFieldContents();
 	}
 	
 	public int getGroupID() {
 		return selectedGroupId;
+		
 	}
 
   public void setUserID(int id){
