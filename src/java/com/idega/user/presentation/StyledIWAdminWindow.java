@@ -213,7 +213,7 @@ private Image helpImage = null;
 	public Help getHelp(String helpTextKey) {
 	 	Help help = new Help();
 	 	helpImage = new Image();
-	 	helpImage.setSrc("/iw/idegaweb/bundles/com.idega.user.bundle/resources/help.gif");
+	 	helpImage.setSrc("/idegaweb/bundles/com.idega.user.bundle/resources/help.gif");
  	  help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
 	  help.setHelpTextKey(helpTextKey);
 	  help.setImage(helpImage);
