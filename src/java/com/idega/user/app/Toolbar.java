@@ -160,7 +160,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
     Table toolbar1 = new Table();
     toolbar1.setCellpadding(0);
-    toolbar1.setCellspacing(4);
+    toolbar1.setCellspacing(0);
 
 /*
     Table table = new Table(4,3);
@@ -188,7 +188,7 @@ public class Toolbar extends Page implements IWBrowserView {
     button.add(iconCrUser,1,1);
    	Text text = new Text("New User");
  	text.setFontFace(Text.FONT_FACE_VERDANA);
- 	text.setFontSize(Text.FONT_SIZE_10_HTML_2);
+ 	text.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink11 = new Link(text);
     tLink11.setWindowToOpen(CreateUser.class);
     button.add(tLink11,2,1);
@@ -200,7 +200,7 @@ public class Toolbar extends Page implements IWBrowserView {
     button2.add(iconCrGroup,1,1);
 	Text text2 = new Text("New Group");
  	text2.setFontFace(Text.FONT_FACE_VERDANA);
- 	text2.setFontSize(Text.FONT_SIZE_10_HTML_2);
+ 	text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
     Link tLink12 = new Link(text2);
     tLink12.setWindowToOpen(CreateGroupWindow.class);
     button2.add(tLink12,2,1);
@@ -233,7 +233,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
    Text text3 = new Text("Reset");
    text3.setFontFace(Text.FONT_FACE_VERDANA);
-   text3.setFontSize(Text.FONT_SIZE_10_HTML_2);
+   text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
    Link resetLink = new Link(text3);
    resetLink.addEventModel(new ResetPresentationEvent());
    if(_controlEvent != null){
@@ -263,12 +263,14 @@ public class Toolbar extends Page implements IWBrowserView {
 
   }
 
- private Table getToolbarButtonWithChangeClassEvent(String textOnButton, Image icon, Class changeClass){
+  
+ protected Table getToolbarButtonWithChangeClassEvent(String textOnButton, Image icon, Class changeClass){
+
  	Table button = new Table(2,1);
  	button.setCellpadding(0);
  	Text text = new Text(textOnButton);
  	text.setFontFace(Text.FONT_FACE_VERDANA);
- 	text.setFontSize(Text.FONT_SIZE_10_HTML_2);
+ 	text.setFontSize(Text.FONT_SIZE_7_HTML_1);
  	Link eventLink = new Link(text);
  	button.add(icon,1,1);
  	button.add(eventLink,2,1);
