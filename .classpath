@@ -27,7 +27,7 @@
   </classpathentry>
   <classpathentry kind="src" path="/com.idega.block.cal">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.3.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jdom/jars/jdom-b9-rc2.jar">
   </classpathentry>
