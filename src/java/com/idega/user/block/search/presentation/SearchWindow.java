@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWStateMachine;
@@ -21,6 +22,7 @@ import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SelectionBox;
+import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.app.ToolbarElement;
@@ -58,7 +60,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 
 	public SearchWindow() {
 		setWidth(500);
-		setHeight(470);
+		setHeight(370);
 		setScrollbar(false);
 		setResizable(true);
 	}
@@ -88,68 +90,59 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		searchEvent = new UserSearchEvent();
 		searchEvent.setSource(this);
 					
-		Form form = new Form();
-		form.addEventModel(searchEvent, iwc);
-
 		setTitle(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"));
-		addTitle(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+		addTitle(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"), TITLE_STYLECLASS);
 		setName(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"));
 		
+		Form form = new Form();
+		form.addEventModel(searchEvent, iwc);
 		add(form,iwc);
-		Table mainTable = new Table();
-		mainTable.setWidth(400);
-		mainTable.setHeight(380);
+
+		Table mainTable = new Table(1, 3);
+		mainTable.setWidth(Table.HUNDRED_PERCENT);
 		mainTable.setCellpadding(0);
 		mainTable.setCellspacing(0);
-		Table tab = new Table(3,13);
-		tab.setStyleClass(mainTableStyle);
-		tab.setWidth(Table.HUNDRED_PERCENT);
-		tab.setHeight(340);
+		mainTable.setHeight(2, 5);
 		form.add(mainTable);
 		
+		Table tab = new Table(3, 6);
+		tab.setColumns(3);
+		tab.setStyleClass(mainTableStyle);
+		tab.setWidth(Table.HUNDRED_PERCENT);
+		tab.setBorder(0);
 		tab.setColumnVerticalAlignment(1, Table.VERTICAL_ALIGN_TOP);
 		tab.setColumnVerticalAlignment(2, Table.VERTICAL_ALIGN_TOP);
-
-		tab.setCellspacing(2);
-		//tab.setAlignment(3, 13, Table.HORIZONTAL_ALIGN_RIGHT);
-		tab.mergeCells(1,4,2,12);
+		tab.setCellspacing(5);
+		int column = 1;
+		int row = 1;
 		
 		//names params
 		//first name
 		TextInput firstName = new TextInput(searchEvent.SEARCH_FIELD_FIRST_NAME);
-		firstName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-
-		Text firstNameText = new Text();
-		firstNameText.setText(iwrb.getLocalizedString("user.search.window.user_first_name", "First name"));
-		firstNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(firstNameText, 1, 1);
-		tab.add(firstName, 1, 2);
+		Text firstNameText = new Text(iwrb.getLocalizedString("user.search.window.user_first_name", "First name"));
+		tab.add(firstNameText, column, row);
+		tab.add(Text.getBreak(), column, row);
+		tab.add(firstName, column++, row);
 
 		//middle name
 		TextInput middleName = new TextInput(searchEvent.SEARCH_FIELD_MIDDLE_NAME);
-		middleName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-
-		Text middleNameText = new Text();
-		middleNameText.setText(iwrb.getLocalizedString("user.search.window.user_middle_name", "Middle name"));
-		middleNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(middleNameText, 2, 1);
-		tab.add(middleName, 2, 2);
+		Text middleNameText = new Text(iwrb.getLocalizedString("user.search.window.user_middle_name", "Middle name"));
+		tab.add(middleNameText, column, row);
+		tab.add(Text.getBreak(), column, row);
+		tab.add(middleName, column++, row);
 		
 		//middle name
 		TextInput lastName = new TextInput(searchEvent.SEARCH_FIELD_LAST_NAME);
-		lastName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-		
-		Text lastNameText = new Text();
-		lastNameText.setText(iwrb.getLocalizedString("user.search.window.user_last_name", "Last name"));
-		lastNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(lastNameText, 3, 1);
-		tab.add(lastName, 3, 2);
+		Text lastNameText = new Text(iwrb.getLocalizedString("user.search.window.user_last_name", "Last name"));
+		tab.add(lastNameText, column, row);
+		tab.add(Text.getBreak(), column, row);
+		tab.add(lastName, column++, row++);
 		
 		//group selectionbox
 		
 		SelectionBox groupSel = new SelectionBox(UserSearchEvent.SEARCH_FIELD_GROUPS);
-		groupSel.setHeight(16); 
-		groupSel.setWidth("300");
+		groupSel.setHeight(15); 
+		groupSel.setWidth(Table.HUNDRED_PERCENT);
 
 		Collection groupsCol = getUserBusiness(iwc).getAllGroupsWithViewPermission(iwc.getCurrentUser(),iwc);
 		
@@ -167,34 +160,29 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 			}
 		}
 		
+		column = 1;
 		Text groups = new Text(iwrb.getLocalizedString("user.search.window.groups", "Groups"));
-		groups.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(groups, 1, 3);
-		tab.add(groupSel, 1, 4); 
+		tab.mergeCells(column, row, column+1, tab.getRows());
+		tab.add(groups, column, row);
+		tab.add(Text.getBreak(), column, row);
+		tab.add(groupSel, column, row); 
 		
 		
 //	personal id
+		column = 3;
 		TextInput ssn = new TextInput(searchEvent.SEARCH_FIELD_PERSONAL_ID);
-		ssn.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-
-
-		Text ssnText = new Text();
-		ssnText.setText(iwrb.getLocalizedString("user.search.window.personal_id", "SSN"));
-		ssnText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(ssnText, 3, 3);
-		tab.add(ssn, 3, 4);
+		Text ssnText = new Text(iwrb.getLocalizedString("user.search.window.personal_id", "SSN"));
+		tab.add(ssnText, column, row);
+		tab.add(Text.getBreak(), column, row);
+		tab.add(ssn, column, row++);
 			
 			
 //	streetname search
 		TextInput address = new TextInput(searchEvent.SEARCH_FIELD_ADDRESS);
-		address.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-
-
-		Text addressText = new Text();
-		addressText.setText(iwrb.getLocalizedString("user.search.window.address", "Address"));
-		addressText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(addressText, 3, 5);
-		tab.add(address, 3, 6);
+		Text addressText = new Text(iwrb.getLocalizedString("user.search.window.address", "Address"));
+		tab.add(addressText, column, row);
+		tab.add(Text.getBreak(), column, row);
+		tab.add(address, column, row++);
 		
 //	user status dropdown
 		DropdownMenu statusMenu = new UserStatusDropdown(UserSearchEvent.SEARCH_FIELD_STATUS_ID);
@@ -204,14 +192,12 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 	
 	
 		Text status = new Text(iwrb.getLocalizedString("user.search.window.status", "Status"));
-		status.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(status, 3, 7);
-		tab.add(statusMenu, 3, 8);
+		tab.add(status, column, row);
+		tab.add(Text.getBreak(), column, row);
+		tab.add(statusMenu, column, row++);
 	
 	
 		//age
-		Table ageTable = new Table(3,1);
-	
 		TextInput ageFloor = new TextInput(searchEvent.SEARCH_FIELD_AGE_FLOOR,"0");
 		ageFloor.setLength(3);
 		ageFloor.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
@@ -220,14 +206,13 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		ageCeil.setLength(3);
 		ageCeil.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 
-		ageTable.add(ageFloor,1,1);
-		ageTable.add(" - ",2,1);
-		ageTable.add(ageCeil,3,1);
-	
 		Text ages = new Text(iwrb.getLocalizedString("user.search.window.ages", "Age"));
-		ages.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(ages, 3,9);
-		tab.add(ageTable, 3, 10); 
+		tab.add(ages, column, row);
+		tab.add(Text.getBreak(), column, row);
+		tab.add(ageFloor, column, row);
+		tab.add(" - ", column, row);
+		tab.add(ageCeil, column, row++);
+	
 	
 		//gender
 		Integer maleId = getUserBusiness(iwc).getGenderId("male");
@@ -239,32 +224,34 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		genders.setSelectedElement(-1);
 	
 		Text gender = new Text(iwrb.getLocalizedString("user.search.window.gender", "Gender"));
-		gender.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(gender, 3,11);
-		tab.add(genders, 3, 12); 		
+		tab.add(gender, column, row);
+		tab.add(Text.getBreak(), column, row);
+		tab.add(genders, column, row++); 		
 
 		//buttons
 		Help help = getHelp(HELP_TEXT_KEY);
-		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("user.search.window.search", "Search"));
-   	CloseButton close = new CloseButton(iwrb.getLocalizedImageButton("user.search.window.close", "Close") );
- //   close.setOnClick("window.close();return false;");
+		StyledButton save = new StyledButton(new SubmitButton(iwrb.getLocalizedString("user.search.window.search", "Search")));
+   	StyledButton close = new StyledButton(new CloseButton(iwrb.getLocalizedString("user.search.window.close", "Close")));
     
 		HiddenInput type = new HiddenInput(UserSearchEvent.SEARCH_FIELD_SEARCH_TYPE, Integer.toString(UserSearchEvent.SEARCHTYPE_ADVANCED));
 		
-		type.setOnClick("window.close();return false;");
 		
 		Table bottomTable = new Table();
 		bottomTable.setCellpadding(0);
 		bottomTable.setCellspacing(5);
 		bottomTable.setWidth(Table.HUNDRED_PERCENT);
-		bottomTable.setHeight(39);
 		bottomTable.setStyleClass(mainTableStyle);
+		bottomTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 		bottomTable.add(help,1,1);
-		bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
-		bottomTable.add(save,2,1);
-		bottomTable.add(type,2,1);
-		bottomTable.add(Text.NON_BREAKING_SPACE,2,1);
-		bottomTable.add(close,2,1);
+
+		Table buttonTable = new Table();
+		buttonTable.setCellpadding(0);
+		buttonTable.setCellspacing(0);
+		buttonTable.setWidth(2, "5");
+		buttonTable.add(save, 1, 1);
+		buttonTable.add(type, 2, 1);
+		buttonTable.add(close, 3, 1);			
+		bottomTable.add(buttonTable,2,1);
 
 		mainTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
 		mainTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
