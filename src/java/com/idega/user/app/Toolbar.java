@@ -360,7 +360,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //      text8.setFontSize(Text.FONT_SIZE_7_HTML_1);
       Link tLink18 = new Link(text8);
 			tLink18.setStyleClass(styledLink);
-      tLink18.setWindowToOpen(com.idega.block.datareport.presentation.ReportOverviewWindow.class);
+      tLink18.setWindowToOpen(com.idega.block.dataquery.presentation.ReportOverviewWindow.class);
       button8.add(tLink18,2,1);
       toolbar1.add(button8,9,1);
     }    
