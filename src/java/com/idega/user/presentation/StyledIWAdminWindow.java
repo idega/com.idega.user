@@ -39,7 +39,7 @@ private Page parentPage;
 private String styleScript = "UserApplicationStyle.css";
 private String styleSrc = "";
 private String inputTextStyle = "text";
-private String backgroundTableStyle = "back";
+private String backTableStyle = "back";
 private String mainTableStyle = "main";
 private String bannerTableStyle = "banner";
 
@@ -93,18 +93,6 @@ private Text adminTitle = null;
 		adminForm = new Form();
 		adminForm.setMethod(method);
 
-		adminTable = new Table(2,2);
-		adminTable.setVerticalAlignment("top");
-		adminTable.mergeCells(1,1,2,1);
-		adminTable.setCellpadding(0);
-		adminTable.setCellspacing(0);
-		adminTable.setWidth("100%");
-		adminTable.setHeight("100%");
-		adminTable.setColor(1,2,"#FFFFFF");
-		adminTable.mergeCells(1,2,2,2);
-		adminTable.setRowVerticalAlignment(2,"top");
-//		adminForm.add(adminTable);
-
 		headerTable = new Table();
 		headerTable.setVerticalAlignment("top");
 		headerTable.setCellpadding(0);
@@ -116,10 +104,9 @@ private Text adminTitle = null;
 		if(titleIsSet) {
 			headerTable.add(getAdminTitle(),2,1);
 		}
-//		adminTable.add(headerTable,1,1);
 
 		mainTable = new Table();
-		mainTable.setStyleClass(mainTableStyle);
+		mainTable.setStyleClass(backTableStyle);
 		mainTable.setCellpadding(_cellPadding);
 		mainTable.setAlignment("center");
 		mainTable.setWidth("100%");
@@ -127,8 +114,6 @@ private Text adminTitle = null;
 		mainTable.setCellspacing(0);
 		mainTable.setVerticalAlignment(1,1,"top");
 		adminForm.add(mainTable);
-//		adminTable.add(mainTable,1,2);
-
 	}
 	/**
 	 * Adds an image to the top banner of the page
@@ -170,14 +155,10 @@ private Text adminTitle = null;
 		adminTitle.setFontStyle(style);
 		super.setTitle(title);
 		titleIsSet = true;
-
-//		headerTable.add(adminTitle,2,1);
 	}
 	public Text getAdminTitle() {
 		return adminTitle;
 	}
-
-
 	public Text formatText(String s, boolean bold){
 		Text T= new Text();
 		if ( s != null ) {
@@ -220,20 +201,6 @@ private Text adminTitle = null;
 		parentPage = this.getParentPage();
 		styleSrc = userBusiness.getUserApplicationStyleSheet(parentPage, iwc);
 		parentPage.addStyleSheetURL(styleSrc);
-//		Image topImage = userBusiness.getTopImage(iwc);
-	
-//		if( !displayEmpty ){
-//				makeTables();
-//				addTopImage(topImage);
-//				setAllMargins(0);				
-//			}
-//
-//			if ( merged ){
-//				super.add(adminTable);
-//			}
-//			else{
-//				super.add(adminForm);
-//			}
 		super._main(iwc);
 	}
 	public void main(IWContext iwc)throws Exception{
