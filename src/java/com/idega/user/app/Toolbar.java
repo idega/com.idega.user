@@ -129,7 +129,6 @@ public class Toolbar extends Page implements IWBrowserView {
     toolbarTable.setCellpadding(0);
     toolbarTable.setCellspacing(0);
     toolbarTable.setStyleClass(menuTableStyle);
-    toolbarTable.setVerticalAlignment("top");
     toolbarTable.setWidth(Table.HUNDRED_PERCENT);
     toolbarTable.setHeight(2,Table.HUNDRED_PERCENT);
 //    toolbarTable.setHeight(1,1);

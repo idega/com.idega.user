@@ -58,7 +58,6 @@ public abstract class UserTab extends Table implements Collectable{
     this.setCellspacing(0);
     this.setWidth("400"); //changed from 370
     this.setHeight("90%");
-    this.setVerticalAlignment("top"); //added - birna
     initializeFieldNames();
     initializeFields();
     initializeTexts();

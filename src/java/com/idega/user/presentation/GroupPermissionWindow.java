@@ -642,7 +642,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		table.setAlignment(2, 3, Table.HORIZONTAL_ALIGN_RIGHT);
 		table.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 		table.mergeCells(1, 2, 2, 2);
-		table.setVerticalAlignment(Table.VERTICAL_ALIGN_TOP);
 		
 		table.add(new Text(iwrb.getLocalizedString("grouppermissionwindow.setting_permission_for_group","Setting permissions for ")+selectedGroup.getName(),true,false,false),1,1);
 		

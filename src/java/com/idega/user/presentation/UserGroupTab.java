@@ -42,7 +42,6 @@ public abstract class UserGroupTab extends Table implements Collectable {
 		this.setWidth("400"); //changed from 370
 		this.setHeight("90%");
     this.setStyleClass("main");
-    this.setVerticalAlignment("top");
     fieldValues = new Hashtable();
     initializeFieldNames();
     initializeFields();

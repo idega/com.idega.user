@@ -83,7 +83,6 @@ import com.idega.util.IWColor;
         frameTable.setStyleClass(mainStyleClass);
         frameTable.setWidth(490);
         frameTable.setHeight(320);
-				frameTable.setVerticalAlignment(Table.VERTICAL_ALIGN_TOP);
 				frameTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
 				frameTable.setVerticalAlignment(1,2,Table.VERTICAL_ALIGN_TOP);
 				frameTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
