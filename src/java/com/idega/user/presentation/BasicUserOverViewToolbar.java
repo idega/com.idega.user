@@ -28,6 +28,7 @@ import com.idega.util.IWColor;
  */
 public class BasicUserOverViewToolbar extends Toolbar {
 	private Group selectedGroup;
+	  public static final String PARAMETERSTRING_GROUP_ID = "ic_group_id";
 
   /**
    * Constructor for BasicUserOverViewToolbar.
@@ -100,7 +101,27 @@ public class BasicUserOverViewToolbar extends Toolbar {
    //history
    toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("history","History"), iwb.getImage("history.gif"), com.idega.block.news.presentation.News.class),5,1);
    //import
-   toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("import","Import"), iwb.getImage("import.gif"), com.idega.block.news.presentation.News.class),6,1);
+   
+   
+   
+   if(selectedGroup!=null){
+	 	Table button3 = new Table(2,1);
+	 	button3.setCellpadding(0);
+	    Image iconCrGroup = iwb.getImage("import.gif");
+	    button3.add(iconCrGroup,1,1);
+		Text text3 = new Text(iwrb.getLocalizedString("import","Import"));
+	 	text3.setFontFace(Text.FONT_FACE_VERDANA);
+	 	text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
+	    Link tLink12 = new Link(text3);
+	    tLink12.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID,((Integer)selectedGroup.getPrimaryKey()).toString() );
+	   tLink12.setWindowToOpen(com.idega.block.importer.presentation.Importer.class);
+	 
+	    button3.add(tLink12,2,1);
+	    toolbar1.add(button3,6,1);
+	}
+    
+   
+   //toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("import","Import"), iwb.getImage("import.gif"), com.idega.block.news.presentation.News.class),6,1);
    //export
    toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("export","Export"), iwb.getImage("export.gif"), com.idega.block.news.presentation.News.class),7,1);
      //bread crumbs
