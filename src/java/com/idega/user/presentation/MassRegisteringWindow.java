@@ -45,7 +45,7 @@ public class MassRegisteringWindow extends IWAdminWindow {
 	private String PARAMETER_STATUS = "mrw_sta";
 	private String PARAMETER_SAVE = "mrw_sv";
 
-	private int numberOfRows = 20;
+	private int numberOfRows = 18;
 	private Group group;
 	private IWResourceBundle iwrb;
 	private UserHome uHome;
