@@ -71,7 +71,7 @@ public class GroupTreeNode implements ICTreeNode {
     switch (_nodeType) {
       case TYPE_DOMAIN:
         /**
-         * @todo optimize
+         * @todo optimize the tree. store the tree nodes in session?
          */
         try {
           List l = new Vector();
@@ -93,8 +93,8 @@ public class GroupTreeNode implements ICTreeNode {
           throw new RuntimeException(e.getMessage());
         }
       case TYPE_GROUP:
-//        return _group.getChildren();
           List l = new Vector();
+                    
           Iterator iter = _group.getChildren();
           GroupTreeNode node = null;
           while (iter.hasNext()) {

@@ -94,6 +94,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 		{
 			GroupBusiness business = (GroupBusiness)IBOLookup.getServiceInstance(e.getIWContext(),GroupBusiness.class);
 			Group group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID());
+			group.setAliasID(event.getAliasID());
 
 			//set owner
 			IWUserContext iwc =  e.getIWContext();
