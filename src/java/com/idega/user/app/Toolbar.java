@@ -32,7 +32,7 @@ import com.idega.user.presentation.MassMovingWindow;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -300,8 +300,8 @@ public class Toolbar extends Page implements IWBrowserView {
 	  if (showISStuff && iwc.isSuperAdmin()) {
 			Table button6 = new Table(2, 1);
 			button6.setCellpadding(0);
-			Image iconImport = iwb.getImage("import.gif");
-			button6.add(iconImport, 1, 1);
+//			Image iconImport = iwb.getImage("import.gif");
+//			button6.add(iconImport, 1, 1);
 			Text text6 = new Text(iwrb.getLocalizedString("nationRegister", "National Register"));
 //			text6.setFontFace(Text.FONT_FACE_VERDANA);
 //			text6.setFontSize(Text.FONT_SIZE_7_HTML_1);
