@@ -42,6 +42,8 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
   
   private static final String HELP_TEXT_KEY = "delete_group_confirm_window";
   
+  private String mainStyleClass = "main";
+  
   public DeleteGroupConfirmWindow() {
     setWidth(300);
     setHeight(200);
@@ -133,23 +135,27 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
 		cancel.setOnClick("window.close(); return false;");
 		ok.setOnClick("delete_form.submit();window.close();");
     //  assemble table
-    Table table = new Table(2,3);
-    table.setWidth(Table.HUNDRED_PERCENT);
+    Table table = new Table(3,3);
+    table.setWidth(280);
+    table.setHeight(100);
+    table.setStyleClass(mainStyleClass);
     table.setAlignment(2,3,Table.HORIZONTAL_ALIGN_RIGHT);
     table.mergeCells(1,1,2,1);
 		table.add(selectedGroup, 1,1);
 		table.add(help,1,3);
+		table.setAlignment(2,3,"right");
+		table.setAlignment(3,3,"right");
 		if (askForConfirmation) {
       table.add(question,1,2);
-		  table.add(ok,1,3);
-      table.add(Text.getNonBrakingSpace(),1,3);
-		  table.add(cancel, 1,3);
+		  table.add(ok,2,3);
+//      table.add(Text.NON_BREAKING_SPACE,2,3);
+		  table.add(cancel, 3,3);
 		}
 		else  { 
       table.add(explanation1,1,2);
       table.add(Text.getBreak(),1,2);
       table.add(explanation2,1,2);
-		  table.add(close, 1,3);
+		  table.add(close, 2,3);
 		}
 		return table;
 	}

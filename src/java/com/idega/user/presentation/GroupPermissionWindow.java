@@ -61,6 +61,8 @@ public class GroupPermissionWindow extends StyledIWAdminWindow {//implements Sta
 	
 	//private static final String PARA  = "com.idega.user";
 	
+	private String mainStyleClass = "main";
+	
 	private StatefullPresentationImplHandler stateHandler = null;
 	private GroupBusiness groupBiz = null;
 
@@ -92,6 +94,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow {//implements Sta
 		setWidth(width);
 		setHeight(height);
 		setScrollbar(true);
+		setResizable(true);
 		
 
 	}
@@ -500,14 +503,19 @@ public class GroupPermissionWindow extends StyledIWAdminWindow {//implements Sta
 		
 				
 		Table table = new Table(2,2);
+		table.setStyleClass(mainStyleClass);
 		table.mergeCells(1,1,2,1);
 		table.add(browser,1,1);
+		table.setVerticalAlignment(1,2,"bottom");
+		table.setVerticalAlignment(2,2,"bottom");
 		table.add(help,1,2);
 		table.add(owners,2,2);
-		table.add(close,2,2);
+		table.add(Text.NON_BREAKING_SPACE,2,2);
 		table.add(save,2,2);
-		table.setWidth(Table.HUNDRED_PERCENT);
-		table.setHeight(Table.HUNDRED_PERCENT);
+		table.add(Text.NON_BREAKING_SPACE,2,2);
+		table.add(close,2,2);
+		table.setWidth(620);
+		table.setHeight(480);
 		table.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
 		table.setAlignment(2,2,Table.HORIZONTAL_ALIGN_RIGHT);
 

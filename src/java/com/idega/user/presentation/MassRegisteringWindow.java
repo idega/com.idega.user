@@ -55,10 +55,13 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 	private UserHome uHome;
 	private StatusHome sHome;
 	private List failedInserts;
+	
+	private String mainStyleClass = "main";
 
 	public MassRegisteringWindow() {
-		setHeight(600);
-		setWidth(400);	
+		setHeight(620);
+		setWidth(400);
+		setResizable(true);	
 	}
 	
 	private void addForm(IWContext iwc, boolean verifyForm) {
@@ -68,6 +71,9 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 		Table table = new Table();
 		table.setCellpadding(2);
 		table.setCellspacing(0);
+		table.setStyleClass(mainStyleClass);
+		table.setWidth(380);
+		table.setHeight(560);
 		table.setBorder(0);
 		
 		boolean foundUser = false;

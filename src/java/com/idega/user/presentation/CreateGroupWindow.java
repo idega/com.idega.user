@@ -62,12 +62,14 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
   private String selectedGroupProviderStateId = null; 
   private Group selectedGroup = null;
   private Collection groupTypes = null;
+  
+  private String mainTableStyle = "main";
 
 	public CreateGroupWindow() {
 		_stateHandler = new StatefullPresentationImplHandler();
 		_stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
-		setWidth(380);
-		setHeight(320);
+		setWidth(400);//380
+		setHeight(400);//320
 		setResizable(true);
 		setScrollbar(false);
 		getLocation().setApplicationClass(CreateGroupWindow.class);
@@ -135,6 +137,9 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 
 			add(form,iwc);
 			Table tab = new Table(2, 11); //changed from Table(2,8) - birna
+			tab.setStyleClass(mainTableStyle);
+			tab.setWidth(380);
+			tab.setHeight(320);
 			
 			//setting alignment for all the cells in the main table:
 			tab.setColumnAlignment(1, "left"); //changed from (1,"right") - birna
@@ -240,9 +245,9 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
       close.setOnClick("window.close();return false;");
       Help help = getHelp(HELP_TEXT_KEY);
       tab.add(help,1,11);
-			tab.add(close, 2, 11); //changed from (close,2,8) - birna
+			tab.add(button, 2, 11); //changed from (close,2,8) - birna
 			tab.add(Text.getNonBrakingSpace(), 2, 11); //changed from (Text.getNonBrakingSpace(),2,8) - birna
-			tab.add(button, 2, 11); //changed from (button,2,8)
+			tab.add(close, 2, 11); //changed from (button,2,8)
 		}
 	}
   

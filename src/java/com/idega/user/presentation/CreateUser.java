@@ -148,8 +148,11 @@ public class CreateUser extends StyledIWAdminWindow {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
   	fullNameText = new Text(iwrb.getLocalizedString(fullNameFieldParameterName,"Name"));
+  	fullNameText.setBold();
 		ssnText = new Text(iwrb.getLocalizedString(ssnFieldParameterName,"Personal ID (SSN)"));
+		ssnText.setBold();
 		primaryGroupText = new Text(iwrb.getLocalizedString(primaryGroupFieldParameterName,"Primarygroup"));
+		primaryGroupText.setBold();
 	}
 
 	protected void initializeFields(IWContext iwc) {

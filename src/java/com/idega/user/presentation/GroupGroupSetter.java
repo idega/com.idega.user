@@ -11,34 +11,36 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SelectionBox;
 import com.idega.presentation.ui.SelectionDoubleBox;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.Window; 
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.User;
-import com.idega.util.IWColor;
 
- public class GroupGroupSetter extends Window {
+ public class GroupGroupSetter extends StyledIWAdminWindow { //changed from Window
  	
- 		private int width = 500;
- 		private int height = 300;
+ 		private int width = 510;
+ 		private int height = 400;
 
     private static final String FIELDNAME_SELECTION_DOUBLE_BOX = "related_groups";
     private IWResourceBundle iwrb = null;
 		private static final String IW_BUNDLE_IDENTIFIER  = "com.idega.user";
+		
+		private String mainStyleClass = "main";
 	
     public GroupGroupSetter(){
       super("add groups to groups");
       this.setAllMargins(0);
       this.setWidth(width);
       this.setHeight(height);
-      this.setBackgroundColor(new IWColor(207,208,210));
+      this.setResizable(true);
+//      this.setBackgroundColor(new IWColor(207,208,210));
     }
 
 
@@ -47,8 +49,9 @@ import com.idega.util.IWColor;
       Form form = new Form();
 
       Table frameTable = new Table(3,3);
-      frameTable.setWidth("100%");
-      frameTable.setHeight("100%");
+      frameTable.setWidth(490);
+      frameTable.setHeight(320);
+      frameTable.setStyleClass(mainStyleClass);
       frameTable.setVerticalAlignment(Table.VERTICAL_ALIGN_TOP);
 			frameTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
 			frameTable.setVerticalAlignment(1,2,Table.VERTICAL_ALIGN_TOP);
@@ -144,11 +147,12 @@ import com.idega.util.IWColor;
       save.setAsImageButton(true);
 			CloseButton close = new CloseButton(iwrb.getLocalizedString("groupgroupsetter.close","close"));
 			close.setAsImageButton(true);
-			frameTable.add(close,2,3);
-      frameTable.add(save,2,3);
+			frameTable.add(save,2,3);
+			frameTable.add(Text.NON_BREAKING_SPACE,2,3);
+      frameTable.add(close,2,3);
       frameTable.setAlignment(2,3,"right");
       form.add(frameTable);
-      this.add(form);
+      this.add(form,iwc);
     }
 
     public void main(IWContext iwc) throws Exception {
@@ -156,6 +160,7 @@ import com.idega.util.IWColor;
     	iwrb = getResourceBundle(iwc);
     	
     	setTitle(iwrb.getLocalizedString("groupgroupsetter.title","Add a group to a group"));
+			addTitle(iwrb.getLocalizedString("groupgroupsetter.title","Add a group to a group"));
 			setName(iwrb.getLocalizedString("groupgroupsetter.title","Add a group to a group"));
 
       String save = iwc.getParameter("save");
@@ -243,16 +248,16 @@ import com.idega.util.IWColor;
     return business;
   }
   
-  private UserBusiness getUserBusiness(IWApplicationContext iwc) {
-    UserBusiness business;
-    try {
-      business = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-    }
-    catch(java.rmi.RemoteException rme) {
-      throw new RuntimeException(rme.getMessage());
-    }
-    return business;
-  } 
+//  private UserBusiness getUserBusiness(IWApplicationContext iwc) {
+//    UserBusiness business;
+//    try {
+//      business = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+//    }
+//    catch(java.rmi.RemoteException rme) {
+//      throw new RuntimeException(rme.getMessage());
+//    }
+//    return business;
+//  } 
  
  
 
