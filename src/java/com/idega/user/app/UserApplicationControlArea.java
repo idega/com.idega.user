@@ -19,6 +19,7 @@ import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Page;
+import com.idega.presentation.Script;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.user.business.UserBusiness;
@@ -140,6 +141,17 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		if (getParentPage() != null) {
 			getParentPage().setStyleDefinition("A", LINK_STYLE);
 			getParentPage().setStyleDefinition("A:hover", LINK_HOVER_STYLE);
+			
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("function setLinkToBold(input) {").append("\n\t");
+			buffer.append("if (boldLink != null)").append("\n\t\t");
+			buffer.append("boldLink.style.fontWeight='normal';").append("\n\t");
+			buffer.append("input.style.fontWeight='bold';").append("\n\t");
+			buffer.append("boldLink = input;").append("\n}");
+
+			Script script = getParentPage().getAssociatedScript();
+			script.addVariable("boldLink", "null");
+			script.addFunction("setLinkToBold", buffer.toString());
 		}
 
     groupTree.setToShowSuperRootNode(true);

@@ -226,7 +226,7 @@ public class GroupTreeView extends IWTreeControl {
 				}
 			case 2 :
 				Link l = this.getLinkPrototypeClone(node.getNodeName());
-				l.setOnClick("this.style.fontWeight='bold';");
+				l.setOnClick("setLinkToBold(this)");
 
 				switch (node.getNodeType()) {
 					case GroupTreeNode.TYPE_DOMAIN :
