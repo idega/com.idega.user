@@ -1,5 +1,8 @@
 package com.idega.user.presentation;
 
+import java.util.*;
+import com.idega.user.data.*;
+import com.idega.data.IDOLookup;
 import com.idega.presentation.Table;
 import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.TextArea;
@@ -8,13 +11,9 @@ import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Text;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.data.User;
 import com.idega.util.datastructures.Collectable;
 import com.idega.util.idegaTimestamp;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
 
-import com.idega.user.data.Gender;
 
 
 /**
@@ -156,21 +155,24 @@ public class GeneralUserInfoTab extends UserTab{
     genderField = new DropdownMenu(genderFieldName);
     genderField.addMenuElement("","Gender");
 
-    Gender[] genders = null;
+    Collection genders = null;
     try {
-      Gender g = (Gender)com.idega.user.data.GenderBMPBean.getStaticInstance(Gender.class);
-      genders = (Gender[])g.findAll();
+      GenderHome g = (GenderHome) IDOLookup.getHome(Gender.class);
+      genders = g.findAllGenders();
     }
     catch (Exception ex) {
       // do nothing
     }
 
-    if(genders != null){
-      for (int i = 0; i < genders.length; i++) {
-        genderField.addMenuElement(genders[i].getID(),genders[i].getName());
+    Iterator iter = genders.iterator();
+    while (iter.hasNext()) {
+      Gender item = (Gender)iter.next();
+      try{
+        genderField.addMenuElement(((Integer)item.getPrimaryKey()).intValue() ,item.getName());
       }
-
+      catch(Exception ex){}
     }
+
   }
 
   public void initializeTexts(){
