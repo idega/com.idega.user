@@ -16,7 +16,7 @@ import com.idega.event.*;
 
 public class ChangeClassEvent extends IWPresentationEvent {
 	
-  private final String ENCRYPTED_CLASS_PARAMETER = IWMainApplication.classToInstanciateParameter+"_ev";
+  private final String ENCRYPTED_CLASS_PARAMETER = IWMainApplication.classToInstanciateParameter;
   private String _className;
 
   public ChangeClassEvent(Class theClass){
