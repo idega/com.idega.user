@@ -5,6 +5,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CheckBox;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 
@@ -30,8 +31,14 @@ public class UserImageTab extends UserTab {
 	 */
 	private ImageInserter imageField;
 	private String imageFieldName;
-	private Text imageText;
+  private Text imageText;
+  
+  private CheckBox removeImageField;
+  private String removeImageFieldName;
+  private Text removeImageText;
+  
 	private UserBusiness biz;
+
 
 	private User user = null;
 	private int systemImageId = -1;
@@ -52,11 +59,13 @@ public class UserImageTab extends UserTab {
 
 	public void initializeFieldNames() {
 		imageFieldName = "usr_imag_userSystemImageId";
+    removeImageFieldName = "image_removeImageFieldName";
 	}
 
 	public void initializeFields() {
 		imageField = new ImageInserter(imageFieldName + getUserId());
 		imageField.setHasUseBox(false);
+    removeImageField = new CheckBox(removeImageFieldName);
 	}
 
 	public void initializeTexts() {
@@ -65,35 +74,44 @@ public class UserImageTab extends UserTab {
 
 		imageText = getTextObject();
 		imageText.setText(iwrb.getLocalizedString(imageFieldName, "Image") + ":");
+    
+    removeImageText = getTextObject();
+    removeImageText.setText(iwrb.getLocalizedString(removeImageFieldName, "do not show an image"));
 	}
 
 	public void initializeFieldValues() {
 		systemImageId = -1;
+    fieldValues.put(removeImageFieldName, new Boolean(false));
 	}
 
 	public void lineUpFields() {
 		this.resize(1, 1);
 
-		Table imageTable = new Table(1, 2);
+		Table imageTable = new Table(1, 3);
 		imageTable.setWidth("100%");
 		imageTable.setCellpadding(0);
 		imageTable.setCellspacing(0);
 
 		imageTable.add(imageText, 1, 1);
 		imageTable.add(this.imageField, 1, 2);
+    imageTable.add(removeImageField, 1, 3);
+    imageTable.add(Text.getNonBrakingSpace(),1,3);
+    imageTable.add(removeImageText,1,3);
 		this.add(imageTable, 1, 1);
 	}
 
 	public void updateFieldsDisplayStatus() {
 		imageField.setImageId(systemImageId);
+    removeImageField.setChecked(((Boolean)fieldValues.get(removeImageFieldName)).booleanValue());
 	}
 
 	public boolean collect(IWContext iwc) {
 		String imageID = iwc.getParameter(imageFieldName + this.getUserId());
-
 		if (imageID != null) {
 			fieldValues.put(imageFieldName, imageID);
 		}
+    
+    fieldValues.put(removeImageFieldName, new Boolean(iwc.isParameterSet(removeImageFieldName)));
 
 		return true;
 	}
@@ -105,16 +123,22 @@ public class UserImageTab extends UserTab {
 				String image = (String)fieldValues.get(imageFieldName);
 
 				if ((image != null) && (!image.equals("-1")) && (!image.equals(""))) {
-					if (user == null)
+          if (user == null)
 						user = getUser();
-
-					int tempId = Integer.parseInt(image);
-					if (tempId != systemImageId) {
+          int tempId;
+          if (((Boolean) fieldValues.get(removeImageFieldName)).booleanValue())  {
+            user.setSystemImageID(null);
+            // set variables to default values
+            systemImageId = -1;
+            fieldValues.put(imageFieldName, "-1");
+            user.store();
+            updateFieldsDisplayStatus();
+          }
+          else if ((tempId = Integer.parseInt(image)) != systemImageId) {
 						systemImageId = tempId;
 						user.setSystemImageID(systemImageId);
 						user.store();
 						updateFieldsDisplayStatus();
-
 					}
 
 					iwc.removeSessionAttribute(imageFieldName + getUserId());
@@ -144,7 +168,9 @@ public class UserImageTab extends UserTab {
 			if (systemImageId != -1) {
 				fieldValues.put(this.imageFieldName, Integer.toString(systemImageId));
 			}
-
+      
+      fieldValues.put(removeImageFieldName, new Boolean(false));
+    
 			this.updateFieldsDisplayStatus();
 		}
 		catch (Exception e) {
