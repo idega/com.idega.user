@@ -13,6 +13,7 @@ import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.presentation.IWContext;
@@ -41,6 +42,7 @@ import javax.swing.event.ChangeListener;
 public class UserApplicationControlArea extends Page implements IWBrowserView, StatefullPresentation {
 
   private IWBundle iwb;
+	private IWResourceBundle iwrb;
   private StatefullPresentationImplHandler _stateHandler = null;
   private String _controlTarget = null;
   private IWPresentationEvent _contolEvent = null;
@@ -89,6 +91,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
   public void initializeInMain(IWContext iwc){
 
     iwb = getBundle(iwc);
+    iwrb = getResourceBundle(iwc);
 
     IWLocation location = (IWLocation)this.getLocation().clone();
     location.setSubID(1);
@@ -137,7 +140,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
     groupTree.setToShowSuperRootNode(true);
     groupTree.setDefaultOpenLevel(0);
-    groupTree.setSuperRootNodeName("IW Member");
+    groupTree.setSuperRootNodeName(iwrb.getLocalizedString("tree.super.node.name","My groups"));
     Image icon = iwb.getImage("super_root_icon.gif");
     groupTree.setSuperRootNodeIcon(icon);
 
