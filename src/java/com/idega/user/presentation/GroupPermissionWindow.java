@@ -40,6 +40,7 @@ import com.idega.user.data.GroupTypeConstants;
 import com.idega.user.data.User;
 import com.idega.user.event.SelectGroupEvent;
 import com.idega.util.IWColor;
+import com.idega.util.Timer;
 
 /**
  * Description: An editor window for the selected groups permissions. <br>The diplayed list of groups contains the groups the selected group has
@@ -146,7 +147,11 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			}
 			
 			//add the permission form
+			Timer total = new Timer();
+			total.start();
 			addPermissionsForm(iwc);
+			total.stop();
+			System.out.println("Total = "+total.getTimeString());
 		
 		}
 
@@ -223,7 +228,11 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		groupComparator.setObjectsAreICPermissions(true);
 		groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));		
 		groupComparator.setSortByParents(true);
+		Timer t = new Timer();
+		t.start();
 		Collections.sort(entityList, groupComparator); 
+		t.stop();
+		System.out.println(t.getTimeString());
 		List browserList = null;
 		List groupTypes = new ArrayList();
 		if (filterClubs) {

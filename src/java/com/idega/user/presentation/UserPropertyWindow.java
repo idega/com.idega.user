@@ -37,6 +37,17 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		this.setBackgroundColor(new IWColor(207, 208, 210));
 		
 	}
+	
+	public void main(IWContext iwc) throws Exception {
+	    IWResourceBundle iwrb = getResourceBundle(iwc);
+	    String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
+	    if(userIdString != null) {
+			int userId = Integer.parseInt(userIdString);
+		    User user = getUserBusiness(iwc).getUser(userId);
+		    addTitle(user.getName(), TITLE_STYLECLASS);
+		}
+		setTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"));
+	}
 
 //	public UserBusiness getUserBusiness(IWApplicationContext iwac) throws RemoteException {
 //		return (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, UserBusiness.class);
@@ -110,15 +121,6 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 				metaDataTab.setPanel(panel);
 				panel.addTab(metaDataTab,++count,iwc);
 			}
-			
-			// ask one of the tab for the user id because the user id parameter is not set when navigating within the user property window 
-			// that is switching from one tab to another
-			String userName = user.getName();
-			if(userName!=null) {
-			    this.addTitle(userName, TITLE_STYLECLASS);
-			}
-			setTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"));
-	
 			
 			
 			//get plugins

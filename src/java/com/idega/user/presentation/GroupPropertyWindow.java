@@ -41,6 +41,17 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 		setResizable(true);
 	}
 
+	public void main(IWContext iwc) throws Exception {
+	    IWResourceBundle iwrb = getResourceBundle(iwc);
+	    String groupIdString = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
+	    if (groupIdString != null) {
+		    int groupId = Integer.parseInt(groupIdString);
+			Group group = getGroupBusiness(iwc).getGroupByGroupID(groupId);
+			addTitle(group.getName(), TITLE_STYLECLASS);
+	    }
+		setTitle(iwrb.getLocalizedString("group_property_window", "Group Property Window"));
+	}
+
 	/**
 	 * @see com.idega.presentation.TabbedPropertyWindow#disposeOfPanel(com.idega.presentation.IWContext)
 	 */
@@ -81,10 +92,6 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 				metadataTab.setPanel(panel);
 				panel.addTab(metadataTab,++count,iwc);
 			}
-			
-			IWResourceBundle iwrb = getResourceBundle(iwc);
-			setTitle(iwrb.getLocalizedString("group_property_window", "Group Property Window"));
-			addTitle(group.getName(), TITLE_STYLECLASS);
 
 			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForGroupType(group.getGroupType());
 			Iterator iter = plugins.iterator();
