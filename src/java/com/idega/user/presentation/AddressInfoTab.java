@@ -33,6 +33,13 @@ public class AddressInfoTab extends UserTab {
 	private TextInput countryField;
 	private TextInput poBoxField;
 
+  private TextInput secondStreetField;
+  private TextInput secondCityField;
+  private TextInput secondProvinceField;
+  private PostalCodeDropdownMenu secondPostalCodeField;
+  private TextInput secondCountryField;
+  private TextInput secondPoBoxField;
+
 	private static final String streetFieldName = "UMstreet";
 	private static final String cityFieldName = "UMcity";
 	private static final String provinceFieldName = "UMprovince";
@@ -41,12 +48,22 @@ public class AddressInfoTab extends UserTab {
 	private static final String countryFieldName = "UMcountry";
 	private static final String poBoxFieldName = "UMpoBox";
 
+  private static final String secondStreetFieldName = "UMsecondStreet";
+  private static final String secondCityFieldName = "UMsecondCity";
+  private static final String secondProvinceFieldName = "UMsecondProvince";
+  private static final String secondPostalCodeFieldName = 
+    "UMsecond" + PostalCodeDropdownMenu.IW_POSTAL_CODE_MENU_PARAM_NAME;
+  private static final String secondCountryFieldName = "UMsecondCountry";
+  private static final String secondPoBoxFieldName = "UMsecondPoBox";
+
 	private Text streetText;
 	private Text cityText;
 	private Text provinceText;
 	private Text postalCodeText;
 	private Text countryText;
 	private Text poBoxText;
+  
+  private Text coAddressText;
 
 	public AddressInfoTab() {
 		super();
@@ -93,11 +110,40 @@ public class AddressInfoTab extends UserTab {
 		if (postalId != null && !postalId.equals(""))
 			postalCodeField.setSelectedElement(Integer.parseInt(postalId));
 
-		if (country != null)
-			countryField.setContent(country);
+		//if (country != null)
+      // hack
+      /** TODO remove island hack
+       * 
+       */
+			countryField.setContent("Island");
 		if (poBox != null)
-			poBoxField.setContent(poBox);
+			poBoxField.setContent(poBox);      
+    // second address
+    street = (String)fieldValues.get(secondStreetFieldName);
+    city = (String)fieldValues.get(secondCityFieldName);
+    province = (String)fieldValues.get(secondProvinceFieldName);
+    postalId = (String)fieldValues.get(secondPostalCodeFieldName);
+    country = (String)fieldValues.get(secondCountryFieldName);
+    poBox = (String)fieldValues.get(secondPoBoxFieldName);
 
+    if (street != null)
+      secondStreetField.setContent(street);
+    if (city != null)
+      secondCityField.setContent(city);
+    if (province != null)
+      secondProvinceField.setContent(province);
+
+    if (postalId != null && !postalId.equals(""))
+      secondPostalCodeField.setSelectedElement(Integer.parseInt(postalId));
+
+    ///if (country != null)
+    // hack
+    /** TODO remove island hack
+     * 
+     */
+    secondCountryField.setContent("Island");
+    if (poBox != null)
+      secondPoBoxField.setContent(poBox);
 	}
 
 	public void initializeFields() {
@@ -122,6 +168,29 @@ public class AddressInfoTab extends UserTab {
 
 		poBoxField = new TextInput(poBoxFieldName);
 		poBoxField.setLength(10);
+    // second address
+    secondStreetField = new TextInput(secondStreetFieldName);
+    secondStreetField.setLength(20);
+
+    secondCityField = new TextInput(secondCityFieldName);
+    secondCityField.setLength(20);
+
+    secondProvinceField = new TextInput(secondProvinceFieldName);
+    secondProvinceField.setLength(20);
+
+    //only works for Iceland
+    if (secondPostalCodeField == null) {
+      secondPostalCodeField = new PostalCodeDropdownMenu();
+      secondPostalCodeField.setName(secondPostalCodeFieldName);
+      secondPostalCodeField.setCountry("Iceland"); //hack
+    }
+
+    secondCountryField = new TextInput(secondCountryFieldName);
+    secondCountryField.setLength(20);
+    secondCountryField.setDisabled(true);
+
+    secondPoBoxField = new TextInput(secondPoBoxFieldName);
+    secondPoBoxField.setLength(10);
 
 	}
 
@@ -146,7 +215,10 @@ public class AddressInfoTab extends UserTab {
 
 		poBoxText = new Text(iwrb.getLocalizedString(poBoxFieldName,"P.O.Box"));
 		poBoxText.setFontSize(fontSize);
-
+    // the same texts are used for the second address
+    
+    coAddressText = new Text(iwrb.getLocalizedString("UM_coAddress","co address"));
+    
 	}
 
 	public void lineUpFields() {
@@ -159,22 +231,20 @@ public class AddressInfoTab extends UserTab {
 		addressTable.setWidth("100%");
 		addressTable.setCellpadding(0);
 		addressTable.setCellspacing(0);
-		addressTable.setHeight(1, columnHeight);
-		addressTable.setHeight(2, columnHeight);
-		addressTable.setHeight(3, columnHeight);
-		addressTable.setHeight(4, columnHeight);
+    int i;
+    for (i= 1; i < 5; i++) {
+		  addressTable.setHeight(i, columnHeight);
+    }
 		addressTable.setWidth(1, "70");
+		addressTable.add(this.cityText, 1, 1);
+		addressTable.add(this.cityField, 2, 1);
+		addressTable.add(this.provinceText, 1, 2);
+		addressTable.add(this.provinceField, 2, 2);
+		addressTable.add(this.countryText, 1, 3);
+		addressTable.add(this.countryField, 2, 3);
+    addressTable.add(postalCodeText,1,4);
+    addressTable.add(postalCodeField,2,4);
 
-		addressTable.add(this.streetText, 1, 1);
-		addressTable.add(this.streetField, 2, 1);
-		addressTable.add(this.cityText, 1, 2);
-		addressTable.add(this.cityField, 2, 2);
-		addressTable.add(this.provinceText, 1, 3);
-		addressTable.add(this.provinceField, 2, 3);
-		addressTable.add(this.countryText, 1, 4);
-		addressTable.add(this.countryField, 2, 4);
-
-		this.add(addressTable);
 		//    fpane.add(addressTable);
 
 		Table addressTable2 = new Table(4, 1);
@@ -187,15 +257,61 @@ public class AddressInfoTab extends UserTab {
 		addressTable2.setWidth(2, "70");
 		addressTable2.setWidth(3, "70");
 
-		addressTable2.add(this.postalCodeText, 1, 1);
-		addressTable2.add(this.postalCodeField, 2, 1);
+		addressTable2.add(this.streetText, 1, 1);
+		addressTable2.add(this.streetField, 2, 1);
 		addressTable2.add(this.poBoxText, 3, 1);
 		addressTable2.add(this.poBoxField, 4, 1);
 
 		this.add(addressTable2);
+    this.add(addressTable);
 		//    fpane.add(addressTable2);
 		//    this.add(fpane);
 
+    // second address
+    Table secondAddressTable = new Table(2, 4);
+
+    //    FramePane fpane = new FramePane();
+
+    secondAddressTable.setWidth("100%");
+    secondAddressTable.setCellpadding(0);
+    secondAddressTable.setCellspacing(0);
+
+    for (i= 1; i < 5; i++) {
+      secondAddressTable.setHeight(i, columnHeight);
+    }
+    secondAddressTable.setWidth(1, "70");
+    
+    secondAddressTable.setHeight(1,"20");
+   
+    secondAddressTable.add(this.cityText, 1, 1);
+    secondAddressTable.add(secondCityField, 2, 1);
+    secondAddressTable.add(this.provinceText, 1,2);
+    secondAddressTable.add(secondProvinceField, 2, 2);
+    secondAddressTable.add(this.countryText, 1, 3);
+    secondAddressTable.add(secondCountryField, 2, 3);
+    secondAddressTable.add(postalCodeText,1,4);
+    secondAddressTable.add(secondPostalCodeField,2,4);
+
+    //    fpane.add(secondAddressTable);
+
+    Table secondAddressTable2 = new Table(4, 1);
+
+    secondAddressTable2.setWidth("100%");
+    secondAddressTable2.setCellpadding(0);
+    secondAddressTable2.setCellspacing(0);
+    secondAddressTable2.setHeight(1, columnHeight);
+    secondAddressTable2.setWidth(1, "70");
+    secondAddressTable2.setWidth(2, "70");
+    secondAddressTable2.setWidth(3, "70");
+
+    secondAddressTable2.add(this.streetText, 1, 1);
+    secondAddressTable2.add(this.secondStreetField, 2, 1);    
+    secondAddressTable2.add(this.poBoxText, 3, 1);
+    secondAddressTable2.add(this.secondPoBoxField, 4, 1);
+
+    add(coAddressText);
+    this.add(secondAddressTable2);
+    this.add(secondAddressTable);
 	}
 
 	public boolean collect(IWContext iwc) {
@@ -226,6 +342,32 @@ public class AddressInfoTab extends UserTab {
 			if (poBox != null) {
 				fieldValues.put(this.poBoxFieldName, poBox);
 			}
+      // second address
+      street = iwc.getParameter(secondStreetFieldName);
+      city = iwc.getParameter(secondCityFieldName);
+      province = iwc.getParameter(secondProvinceFieldName);
+      postal = iwc.getParameter(secondPostalCodeFieldName);
+      country = iwc.getParameter(secondCountryFieldName);
+      poBox = iwc.getParameter(secondPoBoxFieldName);
+
+      if (street != null) {
+        fieldValues.put(secondStreetFieldName, street);
+      }
+      if (city != null) {
+        fieldValues.put(secondCityFieldName, city);
+      }
+      if (province != null) {
+        fieldValues.put(secondProvinceFieldName, province);
+      }
+      if (postal != null) {
+        fieldValues.put(secondPostalCodeFieldName, postal);
+      }
+      if (country != null) {
+        fieldValues.put(secondCountryFieldName, country);
+      }
+      if (poBox != null) {
+        fieldValues.put(secondPoBoxFieldName, poBox);
+      }
 
 			this.updateFieldsDisplayStatus();
 
@@ -265,6 +407,36 @@ public class AddressInfoTab extends UserTab {
 				return false;
 			}
 		}
+    
+    // second address
+    street = iwc.getParameter(secondStreetFieldName);
+
+    if (street != null) {
+      try {
+        Integer postalCodeId = null;
+        String postal = iwc.getParameter(secondPostalCodeFieldName);
+        if (postal != null)
+          postalCodeId = new Integer(postal);
+        String country = iwc.getParameter(secondCountryFieldName);
+        String city = iwc.getParameter(secondCityFieldName);
+        String province = iwc.getParameter(secondProvinceFieldName);
+        String poBox = iwc.getParameter(secondPoBoxFieldName);
+
+        this.getUserBusiness(iwc).updateUsersCoAddressOrCreateIfDoesNotExist(
+          userId,
+          street,
+          postalCodeId,
+          country,
+          city,
+          province,
+          poBox);
+
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+        return false;
+      }
+    }
 
 		return true;
 
@@ -305,7 +477,40 @@ public class AddressInfoTab extends UserTab {
 				if (poBox != null)
 					fieldValues.put(poBoxFieldName, poBox);
 			}
+      // second address
+      addr = userBiz.getUsersCoAddress(getUser());
 
+      hasAddress = false;
+      if (addr != null) {
+        hasAddress = true;
+      }
+
+      if (hasAddress) {
+        /** @todo remove this fieldValues bullshit!**/
+        String street = addr.getStreetAddress();
+        int code = addr.getPostalCodeID();
+        Country country = addr.getCountry();
+        String countryName = null;
+        if (country != null)
+          countryName = country.getName();
+        String city = addr.getCity();
+        String province = addr.getProvince();
+        String poBox = addr.getPOBox();
+
+        if (street != null)
+          fieldValues.put(secondStreetFieldName, street);
+        if (city != null)
+          fieldValues.put(secondCityFieldName, city);
+        if (province != null)
+          fieldValues.put(secondProvinceFieldName, province);
+        if (code != -1)
+          fieldValues.put(secondPostalCodeFieldName, String.valueOf(code));
+        if (countryName != null)
+          fieldValues.put(secondCountryFieldName, countryName);
+        if (poBox != null)
+          fieldValues.put(secondPoBoxFieldName, poBox);
+      }
+      
 			updateFieldsDisplayStatus();
 
 		}
