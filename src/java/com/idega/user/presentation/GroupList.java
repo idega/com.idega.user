@@ -43,15 +43,26 @@ public class GroupList extends Page {
           iter = direct.iterator();
           while (iter.hasNext()) {
             Object item = iter.next();
-            table.add("D",1,row);
-            table.add(((Group)item).getName(),3,row++);
+						if( item !=null ){
+	            table.add("D",1,row);
+	            table.add(((Group)item).getName(),3,row++);
+						}
+						 else{
+							 System.err.println("ITEM IS NULL in grouplist for D");
+						 }
           }
 
           iter = notDirect.iterator();
           while (iter.hasNext()) {
             Object item = iter.next();
-            table.add("E",1,row);
-            table.add(((Group)item).getName(),3,row++);
+						if( item !=null ){
+	            table.add("E",1,row);
+	            table.add(((Group)item).getName(),3,row++);
+						}
+					 else{
+						 System.err.println("ITEM IS NULL in grouplist for E");
+					 }
+											 
           }
 
         } else if(direct != null){
@@ -64,7 +75,7 @@ public class GroupList extends Page {
 							table.add(((Group)item).getName(),3,row++);
             }
             else{
-            	System.err.println("ITEM IS NULL in grouplist");
+            	System.err.println("ITEM IS NULL in grouplist for D latter");
             }
             
           }
