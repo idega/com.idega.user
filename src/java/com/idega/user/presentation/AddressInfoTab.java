@@ -15,6 +15,7 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import com.idega.core.data.Address;
+import com.idega.core.data.PostalCode;
 
 
 
@@ -88,17 +89,18 @@ public class AddressInfoTab extends UserTab{
   }
 
   public void updateFieldsDisplayStatus(){
-    streetField.setContent((String)fieldValues.get(this.streetFieldName));
+    streetField.setContent((String)fieldValues.get(streetFieldName));
 
-    cityField.setContent((String)fieldValues.get(this.cityFieldName));
+    cityField.setContent((String)fieldValues.get(cityFieldName));
 
-    provinceField.setContent((String)fieldValues.get(this.provinceFieldName));
+    provinceField.setContent((String)fieldValues.get(provinceFieldName));
 
-    postalCodeField.setContent((String)fieldValues.get(this.postalCodeFieldName));
+	Integer postalId = (Integer) fieldValues.get(postalCodeFieldName);
+	if( postalId!=null ) postalCodeField.setSelectedElement(postalId.intValue());
 
-    countryField.setContent((String)fieldValues.get(this.countryFieldName));
+    countryField.setContent((String)fieldValues.get(countryFieldName));
 
-    poBoxField.setContent((String)fieldValues.get(this.poBoxFieldName));
+    poBoxField.setContent((String)fieldValues.get(poBoxFieldName));
 
   }
 
@@ -274,13 +276,23 @@ public class AddressInfoTab extends UserTab{
       if(addr != null){
         hasAddress = true;
       }
-
-      fieldValues.put(this.streetFieldName,(hasAddress) ? addr.getStreetName()+" "+addr.getStreetNumber():"" );
-      fieldValues.put(this.cityFieldName,(hasAddress) ? addr.getCity():"" );
-      fieldValues.put(this.provinceFieldName,(hasAddress) ? addr.getProvince():"" );
-      fieldValues.put(this.postalCodeFieldName,(hasAddress) ? "":"" );
-      fieldValues.put(this.countryFieldName,(hasAddress) ? "":"" );
-      fieldValues.put(this.poBoxFieldName,(hasAddress) ? addr.getPOBox():"");
+      
+      /** @todo remove this fieldValues bullshit!**/
+      String street = addr.getStreetAddress();
+      PostalCode code = addr.getPostalCode();      
+      String country = addr.getCountry().getName();
+      String city = addr.getCity();
+      String province = addr.getProvince(); 	
+      String poBox = addr.getPOBox();
+      
+	  if( hasAddress){
+	      if( street!=null ) fieldValues.put(streetFieldName, street );
+	      if( city!=null ) fieldValues.put(cityFieldName, city );
+	      if ( province!=null ) fieldValues.put(provinceFieldName, province );
+	      if ( code!=null ) fieldValues.put(postalCodeFieldName, code.getPrimaryKey() );
+	      if ( country!=null ) fieldValues.put(countryFieldName, country );
+	      if ( poBox!=null ) fieldValues.put(poBoxFieldName, poBox);
+	  }
       this.updateFieldsDisplayStatus();
 
     }catch(Exception e){
