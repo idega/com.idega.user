@@ -357,6 +357,13 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			}
 		}
 		return groupTypes;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.user.app.ToolbarElement#isButton(com.idega.presentation.IWContext)
+	 */
+	public boolean isButton(IWContext iwc) {
+		return false;
 	}   
 	
 	

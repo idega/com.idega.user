@@ -66,4 +66,11 @@ public class MassMovingWindowPlugin implements ToolbarElement {
 	public int getPriority(IWContext iwc) {
 		return 6;
 	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.user.app.ToolbarElement#isButton(com.idega.presentation.IWContext)
+	 */
+	public boolean isButton(IWContext iwc) {
+		return false;
+	}
 }

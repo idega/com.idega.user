@@ -264,7 +264,7 @@ public class Toolbar extends Page implements IWBrowserView {
 					parameterMap.put(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId );
 				}
 				String toolName = toolbarElement.getName(iwc);
-				if (useDropdown) { 
+				if (useDropdown && (! toolbarElement.isButton(iwc))) { 
 					SelectOption toolOption = new SelectOption(toolName, "1");
 					toolOption.setWindowToOpenOnSelect(toolPresentationClass, parameterMap);
 					menu.addOption(toolOption);

@@ -14,11 +14,13 @@ import com.idega.presentation.Image;
 
 public interface ToolbarElement {
 
-  public Image getButtonImage(IWContext iwc);
-  public String getName(IWContext iwc);
-  public Class getPresentationObjectClass(IWContext iwc);
-  public Map getParameterMap(IWContext iwc);
-  public boolean isValid(IWContext iwc);
-  public int getPriority(IWContext iwc);
+  Image getButtonImage(IWContext iwc);
+  boolean isButton(IWContext iwc);
+  String getName(IWContext iwc);
+  Class getPresentationObjectClass(IWContext iwc);
+  Map getParameterMap(IWContext iwc);
+  boolean isValid(IWContext iwc);
+  int getPriority(IWContext iwc);
+  
 
 }
