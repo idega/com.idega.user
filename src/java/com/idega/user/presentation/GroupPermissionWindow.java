@@ -119,7 +119,6 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 
 	
 	public void main(IWContext iwc) throws Exception {
-		boolean resort = false;
 		iwrb = this.getResourceBundle(iwc);
 		
 		parseAction(iwc);
@@ -182,7 +181,6 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 				
 				
 				//refresh permissions PermissionCacher.updatePermissions()
-				resort = true;
 				iwc.getApplicationContext().removeApplicationAttribute("ic_permission_map_"+AccessController.CATEGORY_GROUP_ID);
 				
 			}
@@ -197,18 +195,11 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 			
 		}
 				
-		List entityList = null;
-		entityList = (List) iwc.getSessionAttribute("sortedPermissionList_"+selectedGroupId);
-		
-		if(entityList==null || resort){
-			entityList = orderAndGroupPermissionsByContextValue(allPermissions);
-			GroupComparator groupComparator = new GroupComparator(iwc.getCurrentLocale());
-			groupComparator.setObjectsAreICPermissions(true);
-			groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));
-			Collections.sort(entityList, groupComparator);//sort alphabetically
-			
-			iwc.setSessionAttribute("sortedPermissionList_"+selectedGroupId,entityList);
-		}
+		List entityList = entityList = orderAndGroupPermissionsByContextValue(allPermissions);
+		GroupComparator groupComparator = new GroupComparator(iwc.getCurrentLocale());
+		groupComparator.setObjectsAreICPermissions(true);
+		groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));
+		Collections.sort(entityList, groupComparator);//sort alphabetically
 	
 		EntityBrowser browser = new EntityBrowser();
 		browser.setEntities("gpw_"+selectedGroupId,entityList);
@@ -254,21 +245,15 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 						Group group;
 						try {
 							group = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(perm.getContextValue()));
-							//TODO better solutions
-							Collection parents = getGroupBusiness(iwc).getParentGroups(group);
-							if(parents!=null && !parents.isEmpty()){
-								Iterator par = parents.iterator();
-								while (par.hasNext()) {
-									Group parent = (Group) par.next();
-									return new Text(group.getName()+" ("+parent.getName()+")" );
-								}
-								
-							}
-							else return new Text(group.getName());
+
+							return new Text( getGroupBusiness(iwc).getNameOfGroupWithParentName(group));
+							
 						}
 						catch (RemoteException e) {
+							e.printStackTrace();
 						}
-						catch (FinderException e) {
+						catch (FinderException ex) {
+							ex.printStackTrace();
 						}
 						
 					}
