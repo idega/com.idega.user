@@ -248,6 +248,8 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
   private void setCurrentUserAsOwnerOfGroup(IWUserContext iwc, Group group){
 		User user = iwc.getCurrentUser();
 		AccessController access = iwc.getAccessController();
+		//get users and add them as owners also, user.getPrimaryGroup();
+		
 		try {
 			access.setAsOwner(group,((Integer)user.getPrimaryKey()).intValue(), iwc);
 		}
