@@ -14,7 +14,8 @@ import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.data.Group;
-import java.util.List;
+import com.idega.user.data.GroupHome;
+
 import java.util.Iterator;
 import java.util.Enumeration;
 import com.idega.util.Disposable;
@@ -58,7 +59,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     addLink.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID,this.getGroupId());
 
      try{
-      Group group = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKey(new Integer(getGroupId()));
+       
+      Group group = (Group)(((GroupHome)com.idega.data.IDOLookup.getHome(Group.class)).findByPrimaryKey(new Integer(getGroupId())));
 
       fieldValues.put(this.nameFieldName,(group.getName() != null) ? group.getName():"" );
       fieldValues.put(this.descriptionFieldName,(group.getDescription() != null) ? group.getDescription():"" );
