@@ -1,5 +1,6 @@
 package com.idega.user.app;
 
+import com.idega.presentation.ui.Window;
 import javax.swing.event.ChangeListener;
 import com.idega.idegaweb.*;
 import com.idega.event.*;
@@ -16,7 +17,7 @@ import com.idega.presentation.*;
  * @version 1.0
  */
 
-public class UserApplicationMainArea extends Block implements IWBrowserView, StatefullPresentation {
+public class UserApplicationMainArea extends Window implements IWBrowserView, StatefullPresentation {
 
 
   private IWBundle iwb;
