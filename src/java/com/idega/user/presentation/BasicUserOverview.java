@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.swing.event.ChangeListener;
@@ -274,20 +275,69 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     if (selectedGroup != null)  {
       selfGroupId = ((Integer) selectedGroup.getPrimaryKey()).toString();
     } 
+    
     DropdownMenu groupList = new DropdownMenu(SELECTED_TARGET_GROUP_KEY);
     GroupBusiness groupBusiness = BasicUserOverview.getGroupBusiness(iwc);
     UserBusiness business = BasicUserOverview.getUserBusiness(iwc);
-    User user = iwc.getCurrentUser();
-    Collection coll = business.getAllGroupsWithEditPermission(user, iwc);
-    Iterator iterator = coll.iterator();
-    while (iterator.hasNext())  {
-      Group group = (Group) iterator.next();
-      String id = ((Integer) group.getPrimaryKey()).toString();
-      if (! selfGroupId.equals(id)) {
-        String name = groupBusiness.getNameOfGroupWithParentName(group);
-        groupList.addMenuElement(id,name);
-      }
+		User user = iwc.getCurrentUser();
+		
+//	NOT SUPER USER
+    if(!iwc.isSuperAdmin()){
+	    Collection coll = business.getAllGroupsWithEditPermission(user, iwc);
+	    Iterator iterator = coll.iterator();
+	    while (iterator.hasNext())  {
+	      Group group = (Group) iterator.next();
+	      String id = group.getPrimaryKey().toString();
+	      if (! selfGroupId.equals(id)) {
+	        String name = groupBusiness.getNameOfGroupWithParentName(group);
+	        groupList.addMenuElement(id,name);
+	      }
+	    }
     }
+    else{  //IS SUPER USER
+			Collection tops = null;
+			try {
+				tops = business.getUsersTopGroupNodesByViewAndOwnerPermissions(user,iwc);
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+			}
+      
+			if(tops!=null && !tops.isEmpty()){
+				Iterator topGroupsIterator = tops.iterator();
+				List allGroups = new ArrayList();
+		
+				while (topGroupsIterator.hasNext())  {
+					Group parentGroup = (Group) topGroupsIterator.next();
+					allGroups.add(parentGroup);
+					Collection coll = null;
+					try {
+						coll = groupBusiness.getChildGroupsRecursive(parentGroup);
+					}
+					catch (EJBException e1) {
+						e1.printStackTrace();
+					}
+					catch (RemoteException e1) {
+						e1.printStackTrace();
+					}
+					if (coll != null) allGroups.addAll(coll);
+				}
+				
+				if(allGroups != null){
+					Iterator iter = allGroups.iterator();
+					while (iter.hasNext()) {
+						Group item = (Group) iter.next();
+						String id = item.getPrimaryKey().toString();
+						if (!selfGroupId.equals(id)) {
+							String name = groupBusiness.getNameOfGroupWithParentName(item);
+							groupList.addMenuElement(id,name);
+						}
+					}
+				}
+			}
+    	
+    }
+    
     return groupList;
   }
 

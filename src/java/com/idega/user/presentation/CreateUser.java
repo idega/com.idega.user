@@ -1,8 +1,12 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+
+import javax.ejb.EJBException;
 
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
@@ -171,11 +175,39 @@ public class CreateUser extends Window {
 			groups = getUserBusiness(iwc).getAllGroupsWithEditPermission(iwc.getCurrentUser(),iwc );
 		}
 		else{
+			GroupBusiness groupBusiness = this.getGroupBusiness(iwc);
+			UserBusiness business = this.getUserBusiness(iwc);
+			User user = iwc.getCurrentUser();
+			Collection tops = null;
 			try {
-				groups = groupBiz.getAllGroups();
+				tops = business.getUsersTopGroupNodesByViewAndOwnerPermissions(user,iwc);
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
+			}
+			  
+			if(tops!=null && !tops.isEmpty()){
+				Iterator topGroupsIterator = tops.iterator();
+				List allGroups = new ArrayList();
+			
+				while (topGroupsIterator.hasNext())  {
+					Group parentGroup = (Group) topGroupsIterator.next();
+					allGroups.add(parentGroup);
+					Collection coll = null;
+					try {
+						coll = groupBusiness.getChildGroupsRecursive(parentGroup);
+					}
+					catch (EJBException e1) {
+						e1.printStackTrace();
+					}
+					catch (RemoteException e1) {
+						e1.printStackTrace();
+					}
+					if (coll != null) allGroups.addAll(coll);
+				}
+					
+					groups = allGroups;
+				
 			}
 		}
 		
