@@ -21,6 +21,7 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
+import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.StyledButton;
@@ -267,8 +268,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		saveButton.setSubmitConfirm(iwrb.getLocalizedString("change.selected.permissions?", "Change selected permissions?"));
 		StyledButton save = new StyledButton(saveButton);
 		
-		SubmitButton closeButton = new SubmitButton(iwrb.getLocalizedString("close", "Close"));
-		closeButton.setOnClick("window.close()");
+		CloseButton closeButton = new CloseButton(iwrb.getLocalizedString("close", "Close"));
 		StyledButton close = new StyledButton(closeButton);
 
 		Table mainTable = new Table(1, 3);

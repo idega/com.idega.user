@@ -29,6 +29,7 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
+import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
@@ -179,8 +180,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		table.add(permissionControlGroupName,1,2);
 		
 		SubmitButton override = new SubmitButton(iwrb.getLocalizedImageButton("group_permission_window.override", "Override inherited permissions"),PARAM_OVERRIDE_INHERITANCE,"true");
-		SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
-		close.setOnClick("window.close()");
+		CloseButton close = new CloseButton(iwrb.getLocalizedImageButton("close", "Close"));
 		
 		Link owners = new Link(iwrb.getLocalizedString("owner.button", "Owners"));
 				owners.setWindowToOpen(GroupOwnersWindow.class);
@@ -836,8 +836,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"),PARAM_SAVING,"TRUE");
 		save.setSubmitConfirm(iwrb.getLocalizedString("grouppermissionwindow.confirm_message", "Change selected permissions?"));
 
-		SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
-		close.setOnClick("window.close()");
+		CloseButton close = new CloseButton(iwrb.getLocalizedImageButton("close", "Close"));
 
 		Link owners = new Link(iwrb.getLocalizedString("owner.button", "Owners"));
 		owners.setWindowToOpen(GroupOwnersWindow.class);

@@ -31,6 +31,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
+import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
@@ -536,8 +537,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"));
         save.setSubmitConfirm(iwrb.getLocalizedString("change.selected.permissions?", "Change selected permissions?"));
         
-        SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
-        close.setOnClick("window.close()");
+        CloseButton close = new CloseButton(iwrb.getLocalizedImageButton("close", "Close"));
         
         Table mainTable = new Table();
 	    		mainTable.setWidth(600);
