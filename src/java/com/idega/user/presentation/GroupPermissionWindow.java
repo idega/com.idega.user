@@ -51,7 +51,7 @@ import com.idega.util.IWColor;
 public class GroupPermissionWindow extends StyledIWAdminWindow { //implements StatefullPresentation{
 
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-	private static final String PARAM_SELECTED_GROUP_ID = SelectGroupEvent.PRM_GROUP_ID; //todo remove when using event system
+	private static final String PARAM_SELECTED_GROUP_ID = SelectGroupEvent.PRM_GROUP_ID; 
 	private static final String PARAM_SAVING = "gpw_save";
 	private static final String SESSION_PARAM_PERMISSIONS_BEFORE_SAVE = "gpw_permissions_b_s";
 	private static final String RECURSE_PERMISSIONS_TO_CHILDREN_KEY = "gpw_recurse_ch_of_gr";
