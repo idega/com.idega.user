@@ -5,7 +5,7 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb User</name>
   <artifactId>com.idega.user</artifactId>
-  <currentVersion>1.0</currentVersion>
+  <currentVersion>1.0-SNAPSHOT</currentVersion>
   <inceptionYear>2000</inceptionYear>
   <shortDescription>User</shortDescription>
   <versions>
