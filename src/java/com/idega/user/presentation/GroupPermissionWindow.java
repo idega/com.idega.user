@@ -701,12 +701,17 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			allPermissions = AccessControl.getAllGroupPermissionsForGroup(selectedGroup);
 			//for the user
 			Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
-			//get all permit permissions from parents or their permission controlling groups
-			Collection permitPermissions = AccessControl.getAllGroupPermitPermissions(getAllParentOrPermissionControllingGroupsForUser(iwc, user));
+			
 						
 			//add the permissions to one big list
 			allPermissions.addAll(ownedPermissions);
-			allPermissions.addAll(permitPermissions);
+			
+//			get all permit permissions from parents or their permission controlling groups
+			Collection parentOrPersionControllingGroups = getAllParentOrPermissionControllingGroupsForUser(iwc, user);
+			if(!parentOrPersionControllingGroups.isEmpty()){
+			    Collection permitPermissions = AccessControl.getAllGroupPermitPermissions(parentOrPersionControllingGroups);
+			    allPermissions.addAll(permitPermissions);
+			}
 
 		}
 		catch (Exception e) {
