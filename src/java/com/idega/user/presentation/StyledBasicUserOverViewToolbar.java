@@ -110,7 +110,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 Table button = new Table(1, 1);
                 button.setStyleClass(styleButton);
                 button.setAlignment(1,1,"center");
-                button.setCellpadding(0);
+                button.setCellpadding(1);
                 Text text = new Text(iwrb.getLocalizedString("new.member", "New member"));
                 Link tLink11 = new Link(text);
                 tLink11.setStyleClass(styledLinkClass);
@@ -134,7 +134,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
             Table editGroup = new Table(1, 1);
             editGroup.setStyleClass(styleButton);
             editGroup.setAlignment(1,1,"center");
-            editGroup.setCellpadding(0);
+            editGroup.setCellpadding(1);
             Text editText = new Text(iwrb.getLocalizedString("edit.group", "Edit group"));
             Link editLink = new Link(editText);
             editLink.setStyleClass(styledLinkClass);
@@ -154,7 +154,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                     Table button3 = new Table(1, 1);
                     button3.setStyleClass(styleButton);
                     button3.setAlignment(1,1,"center");
-                    button3.setCellpadding(0);
+                    button3.setCellpadding(1);
                     Text text3 = new Text(iwrb.getLocalizedString("import", "Import"));
                     Link tLink14 = new Link(text3);
                     tLink14.setStyleClass(styledLinkClass);
@@ -178,7 +178,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                     Table button3 = new Table(1, 1);
                     button3.setStyleClass(styleButton);
                     button3.setAlignment(1,1,"center");
-                    button3.setCellpadding(0);
+                    button3.setCellpadding(1);
                     Text text3 = new Text(iwrb.getLocalizedString("massregistering", "Bulk registering"));
                     Link tLink14 = new Link(text3);
                     tLink14.setStyleClass(styledLinkClass);
@@ -200,7 +200,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                     Table button4 = new Table(1, 1);
                     button4.setStyleClass(styleButton);
                     button4.setAlignment(1,1,"center");
-                    button4.setCellpadding(0);
+                    button4.setCellpadding(1);
                     Text text4 = new Text(iwrb.getLocalizedString("updatecdiv", "Update template"));
                     Link tLink15 = new Link(text4);
                     tLink15.setStyleClass(styledLinkClass);
@@ -224,7 +224,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                     Table button4 = new Table(1, 1);
                     button4.setStyleClass(styleButton);
                     button4.setAlignment(1,1,"center");
-                    button4.setCellpadding(0);
+                    button4.setCellpadding(1);
                     Text text4 = new Text(iwrb.getLocalizedString("cashier", "Cashier"));
                     Link tLink15 = new Link(text4);
                     tLink15.setStyleClass(styledLinkClass);
@@ -245,7 +245,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 Table button4 = new Table(1, 1);
                 button4.setStyleClass(styleButton);
                 button4.setAlignment(1,1,"center");
-                button4.setCellpadding(0);
+                button4.setCellpadding(1);
                 Text text3 = new Text(iwrb.getLocalizedString("roles", "Roles"));
                 Link tLink12 = new Link(text3);
                 tLink12.setStyleClass(styledLinkClass);
@@ -271,7 +271,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 Table button4 = new Table(1, 1);
                 button4.setStyleClass(styleButton);
                 button4.setAlignment(1,1,"center");
-                button4.setCellpadding(0);
+                button4.setCellpadding(1);
                 Text text3 = new Text(iwrb.getLocalizedString("permissions", "Permissions"));
                 Link tLink12 = new Link(text3);
                 tLink12.setStyleClass(styledLinkClass);
@@ -298,7 +298,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 Table button5 = new Table(1, 1);
                 button5.setStyleClass(styleButton);
                 button5.setAlignment(1,1,"center");
-                button5.setCellpadding(0);
+                button5.setCellpadding(1);
                 Text text5 = new Text(iwrb.getLocalizedString("Delete.group", "Delete group"));
                 Link tLink5 = new Link(text5);
                 tLink5.setStyleClass(styledLinkClass);
