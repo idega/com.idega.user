@@ -44,6 +44,7 @@ public class SearchResultsWindowPS extends BasicUserOverviewPS {
 			searchType = ((UserSearchEvent)e).getSearchType();
 			this._selectedDomain = null;
 			this._selectedGroup = null;
+			showSearchResult = true;
 			
 			this.fireStateChanged();	
 			
