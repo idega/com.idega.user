@@ -42,9 +42,13 @@ public class ChangeClassEvent extends IWPresentationEvent {
    	if( className != null ){
    		setChangeClassName(IWMainApplication.decryptClassName(className));
  		return true;
+   	}else{
+
+         System.err.println("ChangeClassEvent: className is null!");
+
    	}
 
-    return false;
+    return true;
 
 
   }
