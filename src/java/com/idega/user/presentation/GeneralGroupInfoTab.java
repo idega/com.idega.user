@@ -38,16 +38,22 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private IBPageChooser homepageField;
 //	private DropdownMenu grouptypeField;
 	private Text grouptypeField;
+	private TextInput shortNameField;
+	private TextInput abbrField;
 	
 	private Text nameText;
 	private Text descriptionText;
 	private Text homepageText;
 	private Text grouptypeText;
+	private Text shortNameText;
+	private Text abbrText;
 
 	private String nameFieldName;
 	private String descriptionFieldName;
 	private String homepageFieldName;
 	private String grouptypeFieldName;
+	private String shortNameFieldName;
+	private String abbrFieldName;
 
 	private IWResourceBundle _iwrb = null;
 
@@ -84,7 +90,9 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 			fieldValues.put(descriptionFieldName, (group.getDescription() != null) ? group.getDescription() : "");
 			fieldValues.put(homepageFieldName, new Integer(group.getHomePageID()));
 			fieldValues.put(grouptypeFieldName, (group.getGroupType() != null) ? group.getGroupType() : "");
-			updateFieldsDisplayStatus();
+			fieldValues.put(shortNameFieldName, (group.getShortName() != null) ? group.getShortName() : "");
+			fieldValues.put(abbrFieldName, (group.getAbbrevation() != null) ? group.getAbbrevation() : "");
+		updateFieldsDisplayStatus();
 		}
 		catch (Exception e) {
 			System.err.println("GeneralGroupInfoTab error initFieldContents, GroupId : " + getGroupId());
@@ -106,6 +114,10 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 					homepageField.setSelectedPage(node.getNodeID(), node.getNodeName());
 			}
 		}
+
+		shortNameField.setContent((String) fieldValues.get(shortNameFieldName));
+		abbrField.setContent((String) fieldValues.get(abbrFieldName));
+
 
 		//String type = (String) fieldValues.get(grouptypeFieldName);
 		//grouptypeField.setSelectedElement(type);
@@ -138,6 +150,12 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		String addRemove = "  " + iwrb.getLocalizedString("gen_addremove","Add/Remove") + "  ";
 
 		addLink = new Link(addRemove);
+		
+		shortNameField = new TextInput(shortNameFieldName);
+		shortNameField.setLength(26);
+		
+		abbrField = new TextInput(abbrFieldName);
+		abbrField.setLength(26);		
 	}
 
 	public void initializeTexts() {
@@ -158,6 +176,12 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 
 		memberof = getTextObject();
 		memberof.setText(iwrb.getLocalizedString("gen_memberof","Member of") + ":");
+		
+		shortNameText = getTextObject();
+		shortNameText.setText(iwrb.getLocalizedString("gen_shortname","Short name") + ":");
+		
+		abbrText = getTextObject();
+		abbrText.setText(iwrb.getLocalizedString("gen_abbr","Abbrevation") + ":");		
 	}
 
 	public boolean store(IWContext iwc) {
@@ -169,6 +193,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 				group.setDescription((String) fieldValues.get(descriptionFieldName));
 				group.setHomePageID((Integer) fieldValues.get(homepageFieldName));
 				group.setGroupType((String) fieldValues.get(grouptypeFieldName));
+				group.setShortName((String) fieldValues.get(shortNameFieldName));
+				group.setAbbrevation((String) fieldValues.get(abbrFieldName));
 				group.store();
 			}
 		}
@@ -185,12 +211,18 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		setCellpadding(0);
 		setCellspacing(0);
 
-		Table nameTable = new Table(2, 1);
+		Table nameTable = new Table(2, 3);
 		nameTable.setCellpadding(0);
 		nameTable.setCellspacing(0);
 		nameTable.setWidth(1, 1, "50");
+		nameTable.setWidth(1, 2, "50");
+		nameTable.setWidth(1, 3, "50");
 		nameTable.add(nameText, 1, 1);
 		nameTable.add(nameField, 2, 1);
+		nameTable.add(shortNameText, 1, 2);
+		nameTable.add(shortNameField, 2, 2);
+		nameTable.add(abbrText, 1, 3);
+		nameTable.add(abbrField, 2, 3);
 		add(nameTable, 1, 1);
 
 		Table homepageTable = new Table(2, 1);
@@ -237,6 +269,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 			String desc = iwc.getParameter(descriptionFieldName);
 			String homepage = iwc.getParameter(homepageFieldName);
 			String grouptype = iwc.getParameter(grouptypeFieldName);
+			String gshortname = iwc.getParameter(shortNameFieldName);
+			String gabbr = iwc.getParameter(abbrFieldName);
 
 			if (gname != null) {
 				fieldValues.put(nameFieldName, gname);
@@ -255,6 +289,14 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 				fieldValues.put(grouptypeFieldName, grouptype);
 			}
 
+			if (gshortname != null) {
+				fieldValues.put(shortNameFieldName, gshortname);
+			}
+
+			if (gabbr != null) {
+				fieldValues.put(abbrFieldName, gabbr);
+			}
+
 			updateFieldsDisplayStatus();
 
 			return true;
@@ -267,6 +309,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		nameFieldName = "UM_group_name";
 		homepageFieldName = "UM_home_page";
 		grouptypeFieldName = "UM_group_type";
+		shortNameFieldName = "UM_group_short";
+		abbrFieldName = "UM_group_abbr";
 	}
 
 	public void initializeFieldValues() {
@@ -274,6 +318,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		fieldValues.put(descriptionFieldName, "");
 		fieldValues.put(homepageFieldName, new Integer(0));
 		fieldValues.put(grouptypeFieldName, "");
+		fieldValues.put(shortNameFieldName, "");
+		fieldValues.put(abbrFieldName, "");
 
 		updateFieldsDisplayStatus();
 	}
