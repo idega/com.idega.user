@@ -212,7 +212,8 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
           _createEvent.getIONameForName() +
           ".value == \"\")) { \n\t alert(\""
           + message +
-          "\") \n\t return false \n\t } \n\t else \n\t { \n\t window.close() \n\t return true \n\t } \n\t }");
+          "\") \n\t return false \n\t } " +      //   "\n\t else \n\t { \n\t window.close() \n\t return true \n\t } 
+      "\n\t }" );
       form.setOnSubmit("return mandatoryCheck(this)");
       SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"), _createEvent.getIONameForCancel());
       close.setOnClick("window.close();return false;");
