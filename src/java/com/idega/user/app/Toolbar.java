@@ -112,7 +112,7 @@ public class Toolbar extends Page implements IWBrowserView {
     iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
     boolean showISStuff = iwc.getApplicationSettings().getProperty("temp_show_is_related_stuff")!=null;
-		
+		boolean showReportGenerator = iwc.getApplicationSettings().getProperty("temp_show_report_generator")!=null;
 
     Table toolbarTable = new Table(2,3);
     toolbarTable.setCellpadding(0);
@@ -249,8 +249,8 @@ public class Toolbar extends Page implements IWBrowserView {
 			toolbar1.add(button6, 7, 1);
 		}
     
-    //Member exchange window temp
-    if(showISStuff){
+
+    if(showReportGenerator){
       Table button7 = new Table(2,1);
       button7.setCellpadding(0);
       Image iconExchange = iwb.getImage("new_group.gif");
@@ -264,7 +264,7 @@ public class Toolbar extends Page implements IWBrowserView {
       toolbar1.add(button7,8,1);
     }
     
-    if(showISStuff){
+    if(showReportGenerator){
       Table button8 = new Table(2,1);
       button8.setCellpadding(0);
       Image iconExchange = iwb.getImage("new_group.gif");
