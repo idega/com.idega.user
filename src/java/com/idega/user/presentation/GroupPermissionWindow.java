@@ -241,7 +241,17 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 						Group group;
 						try {
 							group = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(perm.getContextValue()));
-							return new Text(group.getName());
+							//TODO better solutions
+							Collection parents = getGroupBusiness(iwc).getParentGroups(group);
+							if(parents!=null && !parents.isEmpty()){
+								Iterator par = parents.iterator();
+								while (par.hasNext()) {
+									Group parent = (Group) par.next();
+									return new Text("("+parent.getName()+") "+group.getName());
+								}
+								
+							}
+							else return new Text(group.getName());
 						}
 						catch (RemoteException e) {
 						}
