@@ -224,6 +224,7 @@ public class UserSearcher extends Block implements IWPageEventListener {
 			try {
 				UserHome home = (UserHome) IDOLookup.getHome(User.class);
 				user = home.findByPrimaryKey(userID);
+				getUserSession(iwc).setUser(user);
 			}
 			catch (IDOLookupException e) {
 				throw new FinderException(e.getMessage());
@@ -545,6 +546,7 @@ private void addParameters(Link link) {
 			link.addParameter((String)entry.getKey(),(String)entry.getValue());
 		}
 	}
+	link.setEventListener(UserSearcher.class);
 }
 
 private void addParameters(Form form) {
@@ -1026,7 +1028,7 @@ public boolean isUseFlexiblePersonalID(){
 
 	public boolean actionPerformed(IWContext iwc) throws IWException {
 		try {
-			processSearch(iwc);
+			process(iwc);
 			return true;
 		}
 		catch (IDOLookupException e) {
