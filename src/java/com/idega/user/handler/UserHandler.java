@@ -2,7 +2,7 @@ package com.idega.user.handler;
 
 import java.util.List;
 
-import com.idega.builder.handler.PropertyHandler;
+import com.idega.core.builder.data.ICPropertyHandler;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.presentation.UserChooser;
@@ -10,7 +10,7 @@ import com.idega.user.presentation.UserChooser;
 /**
  * @author gimmi
  */
-public class UserHandler implements PropertyHandler{
+public class UserHandler implements ICPropertyHandler{
   /**
    *
    */

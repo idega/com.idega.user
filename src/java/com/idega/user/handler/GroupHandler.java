@@ -1,5 +1,5 @@
 /*
- * $Id: GroupHandler.java,v 1.1 2004/02/25 16:57:42 tryggvil Exp $
+ * $Id: GroupHandler.java,v 1.2 2004/06/28 11:17:09 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -11,7 +11,7 @@ package com.idega.user.handler;
 
 import java.util.List;
 
-import com.idega.builder.handler.PropertyHandler;
+import com.idega.core.builder.data.ICPropertyHandler;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.data.Group;
@@ -23,7 +23,7 @@ import com.idega.user.presentation.GroupTreeNode;
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-public class GroupHandler implements PropertyHandler {
+public class GroupHandler implements ICPropertyHandler {
   /**
    *
    */
