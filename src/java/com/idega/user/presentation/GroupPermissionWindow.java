@@ -445,9 +445,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 				Iterator entries = permissions.values().iterator();
 				while (entries.hasNext()) {	
 					ICPermission permission = (ICPermission) entries.next();
-				
-					permission.setPermissionValue(false);
-					permission.store();
+					access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, selectedGroupId, permission.getContextValue(), permission.getPermissionString(), Boolean.FALSE);
 					
 					  
 					 if(groupIdsToRecurseChangesOn!=null && groupIdsToRecurseChangesOn.contains(new Integer(permission.getContextValue()))){
