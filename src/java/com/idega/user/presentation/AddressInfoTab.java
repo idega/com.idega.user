@@ -9,6 +9,7 @@ import com.idega.presentation.ui.FramePane;
 import com.idega.presentation.ui.PostalCodeDropdownMenu;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Text;
+import com.idega.user.business.UserBusiness;
 import com.idega.util.datastructures.Collectable;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -265,7 +266,8 @@ public class AddressInfoTab extends UserTab{
 
   public void initFieldContents(){
     try{
-      Address addr = this.getUserBusiness(this.getEventIWContext()).getUserAddress1(this.getUserId());
+    	UserBusiness userBiz = getUserBusiness(this.getEventIWContext());
+      Address addr = userBiz.getUsersMainAddress(userBiz.getUser(this.getUserId()));
 
       boolean hasAddress = false;
       if(addr != null){
