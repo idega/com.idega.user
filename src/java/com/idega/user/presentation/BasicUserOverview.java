@@ -58,6 +58,7 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWColor;
+import com.idega.util.StringHandler;
 /**
  * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
  * 
@@ -72,7 +73,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     public static final String SELECTED_GROUP_KEY = "selected_group_key";
     public static final String DELETE_USERS_KEY = "delete_selected_users";
     public static final String MOVE_USERS_KEY = "move_users";
-    
+
+    protected static final String PHONE_TYPE_PATH = PhoneType.class.getName() + ".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME";
     protected static final String USER_APPLICATION_FRONT_PAGE_ID = "USER_APPLICATION_FRONT_PAGE_ID";
     
     private String _controlTarget = null;
@@ -491,6 +493,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         
         // define phone converter class
         EntityToPresentationObjectConverter converterPhone = new EntityToPresentationObjectConverter() {
+        	
             public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
@@ -511,11 +514,41 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 int i;
                 Table table = new Table();
                 for (i = 0; i < phone.length; i++) {
-                    table.add(browser.getDefaultConverter().getPresentationObject((GenericEntity) phone[i], path, browser, iwc));
+                    table.add(getPresentationObjectForPhone(phone[i], path, browser, iwc));
                 }
                 return table;
             }
+           
+            private PresentationObject getPresentationObjectForPhone(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc)  {
+                StringBuffer displayValues = new StringBuffer();
+                List list = path.getValues((EntityRepresentation) genericEntity);
+                Iterator valueIterator = list.iterator();
+                EntityPath currentPath = path;
+                while (valueIterator.hasNext()) {
+					Object object = valueIterator.next();
+                	// if there is no entry the object is null
+                	if (object == null) {
+                		object = "";
+                	}
+                	else {
+                    	// get localized string for phone type
+                    	String shortKey = currentPath.getShortKeySection();
+                    	currentPath = path.getNextEntityPath();
+                    	String phoneType = object.toString();
+                    	if (PHONE_TYPE_PATH.equals(shortKey)) {
+                    		object = getBundle(iwc).getResourceBundle(iwc).getLocalizedString(phoneType, phoneType);
+                    	}
+                	}
+                	displayValues.append(object.toString());
+                	// append white space
+                	displayValues.append(' ');  
+                }
+                Text text = new Text();
+                text.setText(displayValues.toString());               
+                return text;
+              }
         };
+        
         // define special converter class for complete address
         EntityToPresentationObjectConverter converterCompleteAddress = new EntityToPresentationObjectConverter() {
             private List values;
@@ -635,7 +668,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             + Country.class.getName()
             + ".IC_COUNTRY_ID|COUNTRY_NAME";
         String emailKey = Email.class.getName() + ".ADDRESS";
-        String phoneKey = PhoneType.class.getName() + ".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + Phone.class.getName() + ".PHONE_NUMBER";
+        String phoneKey = PHONE_TYPE_PATH +":" + Phone.class.getName() + ".PHONE_NUMBER";
         String pinKey = User.class.getName() + ".PERSONAL_ID";
         
         String firstNameKey = User.class.getName() + ".FIRST_NAME";
