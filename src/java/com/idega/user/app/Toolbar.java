@@ -277,10 +277,10 @@ public class Toolbar extends Page implements IWBrowserView {
       ICFile queryFolder = lookUpFile(QUERY_FOLDER_NAME);
       ICFile layoutFolder = lookUpFile(LAYOUT_FOLDER_NAME);
       if (queryFolder != null)  {
-        tLink18.addParameter(ReportLayoutChooser.SET_ID_OF_QUERY_FOLDER_KEY, queryFolder.getID());
+        tLink18.addParameter(ReportLayoutChooser.SET_ID_OF_QUERY_FOLDER_KEY, queryFolder.getPrimaryKey().toString());
       }
       if (layoutFolder != null) {
-        tLink18.addParameter(ReportLayoutChooser.SET_ID_OF_DESIGN_FOLDER_KEY, layoutFolder.getID());
+        tLink18.addParameter(ReportLayoutChooser.SET_ID_OF_DESIGN_FOLDER_KEY, layoutFolder.getPrimaryKey().toString());
       }
       button8.add(tLink18,2,1);
       toolbar1.add(button8,9,1);
