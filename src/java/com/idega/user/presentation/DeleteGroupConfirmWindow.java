@@ -17,12 +17,13 @@ import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.help.presentation.Help;
-import com.idega.idegaweb.presentation.*;
+import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
@@ -62,6 +63,10 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
       String groupIdString = iwc.getParameter(GROUP_ID_KEY);
       groupId = new Integer(groupIdString);
     }
+//    else {
+//    	// no group is selected show nothing
+//    	return;
+//    }
     Integer parentGroupId = new Integer(-1);
     if (iwc.isParameterSet(PARENT_GROUP_ID_KEY)) {
       String groupIdString = iwc.getParameter(PARENT_GROUP_ID_KEY);
@@ -126,12 +131,14 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
     }
 		// get buttons
 		Help help = getHelp(HELP_TEXT_KEY);
-    SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("Close", "Close"), DeleteGroupEvent.CANCEL_KEY);
-		SubmitButton ok = new SubmitButton(iwrb.getLocalizedImageButton("yes", "Yes"), DeleteGroupEvent.OKAY_KEY);
+		SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("Close", "Close"), DeleteGroupEvent.CANCEL_KEY);
+		GenericButton ok = new GenericButton(iwrb.getLocalizedString("yes","Yes"));
+    	ok.setAsImageButton(true);
 		SubmitButton cancel = new SubmitButton(iwrb.getLocalizedImageButton("cancel", "Cancel"), DeleteGroupEvent.CANCEL_KEY);
-    close.setOnClick("window.close(); return false;");
+		close.setOnClick("window.close(); return false;");
 		cancel.setOnClick("window.close(); return false;");
-		ok.setOnClick("delete_form.submit();window.close();");
+		// first submit, then close window
+		ok.setOnClick("document.delete_form.submit(); window.close();");
 		
 		Table mainTable = new Table();
 		mainTable.setWidth(280);
