@@ -7,6 +7,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Script;
 import com.idega.presentation.text.Link;
 import com.idega.user.event.SelectDomainEvent;
 import com.idega.user.event.SelectGroupEvent;
@@ -49,6 +50,9 @@ public class GroupTreeView extends IWTreeControl {
 	public static final String ONCLICK_DEFAULT_NODE_NAME_PARAMETER_NAME = "iw_node_name";
 
 	private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
+  
+  private int selectedGroupId;
+  private int selectedDomainId;
 	
 	private IWBundle bundle;
 
@@ -227,6 +231,17 @@ public class GroupTreeView extends IWTreeControl {
 			case 2 :
 				Link l = this.getLinkPrototypeClone(node.getNodeName());
 				l.setOnClick("setLinkToBold(this)");
+        l.setID(node.getNodeID());
+        // set selection bold
+        if (selectedDomainId > 0 || selectedGroupId > 0) {
+          int nodeType = node.getNodeType();
+          int nodeId = node.getNodeID();
+          if (  ((nodeType == GroupTreeNode.TYPE_DOMAIN) && (nodeId == selectedDomainId)) ||
+                ((nodeType == GroupTreeNode.TYPE_GROUP) && (nodeId == selectedGroupId)) ) {
+            String script = "hugo=document.getElementById('"+node.getNodeID()+"'); setLinkToBold(hugo);";
+            getParentPage().setOnLoad(script);
+          }
+        }
 
 				switch (node.getNodeType()) {
 					case GroupTreeNode.TYPE_DOMAIN :
@@ -384,5 +399,19 @@ public class GroupTreeView extends IWTreeControl {
 		super.setControlTarget(controlTarget);
 		nodeNameTarget = null;
 	}
+
+  /**
+   * @param i
+   */
+  public void setSelectedDomainId(int i) {
+    selectedDomainId = i;
+  }
+
+  /**
+   * @param i
+   */
+  public void setSelectedGroupId(int i) {
+    selectedGroupId = i;
+  }
 
 }
