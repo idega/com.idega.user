@@ -22,7 +22,6 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.Table;
-import com.idega.util.IWColor;
 
 /**
  * <p>Title: idegaWeb</p>

@@ -9,7 +9,6 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
-import com.idega.util.IWColor;
 
 /**
  * <p>Title: idegaWeb</p>

@@ -18,7 +18,6 @@ import com.idega.presentation.Image;
 import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
-//import com.idega.presentation.text.LinkContainer;
 import com.idega.presentation.text.Text;
 import com.idega.user.block.search.presentation.SearchForm;
 import com.idega.user.block.search.presentation.SearchWindow;
@@ -26,7 +25,6 @@ import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.CreateUser;
 import com.idega.user.presentation.MassMovingWindow;
-import com.idega.util.IWColor;
 
 
 /**
