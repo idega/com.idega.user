@@ -165,7 +165,7 @@ public class GeneralUserInfoTab extends UserTab {
 		while (iter.hasNext()) {
 			Gender item = (Gender) iter.next();
 			try {
-				genderField.addMenuElement(((Integer) item.getPrimaryKey()).intValue(), item.getName());
+				genderField.addMenuElement(((Integer) item.getPrimaryKey()).intValue(), iwrb.getLocalizedString(item.getName(),item.getName()));
 			}
 			catch (Exception ex) {
 			}
