@@ -188,7 +188,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
 			}
 		}
 
-		toolbar1.add(new PrintButton(),6,1);
+		toolbar1.add(new PrintButton(iwb.getImage("new_group.gif")),6,1);
 		
 		//calendar
 		// toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("calendar","Calendar"), iwb.getImage("calendar.gif"), com.idega.block.news.presentation.News.class),4,1);
