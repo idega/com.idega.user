@@ -481,7 +481,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	private Form getGroupPermissionForm(EntityBrowser browser) throws Exception{
 		
 		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"));
-		save.setSubmitConfirm("Change selected permissions?");
+		save.setSubmitConfirm(iwrb.getLocalizedString("grouppermissionwindow.confirm_message","Change selected permissions?"));
 		
 		SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
 		close.setOnClick("window.close()");
