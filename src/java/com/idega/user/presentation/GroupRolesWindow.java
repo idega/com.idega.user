@@ -39,7 +39,6 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.event.SelectGroupEvent;
 import com.idega.util.IWColor;
-import com.idega.util.ListUtil;
 
 /**
  * Description: An editor window for the selected groups roles <br>Company: Idega Software <br>Copyright: Idega Software 2003 <br>
@@ -201,8 +200,8 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
             public PresentationObject getPresentationObject(Object permissions, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 boolean isSet = false;
                 String permissionKey = path.getShortKey();
-                final int selectedId = Integer.parseInt(selectedGroupId);
-                String groupId = null;
+                //final int selectedId = Integer.parseInt(selectedGroupId);
+                //String groupId = null;
                 String permissionType = null;
                 String roleKey = null;
                 
@@ -343,7 +342,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         return allRoles;
     }
     protected void saveChanges(IWContext iwc, AccessController access) {
-        List groupsCurrentRoleKeys = (List) iwc.getSessionAttribute(SESSION_PARAM_ROLES_BEFORE_SAVE + selectedGroupId);
+        //List groupsCurrentRoleKeys = (List) iwc.getSessionAttribute(SESSION_PARAM_ROLES_BEFORE_SAVE + selectedGroupId);
         List rolesToRecurseToChildren = CheckBoxConverter.getResultByParsing(iwc, RECURSE_PERMISSIONS_TO_CHILDREN_KEY);
         
         
