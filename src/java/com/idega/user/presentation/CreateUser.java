@@ -192,6 +192,7 @@ public class CreateUser extends Window {
 
 
 		okButton = new SubmitButton("     OK     ", submitButtonParameterName, okButtonParameterValue);
+    okButton.setAsImageButton(true);
 		//cancelButton = new SubmitButton(" Cancel ", submitButtonParameterName, cancelButtonParameterValue);
 		cancelButton = new CloseButton();
 
