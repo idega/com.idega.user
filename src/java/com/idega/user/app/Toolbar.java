@@ -19,6 +19,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.DropdownMenu;
 import com.idega.user.block.search.presentation.SearchForm;
 import com.idega.user.block.search.presentation.SearchWindow;
 import com.idega.user.event.ChangeClassEvent;
@@ -150,7 +151,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
     add(toolbarTable);
 
-    Table toolbar1 = new Table(10,1);
+    Table toolbar1 = new Table(11,1);
 
   //  toolbar1.setStyleClass(menuTableStyle);
 //		Image menuTile = iwb.getImage("menu_tile.gif");
@@ -232,9 +233,8 @@ public class Toolbar extends Page implements IWBrowserView {
 		button3.add(dottedImage,3,1);
 		toolbar1.add(button3,5,1);
 			
-
-  
-    
+//		DropdownMenu dropdownMenu = new DropdownMenu();
+//		dropdownMenu.setOnChange("window.open(this.options[this.selectedIndex].value)");
 		//Member exchange window temp
 		if(showISStuff){
 				
@@ -252,7 +252,9 @@ public class Toolbar extends Page implements IWBrowserView {
 			button5.setWidth(2,10);
 			button5.add(tLink15,2,1);
 			toolbar1.add(button5,6,1);
-
+			
+//			dropdownMenu.addMenuElement(tLink15.getURL(),tLink15.toString());
+			
 			
 //			Table button5 = new Table(2,1);
 //			button5.setCellpadding(0);
@@ -285,7 +287,9 @@ public class Toolbar extends Page implements IWBrowserView {
 					}
 					tLink14.setWindowToOpen(MassMovingWindow.class);
 					button4.add(tLink14,1,1);
-					toolbar1.add(button4,7,1);  
+					toolbar1.add(button4,7,1); 
+					
+//				dropdownMenu.addMenuElement(tLink14.getURL(),tLink14.toString()); 
     
 //				 Table button4 = new Table(2,1);
 //				 button4.setCellpadding(0);
@@ -326,8 +330,20 @@ public class Toolbar extends Page implements IWBrowserView {
 			button6.setWidth(2,15);
 			button6.add(tLink16, 2, 1);
 			toolbar1.add(button6, 8, 1);
+			
+//			String tLink16String = tLink16.toString();
+//			tLink16String = java.net.URLEncoder.encode(tLink16String);
+//			
+//			tLink16.setURL(iwc.getApplication().getWindowOpenerURI(Importer.class));
+//			tLink16.setParameter(tLink16.toString(),iwc.getApplication().getWindowOpenerURI(Importer.class));
+			
+ 
+ 
+
+//			dropdownMenu.addMenuElement(tLink16.getURL(),tLink16.toString());
+
 		}
-    
+//		toolbar1.add(dropdownMenu,11,1);
 
 //    if(showReportGenerator){
 //      Table button7 = new Table(2,1);
@@ -390,6 +406,16 @@ public class Toolbar extends Page implements IWBrowserView {
 		 button5.add(tLink15,2,1);
 		 toolbar1.add(button5,10,1);
 	 }
+	 Table butt = new Table(2,1);
+	 butt.setCellpadding(0);
+	 Text tex = new Text(iwrb.getLocalizedString("button.calendar","Calendar Window"));
+	 Link tLin = new Link(tex);
+	 tLin.setStyleClass(styledLink);
+	 tLin.setWindowToOpen(com.idega.block.cal.presentation.CalendarWindow.class);
+	 butt.add(tLin,2,1);
+	 toolbar1.add(butt,11,1);
+	 
+	 
 	 
    // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("reports","Reports"), iwb.getImage("reports.gif"), com.idega.block.reports.presentation.Reporter.class),5,1);
 
