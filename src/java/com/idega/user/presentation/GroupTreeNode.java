@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
@@ -324,6 +325,10 @@ public class GroupTreeNode implements ICTreeNode {
 			default :
 				throw new UnsupportedOperationException("Operation not supported for type:" + getNodeType());
 		}
+	}
+	
+	public String getNodeName(Locale locale) {
+		return getNodeName();
 	}
 	
 	public String getGroupType() {
