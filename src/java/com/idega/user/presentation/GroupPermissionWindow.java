@@ -16,25 +16,21 @@ import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
-import com.idega.core.accesscontrol.business.PermissionCacher;
 import com.idega.core.accesscontrol.data.ICPermission;
-import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationState;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
-import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.user.app.UserApplication;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.event.SelectGroupEvent;
@@ -473,9 +469,16 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 		
 		SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
 		close.setOnClick("window.close()");
+		
+		Link owners = new Link(iwrb.getLocalizedString("owner.button","Owners"));
+		owners.setWindowToOpen(GroupOwnersWindow.class);
+		owners.setAsImageButton(true);
+		owners.addParameter(PARAM_SELECTED_GROUP_ID,selectedGroupId);
+		
 				
 		Table table = new Table(1,2);
 		table.add(browser,1,1);
+		table.add(owners,1,2);
 		table.add(close,1,2);
 		table.add(save,1,2);
 		table.setWidth(Table.HUNDRED_PERCENT);
@@ -568,6 +571,9 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	public String getName() {
 		return "Group permissions";
 	}
+	
+	
+	
 
 }
 
