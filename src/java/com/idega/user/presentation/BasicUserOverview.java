@@ -229,7 +229,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			
 		//		define address converter class
 		EntityToPresentationObjectConverter converterAddress = new EntityToPresentationObjectConverter() {
-			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+      public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+      }			
+      
+      public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
 					// entity is a user, try to get the corresponding address
 				User user = (User) entity;
 				Address address = null;
@@ -248,7 +252,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			
 		// define email converter class
 		EntityToPresentationObjectConverter converterEmail = new EntityToPresentationObjectConverter() {
-			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+      public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+      }     
+      
+      public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
 					// entity is a user, try to get the corresponding address
 				User user = (User) entity;
 				Email email = null;
@@ -266,7 +274,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			
 		// define phone converter class
 		EntityToPresentationObjectConverter converterPhone = new EntityToPresentationObjectConverter() {
-			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+      public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+      }     
+      
+      public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
 					// entity is a user, try to get the corresponding address
 				User user = (User) entity;
 				Phone[] phone = null;
@@ -289,7 +301,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		// define special converter class for complete address
 		EntityToPresentationObjectConverter converterCompleteAddress = new EntityToPresentationObjectConverter() {
 			private List values;
-			public PresentationObject getPresentationObject(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+			
+      public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+      } 
+      
+      public PresentationObject getPresentationObject(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc) {
 				// entity is a user, try to get the corresponding address
 				User user = (User) genericEntity;
 				Address address = null;
@@ -325,7 +342,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		};
 		// define user properties link converter class
 		EntityToPresentationObjectConverter converterLink = new EntityToPresentationObjectConverter() {
-			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+			
+      public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+      } 
+      
+      public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
 				User user = (User) entity;
 					
 				PresentationObject text = browser.getDefaultConverter().getPresentationObject(entity, path, browser, iwc);
@@ -349,7 +371,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		};
 		// define checkbox button converter class
 		EntityToPresentationObjectConverter converterToDeleteButton = new EntityToPresentationObjectConverter() {
-			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+			
+      public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+      } 
+      
+      public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
 				User user = (User) entity;
 
 				if (!user.equals(administratorUser)) {

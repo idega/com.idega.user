@@ -126,6 +126,10 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
     // define checkbox button converter class
     EntityToPresentationObjectConverter converterToChooseButton = new EntityToPresentationObjectConverter() {
 
+      public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+      } 
+
       public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
         User user = (User) entity;
         RadioButton radioButton = new RadioButton();

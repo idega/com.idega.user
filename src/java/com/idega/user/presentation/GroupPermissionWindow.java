@@ -233,6 +233,10 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
   
 				private com.idega.core.user.data.User administrator = null;
 				private boolean loggedInUserIsAdmin;
+        
+        public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+          return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+        } 
   
 				public PresentationObject getPresentationObject(Object permissions, EntityPath path, EntityBrowser browser, IWContext iwc)  {
 
@@ -272,6 +276,10 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
   
 					private com.idega.core.user.data.User administrator = null;
 					private boolean loggedInUserIsAdmin;
+          
+          public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+          } 
   
 					public PresentationObject getPresentationObject(Object permissions, EntityPath path,EntityBrowser browser, IWContext iwc)  {
 

@@ -172,6 +172,11 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 			 EntityToPresentationObjectConverter converterLink = new EntityToPresentationObjectConverter() {
 				 private com.idega.core.user.data.User administrator = null;
 				 private boolean loggedInUserIsAdmin;
+         
+         public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+           return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+         } 
+         
 				 public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
 					 User user = (User) entity;
 					 if (administrator == null) {
@@ -209,6 +214,10 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
   
 					private com.idega.core.user.data.User administrator = null;
 					private boolean loggedInUserIsAdmin;
+          
+          public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+          } 
   
 					public PresentationObject getPresentationObject(Object userEntity, EntityPath path,EntityBrowser browser, IWContext iwc)  {
 
