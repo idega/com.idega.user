@@ -388,8 +388,7 @@ public class GeneralUserInfoTab extends UserTab {
 			catch (RemoteException e) {
 				e.printStackTrace();
 			}
-		
-			fieldValues.put(idFieldName, (memberNumber != null) ? memberNumber : "");
+
 			fieldValues.put(idFieldName, (memberNumber != null) ? memberNumber : "");
 			fieldValues.put(fullNameFieldName, (user.getName() != null) ? user.getName() : "");
 			fieldValues.put(displayNameFieldName, (user.getDisplayName() != null) ? user.getDisplayName() : "");
@@ -469,7 +468,12 @@ public class GeneralUserInfoTab extends UserTab {
 		
 		boolean setNumber = false;
 		String clubId = club.getPrimaryKey().toString();
-		System.out.println(number);
+		
+		if(number.equals("")){
+			user.removeMetaData("CLUB_MEMB_NR_"+clubId);
+			user.store();
+			return true;
+		}
 		
 		
 		try {
