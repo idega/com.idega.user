@@ -1,10 +1,13 @@
 package com.idega.user.presentation;
 
+import com.idega.block.help.presentation.Help;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
@@ -17,7 +20,7 @@ import com.idega.util.IWTimestamp;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -26,6 +29,9 @@ public class UserLoginTab extends UserTab {
 
 	private static final String TAB_NAME = "usr_log_tab_name";
 	private static final String DEFAULT_TAB_NAME = "Login";
+	
+	private static final String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
+	private static final String HELP_TEXT_KEY = "user_login_tab";
 
 	private Text userLoginText;
 	private TextInput userLoginField;
@@ -287,7 +293,7 @@ public class UserLoginTab extends UserTab {
 		frameTable.setCellspacing(0);
 
 		// loginTable begin
-		Table loginTable = new Table(2, 3);
+		Table loginTable = new Table(2, 4);
 		loginTable.setCellpadding(0);
 		loginTable.setCellspacing(0);
 		loginTable.setHeight(1, rowHeight);
@@ -301,6 +307,7 @@ public class UserLoginTab extends UserTab {
 		loginTable.add(this.passwordField, 2, 2);
 		loginTable.add(this.confirmPasswordText, 1, 3);
 		loginTable.add(this.confirmPasswordField, 2, 3);
+		loginTable.add(getHelpButton(),1,4);
 		// loginTable end
 
 		// AccountPropertyTable begin
@@ -477,6 +484,18 @@ public class UserLoginTab extends UserTab {
 			}
 
 		}
+	}
+	
+	public Help getHelpButton() {
+		IWContext iwc = IWContext.getInstance();
+		IWBundle iwb = getBundle(iwc);
+		Help help = new Help();
+		Image helpImage = iwb.getImage("help.gif");
+		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+		help.setHelpTextKey(HELP_TEXT_KEY);
+		help.setImage(helpImage);
+		return help;
+		
 	}
 
 	public void initializeFieldNames() {
