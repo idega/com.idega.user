@@ -144,6 +144,8 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			//don't forget the login tab
 			UserLoginTab ult = new UserLoginTab();
 			ult.setPanel(panel);
+			ult.setUserID(userId);
+			ult.setGroupID(groupId);
 			panel.addTab(ult, ++count, iwc);
 			
 		}
