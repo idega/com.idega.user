@@ -396,7 +396,7 @@ public class Toolbar extends Page implements IWBrowserView {
    //toolbar1.add(button9,10,1);
    toolbarTable.setAlignment(2,2,"right");
    toolbarTable.setVerticalAlignment(2,2,"middle");
-   toolbarTable.add(text9,2,2);
+ //  toolbarTable.add(text9,2,2);
    toolbarTable.add(searchForm,3,2);
    
 /*
