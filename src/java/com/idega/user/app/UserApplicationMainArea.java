@@ -14,6 +14,7 @@ import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
@@ -39,6 +40,7 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
   private StatefullPresentationImplHandler _stateHandler = null;
   private String _controlTarget = null;
   private IWPresentationEvent _contolEvent = null;
+  private String styleScript = "UserApplicationStyle.css";
 
   private BasicUserOverview _buo = new BasicUserOverview();
 	private SearchResultsWindow search = new SearchResultsWindow();//these should be added dynamically
@@ -77,6 +79,13 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 
   public void main(IWContext iwc) throws Exception {
     this.empty();
+    
+	IWBundle iwb = getBundle(iwc);
+	Page parentPage = this.getParentPage();
+	String styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
+	parentPage.addStyleSheetURL(styleSrc);
+	
+    
     UserApplicationMainAreaPS ps = (UserApplicationMainAreaPS)this.getPresentationState(iwc);
 		String className = ps.getClassNameToShow();
 		Collection plugins = ps.getUserGroupPlugins();

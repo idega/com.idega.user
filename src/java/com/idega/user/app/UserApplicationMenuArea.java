@@ -28,6 +28,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
   private Toolbar toolbar = new Toolbar();
   private static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 	private String userApplicationMainAreaStateId = null;
+	private String styleScript = "UserApplicationStyle.css";
 
 
 
@@ -82,12 +83,26 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
     toolbar.setUserApplicationMainAreaStateId(userApplicationMainAreaStateId);
     super.add(toolbar);
   }
+  
+  
 
 	/**
 	 * @param string
 	 */
 	public void setUserApplicationMainAreaStateId(String string) {
 		userApplicationMainAreaStateId = string;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
+	 */
+	public void main(IWContext iwc) throws Exception {
+		super.main(iwc);
+		IWBundle iwb = getBundle(iwc);
+		Page parentPage = this.getParentPage();
+		String styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
+		parentPage.addStyleSheetURL(styleSrc);
+	
 	}
 
 }
