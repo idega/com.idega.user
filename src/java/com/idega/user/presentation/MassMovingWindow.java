@@ -25,7 +25,7 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.app.ToolbarElement;
-import com.idega.user.app.UserApplicationMainAreaPS;
+//import com.idega.user.app.UserApplicationMainAreaPS;
 import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
@@ -142,8 +142,8 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
         //TODO thomas change this in the way that actually the userApplicationMainAreaPs is used
         //actionListener = (UserApplicationMainAreaPS) stateMachine.getStateFor(actionListenerStateId, UserApplicationMainAreaPS.class);
         String code = IWMainApplication.getEncryptedClassName(BasicUserOverview.class);
-        String code2 = IWMainApplication.getEncryptedClassName(UserApplicationMainAreaPS.class);
-        String string = IWMainApplication.getHashCodedClassName("6893");
+        //String code2 = IWMainApplication.getEncryptedClassName(UserApplicationMainAreaPS.class);
+        //String string = IWMainApplication.getHashCodedClassName("6893");
         code = ":" + code;
         actionListener = (BasicUserOverviewPS) stateMachine.getStateFor( code , BasicUserOverviewPS.class);
       }
