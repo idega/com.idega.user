@@ -28,14 +28,17 @@ import com.idega.util.IWColor;
 public class UserPropertyWindow extends TabbedPropertyWindow {
 
 	public static final String PARAMETERSTRING_SELECTED_GROUP_ID = "selected_ic_group_id";
+	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
+	
 
 	public static final String PARAMETERSTRING_USER_ID = "ic_user_id";
 
 	public static final String SESSION_ADDRESS = "ic_user_property_window";
 
 	public UserPropertyWindow() {
-		super(410, 550);
+		super(500, 600); //changed from super(410,550); - birna
 		super.setResizable(true);
+		super.setScrollbar(true);
 		this.setBackgroundColor(new IWColor(207, 208, 210));
 	}
 
@@ -49,7 +52,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 
 		try { //temporary before plugins work
 			panel.addTab(genTab, count, iwc);
-			panel.addTab(new UserImageTab(), ++count, iwc);
+//			panel.addTab(new UserImageTab(), ++count, iwc); //not needed because image added to the general tab - birna
 			panel.addTab(new AddressInfoTab(), ++count, iwc);
 			panel.addTab(new UserPhoneTab(), ++count, iwc);
 			panel.addTab(new UserGroupList(), ++count, iwc);
@@ -124,6 +127,10 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 	 */
 	public boolean disposeOfPanel(IWContext iwc) {
 		return iwc.isParameterSet(PARAMETERSTRING_USER_ID);
+	}
+	
+	public String getBundleIdentifier() {
+		return IW_BUNDLE_IDENTIFIER;
 	}
 
 }

@@ -47,6 +47,8 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
 	private final static String LINK_STYLE = "font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#000000;text-decoration:none;";
 	private final static String LINK_HOVER_STYLE = "font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#FF8008;text-decoration:none;";
+	
+	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
   private IWBundle iwb;
 	private IWResourceBundle iwrb;
@@ -91,7 +93,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
   }
 
   public String getBundleIdentifier(){
-    return "com.idega.user";
+    return IW_BUNDLE_IDENTIFIER;
   }
 
 

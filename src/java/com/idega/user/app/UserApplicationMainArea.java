@@ -41,6 +41,8 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
   private String _controlTarget = null;
   private IWPresentationEvent _contolEvent = null;
   private String styleScript = "UserApplicationStyle.css";
+  
+	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
   private BasicUserOverview _buo = new BasicUserOverview();
 	private SearchResultsWindow search = new SearchResultsWindow();//these should be added dynamically
@@ -166,6 +168,9 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 //    this.getParentPage().setBackgroundColor(IWColor.getHexColorString(250,245,240));
 
   }
+	public String getBundleIdentifier() {
+		return IW_BUNDLE_IDENTIFIER;
+	}
 
 
 }

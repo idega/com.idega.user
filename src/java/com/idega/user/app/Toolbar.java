@@ -53,13 +53,13 @@ public class Toolbar extends Page implements IWBrowserView {
   private String selectedGroupProviderStateId = null;
   private String userApplicationMainAreaStateId = null;
   
-	/**
-			 * added 7/10/03 for stylesheet writeout
-			 * @author birna
-			 */
-			private Page parentPage;
-			private String styleScript = "UserApplicationStyle.css";
-			private String styleSrc = "";
+//	/**
+//			 * added 7/10/03 for stylesheet writeout
+//			 * @author birna
+//			 */
+//			private Page parentPage;
+//			private String styleScript = "UserApplicationStyle.css";
+//			private String styleSrc = "";
 			private String menuTableStyle = "menu";
 
 
@@ -122,9 +122,9 @@ public class Toolbar extends Page implements IWBrowserView {
 		boolean showReportGenerator = iwc.getApplicationSettings().getProperty("temp_show_report_generator")!=null;
 		
 //	added for stylesheet writout:
-			parentPage = this.getParentPage();
-			styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
-			parentPage.addStyleSheetURL(styleSrc);
+//			parentPage = this.getParentPage();
+//			styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
+//			parentPage.addStyleSheetURL(styleSrc);
 
     Table toolbarTable = new Table(3,3);
 

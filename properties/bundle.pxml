@@ -53,7 +53,7 @@
       <type>java.lang.String</type>
       <value>com.idega.user</value>
     </key>
-<key>
+    <key>
       <name>iw_bundle_starter_class</name>
       <type>java.lang.String</type>
       <value>com.idega.user.business.GroupRelationDaemonBundleStarter</value>

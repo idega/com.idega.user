@@ -53,9 +53,11 @@ public abstract class UserTab extends Table implements Collectable{
     //business = new UserBusiness();
     fieldValues = new Hashtable();
     init();
+    this.setStyleClass("main"); //added for isi styles - birna
     this.setCellpadding(0);
-    this.setCellspacing(0);
-    this.setWidth("370");
+    this.setCellspacing(10);
+    this.setWidth("97%"); //changed from 370
+    this.setVerticalAlignment("middle"); //added - birna
     initializeFieldNames();
     initializeFields();
     initializeTexts();

@@ -11,12 +11,37 @@ body{
 }
 body, p, h1, h2, h3, table, td, th, textarea, input{
 	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 10px;
 }
-a{
+a.styledLink{
 	font-family: verdana,helvetica,arial,sans-serif;
 	font-size: 10px;
+	font-style: italic;
+	font-weight: bold;
+	color: #5d5d5d;
 	text-decoration: none;
+	text-transform: uppercase;
 }
+a:hover.styledLink{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 10px;
+	font-style: italic;
+	font-weight: bold;
+	color: 5d5d5d
+	text-decoration: none;
+	text-transform: uppercase;
+}
+a:active.styledLink{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 10px;
+	font-style: italic;
+	font-weight: bold;
+	color: 5d5d5d
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+
 h1{
 	font-family: verdana,helvetica,arial,sans-serif;
 	font-size: 14pt;
@@ -30,7 +55,7 @@ h1{
 	background: #ffffff url(banner_tile.gif) repeat;
 }
 table.back{
-	background-color: #eeeeee;
+	background-color: #f3f3f3;
 	border: 1px solid #cccccc;
 }
 table.main{
@@ -42,8 +67,15 @@ table.main{
 table.box{
 	border: 1px solid #bbbbbb;
 	width: 85px;
-	height: 8px;
+	height: 12px;
 	font-size: 8px;
+	background: #ffffff url(button_tile.gif) repeat;
+}
+table.selectedBox{
+	border: 1px solid #bbbbbb;
+	width: 85px;
+	height: 12px;
+	background: #ffffff url(dark_button_tile.gif) repeat;
 }
 td.white{
 	background-color: #ffffff;

@@ -8,11 +8,14 @@ import java.util.StringTokenizer;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
+import com.idega.block.media.presentation.ImageInserter;
 import com.idega.data.IDOLookup;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.DateInput;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.TextArea;
@@ -44,6 +47,8 @@ public class GeneralUserInfoTab extends UserTab {
 	private DropdownMenu genderField;
 	private TextInput personalIDField;
 	private DateInput createdField;
+	private ImageInserter imageField;
+	private CheckBox removeImageField;
 
 	private String idFieldName;
 	private String fullNameFieldName;
@@ -53,6 +58,8 @@ public class GeneralUserInfoTab extends UserTab {
 	private String genderFieldName;
 	private String personalIDFieldName;
 	private String createdFieldName;
+	private String imageFieldName;
+	private String removeImageFieldName;
 
 	private Text idText;
 	private Text fullNameText;
@@ -62,6 +69,11 @@ public class GeneralUserInfoTab extends UserTab {
 	private Text genderText;
 	private Text personalIDText;
 	private Text createdText;
+	private Text imageText;
+	private Text removeImageText;
+	
+	private User user = null;
+	private int systemImageId = -1;
 
 	public GeneralUserInfoTab() {
 		super();
@@ -84,6 +96,8 @@ public class GeneralUserInfoTab extends UserTab {
 		genderFieldName = "usr_info_UMgender";
 		personalIDFieldName = "usr_info_UMpersonalID";
 		createdFieldName = "usr_info_UMcreated";
+		imageFieldName = "usr_imag_userSystemImageId";
+		removeImageFieldName = "image_removeImageFieldName";
 	}
 
 	public void initializeFieldValues() {
@@ -95,6 +109,8 @@ public class GeneralUserInfoTab extends UserTab {
 		fieldValues.put(genderFieldName, "");
 		fieldValues.put(personalIDFieldName, "");
 		fieldValues.put(createdFieldName, "");
+		systemImageId = -1;
+		fieldValues.put(removeImageFieldName, new Boolean(false));
 
 		updateFieldsDisplayStatus();
 	}
@@ -135,22 +151,25 @@ public class GeneralUserInfoTab extends UserTab {
 		if (created.hasMoreTokens()) {
 			createdField.setDay(created.nextToken());
 		}
+		
+		imageField.setImageId(systemImageId);
+		removeImageField.setChecked(((Boolean)fieldValues.get(removeImageFieldName)).booleanValue());
 	}
 
 	public void initializeFields() {
 		idField = new TextInput(idFieldName);
-		idField.setLength(12);
+		idField.setLength(20);//changed from 12 - birna
 		
 		fullNameField = new TextInput(fullNameFieldName);
 		fullNameField.setLength(20);
 
 		displayNameField = new TextInput(displayNameFieldName);
-		displayNameField.setLength(12);
+		displayNameField.setLength(20);//changed from 12 - birna
 		displayNameField.setMaxlength(20);
 
 		descriptionField = new TextArea(descriptionFieldName);
-		descriptionField.setHeight(5);
-		descriptionField.setWidth(42);
+		descriptionField.setHeight(7);//changed from (5) - birna
+		descriptionField.setWidth(42); //changed from (42)
 		descriptionField.setWrap(true);
 
 		dateOfBirthField = new DateInput(dateOfBirthFieldName);
@@ -183,10 +202,14 @@ public class GeneralUserInfoTab extends UserTab {
 		}
 
 		personalIDField = new TextInput(personalIDFieldName);
-		personalIDField.setLength(12);
+		personalIDField.setLength(20); //changed from 12 - birna
 		
 		createdField = new DateInput(createdFieldName);
 		createdField.setYearRange(time.getYear(), time.getYear() - 50);
+		
+		imageField = new ImageInserter(imageFieldName + getUserId());
+		imageField.setHasUseBox(false);
+		removeImageField = new CheckBox(removeImageFieldName);
 
 	}
 
@@ -194,67 +217,89 @@ public class GeneralUserInfoTab extends UserTab {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		idText = getTextObject();
-		idText.setText(iwrb.getLocalizedString(idFieldName,"ID"));
+		idText = new Text();//getTextObject();
+		idText.setText(iwrb.getLocalizedString(idFieldName,"ID") + ":");
+		idText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
-		fullNameText = getTextObject();		
-		fullNameText.setText(iwrb.getLocalizedString(fullNameFieldName,"Name"));
+		fullNameText = new Text();//getTextObject();		
+		fullNameText.setText(iwrb.getLocalizedString(fullNameFieldName,"Name") + ":");
+		fullNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
-		displayNameText = getTextObject();
-		displayNameText.setText(iwrb.getLocalizedString(displayNameFieldName,"Display name"));
+		displayNameText = new Text();//getTextObject();
+		displayNameText.setText(iwrb.getLocalizedString(displayNameFieldName,"Display name") + ":");
+		displayNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
-		descriptionText = getTextObject();
-		descriptionText.setText(iwrb.getLocalizedString(descriptionFieldName,"Description"));
+		descriptionText = new Text();//getTextObject();
+		descriptionText.setText(iwrb.getLocalizedString(descriptionFieldName,"Description") + ":");
+		descriptionText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
-		dateOfBirthText = getTextObject();
-		dateOfBirthText.setText(iwrb.getLocalizedString(dateOfBirthFieldName,"Date of birth"));
+		dateOfBirthText = new Text();// getTextObject();
+		dateOfBirthText.setText(iwrb.getLocalizedString(dateOfBirthFieldName,"Date of birth") + ":");
+		dateOfBirthText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
-		genderText = getTextObject();
-		genderText.setText(iwrb.getLocalizedString(genderFieldName,"Gender"));
+		genderText = new Text(); //getTextObject();
+		genderText.setText(iwrb.getLocalizedString(genderFieldName,"Gender") + ":");
+		genderText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
-		personalIDText = getTextObject();
-		personalIDText.setText(iwrb.getLocalizedString(personalIDFieldName,"Personal ID"));
+		personalIDText = new Text();//getTextObject();
+		personalIDText.setText(iwrb.getLocalizedString(personalIDFieldName,"Personal ID") + ":");
+		personalIDText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
-		createdText = getTextObject();
-		createdText.setText(iwrb.getLocalizedString(createdFieldName,"Created"));
+		createdText = new Text();//getTextObject();
+		createdText.setText(iwrb.getLocalizedString(createdFieldName,"Created") + ":");
+		createdText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		
+		imageText = new Text();//getTextObject();
+		imageText.setText(iwrb.getLocalizedString(imageFieldName, "Image") + ":");
+		imageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		
+		removeImageText = new Text();//getTextObject();
+		removeImageText.setText(iwrb.getLocalizedString(removeImageFieldName, "do not show an image"));
+		removeImageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 	}
 
 	public void lineUpFields() {
 		resize(1, 3);
-
+		
 		//First Part (names)
-		Table nameTable = new Table(2, 5);
+		Table nameTable = new Table(3, 6); //changed from (2,5) - birna
 		nameTable.setWidth("100%");
-		nameTable.setCellpadding(0);
-		nameTable.setCellspacing(0);
-		nameTable.setHeight(1, rowHeight);
-		nameTable.setHeight(2, rowHeight);
-		nameTable.setHeight(3, rowHeight);
-		nameTable.setHeight(4, rowHeight);
+		nameTable.setCellpadding(2);
+		nameTable.setCellspacing(2);
+//		nameTable.setHeight(1, rowHeight);
+//		nameTable.setHeight(2, rowHeight);
+//		nameTable.setHeight(3, rowHeight);
+//		nameTable.setHeight(4, rowHeight);
 
-		nameTable.add(idText, 1, 1);
-		nameTable.add(idField, 2, 1);
-		nameTable.add(personalIDText, 1, 2);
-		nameTable.add(personalIDField, 2, 2);
-		nameTable.add(fullNameText, 1, 3);
-		nameTable.add(fullNameField, 2, 3);
-		nameTable.add(displayNameText, 1, 4);
+		nameTable.add(fullNameText,1,1);//(idText, 1, 1); 
+		nameTable.add(fullNameField,1,2);//(idField, 2, 1);
+		nameTable.add(personalIDText,2,1);//(personalIDText, 1, 2);
+		nameTable.add(personalIDField,2,2);//(personalIDField, 2, 2);
+		nameTable.add(idText,1,3);//(fullNameText, 1, 3);
+		nameTable.add(idField,1,4);//(fullNameField, 2, 3);
+		nameTable.add(displayNameText,2,3);//(displayNameText, 1, 4);
 		nameTable.add(displayNameField, 2, 4);
-		nameTable.add(genderText, 1, 5);
-		nameTable.add(genderField, 2, 5);
+		nameTable.add(genderText, 1,5);
+		nameTable.add(genderField,1,6);//(genderField, 2, 5);
+		nameTable.mergeCells(3,2,3,5);
+		nameTable.add(imageText,3,1);
+		nameTable.add(imageField,3,2);
+		nameTable.add(removeImageField,3,6);
+		nameTable.add(Text.getNonBrakingSpace(),3,6);
+		nameTable.add(removeImageText,3,6);
 		add(nameTable, 1, 1);
 		//First Part ends
 
 		//Second Part (Date of birth)
-		Table dateofbirthTable = new Table(2, 2);
+		Table dateofbirthTable = new Table(2, 4);
 		dateofbirthTable.setCellpadding(0);
-		dateofbirthTable.setCellspacing(0);
-		dateofbirthTable.setHeight(1, rowHeight);
-		dateofbirthTable.setHeight(2, rowHeight);
+		dateofbirthTable.setCellspacing(2);//changed from (0)
+//		dateofbirthTable.setHeight(1, rowHeight);
+//		dateofbirthTable.setHeight(2, rowHeight);
 		dateofbirthTable.add(dateOfBirthText, 1, 1);
-		dateofbirthTable.add(dateOfBirthField, 2, 1);
-		dateofbirthTable.add(createdText, 1, 2);
-		dateofbirthTable.add(createdField, 2, 2);
+		dateofbirthTable.add(dateOfBirthField, 1, 2);//changed from ...,2,1) - birna
+		dateofbirthTable.add(createdText, 1, 3);
+		dateofbirthTable.add(createdField, 1, 4);//changed from ...,2,2) - birna
 		add(dateofbirthTable, 1, 2);
 		//Second Part Ends
 
@@ -264,7 +309,8 @@ public class GeneralUserInfoTab extends UserTab {
 		descriptionTable.setCellspacing(0);
 		descriptionTable.setHeight(1, rowHeight);
 		descriptionTable.add(descriptionText, 1, 1);
-		descriptionTable.add(descriptionField, 1, 2);
+		descriptionTable.addBreak();
+		descriptionTable.add(descriptionField, 1, 1);//changed from ...,1,2)
 		add(descriptionTable, 1, 3);
 		//Third Part ends
 	}
@@ -279,6 +325,7 @@ public class GeneralUserInfoTab extends UserTab {
 			String gender = iwc.getParameter(genderFieldName);
 			String personalID = iwc.getParameter(personalIDFieldName);
 			String created = iwc.getParameter(createdFieldName);
+			String imageID = iwc.getParameter(imageFieldName + this.getUserId());
 
 			if(ID!=null){
 				fieldValues.put(idFieldName, ID);
@@ -304,6 +351,10 @@ public class GeneralUserInfoTab extends UserTab {
 			if (created != null) {
 				fieldValues.put(createdFieldName, created);
 			}
+			if (imageID != null) {
+				fieldValues.put(imageFieldName, imageID);
+			}
+			fieldValues.put(removeImageFieldName, new Boolean(iwc.isParameterSet(removeImageFieldName)));
 
 			updateFieldsDisplayStatus();
 
@@ -367,6 +418,34 @@ public class GeneralUserInfoTab extends UserTab {
 				if (createdTS != null)
 					getUser().setCreated(createdTS.getTimestamp());
 			}
+			if (getUserId() > -1) {
+	
+				String image = (String)fieldValues.get(imageFieldName);
+	
+				if ((image != null) && (!image.equals("-1")) && (!image.equals(""))) {
+					if (user == null)
+						user = getUser();
+					int tempId;
+					if (((Boolean) fieldValues.get(removeImageFieldName)).booleanValue())  {
+						user.setSystemImageID(null);
+						// set variables to default values
+						systemImageId = -1;
+						fieldValues.put(imageFieldName, "-1");
+						user.store();
+						updateFieldsDisplayStatus();
+					}
+					else if ((tempId = Integer.parseInt(image)) != systemImageId) {
+						systemImageId = tempId;
+						user.setSystemImageID(systemImageId);
+						user.store();
+						updateFieldsDisplayStatus();
+					}
+	
+					iwc.removeSessionAttribute(imageFieldName + getUserId());
+	
+				}
+	
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace(System.err);
@@ -374,7 +453,7 @@ public class GeneralUserInfoTab extends UserTab {
 		}
 
 		return true;
-	}
+	}//end store
 
 	public void initFieldContents() {
 
@@ -383,6 +462,12 @@ public class GeneralUserInfoTab extends UserTab {
 			String memberNumber =null;
 			try {
 				memberNumber = getMemberNumber(getUser());
+				imageField.setImSessionImageName(imageFieldName + getUserId());
+				systemImageId = getSelectedImageId(user);
+				
+				if (systemImageId != -1) {
+					fieldValues.put(this.imageFieldName, Integer.toString(systemImageId));
+				}
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
@@ -396,6 +481,7 @@ public class GeneralUserInfoTab extends UserTab {
 			fieldValues.put(genderFieldName, (user.getGenderID() != -1) ? Integer.toString(user.getGenderID()) : "");
 			fieldValues.put(personalIDFieldName, (user.getPersonalID() != null) ? user.getPersonalID() : "");
 			fieldValues.put(createdFieldName, (user.getCreated() != null) ? new IWTimestamp(user.getCreated()).toSQLDateString() : "");
+			fieldValues.put(removeImageFieldName, new Boolean(false));
 			updateFieldsDisplayStatus();
 
 		}
@@ -512,13 +598,32 @@ public class GeneralUserInfoTab extends UserTab {
 	}
 	
 	//END REMOVE
-	
-	
-	
-	
-	
-	
+	private void setSelectedImageId() {
+		try {
+			String image = (String)fieldValues.get(this.imageFieldName);
+			if ((image != null)
+				&& (!image.equals("-1"))
+				&& (!image.equals(""))
+				&& (!image.equals("0"))) {
+				systemImageId = Integer.parseInt(image);
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace(System.err);
+		}
 
-	
-	
+	}
+	private int getSelectedImageId(User user) {
+			try {
+				int tempImageId = user.getSystemImageID();
+				if ((systemImageId == -1) && (tempImageId != -1))
+					systemImageId = tempImageId;
+			}
+			catch (Exception ex) {
+				ex.printStackTrace(System.err);
+			}
+
+			return systemImageId;
+		}
+
 } // Class GeneralUserInfoTab

@@ -10,7 +10,7 @@ import com.idega.idegaweb.IWResourceBundle;
 public class StyledIWAdminWindow extends Window {
 
 public static final String MENU_COLOR = "#EFEFEF";
-private final static String IW_BUNDLE_IDENTIFIER="com.idega.core"; //changed from com.idega.core
+private final static String IW_BUNDLE_IDENTIFIER="com.idega.user"; //changed from com.idega.core
 public final static String STYLE = "font-family:arial; font-size:8pt; color:#000000; text-align: justify; border: 1 solid #000000;";
 public final static String STYLE_2 = "font-family:arial; font-size:8pt; color:#000000; text-align: justify;";
 
@@ -38,7 +38,6 @@ private String backgroundTableStyle = "back";
 private String mainTableStyle = "main";
 private String bannerTableStyle = "banner";
 
-public static String HEADER_COLOR = "#0E2456";
 
 public Image felix;  
 
@@ -94,7 +93,6 @@ public Image felix;
     adminTable.setWidth("100%");
     adminTable.setHeight("100%");
     adminTable.setHeight(2,"100%");
-    adminTable.setColor(1,1,HEADER_COLOR);
     adminTable.setColor(1,2,"#FFFFFF");
     if ( !merged ) {
 			adminTable.setColor(2,2,MENU_COLOR);
@@ -218,7 +216,6 @@ public Image felix;
 		if( !displayEmpty ){
 			makeTables(felix);
 			setAllMargins(0);
-			HEADER_COLOR = iwbCore.getProperty("adminHeaderColor",HEADER_COLOR);
 
 			if ( merged ){
 	super.add(adminTable);
