@@ -38,7 +38,7 @@ import javax.swing.event.ChangeListener;
  * <p>Company: idega Software</p>
  * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
- */
+ */ 
 
 public class UserApplication extends IWBrowser {
 
@@ -52,8 +52,8 @@ public class UserApplication extends IWBrowser {
 
   public void initializePresentation(){
 
-    this.setWidth(650);
-    this.setHeight(450);
+    this.setWidth(933);
+    this.setHeight(700);
 
     this.addToTop(new Top());
     this.setSpanPixels(POS_TOP,33);
@@ -199,16 +199,24 @@ public class UserApplication extends IWBrowser {
         headerTable.setCellspacing(0);
         headerTable.setWidth("100%");
         headerTable.setHeight("100%");
-        headerTable.add(iwc.getApplication().getCoreBundle().getImage("/editorwindow/idegaweb.gif","idegaWeb"),1,1);
-
-
-        Text adminTitle = new Text("Users & Groups &nbsp;&nbsp;");
+        
+        /** @todo setja inn mynd i header**/
+        //headerTable.add(iwc.getApplication().getCoreBundle().getImage("/editorwindow/idegaweb.gif","idegaWeb"),1,1);
+		Text adminTitle = new Text("Félagakerfi ÍSÍ & UMFÍ");
+        adminTitle.setBold();
+        adminTitle.setFontColor("#FFFFFF");
+        adminTitle.setFontSize(Text.FONT_SIZE_12_HTML_3);
+        adminTitle.setFontFace(Text.FONT_FACE_ARIAL);
+		headerTable.add(adminTitle,1,1);
+		
+        /*Text adminTitle = new Text("Users & Groups &nbsp;&nbsp;");
           adminTitle.setBold();
           adminTitle.setFontColor("#FFFFFF");
           adminTitle.setFontSize("3");
           adminTitle.setFontFace(Text.FONT_FACE_ARIAL);
 
-        headerTable.add(adminTitle,2,1);
+        headerTable.add(adminTitle,2,1);*/
+
 
         headerTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_LEFT);
         headerTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
