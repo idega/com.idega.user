@@ -169,6 +169,14 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
+	
+	
 
 
+    /* (non-Javadoc)
+     * @see com.idega.presentation.ui.Window#isFocusAllowedOnLoad()
+     */
+    protected boolean isFocusAllowedOnLoad() {
+        return false;
+    }
 }
