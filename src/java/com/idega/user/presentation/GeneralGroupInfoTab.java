@@ -55,7 +55,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
   }
 
   public void initFieldContents() {
-    addLink.setWindowToOpen(GeneralGroupInfoTab.GroupGroupSetter.class);
+    addLink.setWindowToOpen(GroupGroupSetter.class);
     addLink.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID,this.getGroupId());
 
      try{
@@ -87,7 +87,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     descriptionField.setWidth(43);
     descriptionField.setWrap(true);
 
-    memberofFrame = new IFrame("ic_user_memberof_ic_group",GeneralGroupInfoTab.GroupList.class);
+    memberofFrame = new IFrame("ic_user_memberof_ic_group",GroupList.class);
     memberofFrame.setHeight(150);
     memberofFrame.setWidth(367);
     memberofFrame.setScrolling(IFrame.SCROLLING_YES);
@@ -211,224 +211,10 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
   }
 
 
-  public class GroupList extends Page {
-
-    private List groups = null;
-
-    public GroupList(){
-      super();
-    }
-
-    public Table getGroupTable(IWContext iwc)throws Exception{
-
-      List direct = (List)iwc.getSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
-      List notDirect = (List)iwc.getSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
-
-      Table table = null;
-      Iterator iter = null;
-      int row = 1;
-      if(direct != null && notDirect != null){
-        table = new Table(5,direct.size()+notDirect.size());
-
-        iter = direct.iterator();
-        while (iter.hasNext()) {
-          Object item = iter.next();
-          table.add("D",1,row);
-          table.add(((Group)item).getName(),3,row++);
-        }
-
-        iter = notDirect.iterator();
-        while (iter.hasNext()) {
-          Object item = iter.next();
-          table.add("E",1,row);
-          table.add(((Group)item).getName(),3,row++);
-        }
-
-      } else if(direct != null){
-        table = new Table(5,direct.size());
-        iter = direct.iterator();
-        while (iter.hasNext()) {
-          Object item = iter.next();
-          table.add("D",1,row);
-          table.add(((Group)item).getName(),3,row++);
-        }
-      }
-
-      if(table != null){
-        table.setWidth("100%");
-        table.setWidth(1,"10");
-        table.setWidth(2,"3");
-        table.setWidth(4,"10");
-        table.setWidth(5,"10");
-      }
+ 
 
 
-
-      return table;
-    }
-
-    public void main(IWContext iwc) throws Exception {
-      this.getParentPage().setAllMargins(0);
-      Table tb = getGroupTable(iwc);
-      if(tb != null){
-        this.add(tb);
-      }
-    }
-
-
-
-  } // InnerClass
-
-
-  public class GroupGroupSetter extends Window {
-
-    private static final String FIELDNAME_SELECTION_DOUBLE_BOX = "related_groups";
-
-    public GroupGroupSetter(){
-      super("add groups to groups");
-      this.setAllMargins(0);
-      this.setWidth(400);
-      this.setHeight(300);
-      this.setBackgroundColor("#d4d0c8");
-    }
-
-
-    private void LineUpElements(IWContext iwc)throws Exception{
-
-      Form form = new Form();
-
-      Table frameTable = new Table(3,3);
-      frameTable.setWidth("100%");
-      frameTable.setHeight("100%");
-      //frameTable.setBorder(1);
-
-
-      SelectionDoubleBox sdb = new SelectionDoubleBox(GroupGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX,"Not in","In");
-
-      SelectionBox left = sdb.getLeftBox();
-      left.setHeight(8);
-      left.selectAllOnSubmit();
-
-
-      SelectionBox right = sdb.getRightBox();
-      right.setHeight(8);
-      right.selectAllOnSubmit();
-
-
-
-      String stringGroupId = iwc.getParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID);
-      int groupId = Integer.parseInt(stringGroupId);
-      form.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID,stringGroupId);
-
-      List directGroups = UserGroupBusiness.getGroupsContainingDirectlyRelated(groupId);
-
-      Iterator iter = null;
-      if(directGroups != null){
-        iter = directGroups.iterator();
-        while (iter.hasNext()) {
-          Object item = iter.next();
-          right.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
-        }
-      }
-      List notDirectGroups = UserGroupBusiness.getAllGroupsNotDirectlyRelated(groupId,iwc);
-      if(notDirectGroups != null){
-        iter = notDirectGroups.iterator();
-        while (iter.hasNext()) {
-          Object item = iter.next();
-          left.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
-        }
-      }
-
-      //left.addSeparator();
-      //right.addSeparator();
-
-      frameTable.setAlignment(2,2,"center");
-      frameTable.add("GroupId: "+groupId,2,1);
-      frameTable.add(sdb,2,2);
-      frameTable.add(new SubmitButton("  Save  ","save","true"),2,3);
-      frameTable.setAlignment(2,3,"right");
-      form.add(frameTable);
-      this.add(form);
-    }
-
-    public void main(IWContext iwc) throws Exception {
-
-
-      String save = iwc.getParameter("save");
-      if(save != null){
-        String stringGroupId = iwc.getParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID);
-        int groupId = Integer.parseInt(stringGroupId);
-
-        String[] related = iwc.getParameterValues(GroupGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
-
-        //Group group = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(groupId);
-        Group group = getUserGroupBusiness(iwc).getGroupByGroupID(groupId);
-        List currentRelationShip = group.getListOfAllGroupsContainingThis();
-
-
-        if(related != null){
-
-          if(currentRelationShip != null){
-            for (int i = 0; i < related.length; i++) {
-              int id = Integer.parseInt(related[i]);
-              //Group gr = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(id);
-              Group gr = getUserGroupBusiness(iwc).getGroupByGroupID(id);
-              if(!currentRelationShip.remove(gr)){
-                gr.addGroup(group);
-              }
-            }
-
-            Iterator iter = currentRelationShip.iterator();
-            while (iter.hasNext()) {
-              Object item = iter.next();
-              ((Group)item).removeGroup(group);
-            }
-
-          } else{
-            for (int i = 0; i < related.length; i++) {
-              //((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(Integer.parseInt(related[i])).addGroup(group);
-              Group group2 = getUserGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(related[i]));
-              group2.addGroup(group);
-            }
-          }
-
-        }else if (currentRelationShip != null){
-            Iterator iter = currentRelationShip.iterator();
-            while (iter.hasNext()) {
-              Object item = iter.next();
-              ((Group)item).removeGroup(group);
-            }
-          }
-
-        this.close();
-        this.setParentToReload();
-      } else {
-        LineUpElements(iwc);
-      }
-
-/*
-      Enumeration enum = iwc.getParameterNames();
-       System.err.println("--------------------------------------------------");
-      if(enum != null){
-        while (enum.hasMoreElements()) {
-          Object item = enum.nextElement();
-          if(item.equals("save")){
-            this.close();
-          }
-          String val[] = iwc.getParameterValues((String)item);
-          System.err.print(item+" = ");
-          if(val != null){
-            for (int i = 0; i < val.length; i++) {
-              System.err.print(val[i]+", ");
-            }
-          }
-          System.err.println();
-        }
-      }
-*/
-    }
-
-  } // InnerClass
+ 
 
 
 
