@@ -150,8 +150,8 @@ public class CreateUser extends StyledIWAdminWindow {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		fullNameField = new TextInput(fullNameFieldParameterName);
-		//fullNameField.setLength(20);
-		fullNameField.setWidth(Table.HUNDRED_PERCENT);
+		fullNameField.setLength(20);
+		//fullNameField.setWidth(Table.HUNDRED_PERCENT);
 		fullNameField.setStyleClass("text");
 
 		ssnField = new TextInput(ssnFieldParameterName);
