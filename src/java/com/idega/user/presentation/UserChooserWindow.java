@@ -124,7 +124,7 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 
 			init(iwc);
 
-			addTitle(iwrb.getLocalizedString("select_a_user", "Select a user"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+			addTitle(iwrb.getLocalizedString("select_a_user", "Select a user"), TITLE_STYLECLASS);
 
 			Form form = new Form();
 			form.maintainParameter(SCRIPT_PREFIX_PARAMETER);
