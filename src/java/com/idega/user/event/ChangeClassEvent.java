@@ -19,6 +19,8 @@ public class ChangeClassEvent extends IWPresentationEvent {
   private static final String ENCRYPTED_CLASS_PARAMETER = "iw_cc_ev_"+IWMainApplication.classToInstanciateParameter;
   private String _className;
 
+  public ChangeClassEvent(){}
+
   public ChangeClassEvent(Class theClass){
 	setChangeClass(theClass);
   }
@@ -42,13 +44,9 @@ public class ChangeClassEvent extends IWPresentationEvent {
    	if( className != null ){
    		setChangeClassName(IWMainApplication.decryptClassName(className));
  		return true;
-   	}else{
-
-         System.err.println("ChangeClassEvent: className is null!");
-
    	}
 
-    return true;
+    return false;
 
 
   }
