@@ -59,7 +59,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     addLink.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID,this.getGroupId());
 
      try{
-      Group group = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(getGroupId());
+      Group group = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKey(new Integer(getGroupId()));
 
       fieldValues.put(this.nameFieldName,(group.getName() != null) ? group.getName():"" );
       fieldValues.put(this.descriptionFieldName,(group.getDescription() != null) ? group.getDescription():"" );
@@ -112,11 +112,11 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     try{
       if(getGroupId() > -1){
 
-        Group group = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(getGroupId());
+        Group group = this.getUserGroupBusiness(iwc).getGroupByGroupID(getGroupId());
+        //Group group = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(getGroupId());
         group.setName((String)fieldValues.get(this.nameFieldName));
         group.setDescription((String)fieldValues.get(this.descriptionFieldName));
-
-        group.update();
+        group.store();
 
       }
     }catch(Exception e){
@@ -211,7 +211,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
   }
 
 
-  public static class GroupList extends Page {
+  public class GroupList extends Page {
 
     private List groups = null;
 
@@ -219,7 +219,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
       super();
     }
 
-    public Table getGroupTable(IWContext iwc){
+    public Table getGroupTable(IWContext iwc)throws Exception{
 
       List direct = (List)iwc.getSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
       List notDirect = (List)iwc.getSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
@@ -280,7 +280,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
   } // InnerClass
 
 
-  public static class GroupGroupSetter extends Window {
+  public class GroupGroupSetter extends Window {
 
     private static final String FIELDNAME_SELECTION_DOUBLE_BOX = "related_groups";
 
@@ -293,7 +293,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     }
 
 
-    private void LineUpElements(IWContext iwc){
+    private void LineUpElements(IWContext iwc)throws Exception{
 
       Form form = new Form();
 
@@ -327,7 +327,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
         iter = directGroups.iterator();
         while (iter.hasNext()) {
           Object item = iter.next();
-          right.addElement(Integer.toString(((Group)item).getID()),((Group)item).getName());
+          right.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
         }
       }
       List notDirectGroups = UserGroupBusiness.getAllGroupsNotDirectlyRelated(groupId,iwc);
@@ -335,7 +335,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
         iter = notDirectGroups.iterator();
         while (iter.hasNext()) {
           Object item = iter.next();
-          left.addElement(Integer.toString(((Group)item).getID()),((Group)item).getName());
+          left.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
         }
       }
 
@@ -361,7 +361,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
 
         String[] related = iwc.getParameterValues(GroupGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX);
 
-        Group group = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(groupId);
+        //Group group = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(groupId);
+        Group group = getUserGroupBusiness(iwc).getGroupByGroupID(groupId);
         List currentRelationShip = group.getListOfAllGroupsContainingThis();
 
 
@@ -370,7 +371,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
           if(currentRelationShip != null){
             for (int i = 0; i < related.length; i++) {
               int id = Integer.parseInt(related[i]);
-              Group gr = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(id);
+              //Group gr = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(id);
+              Group gr = getUserGroupBusiness(iwc).getGroupByGroupID(id);
               if(!currentRelationShip.remove(gr)){
                 gr.addGroup(group);
               }
@@ -384,7 +386,9 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
 
           } else{
             for (int i = 0; i < related.length; i++) {
-              ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(Integer.parseInt(related[i])).addGroup(group);
+              //((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(Integer.parseInt(related[i])).addGroup(group);
+              Group group2 = getUserGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(related[i]));
+              group2.addGroup(group);
             }
           }
 

@@ -2,6 +2,7 @@ package com.idega.user.presentation;
 
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.IWContext;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -10,7 +11,7 @@ import com.idega.presentation.Page;
 import com.idega.user.data.User;
 import com.idega.user.business.UserBusiness;
 import com.idega.data.EntityFinder;
-import java.util.List;
+import java.util.Collection;
 import java.util.Vector;
 import java.util.Iterator;
 import com.idega.user.presentation.UserPropertyWindow;
@@ -43,12 +44,13 @@ public class BasicUserOverview extends Page {
 
 
   public Table getUsers(IWContext iwc) throws Exception{
-    List users = EntityFinder.findAllOrdered(com.idega.user.data.UserBMPBean.getStaticInstance(),com.idega.user.data.UserBMPBean.getColumnNameFirstName());
+    //List users = EntityFinder.findAllOrdered(com.idega.user.data.UserBMPBean.getStaticInstance(),com.idega.user.data.UserBMPBean.getColumnNameFirstName());
+    Collection users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
     Table userTable = null;
     /**
      * @todo important: change back to  List adminUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
      */
-    List adminUsers = null; // UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
+    Collection adminUsers = null; // UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
 
     if(users != null){
       if(adminUsers == null){
@@ -63,8 +65,11 @@ public class BasicUserOverview extends Page {
       }
 
       int line = 1;
-      for (int i = 0; i < users.size(); i++) {
-        User tempUser = (User)users.get(i);
+      Iterator iter = users.iterator();
+      while (iter.hasNext()) {
+        User tempUser = (User)iter.next();
+      //for (int i = 0; i < users.size(); i++) {
+        //User tempUser = (User)users.get(i);
         if(tempUser != null){
 
           boolean userIsSuperAdmin = iwc.getAccessController().getAdministratorUser().equals(tempUser);
@@ -73,7 +78,7 @@ public class BasicUserOverview extends Page {
           if(!userIsSuperAdmin){
             Link aLink = new Link(new Text(tempUser.getName()));
             aLink.setWindowToOpen(UserPropertyWindow.class);
-            aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
+            aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
             userTable.add(aLink,2,line);
             delete = true;
             line++;
@@ -82,7 +87,7 @@ public class BasicUserOverview extends Page {
 //            userTable.add(aText,2,i+1);
             Link aLink = new Link(new Text(tempUser.getName()));
             aLink.setWindowToOpen(AdministratorPropertyWindow.class);
-            aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
+            aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
             userTable.add(aLink,2,line);
             delete = true;
             line++;
@@ -91,7 +96,7 @@ public class BasicUserOverview extends Page {
           if(delete && !adminUsers.contains(tempUser) && !userIsSuperAdmin && iwc.getAccessController().isAdmin(iwc)){
             Link delLink = new Link(new Text("Delete"));
             delLink.setWindowToOpen(ConfirmWindow.class);
-            delLink.addParameter(BasicUserOverview.PARAMETER_DELETE_USER , tempUser.getID());
+            delLink.addParameter(BasicUserOverview.PARAMETER_DELETE_USER , tempUser.getPrimaryKey().toString());
             userTable.add(delLink,3,line-1);
           }
 
@@ -198,9 +203,8 @@ public class BasicUserOverview extends Page {
     /*abstract*/
     public void actionPerformed(IWContext iwc)throws Exception{
       String userDelId = iwc.getParameter(BasicUserOverview.PARAMETER_DELETE_USER);
-
       if(userDelId != null){
-        UserBusiness.deleteUser(Integer.parseInt(userDelId));
+        getUserBusiness(iwc).deleteUser(Integer.parseInt(userDelId));
       }
     }
 
@@ -228,10 +232,35 @@ public class BasicUserOverview extends Page {
       super._main(iwc);
     }
 
+    public UserBusiness getUserBusiness(IWApplicationContext iwc){
+      UserBusiness business = null;
+      if(business == null){
+        try{
+          business = (UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserBusiness.class);
+        }
+        catch(java.rmi.RemoteException rme){
+          throw new RuntimeException(rme.getMessage());
+        }
+      }
+      return business;
+    }
+
+
   }
 
 
-
+  public UserBusiness getUserBusiness(IWApplicationContext iwc){
+    UserBusiness business = null;
+    if(business == null){
+      try{
+        business = (UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserBusiness.class);
+      }
+      catch(java.rmi.RemoteException rme){
+        throw new RuntimeException(rme.getMessage());
+      }
+    }
+    return business;
+  }
 
 
 

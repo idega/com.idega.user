@@ -295,7 +295,7 @@ public class GeneralUserInfoTab extends UserTab{
         if( st != null && !st.equals("")){
           dateOfBirthTS = new idegaTimestamp(st);
         }
-        business.updateUser(getUserId(),(String)fieldValues.get(this.firstNameFieldName),
+        super.getUserBusiness(iwc).updateUser(getUserId(),(String)fieldValues.get(this.firstNameFieldName),
                             (String)fieldValues.get(this.middleNameFieldName),(String)fieldValues.get(this.lastNameFieldName),
                             (String)fieldValues.get(this.displayNameFieldName),(String)fieldValues.get(this.descriptionFieldName),
                             gen,dateOfBirthTS,null);
@@ -312,7 +312,7 @@ public class GeneralUserInfoTab extends UserTab{
   public void initFieldContents(){
 
     try{
-      User user = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(getUserId());
+      User user = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKey(new Integer(getUserId()));
 
       fieldValues.put(this.firstNameFieldName,(user.getFirstName() != null) ? user.getFirstName():"" );
       fieldValues.put(this.middleNameFieldName,(user.getMiddleName() != null) ? user.getMiddleName():"" );

@@ -255,11 +255,13 @@ public class UserPhoneTab extends UserTab{
 
         for ( int a = 0; a < phoneString.length; a++ ) {
           if ( phoneString[a] != null && phoneString[a].length() > 0 ) {
-            business.updateUserPhone(getUserId(),Integer.parseInt(phoneTypeString[a]),phoneString[a]);
+            //business.updateUserPhone(getUserId(),Integer.parseInt(phoneTypeString[a]),phoneString[a]);
+            super.getUserBusiness(iwc).updateUserPhone(getUserId(),Integer.parseInt(phoneTypeString[a]),phoneString[a]);
           }
         }
         if ( (String)fieldValues.get(this.emailFieldName) != null && ((String)fieldValues.get(this.emailFieldName)).length() > 0 )
-          business.updateUserMail(getUserId(),(String)fieldValues.get(this.emailFieldName));
+          //business.updateUserMail(getUserId(),(String)fieldValues.get(this.emailFieldName));
+          super.getUserBusiness(iwc).updateUserMail(getUserId(),(String)fieldValues.get(this.emailFieldName));
       }
     }
     catch(Exception e){
@@ -273,8 +275,8 @@ public class UserPhoneTab extends UserTab{
   public void initFieldContents(){
 
     try{
-      Phone[] phones = UserBusiness.getUserPhones(getUserId());
-      Email mail = UserBusiness.getUserMail(getUserId());
+      Phone[] phones = this.getUserBusiness(this.getEventIWContext()).getUserPhones(getUserId());
+      Email mail = this.getUserBusiness(this.getEventIWContext()).getUserMail(getUserId());
 
       for ( int a = 0; a < phones.length; a++ ) {
         if ( a == 0 ) {

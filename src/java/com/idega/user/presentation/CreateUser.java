@@ -8,6 +8,7 @@ import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.Table;
 import com.idega.presentation.IWContext;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.DropdownMenu;
@@ -96,7 +97,7 @@ public class CreateUser extends Window {
   public static String goToPropertiesFieldParameterName = "gotoProperties";
   public static String primaryGroupFieldParameterName = "primarygroup";
 
-  private UserBusiness business;
+  //private UserBusiness business;
 
   private String rowHeight = "37";
 
@@ -109,7 +110,7 @@ public class CreateUser extends Window {
     this.setScrollbar(false);
     myForm = new Form();
     this.add(myForm);
-    business = new UserBusiness();
+    //business = new UserBusiness();
     initializeTexts();
     initializeFields();
     lineUpElements();
@@ -175,7 +176,7 @@ public class CreateUser extends Window {
         Iterator iter = groups.iterator();
         while (iter.hasNext()) {
           Group item = (Group)iter.next();
-          primaryGroupField.addMenuElement(item.getID(),item.getName());
+          primaryGroupField.addMenuElement(item.getPrimaryKey().toString(),item.getName());
         }
       }
     }
@@ -303,7 +304,7 @@ public class CreateUser extends Window {
 
   public void commitCreation(IWContext iwc) throws Exception{
 
-    User newUser;
+    User newUser = null;
 
     String login = iwc.getParameter(this.userLoginFieldParameterName);
     String passw = iwc.getParameter(this.passwordFieldParameterName);
@@ -316,7 +317,7 @@ public class CreateUser extends Window {
     String disabledAccount = iwc.getParameter(this.disableAccountFieldParameterName);
     String primaryGroup = iwc.getParameter(this.primaryGroupFieldParameterName);
 
-    Boolean bMustChage;
+    Boolean bMustChange;
     Boolean bAllowedToChangePassw;
     Boolean bPasswNeverExpires;
     Boolean bEnabledAccount;
@@ -328,9 +329,9 @@ public class CreateUser extends Window {
     }
 
     if(mustChage != null && !"".equals(mustChage)){
-      bMustChage = Boolean.TRUE;
+      bMustChange = Boolean.TRUE;
     }else{
-      bMustChage = Boolean.FALSE;
+      bMustChange = Boolean.FALSE;
     }
 
     if(cannotchangePassw != null && !"".equals(cannotchangePassw)){
@@ -358,9 +359,10 @@ public class CreateUser extends Window {
       throw new Exception("password and confirmed password not the same");
     }
 
-    TransactionManager transaction = IdegaTransactionManager.getInstance();
+/*    TransactionManager transaction = IdegaTransactionManager.getInstance();
     try{
       transaction.begin();
+
       newUser = business.insertUser(iwc.getParameter(firstNameFieldParameterName),
                                    iwc.getParameter(middleNameFieldParameterName),
                                    iwc.getParameter(lastNameFieldParameterName),
@@ -375,11 +377,22 @@ public class CreateUser extends Window {
       transaction.rollback();
       throw new Exception(e.getMessage()+" : User entry was removed");
     }
+*/
+    try{
+      String firstName = iwc.getParameter(firstNameFieldParameterName);
+      String middleName = iwc.getParameter(middleNameFieldParameterName);
+      String lastName = iwc.getParameter(lastNameFieldParameterName);
+      newUser = getUserBusiness(iwc).createUserWithLogin(firstName,middleName,lastName,null,null,null,null,primaryGroupId,login,password,bEnabledAccount,idegaTimestamp.RightNow(),5000,bPasswNeverExpires,bAllowedToChangePassw,bMustChange,null);
+    }
+    catch(Exception e){
+      add("Error: "+e.getMessage());
+      e.printStackTrace();
+    }
 
     if(iwc.getParameter(goToPropertiesFieldParameterName) != null){
       Link gotoLink = new Link();
       gotoLink.setWindowToOpen(UserPropertyWindow.class);
-      gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, newUser.getID());
+      gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, newUser.getPrimaryKey().toString());
       this.setWindowToOpenOnLoad(gotoLink,iwc);
     }
 
@@ -399,5 +412,17 @@ public class CreateUser extends Window {
     }
   }
 
+  public UserBusiness getUserBusiness(IWApplicationContext iwc){
+    UserBusiness business = null;
+    if(business == null){
+      try{
+        business = (UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserBusiness.class);
+      }
+      catch(java.rmi.RemoteException rme){
+        throw new RuntimeException(rme.getMessage());
+      }
+    }
+    return business;
+  }
 
 }

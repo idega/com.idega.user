@@ -10,9 +10,13 @@ import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.Table;
 import com.idega.presentation.ui.FramePane;
 import com.idega.presentation.IWContext;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.text.Text;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserGroupBusiness;
+import com.idega.user.business.GroupBusiness;
+
 import com.idega.user.data.User;
 import com.idega.util.idegaTimestamp;
 import com.idega.user.data.Group;
@@ -55,7 +59,7 @@ public class CreateUserGroup extends Window {
   public static String descriptionFieldParameterName = "description";
   public static String groupTypeFieldParameterName = "group_type";
 
-  private UserBusiness business;
+  //private UserBusiness business;
 
   private String rowHeight = "37";
 
@@ -68,11 +72,11 @@ public class CreateUserGroup extends Window {
     this.setBackgroundColor("#d4d0c8");
     myForm = new Form();
     this.add(myForm);
-    business = new UserBusiness();
+    //business = new UserBusiness();
     initializeTexts();
     initializeFields();
     init();
-    lineUpElements();
+    //lineUpElements();
   }
 
   protected void initializeTexts(){
@@ -110,7 +114,8 @@ public class CreateUserGroup extends Window {
   }
 
 
-  public void lineUpElements(){
+  //public void lineUpElements(){
+  public void lineUpElements(IWContext iwc)throws Exception{
 
     Table frameTable = new Table(1,3);
     frameTable.setAlignment("center");
@@ -143,7 +148,8 @@ public class CreateUserGroup extends Window {
 
 
       for (int i = 0; i < groupType.size(); i++){
-        String value = ((Group)com.idega.user.data.GroupBMPBean.getStaticInstance((Class)groupType.get(i))).getGroupTypeValue();
+        String value = getGroupBusiness(iwc).getGroupType((Class)groupType.get(i));
+        //String value = ((Group)com.idega.user.data.GroupBMPBean.getStaticInstance((Class)groupType.get(i))).getGroupTypeValue();
         String text = value.substring(1);
         text = value.substring(0,1).toUpperCase() + text;
 
@@ -193,8 +199,6 @@ public class CreateUserGroup extends Window {
 
   public void commitCreation(IWContext iwc) throws Exception{
 
-    Group newGroup;
-
     String name = iwc.getParameter(this.groupNameFieldParameterName);
     String description = iwc.getParameter(this.descriptionFieldParameterName);
     String type = iwc.getParameter(this.groupTypeFieldParameterName);
@@ -202,18 +206,12 @@ public class CreateUserGroup extends Window {
     if(type == null){
       throw new Exception("no group_type selected");
     }
-
-    newGroup = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).createLegacy();
-    newGroup.setName(name);
-    newGroup.setDescription(description);
-    newGroup.setGroupType(type);
-
-    newGroup.insert();
-
+    this.getGroupBusiness(iwc).createGroup(name,description,type);
   }
 
 
   public void main(IWContext iwc) throws Exception {
+    lineUpElements(iwc);
     String submit = iwc.getParameter("submit");
     if(submit != null){
       if(submit.equals("ok")){
@@ -225,6 +223,48 @@ public class CreateUserGroup extends Window {
       }
     }
   }
+
+
+  public UserBusiness getUserBusiness(IWApplicationContext iwc){
+    UserBusiness business = null;
+    if(business == null){
+      try{
+        business = (UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserBusiness.class);
+      }
+      catch(java.rmi.RemoteException rme){
+        throw new RuntimeException(rme.getMessage());
+      }
+    }
+    return business;
+  }
+
+  public UserGroupBusiness getUserGroupBusiness(IWApplicationContext iwc){
+    UserGroupBusiness business = null;
+    if(business == null){
+      try{
+        business = (UserGroupBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserGroupBusiness.class);
+      }
+      catch(java.rmi.RemoteException rme){
+        throw new RuntimeException(rme.getMessage());
+      }
+    }
+    return business;
+  }
+
+
+  public GroupBusiness getGroupBusiness(IWApplicationContext iwc){
+    GroupBusiness business = null;
+    if(business == null){
+      try{
+        business = (GroupBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
+      }
+      catch(java.rmi.RemoteException rme){
+        throw new RuntimeException(rme.getMessage());
+      }
+    }
+    return business;
+  }
+
 
 
 }

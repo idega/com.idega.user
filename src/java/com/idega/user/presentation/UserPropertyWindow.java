@@ -49,6 +49,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
       for (int i = 0; i < obj.length; i++) {
         PresentationObject mo = obj[i];
         if( mo instanceof UserTab && ((UserTab)mo).getUserId() != newId){
+          mo.setIWContext(iwc);
           ((UserTab)mo).setUserID(newId);
         }
       }

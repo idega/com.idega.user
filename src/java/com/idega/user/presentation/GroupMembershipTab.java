@@ -2,6 +2,7 @@ package com.idega.user.presentation;
 
 import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.IWContext;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.Page;
 import com.idega.presentation.Table;
@@ -109,21 +110,21 @@ public class GroupMembershipTab extends UserGroupTab {
   }
 
   public void main(IWContext iwc) throws Exception {
-    Object obj = UserGroupBusiness.getGroupsContainedDirectlyRelated(this.getGroupId());
+    Object obj = this.getUserGroupBusiness(iwc).getGroupsContainedDirectlyRelated(this.getGroupId());
     if(obj != null){
       iwc.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED,obj);
     }else{
       iwc.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
     }
 
-    Object ob = UserGroupBusiness.getGroupsContainedNotDirectlyRelated(this.getGroupId());
+    Object ob = getUserGroupBusiness(iwc).getGroupsContainedNotDirectlyRelated(this.getGroupId());
     if(ob != null){
       iwc.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED,ob);
     }else{
       iwc.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
     }
 
-    Object obju = UserGroupBusiness.getUsersContainedDirectlyRelated(this.getGroupId());
+    Object obju = getUserGroupBusiness(iwc).getUsersContainedDirectlyRelated(this.getGroupId());
     if(obju != null){
       iwc.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_DIRECTLY_RELATED,obju);
     }else{
@@ -134,7 +135,7 @@ public class GroupMembershipTab extends UserGroupTab {
     /**
      * @todo check
      */
-    Object obu = UserGroupBusiness.getUsersContainedNotDirectlyRelated(this.getGroupId());
+    Object obu = getUserGroupBusiness(iwc).getUsersContainedNotDirectlyRelated(this.getGroupId());
     if(obu != null){
       iwc.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERS_NOT_DIRECTLY_RELATED,obu);
     }else{
@@ -158,33 +159,38 @@ public class GroupMembershipTab extends UserGroupTab {
       List notDirect = (List)iwc.getSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
 
       Table table = null;
-      Iterator iter = null;
-      int row = 1;
-      if(direct != null && notDirect != null){
-        table = new Table(5,direct.size()+notDirect.size());
+        try{
+        Iterator iter = null;
+        int row = 1;
+        if(direct != null && notDirect != null){
+          table = new Table(5,direct.size()+notDirect.size());
+          iter = direct.iterator();
+          while (iter.hasNext()) {
+            Object item = iter.next();
+            table.add("D",1,row);
+            table.add(((Group)item).getName(),3,row++);
+          }
 
-        iter = direct.iterator();
-        while (iter.hasNext()) {
-          Object item = iter.next();
-          table.add("D",1,row);
-          table.add(((Group)item).getName(),3,row++);
-        }
+          iter = notDirect.iterator();
+          while (iter.hasNext()) {
+            Object item = iter.next();
+            table.add("E",1,row);
+            table.add(((Group)item).getName(),3,row++);
+          }
 
-        iter = notDirect.iterator();
-        while (iter.hasNext()) {
-          Object item = iter.next();
-          table.add("E",1,row);
-          table.add(((Group)item).getName(),3,row++);
+        } else if(direct != null){
+          table = new Table(5,direct.size());
+          iter = direct.iterator();
+          while (iter.hasNext()) {
+            Object item = iter.next();
+            table.add("D",1,row);
+            table.add(((Group)item).getName(),3,row++);
+          }
         }
-
-      } else if(direct != null){
-        table = new Table(5,direct.size());
-        iter = direct.iterator();
-        while (iter.hasNext()) {
-          Object item = iter.next();
-          table.add("D",1,row);
-          table.add(((Group)item).getName(),3,row++);
-        }
+      }
+      catch(Exception e){
+        add("Error fetching groups: "+e.getMessage());
+        e.printStackTrace();
       }
 
       if(table != null){
@@ -194,8 +200,6 @@ public class GroupMembershipTab extends UserGroupTab {
         table.setWidth(4,"10");
         table.setWidth(5,"10");
       }
-
-
 
       return table;
     }
@@ -229,31 +233,37 @@ public class GroupMembershipTab extends UserGroupTab {
       Table table = null;
       Iterator iter = null;
       int row = 1;
-      if(direct != null && notDirect != null){
-        table = new Table(5,direct.size()+notDirect.size());
+        try{
+        if(direct != null && notDirect != null){
+          table = new Table(5,direct.size()+notDirect.size());
 
-        iter = direct.iterator();
-        while (iter.hasNext()) {
-          Object item = iter.next();
-          table.add("D",1,row);
-          table.add(((User)item).getName(),3,row++);
-        }
+          iter = direct.iterator();
+          while (iter.hasNext()) {
+            Object item = iter.next();
+            table.add("D",1,row);
+            table.add(((User)item).getName(),3,row++);
+          }
 
-        iter = notDirect.iterator();
-        while (iter.hasNext()) {
-          Object item = iter.next();
-          table.add("E",1,row);
-          table.add(((User)item).getName(),3,row++);
-        }
+          iter = notDirect.iterator();
+          while (iter.hasNext()) {
+            Object item = iter.next();
+            table.add("E",1,row);
+            table.add(((User)item).getName(),3,row++);
+          }
 
-      } else if(direct != null){
-        table = new Table(5,direct.size());
-        iter = direct.iterator();
-        while (iter.hasNext()) {
-          Object item = iter.next();
-          table.add("D",1,row);
-          table.add(((User)item).getName(),3,row++);
+        } else if(direct != null){
+          table = new Table(5,direct.size());
+          iter = direct.iterator();
+          while (iter.hasNext()) {
+            Object item = iter.next();
+            table.add("D",1,row);
+            table.add(((User)item).getName(),3,row++);
+          }
         }
+      }
+      catch(Exception e){
+        add("Error fetching User: "+e.getMessage());
+        e.printStackTrace();
       }
 
       if(table != null){
@@ -429,5 +439,6 @@ public class GroupMembershipTab extends UserGroupTab {
 //    }
 
 //  } // InnerClass
+
 
 }

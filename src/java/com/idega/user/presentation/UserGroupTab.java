@@ -2,8 +2,10 @@ package com.idega.user.presentation;
 
 import com.idega.presentation.Table;
 import com.idega.presentation.IWContext;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.text.Text;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserGroupBusiness;
 import com.idega.util.datastructures.Collectable;
 import java.util.Hashtable;
 
@@ -25,14 +27,14 @@ public abstract class UserGroupTab extends Table implements Collectable {
 
   protected Text proxyText;
 
-  protected UserBusiness business;
+  //protected UserBusiness business;
 
   protected Hashtable fieldValues;
 
 
   public UserGroupTab() {
     super();
-    business = new UserBusiness();
+    //business = new UserBusiness();
     init();
     this.setCellpadding(0);
     this.setCellspacing(0);
@@ -77,6 +79,32 @@ public abstract class UserGroupTab extends Table implements Collectable {
 
   public int getGroupId(){
     return groupId;
+  }
+
+  public UserBusiness getUserBusiness(IWApplicationContext iwc){
+    UserBusiness business = null;
+    if(business == null){
+      try{
+        business = (UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserBusiness.class);
+      }
+      catch(java.rmi.RemoteException rme){
+        throw new RuntimeException(rme.getMessage());
+      }
+    }
+    return business;
+  }
+
+  public UserGroupBusiness getUserGroupBusiness(IWApplicationContext iwc){
+    UserGroupBusiness business = null;
+    if(business == null){
+      try{
+        business = (UserGroupBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserGroupBusiness.class);
+      }
+      catch(java.rmi.RemoteException rme){
+        throw new RuntimeException(rme.getMessage());
+      }
+    }
+    return business;
   }
 
 

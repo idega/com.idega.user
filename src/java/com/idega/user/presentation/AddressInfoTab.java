@@ -240,7 +240,7 @@ public class AddressInfoTab extends UserTab{
       //fieldValues.get(this.postalCodeFieldName);
       //fieldValues.get(this.countryFieldName);
 
-      business.updateUserAddress1(this.getUserId(), (tok.hasMoreTokens())?tok.nextToken():"", (tok.hasMoreTokens())?tok.nextToken():"", (String)fieldValues.get(this.cityFieldName), null, (String)fieldValues.get(this.provinceFieldName), null, (String)fieldValues.get(this.poBoxFieldName));
+      this.getUserBusiness(iwc).updateUserAddress1(this.getUserId(), (tok.hasMoreTokens())?tok.nextToken():"", (tok.hasMoreTokens())?tok.nextToken():"", (String)fieldValues.get(this.cityFieldName), null, (String)fieldValues.get(this.provinceFieldName), null, (String)fieldValues.get(this.poBoxFieldName));
 
       return true;
     }catch(Exception e){
@@ -251,7 +251,7 @@ public class AddressInfoTab extends UserTab{
 
   public void initFieldContents(){
     try{
-      Address addr = business.getUserAddress1(this.getUserId());
+      Address addr = this.getUserBusiness(this.getEventIWContext()).getUserAddress1(this.getUserId());
 
       boolean hasAddress = false;
       if(addr != null){

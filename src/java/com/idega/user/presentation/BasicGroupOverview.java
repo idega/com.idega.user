@@ -69,14 +69,14 @@ public class BasicGroupOverview extends Page {
 
           Link aLink = new Link(new Text(tempGroup.getName()));
           aLink.setWindowToOpen(GroupPropertyWindow.class);
-          aLink.addParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, tempGroup.getID());
+          aLink.addParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, tempGroup.getPrimaryKey().toString());
           groupTable.add(aLink,2,i+1);
 
           //if(!tempGroup.equals(AccessControl.getPermissionGroupAdministrator()) && !tempGroup.equals(AccessControl.getPermissionGroupEveryOne()) && !tempGroup.equals(AccessControl.getPermissionGroupUsers())){
           if(!notDelet.contains(tempGroup) && iwc.getAccessController().isAdmin(iwc)){
             Link delLink = new Link(new Text("Delete"));
             delLink.setWindowToOpen(ConfirmWindowBGO.class);
-            delLink.addParameter(BasicGroupOverview.PARAMETER_DELETE_GROUP , tempGroup.getID());
+            delLink.addParameter(BasicGroupOverview.PARAMETER_DELETE_GROUP , tempGroup.getPrimaryKey().toString());
             groupTable.add(delLink,3,i+1);
           }
 
