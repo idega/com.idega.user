@@ -28,14 +28,12 @@ import com.idega.user.presentation.BasicUserOverview;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
 public class UserApplicationMainArea extends Window implements IWBrowserView, StatefullPresentation {
 
-
-  protected static final String USER_APPLICATION_FRONT_PAGE_ID = "USER_APPLICATION_FRONT_PAGE_ID";
 	private IWBundle iwb;
   private StatefullPresentationImplHandler _stateHandler = null;
   private String _controlTarget = null;
@@ -124,18 +122,9 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
     }
     else{
     	this.add(_buo);
-//			String frontPageId = getBundle(iwc).getProperty(USER_APPLICATION_FRONT_PAGE_ID,"-1");
-//			if(ps.getSelectedGroup()==null && !"-1".equals(frontPageId)) {
-//				setPageID(Integer.parseInt(frontPageId));
-//			}
-//			else {
-//      	this.add(_buo);
-//			}
     }
 
   }
-
-
 
   public void initializeInMain(IWContext iwc){
 		

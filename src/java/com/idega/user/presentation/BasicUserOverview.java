@@ -167,7 +167,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		Table returnTable = new Table(2, 4);
 		returnTable.setCellpaddingAndCellspacing(0);
 		returnTable.setWidth(Table.HUNDRED_PERCENT);
-		returnTable.setHeight("90%");//Table.HUNDRED_PERCENT);
+		returnTable.setHeight(Table.HUNDRED_PERCENT);
 		returnTable.setHeight(4, Table.HUNDRED_PERCENT);
 		returnTable.mergeCells(1,1,2,1);
 		returnTable.mergeCells(1,2,2,2);
@@ -175,9 +175,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		returnTable.setHeight(1, 40);
 		returnTable.setHeight(2,6);
 		returnTable.setWidth(1,3,6);
+		returnTable.setColor(1,1,"#ffffff");
 		returnTable.setColor(1,3,"#f3f3f3");
 		returnTable.setColor(2,4,"#f3f3f3");
-//		returnTable.setRowStyle(3,"border-bottom","1px solid #cccccc");
+		returnTable.setStyleClass("grayBorderBottom");
 
 		returnTable.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_TOP);
 		returnTable.setVerticalAlignment(2, 4, Table.VERTICAL_ALIGN_TOP);
@@ -226,19 +227,20 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		
 		else if(selectedGroup == null) {
 			if(users == null || users.isEmpty()) {
-				Table frameTable = new Table(1,1);
-				frameTable.setCellpaddingAndCellspacing(0);
-				frameTable.setStyleClass("mainDisplay");
-				frameTable.setHeight(1,1,"100%");
-				frameTable.setWidth(1,1,"100%");
+//				Table frameTable = new Table(1,1);
+//				frameTable.setCellpaddingAndCellspacing(0);
+//				frameTable.setStyleClass("mainDisplay");
+//				frameTable.setHeight(1,1,"100%");
+//				frameTable.setWidth(1,1,"100%");
 				IFrame frontPage = new IFrame();
 				String frontPageId = getBundle(iwc).getProperty(USER_APPLICATION_FRONT_PAGE_ID);
 				if(frontPageId!=null && !"-1".equals(frontPageId)) {
-					frontPage.setHeight("99%");
+					frontPage.setHeight("95%");
 					frontPage.setWidth("99%");
+					frontPage.setStyleClass("main");
 					frontPage.setIBPage(Integer.parseInt(frontPageId));
 					frontPage.setScrolling(IFrame.SCROLLING_AUTO);
-					frontPage.setBorder(1);
+		//			frontPage.setBorder(1);
 					returnTable.add(frontPage,2,4);
 				}
 			}			

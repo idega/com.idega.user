@@ -41,7 +41,6 @@ public class UserApplication extends IWBrowser {
   
 	/**
 		 * added 7/10/03 for stylesheet writeout
-		 * @author birna
 		 */
 		private Page parentPage;
 		private String styleScript = "UserApplicationStyle.css";
@@ -57,22 +56,15 @@ public class UserApplication extends IWBrowser {
     this.setHeight(750);
 
     this.addToTop(new Top());
-    this.setSpanPixels(POS_TOP,51); //changed from (POS_TOP, 68);
-    this.setSpanPixels(POS_LEFTMAIN, 200); //changed from ...,200);
-    this.setSpanPixels(POS_MENU,35); //changed from (POS_MENU,26);
-    this.setSpanPixels(POS_BOTTOM,1); //changed from (POS_MENU,26)
+    this.setSpanPixels(POS_TOP,51); 
+    this.setSpanPixels(POS_LEFTMAIN, 200); 
+    this.setSpanPixels(POS_MENU,35); 
+    this.setSpanPixels(POS_BOTTOM,1); 
 
     UserApplicationMenuArea menuArea = new UserApplicationMenuArea();
 		UserApplicationControlArea treeArea = new UserApplicationControlArea();
 		UserApplicationMainArea mainArea = new UserApplicationMainArea();
-		UserApplicationLoginArea loginArea = new UserApplicationLoginArea();
 		
-		FrameSet leftFrame = new FrameSet();
-		leftFrame.add(loginArea);
-		leftFrame.add(treeArea);
-		
-//		this.add(leftFrame);
-
 		this.addToMenu(menuArea);
     this.showMenuFrame(true);
     this.showBottomFrame(true); //MUST BE TRUE!
@@ -234,39 +226,39 @@ public class UserApplication extends IWBrowser {
   }
 
 
-  public class Bottom extends Page implements IWBrowserCompliant {
-
-    public Bottom(){
-      if(this.isChildOfOtherPage()){
-        Page parent = this.getParentPage();
-        parent.setAllMargins(0);
-        parent.setBackgroundColor("#ffffff");//new IWColor(207,208,210).getHexColorString());
-      } else {
-        setAllMargins(0);
-        setBackgroundColor("#ffffff");//new IWColor(207,208,210).getHexColorString());
-      }
-
-    }
-
-   public void main(IWContext iwc) throws Exception{
-    Table toolbarTable = new Table(1,1);
-    
-    toolbarTable.setCellpadding(0);
-    toolbarTable.setCellspacing(0);
-    toolbarTable.setWidth("100%");
-    toolbarTable.setHeight("100%");
-//    toolbarTable.setHeight(1,1);
-//    toolbarTable.setHeight(3,1);
-
-//    IWColor color = new IWColor(0,0,0);//new IWColor(207,208,210);//jonni color
+//  public class Bottom extends Page implements IWBrowserCompliant {
 //
-//    toolbarTable.setColor(color);
-//    toolbarTable.setColor(1,1,color.brighter());
-//    toolbarTable.setColor(1,3,color.darker());
-
-    add(toolbarTable);
-   }
-
-
-  }
+//    public Bottom(){
+//      if(this.isChildOfOtherPage()){
+//        Page parent = this.getParentPage();
+//        parent.setAllMargins(0);
+//        parent.setBackgroundColor("#ffffff");//new IWColor(207,208,210).getHexColorString());
+//      } else {
+//        setAllMargins(0);
+//        setBackgroundColor("#ffffff");//new IWColor(207,208,210).getHexColorString());
+//      }
+//
+//    }
+//
+//   public void main(IWContext iwc) throws Exception{
+//    Table toolbarTable = new Table(1,1);
+//    
+//    toolbarTable.setCellpadding(0);
+//    toolbarTable.setCellspacing(0);
+//    toolbarTable.setWidth("100%");
+//    toolbarTable.setHeight("100%");
+////    toolbarTable.setHeight(1,1);
+////    toolbarTable.setHeight(3,1);
+//
+////    IWColor color = new IWColor(0,0,0);//new IWColor(207,208,210);//jonni color
+////
+////    toolbarTable.setColor(color);
+////    toolbarTable.setColor(1,1,color.brighter());
+////    toolbarTable.setColor(1,3,color.darker());
+//
+//    add(toolbarTable);
+//   }
+//
+//
+//  }
 }

@@ -211,7 +211,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
   	Table table = new Table(1,3);
   	table.setCellspacing(0);
   	table.setCellpadding(0);
-  	table.setHeight("80%");
+  	table.setHeight("90%");
 		table.setWidth(Table.HUNDRED_PERCENT);
 		table.setStyleClass("back");
   	table.setAlignment(1,2,"center");		
