@@ -296,7 +296,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		IWBundle iwb = getBundle(iwc);
 	  	
 		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
-		addTitle("." + iwrb.getLocalizedString("create_new_user", "Create a new User"), TITLE_STYLECLASS);
+		addTitle(iwrb.getLocalizedString("create_new_user", "Create a new User"), TITLE_STYLECLASS);
 		super.setTitle(iwrb.getLocalizedString("create_new_user", "Create a new User"));
 
 		myForm = new Form();
