@@ -41,7 +41,7 @@ import com.idega.user.presentation.GroupTreeView;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -244,7 +244,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		welcomeMessageTable.setCellspacing(0);
 		welcomeMessageTable.setCellpadding(0);
 		welcomeMessageTable.setWidth(Table.HUNDRED_PERCENT);
-		welcomeMessageTable.setHeight(50);
+		welcomeMessageTable.setHeight(40);
 		welcomeMessageTable.setAlignment(1,1,"center");
   	welcomeMessageTable.setAlignment(2,1,"center");
 		welcomeMessageTable.setVerticalAlignment(1,1,"middle");

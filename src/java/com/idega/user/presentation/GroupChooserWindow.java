@@ -12,6 +12,7 @@ import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.AbstractChooser;
@@ -65,10 +66,13 @@ public class GroupChooserWindow extends StyledAbstractChooserWindow {
     
     setStyles();
     
+    Table table = new Table(1,2);
+    table.setCellpaddingAndCellspacing(0);
+    
 
     Text text = new Text(iwrb.getLocalizedString("select_group","Select group")+":");
       text.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-    add(text,iwc);
+    table.add(text,1,1);
 
     try {
 //      TreeViewer viewer = com.idega.builder.business.IBPageHelper.getInstance().getPageTreeViewer(iwc);
@@ -111,7 +115,9 @@ public class GroupChooserWindow extends StyledAbstractChooserWindow {
       viewer.setLocation((IWLocation)this.getLocation().clone());
       viewer.getLocation().setSubID(1);
 
-      add(viewer,iwc);
+      table.add(viewer,1,2);
+      
+      add(table,iwc);
 
       viewer.setToMaintainParameter(SCRIPT_PREFIX_PARAMETER,iwc);
       viewer.setToMaintainParameter(SCRIPT_SUFFIX_PARAMETER,iwc);

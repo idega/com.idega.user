@@ -58,7 +58,7 @@ public class UserApplication extends IWBrowser {
 
     this.addToTop(new Top());
     this.setSpanPixels(POS_TOP,51); //changed from (POS_TOP, 68);
-    this.setSpanPixels(POS_LEFTMAIN, 190); //changed from ...,200);
+    this.setSpanPixels(POS_LEFTMAIN, 200); //changed from ...,200);
     this.setSpanPixels(POS_MENU,35); //changed from (POS_MENU,26);
     this.setSpanPixels(POS_BOTTOM,1); //changed from (POS_MENU,26)
 
@@ -204,7 +204,7 @@ public class UserApplication extends IWBrowser {
 //        headerTable.add(this.getBundle(iwc).getImage("/top.gif","idegaWeb Member"),1,1);
 				headerTable.add(this.getBundle(iwc).getImage("top.gif","idegaWeb Member"),1,1);
 
-        /*Text adminTitle = new Text("Félagakerfi ÍSÍ & UMFÍ");
+        /*Text adminTitle = new Text("Fï¿½lagakerfi ï¿½Sï¿½ & UMFï¿½");
         adminTitle.setBold();
         adminTitle.setFontColor("#FFFFFF");
         adminTitle.setFontSize(Text.FONT_SIZE_12_HTML_3);

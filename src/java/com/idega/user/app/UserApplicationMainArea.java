@@ -123,13 +123,14 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
     	}
     }
     else{
-			String frontPageId = getBundle(iwc).getProperty(USER_APPLICATION_FRONT_PAGE_ID,"-1");
-			if(ps.getSelectedGroup()==null && !"-1".equals(frontPageId)) {
-				setPageID(Integer.parseInt(frontPageId));
-			}
-			else {
-      	this.add(_buo);
-			}
+    	this.add(_buo);
+//			String frontPageId = getBundle(iwc).getProperty(USER_APPLICATION_FRONT_PAGE_ID,"-1");
+//			if(ps.getSelectedGroup()==null && !"-1".equals(frontPageId)) {
+//				setPageID(Integer.parseInt(frontPageId));
+//			}
+//			else {
+//      	this.add(_buo);
+//			}
     }
 
   }
