@@ -485,7 +485,7 @@ public class Toolbar extends Page implements IWBrowserView {
   private ICFile lookUpFile(String name)  {
     try {
       ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
-      ICFile file = (ICFile) home.findByFileName(name);
+      ICFile file = home.findByFileName(name);
       return file;
     }
     // FinderException, RemoteException
