@@ -5,12 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.FinderException;
 import javax.swing.event.ChangeListener;
 
-import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBDomain;
 import com.idega.builder.presentation.IBPageChooser;
 import com.idega.business.IBOLookup;
@@ -23,9 +19,7 @@ import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
-import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.idegaweb.presentation.IWAdminWindow;
-import com.idega.presentation.Frame;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
@@ -33,7 +27,6 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.presentation.Table;
-import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
@@ -43,10 +36,9 @@ import com.idega.presentation.ui.TextInput;
 import com.idega.user.app.ToolbarElement;
 import com.idega.user.app.UserApplication;
 import com.idega.user.app.UserApplicationMenuAreaPS;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
-import com.idega.user.data.GroupTypeBMPBean;
-import com.idega.user.data.GroupTypeHome;
 import com.idega.user.event.CreateGroupEvent;
 
 /**
@@ -177,7 +169,7 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			tab.add(pageText, 1, 4);
 			tab.add(pageChooser, 2, 4);
 
-			DropdownMenu mnu = getGroupTypeMenu(iwrb);
+			DropdownMenu mnu = getGroupTypeMenu(iwrb, iwc);
       /* 
       new DropdownMenu(_createEvent.getIONameForGroupType());
 			try {
@@ -221,103 +213,24 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 		}
 	}
   
-  private DropdownMenu getGroupTypeMenu(IWResourceBundle iwrb)  {
+  private DropdownMenu getGroupTypeMenu(IWResourceBundle iwrb, IWContext iwc)  {
     DropdownMenu menu = new DropdownMenu(_createEvent.getIONameForGroupType());
-    GroupType selectedGroupType;
-    GroupTypeHome groupTypeHome;
-    String selectedGroupTypeString = null;
+    GroupBusiness groupBusiness;
     try {
-      //get home
-      groupTypeHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
-      if (selectedGroup == null)  {
-        selectedGroupType = GroupTypeBMPBean.getStaticInstance();
-      }
-      else {
-        selectedGroupTypeString = selectedGroup.getGroupType();
-        // get home
-        groupTypeHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
-        // get type of selected group
-        selectedGroupType = groupTypeHome.findByPrimaryKey(selectedGroupTypeString);
-      }
+      groupBusiness =(GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
     }
-    catch (Exception ex)  {
+    catch (RemoteException ex)  {
       throw new RuntimeException(ex.getMessage());
     }
-    
-    GroupType generalType = findOrCreateGeneralGroupType(selectedGroupType, groupTypeHome);
-    String generalTypeString = generalType.getType();
-    
-    GroupType aliasType = findOrCreateAliasGroupType(selectedGroupType, groupTypeHome);
-    String aliasTypeString = aliasType.getType();
-
-    // selected group is null
-    if (selectedGroup == null)  {
-      addElement(menu, generalTypeString, iwrb);
-      addElement(menu, aliasTypeString, iwrb);
-      return menu;
-    }
-    // selected group is not null
-          
-    // first: type of selected group
-    addElement(menu, selectedGroupTypeString, iwrb);
-    // second: general type
-    if (! generalTypeString.equals(selectedGroupTypeString))
-      addElement(menu, generalTypeString, iwrb);
-    // third: alias type
-    if (! aliasTypeString.equals(selectedGroupTypeString))
-      addElement(menu, aliasTypeString, iwrb);
-    // then add children of type of selected group
-    Iterator childrenIterator = selectedGroupType.getChildren();
-    if (childrenIterator != null) { 
-      // there are some childrens
-      while (childrenIterator.hasNext())  {
-        GroupType item = (GroupType) childrenIterator.next();
-        String value = item.getType();
-        addElement(menu,value,iwrb);
-      }  
+    Iterator iterator = groupBusiness.getAllAllowedGroupTypesForChildren(selectedGroup, iwc).iterator();
+    while (iterator.hasNext())  {
+      GroupType item = (GroupType) iterator.next();
+      String value = item.getType();
+      menu.addMenuElement(value, iwrb.getLocalizedString(value, value));
     }
     return menu;
   }
-      
-  private void addElement(DropdownMenu menu, String value, IWResourceBundle resourceBundle)  {
-    menu.addMenuElement(value, resourceBundle.getLocalizedString(value, value));
-  }       
-
-  private GroupType findOrCreateAliasGroupType(GroupType aGroupType, GroupTypeHome home) {  
-    try {
-      GroupType type = home.findByPrimaryKey(aGroupType.getAliasGroupTypeString());
-      return type;
-    }
-    catch (FinderException findEx)  {
-      try {
-      GroupType type = home.create();
-      type.setGroupTypeAsAliasGroup();
-      return type;
-      }
-      catch (CreateException createEx)  {
-        throw new RuntimeException(createEx.getMessage());
-      }
-    }
-  }
     
-
-  private GroupType findOrCreateGeneralGroupType(GroupType aGroupType, GroupTypeHome home) {  
-    try {
-      GroupType type = home.findByPrimaryKey(aGroupType.getGeneralGroupTypeString());
-      return type;
-    }
-    catch (FinderException findEx)  {
-      try {
-      GroupType type = home.create();
-      type.setGroupTypeAsGeneralGroup();
-      return type;
-      }
-      catch (CreateException createEx)  {
-        throw new RuntimeException(createEx.getMessage());
-      }
-    }
-  }
-
 
 
 	/*

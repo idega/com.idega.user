@@ -1,6 +1,7 @@
 package com.idega.user.presentation;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.Window;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
+import com.idega.user.data.GroupType;
 import com.idega.util.IWColor;
 
  public class GroupGroupSetter extends Window {
@@ -53,17 +55,31 @@ import com.idega.util.IWColor;
 
 
       String stringGroupId = iwc.getParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID);
+      String stringParentGroupId = iwc.getParameter(GeneralGroupInfoTab.PARENT_GROUP_ID);
       int groupId = Integer.parseInt(stringGroupId);
+      int parentGroupId = Integer.parseInt(stringParentGroupId);
       form.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID,stringGroupId);
-
-      Collection directGroups = getGroupBusiness(iwc).getParentGroups(groupId);
+      GroupBusiness groupBusiness = getGroupBusiness(iwc);
+      Collection allowedGroupTypes = groupBusiness.getAllAllowedGroupTypesForChildren(parentGroupId, iwc); 
+      Iterator iterator = allowedGroupTypes.iterator();
+      HashMap map = new HashMap();
+      while (iterator.hasNext())  {
+        String value = ((GroupType) iterator.next()).getType();
+        map.put(value, value);
+      }        
+      // usually the following group type should be already contained
+      Group group = groupBusiness.getGroupByGroupID(groupId);
+      String value = group.getGroupType();
+      map.put(value, value);
+      
+      Collection directGroups = groupBusiness.getParentGroups(groupId);
 
       Iterator iter = null;
       if(directGroups != null){
         iter = directGroups.iterator();
         while (iter.hasNext()) {
-          Object item = iter.next();
-          right.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
+          Group item = (Group) iter.next();
+          right.addElement(item.getPrimaryKey().toString(),item.getName());
         }
       }
       
@@ -71,8 +87,9 @@ import com.idega.util.IWColor;
       if(notDirectGroups != null){
         iter = notDirectGroups.iterator();
         while (iter.hasNext()) {
-          Object item = iter.next();
-          left.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
+          Group item = (Group) iter.next();
+          if (! map.containsKey(group.getGroupType()))
+            left.addElement(item.getPrimaryKey().toString(),item.getName());
         }
       }
 

@@ -119,8 +119,11 @@ public class BasicUserOverViewToolbar extends Toolbar {
 				text2.setFontFace(Text.FONT_FACE_VERDANA);
 				text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
 				Link tLink12 = new Link(text2);
-				tLink12.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
-				// tLink12.setWindowToOpen(CreateGroupWindow.class);
+        if (selectedGroup != null)
+				  tLink12.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
+				if (parentGroup != null)
+          tLink12.setParameter(GroupPropertyWindow.PARENT_GROUP_ID_KEY, ((Integer) parentGroup.getPrimaryKey()).toString());
+        // tLink12.setWindowToOpen(CreateGroupWindow.class);
 				tLink12.setWindowToOpen(GroupPropertyWindow.class);
 				button2.add(tLink12, 2, 1);
 				toolbar1.add(button2, 3, 1);
