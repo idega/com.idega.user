@@ -109,11 +109,13 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
 	
 	private Collection getAllPermissionForGroup(Group group)  {
 			Collection allPermissions = null;
+			Collection permissionSetOnGroup = null;
 		
 			try {
 					allPermissions = AccessControl.getAllGroupPermissionsForGroup(group);
-					//Collection ownedPermissions = AccessControl.getAllGroupPermissionsOwnedByGroup( iwc.getCurrentUser().getGroup() );
-					//allPermissions.addAll(ownedPermissions);
+					permissionSetOnGroup = AccessControl.getAllGroupPermissionsReverseForGroup(group);
+					
+					allPermissions.addAll(permissionSetOnGroup);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
