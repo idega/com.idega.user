@@ -118,8 +118,12 @@ public class GroupTreeNode implements ICTreeNode {
 	}
 
 	public Iterator getChildrenIterator() {
+	    return getChildren().iterator();
+	}
+	
+	public Collection getChildren() {
 		if (_children != null) {
-			return _children.iterator();
+			return _children;
 		}
 			
 		switch (_nodeType) {
@@ -141,7 +145,7 @@ public class GroupTreeNode implements ICTreeNode {
 					}
 
 					_children = l;
-					return l.iterator();
+					return l;
 
 				}
 				catch (Exception e) {
@@ -172,7 +176,7 @@ public class GroupTreeNode implements ICTreeNode {
 
 				_children = l;
 
-				return l.iterator();
+				return l;
 			default :
 				throw new UnsupportedOperationException("Operation not supported for type:" + getNodeType());
 		}
