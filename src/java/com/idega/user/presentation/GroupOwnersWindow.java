@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
@@ -37,7 +38,7 @@ import com.idega.util.IWColor;
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
  * 
  */
-public class GroupOwnersWindow extends IWAdminWindow {//implements StatefullPresentation{
+public class GroupOwnersWindow extends GroupPermissionWindow {//implements StatefullPresentation{
 	
 	private static final String IW_BUNDLE_IDENTIFIER  = "com.idega.user";
 	private static final String PARAM_SELECTED_GROUP_ID  = SelectGroupEvent.PRM_GROUP_ID; //todo remove when using event system
@@ -112,6 +113,8 @@ public class GroupOwnersWindow extends IWAdminWindow {//implements StatefullPres
 			try {
 			
 				String[] values = iwc.getParameterValues(permissionTypeOwner);
+				Map permissions = getPermissionMapFromSession(iwc,permissionTypeOwner);
+				
 				if(values!=null && values.length>0){
 					
 					for (int i = 0; i < values.length; i++) {//different from groupPermissionWindow selectedGroupId and vaules[i] are swapped
@@ -119,6 +122,15 @@ public class GroupOwnersWindow extends IWAdminWindow {//implements StatefullPres
 					}
 					
 				}
+				
+				Iterator entries = permissions.values().iterator();
+				while (entries.hasNext()) {
+					ICPermission permission = (ICPermission) entries.next();
+					permission.setPermissionValue(false);
+					permission.store();
+				}
+
+				permissions.clear();
 					
 			}
 			catch (Exception e) {
@@ -225,6 +237,10 @@ public class GroupOwnersWindow extends IWAdminWindow {//implements StatefullPres
 							
 							isOwner = (ownerType.equals(permissionType)) && groupId.equals(selectedGroupId) && perm.getPermissionValue() ;
 							
+							if( isOwner ){							
+								Map permissionMap = getPermissionMapFromSession(iwc,permissionTypeOwner);
+								permissionMap.put(groupId, perm);
+							}
 						}
 					
 						
@@ -345,6 +361,8 @@ public class GroupOwnersWindow extends IWAdminWindow {//implements StatefullPres
 		}
 		return business;
 	}
+	
+	
 
 }
 

@@ -52,6 +52,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	private static final String IW_BUNDLE_IDENTIFIER  = "com.idega.user";
 	private static final String PARAM_SELECTED_GROUP_ID  = SelectGroupEvent.PRM_GROUP_ID; //todo remove when using event system
 	private static final String PARAM_SAVING  = "gpw_save";
+	private static final String SESSION_PARAM_PERMISSIONS_BEFORE_SAVE  = "gpw_permissions_b_s";
 	
 	//private static final String PARA  = "com.idega.user";
 	
@@ -69,8 +70,6 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	
 	private List permissionType;
 	private IWResourceBundle iwrb = null;
-	
-	
 	
 	
 	/**
@@ -152,18 +151,35 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 				while (iterator.hasNext()) {
 					String key = (String) iterator.next();
 					String[] values = iwc.getParameterValues(key);
+					Map permissions = this.getPermissionMapFromSession(iwc,key);
+					
+					//adding new values
 					if(values!=null && values.length>0){
 						
 						for (int i = 0; i < values.length; i++) {
 							access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,selectedGroupId,values[i],key,Boolean.TRUE);
+							permissions.remove(values[i]);
 						}
 						
 					}
 					
+					//does not remove record only set the permission to false
+					//todo remove if I am owner (see todo on owner stuff in this class)
+					//AccessControl.removePermissionRecords(AccessController.CATEGORY_GROUP_ID,iwc, instanceId,(String)item, groupsToRemove);
+				
+					Iterator entries = permissions.values().iterator();
+					while (entries.hasNext()) {
+						ICPermission permission = (ICPermission) entries.next();
+						permission.setPermissionValue(false);
+						permission.store();
+					}
+					
+					permissions.clear();
+					
+					
+					
 				}
 				
-				//remove permissions changed 
-				//AccessControl.removePermissionRecords(AccessController.CATEGORY_GROUP_ID,iwc, instanceId,(String)item, groupsToRemove);
 				
 				//refresh permissions PermissionCacher.updatePermissions()
 				
@@ -189,6 +205,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 		browser.setShowSettingButton(false);
 		browser.setWidth(browser.HUNDRED_PERCENT);
 		browser.setUseExternalForm(true);
+		browser.setUseEventSystem(false);
 		
 		
 //	fonts
@@ -270,12 +287,18 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 							permissionType = perm.getPermissionString();
 							
 							isSet = columnName.equals(permissionType);
-							if(!isOwner){
+							if(!isOwner){//isOwner is not always set if the group also has other permissions??
 								isOwner = ownerType.equals(permissionType);
 							}
 							
 							if(isSet){
 								active = perm.getPermissionValue();
+								
+								if( active ){							
+									Map permissionMap = getPermissionMapFromSession(iwc,columnName);
+									permissionMap.put(groupId, perm);
+								}
+								
 							}
 							
 						}
@@ -307,34 +330,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 		
 				//converter ends
 				
-		// define checkbox button converter class
-			EntityToPresentationObjectConverter permissionOwner =
-				new EntityToPresentationObjectConverter() {
-  
-					private com.idega.core.user.data.User administrator = null;
-					private boolean loggedInUserIsAdmin;
-  
-					public PresentationObject getPresentationObject(Object permissions, EntityPath path, EntityBrowser browser,IWContext iwc)  {
 
-						Collection col = (Collection) permissions;
-    
-						Iterator iterator = col.iterator();
-					
-						boolean active = false;
-					
-						while (iterator.hasNext() && !active) {
-							ICPermission perm = (ICPermission) iterator.next();
-						
-							perm.getPermissionString();
-						
-						}
-					
-						CheckBox checkBox = new CheckBox();
-						return checkBox;
-					
-					}
-				};
-				//converter ends
 				
 		
 		
@@ -568,7 +564,16 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	}
 	
 	
-
+	protected Map getPermissionMapFromSession(IWContext iwc, String permissionKey){
+		Map map = (Map) iwc.getSessionAttribute(this.SESSION_PARAM_PERMISSIONS_BEFORE_SAVE+permissionKey);
+		
+		if( map == null ){
+			 map = new HashMap(); 
+			iwc.setSessionAttribute(SESSION_PARAM_PERMISSIONS_BEFORE_SAVE+permissionKey,map);
+		}
+		return map;
+		
+	}
 	/**
 	 * @see com.idega.presentation.PresentationObject#getName()
 	 */
