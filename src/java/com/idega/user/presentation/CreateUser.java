@@ -1,6 +1,7 @@
 package com.idega.user.presentation;
 
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
@@ -540,10 +541,11 @@ public class CreateUser extends Window {
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
+		IWBundle iwb = getBundle(iwc);
 
 		//added for stylesheet writout:
 		parentPage = this.getParentPage();
-	  styleSrc = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/" + styleScript);
+	  styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
 	  parentPage.addStyleSheetURL(styleSrc);
 	  
 	 
