@@ -7,11 +7,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.swing.event.ChangeListener;
-
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
@@ -42,7 +40,6 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
