@@ -110,7 +110,6 @@ public class CreateUser extends StyledIWAdminWindow {
 	private String fullName = null;
 	private String primaryGroup = null;
 	
-	private TextInput groupInput = null;
 /*
 	public static String generateLoginFieldParameterName = "generateLogin";
 	public static String generatePasswordFieldParameterName = "generatePassword";
@@ -136,8 +135,8 @@ public class CreateUser extends StyledIWAdminWindow {
 
 	public CreateUser() {
 		super();
-		setHeight(250);
-		setWidth(380);
+		setHeight(240);
+		setWidth(340);
 	//	setBackgroundColor(new IWColor(207, 208, 210));
 		setScrollbar(false);
 		setResizable(true);
@@ -147,11 +146,11 @@ public class CreateUser extends StyledIWAdminWindow {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-  	fullNameText = new Text(iwrb.getLocalizedString(fullNameFieldParameterName,"Name"));
+  	fullNameText = new Text(iwrb.getLocalizedString(fullNameFieldParameterName,"Name") + ":");
   	fullNameText.setBold();
-		ssnText = new Text(iwrb.getLocalizedString(ssnFieldParameterName,"Personal ID (SSN)"));
+		ssnText = new Text(iwrb.getLocalizedString(ssnFieldParameterName,"Personal ID (SSN)") + ":");
 		ssnText.setBold();
-		primaryGroupText = new Text(iwrb.getLocalizedString(primaryGroupFieldParameterName,"Primarygroup"));
+		primaryGroupText = new Text(iwrb.getLocalizedString(primaryGroupFieldParameterName,"Primarygroup") + ":");
 		primaryGroupText.setBold();
 	}
 
@@ -160,13 +159,14 @@ public class CreateUser extends StyledIWAdminWindow {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		fullNameField = new TextInput(fullNameFieldParameterName);
-		fullNameField.setLength(20);
-		fullNameField.setStyleClass("text");
+		fullNameField.setLength(17);
+		fullNameField.setStyleClass(inputTextStyle);
 		fullNameField.setOnFocus("");
 //		fullNameField.setAsNotEmpty(iwrb.getLocalizedString("new_user.full_name_required","Full name must be selected"));
 		ssnField = new TextInput(ssnFieldParameterName);
-		ssnField.setLength(20);
+		ssnField.setLength(17);
 		ssnField.setMaxlength(12);
+		ssnField.setStyleClass(inputTextStyle);
 //		ssnField.setAsNotEmpty(iwrb.getLocalizedString("new_user.personal_id_required","Personal ID must be selected"));
 		//ssnField.setAsIcelandicSSNumber();
 
@@ -175,8 +175,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		//goToPropertiesField.setChecked(true);
 		
 		primaryGroupField = new GroupChooser(primaryGroupFieldParameterName);
-		groupInput = (TextInput)primaryGroupField.getPresentationObject(iwc);
-//		groupInput.setAsNotEmpty(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
+		primaryGroupField.setStyleClassName(inputTextStyle);
 //		if(primaryGroupField.isEmpty()) {
 //			this.setErrorMessage(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
 //			this.setToLoadAlert(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
@@ -200,28 +199,34 @@ public class CreateUser extends StyledIWAdminWindow {
 		//IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		//mainTable begin	
-		mainTable = new Table(2,2);
-		mainTable.setStyleClass(mainTableStyle);
-		mainTable.setCellspacing(10);
+		mainTable = new Table();
+//		mainTable.setStyleClass(mainTableStyle);
+		mainTable.setCellspacing(0);
 		mainTable.setCellpadding(0);
 		mainTable.setWidth(300);
-		mainTable.setHeight(180);
+		mainTable.setHeight(190);
+		mainTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
+		mainTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
 		//mainTable end
 		
 		//inputTable begin
-		inputTable = new Table(1, 6);
+		inputTable = new Table();
+		inputTable.setStyleClass(mainTableStyle);
+		inputTable.setWidth(Table.HUNDRED_PERCENT);
+		inputTable.setHeight(150);
 		inputTable.setCellpadding(0);
-		inputTable.setCellspacing(0);		
+		inputTable.setCellspacing(5);		
 		inputTable.add(fullNameText,1,1);
 		inputTable.add(fullNameField,1,2);
 		inputTable.add(ssnText,1,3);
 		inputTable.add(ssnField,1,4);
 		inputTable.add(primaryGroupText, 1, 5);
 		inputTable.add(primaryGroupField, 1, 6);
+		inputTable.add(Text.BREAK + Text.BREAK,1,6);
 		//inputTable end
 	
 		// buttonTable begin
-		buttonTable = new Table(5, 1);
+		buttonTable = new Table();
 		buttonTable.setCellpadding(0);
 		buttonTable.setCellspacing(0);
 		buttonTable.setHeight(1, rowHeight);
@@ -230,22 +235,36 @@ public class CreateUser extends StyledIWAdminWindow {
 		buttonTable.add(cancelButton, 3, 1);			
 		// buttonTable end
 		
-		helpTable = new Table(1,1);
+		helpTable = new Table();
 		helpTable.setCellpadding(0);
 		helpTable.setCellspacing(0);
 		helpTable.setHeight(1,rowHeight);
 		helpTable.add(help,1,1);
 		
+		Table bottomTable = new Table();
+		bottomTable.setCellpadding(0);
+		bottomTable.setCellspacing(5);
+		bottomTable.setWidth(Table.HUNDRED_PERCENT);
+		bottomTable.setHeight(30);
+		bottomTable.setStyleClass(mainTableStyle);
+		bottomTable.add(helpTable,1,1);
+		bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
+		bottomTable.add(buttonTable,2,1);
+		
 		//warningTable begin
 		warningTable = new Table(1,1);
 		warningTable.setCellpadding(0);
 		warningTable.setCellspacing(0);
+		//warningTabe end
+		
 		mainTable.add(inputTable, 1,1);
-		mainTable.setAlignment(2, 2, Table.HORIZONTAL_ALIGN_RIGHT);
+/*		mainTable.setAlignment(2, 2, Table.HORIZONTAL_ALIGN_RIGHT);
 		mainTable.setVerticalAlignment(2, 2, Table.VERTICAL_ALIGN_BOTTOM);
 		mainTable.add(buttonTable, 2,2);
 		mainTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_BOTTOM);
 		mainTable.add(helpTable,1,2);
+*/		
+		mainTable.add(bottomTable,1,3);
 		
 		myForm.add(mainTable);
 	}
