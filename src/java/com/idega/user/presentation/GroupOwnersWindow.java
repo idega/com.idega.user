@@ -9,6 +9,7 @@ import java.util.Map;
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
+import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
@@ -37,11 +38,13 @@ import com.idega.util.IWColor;
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
  * 
  */
-public class GroupOwnersWindow extends GroupPermissionWindow {//implements StatefullPresentation{
+public class GroupOwnersWindow extends StyledIWAdminWindow {//GroupPermissionWindow {//implements StatefullPresentation{
 	
 	private static final String IW_BUNDLE_IDENTIFIER  = "com.idega.user";
 	private static final String PARAM_SELECTED_GROUP_ID  = SelectGroupEvent.PRM_GROUP_ID; //todo remove when using event system
 	private static final String PARAM_SAVING  = "gpw_save";
+	
+	private static final String HELP_TEXT_KEY = "group_owners_window";
 
 	
 	private GroupBusiness groupBiz = null;
@@ -59,6 +62,10 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 	
 	private final String permissionTypeOwner="owner";//HARD CODED TEMPORARY
 	
+	private String mainStyleClass = "main";
+	
+	private GroupPermissionWindow gpw = null;
+	
 	
 	
 	
@@ -71,6 +78,7 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 		setWidth(width);
 		setHeight(height);
 		setScrollbar(true);
+		setResizable(true);
 		
 
 	}
@@ -103,6 +111,8 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 	public void main(IWContext iwc) throws Exception {
 		iwrb = this.getResourceBundle(iwc);
 		
+		gpw = new GroupPermissionWindow();
+		
 		parseAction(iwc);		
 
 		
@@ -113,7 +123,7 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 			try {
 			
 				String[] values = iwc.getParameterValues(permissionTypeOwner);
-				Map permissions = getPermissionMapFromSession(iwc,permissionTypeOwner,false);
+				Map permissions = gpw.getPermissionMapFromSession(iwc,permissionTypeOwner,false);
 				
 				if(values!=null && values.length>0){
 					
@@ -216,7 +226,7 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 
           
           public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
-						getPermissionMapFromSession(iwc,permissionTypeOwner,true);
+						gpw.getPermissionMapFromSession(iwc,permissionTypeOwner,true);
             return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
           } 
   
@@ -234,7 +244,7 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 						final String ownerType = permissionTypeOwner;
 						String groupId = null;
 						String permissionType = null;
-						Map permissionMap = getPermissionMapFromSession(iwc,permissionTypeOwner,false);
+						Map permissionMap = gpw.getPermissionMapFromSession(iwc,permissionTypeOwner,false);
 						
 						while (iterator.hasNext() && !isOwner) {
 							ICPermission perm = (ICPermission) iterator.next();
@@ -282,7 +292,7 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 		Form form = getGroupPermissionForm(browser);
 		form.add(new HiddenInput(PARAM_SELECTED_GROUP_ID,selectedGroupId));
 		form.add(new HiddenInput(PARAM_SAVING,"TRUE"));
-		add(form);
+		add(form,iwc);
 
 		
 	}
@@ -295,20 +305,28 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 	 */
 	private Form getGroupPermissionForm(EntityBrowser browser) throws Exception{
 		
+		Help help = getHelp(HELP_TEXT_KEY);
+		
 		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"));
 		save.setSubmitConfirm(iwrb.getLocalizedString("change.selected.permissions?","Change selected permissions?"));
 		
 		SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
 		close.setOnClick("window.close()");
 				
-		Table table = new Table(1,2);
+		Table table = new Table(2,2);
+		table.setStyleClass(mainStyleClass);
+		table.mergeCells(1,1,2,1);
 		table.add(browser,1,1);
-		table.add(close,1,2);
-		table.add(save,1,2);
-		table.setWidth(Table.HUNDRED_PERCENT);
-		table.setHeight(Table.HUNDRED_PERCENT);
+		table.setVerticalAlignment(1,2,"bottom");
+		table.setVerticalAlignment(2,2,"bottom");	
+		table.add(help,1,2);
+		table.add(save,2,2);
+		table.add(Text.NON_BREAKING_SPACE,2,2);
+		table.add(close,2,2);
+		table.setWidth(600);
+		table.setHeight(410);
 		table.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
-		table.setAlignment(1,2,Table.HORIZONTAL_ALIGN_RIGHT);
+		table.setAlignment(2,2,Table.HORIZONTAL_ALIGN_RIGHT);
 
 		Form form = new Form();
 		form.add(table);
