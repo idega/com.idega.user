@@ -137,7 +137,7 @@ public class GroupTreeNode implements ICTreeNode {
     switch (_nodeType) {
       case TYPE_DOMAIN:
         try{
-          GroupTreeNode node = new GroupTreeNode(((IBDomainHome)_domain.getEJBHome()).findByPrimaryKey(new Integer(childIndex)));
+          GroupTreeNode node = new GroupTreeNode(((IBDomainHome)_domain.getEJBLocalHome()).findByPrimaryKey(new Integer(childIndex)));
           node.setParent(this);
           return node;
         }
