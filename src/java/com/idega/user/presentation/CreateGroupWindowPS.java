@@ -30,18 +30,10 @@ import com.idega.user.data.User;
 import com.idega.user.event.CreateGroupEvent;
 
 /**
- * <p>
- * Title: idegaWeb
- * </p>
- * <p>
- * Description:
- * </p>
- * <p>
- * Copyright: Copyright (c) 2004
- * </p>
- * <p>
- * Company: idega Software
- * </p>
+ * Title: CreateGroupWindowPS<br>
+ * Description: This class handles creating new groups.<br>
+ * Copyright: Idega Software Copyright (c) 2002<br>
+ * Company: Idega Software<br>
  * 
  * @author <a href="eiki@idega.is">Eirikur Hrafnsson </a>
  * @version 1.0
