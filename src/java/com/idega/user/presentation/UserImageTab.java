@@ -82,24 +82,17 @@ public class UserImageTab extends UserTab{
   }
   
   public void updateFieldsDisplayStatus(){
-
-    if ( systemImageId != -1 ){
       imageField.setImageId(systemImageId);       
-    }
   }
 
   public boolean collect(IWContext iwc){
-    if(iwc != null){
-
-      String image = iwc.getParameter(this.imageFieldName);
-
-      if(image != null){
-        fieldValues.put(this.imageFieldName,image);
-      }
-
-      return true;
-    }
-    return false;
+	  String imageID = iwc.getParameter(imageFieldName);
+	
+	  if(imageID != null){
+	    fieldValues.put(imageFieldName,imageID);
+	  }
+	
+	  return true;
   }
 
   public boolean store(IWContext iwc){
@@ -109,18 +102,17 @@ public class UserImageTab extends UserTab{
         String image = (String)fieldValues.get(imageFieldName);
         
         if( (image!=null) && (!image.equals("-1")) && (!image.equals("")) && (!image.equals("0")) ){
-      		if( user == null ) user = getUserBusiness().getUser(this.getUserId());
-	  			int id = Integer.parseInt(image);
-	  			user.setSystemImageID(id);
+      		if( user == null ) user = getUserBusiness(getIWApplicationContext()).getUser(this.getUserId());
+	  			
+	  			systemImageId = Integer.parseInt(image);
+	  			user.setSystemImageID(systemImageId);
         	user.store();
         
         	updateFieldsDisplayStatus();
         
         
         }
-        
-        
-                
+     
       }
     }
     catch(Exception e){
@@ -134,7 +126,7 @@ public class UserImageTab extends UserTab{
   public void initFieldContents(){
 
     try{
-      if( user == null ) user = getUserBusiness().getUser(this.getUserId());
+      if( user == null ) user = getUserBusiness(getIWApplicationContext()).getUser(this.getUserId());
 			
 			systemImageId = getSelectedImageId(user);
 			
@@ -152,11 +144,6 @@ public class UserImageTab extends UserTab{
 
 
   }
-
-	private UserBusiness getUserBusiness() throws RemoteException {
-		if(biz==null) biz = (UserBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), UserBusiness.class);	
-		return biz;
-	}
 	
 	private void setSelectedImageId(){
 		try {
