@@ -23,6 +23,7 @@ import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.util.SelectorUtility;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
+import com.idega.user.util.ICUserConstants;
 
 /**
  * Title:        User
@@ -74,7 +75,6 @@ public class AddressInfoTab extends UserTab {
   private static final String secondCommuneFieldName = "UMsecondPoBox";
   private static final String secondPoBoxFieldName = "UMsecondCommune";
   
-	private static final String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
 	private static final String HELP_TEXT_KEY = "address_info_tab";
 
 	private Text streetText;
@@ -240,7 +240,7 @@ public class AddressInfoTab extends UserTab {
 		IWBundle iwb = getBundle(iwc);
 		Help help = new Help();
 		Image helpImage = iwb.getImage("help.gif");
-		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+		help.setHelpTextBundle( ICUserConstants.HELP_BUNDLE_IDENTFIER);
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;

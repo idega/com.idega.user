@@ -21,6 +21,7 @@ import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
+import com.idega.user.util.ICUserConstants;
 import com.idega.util.Disposable;
 
 /**
@@ -37,7 +38,6 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private static final String TAB_NAME = "gen_tab_name";
 	private static final String DEFAULT_TAB_NAME = "General";
 	
-	private static final String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
 	private static final String HELP_TEXT_KEY = "general_group_info_tab";
 
 	private TextInput nameField;
@@ -419,7 +419,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		IWBundle iwb = getBundle(iwc);
 		Help help = new Help();
 		Image helpImage = iwb.getImage("help.gif");
-		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+		help.setHelpTextBundle( ICUserConstants.HELP_BUNDLE_IDENTFIER);
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;

@@ -26,6 +26,7 @@ import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.user.util.ICUserConstants;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -41,7 +42,6 @@ public class GeneralUserInfoTab extends UserTab {
 	private static final String TAB_NAME = "usr_info_tab_name";
 	private static final String DEFAULT_TAB_NAME = "General";
 	
-	private static final String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
 	private static final String HELP_TEXT_KEY = "tabbed_property_panel";
 
 	private TextInput idField;
@@ -268,7 +268,7 @@ public class GeneralUserInfoTab extends UserTab {
 		IWBundle iwb = getBundle(iwc);
 		Help help = new Help();
 		Image helpImage = iwb.getImage("help.gif");
-		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+		help.setHelpTextBundle( ICUserConstants.HELP_BUNDLE_IDENTFIER);
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;
