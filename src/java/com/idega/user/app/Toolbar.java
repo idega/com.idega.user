@@ -168,6 +168,7 @@ public class Toolbar extends Page implements IWBrowserView {
    IWLocation location = (IWLocation)this.getLocation().clone();
    location.setSubID(1);
    searchForm.setLocation(location,iwc);
+   searchForm.setArtificialCompoundId(getCompoundId(),iwc);
    searchForm.setHorizontalAlignment("right");
    toolbarTable.add(searchForm,2,2);
 
