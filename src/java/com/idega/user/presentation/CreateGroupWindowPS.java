@@ -21,6 +21,7 @@ import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.User;
 import com.idega.user.event.CreateGroupEvent;
+import com.idega.user.util.ICUserConstants;
 
 /**
  * Title: CreateGroupWindowPS<br>
@@ -116,6 +117,23 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
                                 event.getDescription(), event.getGroupType(),
                                 event.getHomePageID(), event.getAliasID(),
                                 parentGroup);
+                        
+                        
+                        //todo refactor this to a plugin
+                        //used to see the path to groups in the permission window
+                        String groupNumber = parentGroup.getMetaData(ICUserConstants.META_DATA_GROUP_NUMBER);
+                        if(groupNumber!=null && !"".equals(groupNumber)) {
+                            if(!groupNumber.endsWith("-")) {
+                                groupNumber+="-";//add a - to thee number
+                            }
+                            
+                            group.setMetaData(ICUserConstants.META_DATA_GROUP_NUMBER,groupNumber);
+                            
+                            group.store();
+                            
+                        }
+                        
+                        /////////////
 
                     } else {
                        //UNKNOWN PARENT TYPE
