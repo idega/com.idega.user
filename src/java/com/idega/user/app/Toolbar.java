@@ -133,7 +133,7 @@ public class Toolbar extends Page implements IWBrowserView {
 		//			parentPage.addStyleSheetURL(styleSrc);
 
 		Table toolbarTable = new Table(3, 3);
-		boolean useDropdown = false;
+		boolean useDropdown = iwb.getBooleanProperty("use_dropdown_in_toolbar", false);
 
 		//	added for isi style
 		//		toolbarTable.setStyleClass(menuTableStyle); --- changed
