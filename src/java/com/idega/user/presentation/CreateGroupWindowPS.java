@@ -120,6 +120,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
       eventContext = e.getIWContext();
 			//set current user a owner of group
 			setCurrentUserAsOwnerOfGroup(e.getIWContext(), group);
+			
 			//get groupType tree and iterate through it and create default sub groups.
 			createDefaultSubGroups(group,business,e.getIWContext());
 					
@@ -227,6 +228,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 					try {
 						Group newGroup = business.createGroup(name,"",typeString);
 						setCurrentUserAsOwnerOfGroup(iwc,newGroup);
+						setCurrentUsersPrimaryGroupPermissionsForGroup(iwc,newGroup);
 						group.addGroup(newGroup);
 						if(!type.isLeaf()){
 							createDefaultSubGroups(newGroup,business,iwc);
@@ -258,4 +260,28 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 		
 		}
   }
+  
+	private void setCurrentUsersPrimaryGroupPermissionsForGroup(IWUserContext iwc, Group group){
+		User user = iwc.getCurrentUser();
+		AccessController access = iwc.getAccessController();
+		try {
+			Group primary = user.getPrimaryGroup();
+			String primaryGroupId = primary.getPrimaryKey().toString();
+			String newGroupId = group.getPrimaryKey().toString();
+			//TDOD create methods for this in accesscontrol
+			//create permission
+			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_CREATE,Boolean.TRUE);
+			//edit permission
+			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_EDIT,Boolean.TRUE);
+			//delete permission
+			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_DELETE,Boolean.TRUE);
+			//view permission
+			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_VIEW,Boolean.TRUE);
+					
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		
+		}
+	}
 }
