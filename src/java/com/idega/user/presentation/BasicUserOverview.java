@@ -33,6 +33,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
@@ -199,10 +200,20 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			
 			// add move to group
 			if (users.size()>0) {
-				String confirmMoving = resourceBundle.getLocalizedString("buo_move_selected_users", "Move selected users");
+        String confirmMoving;
+        Image buttonMoving;
+        if (selectedGroup == null) {
+          confirmMoving = resourceBundle.getLocalizedString("buo_add_selected_users", "Add selected users");
+          buttonMoving = resourceBundle.getLocalizedImageButton("Add to", "Add to");
+        }
+        else {
+				  confirmMoving = resourceBundle.getLocalizedString("buo_move_selected_users", "Move selected users");
+          buttonMoving = resourceBundle.getLocalizedImageButton("Move to", "Move to");
+        }
 				confirmMoving += " ?";
+        
 				SubmitButton moveToButton = 
-					new SubmitButton(resourceBundle.getLocalizedImageButton("Move to", "Move to"),
+					new SubmitButton(buttonMoving,
 						BasicUserOverview.MOVE_USERS_KEY,
 						BasicUserOverview.MOVE_USERS_KEY);
 				moveToButton.setSubmitConfirm(confirmMoving);		
@@ -633,7 +644,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     User currentUser = iwc.getCurrentUser();
     Map resultMap = new HashMap();
     Map map = userBusiness.moveUsers(userIds, parentGroup, targetGroupId, currentUser);
-    Integer groupId = (Integer) parentGroup.getPrimaryKey();
+    Integer groupId; 
+    if (parentGroup != null) {
+      groupId = (Integer) parentGroup.getPrimaryKey();
+    }
+    else {
+      groupId = new Integer(-1);
+    }
     // map has user's ids as keys, messages as values
     // if the value is null the corresponding user was successfully moved
     resultMap.put(groupId , map);
@@ -691,14 +708,20 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
       Map map = (Map) groupMap.getValue();
       Integer groupId = (Integer) groupMap.getKey();
       Group group;
-      try {
-        group = groupBusiness.getGroupByGroupID(groupId.intValue());
+      String groupName;
+      if ((new Integer(-1)).equals(groupId)) {
+        groupName = "";
       }
-      // Remote and FinderException
-      catch (Exception ex)  {
-        throw new RuntimeException(ex.getMessage());
+      else {
+        try {
+          group = groupBusiness.getGroupByGroupID(groupId.intValue());
+        }
+        // Remote and FinderException
+        catch (Exception ex)  {
+          throw new RuntimeException(ex.getMessage());
+        }
+        groupName = groupBusiness.getNameOfGroupWithParentName(group);
       }
-      String groupName = groupBusiness.getNameOfGroupWithParentName(group);
       Iterator entryIterator = map.entrySet().iterator();
       while (entryIterator.hasNext()) {
         Map.Entry entry = (Map.Entry) entryIterator.next();
@@ -722,7 +745,22 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
       }
     }
-    movedUsersNumberMessage += ": " + movedUsers;
+    int targetGroupId = ps.getTargetGroupId();
+    Group targetGroup;
+    if (targetGroupId > 0)  {
+      GroupBusiness biz = getGroupBusiness(iwc);
+      try {
+        targetGroup = biz.getGroupByGroupID(targetGroupId);
+      }
+      catch (Exception ex)  {
+        throw new RuntimeException(ex.getMessage());
+      }
+      String targetName = biz.getNameOfGroupWithParentName(targetGroup);
+      movedUsersNumberMessage += ": " + movedUsers + "  " + targetName;
+    }
+    else {
+      movedUsersNumberMessage += ": " + movedUsers;
+    }
     notMovedUsersNumberMessage += ": " + notMovedUsers;
     notMovedUsersMessage += ": ";
     
@@ -903,7 +941,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     String pinKey = "com.idega.user.data.User.PERSONAL_ID";
         
     Iterator iterator = messageMap.keySet().iterator();
-    String identifier = (iterator.hasNext()) ? (String) iterator.next() : "move";
+    String identifier = (iterator.hasNext()) ? iterator.next().toString() : "move";
       
       
     entityBrowser.setEntities(identifier, users);

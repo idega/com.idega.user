@@ -13,6 +13,7 @@ import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.event.ResetPresentationEvent;
+import com.idega.user.block.search.event.UserSearchEvent;
 import com.idega.user.data.Group;
 import com.idega.user.event.SelectDomainEvent;
 import com.idega.user.event.SelectGroupEvent;
@@ -40,12 +41,17 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
 	protected IBDomain _selectedDomain = null;
   
   private Map resultOfMovingUsers = null;
+  private int targetGroupId;
 
   public BasicUserOverviewPS() {
   }
   
   public Map getResultOfMovingUsers() {
     return resultOfMovingUsers;
+  }
+  
+  public int getTargetGroupId() {
+    return targetGroupId;
   }
 
   public Group getSelectedGroup(){
@@ -70,6 +76,10 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
 
 
   public void actionPerformed(IWPresentationEvent e)throws IWException{
+    
+    if (e instanceof UserSearchEvent) {
+      _selectedGroup = null;
+    }
 
     if(e instanceof ResetPresentationEvent){
       resultOfMovingUsers = null;
@@ -114,6 +124,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
         int targetGroupId = Integer.parseInt(mainIwc.getParameter(BasicUserOverview.SELECTED_TARGET_GROUP_KEY));
         // move users to a group
         resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup, targetGroupId, mainIwc);
+        this.targetGroupId = targetGroupId; 
       }
     }  
     
@@ -125,6 +136,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
         groupIds = mainIwc.getParameterValues(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY);
         // move users 
         resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(Arrays.asList(groupIds), mainIwc);
+        targetGroupId = -1;
         fireStateChanged();
       }
     }     
