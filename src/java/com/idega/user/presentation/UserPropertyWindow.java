@@ -32,7 +32,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
   public static final String SESSION_ADDRESS = "ic_user_property_window";  
 
   public UserPropertyWindow(){
-    super();
+    super(410,550);
     this.setBackgroundColor(new IWColor(207,208,210));
   }
 
