@@ -1,9 +1,20 @@
 package com.idega.user.presentation;
 
+import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.TabbedPropertyPanel;
 import com.idega.presentation.TabbedPropertyWindow;
+import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserGroupPlugInBusiness;
+import com.idega.user.data.Group;
+import com.idega.user.data.User;
+import com.idega.user.data.UserGroupPlugIn;
 import com.idega.util.IWColor;
 
 
@@ -31,9 +42,45 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
   }
 
   public void initializePanel( IWContext iwc, TabbedPropertyPanel panel){
-    panel.addTab(new GeneralGroupInfoTab(),0,iwc);
+  	
+  	try{
+  		int count = 0;
+    	panel.addTab(new GeneralGroupInfoTab(),count++,iwc);
 //    panel.addTab(new GroupMembershipTab(),1,iwc);
     //panel.addTab(new ExtendedGroupMembershipTab(),2,iwc);
+    
+//	temp shit
+			String id = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
+			int groupId = Integer.parseInt(id);
+			Group group = getGroupBusiness(iwc).getGroupByGroupID(groupId);
+   
+			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForGroupTypeString(group.getGroupType());
+			Iterator iter = plugins.iterator();
+	  
+			while (iter.hasNext()) {
+			UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
+		
+			UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness)
+					 com.idega.business.IBOLookup.getServiceInstance(iwc,Class.forName(element.getBusinessICObject().getClassName()));
+			
+		
+		
+		
+			List tabs = pluginBiz.getGroupPropertiesTabs(group);
+			Iterator tab = tabs.iterator();
+			while (tab.hasNext()) {
+				UserTab el = (UserTab) tab.next();
+				panel.addTab(el,count++,iwc);
+			}
+		
+			}
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    
+
+    
   }
 
   public void main(IWContext iwc) throws Exception {
@@ -58,5 +105,10 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 	public boolean disposeOfPanel(IWContext iwc) {
 		return iwc.isParameterSet(PARAMETERSTRING_GROUP_ID);
 	}
+
+	public GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws RemoteException{
+		return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac,GroupBusiness.class);
+	}
+  
 
 }
