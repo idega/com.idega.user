@@ -58,7 +58,7 @@ public class UserApplication extends IWBrowser {
 
     this.addToTop(new Top());
     this.setSpanPixels(POS_TOP,50); 
-    this.setSpanPixels(POS_LEFTMAIN, 200);
+    this.setSpanPixels(POS_LEFTMAIN, 230);
     this.setSpanPixels(POS_MENU,29); 
     this.setSpanPixels(POS_BOTTOM,35); 
     this.setSpanPixels(POS_EVENT,1); 
@@ -97,7 +97,7 @@ public class UserApplication extends IWBrowser {
     this.getEventFrame().setNoresize(true);
     this.getMainFrame().setScrolling(true);
     this.getLeftMainFrame().setNoresize(false);
-    this.getLeftMainFrame().setScrolling(false);
+    this.getLeftMainFrame().setScrollingAuto();
   }
 
   public String getBundleIdentifier(){

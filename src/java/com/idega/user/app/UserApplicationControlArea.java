@@ -232,8 +232,8 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	 */
 	public Layer displayTable(IWContext iwc) {
 		Layer layer = new Layer(Layer.DIV);
-		layer.setWidth(173);
-		layer.setHeight("98%");
+		layer.setWidth(203);
+		layer.setHeight(579);
 		layer.setStyleClass("main");
 		layer.setPadding(4);
 		layer.add(groupTree);
@@ -283,7 +283,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		Table table = new Table(1, 2);
 		table.setCellpaddingAndCellspacing(0);
 		table.setWidth(200);
-		table.setHeight(Table.HUNDRED_PERCENT);
+		table.setHeight(635);
 		table.setHeight(1, 1, 42);
 		table.setBackgroundImage(1, 1, iwb.getImage("bgtile.gif"));
 		table.setHeight(1, 2, Table.HUNDRED_PERCENT);
