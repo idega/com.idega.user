@@ -69,7 +69,7 @@ public class OwnerGroupInformationText extends Text {
 		
 		Page page = this.getParentPage();
 		if(page != null) {
-			int rootPageID = page.getDPTRootPageID();
+			int rootPageID = page.getDynamicPageTrigger().getRootPage();;
 			if(rootPageID != -1) {
 				try {
 					Group gr = ((GroupHome)IDOLookup.getHome(Group.class)).findByHomePageID(rootPageID);
