@@ -1,0 +1,83 @@
+ICUser
+
+
+create index IDX_IC_USER_1 on IC_USER(LAST_NAME,FIRST_NAME,MIDDLE_NAME);
+commit;
+create index IDX_IC_USER_2 on IC_USER(FIRST_NAME,LAST_NAME,MIDDLE_NAME);
+commit;
+create index IDX_IC_USER_3 on IC_USER(FIRST_NAME);
+commit;
+create index IDX_IC_USER_4 on IC_USER(PERSONAL_ID);
+commit;
+create index IDX_IC_USER_5 on IC_USER(USER_REPRESENTATIVE);
+commit;
+
+create index IDX_IC_USER_ADDRESS_1 on IC_USER_ADDRESS(IC_USER_ID);
+create index IDX_IC_USER_ADDRESS_2 on IC_USER_ADDRESS(IC_ADDRESS_ID);
+commit;
+
+create index IDX_IC_USER_PHONE_1 on IC_USER_PHONE(IC_USER_ID);
+create index IDX_IC_USER_PHONE_2 on IC_USER_PHONE(IC_PHONE_ID);
+commit;
+
+create index IDX_IC_USER_EMAIL_1 on IC_USER_EMAIL(IC_USER_ID);
+create index IDX_IC_USER_EMAIL_2 on IC_USER_EMAIL(IC_EMAIL_ID);
+commit;
+
+ICGroupType
+create index IDX_IC_GROUP_TYPE1 on IC_GROUP_TYPE(IS_VISIBLE);
+commit;
+create index IDX_IC_GROUP_TYPE2 on IC_GROUP_TYPE(GROUP_TYPE);
+commit;
+create index IDX_IC_GROUP_TYPE3 on IC_GROUP_TYPE(IS_VISIBLE,GROUP_TYPE);
+commit;
+
+ICGroup
+create index IDX_IC_GROUP_1 on IC_GROUP(GROUP_TYPE,IC_GROUP_ID);
+commit;
+create index IDX_IC_GROUP_2 on IC_GROUP(NAME);
+commit;
+create index IDX_IC_GROUP_3 on IC_GROUP(IC_GROUP_ID);
+commit;
+create index IDX_IC_GROUP_4 on IC_GROUP(GROUP_TYPE);
+commit;
+create index IDX_IC_GROUP_5 on IC_GROUP(IC_GROUP_ID,GROUP_TYPE);
+commit;
+
+ICGroupRelation
+create index IDX_IC_GROUP_REL_1 on IC_GROUP_RELATION(RELATED_IC_GROUP_ID);
+commit;
+create index IDX_IC_GROUP_REL_2 on IC_GROUP_RELATION(IC_GROUP_ID);
+commit;
+create index IDX_IC_GROUP_REL_3 on IC_GROUP_RELATION(IC_GROUP_ID,RELATIONSHIP_TYPE,GROUP_RELATION_STATUS);
+commit;
+create index IDX_IC_GROUP_REL_4 on IC_GROUP_RELATION(IC_GROUP_ID,RELATIONSHIP_TYPE);
+commit;
+create index IDX_IC_GROUP_REL_5 on IC_GROUP_RELATION(RELATIONSHIP_TYPE);
+commit;
+create index IDX_IC_GROUP_REL_6 on IC_GROUP_RELATION(RELATED_IC_GROUP_ID,RELATIONSHIP_TYPE,GROUP_RELATION_STATUS);
+commit;
+create index IDX_IC_GROUP_REL_7 on IC_GROUP_RELATION(RELATED_IC_GROUP_ID,RELATIONSHIP_TYPE);
+commit;
+create index IDX_IC_GROUP_REL_8 on IC_GROUP_RELATION(RELATIONSHIP_TYPE,GROUP_RELATION_STATUS);
+commit;
+
+ICGroupDomainRelation
+create index IDX_IC_GROUP_DOM_REL_8 on IC_GROUP_DOMAIN_RELATION(RELATIONSHIP_TYPE);
+commit;
+
+PostalCode
+create index IDX_IC_POSTALCODE on IC_POSTAL_CODE(postal_code);
+commit;
+create index IDX_IC_POSTALCODE2 on IC_POSTAL_CODE(postal_code,name);
+commit;
+create index IDX_IC_POSTALCODE3 on IC_POSTAL_CODE(postal_code,ic_country_id);
+commit;
+create index IDX_IC_POSTALCODE4 on IC_POSTAL_CODE(ic_country_id);
+commit;
+
+Address
+create index IDX_ADDRESS_TYPE on IC_ADDRESS(IC_ADDRESS_TYPE_ID);
+commit;
+create index IDX_ADDRESS_STREET_NAME on IC_ADDRESS(STREET_NAME);
+

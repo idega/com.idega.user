@@ -1,0 +1,10 @@
+For the simple search
+
+select * from ic_user where first_name like '%salt%' 
+	or ic_user_id in ( select ua.ic_user_id from ic_address a ,ic_user_address ua 
+	where a.ic_address_id=ua.ic_address_id and a.street_name like '%SALT%') 
+	order by first_name,last_name,middle_name
+	
+	
+	
+	
