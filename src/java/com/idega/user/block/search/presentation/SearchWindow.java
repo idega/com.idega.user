@@ -55,8 +55,8 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 
 
 	public SearchWindow() {
-		setWidth(620);
-		setHeight(380);
+		setWidth(480);
+		setHeight(360);
 		setScrollbar(false);
 		setResizable(true);
 	}
@@ -94,20 +94,20 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		Form form = new Form();
 		form.addEventModel(searchEvent, iwc);
 
-		setTitle(iwrb.getLocalizedString("searchwindow.title", "Search"));
-		addTitle(iwrb.getLocalizedString("searchwindow.title", "Search"), IWConstants.BUILDER_FONT_STYLE_TITLE);
-		setName(iwrb.getLocalizedString("searchwindow.title", "Search"));
+		setTitle(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"));
+		addTitle(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+		setName(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"));
 		
 		add(form);
-		Table tab = new Table(4,13);
+		Table tab = new Table(3,13);
 		form.add(tab);
 		
 		tab.setColumnVerticalAlignment(1, Table.VERTICAL_ALIGN_TOP);
 		tab.setColumnVerticalAlignment(2, Table.VERTICAL_ALIGN_TOP);
 
 		tab.setCellspacing(2);
-		tab.setAlignment(4, 12, Table.HORIZONTAL_ALIGN_RIGHT);
-		tab.mergeCells(1,4,2,11);
+		//tab.setAlignment(3, 13, Table.HORIZONTAL_ALIGN_RIGHT);
+		tab.mergeCells(1,4,2,12);
 		tab.setWidth(Table.HUNDRED_PERCENT);
 		tab.setHeight(Table.HUNDRED_PERCENT);
 		
@@ -142,24 +142,11 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		tab.add(lastNameText, 3, 1);
 		tab.add(lastName, 3, 2);
 		
-		
-		//user status dropdown
-		DropdownMenu statusMenu = new UserStatusDropdown(UserSearchEvent.SEARCH_FIELD_STATUS_ID);
-		statusMenu.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-		statusMenu.addMenuElement(-1,iwrb.getLocalizedString("user.search.window.all_statuses", "All statuses"));
-		statusMenu.setSelectedElement(-1);
-		
-		
-		Text status = new Text(iwrb.getLocalizedString("user.search.window.status", "Status"));
-		status.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(status, 3, 3);
-		tab.add(statusMenu, 3, 4);
-		
 		//group selectionbox
 		
 		SelectionBox groupSel = new SelectionBox(UserSearchEvent.SEARCH_FIELD_GROUPS);
-		groupSel.setHeight(14); 
-		groupSel.setWidth("240");
+		groupSel.setHeight(16); 
+		groupSel.setWidth("300");
 
 		Collection groupsCol = getUserBusiness(iwc).getAllGroupsWithViewPermission(iwc.getCurrentUser(),iwc);
 		
@@ -170,47 +157,11 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 			//getchildren
 		}
 		
-
-		
 		Text groups = new Text(iwrb.getLocalizedString("user.search.window.groups", "Groups"));
 		groups.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 		tab.add(groups, 1, 3);
 		tab.add(groupSel, 1, 4); 
 		
-
-		//age
-		Table ageTable = new Table(3,1);
-		
-		TextInput ageFloor = new TextInput(searchEvent.SEARCH_FIELD_AGE_FLOOR,"0");
-		ageFloor.setLength(3);
-		ageFloor.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-		
-		TextInput ageCeil = new TextInput(searchEvent.SEARCH_FIELD_AGE_CEILING,"120");
-		ageCeil.setLength(3);
-		ageCeil.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-
-		ageTable.add(ageFloor,1,1);
-		ageTable.add(" - ",2,1);
-		ageTable.add(ageCeil,3,1);
-		
-		Text ages = new Text(iwrb.getLocalizedString("user.search.window.ages", "Age"));
-		ages.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(ages, 3,5);
-		tab.add(ageTable, 3, 6); 
-		
-		//gender
-		Integer maleId = getUserBusiness(iwc).getGenderId("male");
-		Integer femaleId = getUserBusiness(iwc).getGenderId("female");	
-		DropdownMenu genders = new DropdownMenu(UserSearchEvent.SEARCH_FIELD_GENDER_ID);
-		genders.addMenuElement(femaleId.intValue(),iwrb.getLocalizedString("user.search.window.females", "Women"));
-		genders.addMenuElement(maleId.intValue(),iwrb.getLocalizedString("user.search.window.males", "Men"));
-		genders.addMenuElement(-1,iwrb.getLocalizedString("user.search.window.both.genders", "Both genders"));
-		genders.setSelectedElement(-1);
-		
-		Text gender = new Text(iwrb.getLocalizedString("user.search.window.gender", "Gender"));
-		gender.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(gender, 3,7);
-		tab.add(genders, 3, 8); 
 		
 //	personal id
 		TextInput ssn = new TextInput(searchEvent.SEARCH_FIELD_PERSONAL_ID);
@@ -220,8 +171,8 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		Text ssnText = new Text();
 		ssnText.setText(iwrb.getLocalizedString("user.search.window.personal_id", "SSN"));
 		ssnText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(ssnText, 3, 9);
-		tab.add(ssn, 3, 10);
+		tab.add(ssnText, 3, 3);
+		tab.add(ssn, 3, 4);
 			
 			
 //	streetname search
@@ -232,8 +183,55 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		Text addressText = new Text();
 		addressText.setText(iwrb.getLocalizedString("user.search.window.address", "Address"));
 		addressText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(addressText, 3, 11);
-		tab.add(address, 3, 12);
+		tab.add(addressText, 3, 5);
+		tab.add(address, 3, 6);
+		
+//	user status dropdown
+		DropdownMenu statusMenu = new UserStatusDropdown(UserSearchEvent.SEARCH_FIELD_STATUS_ID);
+		statusMenu.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+		statusMenu.addMenuElement(-1,iwrb.getLocalizedString("user.search.window.all_statuses", "All statuses"));
+		statusMenu.setSelectedElement(-1);
+	
+	
+		Text status = new Text(iwrb.getLocalizedString("user.search.window.status", "Status"));
+		status.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		tab.add(status, 3, 7);
+		tab.add(statusMenu, 3, 8);
+	
+	
+		//age
+		Table ageTable = new Table(3,1);
+	
+		TextInput ageFloor = new TextInput(searchEvent.SEARCH_FIELD_AGE_FLOOR,"0");
+		ageFloor.setLength(3);
+		ageFloor.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+	
+		TextInput ageCeil = new TextInput(searchEvent.SEARCH_FIELD_AGE_CEILING,"120");
+		ageCeil.setLength(3);
+		ageCeil.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+
+		ageTable.add(ageFloor,1,1);
+		ageTable.add(" - ",2,1);
+		ageTable.add(ageCeil,3,1);
+	
+		Text ages = new Text(iwrb.getLocalizedString("user.search.window.ages", "Age"));
+		ages.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		tab.add(ages, 3,9);
+		tab.add(ageTable, 3, 10); 
+	
+		//gender
+		Integer maleId = getUserBusiness(iwc).getGenderId("male");
+		Integer femaleId = getUserBusiness(iwc).getGenderId("female");	
+		DropdownMenu genders = new DropdownMenu(UserSearchEvent.SEARCH_FIELD_GENDER_ID);
+		genders.addMenuElement(femaleId.intValue(),iwrb.getLocalizedString("user.search.window.females", "Women"));
+		genders.addMenuElement(maleId.intValue(),iwrb.getLocalizedString("user.search.window.males", "Men"));
+		genders.addMenuElement(-1,iwrb.getLocalizedString("user.search.window.both.genders", "Both genders"));
+		genders.setSelectedElement(-1);
+	
+		Text gender = new Text(iwrb.getLocalizedString("user.search.window.gender", "Gender"));
+		gender.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		tab.add(gender, 3,11);
+		tab.add(genders, 3, 12); 		
 
 		//buttons
 		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("user.search.window.search", "Search"));
