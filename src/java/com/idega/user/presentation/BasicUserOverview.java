@@ -186,7 +186,15 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             
             EntityBrowser entityBrowser = getEntityBrowser(users, iwc);
             // put print button to bottom
-            entityBrowser.addPresentationObjectToBottom(new PrintButton(iwb.getImage("print.gif")));
+    		Link link = new Link(iwb.getImage("search.gif"));
+    		if (selectedGroup!= null) {
+    		    link.addParameter("dr_group", selectedGroup.getNodeID());
+    		}
+    		link.addParameter(UserStatsWindow.STATS_INVOCATION_NAME_FROM_BUNDLE, "Invocation-UserStats.xml");
+    		link.addParameter(UserStatsWindow.STATS_LAYOUT_NAME_FROM_BUNDLE, "Layout-UserStats.xml");
+    		link.addParameter(UserStatsWindow.STATS_LOCALIZABLE_KEY_NAME, "userstatswindow.userstats");
+    		link.setWindowToOpen(UserStatsWindow.class);
+    		entityBrowser.addPresentationObjectToBottom(link);
             // put browser into a form
             Form form = new Form();
             form.add(entityBrowser);
