@@ -3,6 +3,7 @@ package com.idega.user.presentation;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +33,7 @@ import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.GroupComparator;
 import com.idega.user.data.Group;
 import com.idega.user.event.SelectGroupEvent;
 import com.idega.util.IWColor;
@@ -117,6 +119,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 
 	
 	public void main(IWContext iwc) throws Exception {
+		boolean resort = false;
 		iwrb = this.getResourceBundle(iwc);
 		
 		parseAction(iwc);
@@ -137,9 +140,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 		
 		Collection allPermissions = getAllPermissionForSelectedGroupAndCurrentUser(iwc);
 		List permissionTypes = getAllPermissionTypes(allPermissions);
-		Collection entityCollection = orderAndGroupPermissionsByContextValue(allPermissions);
-		
-		
+	
 		if(saveChanges){
 			
 			AccessController access = iwc.getAccessController();
@@ -181,7 +182,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 				
 				
 				//refresh permissions PermissionCacher.updatePermissions()
-				
+				resort = true;
 				iwc.getApplicationContext().removeApplicationAttribute("ic_permission_map_"+AccessController.CATEGORY_GROUP_ID);
 				
 			}
@@ -192,13 +193,25 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 			//refetch
 			allPermissions = getAllPermissionForSelectedGroupAndCurrentUser(iwc);
 			permissionTypes = getAllPermissionTypes(allPermissions);
-			entityCollection = orderAndGroupPermissionsByContextValue(allPermissions);
+
 			
 		}
 				
+		List entityList = null;
+		entityList = (List) iwc.getSessionAttribute("sortedPermissionList_"+selectedGroupId);
+		
+		if(entityList==null || resort){
+			entityList = orderAndGroupPermissionsByContextValue(allPermissions);
+			GroupComparator groupComparator = new GroupComparator(iwc.getCurrentLocale());
+			groupComparator.setObjectsAreICPermissions(true);
+			groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));
+			Collections.sort(entityList, groupComparator);//sort alphabetically
+			
+			iwc.setSessionAttribute("sortedPermissionList_"+selectedGroupId,entityList);
+		}
 	
 		EntityBrowser browser = new EntityBrowser();
-		browser.setEntities("gpw_"+selectedGroupId,entityCollection);
+		browser.setEntities("gpw_"+selectedGroupId,entityList);
 		//browser.setDefaultNumberOfRows(entityCollection.size() );
 		browser.setDefaultNumberOfRows(16);
 		browser.setShowSettingButton(false);
@@ -247,7 +260,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 								Iterator par = parents.iterator();
 								while (par.hasNext()) {
 									Group parent = (Group) par.next();
-									return new Text("("+parent.getName()+") "+group.getName());
+									return new Text(group.getName()+" ("+parent.getName()+")" );
 								}
 								
 							}
@@ -400,13 +413,13 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	 * @param iwc
 	 * @return Collection
 	 */
-	private Collection orderAndGroupPermissionsByContextValue(Collection allPermissions) {
+	private List orderAndGroupPermissionsByContextValue(Collection allPermissions) {
 		
 		Iterator iter = allPermissions.iterator();
 		
 		//order the permissions by the groupId and create a List for each one.
 		Map map = new HashMap();
-		Collection finalCollection = new ArrayList();
+		List finalCollection = new ArrayList();
 		
 		String groupId;
 		
@@ -423,7 +436,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 			map.put(groupId,list);				
 		}
 			
-		finalCollection = map.values();
+		finalCollection = com.idega.util.ListUtil.convertCollectionToList(map.values());
 			
 
 		return finalCollection;
