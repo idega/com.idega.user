@@ -246,7 +246,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		welcomeMessageTable.setWidth(Table.HUNDRED_PERCENT);
 		welcomeMessageTable.setHeight(40);
 		welcomeMessageTable.setAlignment(1,1,"center");
-  	welcomeMessageTable.setAlignment(2,1,"center");
+  	welcomeMessageTable.setAlignment(2,1,"left");
 		welcomeMessageTable.setVerticalAlignment(1,1,"middle");
   	welcomeMessageTable.setVerticalAlignment(2,1,"middle");
 		if(iwc.isLoggedOn())
