@@ -323,14 +323,9 @@ public class GroupTreeNode implements ICTreeNode {
 	}
 	
 	public String getGroupType() {
-		try {
-			if (this._nodeType == TYPE_GROUP)
-				return _group.getGroupType();
-			return null;
-		}
-		catch (RemoteException e) {
-			return null;
-		}
+		if (this._nodeType == TYPE_GROUP)
+			return _group.getGroupType();
+		return null;
 	}
 
 	public int getNodeID() {
