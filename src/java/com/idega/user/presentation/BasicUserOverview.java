@@ -183,6 +183,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		returnTable.setVerticalAlignment(2, 4, Table.VERTICAL_ALIGN_TOP);
 		returnTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_BOTTOM);
 
+		returnTable.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 		returnTable.add(toolbar, 1, 1);
 		returnTable.add(middleTable,1,2);
 		

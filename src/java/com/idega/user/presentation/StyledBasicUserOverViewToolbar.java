@@ -54,8 +54,6 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 		Table toolbar1 = new Table();
 		toolbar1.setCellpadding(0);
 		toolbar1.setCellspacing(0);
-		toolbar1.setAlignment("right");
-		toolbar1.setVerticalAlignment("bottom");
 
 		if (title != null) {
 			Text text = new Text(title);
