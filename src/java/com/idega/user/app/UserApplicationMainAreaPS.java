@@ -39,6 +39,7 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
   private String _class = null;
   private Group _selectedGroup = null;
   private Collection _plugins = null;
+  public boolean search = false;
   
 
   public UserApplicationMainAreaPS() {
@@ -64,10 +65,13 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
   }
 
   public void actionPerformed(IWPresentationEvent e) throws IWException{
+  	  	
     if(e instanceof ResetPresentationEvent){
+			this.search = false;
       this.reset();
       this.fireStateChanged();
     }
+    
     
     if(e instanceof SelectGroupEvent){
     	try{
@@ -89,7 +93,7 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
 				System.out.println("Plugin business class : "+className);
 
 			}*/
-		
+					this.search = false;
       		this.fireStateChanged();
     	}
     	catch( Exception ex ){
@@ -101,15 +105,14 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
     if(e instanceof SimpleSearchEvent){
       System.out.println("[UserAppMainArea]: search for "+((SimpleSearchEvent)e).getSearchString());
       System.out.println("[UserAppMainArea]: searchType =  "+((SimpleSearchEvent)e).getSearchType());
-      
-      
-      
+      this.search = true;  
       this.fireStateChanged();
     }
     
     if(e instanceof ChangeClassEvent){
       _class = ((ChangeClassEvent)e).getChangeClassName();
       System.out.println(this+"Class to change to is "+((ChangeClassEvent)e).getChangeClassName() );
+			this.search = false;
       this.fireStateChanged();
     }
 
@@ -117,6 +120,13 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
     for (int i = 0; i < listners.length; i++) {
       listners[i].actionPerformed(e);
     }
+    
+    
+		if( search ){
+			_class= null;
+			_selectedGroup = null;
+			_plugins = null;
+		}
 
   }
 
@@ -133,6 +143,11 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
     return _selectedGroup;
   }
   
+  public boolean isSearch(){
+  	return this.search;
+  }
+  
+    
   public Collection getUserGroupPlugins(){
     return _plugins;
   }

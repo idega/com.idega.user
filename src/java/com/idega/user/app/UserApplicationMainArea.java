@@ -18,6 +18,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.presentation.ui.Window;
+import com.idega.user.block.search.presentation.SearchResultsWindow;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.presentation.BasicUserOverview;
@@ -40,22 +41,25 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
   private IWPresentationEvent _contolEvent = null;
 
   private BasicUserOverview _buo = new BasicUserOverview();
+	private SearchResultsWindow search = new SearchResultsWindow();//these should be added dynamically
 
 
   public UserApplicationMainArea() {
     this.setAllMargins(0);
-  _stateHandler = new StatefullPresentationImplHandler();
+  	_stateHandler = new StatefullPresentationImplHandler();
     getStateHandler().setPresentationStateClass(UserApplicationMainAreaPS.class);
   }
 
   public void setControlEventModel(IWPresentationEvent model){
     _contolEvent = model;
     _buo.setControlEventModel(model);
+		search.setControlEventModel(model);
   }
 
   public void setControlTarget(String controlTarget){
     _controlTarget = controlTarget;
     _buo.setControlTarget(controlTarget);
+    search.setControlTarget(controlTarget);
   }
 
   public Class getPresentationStateClass(){
@@ -80,6 +84,9 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
     	PresentationObject obj = (PresentationObject)Class.forName(className).newInstance();
     	add(obj);
         ps.setClassNameToShow(null);
+    }
+    else if( ps.isSearch()){
+    	add(search);
     }
     else if( plugins!=null && !plugins.isEmpty() ){
     	System.out.println("Plugins are not null");
@@ -120,6 +127,9 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
     location.setSubID(1);//bara eitthva? id...herma eftir instance id
     _buo.setLocation(location,iwc);
     _buo.setArtificialCompoundId(getCompoundId(),iwc);
+    
+		search.setLocation(location,iwc);
+		search.setArtificialCompoundId(getCompoundId(),iwc);
 
 
     this.setIWUserContext(iwc);
@@ -128,12 +138,18 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
     if(buoState instanceof IWActionListener){
       ((UserApplicationMainAreaPS)this.getPresentationState(iwc)).addIWActionListener((IWActionListener)buoState);
     }
+    
+		IWPresentationState searchState = search.getPresentationState(iwc);
+		if(searchState instanceof IWActionListener){
+			((UserApplicationMainAreaPS)this.getPresentationState(iwc)).addIWActionListener((IWActionListener)searchState);
+		}
 
 
     ChangeListener[] chListeners = this.getPresentationState(iwc).getChangeListener();
     if(chListeners != null){
       for (int i = 0; i < chListeners.length; i++) {
         buoState.addChangeListener(chListeners[i]);
+				searchState.addChangeListener(chListeners[i]);
       }
     }
 

@@ -24,8 +24,7 @@ public class SimpleSearchEvent extends IWPresentationEvent
 	private String _searchString = null;
 	private int _searchType = 0;
 
-    public SimpleSearchEvent()
-    {
+    public SimpleSearchEvent(){
     }
 
 	public String getSearchString(){
