@@ -50,8 +50,10 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.PrintButton;
 import com.idega.presentation.ui.SubmitButton;
+import com.idega.servlet.IWCoreServlet;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
@@ -71,6 +73,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	public static final String SELECTED_GROUP_KEY = "selected_group_key";
 	public static final String DELETE_USERS_KEY = "delete_selected_users";
 	public static final String MOVE_USERS_KEY = "move_users";
+	
+	protected static final String USER_APPLICATION_FRONT_PAGE_ID = "USER_APPLICATION_FRONT_PAGE_ID";
 
 	private String _controlTarget = null;
 	private IWPresentationEvent _controlEvent = null;
@@ -169,7 +173,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		returnTable.mergeCells(1,1,2,1);
 		returnTable.mergeCells(1,2,2,2);
 		returnTable.mergeCells(1,3,1,4);
-		returnTable.setHeight(1, 50);
+		returnTable.setHeight(1, 40);
 		returnTable.setHeight(2,6);
 		returnTable.setWidth(1,3,6);
 		returnTable.setColor(1,3,"#f3f3f3");
@@ -181,15 +185,30 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		returnTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_BOTTOM);
 
 		returnTable.add(toolbar, 1, 1);
+		returnTable.add(middleTable,1,2);
 		
 		if (selectedGroup != null) {
 			topTable.add(selectedGroup.getName() + Text.NON_BREAKING_SPACE,1,1);
 			returnTable.add(topTable,2,3);
-			returnTable.add(middleTable,1,2);
+		}
+		else {
+			Table frameTable = new Table(1,1);
+			frameTable.setCellpaddingAndCellspacing(0);
+			frameTable.setStyleClass("mainDisplay");
+			frameTable.setHeight(1,1,"100%");
+			frameTable.setWidth(1,1,"100%");
+			IFrame frontPage = new IFrame();
+			String frontPageId = getBundle(iwc).getProperty(USER_APPLICATION_FRONT_PAGE_ID);
+			if(!"-1".equals(frontPageId)) {
+				frontPage.setHeight("99%");
+				frontPage.setWidth("99%");
+				frontPage.setIBPage(Integer.parseInt(frontPageId));
+				frontPage.setScrolling(IFrame.SCROLLING_AUTO);
+				frontPage.setBorder(1);
+				returnTable.add(frontPage,2,4);
+			}
 		}
 		
-		
-
 		//for the link to open the user properties
 		boolean canEditUserTemp = false;
 		if (selectedGroup != null) {
@@ -704,7 +723,6 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		iwb = this.getBundle(iwc);
 		iwrb = this.getResourceBundle(iwc);
 		this.getParentPage().setAllMargins(0);
-		this.
 
 		accessController = iwc.getAccessController();
 		ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
@@ -736,8 +754,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		}
 
 		isCurrentUserSuperAdmin = iwc.isSuperAdmin();
-		
-
+	
 		if (selectedGroup != null && !isCurrentUserSuperAdmin) {
 			if (accessController.hasViewPermissionFor(selectedGroup, iwc) || accessController.isOwner(selectedGroup, iwc)) {
 				this.add(getList(iwc));
