@@ -226,8 +226,6 @@ public class CreateUser extends StyledIWAdminWindow {
 		buttonTable.setCellspacing(0);
 		buttonTable.setHeight(1, rowHeight);
 		buttonTable.setWidth(2, "5");
-		buttonTable.setAlignment("right");
-		buttonTable.setVerticalAlignment("bottom");
 		buttonTable.add(okButton, 1, 1);
 		buttonTable.add(cancelButton, 3, 1);			
 		// buttonTable end
@@ -236,7 +234,6 @@ public class CreateUser extends StyledIWAdminWindow {
 		helpTable.setCellpadding(0);
 		helpTable.setCellspacing(0);
 		helpTable.setHeight(1,rowHeight);
-		helpTable.setVerticalAlignment("bottom");
 		helpTable.add(help,1,1);
 		
 		//warningTable begin
@@ -244,7 +241,10 @@ public class CreateUser extends StyledIWAdminWindow {
 		warningTable.setCellpadding(0);
 		warningTable.setCellspacing(0);
 		mainTable.add(inputTable, 1,1);
+		mainTable.setAlignment(2, 2, Table.HORIZONTAL_ALIGN_RIGHT);
+		mainTable.setVerticalAlignment(2, 2, Table.VERTICAL_ALIGN_BOTTOM);
 		mainTable.add(buttonTable, 2,2);
+		mainTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_BOTTOM);
 		mainTable.add(helpTable,1,2);
 		
 		myForm.add(mainTable);
