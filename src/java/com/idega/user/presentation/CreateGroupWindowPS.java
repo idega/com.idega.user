@@ -70,6 +70,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
   public void actionPerformed(IWPresentationEvent e) throws IWException {
 //    System.out.println("[CreateGroupWindowPS]: ps = "+this);
 //    System.out.println("[CreateGroupWindowPS] : event = " + e);
+
     if(e instanceof CreateGroupEvent ){
 //      System.out.println("[CreateGroupWindowPS] : (e instanceof CreateGroupEvent) = true");
       CreateGroupEvent event = (CreateGroupEvent)e;
@@ -107,17 +108,18 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 		{
 			throw new EJBException(fe);
 		}
+    this.fireStateChanged();
 
 
       } else if(event.doCancel()){
         this.reset();
         _close = true;
+        this.fireStateChanged();
       } else {
         _groupName = event.getName();
         _groupDescription = event.getDescription();
         _groupType = event.getGroupType();
       }
-
 
     }
   }

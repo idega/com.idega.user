@@ -2,6 +2,7 @@ package com.idega.user.presentation;
 
 import com.idega.idegaweb.*;
 import com.idega.user.app.ToolbarElement;
+import com.idega.user.app.UserApplication;
 import com.idega.presentation.*;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBDomain;
@@ -10,6 +11,8 @@ import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationState;
+import com.idega.event.IWStateMachine;
+import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
@@ -30,6 +33,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import javax.ejb.EJBException;
+import javax.swing.event.ChangeListener;
 
 /**
  *
@@ -59,7 +63,25 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
   }
 
   public void initializeInMain(IWContext iwc){
-    this.addIWActionListener((IWActionListener)this.getPresentationState(iwc));
+    String id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + 
+                IWMainApplication.getEncryptedClassName(UserApplication.class);
+    id += Frame.COMPOUND_ID_FRAME_NAME_KEY + "iwb_main_left";
+    this.setArtificialCompoundId(id, iwc);
+    IWPresentationState state = this.getPresentationState(iwc);
+    // add action listener
+    this.addActionListener((IWActionListener) state );
+    // get and set change listener
+    id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + 
+         IWMainApplication.getEncryptedClassName(UserApplication.Top.class);
+    IWStateMachine stateMachine;
+    IWPresentationState changeListenerState = null;
+		try {
+			stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
+		  changeListenerState = (IWControlFramePresentationState)stateMachine.getStateFor(id,IWControlFramePresentationState.class);
+    }
+    catch (RemoteException e) {
+    }
+    state.addChangeListener((ChangeListener) changeListenerState);
   }
 
   public void main(IWContext iwc) throws Exception {
@@ -75,6 +97,10 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
       _createEvent = new CreateGroupEvent();
       //_createEvent.setSource(this.getLocation());
       _createEvent.setSource(this);
+      // set controller (added by Thomas)
+      String id = IWMainApplication.getEncryptedClassName(UserApplication.Top.class);
+      id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + id;
+      _createEvent.setController(id);
 
       IWResourceBundle iwrb = iwc.getApplication().getBundle(BuilderLogic.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
       Form form = new Form();
@@ -158,7 +184,8 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
       tab.add(mnu,2,5);
 
       SubmitButton button = new SubmitButton(iwrb.getLocalizedImageButton("save","Save"),_createEvent.getIONameForCommit());
-      SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close","Close"),_createEvent.getIONameForCancel());
+      SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close","Close"));
+      close.setOnClick("window.close()");
       tab.add(close,2,7);
       tab.add(Text.getNonBrakingSpace(),2,7);
       tab.add(button,2,7);
