@@ -56,14 +56,12 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
 	  System.out.println("[UserAppMainArea]: searchType =  "+((SimpleSearchEvent)e).getSearchType());
       this.fireStateChanged();
     }
-    
+
  	if(e instanceof ChangeClassEvent){
-      System.out.println("[UserAppMainArea]: search for "+((SimpleSearchEvent)e).getSearchString());
-	  System.out.println("[UserAppMainArea]: searchType =  "+((SimpleSearchEvent)e).getSearchType());
-      _class = ((ChangeClassEvent)e).getChangeClassName();       
+      _class = ((ChangeClassEvent)e).getChangeClassName();
 		this.fireStateChanged();
     }else{
-    	_class=null;	
+    	_class=null;
  	}
 
 
@@ -74,9 +72,9 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
     }
 
   }
-  
+
   public String getClassNameToShow(){
-  	return _class;	
+  	return _class;
   }
 
 }
