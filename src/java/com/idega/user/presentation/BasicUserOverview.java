@@ -329,7 +329,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 				}
 			};
 			// set default columns
-			String nameKey = "com.idega.user.data.User.FIRST_NAME:" + "com.idega.user.data.User.LAST_NAME:" + "com.idega.user.data.User.MIDDLE_NAME";
+			String nameKey = "com.idega.user.data.User.FIRST_NAME:" + "com.idega.user.data.User.MIDDLE_NAME:"+"com.idega.user.data.User.LAST_NAME";
 			String completeAddressKey =
 				"com.idega.core.data.Address.STREET_NAME:"
 					+ "com.idega.core.data.Address.STREET_NUMBER:"
