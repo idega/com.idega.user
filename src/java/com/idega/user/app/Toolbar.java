@@ -107,18 +107,27 @@ public class Toolbar extends Page implements IWBrowserView {
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
 		boolean useDropdown = iwb.getBooleanProperty("use_dropdown_in_toolbar", false);
+		
+		Table controlTable = new Table(1, 3);
+		controlTable.setCellpadding(0);
+		controlTable.setCellspacing(0);
+		controlTable.setWidth(Table.HUNDRED_PERCENT);
+		controlTable.setHeight(29);
+		controlTable.setColor(1, 1, "#FFFFFF");
+		controlTable.setColor(1, 3, "#D0D0D0");
 
 		Table toolbarTable = new Table(4, 1);
 		toolbarTable.setCellpadding(0);
 		toolbarTable.setCellspacing(0);
 		toolbarTable.setBorder(0);
-		toolbarTable.setHeight(Table.HUNDRED_PERCENT);
+		toolbarTable.setHeight(27);
 		toolbarTable.setStyleClass(menuTableStyle);
 		toolbarTable.setWidth(Table.HUNDRED_PERCENT);
 		toolbarTable.setWidth(4, Table.HUNDRED_PERCENT);
 		toolbarTable.setHeight(1, Table.HUNDRED_PERCENT);
 		toolbarTable.setAlignment(4, 1, Table.HORIZONTAL_ALIGN_RIGHT);
-		add(toolbarTable);
+		controlTable.add(toolbarTable, 1, 2);
+		add(controlTable);
 
 		Table toolbar1 = new Table();
 		toolbar1.setCellpadding(0);

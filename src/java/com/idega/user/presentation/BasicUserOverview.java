@@ -282,10 +282,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         returnTable.mergeCells(1,1,2,1);
         returnTable.mergeCells(1,2,2,2);
         returnTable.mergeCells(1,3,1,4);
-        returnTable.setHeight(1, 40);
+        returnTable.setHeight(1, 42);
         returnTable.setHeight(2,6);
         returnTable.setWidth(1,3,6);
         returnTable.setColor(1,1,"#ffffff");
+    		returnTable.setBackgroundImage(1, 1, iwb.getImage("bgtile.gif"));
         returnTable.setColor(1,3,"#f3f3f3");
         returnTable.setColor(2,4,"#f3f3f3");
         returnTable.setStyleClass("grayBorderBottom");
@@ -793,7 +794,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         				frameTable.setCellpaddingAndCellspacing(0);
         				frameTable.setHeight("100%");
         				frameTable.setWidth("100%");
-        				frameTable.setHeight(1, 40);
+        				frameTable.setHeight(1, 42);
+        				frameTable.setBackgroundImage(1, 1, getBundle(iwc).getImage("bgtile.gif"));
         				frameTable.setStyleClass(1, 2, "main");
         				frameTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
         				frameTable.setLeftCellBorderWidth(1, 2, 0);

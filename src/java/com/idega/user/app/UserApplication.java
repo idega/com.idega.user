@@ -59,7 +59,7 @@ public class UserApplication extends IWBrowser {
     this.addToTop(new Top());
     this.setSpanPixels(POS_TOP,50); 
     this.setSpanPixels(POS_LEFTMAIN, 200);
-    this.setSpanPixels(POS_MENU,35); 
+    this.setSpanPixels(POS_MENU,29); 
     this.setSpanPixels(POS_BOTTOM,35); 
     this.setSpanPixels(POS_EVENT,1); 
 
