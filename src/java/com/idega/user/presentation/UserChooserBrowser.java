@@ -39,6 +39,11 @@ public class UserChooserBrowser extends AbstractChooser {
     return UserChooserBrowserWindow.class;
   }
 
+	public void setSelectedUser(String userId, String userName) {
+		super.setChooserValue(userName,userId);
+	}
+
+
  /* public PresentationObject getPresentationObject(IWContext iwc) {
     Link link = new Link("tryrtt");
     
