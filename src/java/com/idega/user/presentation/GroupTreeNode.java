@@ -273,6 +273,9 @@ public class GroupTreeNode implements ICTreeNode {
 				}
 			case TYPE_GROUP :
 				if (isAlias()){
+					//TODO Sigtryggur 22.06.2004 Here needs to be a check if the alias is an alias on an ancestor
+					//because then the tree renders forever in an infinite loop
+					//if it points to an ancestor it must return 0 in childCount 
 					Group aliasGroup = getAlias();
 					if(aliasGroup!=null) return aliasGroup.getChildCount();
 					else{
