@@ -29,6 +29,7 @@ import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
@@ -129,7 +130,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	
 	protected Table getList(IWContext iwc) throws Exception {		
     
-    if (ps.getResultOfMovingUsers() != null)  {
+    if (getPresentationStateOfBasicUserOverview(iwc).getResultOfMovingUsers() != null)  {
       return getResultList(iwc);
     }
 		
@@ -500,11 +501,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     
     String dateOfBirthKey = "com.idega.user.data.User.DATE_OF_BIRTH";
 			
-		String identifier = (selectedGroup==null)? "" : selectedGroup.getName();
-		identifier += (ps.getSelectedDomain() != null) ? ps.getSelectedDomain().getPrimaryKey().toString() : "";
-			
-		entityBrowser.setEntities(getEntityBrowserIdentifier(), users);
-		
+		entityBrowser.setEntities(getEntityBrowserIdentifier(ps), users);
 		
 		entityBrowser.setDefaultNumberOfRows(Math.min(users.size(), 30));
 		//entityBrowser.setLineColor("#DBDCDF");
@@ -684,17 +681,29 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		return "com.idega.user";
 	}
 
- 
+  // necessary because of subclasses
+  private BasicUserOverviewPS getPresentationStateOfBasicUserOverview(IWUserContext iwuc) {
+    try {
+      IWStateMachine stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwuc, IWStateMachine.class); 
+      String code = IWMainApplication.getEncryptedClassName(BasicUserOverview.class);
+      code = ":" + code;
+      return (BasicUserOverviewPS) stateMachine.getStateFor( code , BasicUserOverviewPS.class);
+    }
+    catch (RemoteException ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+  }
  
 ////////////////////////////////////////////////////////// hack for friday /////////////////////////////////////////////////////////////////////////////////////  
     
   private Table getResultList(IWContext iwc)  {
+    BasicUserOverviewPS state = getPresentationStateOfBasicUserOverview(iwc);
     String movedUsersNumberMessage  = getLocalizedString("number_of_sucessfully_moved_users", "Number of successfully moved users", iwc );
     String notMovedUsersNumberMessage  = getLocalizedString("number_of_not_moved_users", "Number of not moved users", iwc );
     String notMovedUsersMessage = getLocalizedString("the_following_users_were_not moved", "Following users were not moved", iwc);
     String success = getLocalizedString("all_users_were_moved_to the_specified_group","All users were successfully moved.",iwc);
     String target = getLocalizedString("Target", "Target", iwc);
-    Map resultOfMovingUsers = ps.getResultOfMovingUsers();
+    Map resultOfMovingUsers = state.getResultOfMovingUsers();
     UserBusiness userBusiness = BasicUserOverview.getUserBusiness(iwc);
     GroupBusiness groupBusiness = BasicUserOverview.getGroupBusiness(iwc);
     // map has ids of groups as key and groupMaps as values.
@@ -748,7 +757,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
       }
     }
-    int targetGroupId = ps.getTargetGroupId();
+    int targetGroupId = state.getTargetGroupId();
     Group targetGroup;
     if (targetGroupId > 0)  {
       GroupBusiness biz = getGroupBusiness(iwc);
@@ -781,7 +790,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     Table table = new Table(1,4);
     table.add(movedUsersNumberMessageText,1,1);
     if (notMovedUsers > 0) {
-      EntityBrowser browser = getEntityBrowserForResult(notMovedUsersColl, completeResultOfMoving, iwc);
+      EntityBrowser browser = getEntityBrowserForResult(notMovedUsersColl, completeResultOfMoving, state, iwc);
       table.add(notMovedUsersNumberMessageText,1,2);
       table.add(notMovedUsersMessageText,1,3);
       table.add(browser,1,4);
@@ -792,7 +801,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     return table;
   }
   
-  private EntityBrowser getEntityBrowserForResult(Collection users, Map messageMap, IWContext iwc) {
+  private EntityBrowser getEntityBrowserForResult(Collection users, Map messageMap, BasicUserOverviewPS state, IWContext iwc) {
     // define entity browser
     EntityBrowser entityBrowser = new EntityBrowser();
     PresentationObject parentObject = this.getParentObject();
@@ -989,11 +998,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     return entityBrowser;
   }
   
-  protected String getEntityBrowserIdentifier(){
+  protected String getEntityBrowserIdentifier(BasicUserOverviewPS state){
   	
 		String identifier = (selectedGroup==null)? "" : selectedGroup.getPrimaryKey().toString();
 		identifier +="_";
-		identifier += (ps.getSelectedDomain() != null) ? ps.getSelectedDomain().getPrimaryKey().toString() : "";
+		identifier += (state.getSelectedDomain() != null) ? state.getSelectedDomain().getPrimaryKey().toString() : "";
 		
 		
 		return identifier;

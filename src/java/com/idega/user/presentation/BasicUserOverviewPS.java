@@ -79,6 +79,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
     
     if (e instanceof UserSearchEvent) {
       _selectedGroup = null;
+      resultOfMovingUsers = null;
     }
 
     if(e instanceof ResetPresentationEvent){
