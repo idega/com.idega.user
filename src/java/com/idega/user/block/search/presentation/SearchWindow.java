@@ -12,6 +12,7 @@ import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.IWAdminWindow;
+import com.idega.user.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
@@ -42,7 +43,7 @@ import com.idega.user.presentation.UserStatusDropdown;
  * @author <a href="eiki@idega.is">Eirikur Hrafnsson</a>
  * @version 1.0 
  */
-public class SearchWindow extends IWAdminWindow implements ToolbarElement {
+public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement { //changed from extends IWAdminWindow - birna
 	
 	private UserBusiness userBiz;
 	private GroupBusiness groupBiz;
@@ -98,7 +99,7 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		addTitle(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"), IWConstants.BUILDER_FONT_STYLE_TITLE);
 		setName(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"));
 		
-		add(form);
+		add(form, iwc);
 		Table tab = new Table(3,13);
 		form.add(tab);
 		

@@ -104,7 +104,7 @@ public class CreateUser extends Window {
 	 * @author birna
 	 */
 	private Page parentPage;
-	private String styleScript = "memberStyles.css";
+	private String styleScript = "UserApplicationStyle.css";
 	private String styleSrc = "";
 	
 	private String inputTextStyle = "text";
@@ -144,6 +144,9 @@ public class CreateUser extends Window {
 	}
 
 	protected void initializeFields(IWContext iwc) {
+		
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+		
 		fullNameField = new TextInput(fullNameFieldParameterName);
 		fullNameField.setLength(20);
 		fullNameField.setStyleClass("text");
@@ -228,10 +231,11 @@ public class CreateUser extends Window {
 		}
 */
 
-		okButton = new SubmitButton("     OK     ", submitButtonParameterName, okButtonParameterValue);
+		okButton = new SubmitButton(iwrb.getLocalizedString("save", "Save"), submitButtonParameterName, okButtonParameterValue);
     okButton.setAsImageButton(true);
 		//cancelButton = new SubmitButton(" Cancel ", submitButtonParameterName, cancelButtonParameterValue);
-		cancelButton = new CloseButton();
+		cancelButton = new CloseButton(iwrb.getLocalizedString("close", "Close"));
+		cancelButton.setAsImageButton(true);
 
 	}
 
@@ -247,7 +251,7 @@ public class CreateUser extends Window {
 		bannerTable.setCellpadding(0);
 		bannerTable.setCellspacing(0);
 		bannerTable.setWidth("100%");
-		bannerTable.add(this.getBundle(iwc).getImage("felix_banner.gif","idegaWeb Member"),1,1);
+		bannerTable.add(this.getBundle(iwc).getImage("top.gif","idegaWeb Member"),1,1);
 		
 		Table backTable = new Table(1,3);
 		backTable.setStyleClass(backgroundTableStyle);

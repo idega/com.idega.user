@@ -42,7 +42,7 @@ public class UserApplication extends IWBrowser {
 		 * @author birna
 		 */
 		private Page parentPage;
-		private String styleScript = "memberStyles.css";
+		private String styleScript = "UserApplicationStyle.css";
 		private String styleSrc = "";
 		private String bannerTableStyle = "banner";
 
@@ -192,7 +192,7 @@ public class UserApplication extends IWBrowser {
 
         /** @todo setja inn mynd i header**/
 //        headerTable.add(this.getBundle(iwc).getImage("/top.gif","idegaWeb Member"),1,1);
-				headerTable.add(this.getBundle(iwc).getImage("felix_banner.gif","idegaWeb Member"),1,1);
+				headerTable.add(this.getBundle(iwc).getImage("top.gif","idegaWeb Member"),1,1);
 
         /*Text adminTitle = new Text("Félagakerfi ÍSÍ & UMFÍ");
         adminTitle.setBold();

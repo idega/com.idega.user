@@ -128,7 +128,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			setTitle(iwrb.getLocalizedString("create_new_group", "Create a new Group"));
 			addTitle(iwrb.getLocalizedString("create_new_group", "Create a new Group"), IWConstants.BUILDER_FONT_STYLE_TITLE);
 
-			add(form);
+			add(form,iwc);
 			Table tab = new Table(2, 11); //changed from Table(2,8) - birna
 			
 			//setting alignment for all the cells in the main table:

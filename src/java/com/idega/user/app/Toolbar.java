@@ -58,7 +58,7 @@ public class Toolbar extends Page implements IWBrowserView {
 			 * @author birna
 			 */
 			private Page parentPage;
-			private String styleScript = "memberStyles.css";
+			private String styleScript = "UserApplicationStyle.css";
 			private String styleSrc = "";
 			private String menuTableStyle = "menu";
 
@@ -129,10 +129,12 @@ public class Toolbar extends Page implements IWBrowserView {
     Table toolbarTable = new Table(3,3);
 
 //	added for isi style
-		toolbarTable.setStyleClass(menuTableStyle);
+//		toolbarTable.setStyleClass(menuTableStyle); --- changed
 
     toolbarTable.setCellpadding(0);
     toolbarTable.setCellspacing(0);
+    toolbarTable.setStyleClass(menuTableStyle);
+    toolbarTable.setVerticalAlignment("top");
     toolbarTable.setWidth(Table.HUNDRED_PERCENT);
     toolbarTable.setHeight(2,Table.HUNDRED_PERCENT);
 //    toolbarTable.setHeight(1,1);
@@ -155,36 +157,15 @@ public class Toolbar extends Page implements IWBrowserView {
     add(toolbarTable);
 
     Table toolbar1 = new Table(10,1);
-    toolbar1.setStyleClass(menuTableStyle);
-		Image menuTile = iwb.getImage("menu_tile.gif");
-		toolbar1.setBackgroundImage(menuTile);
+
+  //  toolbar1.setStyleClass(menuTableStyle);
+//		Image menuTile = iwb.getImage("menu_tile.gif");
+//		toolbar1.setBackgroundImage(menuTile);
   //  toolbar1.setColor(color);
+
     toolbar1.setCellpadding(0);
     toolbar1.setCellspacing(0);
     toolbar1.setAlignment(Table.HORIZONTAL_ALIGN_LEFT);
-    
-//    //leftmost:
-//    Image menu1 = iwb.getImage("isi_menu1.gif");
-//    toolbar1.add(menu1,1,1);
-//    //new member:
-//    Image newMemImg = iwb.getImage("isi_new_member.gif");
-//    Link tLink11 = new Link();
-//    tLink11.setWindowToOpen(CreateUser.class);
-//    tLink11.setImage(newMemImg);
-//    toolbar1.add(tLink11,2,1);
-//    
-//    //between new member and new group:
-//    Image menu2 = iwb.getImage("isi_menu2.gif");
-//    toolbar1.add(menu2,3,1);
-//    //new group:
-//    Image newGrImg = iwb.getImage("isi_new_group.gif");
-//    Link tLink12 = new Link();
-//    tLink12.setWindowToOpen(CreateGroupWindow.class);
-//		if (selectedGroupProviderStateId != null)
-//			tLink12.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
-//		tLink12.setImage(newGrImg);
-//		toolbar1.add(tLink12,4,1);	
-//    
 		
     //toolbar1.setWidth(Table.HUNDRED_PERCENT);
     //toolbar1.setHeight(Table.HUNDRED_PERCENT);
@@ -192,120 +173,64 @@ public class Toolbar extends Page implements IWBrowserView {
 
 
    //User
-   Table button = new Table(2,1);
-   button.setStyleClass(menuTableStyle);
-   button.setCellpadding(0);
-   Image menu1 = iwb.getImage("isi_menu1.gif");
-   button.add(menu1,1,1);
-   Image newMemImg = iwb.getImage("isi_new_member.gif");
-	 Link tLink11 = new Link();
-	 tLink11.setImage(newMemImg);
-	 tLink11.setWindowToOpen(CreateUser.class);
-   button.add(tLink11,2,1);
-   toolbar1.add(button,2,1);
-    
-//    Table button = new Table(2,1);
-//    button.setCellpadding(0);
-//    Image iconCrUser = iwb.getImage("new_user.gif");
-//    button.add(iconCrUser,1,1);
-//    Text text = new Text(iwrb.getLocalizedString("new.member","New member"));
+    Table button = new Table(2,1);
+    button.setCellpadding(0);
+    Image iconCrUser = iwb.getImage("new_user.gif");
+    button.add(iconCrUser,1,1);
+    Text text = new Text(iwrb.getLocalizedString("new.member","New member"));
 //    text.setFontFace(Text.FONT_FACE_VERDANA);
 //    text.setFontSize(Text.FONT_SIZE_7_HTML_1);
-//    Link tLink11 = new Link(text);
-//    tLink11.setWindowToOpen(CreateUser.class);
-//    button.add(tLink11,2,1);
-//    toolbar1.add(button,2,1);
+    Link tLink11 = new Link(text);
+    tLink11.setWindowToOpen(CreateUser.class);
+    button.add(tLink11,2,1);
+    toolbar1.add(button,2,1);
 
-    //Group
+    //Group   
     Table button2 = new Table(2,1);
-    button2.setStyleClass(menuTableStyle);
     button2.setCellpadding(0);
-    Image menu2 = iwb.getImage("isi_menu2.gif");
-    button2.add(menu2,1,1);
-    Image newGrImg = iwb.getImage("isi_new_group.gif");
-    Link tLink12 = new Link();
-    tLink12.setImage(newGrImg);
-		tLink12.setWindowToOpen(CreateGroupWindow.class);
-		if (selectedGroupProviderStateId != null)
-			tLink12.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
+    Image iconCrGroup = iwb.getImage("new_group.gif");
+    button2.add(iconCrGroup,1,1);
+    Text text2 = new Text(iwrb.getLocalizedString("new.group","New group"));
+//    text2.setFontFace(Text.FONT_FACE_VERDANA);
+//    text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
+    Link tLink12 = new Link(text2);
+    tLink12.setWindowToOpen(CreateGroupWindow.class);
+    if (selectedGroupProviderStateId != null)
+      tLink12.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
     button2.add(tLink12,2,1);
     toolbar1.add(button2,3,1);
     
-//    Table button2 = new Table(2,1);
-//    button2.setCellpadding(0);
-//    Image iconCrGroup = iwb.getImage("new_group.gif");
-//    button2.add(iconCrGroup,1,1);
-//    Text text2 = new Text(iwrb.getLocalizedString("new.group","New group"));
-//    text2.setFontFace(Text.FONT_FACE_VERDANA);
-//    text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
-//    Link tLink12 = new Link(text2);
-//    tLink12.setWindowToOpen(CreateGroupWindow.class);
-//    if (selectedGroupProviderStateId != null)
-//      tLink12.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
-//    button2.add(tLink12,2,1);
-//    toolbar1.add(button2,3,1);
-//    
 		//Search temp
 		Table button3 = new Table(2,1);
-		button3.setStyleClass(menuTableStyle);
 		button3.setCellpadding(0);
-		Image menu3 = iwb.getImage("isi_menu2.gif");
-		button3.add(menu3,1,1);
-		Image searchImg = iwb.getImage("isi_search.gif");
-		Link tLink13 = new Link();
+		Image iconSearch = iwb.getImage("search.gif");
+		button3.add(iconSearch,1,1);
+		Text text3 = new Text(iwrb.getLocalizedString("button.search","Search"));
+//		text3.setFontFace(Text.FONT_FACE_VERDANA);
+//		text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
+		Link tLink13 = new Link(text3);
 		if (userApplicationMainAreaStateId != null)
 			tLink13.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, userApplicationMainAreaStateId);
-		tLink13.setImage(searchImg);
 		tLink13.setWindowToOpen(SearchWindow.class);
 		button3.add(tLink13,2,1);
 		toolbar1.add(button3,4,1);
-
-//		Table button3 = new Table(2,1);
-//		button3.setCellpadding(0);
-//		Image iconSearch = iwb.getImage("new_group.gif");
-//		button3.add(iconSearch,1,1);
-//		Text text3 = new Text(iwrb.getLocalizedString("button.search","Search"));
-//		text3.setFontFace(Text.FONT_FACE_VERDANA);
-//		text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
-//		Link tLink13 = new Link(text3);
-//		if (userApplicationMainAreaStateId != null)
-//			tLink13.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, userApplicationMainAreaStateId);
-//		tLink13.setWindowToOpen(SearchWindow.class);
-//		button3.add(tLink13,2,1);
-//		toolbar1.add(button3,4,1);
   
     
 		//Member exchange window temp
 		if(showISStuff){
-			
-				Table button5 = new Table(4,1);
-				button5.setCellpadding(0);
-				Image menu4 = iwb.getImage("isi_menu4.gif");
-				button5.add(menu4,1,1);
-				Image menu5 = iwb.getImage("isi_menu5_dotted.gif");
-				button5.add(menu5,2,1);
-				Image menu6 = iwb.getImage("isi_menu6.gif");
-				button5.add(menu6,3,1);
-				Link tLink15 = new Link();
-				Image iconExchange = iwb.getImage("isi_other_choises.gif");
-				//TODO Eiki add somekind of plugin lookup for toolbar items
-				tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.ClubMemberExchangeWindow");
-				tLink15.setImage(iconExchange);
-				button5.add(tLink15,4,1);
-				toolbar1.add(button5,5,1);
-			
-//			Table button5 = new Table(2,1);
-//			button5.setCellpadding(0);
-//			Image iconExchange = iwb.getImage("isi_new_group.gif");
-//			button5.add(iconExchange,1,1);
-//			Text text5 = new Text(iwrb.getLocalizedString("button.club_member_exchange","Club exchange"));
+				
+			Table button5 = new Table(2,1);
+			button5.setCellpadding(0);
+			Image iconExchange = iwb.getImage("other_choises.gif");
+			button5.add(iconExchange,1,1);
+			Text text5 = new Text(iwrb.getLocalizedString("button.club_member_exchange","Club exchange"));
 //			text5.setFontFace(Text.FONT_FACE_VERDANA);
 //			text5.setFontSize(Text.FONT_SIZE_7_HTML_1);
-//			Link tLink15 = new Link(text5);
-//			//TODO Eiki add somekind of plugin lookup for toolbar items
-//			tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.ClubMemberExchangeWindow");
-//			button5.add(tLink15,2,1);
-//			toolbar1.add(button5,6,1);
+			Link tLink15 = new Link(text5);
+			//TODO Eiki add somekind of plugin lookup for toolbar items
+			tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.ClubMemberExchangeWindow");
+			button5.add(tLink15,2,1);
+			toolbar1.add(button5,6,1);
 
 			
 //			Table button5 = new Table(2,1);
@@ -327,8 +252,8 @@ public class Toolbar extends Page implements IWBrowserView {
 				 Table button4 = new Table(1,1);
 					button4.setCellpadding(0);
 					Text text4 = new Text(iwrb.getLocalizedString("button.massMoving","Move"));
-					text4.setFontFace(Text.FONT_FACE_VERDANA);
-					text4.setFontSize(Text.FONT_SIZE_7_HTML_1);
+//					text4.setFontFace(Text.FONT_FACE_VERDANA);
+//					text4.setFontSize(Text.FONT_SIZE_7_HTML_1);
 					Link tLink14 = new Link(text4);
 					if (userApplicationMainAreaStateId != null) {
 						tLink14.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, userApplicationMainAreaStateId);
@@ -338,7 +263,7 @@ public class Toolbar extends Page implements IWBrowserView {
 					}
 					tLink14.setWindowToOpen(MassMovingWindow.class);
 					button4.add(tLink14,1,1);
-					toolbar1.add(button4,6,1);  
+					toolbar1.add(button4,7,1);  
     
 //				 Table button4 = new Table(2,1);
 //				 button4.setCellpadding(0);
@@ -366,8 +291,8 @@ public class Toolbar extends Page implements IWBrowserView {
 			Image iconImport = iwb.getImage("import.gif");
 			button6.add(iconImport, 1, 1);
 			Text text6 = new Text(iwrb.getLocalizedString("nationRegister", "National Register"));
-			text6.setFontFace(Text.FONT_FACE_VERDANA);
-			text6.setFontSize(Text.FONT_SIZE_7_HTML_1);
+//			text6.setFontFace(Text.FONT_FACE_VERDANA);
+//			text6.setFontSize(Text.FONT_SIZE_7_HTML_1);
 			Link tLink16 = new Link(text6);
 
 			//TODO: Eiki make plugin based
@@ -377,7 +302,7 @@ public class Toolbar extends Page implements IWBrowserView {
 			tLink16.setWindowToOpen(Importer.class);
 
 			button6.add(tLink16, 2, 1);
-			toolbar1.add(button6, 7, 1);
+			toolbar1.add(button6, 8, 1);
 		}
     
 
@@ -401,8 +326,8 @@ public class Toolbar extends Page implements IWBrowserView {
   //    Image iconExchange = iwb.getImage("isi_new_group.gif");
   //    button8.add(iconExchange,1,1);
       Text text8 = new Text(iwrb.getLocalizedString("button.report_report_builder","Report builder"));
-      text8.setFontFace(Text.FONT_FACE_VERDANA);
-      text8.setFontSize(Text.FONT_SIZE_7_HTML_1);
+//      text8.setFontFace(Text.FONT_FACE_VERDANA);
+//      text8.setFontSize(Text.FONT_SIZE_7_HTML_1);
       Link tLink18 = new Link(text8);
       tLink18.setWindowToOpen(com.idega.block.datareport.presentation.ReportOverviewWindow.class);
       ICFile queryFolder = lookUpFile(QUERY_FOLDER_NAME);
@@ -414,7 +339,7 @@ public class Toolbar extends Page implements IWBrowserView {
         tLink18.addParameter(ReportOverview.SET_ID_OF_DESIGN_FOLDER_KEY, layoutFolder.getPrimaryKey().toString());
       }
       button8.add(tLink18,2,1);
-      toolbar1.add(button8,8,1);
+      toolbar1.add(button8,9,1);
     }    
 
     
@@ -428,8 +353,8 @@ public class Toolbar extends Page implements IWBrowserView {
 //		 Image iconExchange = iwb.getImage("isi_new_group.gif");
 //		 button5.add(iconExchange,1,1);
 		 Text text5 = new Text(iwrb.getLocalizedString("button.work_reports","Work Reports"));
-		 text5.setFontFace(Text.FONT_FACE_VERDANA);
-		 text5.setFontSize(Text.FONT_SIZE_7_HTML_1);
+//		 text5.setFontFace(Text.FONT_FACE_VERDANA);
+//		 text5.setFontSize(Text.FONT_SIZE_7_HTML_1);
 		 
 		 /*LinkContainer tLink15 = new LinkContainer();
 		 
@@ -441,7 +366,7 @@ public class Toolbar extends Page implements IWBrowserView {
 		 tLink15.setWindowToOpen("is.idega.idegaweb.member.isi.block.reports.presentation.WorkReportWindow");
 		 
 		 button5.add(tLink15,2,1);
-		 toolbar1.add(button5,9,1);
+		 toolbar1.add(button5,10,1);
 	 }
 	 
    // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("reports","Reports"), iwb.getImage("reports.gif"), com.idega.block.reports.presentation.Reporter.class),5,1);
@@ -458,8 +383,10 @@ public class Toolbar extends Page implements IWBrowserView {
 
    //search
    Table button9 = new Table(2,1);
-   Image fastSearch = iwb.getImage("isi_fast_search.gif");
-   button9.add(fastSearch,1,1);
+	 Text text9 = new Text(iwrb.getLocalizedString("fast_search","Fast search"));
+//		text9.setFontFace(Text.FONT_FACE_VERDANA);
+//		text9.setFontSize(Text.FONT_SIZE_7_HTML_1);
+   button9.add(text9,1,1);
    button9.setHorizontalAlignment("right");
    IWLocation location = (IWLocation)this.getLocation().clone();
    location.setSubID(1);
@@ -467,7 +394,9 @@ public class Toolbar extends Page implements IWBrowserView {
    searchForm.setArtificialCompoundId(getCompoundId(),iwc);
    searchForm.setHorizontalAlignment("right");
    //toolbar1.add(button9,10,1);
-   toolbarTable.add(fastSearch,2,2);
+   toolbarTable.setAlignment(2,2,"right");
+   toolbarTable.setVerticalAlignment(2,2,"middle");
+   toolbarTable.add(text9,2,2);
    toolbarTable.add(searchForm,3,2);
    
 /*
@@ -488,6 +417,7 @@ public class Toolbar extends Page implements IWBrowserView {
    //    toolbarTable.add(toolbar1,1,2);
 //	this.add(toolbar1);
 	toolbarTable.add(toolbar1,1,2);
+	
   }
 
 
