@@ -1,9 +1,16 @@
 package com.idega.user.app;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationState;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWUserContext;
@@ -14,6 +21,8 @@ import com.idega.presentation.Page;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.data.Group;
 import com.idega.user.presentation.GroupTreeNode;
 import com.idega.user.presentation.GroupTreeView;
 import com.idega.util.IWColor;
@@ -37,7 +46,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
   private IWPresentationEvent _contolEvent = null;
 
   private GroupTreeView groupTree = new GroupTreeView();
-
+	private UserBusiness userBiz = null;
 
 
   public UserApplicationControlArea() {
@@ -147,9 +156,20 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
     this.empty();
     this.add(groupTree);
     
-    GroupTreeNode node = new GroupTreeNode(iwc.getDomain(),iwc.getApplicationContext());
+    if(iwc.isSuperAdmin()){
+    	GroupTreeNode node = new GroupTreeNode(iwc.getDomain(),iwc.getApplicationContext());
+			groupTree.setRootNode(node);
+    }
+    else{
+    	UserBusiness biz = getUserBusiness(iwc);
+    	Collection groups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser());
+    	Collection groupNodes = convertGroupCollectionToGroupNodeCollection(groups,iwc.getApplicationContext());
+			groupTree.setFirstLevelNodes(groupNodes.iterator());
+
+    }
     
-    groupTree.setRootNode(node);
+    
+    
 
 //    Collection topGroups = iwc.getDomain().getTopLevelGroupsUnderDomain();
 //
@@ -170,9 +190,32 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 //    groupTree.setControlTarget(_controlTarget);
 
 //    this.getParentPage().setBackgroundColor("#d4d0c8");
-
   }
 
+	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
+		if (userBiz == null) {
+			try {
+				userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+			}
+			catch (java.rmi.RemoteException rme) {
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return userBiz;
+	}
+	
+	public Collection convertGroupCollectionToGroupNodeCollection(Collection col, IWApplicationContext iwac){
+		List list = new Vector();
+		
+		Iterator iter = col.iterator();
+		while (iter.hasNext()) {
+			Group group = (Group) iter.next();
+			GroupTreeNode node = new GroupTreeNode(group,iwac);
+			list.add(node);
+		}
+	
 
+		return list;
+	}
 
 }

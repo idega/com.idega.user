@@ -74,7 +74,7 @@ public class GroupTreeNode implements ICTreeNode {
 		GroupTreeNode node = (GroupTreeNode)m.get(group.getPrimaryKey());
 		if (node == null) {
 			_group = group;
-			_nodeType = TYPE_DOMAIN;
+			_nodeType = TYPE_GROUP;
 		
 			m.put(group.getPrimaryKey(),this);
 		}

@@ -56,6 +56,7 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 	
 	private List permissionType;
 	private IWResourceBundle iwrb = null;
+	private UserBusiness userBiz = null;
 	
 	private final String permissionTypeOwner="owner";//HARD CODED TEMPORARY
 	
@@ -349,17 +350,16 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 	}
 	
 	
-	public static UserBusiness getUserBusiness(IWApplicationContext iwc) {
-		UserBusiness business = null;
-		if (business == null) {
+	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
+		if (userBiz == null) {
 			try {
-				business = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return business;
+		return userBiz;
 	}
 	
 	
