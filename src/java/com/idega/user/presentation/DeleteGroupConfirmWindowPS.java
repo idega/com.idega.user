@@ -7,12 +7,16 @@ import java.util.Iterator;
 import javax.ejb.RemoveException;
 
 import com.idega.builder.data.IBDomain;
+import com.idega.core.accesscontrol.business.AccessControl;
+import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationStateImpl;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
+import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
@@ -42,24 +46,83 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
         if (groupBusiness.isGroupRemovable(group))  {
           try {
             // remove group
-            if (parentGroup != null)
+            if (parentGroup != null){
               parentGroup.removeGroup(group, e.getIWContext().getCurrentUser());
+          	}
             else if (parentDomain != null)  {
               removeRelation( parentDomain, group, e.getIWContext().getCurrentUser());
             }
+            
+            //disable permissions for group if it has no other parents.
+           removePermissions(group,e.getIWContext());
+						
+            
+            
             //TODO fix this
 				    e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
 				    e.getIWContext().getApplicationContext().removeApplicationAttribute("group_tree");			
             this.fireStateChanged();
           }
           catch (RemoteException ex)  {
+          	ex.printStackTrace();
           }
         }
       }
     }
 	}
   
-  private void removeRelation(IBDomain domain, Group group, User currentUser)  {
+  /**
+   * This method removes the groups permissions if it no longer has any valid parent relations
+	 * @param group
+	 * @param context
+	 */
+	private void removePermissions(Group group, IWContext iwc) {
+		Collection parents = null;
+		
+		try {
+			parents = getGroupBusiness(iwc).getParentGroups(group);
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		//if it has no parents it will disapeer from view and therefor we can disable its permissions.
+		if( parents==null || parents.isEmpty()){
+			Collection permissions = getAllPermissionForGroup(group);
+
+			Iterator entries = permissions.iterator();
+			while (entries.hasNext()) {
+				ICPermission permission = (ICPermission) entries.next();
+				permission.removeBy(iwc.getCurrentUser());
+			}
+
+
+			//TODO fix this better: refresh permissions PermissionCacher.updatePermissions()
+			iwc.getApplicationContext().removeApplicationAttribute("ic_permission_map_"+AccessController.CATEGORY_GROUP_ID);
+
+			
+		}
+		
+		
+		
+	}
+	
+	private Collection getAllPermissionForGroup(Group group)  {
+			Collection allPermissions = null;
+		
+			try {
+					allPermissions = AccessControl.getAllGroupPermissionsForGroup(group);
+					//Collection ownedPermissions = AccessControl.getAllGroupPermissionsOwnedByGroup( iwc.getCurrentUser().getGroup() );
+					//allPermissions.addAll(ownedPermissions);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("GroupPermission selected group ("+group.getPrimaryKey()+") not found or remote error!");
+			} 
+			return allPermissions;
+		}
+
+	private void removeRelation(IBDomain domain, Group group, User currentUser)  {
     try {
       GroupDomainRelationHome home = (GroupDomainRelationHome) 
         IDOLookup.getHome(GroupDomainRelation.class);
