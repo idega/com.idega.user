@@ -887,7 +887,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     
     public static Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, IWContext iwc) {
         UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
-        User currentUser = iwc.getCurrentUser();
+        //User currentUser = iwc.getCurrentUser();
         Map resultMap = new HashMap();
         Map map = userBusiness.moveUsers(iwc,userIds, parentGroup, targetGroupId);
         Integer groupId;
