@@ -282,9 +282,6 @@ public class UserLoginTab extends UserTab {
 		Table loginTable = new Table(2, 4);
 		loginTable.setCellpadding(0);
 		loginTable.setCellspacing(0);
-		loginTable.setHeight(1, rowHeight);
-		loginTable.setHeight(2, rowHeight);
-		loginTable.setHeight(3, rowHeight);
 		loginTable.setWidth(1, "120");
 
 		loginTable.add(this.userLoginText, 1, 1);
@@ -300,10 +297,6 @@ public class UserLoginTab extends UserTab {
 		Table AccountPropertyTable = new Table(2, 5);
 		AccountPropertyTable.setCellpadding(0);
 		AccountPropertyTable.setCellspacing(0);
-		AccountPropertyTable.setHeight(1, rowHeight);
-		AccountPropertyTable.setHeight(2, rowHeight);
-		AccountPropertyTable.setHeight(3, rowHeight);
-		AccountPropertyTable.setHeight(4, rowHeight);
 
 		AccountPropertyTable.add(this.mustChangePasswordField, 1, 1);
 		AccountPropertyTable.add(this.mustChangePasswordText, 2, 1);
@@ -313,7 +306,6 @@ public class UserLoginTab extends UserTab {
 		AccountPropertyTable.add(this.passwordNeverExpiresText, 2, 3);
 		AccountPropertyTable.add(this.disableAccountField, 1, 4);
 		AccountPropertyTable.add(this.disableAccountText, 2, 4);
-		AccountPropertyTable.add(getHelpButton(),1,5);
 		// AccountPropertyTable end
 
 		errorMessageTable.setHeight(1);
@@ -329,6 +321,11 @@ public class UserLoginTab extends UserTab {
 		this.add(frameTable);
 
 	}
+
+	public void main(IWContext iwc) {
+		getPanel().addHelpButton(getHelpButton());		
+	}
+
 	public boolean collect(IWContext iwc) {
 		if (iwc != null) {
 			IWResourceBundle iwrb = getResourceBundle(iwc);

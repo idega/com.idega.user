@@ -2,6 +2,7 @@ package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
 import java.util.Hashtable;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.location.business.CommuneBusiness;
 import com.idega.core.location.data.Address;
@@ -250,29 +251,31 @@ public class AddressInfoTab extends UserTab {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
 		streetText = new Text(iwrb.getLocalizedString(streetFieldName,"Street"));
-//		streetText.setFontSize(fontSize);
+		streetText.setBold();
 
 		cityText = new Text(iwrb.getLocalizedString(cityFieldName,"City"));
-//		cityText.setFontSize(fontSize);
+		cityText.setBold();
 
 		provinceText = new Text(iwrb.getLocalizedString(provinceFieldName,"Province"));
-//		provinceText.setFontSize(fontSize);
+		provinceText.setBold();
 
 		postalCodeText = new Text(iwrb.getLocalizedString(postalCodeFieldName,"Postal"));
-//		postalCodeText.setFontSize(fontSize);
+		postalCodeText.setBold();
 
 		countryText = new Text(iwrb.getLocalizedString(countryFieldName,"Country"));
-//		countryText.setFontSize(fontSize);
+		countryText.setBold();
 
 		poBoxText = new Text(iwrb.getLocalizedString(poBoxFieldName,"P.O.Box"));
-//		poBoxText.setFontSize(fontSize);
+		poBoxText.setBold();
     // the same texts are used for the second address
 		
 		communeText = new Text(iwrb.getLocalizedString(communeFieldName, "Commune"));
+		communeText.setBold();
     
     coAddressText = new Text(iwrb.getLocalizedString("UM_coAddress","co address"));
-    
+    coAddressText.setBold();
 	}
+	
 	public void lineUpFields() {
 		this.resize(1, 1);
 		int row = 1;
@@ -292,41 +295,30 @@ public class AddressInfoTab extends UserTab {
 			adminUser = null;
 		}
 		
-  
-
 		if (useCommune) {
 			++totalRows;
 		}
-		Table addressTable = new Table(2, totalRows);
-		
-//		System.out.println("UseCommune = "+useCommune);
-
-		//    FramePane fpane = new FramePane();
-
-		addressTable.setWidth("100%");
-		addressTable.setCellpadding(3);
-		addressTable.setCellspacing(3);
-    int i;
-    for (i= 1; i <= totalRows; i++) {
-		  addressTable.setHeight(i, rowHeight);
-    }
-		addressTable.setWidth(1, "70");
-		addressTable.add(this.cityText, 1, row);
-		addressTable.add(this.cityField, 2, row);
+		Table table = new Table(2, totalRows);
+		table.setWidth(Table.HUNDRED_PERCENT);
+		table.setCellpadding(5);
+		table.setCellspacing(0);
+		table.setBorder(1);
+		table.add(this.cityText, 1, row);
+		table.add(this.cityField, 2, row);
 		++row;
-		addressTable.add(this.provinceText, 1, row);
-		addressTable.add(this.provinceField, 2, row);
+		table.add(this.provinceText, 1, row);
+		table.add(this.provinceField, 2, row);
 		if (useCommune) {
 			++row;
-			addressTable.add(this.communeText, 1, row);
-			addressTable.add(this.communeField, 2, row);
+			table.add(this.communeText, 1, row);
+			table.add(this.communeField, 2, row);
 		}
 		++row;
-		addressTable.add(this.countryText, 1, row);
-		addressTable.add(this.countryField, 2, row);
+		table.add(this.countryText, 1, row);
+		table.add(this.countryField, 2, row);
 		++row;
-    addressTable.add(postalCodeText,1,row);
-    addressTable.add(postalCodeField,2,row);
+    table.add(postalCodeText,1,row);
+    table.add(postalCodeField,2,row);
 
 		//    fpane.add(addressTable);
 
@@ -335,7 +327,6 @@ public class AddressInfoTab extends UserTab {
 		addressTable2.setWidth("100%");
 		addressTable2.setCellpadding(3);
 		addressTable2.setCellspacing(3);
-		addressTable2.setHeight(1, rowHeight);
 		addressTable2.setWidth(1, "70");
 		addressTable2.setWidth(2, "70");
 		addressTable2.setWidth(3, "70");
@@ -346,7 +337,7 @@ public class AddressInfoTab extends UserTab {
 		addressTable2.add(this.poBoxField, 4, 1);
 
 		this.add(addressTable2);
-    this.add(addressTable);
+    this.add(table);
 		//    fpane.add(addressTable2);
 		//    this.add(fpane);
 
@@ -359,9 +350,6 @@ public class AddressInfoTab extends UserTab {
     secondAddressTable.setCellpadding(3);
     secondAddressTable.setCellspacing(3);
 
-    for (i= 1; i <= totalRows; i++) {
-      secondAddressTable.setHeight(i, rowHeight);
-    }
     secondAddressTable.setWidth(1, "70");
     
     secondAddressTable.setHeight(1,"20");
@@ -393,7 +381,6 @@ public class AddressInfoTab extends UserTab {
     secondAddressTable2.setWidth("100%");
     secondAddressTable2.setCellpadding(3);
     secondAddressTable2.setCellspacing(3);
-    secondAddressTable2.setHeight(1, rowHeight);
     secondAddressTable2.setWidth(1, "70");
     secondAddressTable2.setWidth(2, "70");
     secondAddressTable2.setWidth(3, "70");
@@ -406,8 +393,10 @@ public class AddressInfoTab extends UserTab {
     add(coAddressText);
     this.add(secondAddressTable2);
     this.add(secondAddressTable);
-    
-    this.add(getHelpButton());
+	}
+
+	public void main(IWContext iwc) {
+		getPanel().addHelpButton(getHelpButton());		
 	}
 
 	public boolean collect(IWContext iwc) {

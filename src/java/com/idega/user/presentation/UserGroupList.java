@@ -168,6 +168,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		this.resize(1, 5);
 
 		Table prTable = new Table(2, 1);
+		prTable.setBorder(1);
 
 		prTable.add(this.primaryGroupText, 1, 1);
 		prTable.add(this.primaryGroupField, 2, 1);
@@ -179,12 +180,10 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		this.add(memberofFrame, 1, 3);
 
 		this.setHeight(1, "30");
-		this.setHeight(2, super.rowHeight);
-		this.setHeight(4, super.rowHeight);
 
 		this.add(addLink, 1, 4);
-		this.add(getHelpButton(),1,5);
 	}
+
 	public boolean collect(IWContext iwc) {
 		String prgroup = iwc.getParameter(primaryGroupFieldName);
 		if (prgroup != null) {
@@ -208,6 +207,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	}
 
 	public void main(IWContext iwc) throws Exception {
+		getPanel().addHelpButton(getHelpButton());		
+
 		primaryGroupField.removeElements();
 		primaryGroupField.addSeparator();
 		UserBusiness userBusiness = this.getUserBusiness(iwc);

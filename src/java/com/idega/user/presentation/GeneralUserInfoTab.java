@@ -4,8 +4,10 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
+
 import com.idega.block.media.presentation.ImageInserter;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWBundle;
@@ -88,7 +90,7 @@ public class GeneralUserInfoTab extends UserTab {
 		this();
 		setUserID(userId);
 	}
-
+	
 	public void initializeFieldNames() {
 		idFieldName = "usr_info_UMid";
 		fullNameFieldName = "usr_info_UMflname";
@@ -214,53 +216,35 @@ public class GeneralUserInfoTab extends UserTab {
 		imageField.setHeight(String.valueOf(138));
 		imageField.setMaxImageWidth(107);
 		imageField.setHasUseBox(false);
+		
 		removeImageField = new CheckBox(removeImageFieldName);
-
+		removeImageField.setWidth("10");
+		removeImageField.setHeight("10");
 	}
 
 	public void initializeTexts() {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		idText = new Text();//getTextObject();
-		idText.setText(iwrb.getLocalizedString(idFieldName,"ID") + ":");
-//		idText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-
-		fullNameText = new Text();//getTextObject();		
-		fullNameText.setText(iwrb.getLocalizedString(fullNameFieldName,"Name") + ":");
-//		fullNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-
-		displayNameText = new Text();//getTextObject();
-		displayNameText.setText(iwrb.getLocalizedString(displayNameFieldName,"Display name") + ":");
-//		displayNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-
-		descriptionText = new Text();//getTextObject();
-		descriptionText.setText(iwrb.getLocalizedString(descriptionFieldName,"Description") + ":");
-//		descriptionText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-
-		dateOfBirthText = new Text();// getTextObject();
-		dateOfBirthText.setText(iwrb.getLocalizedString(dateOfBirthFieldName,"Date of birth") + ":");
-//		dateOfBirthText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-
-		genderText = new Text(); //getTextObject();
-		genderText.setText(iwrb.getLocalizedString(genderFieldName,"Gender") + ":");
-//		genderText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-
-		personalIDText = new Text();//getTextObject();
-		personalIDText.setText(iwrb.getLocalizedString(personalIDFieldName,"Personal ID") + ":");
-//		personalIDText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-
-		createdText = new Text();//getTextObject();
-		createdText.setText(iwrb.getLocalizedString(createdFieldName,"Created") + ":");
-//		createdText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		
-		imageText = new Text();//getTextObject();
-		imageText.setText(iwrb.getLocalizedString(imageFieldName, "Image") + ":");
-//		imageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		
-		removeImageText = new Text();//getTextObject();
-		removeImageText.setText(iwrb.getLocalizedString(removeImageFieldName, "do not show an image"));
-//		removeImageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		idText = new Text(iwrb.getLocalizedString(idFieldName,"ID") + ":");
+		idText.setBold();
+		fullNameText = new Text(iwrb.getLocalizedString(fullNameFieldName,"Name") + ":");
+		fullNameText.setBold();
+		displayNameText = new Text(iwrb.getLocalizedString(displayNameFieldName,"Display name") + ":");
+		displayNameText.setBold();
+		descriptionText = new Text(iwrb.getLocalizedString(descriptionFieldName,"Description") + ":");
+		descriptionText.setBold();
+		dateOfBirthText = new Text(iwrb.getLocalizedString(dateOfBirthFieldName,"Date of birth") + ":");
+		dateOfBirthText.setBold();
+		genderText = new Text(iwrb.getLocalizedString(genderFieldName,"Gender") + ":");
+		genderText.setBold();
+		personalIDText = new Text(iwrb.getLocalizedString(personalIDFieldName,"Personal ID") + ":");
+		personalIDText.setBold();
+		createdText = new Text(iwrb.getLocalizedString(createdFieldName,"Created") + ":");
+		createdText.setBold();
+		imageText = new Text(iwrb.getLocalizedString(imageFieldName, "Image") + ":");
+		imageText.setBold();
+		removeImageText = new Text(iwrb.getLocalizedString(removeImageFieldName, "do not show an image"));
 	}
 	
 	public Help getHelpButton() {
@@ -278,64 +262,61 @@ public class GeneralUserInfoTab extends UserTab {
 	public void lineUpFields() {
 		resize(1, 4);
 		
-		//First Part (names)
-		Table nameTable = new Table(3, 6); //changed from (2,5) - birna
-		nameTable.setWidth("100%");
-		nameTable.setCellpadding(3);
-		nameTable.setCellspacing(3);
-//		nameTable.setHeight(1, rowHeight);
-//		nameTable.setHeight(2, rowHeight);
-//		nameTable.setHeight(3, rowHeight);
-//		nameTable.setHeight(4, rowHeight);
+		Table table = new Table(); //changed from (2,5) - birna
+		table.setWidth("100%");
+		table.setCellpadding(5);
+		table.setCellspacing(0);
+		table.setBorder(0);
 
-		nameTable.add(fullNameText,1,1);//(idText, 1, 1); 
-		nameTable.add(fullNameField,1,2);//(idField, 2, 1);
-		nameTable.add(personalIDText,2,1);//(personalIDText, 1, 2);
-		nameTable.add(personalIDField,2,2);//(personalIDField, 2, 2);
-		nameTable.add(idText,1,3);//(fullNameText, 1, 3);
-		nameTable.add(idField,1,4);//(fullNameField, 2, 3);
-		nameTable.add(displayNameText,2,3);//(displayNameText, 1, 4);
-		nameTable.add(displayNameField, 2, 4);
-		nameTable.add(genderText, 1,5);
-		nameTable.add(genderField,1,6);//(genderField, 2, 5);
-		nameTable.mergeCells(3,2,3,5);
-		nameTable.add(imageText,3,1);
-		nameTable.add(imageField,3,2);
-		nameTable.add(removeImageField,3,6);
-		nameTable.add(Text.getNonBrakingSpace(),3,6);
-		nameTable.add(removeImageText,3,6);
-		add(nameTable, 1, 1);
-		//First Part ends
-
-		//Second Part (Date of birth)
-		Table dateofbirthTable = new Table(2, 4);
-		dateofbirthTable.setCellpadding(3);
-		dateofbirthTable.setCellspacing(3);//changed from (0)
-//		dateofbirthTable.setHeight(1, rowHeight);
-//		dateofbirthTable.setHeight(2, rowHeight);
-		dateofbirthTable.add(dateOfBirthText, 1, 1);
-		dateofbirthTable.add(dateOfBirthField, 1, 2);//changed from ...,2,1) - birna
-		dateofbirthTable.add(createdText, 1, 3);
-		dateofbirthTable.add(createdField, 1, 4);//changed from ...,2,2) - birna
-		add(dateofbirthTable, 1, 2);
-		//Second Part Ends
-
-		//Third Part (description)
-		Table descriptionTable = new Table(1, 2);
-		descriptionTable.setCellpadding(3);
-		descriptionTable.setCellspacing(3);
-		descriptionTable.setHeight(1, rowHeight);
-		descriptionTable.add(descriptionText, 1, 1);
-		descriptionTable.addBreak();
-		descriptionTable.add(descriptionField, 1, 1);//changed from ...,1,2)
-		add(descriptionTable, 1, 3);
-		//Third Part ends
+		table.add(fullNameText,1,1);//(idText, 1, 1);
+		table.add(Text.getBreak(), 1, 1);
+		table.add(fullNameField,1,1);//(idField, 2, 1);
 		
-		Table helpTable = new Table(1,1);
-		helpTable.setCellpadding(3);
-		helpTable.setCellspacing(3);
-		helpTable.add(getHelpButton());
-		add(helpTable,1,4);
+		table.add(personalIDText,2,1);//(personalIDText, 1, 2);
+		table.add(Text.getBreak(), 2, 1);
+		table.add(personalIDField,2,1);//(personalIDField, 2, 2);
+		
+		table.add(idText,1,2);//(fullNameText, 1, 3);
+		table.add(Text.getBreak(), 1, 2);
+		table.add(idField,1,2);//(fullNameField, 2, 3);
+		
+		table.add(displayNameText,2,2);//(displayNameText, 1, 4);
+		table.add(Text.getBreak(), 2, 2);
+		table.add(displayNameField, 2, 2);
+		
+		table.add(genderText, 1,3);
+		table.add(Text.getBreak(), 1, 3);
+		table.add(genderField,1,3);//(genderField, 2, 5);
+		
+		table.mergeCells(1, 4, 2, 4);
+		table.add(dateOfBirthText, 1, 4);
+		table.add(Text.getBreak(), 1, 4);
+		table.add(dateOfBirthField, 1, 4);//changed from ...,2,1) - birna
+
+		table.mergeCells(1, 5, 2, 5);
+		table.add(createdText, 1, 5);
+		table.add(Text.getBreak(), 1, 5);
+		table.add(createdField, 1, 5);//changed from ...,2,2) - birna
+
+		table.mergeCells(1, 6, 2, 6);
+		table.add(descriptionText, 1, 6);
+		table.add(Text.getBreak(), 1, 6);
+		table.add(descriptionField, 1, 6);//changed from ...,1,2)
+
+		table.mergeCells(3,1,3,6);
+		table.setVerticalAlignment(3, 1, Table.VERTICAL_ALIGN_TOP);
+		table.add(imageText,3,1);
+		table.add(Text.getBreak(), 3, 1);
+		table.add(imageField,3,1);
+		
+		table.add(removeImageField,3,1);
+		//table.add(Text.getNonBrakingSpace(),3,1);
+		table.add(removeImageText,3,1);
+		add(table, 1, 1);
+	}
+	
+	public void main(IWContext iwc) {
+		getPanel().addHelpButton(getHelpButton());		
 	}
 
 	public boolean collect(IWContext iwc) {

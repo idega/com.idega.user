@@ -241,10 +241,6 @@ public class UserPhoneTab extends UserTab {
 		staffTable.setWidth("100%");
 		staffTable.setCellpadding(3);
 		staffTable.setCellspacing(3);
-		staffTable.setHeight(1, rowHeight);
-		staffTable.setHeight(2, rowHeight);
-		staffTable.setHeight(3, rowHeight);
-		staffTable.setHeight(4, rowHeight);
 
 		staffTable.add(firstPhoneText, 1, 1);
 		staffTable.add(homePhoneTypeText, 3, 1);
@@ -264,8 +260,6 @@ public class UserPhoneTab extends UserTab {
 		mailTable.setWidth("100%");
 		mailTable.setCellpadding(3);
 		mailTable.setCellspacing(3);
-		mailTable.setHeight(1, rowHeight);
-    mailTable.setHeight(2, rowHeight);
 
 		mailTable.add(emailText, 1, 1);
 		mailTable.add(emailField, 2, 1);
@@ -275,7 +269,10 @@ public class UserPhoneTab extends UserTab {
 		mailTable.add(workPlaceField,2,3);
     
 		this.add(mailTable, 1, 3);
-		this.add(getHelpButton(),1,4);
+	}
+
+	public void main(IWContext iwc) {
+		getPanel().addHelpButton(getHelpButton());		
 	}
 
 	public boolean collect(IWContext iwc) {
