@@ -18,6 +18,7 @@ import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.User;
 import com.idega.user.data.UserGroupPlugIn;
+import com.idega.user.plugin.FamilyTab;
 import com.idega.util.IWColor;
 
 /**
