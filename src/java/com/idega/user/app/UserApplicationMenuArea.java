@@ -34,6 +34,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
 
   private SearchForm searchForm = new SearchForm();
   private Table toolbarTable = new Table(1,3);
+  private Toolbar toolbar = new Toolbar();
 
 
 
@@ -48,12 +49,14 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
     _contolEvent = model;
 
     searchForm.setControlEventModel(model);
+	toolbar.setControlEventModel(model);
   }
 
   public void setControlTarget(String controlTarget){
 //    System.out.print("UserApplicationMenuArea: setControlTarget(String controlTarget)");
     _controlTarget = controlTarget;
     searchForm.setControlTarget(controlTarget);
+	toolbar.setControlTarget(controlTarget);
   }
 
   public Class getPresentationStateClass(){
@@ -108,7 +111,28 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
 
     super.add(toolbarTable);
 
-    this.setIWUserContext(iwc);
+
+	Table table = new Table(2,1);
+	table.setCellpadding(0);
+    table.setCellspacing(0);
+    table.setWidth("100%");
+
+	table.setAlignment(1,1,Table.HORIZONTAL_ALIGN_LEFT);
+	table.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
+
+	table.add(toolbar,1,1);
+	table.add(searchForm,2,1);
+	toolbarTable.add(table,1,2);
+
+//	this.add(toolbar);
+//
+//    this.add(searchForm);
+
+//    this.setIWUserContext(iwc);
+
+//	CreateGroupWindow createGroup = new CreateGroupWindow();
+//
+//    toolbar.add((ToolbarElement)createGroup);
 
 //    IWPresentationState sfState = searchForm.getPresentationState(iwc);
 //    if(sfState instanceof IWActionListener){
@@ -129,27 +153,18 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
 
   }
 
-  public void add(PresentationObject obj){
-    toolbarTable.add(obj,1,2);
-  }
+//  public void add(PresentationObject obj){
+//    toolbarTable.add(obj,1,2);
+//  }
 
-  public void main(IWContext iwc) throws Exception {
-
-    GroupBusiness gBusiness = (GroupBusiness)IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
-
-    this.empty();
-
-	Toolbar toolbar = new Toolbar();
-
-    CreateGroupWindow createGroup = new CreateGroupWindow();
-
-    toolbar.add((ToolbarElement)createGroup);
-
-    this.add(toolbar);
-
-//    this.add(searchForm);
-
-  }
+//  public void main(IWContext iwc) throws Exception {
+//
+    //GroupBusiness gBusiness = (GroupBusiness)IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
+//
+//    this.empty();
+//
+//
+//  }
 
 
 

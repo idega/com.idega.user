@@ -140,9 +140,9 @@ public class Toolbar extends Page implements IWBrowserView {
   public void main(IWContext iwc) throws Exception{
     iwb = getBundle(iwc);
 
-//    Table toolbarTable = new Table(1,3);
-//    toolbarTable.setCellpadding(0);
-//    toolbarTable.setCellspacing(0);
+    Table toolbarTable = new Table(1,1);
+    toolbarTable.setCellpadding(0);
+    toolbarTable.setCellspacing(0);
 //    toolbarTable.setWidth("100%");
 //    toolbarTable.setHeight("100%");
 //    toolbarTable.setHeight(1,1);
@@ -156,7 +156,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //
 //    toolbarTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_RIGHT);
 //
-//    add(toolbarTable);
+    add(toolbarTable);
 
     Table toolbar1 = new Table();
     toolbar1.setCellpadding(0);
@@ -179,8 +179,8 @@ public class Toolbar extends Page implements IWBrowserView {
 */
 
     //int iconDimentions = 20;
-    
-   
+
+
 
     Table button = new Table(2,1);
  	button.setCellpadding(0);
@@ -193,7 +193,7 @@ public class Toolbar extends Page implements IWBrowserView {
     tLink11.setWindowToOpen(CreateUser.class);
     button.add(tLink11,2,1);
     toolbar1.add(button,2,1);
-    
+
  	Table button2 = new Table(2,1);
  	button2.setCellpadding(0);
     Image iconCrGroup = iwb.getImage("new_group.gif");
@@ -210,7 +210,8 @@ public class Toolbar extends Page implements IWBrowserView {
     //toolbar1.setWidth(2,"26");
    // toolbar1.setWidth(3,"26");
 
-    
+
+
    //Group
    //user
    //finance
@@ -221,14 +222,14 @@ public class Toolbar extends Page implements IWBrowserView {
 //    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("To do", iwb.getImage("todo.gif"), com.idega.block.news.presentation.News.class),7,1);
    //settings
     toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Settings", iwb.getImage("settings.gif"), com.idega.block.news.presentation.News.class),6,1);
-   
+
    //view
    	//dropdownmenu
     toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Views", iwb.getImage("views.gif"), com.idega.block.news.presentation.News.class),7,1);
    //search
    	//text input
     toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Search", iwb.getImage("search.gif"), com.idega.block.news.presentation.News.class),8,1);
-   
+
 
    Text text3 = new Text("Reset");
    text3.setFontFace(Text.FONT_FACE_VERDANA);
@@ -243,10 +244,11 @@ public class Toolbar extends Page implements IWBrowserView {
    }
 
    toolbar1.add(resetLink,9,1);
-    
+
    //    toolbarTable.add(toolbar1,1,2);
-	this.add(toolbar1);
-	
+//	this.add(toolbar1);
+	toolbarTable.add(toolbar1,1,1);
+
    //hitt
    //group
    //user
@@ -256,11 +258,11 @@ public class Toolbar extends Page implements IWBrowserView {
    //import
    //bread crumbs
    //name - address - pin
-   
-   
+
+
 
   }
-  
+
  private Table getToolbarButtonWithChangeClassEvent(String textOnButton, Image icon, Class changeClass){
  	Table button = new Table(2,1);
  	button.setCellpadding(0);
@@ -277,9 +279,9 @@ public class Toolbar extends Page implements IWBrowserView {
     if(_controlTarget != null){
       eventLink.setTarget(_controlTarget);
     }
-    
+
     return button;
- 	
+
  }
 
 
