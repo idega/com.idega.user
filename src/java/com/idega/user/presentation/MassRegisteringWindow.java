@@ -1,10 +1,8 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 import javax.ejb.FinderException;
@@ -12,9 +10,7 @@ import javax.ejb.FinderException;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
-import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
@@ -49,8 +45,7 @@ public class MassRegisteringWindow extends IWAdminWindow {
 	private String PARAMETER_STATUS = "mrw_sta";
 	private String PARAMETER_SAVE = "mrw_sv";
 
-  /** TODO */
-	private int numberOfRows = 2;
+	private int numberOfRows = 20;
 	private Group group;
 	private IWResourceBundle iwrb;
 	private UserHome uHome;
@@ -130,10 +125,7 @@ public class MassRegisteringWindow extends IWAdminWindow {
 				status  = new UserStatusDropdown(PARAMETER_STATUS+"_"+i);
 				status.setStyleAttribute(STYLE_2);
 				pid = new TextInput(PARAMETER_PID+"_"+i);
-        /**TODO
-         * DO NOT FORGET TO ACTIVATE THIS AGAIN
-         */
-				//pid.setAsIcelandicSSNumber(iwrb.getLocalizedString("user.pid_incorrect_in_row","Personal ID not correct for user in row")+" "+i);
+ 				pid.setAsIcelandicSSNumber(iwrb.getLocalizedString("user.pid_incorrect_in_row","Personal ID not correct for user in row")+" "+i);
 				pid.setStyleAttribute(STYLE_2);
 				pid.setMaxlength(10);
 				table.add(formatText(Integer.toString(i)), 1, row);
