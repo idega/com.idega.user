@@ -1,15 +1,20 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.presentation.TabbedPropertyWindow;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.TabbedPropertyPanel;
 import com.idega.presentation.PresentationObject;
-import com.idega.user.business.*;
-import com.idega.user.data.*;
+import com.idega.presentation.TabbedPropertyPanel;
+import com.idega.presentation.TabbedPropertyWindow;
+import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserGroupPlugInBusiness;
+import com.idega.user.data.User;
+import com.idega.user.data.UserGroupPlugIn;
 import com.idega.util.IWColor;
 
 /**
@@ -37,23 +42,24 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
   	int count = 0;
     GeneralUserInfoTab genTab = new GeneralUserInfoTab();
 
-    panel.addTab(genTab, count, iwc);
-    panel.addTab(new UserImageTab(),++count,iwc);
-    panel.addTab(new AddressInfoTab(), ++count, iwc);
-    panel.addTab(new UserPhoneTab(), ++count, iwc);
-    panel.addTab(new UserGroupList(),++count,iwc);
+    
     
     try {//temporary before plugins work
+    	panel.addTab(genTab, count, iwc);
+			panel.addTab(new UserImageTab(),++count,iwc);
+	    panel.addTab(new AddressInfoTab(), ++count, iwc);
+	    panel.addTab(new UserPhoneTab(), ++count, iwc);
+	    panel.addTab(new UserGroupList(),++count,iwc);
+	    
+	    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFamilyTab").newInstance() ,++count,iwc);
+	    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFinanceTab").newInstance() ,++count,iwc);
+	    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserHistoryTab").newInstance() ,++count,iwc);
 		
-    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFamilyTab").newInstance() ,++count,iwc);
-    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFinanceTab").newInstance() ,++count,iwc);
-    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserHistoryTab").newInstance() ,++count,iwc);
-	
 	
 	//temp shit
-	String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
-      int userId = Integer.parseInt(id);
-      User user = getUserBusiness(iwc).getUser(userId);
+		String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
+    int userId = Integer.parseInt(id);
+    User user = getUserBusiness(iwc).getUser(userId);
    
 	  Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
 	  Iterator iter = plugins.iterator();
