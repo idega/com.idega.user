@@ -1,5 +1,5 @@
 /*
- * $Id: UserContactSearch.java,v 1.6 2005/02/14 13:55:53 eiki Exp $ Created on
+ * $Id: UserContactSearch.java,v 1.7 2005/02/14 17:42:32 eiki Exp $ Created on
  * Jan 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -33,7 +33,7 @@ import com.idega.util.ListUtil;
 
 /**
  * 
- * Last modified: $Date: 2005/02/14 13:55:53 $ by $Author: eiki $ This class
+ * Last modified: $Date: 2005/02/14 17:42:32 $ by $Author: eiki $ This class
  * implements the Searchplugin interface and can therefore be used in a Search
  * block (com.idega.core.search). <br>
  * It searches lots of user related info like name, personalid,email etc. and
@@ -42,7 +42,7 @@ import com.idega.util.ListUtil;
  * bundle.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class UserContactSearch implements SearchPlugin {
 
@@ -145,7 +145,7 @@ public class UserContactSearch implements SearchPlugin {
 					}
 					if (phones != null && !phones.isEmpty()) {
 						String number = ((Phone) phones.iterator().next()).getNumber();
-						if (!"".equals(number) && !"null".equals(number)) {
+						if (number!=null && !"".equals(number) && !"null".equals(number)) {
 							if (someThingAdded) {
 								abstractText.append(" - ");
 							}
