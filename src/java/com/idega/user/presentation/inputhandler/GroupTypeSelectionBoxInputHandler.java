@@ -29,6 +29,10 @@ import com.idega.user.data.GroupTypeHome;
  */
 public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements InputHandler {
 
+	public GroupTypeSelectionBoxInputHandler() {
+		super();
+	}
+	
 	public GroupTypeSelectionBoxInputHandler(String name) {
 		super(name);
 	}
