@@ -374,7 +374,7 @@ public class GroupPermissionWindow extends IWAdminWindow implements StatefullPre
 	 * @param iwc
 	 */
 	private Form getGroupPermissionForm(IWContext iwc) throws Exception{
-		GroupPermissionTable table = new GroupPermissionTable();
+
 		
 		AccessController access = iwc.getAccessController();
 		Collection col = access.getAllPermissionGroups();
@@ -392,7 +392,7 @@ public class GroupPermissionWindow extends IWAdminWindow implements StatefullPre
 		
 		
 		Form form = new Form();
-		form.add(table);
+
 		return form;
 	}
 	
