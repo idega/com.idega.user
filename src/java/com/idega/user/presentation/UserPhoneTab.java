@@ -38,6 +38,7 @@ public class UserPhoneTab extends UserTab {
 	private DropdownMenu faxPhoneMenu;
 	private TextInput emailField;
   private TextInput jobField;
+	private TextInput workPlaceField;
 
 	public static String homePhoneFieldName = "homePhone";
 	public static String workPhoneFieldName = "workPhone";
@@ -49,6 +50,7 @@ public class UserPhoneTab extends UserTab {
 	public static String faxPhoneMenuName = "faxChoice";
 	public static String emailFieldName = "email";
   public static String jobFieldName = "job";
+	public static String workPlaceFieldName = "job";
 
 	private Text homePhoneText;
 	private Text workPhoneText;
@@ -56,6 +58,7 @@ public class UserPhoneTab extends UserTab {
 	private Text faxPhoneText;
 	private Text emailText;
   private Text jobText;
+	private Text workPlaceText;
 
 	public UserPhoneTab() {
 		super();
@@ -63,13 +66,11 @@ public class UserPhoneTab extends UserTab {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
 		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
-		
-//		this.setName("Phone/Mail");
 	}
 
 	public UserPhoneTab(int userId) {
 		this();
-		this.setUserID(userId);
+		setUserID(userId);
 	}
 
 	public void initializeFieldNames() {
@@ -86,6 +87,7 @@ public class UserPhoneTab extends UserTab {
 		fieldValues.put(this.faxPhoneMenuName, "");
 		fieldValues.put(this.emailFieldName, "");
     fieldValues.put(jobFieldName,"");
+		fieldValues.put(workPlaceFieldName,"");
 
 		this.updateFieldsDisplayStatus();
 	}
@@ -116,6 +118,7 @@ public class UserPhoneTab extends UserTab {
 
 		emailField.setContent((String)fieldValues.get(this.emailFieldName));
     jobField.setContent((String)fieldValues.get(jobFieldName));
+		workPlaceField.setContent((String)fieldValues.get(workPlaceFieldName));
 	}
 
 	public void initializeFields() {
@@ -190,6 +193,9 @@ public class UserPhoneTab extends UserTab {
     
     jobField = new TextInput(jobFieldName);
     jobField.setLength(24);
+
+		workPlaceField = new TextInput(workPlaceFieldName);
+		workPlaceField.setLength(24);
 	}
 
 	public void initializeTexts() {
@@ -213,6 +219,9 @@ public class UserPhoneTab extends UserTab {
     
     jobText = new Text(iwrb.getLocalizedString(jobFieldName, "Job") + ":");
     jobText.setFontSize(fontSize);
+
+		workPlaceText = new Text(iwrb.getLocalizedString(workPlaceFieldName, "Workplace") + ":");
+		workPlaceText.setFontSize(fontSize);
 	}
 
 	public void lineUpFields() {
@@ -241,7 +250,7 @@ public class UserPhoneTab extends UserTab {
 		staffTable.add(faxPhoneField, 2, 4);
 		this.add(staffTable, 1, 1);
 
-		Table mailTable = new Table(2, 2);
+		Table mailTable = new Table(2, 3);
 		mailTable.setWidth("100%");
 		mailTable.setCellpadding(0);
 		mailTable.setCellspacing(0);
@@ -252,6 +261,8 @@ public class UserPhoneTab extends UserTab {
 		mailTable.add(emailField, 2, 1);
     mailTable.add(jobText,1,2);
     mailTable.add(jobField,2,2);
+		mailTable.add(workPlaceText,1,2);
+		mailTable.add(workPlaceField,2,2);
     
 		this.add(mailTable, 1, 3);
 	}
@@ -269,6 +280,7 @@ public class UserPhoneTab extends UserTab {
 			String faxPhoneType = iwc.getParameter(this.faxPhoneMenuName);
 			String email = iwc.getParameter(this.emailFieldName);
       String job = iwc.getParameter(jobFieldName);
+			String workPlace = iwc.getParameter(workPlaceFieldName);
 
 			if (homePhone != null) {
 				fieldValues.put(this.homePhoneFieldName, homePhone);
@@ -299,6 +311,8 @@ public class UserPhoneTab extends UserTab {
 			}
       if (job != null)  
         fieldValues.put(jobFieldName, job);
+			if (workPlace != null)  
+				fieldValues.put(workPlaceFieldName, workPlace);
 
 			this.updateFieldsDisplayStatus();
 
@@ -341,6 +355,11 @@ public class UserPhoneTab extends UserTab {
         String job = (String)fieldValues.get(jobFieldName);
         if ( job != null)
             getUserBusiness(iwc).updateUserJob(getUserId(), job);
+            
+				String workPlace = (String)fieldValues.get(workPlaceFieldName);
+				if ( workPlace != null)
+						getUserBusiness(iwc).updateUserWorkPlace(getUserId(), workPlace);
+
 			}
 		}
 		catch (Exception e) {
@@ -361,7 +380,8 @@ public class UserPhoneTab extends UserTab {
 			Email mail =
 				userBusiness.getUserMail(user);
       String job =
-        userBusiness.getUserJob(user);      
+        userBusiness.getUserJob(user);
+      String workPlace = userBusiness.getUserJob(user);      
 
 			for (int a = 0; a < phones.length; a++) {
 				if (a == 0) {
@@ -411,6 +431,7 @@ public class UserPhoneTab extends UserTab {
 					(mail.getEmailAddress() != null) ? mail.getEmailAddress() : "");
       
       fieldValues.put(jobFieldName, (job == null) ? "" : job);
+			fieldValues.put(workPlaceFieldName, (workPlace == null) ? "" : workPlace);
         
       this.updateFieldsDisplayStatus();  
 
