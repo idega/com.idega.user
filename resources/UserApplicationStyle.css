@@ -65,29 +65,46 @@ h1{
 	font-weight: normal;
 }
 .menu{
-	background: #ffffff url(menu1.gif) repeat;
+	border-bottom: 1px solid #cccccc;
+	background: #ffffff url(menu_tile.gif) repeat;
 }
 .banner{
 	background: #ffffff url(banner_tile.gif) repeat;
 }
-table.back{
-	background-color: #f3f3f3;
+.back{
+	background-color: #f5f5f5;
 	border: 1px solid #cccccc;
 }
-table.main{
+.main{
 	border: 1px solid #cccccc;
 	background-color: #ffffff;
 	font-size: 10px;
 	font-weight: bold;
 }
-table.mainDisplay{
+.mainDisplay{
 	border: 1px solid #cccccc;
 }
 .topTable{
+	border-top: 1px solid #cccccc;
+	border-right: 1px solid #cccccc;
+	border-left: 1px solid #cccccc;
 	background: #ffffff url(topTable_tile.gif) repeat;
 }
-table.box{
+.middleTable{
+	border-top: 1px solid #cccccc;
+	border-right: 1px solid #cccccc;
+	background: #ffffff url(middleTable_tile.gif) repeat;
+}
+.box{
 	border: 1px solid #bbbbbb;
+	width: 100px;
+	height: 12px;
+	font-size: 8px;
+	background: #ffffff url(button_tile.gif) repeat;
+}
+.overviewButton{
+	border-top: 1px solid #bbbbbb;
+	border-left: 1px solid #bbbbbb;
 	width: 100px;
 	height: 12px;
 	font-size: 8px;

@@ -10,6 +10,7 @@ import javax.ejb.EJBException;
 
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -533,6 +534,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		IWBundle iwb = getBundle(iwc);
 	  	
 		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
+		addTitle(iwrb.getLocalizedString("create_new_user", "Create a new User"), IWConstants.BUILDER_FONT_STYLE_TITLE);
 
 		myForm = new Form();
 		add(myForm,iwc);

@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.TabbedPropertyPanel;
@@ -80,6 +82,8 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 	}
 
 	public void main(IWContext iwc) throws Exception {
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+		addTitle(iwrb.getLocalizedString("group_property_window", "User Property Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
     int parentGroupId = -1;
     if (iwc.isParameterSet(PARENT_GROUP_ID_KEY))
       parentGroupId = Integer.parseInt(iwc.getParameter(PARENT_GROUP_ID_KEY));    

@@ -98,6 +98,7 @@ public class MassMovingWindow extends StyledIWAdminWindow implements ToolbarElem
     IWResourceBundle iwrb = getResourceBundle(iwc);
     setTitle(iwrb.getLocalizedString("massmovingWindow.title", "Mass moving automatic"));
     addTitle(iwrb.getLocalizedString("massmovingWindow.title", "Mass moving automatic"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+		
     
     String action = parseRequest(iwc);
     if (SHOW_CHILDREN_OF_GROUP_ACTION.equals(action)) {

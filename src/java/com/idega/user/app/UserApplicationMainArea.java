@@ -23,7 +23,6 @@ import com.idega.user.block.search.presentation.SearchResultsWindow;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.presentation.BasicUserOverview;
-
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description: </p>
@@ -36,7 +35,8 @@ import com.idega.user.presentation.BasicUserOverview;
 public class UserApplicationMainArea extends Window implements IWBrowserView, StatefullPresentation {
 
 
-  private IWBundle iwb;
+  protected static final String USER_APPLICATION_FRONT_PAGE_ID = "USER_APPLICATION_FRONT_PAGE_ID";
+	private IWBundle iwb;
   private StatefullPresentationImplHandler _stateHandler = null;
   private String _controlTarget = null;
   private IWPresentationEvent _contolEvent = null;
@@ -111,21 +111,29 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 				className = plugin.getBusinessICObject().getClassName();
 				System.out.println("Plugin business class : "+className);
 				UserGroupPlugInBusiness biz = (UserGroupPlugInBusiness) IBOLookup.getServiceInstance(iwc,Class.forName(className));
-				PresentationObject obj = biz.instanciateViewer(ps.getSelectedGroup());
+				PresentationObject obj = biz.instanciateViewer(ps.getSelectedGroup());     
 				
 				if(obj==null && !buoHasBeenAdded){
-					add(_buo);
-					buoHasBeenAdded=true;
+						add(_buo);
+						buoHasBeenAdded=true;
 				}
-			
-			add(obj);
-		}
+				else {
+					add(obj);
+				}
+    	}
     }
     else{
-      this.add(_buo);
+			String frontPageId = getBundle(iwc).getProperty(USER_APPLICATION_FRONT_PAGE_ID,"-1");
+			if(ps.getSelectedGroup()==null && !"-1".equals(frontPageId)) {
+				setPageID(Integer.parseInt(frontPageId));
+			}
+			else {
+      	this.add(_buo);
+			}
     }
 
   }
+
 
 
   public void initializeInMain(IWContext iwc){

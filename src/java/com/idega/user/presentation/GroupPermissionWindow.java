@@ -20,6 +20,7 @@ import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.event.IWPresentationState;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
@@ -122,6 +123,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow {//implements Sta
 	
 	public void main(IWContext iwc) throws Exception {
 		iwrb = this.getResourceBundle(iwc);
+		addTitle(iwrb.getLocalizedString("group_permission_window", "Group Permission Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
 		
 		parseAction(iwc);
 		//use GroupPermissionWindowPS	

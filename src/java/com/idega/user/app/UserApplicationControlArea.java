@@ -223,6 +223,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
   	treeTable.setCellspacing(4);
   	treeTable.setCellpadding(0);
   	treeTable.setStyleClass("main");
+  	treeTable.setVerticalAlignment(1,1,"top");
   	treeTable.setWidth("90%");
   	treeTable.setHeight("90%");
   	treeTable.add(groupTree,1,1);

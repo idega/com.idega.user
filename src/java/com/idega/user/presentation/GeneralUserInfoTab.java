@@ -42,7 +42,7 @@ public class GeneralUserInfoTab extends UserTab {
 	private static final String DEFAULT_TAB_NAME = "General";
 	
 	private static final String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
-	private static final String HELP_TEXT_KEY = "general_user_info_tab";
+	private static final String HELP_TEXT_KEY = "tabbed_property_panel";
 
 	private TextInput idField;
 	private TextInput fullNameField;

@@ -11,6 +11,7 @@ import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
@@ -245,8 +246,10 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 	}
 	
 	public void main(IWContext iwc) throws Exception {
+		iwrb = getResourceBundle(iwc);
 		super.main(iwc);
 		setTitle("Mass Registering Window");
+		addTitle(iwrb.getLocalizedString("mass_registering_window", "Mass Registering Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
 
 		init(iwc);
 		if (group != null) {

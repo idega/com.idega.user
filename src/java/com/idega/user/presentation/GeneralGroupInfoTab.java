@@ -66,6 +66,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	public static final String SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED = UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED;//"ic_group_ic_group_not_direct_GGIT";
 
 	protected Text memberof;
+	
+	private String underTableStyle = "main";
 
 	public GeneralGroupInfoTab() {
 		super();
@@ -223,7 +225,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		resize(1, 7);
 		setCellpadding(0);
 		setCellspacing(0);
-
+		
 		Table nameTable = new Table(2, 3);
 		nameTable.setCellpadding(0);
 		nameTable.setCellspacing(0);
@@ -236,7 +238,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		nameTable.add(shortNameField, 2, 2);
 		nameTable.add(abbrText, 1, 3);
 		nameTable.add(abbrField, 2, 3);
-		add(nameTable, 1, 1);
+	  add(nameTable, 1, 1);
 
 		Table homepageTable = new Table(2, 1);
 		homepageTable.setCellpadding(0);
@@ -244,7 +246,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		homepageTable.setWidth(1, "50");
 		homepageTable.add(homepageText, 1, 1);
 		homepageTable.add(homepageField, 2, 1);
-		add(homepageTable, 1, 2);
+	  add(homepageTable, 1, 2);
 
 		Table grouptypeTable = new Table(2, 1);
 		grouptypeTable.setCellpadding(0);

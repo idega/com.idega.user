@@ -162,7 +162,7 @@ private Text adminTitle = null;
 		super.setTitle(title);
 		titleIsSet = true;
 
-//		headerTable.add(adminTitle,2,1);
+		headerTable.add(adminTitle,2,1);
 	}
 
 	public void addTitle(String title,String style) {

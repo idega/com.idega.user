@@ -12,6 +12,7 @@ import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.AbstractChooser;
@@ -46,7 +47,7 @@ public class GroupChooserWindow extends AbstractChooserWindow {
     setTitle("Group chooser");
     setWidth(_width);
     setHeight(_height);
-    setCellpadding(5);
+ //   setCellpadding(5);
     setScrollbar(true);
     this.getLocation().setApplicationClass(this.getClass());
     this.getLocation().isInPopUpWindow(true);
@@ -64,6 +65,7 @@ public class GroupChooserWindow extends AbstractChooserWindow {
     setName(iwrb.getLocalizedString("select_group","Select group"));
     
     setStyles();
+    
 
     Text text = new Text(iwrb.getLocalizedString("select_group","Select group")+":");
       text.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);

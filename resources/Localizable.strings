@@ -1,4 +1,7 @@
-#Fri Oct 31 02:03:45 CET 2003
+#Wed Nov 12 01:38:46 GMT 2003
+=\=\=\=\=\=\=
+<<<<<<<=Localizable.strings
+>>>>>>>=1.7
 Add\ to=
 Address.CITY=
 AddressInfoTab.postalcodewindow.add=
@@ -98,6 +101,7 @@ confirmPassword=
 create_new_group=
 create_new_user=
 delete.user=
+delete_group=
 disableAccount=
 edit.group=
 email=
@@ -122,7 +126,9 @@ generatePassword=
 gotoProperties=
 group_description=
 group_name=
+group_permission_window=
 group_please_set_name_choose_group=
+group_property_window=
 groupgroupsetter.close=
 groupgroupsetter.in=
 groupgroupsetter.not_in=
@@ -243,6 +249,7 @@ user.status=
 user.user_name=
 user.user_not_found=
 user_already_member_of_the_target_group=
+user_property_window=
 user_report_report_builder=
 user_suitable_group_could_not_be_found=
 usergroupsetter.close=
