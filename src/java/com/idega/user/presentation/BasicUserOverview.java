@@ -219,7 +219,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             line++;
           }
 
-          userTable.add(getUserBusiness(iwc).getUsersMainAddress(tempUser).getName(),2,line-1);
+         // userTable.add(getUserBusiness(iwc).getUsersMainAddress(tempUser).getName(),2,line-1);
 
           if(delete && !adminUsers.contains(tempUser) && !userIsSuperAdmin && iwc.getAccessController().isAdmin(iwc)){
             Link delLink = new Link(new Text("Delete"));
