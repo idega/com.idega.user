@@ -135,7 +135,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
           mainIwc.isParameterSet(MassMovingWindow.MOVE_SELECTED_GROUPS) ) {
         groupIds = mainIwc.getParameterValues(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY);
         // move users 
-        resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(Arrays.asList(groupIds), mainIwc);
+        resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(Arrays.asList(groupIds), MassMovingWindow.GROUP_TYPE_CLUB_DIVISION, mainIwc);
         targetGroupId = -1;
         fireStateChanged();
       }
