@@ -168,7 +168,7 @@ public class Toolbar extends Page implements IWBrowserView {
     toolbar1.setCellpadding(0);
     toolbar1.setCellspacing(0);
     toolbar1.setAlignment(Table.HORIZONTAL_ALIGN_LEFT);
-		
+	toolbar1.setVerticalAlignment(Table.VERTICAL_ALIGN_TOP);
     //toolbar1.setWidth(Table.HUNDRED_PERCENT);
     //toolbar1.setHeight(Table.HUNDRED_PERCENT);
     //int iconDimentions = 20;
