@@ -1,5 +1,5 @@
 /*
- * $Id: UserContactSearch.java,v 1.5 2005/01/19 23:59:27 eiki Exp $ Created on
+ * $Id: UserContactSearch.java,v 1.6 2005/02/14 13:55:53 eiki Exp $ Created on
  * Jan 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -33,7 +33,7 @@ import com.idega.util.ListUtil;
 
 /**
  * 
- * Last modified: $Date: 2005/01/19 23:59:27 $ by $Author: eiki $ This class
+ * Last modified: $Date: 2005/02/14 13:55:53 $ by $Author: eiki $ This class
  * implements the Searchplugin interface and can therefore be used in a Search
  * block (com.idega.core.search). <br>
  * It searches lots of user related info like name, personalid,email etc. and
@@ -42,7 +42,7 @@ import com.idega.util.ListUtil;
  * bundle.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class UserContactSearch implements SearchPlugin {
 
@@ -53,7 +53,7 @@ public class UserContactSearch implements SearchPlugin {
 	public static final String SEARCH_TYPE = "user";
 
 	public static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-
+	
 	protected IWMainApplication iwma;
 
 	/**
@@ -115,6 +115,8 @@ public class UserContactSearch implements SearchPlugin {
 	 */
 	public Search createSearch(SearchQuery searchQuery) {
 		List results = new ArrayList();
+		List alreadyAddedContacts = new ArrayList();
+		
 		BasicSearch searcher = new BasicSearch();
 		searcher.setSearchName(getSearchName());
 		searcher.setSearchType(SEARCH_TYPE);
@@ -124,40 +126,47 @@ public class UserContactSearch implements SearchPlugin {
 			Iterator iter = users.iterator();
 			while (iter.hasNext()) {
 				User user = (User) iter.next();
-				StringBuffer name = new StringBuffer();
-				name.append(user.getName());
-				StringBuffer abstractText = new StringBuffer();
-				Collection emails = user.getEmails();
-				Collection phones = user.getPhones();
-				Collection addresses = user.getAddresses();
-				boolean someThingAdded = false;
-				if (addresses != null && !addresses.isEmpty()) {
-					abstractText.append(((Address) addresses.iterator().next()).getStreetAddress());
-					someThingAdded = true;
+				if(alreadyAddedContacts.contains(user.getPrimaryKey())){
+					//don't add twice
+					continue;
 				}
-				if (phones != null && !phones.isEmpty()) {
-					String number = ((Phone) phones.iterator().next()).getNumber();
-					if (!"".equals(number) && !"null".equals(number)) {
-						if (someThingAdded) {
-							abstractText.append(" - ");
-						}
-						abstractText.append(number);
+				else{
+					alreadyAddedContacts.add(user.getPrimaryKey());
+					StringBuffer name = new StringBuffer();
+					name.append(user.getName());
+					StringBuffer abstractText = new StringBuffer();
+					Collection emails = user.getEmails();
+					Collection phones = user.getPhones();
+					Collection addresses = user.getAddresses();
+					boolean someThingAdded = false;
+					if (addresses != null && !addresses.isEmpty()) {
+						abstractText.append(((Address) addresses.iterator().next()).getStreetAddress());
 						someThingAdded = true;
 					}
+					if (phones != null && !phones.isEmpty()) {
+						String number = ((Phone) phones.iterator().next()).getNumber();
+						if (!"".equals(number) && !"null".equals(number)) {
+							if (someThingAdded) {
+								abstractText.append(" - ");
+							}
+							abstractText.append(number);
+							someThingAdded = true;
+						}
+					}
+					BasicSearchResult result = new BasicSearchResult();
+					result.setSearchResultType(SEARCH_TYPE);
+					if (emails != null && !emails.isEmpty()) {
+						String email = ((Email) emails.iterator().next()).getEmailAddress();
+						result.setSearchResultExtraInformation(email);
+						result.setSearchResultURI("mailto:" + email);
+					}
+					else {
+						result.setSearchResultURI("#");
+					}
+					result.setSearchResultName(name.toString());
+					result.setSearchResultAbstract(abstractText.toString());
+					results.add(result);
 				}
-				BasicSearchResult result = new BasicSearchResult();
-				result.setSearchResultType(SEARCH_TYPE);
-				if (emails != null && !emails.isEmpty()) {
-					String email = ((Email) emails.iterator().next()).getEmailAddress();
-					result.setSearchResultExtraInformation(email);
-					result.setSearchResultURI("mailto:" + email);
-				}
-				else {
-					result.setSearchResultURI("#");
-				}
-				result.setSearchResultName(name.toString());
-				result.setSearchResultAbstract(abstractText.toString());
-				results.add(result);
 			}
 		}
 		searcher.setSearchResults(results);
