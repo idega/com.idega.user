@@ -97,13 +97,18 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
 
   public void main(IWContext iwc) throws Exception {
     IWResourceBundle iwrb = getResourceBundle(iwc);
-    setTitle(iwrb.getLocalizedString("searchwindow.title", "Moving"));
-    addTitle(iwrb.getLocalizedString("searchwindow.title", "Moving"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+    setTitle(iwrb.getLocalizedString("massmovingWindow.title", "Moving"));
+    addTitle(iwrb.getLocalizedString("massmovingWindow.title", "Moving"), IWConstants.BUILDER_FONT_STYLE_TITLE);
     
     String action = parseRequest(iwc);
     if (SHOW_CHILDREN_OF_GROUP_ACTION.equals(action)) {
       showListOfChildren(iwrb, iwc);
     }
+    // show error message
+    String errorMessage = iwrb.getLocalizedString("mm_select_club", "Please select first a club");
+    Text error = new Text(errorMessage);
+    error.setBold();
+    add(error);
   }
 
   private String parseRequest(IWContext iwc) {
