@@ -354,7 +354,7 @@ public class Toolbar extends Page implements IWBrowserView {
       Link tLink18 = new Link(text8);
 			tLink18.setStyleClass(styledLink);
       tLink18.setWindowToOpen(com.idega.block.datareport.presentation.ReportOverviewWindow.class);
-      ICFile queryFolder = lookUpFile(QUERY_FOLDER_NAME);
+      //ICFile queryFolder = lookUpFile(QUERY_FOLDER_NAME);
       ICFile layoutFolder = lookUpFile(LAYOUT_FOLDER_NAME);
       if (layoutFolder != null) {
         tLink18.addParameter(ReportQueryOverview.SET_ID_OF_DESIGN_FOLDER_KEY, layoutFolder.getPrimaryKey().toString());
