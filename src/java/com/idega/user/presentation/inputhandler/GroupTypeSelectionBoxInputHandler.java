@@ -48,9 +48,10 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 				Iterator iter = groupTypes.iterator();
 				while (iter.hasNext()) {
 					GroupType groupType = groupTypeHome.findByPrimaryKey(iter.next());
-					String name = groupType.getDefaultGroupName();
-					
-					addMenuElement(groupType.getPrimaryKey().toString(), name);
+					String name = groupType.getType();
+					if(name!=null) {
+						addMenuElement(groupType.getPrimaryKey().toString(), name);
+					}
 				}
 			}
 		} catch (RemoteException e) {
@@ -109,7 +110,7 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 					buf.append(", ");
 				}
 				GroupType gType = (GroupType) gtIter.next();
-				String name = gType.getDefaultGroupName();
+				String name = gType.getType();
 				buf.append(name);
 			}
 			result = buf.toString();
