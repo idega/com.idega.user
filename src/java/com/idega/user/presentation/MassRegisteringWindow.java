@@ -71,7 +71,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
         iwrb = getResourceBundle(iwc);
         super.main(iwc);
         setTitle("Mass Registering Window");
-        addTitle(iwrb.getLocalizedString("mass_registering_window", "Mass Registering Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+        addTitle(iwrb.getLocalizedString("mass_registering_window", "Mass Registering Window"), TITLE_STYLECLASS);
         
         init(iwc);
         if (group != null) {

@@ -115,7 +115,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 
 	public void main(IWContext iwc) throws Exception {
 		iwrb = this.getResourceBundle(iwc);
-		addTitle(iwrb.getLocalizedString("gpow.group_owners_window", "Group Owners Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+		addTitle(iwrb.getLocalizedString("gpow.group_owners_window", "Group Owners Window"), TITLE_STYLECLASS);
 
 
 

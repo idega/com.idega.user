@@ -90,7 +90,7 @@ public class PostalCodeEditorWindow extends StyledIWAdminWindow{
 			Form form = new Form();
 	
 			setTitle(iwrb.getLocalizedString("postalcodeeditorwindow.title", "Postal codes"));
-			addTitle(iwrb.getLocalizedString("postalcodeeditorwindow.title", "Postal codes"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+			addTitle(iwrb.getLocalizedString("postalcodeeditorwindow.title", "Postal codes"), TITLE_STYLECLASS);
 			setName(iwrb.getLocalizedString("postalcodeeditorwindow.title", "Postal codes"));
 	
 			add(form,iwc);

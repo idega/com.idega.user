@@ -62,7 +62,7 @@ public class GroupChooserWindow extends StyledAbstractChooserWindow {
 	 */
 	public void displaySelection(IWContext iwc) {
 		IWResourceBundle iwrb = this.getResourceBundle(iwc);
-		addTitle(iwrb.getLocalizedString("select_group","Select group"),IWConstants.BUILDER_FONT_STYLE_TITLE);
+		addTitle(iwrb.getLocalizedString("select_group","Select group"), TITLE_STYLECLASS);
 		setTitle(iwrb.getLocalizedString("select_group","Select group"));
 		setName(iwrb.getLocalizedString("select_group","Select group"));
 		setStyles();
