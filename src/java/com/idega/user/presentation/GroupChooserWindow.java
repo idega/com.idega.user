@@ -33,6 +33,9 @@ import com.idega.user.data.GroupType;
 
 public class GroupChooserWindow extends AbstractChooserWindow {
 
+
+	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
+  
   private static final int _width = 280;
   private static final int _height = 400;
   private static final String _linkStyle = "font-family:Arial,Helvetica,sans-serif;font-size:8pt;color:#000000;text-decoration:none;";
@@ -209,5 +212,8 @@ public class GroupChooserWindow extends AbstractChooserWindow {
     return false;
   }
   
-  
+	public String getBundleIdentifier() {
+			return IW_BUNDLE_IDENTIFIER;
+	}
+
 }
