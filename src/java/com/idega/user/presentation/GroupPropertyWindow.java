@@ -22,7 +22,7 @@ import com.idega.user.data.UserGroupPlugIn;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -83,7 +83,7 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 
 	public void main(IWContext iwc) throws Exception {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		addTitle(iwrb.getLocalizedString("group_property_window", "User Property Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+		addTitle(iwrb.getLocalizedString("group_property_window", "Group Property Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
     int parentGroupId = -1;
     if (iwc.isParameterSet(PARENT_GROUP_ID_KEY))
       parentGroupId = Integer.parseInt(iwc.getParameter(PARENT_GROUP_ID_KEY));    
