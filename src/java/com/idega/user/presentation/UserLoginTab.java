@@ -13,7 +13,7 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.TextInput;
-import com.idega.user.util.ICUserConstants;
+import com.idega.user.business.UserConstants;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -475,7 +475,7 @@ public class UserLoginTab extends UserTab {
 		IWBundle iwb = getBundle(iwc);
 		Help help = new Help();
 		Image helpImage = iwb.getImage("help.gif");
-		help.setHelpTextBundle( ICUserConstants.HELP_BUNDLE_IDENTFIER);
+		help.setHelpTextBundle(UserConstants.HELP_BUNDLE_IDENTFIER);
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;

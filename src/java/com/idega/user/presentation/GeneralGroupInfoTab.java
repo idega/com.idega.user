@@ -1,7 +1,6 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
-
 import com.idega.builder.presentation.IBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
@@ -19,9 +18,9 @@ import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
-import com.idega.user.util.ICUserConstants;
 import com.idega.util.Disposable;
 
 /**
@@ -419,7 +418,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		IWBundle iwb = getBundle(iwc);
 		Help help = new Help();
 		Image helpImage = iwb.getImage("help.gif");
-		help.setHelpTextBundle( ICUserConstants.HELP_BUNDLE_IDENTFIER);
+		help.setHelpTextBundle( UserConstants.HELP_BUNDLE_IDENTFIER);
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;

@@ -2,7 +2,6 @@ package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
 import java.util.Hashtable;
-
 import com.idega.business.IBOLookup;
 import com.idega.core.location.business.CommuneBusiness;
 import com.idega.core.location.data.Address;
@@ -22,8 +21,8 @@ import com.idega.presentation.ui.PostalCodeDropdownMenu;
 import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.util.SelectorUtility;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserConstants;
 import com.idega.user.data.User;
-import com.idega.user.util.ICUserConstants;
 
 /**
  * Title:        User
@@ -240,7 +239,7 @@ public class AddressInfoTab extends UserTab {
 		IWBundle iwb = getBundle(iwc);
 		Help help = new Help();
 		Image helpImage = iwb.getImage("help.gif");
-		help.setHelpTextBundle( ICUserConstants.HELP_BUNDLE_IDENTFIER);
+		help.setHelpTextBundle(UserConstants.HELP_BUNDLE_IDENTFIER);
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;

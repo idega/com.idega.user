@@ -4,10 +4,8 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
-
 import com.idega.block.media.presentation.ImageInserter;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWBundle;
@@ -22,11 +20,11 @@ import com.idega.presentation.ui.DateInput;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
+import com.idega.user.business.UserConstants;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
-import com.idega.user.util.ICUserConstants;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -268,7 +266,7 @@ public class GeneralUserInfoTab extends UserTab {
 		IWBundle iwb = getBundle(iwc);
 		Help help = new Help();
 		Image helpImage = iwb.getImage("help.gif");
-		help.setHelpTextBundle( ICUserConstants.HELP_BUNDLE_IDENTFIER);
+		help.setHelpTextBundle( UserConstants.HELP_BUNDLE_IDENTFIER);
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;
