@@ -17,6 +17,7 @@ import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.presentation.*;
@@ -114,6 +115,8 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 
 	public void main(IWContext iwc) throws Exception {
 		iwrb = this.getResourceBundle(iwc);
+		addTitle(iwrb.getLocalizedString("gpow.group_owners_window", "Group Owners Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+
 
 
 		parseAction(iwc);
@@ -233,7 +236,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 		browser.setColorForOddRows(IWColor.getHexColorString(246, 246, 247));
 
 		int column = 1;
-		String nameKey = "UserName";
+		String nameKey = iwrb.getLocalizedString("gpow.user_name", "User name");
 
 		//	define link converter class
 		EntityToPresentationObjectConverter converterLink = new EntityToPresentationObjectConverter() {

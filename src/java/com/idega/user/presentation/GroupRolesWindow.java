@@ -22,6 +22,7 @@ import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
@@ -120,7 +121,8 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
     public void main(IWContext iwc) throws Exception {
         iwrb = this.getResourceBundle(iwc);
         access = iwc.getAccessController();
-        super.setTitle(iwrb.getLocalizedString("grouproleswindow.title", "Group Roles Window"));
+        addTitle(iwrb.getLocalizedString("grouproleswindow.title", "Group Roles Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+
         parseAction(iwc);
         
         if (saveChanges) {
