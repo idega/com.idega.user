@@ -72,14 +72,6 @@ public class StyledIWAdmin extends IWAdminWindow {
 		super(name, classToInstanciate, template);
 	}
 
-	/**
-	 * @param name
-	 * @param classToInstanciate
-	 * @param template
-	 */
-	public StyledIWAdmin(String name, Class classToInstanciate, Class template) {
-		super(name, classToInstanciate, template);
-	}
 
 	/**
 	 * @param name
