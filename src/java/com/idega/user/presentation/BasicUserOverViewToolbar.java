@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import com.idega.builder.data.IBDomain;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
@@ -24,6 +25,9 @@ import com.idega.util.IWColor;
  */
 public class BasicUserOverViewToolbar extends Toolbar {
 	private Group selectedGroup;
+  private Group parentGroup;
+  private IBDomain parentDomain;
+  
 	public static final String PARAMETERSTRING_GROUP_ID = "ic_group_id";
 
 	/**
@@ -140,6 +144,26 @@ public class BasicUserOverViewToolbar extends Toolbar {
 				tLink12.setWindowToOpen(GroupPermissionWindow.class);
 
 				toolbar1.add(button4, 4, 1);
+        
+        // delete button
+       
+        Table button5 = new Table(2, 1);
+        button5.setCellpadding(0);
+        Image iconDeleteGroup = iwb.getImage("toolbar_delete.gif");
+        button5.add(iconDeleteGroup, 1, 1);
+        Text text5 = new Text(iwrb.getLocalizedString("Delete", "Delete"));
+        text5.setFontFace(Text.FONT_FACE_VERDANA);
+        text5.setFontSize(Text.FONT_SIZE_7_HTML_1);
+        Link tLink5 = new Link(text5);
+        tLink5.setWindowToOpen(DeleteGroupConfirmWindow.class);
+        if (selectedGroup != null)
+          tLink5.addParameter(DeleteGroupConfirmWindow.GROUP_ID_KEY, ((Integer) selectedGroup.getPrimaryKey()).toString());
+        if (parentGroup != null)
+          tLink5.addParameter(DeleteGroupConfirmWindow.PARENT_GROUP_ID_KEY, ((Integer) parentGroup.getPrimaryKey()).toString());
+        if (parentDomain != null)
+          tLink5.addParameter(DeleteGroupConfirmWindow.PARENT_DOMAIN_ID_KEY, ((Integer) parentDomain.getPrimaryKey()).toString());
+        button5.add(tLink5, 2, 1);
+        toolbar1.add(button5, 5, 1); 
 			}
 		}
 
@@ -192,6 +216,38 @@ public class BasicUserOverViewToolbar extends Toolbar {
 	 */
 	public void setSelectedGroup(Group selectedGroup) {
 		this.selectedGroup = selectedGroup;
+	}
+
+	/**
+	 * Returns the domain.
+	 * @return IBDomain
+	 */
+	public IBDomain getDomain() {
+		return parentDomain;
+	}
+
+	/**
+	 * Returns the parentGroup.
+	 * @return Group
+	 */
+	public Group getParentGroup() {
+		return parentGroup;
+	}
+
+	/**
+	 * Sets the domain.
+	 * @param domain The domain to set
+	 */
+	public void setDomain(IBDomain parentDomain) {
+		this.parentDomain = parentDomain;
+	}
+
+	/**
+	 * Sets the parentGroup.
+	 * @param parentGroup The parentGroup to set
+	 */
+	public void setParentGroup(Group parentGroup) {
+		this.parentGroup = parentGroup;
 	}
 
 }

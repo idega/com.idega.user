@@ -89,7 +89,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		
 		if (toolbar == null) toolbar = new BasicUserOverViewToolbar();
 		BasicUserOverviewPS ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
-		
+	
 		Group selectedGroup = ps.getSelectedGroup();
 		Group aliasGroup = null;
 		
@@ -102,6 +102,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		int userCount = 0;
 		if (selectedGroup != null) {	
 			toolbar.setSelectedGroup(selectedGroup);
+      toolbar.setDomain(ps.getParentDomainOfSelection());
+      toolbar.setParentGroup(ps.getParentGroupOfSelection());
 			if (aliasGroup != null)
 				users = this.getUserBusiness(iwc).getUsersInGroup(aliasGroup);
 			else

@@ -34,6 +34,9 @@ public class BasicUserOverviewPS extends IWPresentationStateImpl implements IWAc
 //  String color2 = "FF0000";
 //  String color = color1;
 
+  private Group parentGroupOfSelection = null;
+  private IBDomain parentDomainOfSelection = null;
+
   Group _selectedGroup = null;
   IBDomain _selectedDomain = null;
 
@@ -48,6 +51,8 @@ public class BasicUserOverviewPS extends IWPresentationStateImpl implements IWAc
   public BasicUserOverviewPS() {
 
   }
+  
+
 
   public int getSelectedPartition(){
     return _selectedPartition;
@@ -98,6 +103,8 @@ public class BasicUserOverviewPS extends IWPresentationStateImpl implements IWAc
       _selectedPartition = _selectedPartitionDefaultValue;
       _partitionSize = _partitionSizeDefaultValue;
       _firstPartitionIndex = _firstPartitionIndexDefaultValue;
+      parentGroupOfSelection = ((SelectGroupEvent)e).getParentGroupOfSelection();
+      parentDomainOfSelection = ((SelectGroupEvent)e).getParentDomainOfSelection();
       this.fireStateChanged();
     }
 
@@ -130,5 +137,21 @@ public class BasicUserOverviewPS extends IWPresentationStateImpl implements IWAc
 
   }
 
+
+	/**
+	 * Returns the parentDomainOfSelection.
+	 * @return IBDomain
+	 */
+	public IBDomain getParentDomainOfSelection() {
+		return parentDomainOfSelection;
+	}
+
+  /**
+  * Returns the parentGroupOfSelection.
+  * @return Group
+  */
+  public Group getParentGroupOfSelection() {
+	  return parentGroupOfSelection;
+  }
 
 }
