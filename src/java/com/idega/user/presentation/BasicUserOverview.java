@@ -92,13 +92,21 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		BasicUserOverviewPS ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
 		
 		Group selectedGroup = ps.getSelectedGroup();
+		Group aliasGroup = null;
+		
+		if (selectedGroup != null && selectedGroup.getGroupType().equals("alias")) {
+			aliasGroup = selectedGroup.getAlias();
+		}
+		
 		IBDomain selectedDomain = ps.getSelectedDomain();
 		Collection users = null;
 		int userCount = 0;
-		if (selectedGroup != null) {
-			
+		if (selectedGroup != null) {	
 			toolbar.setSelectedGroup(selectedGroup);
-			users = this.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
+			if (aliasGroup != null)
+				users = this.getUserBusiness(iwc).getUsersInGroup(aliasGroup);
+			else
+				users = this.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
 			if (users == null) {
 				userCount = 0;
 			}

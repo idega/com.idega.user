@@ -13,6 +13,7 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
@@ -75,6 +76,10 @@ public class CreateUser extends Window {
 	private SubmitButton cancelButton;
 
 	private Form myForm;
+	
+	private String selectedGroupId = null;
+
+	public static String PARAMETERSTRING_GROUP_ID = "default_group";
 
 	public static String okButtonParameterValue = "ok";
 	public static String cancelButtonParameterValue = "cancel";
@@ -103,13 +108,13 @@ public class CreateUser extends Window {
 
 	public CreateUser() {
 		super();
-		this.setName("idegaWeb Builder - Stofna félaga");
-		this.setHeight(490);
-		this.setWidth(390);
-		this.setBackgroundColor(new IWColor(207,208,210));
-		this.setScrollbar(false);
+		setName("idegaWeb Builder - Stofna félaga");
+		setHeight(490);
+		setWidth(390);
+		setBackgroundColor(new IWColor(207,208,210));
+		setScrollbar(false);
 		myForm = new Form();
-		this.add(myForm);
+		add(myForm);
 		//business = new UserBusiness();
 		initializeTexts();
 		initializeFields();
@@ -164,8 +169,7 @@ public class CreateUser extends Window {
 		goToPropertiesField = new CheckBox(goToPropertiesFieldParameterName);
 		goToPropertiesField.setChecked(true);
 
-		primaryGroupField = new DropdownMenu(this.primaryGroupFieldParameterName);
-		//primaryGroupField.addMenuElement("","aðalhópur");
+		primaryGroupField = new DropdownMenu(primaryGroupFieldParameterName);
 		primaryGroupField.addSeparator();
 
 		try {
@@ -173,12 +177,10 @@ public class CreateUser extends Window {
 			gr[0] = ((UserGroupRepresentative) com.idega.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
 			GroupHome home = (GroupHome) IDOLookup.getHome(Group.class);
 			Collection groups = home.findAllGroups(gr, false);
-			//      List groups = com.idega.user.data.GroupBMPBean.getAllGroups(gr,false);
 			if (groups != null) {
 				/**
 				 * @todo filter standardGroups
 				 */
-				//groups.removeAll(AccessController.getStandardGroups());
 				Iterator iter = groups.iterator();
 				while (iter.hasNext()) {
 					Group item = (Group) iter.next();
@@ -192,7 +194,7 @@ public class CreateUser extends Window {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
 		okButton = new SubmitButton("     OK     ", submitButtonParameterName, okButtonParameterValue);
 		cancelButton = new SubmitButton(" Cancel ", submitButtonParameterName, cancelButtonParameterValue);
 
@@ -233,16 +235,16 @@ public class CreateUser extends Window {
 		loginTable.setHeight(3, rowHeight);
 		loginTable.setWidth(1, "110");
 
-		loginTable.add(this.userLoginText, 1, 1);
-		loginTable.add(this.userLoginField, 2, 1);
-		loginTable.add(this.generateLoginField, 3, 1);
-		loginTable.add(this.generateLoginText, 4, 1);
-		loginTable.add(this.passwordText, 1, 2);
-		loginTable.add(this.passwordField, 2, 2);
-		loginTable.add(this.generatePasswordField, 3, 2);
-		loginTable.add(this.generatePasswordText, 4, 2);
-		loginTable.add(this.confirmPasswordText, 1, 3);
-		loginTable.add(this.confirmPasswordField, 2, 3);
+		loginTable.add(userLoginText, 1, 1);
+		loginTable.add(userLoginField, 2, 1);
+		loginTable.add(generateLoginField, 3, 1);
+		loginTable.add(generateLoginText, 4, 1);
+		loginTable.add(passwordText, 1, 2);
+		loginTable.add(passwordField, 2, 2);
+		loginTable.add(generatePasswordField, 3, 2);
+		loginTable.add(generatePasswordText, 4, 2);
+		loginTable.add(confirmPasswordText, 1, 3);
+		loginTable.add(confirmPasswordField, 2, 3);
 		// loginTable end
 
 		// groupTable begin
@@ -252,8 +254,8 @@ public class CreateUser extends Window {
 		groupTable.setHeight(1, rowHeight);
 		groupTable.setWidth(1, "110");
 
-		groupTable.add(this.primaryGroupText, 1, 1);
-		groupTable.add(this.primaryGroupField, 2, 1);
+		groupTable.add(primaryGroupText, 1, 1);
+		groupTable.add(primaryGroupField, 2, 1);
 		// groupTable end
 
 		// AccountPropertyTable begin
@@ -281,8 +283,8 @@ public class CreateUser extends Window {
 		propertyTable.setCellspacing(0);
 		propertyTable.setHeight(1, rowHeight);
 
-		propertyTable.add(this.goToPropertiesText, 1, 1);
-		propertyTable.add(this.goToPropertiesField, 2, 1);
+		propertyTable.add(goToPropertiesText, 1, 1);
+		propertyTable.add(goToPropertiesField, 2, 1);
 		// propertyTable end
 
 		// buttonTable begin
@@ -313,17 +315,17 @@ public class CreateUser extends Window {
 
 		User newUser = null;
 
-		String login = iwc.getParameter(this.userLoginFieldParameterName);
-		String passw = iwc.getParameter(this.passwordFieldParameterName);
-		String cfPassw = iwc.getParameter(this.confirmPasswordFieldParameterName);
+		String login = iwc.getParameter(userLoginFieldParameterName);
+		String passw = iwc.getParameter(passwordFieldParameterName);
+		String cfPassw = iwc.getParameter(confirmPasswordFieldParameterName);
 		String password = null;
 		String ssn = iwc.getParameter(ssnFieldParameterName);
 
-		String mustChage = iwc.getParameter(this.mustChangePasswordFieldParameterName);
-		String cannotchangePassw = iwc.getParameter(this.cannotChangePasswordFieldParameterName);
-		String passwNeverExpires = iwc.getParameter(this.passwordNeverExpiresFieldParameterName);
-		String disabledAccount = iwc.getParameter(this.disableAccountFieldParameterName);
-		String primaryGroup = iwc.getParameter(this.primaryGroupFieldParameterName);
+		String mustChage = iwc.getParameter(mustChangePasswordFieldParameterName);
+		String cannotchangePassw = iwc.getParameter(cannotChangePasswordFieldParameterName);
+		String passwNeverExpires = iwc.getParameter(passwordNeverExpiresFieldParameterName);
+		String disabledAccount = iwc.getParameter(disableAccountFieldParameterName);
+		String primaryGroup = iwc.getParameter(primaryGroupFieldParameterName);
 
 		Boolean bMustChange;
 		Boolean bAllowedToChangePassw;
@@ -424,21 +426,26 @@ public class CreateUser extends Window {
 			Link gotoLink = new Link();
 			gotoLink.setWindowToOpen(UserPropertyWindow.class);
 			gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, newUser.getPrimaryKey().toString());
-			this.setWindowToOpenOnLoad(gotoLink, iwc);
+			setWindowToOpenOnLoad(gotoLink, iwc);
 		}
 
 	}
 
 	public void main(IWContext iwc) throws Exception {
 		String submit = iwc.getParameter("submit");
+		selectedGroupId = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
+		if (selectedGroupId != null) {
+			primaryGroupField.setSelectedElement(selectedGroupId);
+			myForm.add(new HiddenInput(PARAMETERSTRING_GROUP_ID,selectedGroupId));
+		}
 		if (submit != null) {
 			if (submit.equals("ok")) {
-				this.commitCreation(iwc);
-				this.close();
-				this.setParentToReload();
+				commitCreation(iwc);
+				close();
+				setParentToReload();
 			}
 			else if (submit.equals("cancel")) {
-				this.close();
+				close();
 			}
 		}
 	}
