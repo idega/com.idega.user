@@ -12,7 +12,6 @@ import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.app.IWBrowser;
 import com.idega.idegaweb.browser.presentation.IWBrowseControl;
@@ -166,7 +165,7 @@ public class UserApplication extends IWBrowser {
 
 
     public void main(IWContext iwc) throws Exception{
-    	IWBundle iwb = getBundle(iwc);
+    	//IWBundle iwb = getBundle(iwc);
 		
       IWControlFramePresentationState state = (IWControlFramePresentationState)this.getPresentationState(iwc);
       if(state != null){
