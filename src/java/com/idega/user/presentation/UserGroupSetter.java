@@ -117,7 +117,9 @@ import java.util.List;
           iter = directGroups.iterator();
           while (iter.hasNext()) {
             Group item = (Group) iter.next();
-            right.addElement(item.getPrimaryKey().toString(),groupBusiness.getNameOfGroupWithParentName(item));
+            if( item != null){
+            	right.addElement(item.getPrimaryKey().toString(),groupBusiness.getNameOfGroupWithParentName(item));
+            }
           }
         }
         // former:Collection notDirectGroups = userBusiness.getNonParentGroups(userId);
