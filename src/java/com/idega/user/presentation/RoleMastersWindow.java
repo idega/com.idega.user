@@ -223,7 +223,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 			}
 		};
 
-		browser.setMandatoryColumnWithConverter(column++, nameKey, converterLink);
+		browser.setMandatoryColumnWithConverter(column++, iwrb.getLocalizedString(nameKey,"User Name"), converterLink);
 
 		//converter ends
 
