@@ -35,7 +35,7 @@ public class UserChooser extends AbstractChooser {
   		iwc.removeSessionAttribute(UserChooserWindow.AVAILABLE_USER_PKS_SESSION_PARAMETER);
   		iwc.removeSessionAttribute(UserChooserWindow.USING_AVAILABLE_USER_PKS_SESSION_PARAMETER);	
   	}
-    IWBundle iwb = iwc.getApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
+    IWBundle iwb = iwc.getIWMainApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
     setChooseButtonImage(iwb.getImage("open.gif",iwb.getResourceBundle(iwc).getLocalizedString("choose", "Choose")));
   }
 

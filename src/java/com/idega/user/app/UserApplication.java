@@ -77,7 +77,7 @@ public class UserApplication extends IWBrowser {
 
     //this.addToBottom(new Bottom());
    // System.out.println("SERVLET URL : "+getIWApplicationContext().getApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));
-    this.setBottomURL(getIWApplicationContext().getApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));
+    this.setBottomURL(getIWApplicationContext().getIWMainApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));
     
     
 //    this.setBorder(20);

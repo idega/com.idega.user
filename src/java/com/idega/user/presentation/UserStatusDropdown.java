@@ -73,7 +73,7 @@ public class UserStatusDropdown extends DropdownMenu{
   
   private SortedMap getSortedStatuses(Collection statuses, IWContext iwc)  {
     // get collator
-    Locale locale = iwc.getApplication().getSettings().getDefaultLocale();
+    Locale locale = iwc.getIWMainApplication().getSettings().getDefaultLocale();
     Collator collator = Collator.getInstance(locale);
     // create sorted map
     SortedMap stringPrimaryKeyMap = new TreeMap(collator);

@@ -101,7 +101,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
   public void actionPerformed(IWPresentationEvent e) throws IWException {
 //    System.out.println("[CreateGroupWindowPS]: ps = "+this);
 //    System.out.println("[CreateGroupWindowPS] : event = " + e);
-		iwrb = e.getIWContext().getApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(e.getIWContext());
+		iwrb = e.getIWContext().getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(e.getIWContext());
 
     if(e instanceof CreateGroupEvent ){
 //      System.out.println("[CreateGroupWindowPS] : (e instanceof CreateGroupEvent) = true");

@@ -61,7 +61,7 @@ public class UserChooserWindow extends AbstractChooserWindow {
 	private void init(IWContext iwc) {
 	
 		searchString = iwc.getParameter(PARAMETER_SEARCH);
-    iwrb = iwc.getApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+    iwrb = iwc.getIWMainApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
     showAll = iwc.isParameterSet(PARAMETER_VIEW_ALL);
     
 		if (iwc.isParameterSet(PARAMETER_CURRENT_PAGE)) {
