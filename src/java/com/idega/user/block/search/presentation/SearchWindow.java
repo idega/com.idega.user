@@ -55,8 +55,8 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 
 
 	public SearchWindow() {
-		setWidth(640);
-		setHeight(400);
+		setWidth(620);
+		setHeight(380);
 		setScrollbar(false);
 		setResizable(true);
 	}
@@ -96,30 +96,52 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 
 		setTitle(iwrb.getLocalizedString("searchwindow.title", "Search"));
 		addTitle(iwrb.getLocalizedString("searchwindow.title", "Search"), IWConstants.BUILDER_FONT_STYLE_TITLE);
-
+		setName(iwrb.getLocalizedString("searchwindow.title", "Search"));
+		
 		add(form);
-		Table tab = new Table(2,11);
+		Table tab = new Table(4,13);
 		form.add(tab);
 		
 		tab.setColumnVerticalAlignment(1, Table.VERTICAL_ALIGN_TOP);
 		tab.setColumnVerticalAlignment(2, Table.VERTICAL_ALIGN_TOP);
 
-		tab.setCellspacing(3);
-		tab.setAlignment(2, 11, Table.HORIZONTAL_ALIGN_RIGHT);
-		tab.mergeCells(1,4,1,10);
+		tab.setCellspacing(2);
+		tab.setAlignment(4, 12, Table.HORIZONTAL_ALIGN_RIGHT);
+		tab.mergeCells(1,4,2,11);
 		tab.setWidth(Table.HUNDRED_PERCENT);
 		tab.setHeight(Table.HUNDRED_PERCENT);
 		
-		//simple search param
-		TextInput inputName = new TextInput(searchEvent.SEARCH_FIELD_SIMPLE_SEARCH_STRING);
-		inputName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+		//names params
+		//first name
+		TextInput firstName = new TextInput(searchEvent.SEARCH_FIELD_FIRST_NAME);
+		firstName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 
+		Text firstNameText = new Text();
+		firstNameText.setText(iwrb.getLocalizedString("user.search.window.user_first_name", "First name"));
+		firstNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		tab.add(firstNameText, 1, 1);
+		tab.add(firstName, 1, 2);
 
-		Text inputText = new Text();
-		inputText.setText(iwrb.getLocalizedString("user.search.window.user_name", "Name"));
-		inputText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(inputText, 1, 1);
-		tab.add(inputName, 1, 2);
+		//middle name
+		TextInput middleName = new TextInput(searchEvent.SEARCH_FIELD_MIDDLE_NAME);
+		middleName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+
+		Text middleNameText = new Text();
+		middleNameText.setText(iwrb.getLocalizedString("user.search.window.user_middle_name", "Middle name"));
+		middleNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		tab.add(middleNameText, 2, 1);
+		tab.add(middleName, 2, 2);
+		
+		//middle name
+		TextInput lastName = new TextInput(searchEvent.SEARCH_FIELD_LAST_NAME);
+		lastName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+		
+		Text lastNameText = new Text();
+		lastNameText.setText(iwrb.getLocalizedString("user.search.window.user_last_name", "Last name"));
+		lastNameText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+		tab.add(lastNameText, 3, 1);
+		tab.add(lastName, 3, 2);
+		
 		
 		//user status dropdown
 		DropdownMenu statusMenu = new UserStatusDropdown(UserSearchEvent.SEARCH_FIELD_STATUS_ID);
@@ -130,13 +152,14 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		
 		Text status = new Text(iwrb.getLocalizedString("user.search.window.status", "Status"));
 		status.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(status, 2, 1);
-		tab.add(statusMenu, 2, 2);
+		tab.add(status, 3, 3);
+		tab.add(statusMenu, 3, 4);
 		
 		//group selectionbox
 		
 		SelectionBox groupSel = new SelectionBox(UserSearchEvent.SEARCH_FIELD_GROUPS);
-		groupSel.setHeight(13);
+		groupSel.setHeight(14); 
+		groupSel.setWidth("240");
 
 		Collection groupsCol = getUserBusiness(iwc).getAllGroupsWithViewPermission(iwc.getCurrentUser(),iwc);
 		
@@ -146,6 +169,8 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 			groupSel.addMenuElement( ((Integer)group.getPrimaryKey()).intValue(), getGroupBusiness(iwc).getNameOfGroupWithParentName(group) );
 			//getchildren
 		}
+		
+
 		
 		Text groups = new Text(iwrb.getLocalizedString("user.search.window.groups", "Groups"));
 		groups.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
@@ -170,8 +195,8 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		
 		Text ages = new Text(iwrb.getLocalizedString("user.search.window.ages", "Age"));
 		ages.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(ages, 2,3);
-		tab.add(ageTable, 2, 4); 
+		tab.add(ages, 3,5);
+		tab.add(ageTable, 3, 6); 
 		
 		//gender
 		Integer maleId = getUserBusiness(iwc).getGenderId("male");
@@ -184,8 +209,8 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		
 		Text gender = new Text(iwrb.getLocalizedString("user.search.window.gender", "Gender"));
 		gender.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(gender, 2,5);
-		tab.add(genders, 2, 6); 
+		tab.add(gender, 3,7);
+		tab.add(genders, 3, 8); 
 		
 //	personal id
 		TextInput ssn = new TextInput(searchEvent.SEARCH_FIELD_PERSONAL_ID);
@@ -195,8 +220,8 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		Text ssnText = new Text();
 		ssnText.setText(iwrb.getLocalizedString("user.search.window.personal_id", "SSN"));
 		ssnText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(ssnText, 2, 7);
-		tab.add(ssn, 2, 8);
+		tab.add(ssnText, 3, 9);
+		tab.add(ssn, 3, 10);
 			
 			
 //	streetname search
@@ -207,8 +232,8 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		Text addressText = new Text();
 		addressText.setText(iwrb.getLocalizedString("user.search.window.address", "Address"));
 		addressText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-		tab.add(addressText, 2, 9);
-		tab.add(address, 2, 10);
+		tab.add(addressText, 3, 11);
+		tab.add(address, 3, 12);
 
 		//buttons
 		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("user.search.window.search", "Search"));
@@ -217,10 +242,10 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
     
 		HiddenInput type = new HiddenInput(UserSearchEvent.SEARCH_FIELD_SEARCH_TYPE, Integer.toString(UserSearchEvent.SEARCHTYPE_ADVANCED));
 	
-		tab.add(close, 2, 11);
-		tab.add(type,2,11);
-		tab.add(Text.getNonBrakingSpace(), 2, 11);
-		tab.add(save, 2, 11);
+		tab.add(close, 3, 13);
+		tab.add(type,3,13);
+		tab.add(Text.getNonBrakingSpace(), 3, 13);
+		tab.add(save, 3, 13);
 				
 	}
 

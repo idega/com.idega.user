@@ -39,7 +39,7 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 		try {
 			UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
 						
-			Collection entities = userHome.findUsersByConditions(e.getSearchString(),e.getPersonalId()
+			Collection entities = userHome.findUsersByConditions(e.getFirstName(),e.getMiddleName(),e.getLastName(),e.getPersonalId()
 				,e.getAddress(),null,e.getGenderId(),e.getStatusId()
 				,e.getAgeFloor(),e.getAgeCeil(),e.getGroups(),null,true);
 			
