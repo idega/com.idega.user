@@ -5,6 +5,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.event.ChangeListener;
+
+
+import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.core.data.Address;
@@ -16,11 +20,13 @@ import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWPresentationLocation;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
@@ -81,7 +87,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
   public Table getUsers(IWContext iwc) throws Exception{
     this.empty();
-	iwb = this.getBundle(iwc);
+	  iwb = this.getBundle(iwc);
     iwrb = this.getResourceBundle(iwc);
     
     boolean listAll = (iwb.getProperty(ALWAYS_LIST_ALL_USERS)!=null);//temporary solutions
@@ -161,10 +167,41 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			//displaying users starts starts
 			int size = users.size();
 		
+    
+      EntityBrowser entityBrowser =  new EntityBrowser();
+      PresentationObject parentObject = this.getParentObject();
+      entityBrowser.setArtificialCompoundId(parentObject.getCompoundId(),iwc);
+      IWPresentationState presentationState = ((StatefullPresentation) parentObject).getPresentationState(iwc);
+      IWPresentationState presentationStateChild = entityBrowser.getPresentationState(iwc);
+      //presentationStateChild.setLocation(loc);
+      ChangeListener[] chListeners = presentationState.getChangeListener();
+      if(chListeners != null){
+        for (int i = 0; i < chListeners.length; i++) {
+          presentationStateChild.addChangeListener(chListeners[i]);
+        }
+      }
+      entityBrowser.setEntities(users);
+      entityBrowser.setDefaultNumberOfRows(((size>33)?size:33)+1);
+      String key = "com.idega.user.data.User.FIRST_NAME:" + 
+        "com.idega.user.data.User.LAST_NAME:" +
+        "com.idega.user.data.User.MIDDLE_NAME"; 
+      entityBrowser.setDefaultColumns(1, key);
+      entityBrowser.setDefaultColumns(2, "com.idega.user.data.User.FIRST_NAME");
+      entityBrowser.setDefaultColumns(3, "com.idega.user.data.User.LAST_NAME");
+      
+    
+    
+			userTable = new Table(6, ((size>33)?size:33)+1  );
+				returnTable.add(entityBrowser,1,2);
+        //entityBrowser.setLocation(loc);
+      if (userTable != null)
+        return returnTable;
+// does not go further!!!!!!!!!!!!
+/////////////////////////////////////////////////////////
+
 				userTable = new Table(6, ((size>33)?size:33)+1  );
 				returnTable.add(userTable,1,2);
-				
-				
+
 				
 				
 				userTable.setCellpaddingAndCellspacing(0);
@@ -483,7 +520,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     if(_presentationState == null){
       try {
         IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-        _presentationState = (BasicUserOverviewPS)stateMachine.getStateFor(this.getLocation(),this.getPresentationStateClass());
+        _presentationState = (BasicUserOverviewPS)stateMachine.getStateFor(getCompoundId(),this.getPresentationStateClass());
       }
       catch (RemoteException re) {
         throw new RuntimeException(re.getMessage());
@@ -499,6 +536,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
   public String getBundleIdentifier(){
   	return "com.idega.user";
   }
+
+
+
+
+
 
 
 } //Class end
