@@ -96,7 +96,7 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
     Form form = new Form();
     form.maintainAllParameters();
     form.add(mainTable);
-    add(form);
+    add(form,iwc);
 	}
   
   private String parseRequest(IWContext iwc)  {
