@@ -286,7 +286,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 			}
 				
 
-			if (isOwner) {
+			if (isOwner || access.hasPermitPermissionFor(selectedGroup,iwc) ) {
 				Table button4 = new Table(1, 1);
 				button4.setStyleClass(styleButton);
 				button4.setAlignment(1,1,"center");

@@ -38,6 +38,7 @@ import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupComparator;
 import com.idega.user.data.Group;
+import com.idega.user.data.User;
 import com.idega.user.event.SelectGroupEvent;
 import com.idega.util.IWColor;
 
@@ -57,7 +58,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	private static final String SESSION_PARAM_PERMISSIONS_BEFORE_SAVE = "gpw_permissions_b_s";
 	private static final String RECURSE_PERMISSIONS_TO_CHILDREN_KEY = "gpw_recurse_ch_of_gr";
 	private static final String PARAM_OVERRIDE_INHERITANCE = "gpw_over";
-	
+	private static final String PARAM_PERMISSIONS_SET_TO_CHILDREN = "gpw_inherit_perm";
 	private static final String HELP_TEXT_KEY = "group_permission_window";
 
 	//private static final String PARA = "com.idega.user";
@@ -80,7 +81,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	private IWResourceBundle iwrb = null;
 	private Group selectedGroup;
 	private boolean hasInheritedPermissions;
-	private static final String PARAM_PERMISSIONS_SET_TO_CHILDREN = "gpw_inherit_perm";
+
 	
 	/**
 	 * Constructor for GroupPermissionWindow.
@@ -302,24 +303,41 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 				boolean active = false;
 				boolean isSet = false;
-				boolean isOwner = false;
+				//used for displaying check boxes even though permission is not set
+				//perhaps the permit permission should only be allowed to permit other the same permissions?
+				boolean isOwnerOrHasPermitPermission = false;
+				 
 
 				final String columnName = path.getShortKey();
 				final String ownerType = "owner";
-
+				final String permitType = "permit";
+				final int selectedId = Integer.parseInt(selectedGroupId);
+				
 				Map permissionMap = getPermissionMapFromSession(iwc, columnName, false);
 
 				String groupId = null;
 				String permissionType = null;
 
+				
 				while (iterator.hasNext() && !isSet) {
 					ICPermission perm = (ICPermission) iterator.next();
 					groupId = perm.getContextValue();
 					permissionType = perm.getPermissionString();
 
-					isSet = columnName.equals(permissionType);
-					if (!isOwner) { //isOwner is not always set if the group also has other permissions??
-						isOwner = ownerType.equals(permissionType);
+					if(selectedId == perm.getGroupID()){
+						isSet = columnName.equals(permissionType);
+					}
+					else{
+						//don't add the permission to the displayed list because it does not belong to the selected group
+						//but to the current user or one of his parent groups. (permit permission is a special case)
+						//the group id is still added to the list so the current user can give the selected group permissions for that group
+						if(!permissionType.equals(permitType)){
+							isSet = columnName.equals(permissionType);
+						}
+					}
+					
+					if (!isOwnerOrHasPermitPermission) { //isOwner is not always set if the group also has other permissions??
+						isOwnerOrHasPermitPermission = ownerType.equals(permissionType) || permitType.equals(permissionType);
 					}
 
 					if (isSet) {
@@ -333,7 +351,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 				PresentationObject returnObj = null;
 
-				if (isSet || isOwner) {
+				if (isSet || isOwnerOrHasPermitPermission) {
 					returnObj = new CheckBox(columnName, groupId);
 					((CheckBox) returnObj).setChecked(active);
 				}
@@ -524,11 +542,31 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		Collection allPermissions = null;
 
 		try {
+			User user = iwc.getCurrentUser();
 			allPermissions = AccessControl.getAllGroupPermissionsForGroup(selectedGroup);
-			Collection ownedPermissions = AccessControl.getAllGroupPermissionsOwnedByGroup(iwc.getCurrentUser().getGroup());
+			Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
+			
+			Collection directlyRelatedParents = getGroupBusiness(iwc).getParentGroups(user);
+			
+			Iterator iterating = directlyRelatedParents.iterator();
+			ArrayList parents = new ArrayList();
+			
+			while (iterating.hasNext()) {
+				Group parent = (Group) iterating.next();
+				if(parent.getPermissionControllingGroupID()>0){
+					parents.add(parent.getPermissionControllingGroup());
+				}
+				else{
+					parents.add(parent);
+				}	
+			}
+			
+			//get all view permissions for direct parent and put in a list
+			Collection permitPermissions = AccessControl.getAllGroupPermitPermissions(parents);
+						
 			//ownedPermissions.removeAll(allPermissions);
-
 			allPermissions.addAll(ownedPermissions);
+			allPermissions.addAll(permitPermissions);
 
 		}
 		catch (Exception e) {
@@ -547,6 +585,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	private List orderAndGroupPermissionsByContextValue(Collection allPermissions, IWContext iwc) {
 
 		Iterator iter = allPermissions.iterator();
+		
 
 		//order the permissions by the groupId and create a List for each one.
 		Map map = new HashMap();
@@ -556,14 +595,18 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 		while (iter.hasNext()) {
 			ICPermission perm = (ICPermission) iter.next();
+			
+			
 			groupId = perm.getContextValue();
-
+			
 			List list = (List) map.get(groupId);
 			if (list == null) {
 				list = new ArrayList();
 			}
-
+			
 			list.add(perm);
+			
+			
 			map.put(groupId, list);
 
 		}
@@ -590,7 +633,10 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		permissionTypes.add(1, "edit");
 		permissionTypes.add(2, "create");
 		permissionTypes.add(3, "delete");
+		permissionTypes.add(4, "permit");//the permission to give others permissions
 
+		//we shall only support these group permission for now. Use roles for other stuff.
+		/*
 		String permissionType;
 		while (iter.hasNext()) {
 			ICPermission perm = (ICPermission) iter.next();
@@ -604,7 +650,8 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		}
 
 		permissionTypes.remove("owner");
-
+*/
+		
 		return permissionTypes;
 
 	}

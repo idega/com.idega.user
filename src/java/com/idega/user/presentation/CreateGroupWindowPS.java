@@ -1,6 +1,7 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.Iterator;
 
 import javax.ejb.CreateException;
@@ -8,7 +9,10 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
+import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
@@ -18,6 +22,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupType;
@@ -113,7 +118,8 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
       if(event.doCommit()){
 		try
 		{
-			GroupBusiness business = (GroupBusiness)IBOLookup.getServiceInstance(e.getIWContext(),GroupBusiness.class);
+			IWContext iwc = e.getIWContext();
+			GroupBusiness business = getGroupBusiness(iwc);
 
 			// Create under
 			Group group=null;
@@ -150,7 +156,10 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 			eventContext = e.getIWContext();
 			//set current user a owner of group
 			setCurrentUserAsOwnerOfGroup(eventContext, group);
+			setCurrentUsersPrimaryGroupPermissionsForGroup(eventContext,group);
 			
+			//owners should get the permission to give permission for this group
+			giveGroupsParentGroupOwnersPermitPermission(eventContext,group);
 			
 			
 			//get groupType tree and iterate through it and create default sub groups.
@@ -194,6 +203,69 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 
     }
   }
+
+  
+private GroupBusiness getGroupBusiness(IWContext iwc) {
+	GroupBusiness business = null;
+	try {
+		business = (GroupBusiness)IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
+	} catch (IBOLookupException e) {
+		e.printStackTrace();
+	}
+	return business;
+}
+
+private UserBusiness getUserBusiness(IWContext iwc) {
+	UserBusiness business = null;
+	try {
+		business = (UserBusiness)IBOLookup.getServiceInstance(iwc,UserBusiness.class);
+	} catch (IBOLookupException e) {
+		e.printStackTrace();
+	}
+	return business;
+}
+
+/*
+ * gives the owner of a parent and his main group permit permission to this group
+ */
+private void giveGroupsParentGroupOwnersPermitPermission(IWContext iwc, Group group) throws RemoteException {
+	
+	GroupBusiness groupBiz = getGroupBusiness(iwc);
+	UserBusiness userBiz = getUserBusiness(iwc);
+	String groupId = group.getPrimaryKey().toString();
+	AccessController access = iwc.getAccessController();
+	
+	
+	Collection col = groupBiz.getParentGroupsRecursive(group);
+	if(col!=null && !col.isEmpty()){
+		Iterator iter = col.iterator();
+		while (iter.hasNext()) {
+			Group parent = (Group) iter.next();
+			Collection owners = AccessControl.getAllOwnerGroupPermissionsReverseForGroup(parent);
+			
+			if(owners!=null && !owners.isEmpty()){
+				Iterator iter2 = owners.iterator();
+				while (iter2.hasNext()) {
+					
+					ICPermission perm = (ICPermission) iter2.next();
+					User user = userBiz.getUser(perm.getGroupID());
+					Group primary = user.getPrimaryGroup();
+					String primaryGroupId = primary.getPrimaryKey().toString();
+					try {
+						//the owner
+						access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,user.getPrimaryKey().toString(),groupId,access.PERMISSION_KEY_PERMIT,Boolean.TRUE);
+						//the owners primary group
+						access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,groupId,access.PERMISSION_KEY_PERMIT,Boolean.TRUE);	
+					} catch (Exception e) {			
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+}
+
+
 	/**
 	 * Method createDefaultSubGroups.
 	 * @param group
@@ -329,7 +401,8 @@ private void setCurrentUserAsOwnerOfGroup(IWUserContext iwc, Group group){
 			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_DELETE,Boolean.TRUE);
 			//view permission
 			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_VIEW,Boolean.TRUE);
-					
+			//permission to give other permission
+			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_PERMIT,Boolean.TRUE);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -337,27 +410,5 @@ private void setCurrentUserAsOwnerOfGroup(IWUserContext iwc, Group group){
 		}
 	}
 	
-	private void giveParentGroupsOwnersReadAccessToGroup(IWUserContext iwc, Group parentGroup, Group group){
-		//TODO Eiki get all owners and give them read access
-		
-		/*try {
-			User user = iwc.getCurrentUser();
-			AccessController access = iwc.getAccessController();
-			
-			access.
-			Group primary = user.getPrimaryGroup();
-			String primaryGroupId = primary.getPrimaryKey().toString();
-			String newGroupId = group.getPrimaryKey().toString();
-			
-			//view permission
-			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_VIEW,Boolean.TRUE);
-					
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		
-		}
-		
-		*/
-	}
+
 }
