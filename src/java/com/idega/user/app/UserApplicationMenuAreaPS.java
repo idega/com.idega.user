@@ -1,12 +1,11 @@
-
-
 package com.idega.user.app;
 
-import com.idega.user.block.simplesearch.event.SimpleSearchEvent;
-import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.event.*;
-import javax.swing.event.EventListenerList;
+import java.util.*;
+import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.idegaweb.IWException;
+import com.idega.presentation.event.TreeViewerEvent;
+import javax.swing.event.EventListenerList;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -17,11 +16,12 @@ import com.idega.idegaweb.IWException;
  * @version 1.0
  */
 
-public class UserApplicationMainAreaPS extends IWPresentationStateImpl implements IWActionListener {
+public class UserApplicationMenuAreaPS extends IWPresentationStateImpl implements IWActionListener {
 
   private EventListenerList _listenerList = new EventListenerList();
 
-  public UserApplicationMainAreaPS() {
+  public UserApplicationMenuAreaPS() {
+
 
   }
 
@@ -43,19 +43,21 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
     }
   }
 
+//  public void addInnerListener(Class event, IWActionListener l){
+//    EventListenerList list = (EventListenerList)_listenerlists.get(event);
+//    if(list == null){
+//      list = new EventListenerList();
+//      _listenerlists.put(event,list);
+//    }
+//    list.add(IWActionListener.class,l);
+//  }
+
+
   public void actionPerformed(IWPresentationEvent e) throws IWException{
     if(e instanceof ResetPresentationEvent){
       this.reset();
       this.fireStateChanged();
     }
-
-	if(e instanceof SimpleSearchEvent){
-      System.out.println("[UserAppMainArea]: search for "+((SimpleSearchEvent)e).getSearchString());
-	  System.out.println("[UserAppMainArea]: searchType =  "+((SimpleSearchEvent)e).getSearchType());
-      this.fireStateChanged();
-    }
-
-
 
     IWActionListener[] listners =  (IWActionListener[])_listenerList.getListeners(IWActionListener.class);
     for (int i = 0; i < listners.length; i++) {
@@ -63,5 +65,6 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
     }
 
   }
+
 
 }

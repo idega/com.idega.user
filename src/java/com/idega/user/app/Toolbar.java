@@ -137,23 +137,23 @@ public class Toolbar extends Page implements IWBrowserView {
   public void main(IWContext iwc) throws Exception{
     iwb = getBundle(iwc);
 
-    Table toolbarTable = new Table(1,3);
-    toolbarTable.setCellpadding(0);
-    toolbarTable.setCellspacing(0);
-    toolbarTable.setWidth("100%");
-    toolbarTable.setHeight("100%");
-    toolbarTable.setHeight(1,1);
-    toolbarTable.setHeight(3,1);
-
+//    Table toolbarTable = new Table(1,3);
+//    toolbarTable.setCellpadding(0);
+//    toolbarTable.setCellspacing(0);
+//    toolbarTable.setWidth("100%");
+//    toolbarTable.setHeight("100%");
+//    toolbarTable.setHeight(1,1);
+//    toolbarTable.setHeight(3,1);
+//
     IWColor color = new IWColor(212,208,200);
-    toolbarTable.setColor(color);
-    toolbarTable.setColor(1,1,color.brighter());
-    toolbarTable.setColor(1,3,color.darker());
-
-
-    toolbarTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_RIGHT);
-
-    add(toolbarTable);
+//    toolbarTable.setColor(color);
+//    toolbarTable.setColor(1,1,color.brighter());
+//    toolbarTable.setColor(1,3,color.darker());
+//
+//
+//    toolbarTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_RIGHT);
+//
+//    add(toolbarTable);
 
     Table toolbar1 = new Table();
     toolbar1.setCellpadding(0);
@@ -190,7 +190,8 @@ public class Toolbar extends Page implements IWBrowserView {
     tLink11.setWindowToOpen(CreateUser.class);
     toolbar1.add(tLink11,3,1);
 
-    toolbarTable.add(toolbar1,1,2);
+//    toolbarTable.add(toolbar1,1,2);
+	this.add(toolbar1);
 
     toolbar1.setWidth(2,"26");
     toolbar1.setWidth(3,"26");

@@ -1,9 +1,10 @@
 package com.idega.user.app;
 
-import com.idega.event.IWPresentationEvent;
+import javax.swing.event.ChangeListener;
+import com.idega.idegaweb.*;
+import com.idega.event.*;
+import com.idega.user.presentation.BasicUserOverview;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
-import com.idega.event.IWPresentationState;
-import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.*;
 
 /**
@@ -17,21 +18,28 @@ import com.idega.presentation.*;
 
 public class UserApplicationMainArea extends Block implements IWBrowserView, StatefullPresentation {
 
+
+  private IWBundle iwb;
   private StatefullPresentationImplHandler _stateHandler = null;
   private String _controlTarget = null;
   private IWPresentationEvent _contolEvent = null;
 
+  private BasicUserOverview _buo = new BasicUserOverview();
+
 
   public UserApplicationMainArea() {
+	_stateHandler = new StatefullPresentationImplHandler();
     getStateHandler().setPresentationStateClass(UserApplicationMainAreaPS.class);
   }
 
   public void setControlEventModel(IWPresentationEvent model){
     _contolEvent = model;
+	_buo.setControlEventModel(model);
   }
 
   public void setControlTarget(String controlTarget){
     _controlTarget = controlTarget;
+	_buo.setControlTarget(controlTarget);
   }
 
   public Class getPresentationStateClass(){
@@ -44,6 +52,40 @@ public class UserApplicationMainArea extends Block implements IWBrowserView, Sta
 
   public StatefullPresentationImplHandler getStateHandler(){
     return _stateHandler;
+  }
+
+  public void main(IWContext iwc) throws Exception {
+    this.empty();
+	this.add(_buo);
+  }
+
+
+  public void initializeInMain(IWContext iwc){
+
+    iwb = getBundle(iwc);
+
+    IWLocation location = (IWLocation)this.getLocation().clone();
+    location.setSubID(1);
+    _buo.setLocation(location,iwc);
+
+
+    this.setIWUserContext(iwc);
+
+    IWPresentationState buoState = _buo.getPresentationState(iwc);
+    if(buoState instanceof IWActionListener){
+      ((UserApplicationMainAreaPS)this.getPresentationState(iwc)).addIWActionListener((IWActionListener)buoState);
+    }
+
+
+    ChangeListener[] chListeners = this.getPresentationState(iwc).getChangeListener();
+    if(chListeners != null){
+      for (int i = 0; i < chListeners.length; i++) {
+        buoState.addChangeListener(chListeners[i]);
+      }
+    }
+
+//    this.getParentPage().setBackgroundColor(IWColor.getHexColorString(250,245,240));
+
   }
 
 

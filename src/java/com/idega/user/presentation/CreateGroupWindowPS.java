@@ -1,5 +1,13 @@
 package com.idega.user.presentation;
 
+import javax.ejb.*;
+import com.idega.data.IDOException;
+import java.rmi.RemoteException;
+import com.idega.user.data.*;
+import com.idega.business.IBOLookup;
+import com.idega.user.business.GroupBusiness;
+import com.idega.data.IDOLookup;
+import com.idega.builder.data.IBDomain;
 import com.idega.idegaweb.IWException;
 import com.idega.user.event.CreateGroupEvent;
 import com.idega.event.*;
@@ -16,14 +24,12 @@ import com.idega.event.*;
 public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWActionListener{
 
   private boolean _close = false ;
-  private boolean _commit = false ;
 
   private String _groupName = null;
   private String _groupDescription = null;
   private String _groupType = null;
 //  private String _groupParentID = null;
 
-  private CreateGroupEvent _cgEvent = null;
 
   public CreateGroupWindowPS() {
   }
@@ -33,14 +39,9 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
     _groupName = null;
     _groupDescription = null;
     _groupType = null;
-    _commit = false;
-    _cgEvent = null;
     _close = false;
   }
 
-  public CreateGroupEvent getCreateGroupEvent(){
-    return _cgEvent;
-  }
 
   public String getGroupName(){
     return _groupName;
@@ -58,34 +59,55 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
     return _close;
   }
 
-  public boolean doCommit(){
-    return _commit;
-  }
 
   public void doneClosing(){
     _close = false;
   }
 
-  public void doneCommiting(){
-    _commit = false;
-    _cgEvent = null;
-  }
 
 
 
   public void actionPerformed(IWPresentationEvent e) throws IWException {
-    System.out.println("[CreateGroupWindowPS]: ps = "+this);
-    System.out.println("[CreateGroupWindowPS] : event = " + e);
+//    System.out.println("[CreateGroupWindowPS]: ps = "+this);
+//    System.out.println("[CreateGroupWindowPS] : event = " + e);
     if(e instanceof CreateGroupEvent ){
-      System.out.println("[CreateGroupWindowPS] : (e instanceof CreateGroupEvent) = true");
+//      System.out.println("[CreateGroupWindowPS] : (e instanceof CreateGroupEvent) = true");
       CreateGroupEvent event = (CreateGroupEvent)e;
 
-      System.out.println("[CreateGroupWindowPS] : event.doCommit() = "+event.doCommit());
-      System.out.println("[CreateGroupWindowPS] : event.doCancel() = "+event.doCancel());
+//      System.out.println("[CreateGroupWindowPS] : event.doCommit() = "+event.doCommit());
+//      System.out.println("[CreateGroupWindowPS] : event.doCancel() = "+event.doCancel());
 
       if(event.doCommit()){
-        _cgEvent = event;
-        _commit = true;
+		try
+		{
+			GroupBusiness business = (GroupBusiness)IBOLookup.getServiceInstance(e.getIWContext(),GroupBusiness.class);
+			Group group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType());
+
+			// Create under
+			if(event.getParentType() == CreateGroupEvent.TYPE_DOMAIN){  // under Domain
+			  GroupDomainRelationTypeHome gdrHome = (GroupDomainRelationTypeHome)IDOLookup.getHome(GroupDomainRelationType.class);
+			  IBDomain domain = (IBDomain)IDOLookup.findByPrimaryKey(IBDomain.class,event.getParentID());
+			  business.addGroupUnderDomain(domain,group,gdrHome.getTopNodeRelationType());
+			} else if(event.getParentType() == CreateGroupEvent.TYPE_GROUP){ // under other group
+			  Group parentGroup = (Group)IDOLookup.findByPrimaryKey(Group.class,event.getParentID());
+			  parentGroup.addGroup(group);
+			} else {
+			  System.err.println("[CreateGroupWindow]: parentGroupType "+event.getParentType()+"not found");
+			}
+		}
+		catch (CreateException ce)
+		{
+			throw new EJBException(ce);
+		}
+		catch (RemoteException ex)
+		{
+			throw new EJBException(ex);
+		}
+		catch (FinderException fe)
+		{
+			throw new EJBException(fe);
+		}
+
 
       } else if(event.doCancel()){
         this.reset();

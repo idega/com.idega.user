@@ -67,29 +67,6 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 
     CreateGroupWindowPS _ps = (CreateGroupWindowPS)this.getPresentationState(iwc);
 
-    if(_ps.doCommit()){
-
-      CreateGroupEvent event = _ps.getCreateGroupEvent();
-      if(event != null){
-        GroupBusiness business = (GroupBusiness)IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
-        Group group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType());
-
-        // Create under
-        if(event.getParentType() == CreateGroupEvent.TYPE_DOMAIN){  // under Domain
-          GroupDomainRelationTypeHome gdrHome = (GroupDomainRelationTypeHome)IDOLookup.getHome(GroupDomainRelationType.class);
-          IBDomain domain = (IBDomain)IDOLookup.findByPrimaryKey(IBDomain.class,event.getParentID());
-          business.addGroupUnderDomain(domain,group,gdrHome.getTopNodeRelationType());
-        } else if(event.getParentType() == CreateGroupEvent.TYPE_GROUP){ // under other group
-          Group parentGroup = (Group)IDOLookup.findByPrimaryKey(Group.class,event.getParentID());
-          parentGroup.addGroup(group);
-        } else {
-          System.err.println("[CreateGroupWindow]: parentGroupType "+event.getParentType()+"not found");
-        }
-      }
-
-      _ps.doneCommiting();
-    }
-
     if (_ps.doClose()) {
       close();
       _ps.doneClosing();

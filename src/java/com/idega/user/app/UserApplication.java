@@ -62,14 +62,15 @@ public class UserApplication extends IWBrowser {
     this.setSpanPixels(POS_BOTTOM,28);
 
 
-    Toolbar toolbar = new Toolbar();
+//    Toolbar toolbar = new Toolbar();
+//
+//    CreateGroupWindow createGroup = new CreateGroupWindow();
+//
+//    toolbar.add((ToolbarElement)createGroup);
+//
+//    this.addToMenu(toolbar);
 
-    CreateGroupWindow createGroup = new CreateGroupWindow();
-
-    toolbar.add((ToolbarElement)createGroup);
-
-    this.addToMenu(toolbar);
-
+	this.addToMenu(new UserApplicationMenuArea());
 
     this.showMenuFrame(true);
     this.showBottomFrame(true);
@@ -82,6 +83,7 @@ public class UserApplication extends IWBrowser {
 //    this.addToLeftMain(bgo);
     this.addToLeftMain(new UserApplicationControlArea());
     this.addToMain(buo);
+//	this.addToMain(new UserApplicationMainArea());
 
 
 
