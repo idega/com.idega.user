@@ -1,10 +1,12 @@
 package com.idega.user.app;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.EventListenerList;
 
+import com.idega.block.entity.event.EntityBrowserEvent;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWApplicationContext;
@@ -14,11 +16,12 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.IWTabbedPane;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.presentation.text.Link;
-import com.idega.user.block.search.event.SimpleSearchEvent;
+import com.idega.user.block.search.event.UserSearchEvent;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.event.SelectGroupEvent;
+import com.idega.user.presentation.BasicUserOverview;
 import com.idega.user.presentation.CreateGroupWindowPS;
 import com.idega.user.presentation.DeleteGroupConfirmWindowPS;
 import com.idega.user.presentation.GroupPropertyWindow;
@@ -40,6 +43,7 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
   private Group _selectedGroup = null;
   private Collection _plugins = null;
   public boolean search = false;
+
   
 
   public UserApplicationMainAreaPS() {
@@ -102,9 +106,9 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
     }
     
     
-    if(e instanceof SimpleSearchEvent){
-      System.out.println("[UserAppMainArea]: search for "+((SimpleSearchEvent)e).getSearchString());
-      System.out.println("[UserAppMainArea]: searchType =  "+((SimpleSearchEvent)e).getSearchType());
+    if(e instanceof UserSearchEvent){
+      System.out.println("[UserAppMainArea]: search for "+((UserSearchEvent)e).getSearchString());
+      System.out.println("[UserAppMainArea]: searchType =  "+((UserSearchEvent)e).getSearchType());
       this.search = true;  
       this.fireStateChanged();
     }

@@ -115,6 +115,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
 			if(!canEditGroup) canEditGroup = iwc.isSuperAdmin();
 
 			if(canEditGroup){
+				//edit group
 				Table button2 = new Table(2, 1);
 				button2.setCellpadding(0);
 				Image iconCrGroup = iwb.getImage("new_group.gif");
@@ -131,6 +132,23 @@ public class BasicUserOverViewToolbar extends Toolbar {
 				tLink12.setWindowToOpen(GroupPropertyWindow.class);
 				button2.add(tLink12, 2, 1);
 				toolbar1.add(button2, 3, 1);
+				
+				//import button
+				if(selectedGroup!=null){
+					Table button3 = new Table(2,1);
+					button3.setCellpadding(0);
+						Image iconImport = iwb.getImage("import.gif");
+						button3.add(iconImport,1,1);
+					Text text3 = new Text(iwrb.getLocalizedString("import","Import"));
+					text3.setFontFace(Text.FONT_FACE_VERDANA);
+					text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
+						Link tLink14 = new Link(text3);
+						tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID,((Integer)selectedGroup.getPrimaryKey()).toString() );
+					 tLink14.setWindowToOpen(com.idega.block.importer.presentation.Importer.class);
+		 
+						button3.add(tLink14,2,1);
+						toolbar1.add(button3,6,1);
+				}
 			}
 				
 		}
@@ -188,7 +206,9 @@ public class BasicUserOverViewToolbar extends Toolbar {
 			}
 		}
 
-		toolbar1.add(new PrintButton(iwb.getImage("print.gif")),6,1);
+
+		toolbar1.add(new PrintButton(iwb.getImage("print.gif")),7,1);
+
 		
 		//calendar
 		// toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("calendar","Calendar"), iwb.getImage("calendar.gif"), com.idega.block.news.presentation.News.class),4,1);
@@ -196,24 +216,8 @@ public class BasicUserOverViewToolbar extends Toolbar {
 		// toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("history","History"), iwb.getImage("history.gif"), com.idega.block.news.presentation.News.class),5,1);
 		//import
 
-		/* 
-		 if(selectedGroup!=null){
-			Table button3 = new Table(2,1);
-			button3.setCellpadding(0);
-				Image iconCrGroup = iwb.getImage("import.gif");
-				button3.add(iconCrGroup,1,1);
-			Text text3 = new Text(iwrb.getLocalizedString("import","Import"));
->>>>>>> 1.15
-			text3.setFontFace(Text.FONT_FACE_VERDANA);
-			text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
-				Link tLink12 = new Link(text3);
-				tLink12.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID,((Integer)selectedGroup.getPrimaryKey()).toString() );
-			 tLink12.setWindowToOpen(com.idega.block.importer.presentation.Importer.class);
-		 
-				button3.add(tLink12,2,1);
-				toolbar1.add(button3,6,1);
-		}
-		*/
+		
+
 
 		//toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("import","Import"), iwb.getImage("import.gif"), com.idega.block.news.presentation.News.class),6,1);
 		//export
