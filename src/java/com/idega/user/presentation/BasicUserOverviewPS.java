@@ -15,11 +15,13 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.user.block.search.event.UserSearchEvent;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 import com.idega.user.event.SelectDomainEvent;
@@ -49,6 +51,8 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
     //  String color1 = "00FF00";
     //  String color2 = "FF0000";
     //  String color = color1;
+	
+	private GroupBusiness business = null;
 
     protected Group parentGroupOfSelection = null;
 
@@ -160,15 +164,28 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 			        //cut it down because it is in the form "domain_id"_"group_id"
 			        targetGroupNodeString = targetGroupNodeString.substring(Math.max(targetGroupNodeString.indexOf("_") + 1, 0),targetGroupNodeString.length());
 			        int targetGroupId = Integer.parseInt(targetGroupNodeString);
-
-			        // move users to a group
-			        if (_selectedGroup!=null && _selectedGroup.isAlias()) {
-			            resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup.getAlias(),targetGroupId, mainIwc);
-			        } else {
-			            resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup, targetGroupId,mainIwc);
+			        
+			        business = getGroupBusiness(mainIwc);
+			        
+			        try {
+			        	 //move to the real group not the alias!
+						Group target = business.getGroupByGroupID(targetGroupId);
+						if(target.isAlias()){
+							targetGroupId = target.getAliasID();
+						}
+				        // move users to a group
+				        if (_selectedGroup!=null && _selectedGroup.isAlias()) {
+				            resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup.getAlias(),targetGroupId, mainIwc);
+				        } else {
+				            resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup, targetGroupId,mainIwc);
+				        }
+				       
+				        this.targetGroupId = targetGroupId;
+			        
 			        }
-
-			        this.targetGroupId = targetGroupId;
+					catch (FinderException e2) {
+						e2.printStackTrace();
+					}
 			    }
 			}
 
@@ -236,6 +253,18 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
             // set selected group to null
             _selectedGroup = null;
         }
+    }
+    
+    public GroupBusiness getGroupBusiness(IWApplicationContext iwc) {
+        if (business == null) {
+            try {
+                business = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+            }
+            catch (java.rmi.RemoteException rme) {
+                throw new RuntimeException(rme.getMessage());
+            }
+        }
+        return business;
     }
 
 }
