@@ -155,10 +155,15 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		Collection groupsCol = getUserBusiness(iwc).getAllGroupsWithViewPermission(iwc.getCurrentUser(),iwc);
 		
 		Iterator nodes = groupsCol.iterator();
-		while (nodes.hasNext()) {
+		for(int i = 0;nodes.hasNext();i++) {
 			Group group = (Group) nodes.next();
-			groupSel.addMenuElement( ((Integer)group.getPrimaryKey()).intValue(), getGroupBusiness(iwc).getNameOfGroupWithParentName(group) );
-			//getchildren
+			try {
+				groupSel.addMenuElement( ((Integer)group.getPrimaryKey()).intValue(), getGroupBusiness(iwc).getNameOfGroupWithParentName(group) );
+				//getchildren
+			} catch (NullPointerException e) {
+				System.out.println("[SearchWindow]: null in group list index "+ i);
+				e.printStackTrace();
+			}
 		}
 		
 		Text groups = new Text(iwrb.getLocalizedString("user.search.window.groups", "Groups"));
