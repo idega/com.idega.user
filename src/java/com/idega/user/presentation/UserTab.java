@@ -1,19 +1,22 @@
 package com.idega.user.presentation;
-import com.idega.presentation.Table;
-import com.idega.presentation.IWContext;
+import java.rmi.RemoteException;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import javax.ejb.FinderException;
+
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.TabbedPropertyPanel;
+import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.datastructures.Collectable;
-import java.rmi.RemoteException;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.List;
-import java.util.Iterator;
-import javax.ejb.FinderException;
 /**
  * Title: User Copyright: Copyright (c) 2001 Company: idega.is
  * 
@@ -24,7 +27,6 @@ public abstract class UserTab extends Table implements Collectable {
 	private int userId = -1;
 	private int selectedGroupId = -1;
 	private List errorStrings;
-	protected String rowHeight = "37";
 	protected int fontSize = 2;
 	protected Text proxyText;
 	protected UserBusiness business = null;
@@ -32,6 +34,7 @@ public abstract class UserTab extends Table implements Collectable {
 	//protected UserBusiness business;
 	protected Hashtable fieldValues;
 	private boolean _isInitialized = false;
+	private TabbedPropertyPanel panel;
 	
 	public UserTab() {
 		super();
@@ -40,10 +43,9 @@ public abstract class UserTab extends Table implements Collectable {
 		fieldValues = new Hashtable();
 		init();
 		this.setStyleClass("main"); //added for isi styles - birna
-		this.setCellpadding(3);
+		this.setCellpadding(0);
 		this.setCellspacing(0);
-		this.setWidth("400"); //changed from 370
-		this.setHeight("90%");
+		this.setWidth(Table.HUNDRED_PERCENT); //changed from 370
 		initializeFieldNames();
 		initializeFields();
 		initializeTexts();
@@ -79,6 +81,14 @@ public abstract class UserTab extends Table implements Collectable {
 	public abstract boolean collect(IWContext iwc);
 	public abstract boolean store(IWContext iwc);
 	public abstract void initFieldContents();
+	
+	public void setPanel(TabbedPropertyPanel panel) {
+		this.panel = panel;
+	}
+	
+	public TabbedPropertyPanel getPanel() {
+		return panel;
+	}
 	
 	private void initProxyText() {
 		proxyText = new Text("");

@@ -4,8 +4,8 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -69,19 +69,19 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		
 
 		try { //temporary before plugins work
-			panel.addTab(new GeneralUserInfoTab(), count, iwc);
-//			panel.addTab(new UserImageTab(), ++count, iwc); //not needed because image added to the general tab - birna
-			panel.addTab(new AddressInfoTab(), ++count, iwc);
-			panel.addTab(new UserPhoneTab(), ++count, iwc);
-			panel.addTab(new UserGroupList(), ++count, iwc);
-//			PresentationObject familyTab = (PresentationObject) ImplementorRepository.getInstance().newInstanceOrNull(FamilyTab.class, this.getClass());
-//			if(familyTab!=null) {
-//				panel.addTab(familyTab, ++count, iwc);
-//			}
-			//panel.addTab((PresentationObject) Class.forName("is.idega.idegaweb.member.presentation.UserFamilyTab").newInstance(), ++count, iwc);
-			// if the other tabs are added do it in the same way like above!
-			//panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFinanceTab").newInstance() ,++count,iwc);
-			//panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserHistoryTab").newInstance() ,++count,iwc);
+			UserTab userInfo = new GeneralUserInfoTab();
+			userInfo.setPanel(panel);
+			UserTab addressInfo = new AddressInfoTab();
+			addressInfo.setPanel(panel);
+			UserTab phone = new UserPhoneTab();
+			phone.setPanel(panel);
+			UserTab group = new UserGroupList();
+			group.setPanel(panel);
+			
+			panel.addTab(userInfo, count, iwc);
+			panel.addTab(addressInfo, ++count, iwc);
+			panel.addTab(phone, ++count, iwc);
+			panel.addTab(group, ++count, iwc);
 
 			//temp 
 			String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
@@ -105,6 +105,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 					Iterator tab = tabs.iterator();
 					while (tab.hasNext()) {
 						UserTab el = (UserTab) tab.next();						
+						el.setPanel(panel);
 						panel.addTab(el, ++count, iwc);
 					}
 				}
@@ -115,6 +116,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		}
 
 		UserLoginTab ult = new UserLoginTab();
+		ult.setPanel(panel);
 		panel.addTab(ult, ++count, iwc);
 
 	}
@@ -151,10 +153,10 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			User user = getUserBusiness(iwc).getUser(userId);
 			String userName = user.getName();
 			if(userName!=null) {
-			    addTitle(userName);
+			    this.addTitle(userName, TITLE_STYLECLASS);
 			}
 		}
-		addTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+		addTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"), TITLE_STYLECLASS);
 
 	}
 
