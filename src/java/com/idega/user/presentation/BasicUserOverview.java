@@ -153,10 +153,10 @@ System.out.println(" firstIndex = "+firstIndex);
 
 
 //      System.out.println("BasicUserOverview: sel = "+sel+" & parSize = "+parSize);
-      users = ListUtil.convertCollectionToList(users).subList( (sel*parSize), Math.min(userCount,((sel+1)*parSize)) );
+      users = ListUtil.convertCollectionToList(users).subList( (sel*parSize), Math.min(users.size(),((sel+1)*parSize)) );
 //      this.add(" ("+sel+")");
 
-      userTable = new Table(3, ((userCount>33)?userCount:33)+1  );
+      userTable = new Table(3, ((users.size()>33)?users.size():33)+1  );
       returnTable.add(userTable,1,2);
       userTable.setCellpaddingAndCellspacing(0);
       userTable.setLineAfterColumn(1);
