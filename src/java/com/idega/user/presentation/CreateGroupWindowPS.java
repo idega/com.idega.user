@@ -38,6 +38,8 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 
   private boolean _close = false ;
   
+  public boolean parentGropuNotSet = false; 
+  
   private Integer groupId = null;
   private IWContext eventContext = null;
 
@@ -95,6 +97,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 
 
 
+
   public void actionPerformed(IWPresentationEvent e) throws IWException {
 //    System.out.println("[CreateGroupWindowPS]: ps = "+this);
 //    System.out.println("[CreateGroupWindowPS] : event = " + e);
@@ -114,6 +117,9 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 
 			// Create under
 			Group group=null;
+			if(event.getParentType() == 0) {
+				parentGropuNotSet = true;
+			}
 			if(event.getParentType() == CreateGroupEvent.TYPE_DOMAIN){  // under Domain
 				group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID(),event.getAliasID());
 				//GroupDomainRelationTypeHome gdrHome = (GroupDomainRelationTypeHome)IDOLookup.getHome(GroupDomainRelationType.class);
@@ -180,6 +186,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
         _close = true;
         this.fireStateChanged();
       } else {
+      	parentGropuNotSet = true;
         _groupName = event.getName();
         _groupDescription = event.getDescription();
         _groupType = event.getGroupType();

@@ -146,6 +146,11 @@ public class CreateGroupEvent extends IWPresentationEvent {
 				return false;
 			}
 		}
+		else {
+			_groupCommit = null; 
+			_groupCancel = null; 
+			return false;
+		}
 
 
 		_groupCommit = iwc.getParameter(getIONameForCommit());

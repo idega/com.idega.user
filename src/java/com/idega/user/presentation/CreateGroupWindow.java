@@ -152,6 +152,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			tab.setCellspacing(3);
 			form.add(tab);
 			TextInput inputName = new TextInput(_createEvent.getIONameForName());
+			inputName.setAsNotEmpty(iwrb.getLocalizedString("new_group.group_name_required","Group name must be selected"));
 		//	inputName.setLength(28); //commented out - birna
 			//added for isi styles - birna:
 			inputName.setStyleClass("text");
@@ -230,24 +231,24 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			tab.add(layer2, 1, 9); //changed from (layer2,1,6) - birna
 			tab.add(aliasGroupChooser, 1, 10); //changed from (aliasGroupcChooser,2,3) - birna
  			SubmitButton button = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), _createEvent.getIONameForCommit());
-      String message = iwrb.getLocalizedString("group_please_set_name_choose_group", "Please set name and choose a group as parent");
-      getAssociatedScript().addFunction("mandatoryCheck", "function mandatoryCheck(form) { " +
-          "\n\t if ((form."+
-          _createEvent.getIONameForParentID() +
-          ".value == \"\") || (form." +
-          _createEvent.getIONameForName() +
-          ".value == \"\")) { \n\t alert(\""
-          + message +
-          "\") \n\t return false \n\t } \n\t } "); //else  \n\t { \n\t window.close() \n\t }  \n\t }" );
-      form.setOnSubmit("mandatoryCheck(this)");
+//      String message = iwrb.getLocalizedString("group_please_set_name_choose_group", "Please set name and choose a group as parent");
+//      getAssociatedScript().addFunction("mandatoryCheck", "function mandatoryCheck(form) { " +
+//          "\n\t if ((form."+
+//          _createEvent.getIONameForParentID() +
+//          ".value == \"\") || (form." +
+//          _createEvent.getIONameForName() +
+//          ".value == \"\")) { \n\t alert(\""
+//          + message +
+//          "\") \n\t return false \n\t } \n\t } "); //else  \n\t { \n\t window.close() \n\t }  \n\t }" );
+//      form.setOnSubmit("mandatoryCheck(this)");
       SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"), _createEvent.getIONameForCancel());
       //button.setOnClick("mandatoryCheck(this)")
       close.setOnClick("window.close();return false;");
       Help help = getHelp(HELP_TEXT_KEY);
       tab.add(help,1,11);
-			tab.add(button, 2, 11); //changed from (close,2,8) - birna
-			tab.add(Text.getNonBrakingSpace(), 2, 11); //changed from (Text.getNonBrakingSpace(),2,8) - birna
-			tab.add(close, 2, 11); //changed from (button,2,8)
+			tab.add(button, 2, 11); 
+			tab.add(Text.getNonBrakingSpace(), 2, 11); 
+			tab.add(close, 2, 11);
 		}
 	}
   
