@@ -17,6 +17,7 @@ import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
@@ -241,16 +242,19 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		//buttons
 		Help help = getHelp(HELP_TEXT_KEY);
 		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("user.search.window.search", "Search"));
-   	SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("user.search.window.close", "Close") );
-    close.setOnClick("window.close();return false;");
+   	CloseButton close = new CloseButton(iwrb.getLocalizedImageButton("user.search.window.close", "Close") );
+ //   close.setOnClick("window.close();return false;");
     
 		HiddenInput type = new HiddenInput(UserSearchEvent.SEARCH_FIELD_SEARCH_TYPE, Integer.toString(UserSearchEvent.SEARCHTYPE_ADVANCED));
 		
+		type.setOnClick("window.close();return false;");
+		
 		tab.add(help,1,13);
-		tab.add(close, 3, 13);
+		tab.setAlignment(3,13,"right");
+		tab.add(save, 3, 13);
 		tab.add(type,3,13);
 		tab.add(Text.getNonBrakingSpace(), 3, 13);
-		tab.add(save, 3, 13);
+		tab.add(close, 3, 13);
 				
 	}
 
