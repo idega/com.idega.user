@@ -611,7 +611,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 Link aLink = new Link(text);
                 //added to match new style links
                 aLink.setStyleClass(styledLinkUnderline);
-                boolean isUserSuperAdmin = user.getPrimaryKey().equals(administratorUser.getPrimaryKey());
+                boolean isUserSuperAdmin = user.getPrimaryKey().equals(getSuperAdmin(iwc).getPrimaryKey());
                 
                 if ( !isUserSuperAdmin) {
                     aLink.setWindowToOpen(UserPropertyWindow.class);
@@ -643,7 +643,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 User user = (User) entity;
                 
-                if (!user.getPrimaryKey().equals(administratorUser.getPrimaryKey())) {
+                if (!user.getPrimaryKey().equals(getSuperAdmin(iwc).getPrimaryKey())) {
                     CheckBox checkBox = new CheckBox(BasicUserOverview.SELECTED_USERS_KEY, Integer.toString(user.getID()));
                     return checkBox;
                 }
@@ -861,7 +861,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     /**
      * @param iwc
      */
-    private void getSuperAdmin(IWContext iwc) {
+    private com.idega.core.user.data.User getSuperAdmin(IWContext iwc) {
         if (administratorUser == null) {
             try {
                 administratorUser = iwc.getAccessController().getAdministratorUser();
@@ -870,8 +870,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 System.err.println("[BasicUserOverview] access controller failed " + ex.getMessage());
                 ex.printStackTrace(System.err);
             }
-            
         }
+        return administratorUser;
     }
     
     /**

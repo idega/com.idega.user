@@ -10,11 +10,9 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.PrintButton;
-import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.app.Toolbar;
 import com.idega.user.data.Group;
 import com.idega.user.event.SelectGroupEvent;
-import com.idega.user.handler.UserPinLookupToGroupImportHandler;
 import com.idega.util.IWColor;
 
 /**
@@ -153,10 +151,12 @@ public class BasicUserOverViewToolbar extends Toolbar {
 					tLink14.setParameter(Importer.PARAMETER_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
 					tLink14.setParameter(Importer.PARAMETER_IMPORT_FILE, ColumnSeparatedImportFile.class.getName());
 
-					Class pinLookupToGroupImportHandler = ImplementorRepository.getInstance().getAnyClassImpl(UserPinLookupToGroupImportHandler.class, this.getClass());
-					if (pinLookupToGroupImportHandler == null) {
-						logWarning("[BasicUserOverViewToolbar]  Implementation of UserPinLookupToGroupHandler could not be found. Implementing bundle was not loaded.");
-						tLink14.setParameter(Importer.PARAMETER_IMPORT_HANDLER, pinLookupToGroupImportHandler.getName());
+//					Class pinLookupToGroupImportHandler = ImplementorRepository.getInstance().getAnyClassImpl(UserPinLookupToGroupImportHandler.class, this.getClass());
+//					if (pinLookupToGroupImportHandler == null) {
+//						logWarning("[BasicUserOverViewToolbar]  Implementation of UserPinLookupToGroupHandler could not be found. Implementing bundle was not loaded.");
+//						tLink14.setParameter(Importer.PARAMETER_IMPORT_HANDLER, pinLookupToGroupImportHandler.getName());
+					//TODO: Eiki make plugin based
+					tLink14.setParameter(Importer.PARAMETER_IMPORT_HANDLER, "is.idega.idegaweb.member.block.importer.business.PinLookupToGroupImportHandler");
 
 						//setja import handler 
 						//setja import file
@@ -164,7 +164,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
 
 						button3.add(tLink14, 2, 1);
 						toolbar1.add(button3, 6, 1);
-					}
+//					}
 				}
 
 				//mass registering button
@@ -192,13 +192,17 @@ public class BasicUserOverViewToolbar extends Toolbar {
 					Link tLink15 = new Link(text4);
 					tLink15.setStyleClass(styledLinkClass);
 					tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
-                    Class updateClubDivisionTemplate = ImplementorRepository.getInstance().getAnyClassImpl(UserUpdateClubDivisionTemplate.class,this.getClass());
-                    if (updateClubDivisionTemplate == null) {
-						logWarning("[BasicUserOverViewToolbar]  Implementation of UserUpdateClubDivisionTemplate  could not be found. Implementing bundle was not loaded.");
-						tLink15.setWindowToOpen(updateClubDivisionTemplate);
+//                    Class updateClubDivisionTemplate = ImplementorRepository.getInstance().getAnyClassImpl(UserUpdateClubDivisionTemplate.class,this.getClass());
+//                    if (updateClubDivisionTemplate == null) {
+//						logWarning("[BasicUserOverViewToolbar]  Implementation of UserUpdateClubDivisionTemplate  could not be found. Implementing bundle was not loaded.");
+//						tLink15.setWindowToOpen(updateClubDivisionTemplate);
+						
+//						TODO: Eiki make plugin based
+						tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.UpdateClubDivisionTemplate");
+						
 						button4.add(tLink15, 2, 1);
 						toolbar1.add(button4, 8, 1);
-                    }
+//                    }
 				}
 
 			}
