@@ -34,6 +34,7 @@ public class GroupTreeView extends IWTreeControl {
 	Image folderAndFileIcons[][] = null;
 	String folderAndFileIconNames[] = { "treeviewer_node_closed.gif", "treeviewer_node_open.gif", "treeviewer_node_leaf.gif" };
 	String classTypeIcons[] = { "domain/", "group/", "user/" };
+	String fileIconNames[] = { "_node_open.gif", "_node_closed.gif", "_node_leaf.gif" };
 
 	private static final int FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED = 0;
 	private static final int FOLDERANDFILE_ICONINDEX_FOLDER_OPEN = 1;
@@ -118,7 +119,7 @@ public class GroupTreeView extends IWTreeControl {
 
 	public PresentationObject getObjectToAddToColumn(int colIndex, GroupTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
 		//System.out.println("adding into column "+ colIndex + " for node " + node);
-		String image = "treeviewer_node_leaf";
+		String image = "treeviewer";
 		if (node.getGroupType() != null)
 			image = node.getGroupType();
 		
@@ -138,7 +139,7 @@ public class GroupTreeView extends IWTreeControl {
 								l.setImage(folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN]);
 							}
 							else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
-								l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image + ".gif"));
+								l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image + fileIconNames[0]));
 							}
 							//              else if(node instanceof User){
 							//                l.setImage(folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN]);
@@ -154,7 +155,7 @@ public class GroupTreeView extends IWTreeControl {
 								return folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];
 							}
 							else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
-								return bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image + ".gif");
+								return bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[0]);
 							}
 							//              else if(node instanceof User){
 							//                return folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];
@@ -175,7 +176,7 @@ public class GroupTreeView extends IWTreeControl {
 								l.setImage(folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED]);
 							}
 							else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
-								l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image + ".gif"));
+								l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[1]));
 							}
 							//              else if(node instanceof User){
 							//                l.setImage(folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED]);
@@ -188,7 +189,7 @@ public class GroupTreeView extends IWTreeControl {
 								return folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED];
 							}
 							else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
-								return bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image + ".gif");
+								return bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[1]);
 							}
 							//              else if(node instanceof User){
 							//                return folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED];
@@ -210,7 +211,7 @@ public class GroupTreeView extends IWTreeControl {
 							l.setImage(folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FILE]);
 						}
 						else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
-							l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image + ".gif"));
+							l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[2]));
 						}
 						//              else if(node instanceof User){
 						//                l.setImage(folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FILE]);
@@ -223,7 +224,7 @@ public class GroupTreeView extends IWTreeControl {
 							return folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FILE];
 						}
 						else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
-							return bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image + ".gif");
+							return bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[2]);
 						}
 						//              else if(node instanceof User){
 						//                return folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FILE];
