@@ -1,8 +1,6 @@
 package com.idega.user.presentation;
 
 
-import java.rmi.RemoteException;
-
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;

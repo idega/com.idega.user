@@ -10,7 +10,6 @@ import javax.ejb.FinderException;
 
 import com.idega.block.media.presentation.ImageInserter;
 import com.idega.data.IDOLookup;
-import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
