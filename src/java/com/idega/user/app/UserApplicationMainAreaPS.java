@@ -84,21 +84,10 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
 	    	String groupType = _selectedGroup.getGroupType();
 	    	//System.out.println("Selected group type = "+groupType);
 	    	
-	    	_plugins = getGroupBusiness( e.getIWContext()).getUserGroupPluginsForGroupTypeString(groupType);
-	    	
-	    	/*if( _plugins==null ) System.out.println("Plugins are null fro group_type ="+groupType);
-	    	
-	    	Iterator iter = _plugins.iterator();
-    	
-	    	while (iter.hasNext()) {
-	    		
-				UserGroupPlugIn plugin = (UserGroupPlugIn) iter.next();
-				String className = plugin.getBusinessICObject().getClassName();
-				System.out.println("Plugin business class : "+className);
-
-			}*/
-					this.search = false;
-      		this.fireStateChanged();
+	    	_plugins = getGroupBusiness( e.getIWContext()).getUserGroupPluginsForGroupType(groupType);
+	    		    	
+		this.search = false;
+      	this.fireStateChanged();
     	}
     	catch( Exception ex ){
     		ex.printStackTrace();	

@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import com.idega.business.IBOLookup;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
@@ -32,7 +30,6 @@ import com.idega.user.block.search.presentation.SearchWindow;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.User;
-import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.CreateUser;
@@ -191,15 +188,10 @@ public class Toolbar extends Page implements IWBrowserView {
 		Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
 		Iterator iter = plugins.iterator();
 		while (iter.hasNext()) {
-			UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
-			try {
-			    UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) IBOLookup.getServiceInstance(iwc, Class.forName(element.getBusinessICObject().getClassName()));
-				List list = pluginBiz.getMainToolbarElements();
-				if (list != null) {
-					toolbarElements.addAll(list);
-				}
-			} catch (Exception e) {
-			    log(e);
+		    UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) iter.next();
+			List list = pluginBiz.getMainToolbarElements();
+			if (list != null) {
+				toolbarElements.addAll(list);
 			}
 		}
 		// adding some toolbar elements that belong to this bundle
