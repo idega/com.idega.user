@@ -102,24 +102,6 @@ public class UserPhoneTab extends UserTab {
 		mobilePhoneField.setContent(
 			(String)fieldValues.get(this.mobilePhoneFieldName));
 		faxPhoneField.setContent((String)fieldValues.get(this.faxPhoneFieldName));
-
-/*		if ((String)fieldValues.get(this.homePhoneMenuName) != null
-			&& ((String)fieldValues.get(this.homePhoneMenuName)).length() > 0)
-			homePhoneMenu.setSelectedElement(
-				(String)fieldValues.get(this.homePhoneMenuName));
-		if ((String)fieldValues.get(this.workPhoneMenuName) != null
-			&& ((String)fieldValues.get(this.workPhoneMenuName)).length() > 0)
-			workPhoneMenu.setSelectedElement(
-				(String)fieldValues.get(this.workPhoneMenuName));
-		if ((String)fieldValues.get(this.mobilePhoneMenuName) != null
-			&& ((String)fieldValues.get(this.mobilePhoneMenuName)).length() > 0)
-			mobilePhoneMenu.setSelectedElement(
-				(String)fieldValues.get(this.mobilePhoneMenuName));
-		if ((String)fieldValues.get(this.faxPhoneMenuName) != null
-			&& ((String)fieldValues.get(this.faxPhoneMenuName)).length() > 0)
-			faxPhoneMenu.setSelectedElement(
-				(String)fieldValues.get(this.faxPhoneMenuName));*/
-
 		emailField.setContent((String)fieldValues.get(this.emailFieldName));
     jobField.setContent((String)fieldValues.get(jobFieldName));
 		workPlaceField.setContent((String)fieldValues.get(workPlaceFieldName));
@@ -163,30 +145,6 @@ public class UserPhoneTab extends UserTab {
 		faxPhoneField = new TextInput(faxPhoneFieldName);
 		faxPhoneField.setLength(24);
 
-		homePhoneTypeText = new Text(iwrb.getLocalizedString("usr_phone.home_phone", "Home phone")); //new DropdownMenu(phoneTypes, homePhoneMenuName);
-		workPhoneTypeText = new Text(iwrb.getLocalizedString("usr_phone.work_phone", "Work phone")); // new DropdownMenu(phoneTypes, workPhoneMenuName);
-		mobilePhoneTypeText = new Text(iwrb.getLocalizedString("usr_phone.mobile_phone", "Mobile phone")); //new DropdownMenu(phoneTypes, mobilePhoneMenuName);
-		faxPhoneTypeText = new Text(iwrb.getLocalizedString("usr_phone.fax_phone", "Fax")); //new DropdownMenu(phoneTypes, faxPhoneMenuName);
-
-/*		for (int a = 0; a < phoneTypes.length; a++) {
-			if (a == 0) {
-				homePhoneMenu.setSelectedElement(
-					Integer.toString(phoneTypes[a].getID()));
-			}
-			else if (a == 1) {
-				workPhoneMenu.setSelectedElement(
-					Integer.toString(phoneTypes[a].getID()));
-			}
-			else if (a == 2) {
-				mobilePhoneMenu.setSelectedElement(
-					Integer.toString(phoneTypes[a].getID()));
-			}
-			else if (a == 3) {
-				faxPhoneMenu.setSelectedElement(
-					Integer.toString(phoneTypes[a].getID()));
-			}
-		}*/
-
 		emailField = new TextInput(emailFieldName);
 		emailField.setLength(24);
     
@@ -202,26 +160,39 @@ public class UserPhoneTab extends UserTab {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		firstPhoneText = new Text(iwrb.getLocalizedString(homePhoneFieldName,"Phone 1") + ":");
-//		homePhoneText.setFontSize(fontSize);
+		firstPhoneText.setBold();
 
 		secondPhoneText = new Text(iwrb.getLocalizedString(mobilePhoneFieldName,"Phone 2") + ":");
-//		workPhoneText.setFontSize(fontSize);
+		secondPhoneText.setBold();
 
 		thirdPhoneText = new Text(iwrb.getLocalizedString(workPhoneFieldName,"Phone 3") + ":");
-//		mobilePhoneText.setFontSize(fontSize);
+		thirdPhoneText.setBold();
 
 		fourthPhoneText = new Text(iwrb.getLocalizedString(faxPhoneFieldName,"Phone 4") + ":");
-//		faxPhoneText.setFontSize(fontSize);
+		fourthPhoneText.setBold();
+
+		homePhoneTypeText = new Text(iwrb.getLocalizedString("usr_phone.home_phone", "Home phone"));
+		homePhoneTypeText.setFontStyle("font-size:8px");
+
+		workPhoneTypeText = new Text(iwrb.getLocalizedString("usr_phone.work_phone", "Work phone"));
+		workPhoneTypeText.setFontStyle("font-size:8px");
+
+		mobilePhoneTypeText = new Text(iwrb.getLocalizedString("usr_phone.mobile_phone", "Mobile phone"));
+		mobilePhoneTypeText.setFontStyle("font-size:8px");
+
+		faxPhoneTypeText = new Text(iwrb.getLocalizedString("usr_phone.fax_phone", "Fax"));
+		faxPhoneTypeText.setFontStyle("font-size:8px");
 
 		emailText = new Text(iwrb.getLocalizedString(emailFieldName,"E-mail") + ":");
-//		emailText.setFontSize(fontSize);
+		emailText.setBold();
     
     jobText = new Text(iwrb.getLocalizedString(jobFieldName, "Job") + ":");
-//    jobText.setFontSize(fontSize);
+    jobText.setBold();
 
 		workPlaceText = new Text(iwrb.getLocalizedString(workPlaceFieldName, "Workplace") + ":");
-//		workPlaceText.setFontSize(fontSize);
+		workPlaceText.setBold();
 	}
+	
 	public Help getHelpButton() {
 		IWContext iwc = IWContext.getInstance();
 		IWBundle iwb = getBundle(iwc);
@@ -231,44 +202,58 @@ public class UserPhoneTab extends UserTab {
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;
-		
 	}
 
 	public void lineUpFields() {
-		this.resize(1, 4);
+		this.resize(1, 1);
 
-		Table staffTable = new Table(3, 4);
-		staffTable.setWidth("100%");
-		staffTable.setCellpadding(3);
-		staffTable.setCellspacing(3);
+		Table table = new Table();
+		table.setWidth(Table.HUNDRED_PERCENT);
+		table.setColumns(2);
+		table.setCellpadding(5);
+		table.setCellspacing(0);
+		table.setBorder(0);
+		int row = 1;
 
-		staffTable.add(firstPhoneText, 1, 1);
-		staffTable.add(homePhoneTypeText, 3, 1);
-		staffTable.add(homePhoneField, 2, 1);
-		staffTable.add(secondPhoneText, 1, 2);
-		staffTable.add(mobilePhoneTypeText, 3, 2);
-		staffTable.add(mobilePhoneField, 2, 2);
-		staffTable.add(thirdPhoneText, 1, 3);
-		staffTable.add(workPhoneTypeText, 3, 3);
-		staffTable.add(workPhoneField, 2, 3);
-		staffTable.add(fourthPhoneText, 1, 4);
-		staffTable.add(faxPhoneTypeText, 3, 4);
-		staffTable.add(faxPhoneField, 2, 4);
-		this.add(staffTable, 1, 1);
+		table.add(firstPhoneText, 1, row);
+		table.add(Text.getBreak(), 1, row);
+		table.add(homePhoneField, 1, row);
+		table.add(Text.getBreak(), 1, row);
+		table.add(homePhoneTypeText, 1, row);
+		
+		table.add(secondPhoneText, 2, row);
+		table.add(Text.getBreak(), 2, row);
+		table.add(mobilePhoneField, 2, row);
+		table.add(Text.getBreak(), 2, row);
+		table.add(mobilePhoneTypeText, 2, row++);
+		
+		table.add(thirdPhoneText, 1, row);
+		table.add(Text.getBreak(), 1, row);
+		table.add(workPhoneField, 1, row);
+		table.add(Text.getBreak(), 1, row);
+		table.add(workPhoneTypeText, 1, row);
+		
+		table.add(fourthPhoneText, 2, row);
+		table.add(Text.getBreak(), 2, row);
+		table.add(faxPhoneField, 2, row);
+		table.add(Text.getBreak(), 2, row);
+		table.add(faxPhoneTypeText, 2, row++);
+		
+		row++;
 
-		Table mailTable = new Table(2, 3);
-		mailTable.setWidth("100%");
-		mailTable.setCellpadding(3);
-		mailTable.setCellspacing(3);
+		table.add(emailText, 1, row);
+		table.add(Text.getBreak(), 1, row);
+		table.add(emailField, 1, row);
 
-		mailTable.add(emailText, 1, 1);
-		mailTable.add(emailField, 2, 1);
-    mailTable.add(jobText,1,2);
-    mailTable.add(jobField,2,2);
-		mailTable.add(workPlaceText,1,3);
-		mailTable.add(workPlaceField,2,3);
+		table.add(jobText, 2, row);
+		table.add(Text.getBreak(), 2, row);
+		table.add(jobField, 2, row++);
+		
+		table.add(workPlaceText, 1, row);
+		table.add(Text.getBreak(), 1, row);
+		table.add(workPlaceField, 1, row);
     
-		this.add(mailTable, 1, 3);
+		this.add(table, 1, 1);
 	}
 
 	public void main(IWContext iwc) {
