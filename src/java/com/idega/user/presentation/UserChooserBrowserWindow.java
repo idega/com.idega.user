@@ -180,7 +180,7 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
     try {
       UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
       String modifiedSearch = getModifiedSearchString(searchString);
-      Collection entities = userHome.findUsersBySearchCondition(modifiedSearch);
+      Collection entities = userHome.findUsersBySearchCondition(modifiedSearch, false);
       return entities;
     }
     // Remote and FinderException

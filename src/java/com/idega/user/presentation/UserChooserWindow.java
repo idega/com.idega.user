@@ -99,7 +99,7 @@ public class UserChooserWindow extends AbstractChooserWindow {
 		    	users = uHome.findAllUsersOrderedByFirstName();
 	    	}
 	    }else if (searchString != null) {
-	    	users = uHome.findUsersBySearchCondition(searchString, userIds);
+	    	users = uHome.findUsersBySearchCondition(searchString, userIds, false);
 	    }
 		} catch (Exception e) {
 			e.printStackTrace(System.err);

@@ -41,7 +41,7 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 						
 			Collection entities = userHome.findUsersByConditions(e.getFirstName(),e.getMiddleName(),e.getLastName(),e.getPersonalId()
 				,e.getAddress(),null,e.getGenderId(),e.getStatusId()
-				,e.getAgeFloor(),e.getAgeCeil(),e.getGroups(),null,true);
+				,e.getAgeFloor(),e.getAgeCeil(),e.getGroups(),null,true, false);
 			
 			return entities;
 		}
@@ -65,7 +65,7 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 			return null;
 		try {
 			UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
-			Collection entities = userHome.findUsersBySearchCondition(searchString);
+			Collection entities = userHome.findUsersBySearchCondition(searchString, false);
 			return entities;
 		}
 		// Remote and FinderException
