@@ -53,7 +53,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
     try{
       UserBusiness userBusiness = this.getUserBusiness(this.getEventIWContext());
       Collection userGroups = userBusiness.getUserGroupsDirectlyRelated(this.getUserId());
-      if(userGroups != null){
+      if((userGroups != null) && !userGroups.isEmpty() ){
         Iterator iter = userGroups.iterator();
         while (iter.hasNext()) {
           Group item = (Group)iter.next();
