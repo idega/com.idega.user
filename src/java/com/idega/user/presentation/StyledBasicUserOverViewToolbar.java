@@ -233,8 +233,8 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 					tLink15.setWindowToOpen("is.idega.idegaweb.member.isi.block.accounting.presentation.CashierWindow");
 
 					button4.add(tLink15, 1, 1);
-					toolbar1.add(button4, 8, 1);
-					toolbar1.setAlignment(8,1,"center");
+					toolbar1.add(button4, 9, 1);
+					toolbar1.setAlignment(9,1,"center");
 				}
 			}
 
