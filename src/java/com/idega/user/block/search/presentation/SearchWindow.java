@@ -2,7 +2,9 @@ package com.idega.user.block.search.presentation;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.idega.business.IBOLookup;
@@ -30,7 +32,9 @@ import com.idega.user.app.UserApplicationMainArea;
 import com.idega.user.app.UserApplicationMainAreaPS;
 import com.idega.user.block.search.event.UserSearchEvent;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.GroupComparator;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.data.CachedGroup;
 import com.idega.user.data.Group;
 import com.idega.user.presentation.UserStatusDropdown;
 
@@ -144,15 +148,19 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		groupSel.setHeight(15); 
 		groupSel.setWidth(Table.HUNDRED_PERCENT);
 
-		Collection groupsCol = getUserBusiness(iwc).getAllGroupsWithViewPermission(iwc.getCurrentUser(),iwc);
-		
+		List groupsCol = (List)getUserBusiness(iwc).getAllGroupsWithViewPermission(iwc.getCurrentUser(),iwc);
+		GroupComparator groupComparator = new GroupComparator(iwc);
+		groupComparator.setSortByParents(true);
+		groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));
+		Collections.sort(groupsCol, groupComparator);
 		Iterator nodes = groupsCol.iterator();
 //		Map cachedParents = new HashMap();  // No dublicates so this doesn't do anything
 //		Map cachedGroups = new HashMap();
 		for(int i = 0;nodes.hasNext();i++) {
 			Group group = (Group) nodes.next();
+			CachedGroup cachedGroup = new CachedGroup(group);
 			try {
-				groupSel.addMenuElement( ((Integer)group.getPrimaryKey()).intValue(), getGroupBusiness(iwc).getNameOfGroupWithParentName(group));//,cachedParents,cachedGroups) );
+				groupSel.addMenuElement( ((Integer)group.getPrimaryKey()).intValue(), groupComparator.getIndentedGroupName(cachedGroup));//getGroupBusiness(iwc).getNameOfGroupWithParentName(group));//,cachedParents,cachedGroups) );
 				//getchildren
 			} catch (NullPointerException e) {
 				System.out.println("[SearchWindow]: null in group list index "+ i);
