@@ -44,6 +44,45 @@
             </value>
             <type>map</type>
           </key>
+          <key>
+            <name>com.idega.core.accesscontrol.app.AccessControllerApp</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.core.accesscontrol.app.AccessControllerApp.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
+            <name>com.idega.user.data.GroupRelation</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.user.data.GroupRelation.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
+            <name>com.idega.user.data.User</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.user.data.User.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
         </map>
       </value>
       <type>map</type>
@@ -57,6 +96,31 @@
       <name>iw_bundle_starter_class</name>
       <type>java.lang.String</type>
       <value>com.idega.user.business.GroupRelationDaemonBundleStarter</value>
+    </key>
+    <key>
+      <name>styleSheet_name</name>
+      <type>java.lang.String</type>
+      <value>DefaultStyle.css</value>
+    </key>
+    <key>
+      <name>USER_APPLICATION_FRONT_PAGE_ID</name>
+      <type>java.lang.String</type>
+      <value>-1</value>
+    </key>
+    <key>
+      <name>use_dropdown_in_toolbar</name>
+      <type>java.lang.String</type>
+      <value>true</value>
+    </key>
+    <key>
+      <name>handbook_file_id</name>
+      <type>java.lang.String</type>
+      <value>-1</value>
+    </key>
+    <key>
+      <name>user_fetch_grouptree_interval</name>
+      <type>java.lang.String</type>
+      <value>300000</value>
     </key>
   </map>
 </pxml>
