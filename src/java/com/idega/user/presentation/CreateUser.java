@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
@@ -36,10 +37,15 @@ import com.idega.util.IWTimestamp;
  */
 
 public class CreateUser extends Window {
+	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
-	private Text firstNameText;
-	private Text middleNameText;
-	private Text lastNameText;
+	private static final String TAB_NAME = "usr_create_tab_name";
+	private static final String DEFAULT_TAB_NAME = "Create member";
+
+	//	private Text firstNameText;
+	//	private Text middleNameText;
+	//	private Text lastNameText;
+	private Text fullNameText;
 	private Text userLoginText;
 	private Text passwordText;
 	private Text confirmPasswordText;
@@ -54,9 +60,10 @@ public class CreateUser extends Window {
 	private Text goToPropertiesText;
 	private Text primaryGroupText;
 
-	private TextInput firstNameField;
-	private TextInput middleNameField;
-	private TextInput lastNameField;
+	//	private TextInput firstNameField;
+	//	private TextInput middleNameField;
+	//	private TextInput lastNameField;
+	private TextInput fullNameField;
 	private TextInput userLoginField;
 	private PasswordInput passwordField;
 	private PasswordInput confirmPasswordField;
@@ -76,7 +83,7 @@ public class CreateUser extends Window {
 	private SubmitButton cancelButton;
 
 	private Form myForm;
-	
+
 	private String selectedGroupId = null;
 
 	public static String PARAMETERSTRING_GROUP_ID = "default_group";
@@ -85,9 +92,10 @@ public class CreateUser extends Window {
 	public static String cancelButtonParameterValue = "cancel";
 	public static String submitButtonParameterName = "submit";
 
-	public static String firstNameFieldParameterName = "firstName";
-	public static String middleNameFieldParameterName = "middleName";
-	public static String lastNameFieldParameterName = "lastName";
+	//	public static String firstNameFieldParameterName = "firstName";
+	//	public static String middleNameFieldParameterName = "middleName";
+	//	public static String lastNameFieldParameterName = "lastName";
+	public static String fullNameFieldParameterName = "fullName";
 	public static String userLoginFieldParameterName = "login";
 	public static String passwordFieldParameterName = "password";
 	public static String confirmPasswordFieldParameterName = "confirmPassword";
@@ -108,10 +116,14 @@ public class CreateUser extends Window {
 
 	public CreateUser() {
 		super();
-		setName("idegaWeb Builder - Stofna félaga");
+		IWContext iwc = IWContext.getInstance();
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+
+		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
+		//		setName("idegaWeb Builder - Stofna félaga");
 		setHeight(490);
 		setWidth(390);
-		setBackgroundColor(new IWColor(207,208,210));
+		setBackgroundColor(new IWColor(207, 208, 210));
 		setScrollbar(false);
 		myForm = new Form();
 		add(myForm);
@@ -122,33 +134,38 @@ public class CreateUser extends Window {
 	}
 
 	protected void initializeTexts() {
+		IWContext iwc = IWContext.getInstance();
+		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		firstNameText = new Text("First name");
-		middleNameText = new Text("Middle name");
-		lastNameText = new Text("Last name");
-		userLoginText = new Text("User login");
-		passwordText = new Text("Password");
-		confirmPasswordText = new Text("Confirm password");
-		ssnText = new Text("Personal ID (SSN)");
+//		firstNameText = new Text("First name");
+//		middleNameText = new Text("Middle name");
+//		lastNameText = new Text("Last name");
+  	fullNameText = new Text(iwrb.getLocalizedString(fullNameFieldParameterName,"Name"));
+		userLoginText = new Text(iwrb.getLocalizedString(userLoginFieldParameterName,"User login"));
+		passwordText = new Text(iwrb.getLocalizedString(passwordFieldParameterName,"Password"));
+		confirmPasswordText = new Text(iwrb.getLocalizedString(confirmPasswordFieldParameterName,"Confirm password"));
+		ssnText = new Text(iwrb.getLocalizedString(ssnFieldParameterName,"Personal ID (SSN)"));
 
-		generateLoginText = new Text("generate");
-		generatePasswordText = new Text("generate");
-		mustChangePasswordText = new Text("User must change password at next login");
-		cannotChangePasswordText = new Text("User cannot change password");
-		passwordNeverExpiresText = new Text("Password never expires");
-		disableAccountText = new Text("Account is disabled");
-		goToPropertiesText = new Text("go to properties");
+		generateLoginText = new Text(iwrb.getLocalizedString(generateLoginFieldParameterName,"generate"));
+		generatePasswordText = new Text(iwrb.getLocalizedString(generatePasswordFieldParameterName,"generate"));
+		mustChangePasswordText = new Text(iwrb.getLocalizedString(mustChangePasswordFieldParameterName,"User must change password at next login"));
+		cannotChangePasswordText = new Text(iwrb.getLocalizedString(cannotChangePasswordFieldParameterName,"User cannot change password"));
+		passwordNeverExpiresText = new Text(iwrb.getLocalizedString(passwordNeverExpiresFieldParameterName,"Password never expires"));
+		disableAccountText = new Text(iwrb.getLocalizedString(disableAccountFieldParameterName,"Account is disabled"));
+		goToPropertiesText = new Text(iwrb.getLocalizedString(goToPropertiesFieldParameterName,"go to properties"));
 
-		primaryGroupText = new Text("Primarygroup");
+		primaryGroupText = new Text(iwrb.getLocalizedString(primaryGroupFieldParameterName,"Primarygroup"));
 	}
 
 	protected void initializeFields() {
-		firstNameField = new TextInput(firstNameFieldParameterName);
-		firstNameField.setLength(12);
-		middleNameField = new TextInput(middleNameFieldParameterName);
-		middleNameField.setLength(12);
-		lastNameField = new TextInput(lastNameFieldParameterName);
-		lastNameField.setLength(12);
+//		firstNameField = new TextInput(firstNameFieldParameterName);
+//		firstNameField.setLength(12);
+//		middleNameField = new TextInput(middleNameFieldParameterName);
+//		middleNameField.setLength(12);
+//		lastNameField = new TextInput(lastNameFieldParameterName);
+//		lastNameField.setLength(12);
+		fullNameField = new TextInput(fullNameFieldParameterName);
+		fullNameField.setLength(20);
 		userLoginField = new TextInput(userLoginFieldParameterName);
 		userLoginField.setLength(12);
 		passwordField = new PasswordInput(passwordFieldParameterName);
@@ -194,7 +211,7 @@ public class CreateUser extends Window {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		okButton = new SubmitButton("     OK     ", submitButtonParameterName, okButtonParameterValue);
 		cancelButton = new SubmitButton(" Cancel ", submitButtonParameterName, cancelButtonParameterValue);
 
@@ -209,21 +226,16 @@ public class CreateUser extends Window {
 		frameTable.setCellspacing(0);
 
 		// nameTable begin
-		Table nameTable = new Table(4, 3);
+		Table nameTable = new Table(2, 2);
 		nameTable.setCellpadding(0);
 		nameTable.setCellspacing(0);
 		nameTable.setHeight(1, rowHeight);
 		nameTable.setHeight(2, rowHeight);
-		nameTable.setHeight(3, rowHeight);
 
-		nameTable.add(firstNameText, 1, 1);
-		nameTable.add(firstNameField, 2, 1);
-		nameTable.add(middleNameText, 3, 1);
-		nameTable.add(middleNameField, 4, 1);
-		nameTable.add(lastNameText, 1, 2);
-		nameTable.add(lastNameField, 2, 2);
-		nameTable.add(ssnText, 1, 3);
-		nameTable.add(ssnField, 2, 3);
+		nameTable.add(ssnText, 1, 1);
+		nameTable.add(ssnField, 2, 1);
+		nameTable.add(fullNameText, 1, 2);
+		nameTable.add(fullNameField, 2, 2);
 		// nameTable end
 
 		// loginTable begin
@@ -393,14 +405,15 @@ public class CreateUser extends Window {
 		    }
 		*/
 		try {
-			String firstName = iwc.getParameter(firstNameFieldParameterName);
-			String middleName = iwc.getParameter(middleNameFieldParameterName);
-			String lastName = iwc.getParameter(lastNameFieldParameterName);
+//			String firstName = iwc.getParameter(firstNameFieldParameterName);
+//			String middleName = iwc.getParameter(middleNameFieldParameterName);
+//			String lastName = iwc.getParameter(lastNameFieldParameterName);
+			String fullName = iwc.getParameter(fullNameFieldParameterName);
 			newUser =
 				getUserBusiness(iwc).createUserWithLogin(
-					firstName,
-					middleName,
-					lastName,
+					null,
+					null,
+					null,
 					ssn,
 					null,
 					null,
@@ -415,7 +428,8 @@ public class CreateUser extends Window {
 					bPasswNeverExpires,
 					bAllowedToChangePassw,
 					bMustChange,
-					null);
+					null,
+					fullName);
 		}
 		catch (Exception e) {
 			add("Error: " + e.getMessage());
@@ -426,8 +440,8 @@ public class CreateUser extends Window {
 			Link gotoLink = new Link();
 			gotoLink.setWindowToOpen(UserPropertyWindow.class);
 			gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, newUser.getPrimaryKey().toString());
-      String script = "window.opener."+ gotoLink.getWindowToOpenCallingScript(iwc);
-      setOnLoad(script);
+			String script = "window.opener." + gotoLink.getWindowToOpenCallingScript(iwc);
+			setOnLoad(script);
 		}
 
 	}
@@ -437,7 +451,7 @@ public class CreateUser extends Window {
 		selectedGroupId = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
 		if (selectedGroupId != null) {
 			primaryGroupField.setSelectedElement(selectedGroupId);
-			myForm.add(new HiddenInput(PARAMETERSTRING_GROUP_ID,selectedGroupId));
+			myForm.add(new HiddenInput(PARAMETERSTRING_GROUP_ID, selectedGroupId));
 		}
 		if (submit != null) {
 			if (submit.equals("ok")) {
@@ -464,4 +478,7 @@ public class CreateUser extends Window {
 		return business;
 	}
 
+	public String getBundleIdentifier() {
+		return IW_BUNDLE_IDENTIFIER;
+	}
 }

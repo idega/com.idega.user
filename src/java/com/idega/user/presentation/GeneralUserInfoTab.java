@@ -240,20 +240,23 @@ public class GeneralUserInfoTab extends UserTab {
 		resize(1, 3);
 
 		//First Part (names)
-		Table nameTable = new Table(3, 2);
+		Table nameTable = new Table(2, 4);
 		nameTable.setWidth("100%");
 		nameTable.setCellpadding(0);
 		nameTable.setCellspacing(0);
 		nameTable.setHeight(1, columnHeight);
 		nameTable.setHeight(2, columnHeight);
 		nameTable.setHeight(3, columnHeight);
+		nameTable.setHeight(4, columnHeight);
 
 		nameTable.add(personalIDText, 1, 1);
 		nameTable.add(personalIDField, 2, 1);
-		nameTable.add(displayNameText, 1, 2);
-		nameTable.add(displayNameField, 2, 2);
-		nameTable.add(genderText, 1, 3);
-		nameTable.add(genderField, 2, 3);
+		nameTable.add(fullNameText, 1, 2);
+		nameTable.add(fullNameField, 2, 2);
+		nameTable.add(displayNameText, 1, 3);
+		nameTable.add(displayNameField, 2, 3);
+		nameTable.add(genderText, 1, 4);
+		nameTable.add(genderField, 2, 4);
 		add(nameTable, 1, 1);
 		//First Part ends
 
@@ -396,7 +399,7 @@ public class GeneralUserInfoTab extends UserTab {
 //			fieldValues.put(firstNameFieldName, (user.getFirstName() != null) ? user.getFirstName() : "");
 //			fieldValues.put(middleNameFieldName, (user.getMiddleName() != null) ? user.getMiddleName() : "");
 //			fieldValues.put(lastNameFieldName, (user.getLastName() != null) ? user.getLastName() : "");
-			fieldValues.put(fullNameFieldName, (user.getName() != null) ? user.getLastName() : "");
+			fieldValues.put(fullNameFieldName, (user.getName() != null) ? user.getName() : "");
 			fieldValues.put(displayNameFieldName, (user.getDisplayName() != null) ? user.getDisplayName() : "");
 			fieldValues.put(descriptionFieldName, (user.getDescription() != null) ? user.getDescription() : "");
 			fieldValues.put(dateOfBirthFieldName, (user.getDateOfBirth() != null) ? new IWTimestamp(user.getDateOfBirth()).toSQLDateString() : "");
