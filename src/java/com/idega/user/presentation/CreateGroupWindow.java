@@ -69,8 +69,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	public CreateGroupWindow() {
 		_stateHandler = new StatefullPresentationImplHandler();
 		_stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
-		setWidth(445);//380
-		setHeight(380);//320
+		setWidth(455);//380
+		setHeight(390);//320
 		setResizable(true);
 		setScrollbar(false);
 		getLocation().setApplicationClass(CreateGroupWindow.class);
@@ -156,8 +156,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			TextInput inputName = new TextInput(_createEvent.getIONameForName());
 			inputName.setAsNotEmpty(iwrb.getLocalizedString("new_group.group_name_required","Group name must be selected"));
 			inputName.setStyleClass("text");
-			inputName.setLength(17);
-			inputName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+			inputName.setLength(20);
+//			inputName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 			
 			Text inputText = new Text();
 			inputText.setText(iwrb.getLocalizedString("group_name", "Group name") + ":");
@@ -173,10 +173,12 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			Text descText = new Text(iwrb.getLocalizedString("group_description", "Description") + ":");
 			tab.add(descText, 2, 1); // changed from (descText,1,2); - birna
 			tab.mergeCells(2,2,2,8); //added - birna
+			tab.setVerticalAlignment(2,2,Table.VERTICAL_ALIGN_TOP);
 			tab.add(descriptionTextArea, 2, 2); 
 			
 			GroupChooser groupChooser = getGroupChooser(_createEvent.getIONameForParentID(), true, iwc);
 			groupChooser.setStyleClassName("text");
+			groupChooser.setInputLength(17);
 			Text createUnderText = new Text(iwrb.getLocalizedString("parent_group", "Create group under") + ":");
 			
 			Layer layer = new Layer();
@@ -187,7 +189,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			
 			StyledIBPageChooser pageChooser = new StyledIBPageChooser(_createEvent.getIONameForHomePage(), IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 			pageChooser.setStyleClassName("text");
-			pageChooser.setInputLength(20);
+			pageChooser.setInputLength(17);
 			Text pageText = new Text(iwrb.getLocalizedString("home_page", "Select homepage") + ":");
 
 			tab.add(pageText, 1, 5); //changed from (pageText,1,4) - birna
@@ -219,6 +221,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			
 			GroupChooser aliasGroupChooser = getGroupChooser(_createEvent.getIONameForAliasID(), false, iwc);
 			aliasGroupChooser.setStyleClassName("text");
+			aliasGroupChooser.setInputLength(17);
 			String filter = NO_GROUP_SELECTED;
 			if (selectedGroup != null)  {
 				filter = selectedGroup.getPrimaryKey().toString();

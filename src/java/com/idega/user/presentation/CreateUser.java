@@ -135,8 +135,8 @@ public class CreateUser extends StyledIWAdminWindow {
 
 	public CreateUser() {
 		super();
-		setHeight(240);
-		setWidth(340);
+		setHeight(270);
+		setWidth(320);
 	//	setBackgroundColor(new IWColor(207, 208, 210));
 		setScrollbar(false);
 		setResizable(true);
@@ -159,12 +159,12 @@ public class CreateUser extends StyledIWAdminWindow {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		fullNameField = new TextInput(fullNameFieldParameterName);
-		fullNameField.setLength(17);
-		fullNameField.setStyleClass(inputTextStyle);
-		fullNameField.setOnFocus("");
+		fullNameField.setLength(20);
+		fullNameField.setStyleClass("text");
+//		fullNameField.setOnFocus("");
 //		fullNameField.setAsNotEmpty(iwrb.getLocalizedString("new_user.full_name_required","Full name must be selected"));
 		ssnField = new TextInput(ssnFieldParameterName);
-		ssnField.setLength(17);
+		ssnField.setLength(20);
 		ssnField.setMaxlength(12);
 		ssnField.setStyleClass(inputTextStyle);
 //		ssnField.setAsNotEmpty(iwrb.getLocalizedString("new_user.personal_id_required","Personal ID must be selected"));
@@ -176,6 +176,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		
 		primaryGroupField = new GroupChooser(primaryGroupFieldParameterName);
 		primaryGroupField.setStyleClassName(inputTextStyle);
+		primaryGroupField.setInputLength(17);
 //		if(primaryGroupField.isEmpty()) {
 //			this.setErrorMessage(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
 //			this.setToLoadAlert(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
