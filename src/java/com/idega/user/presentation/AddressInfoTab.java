@@ -316,4 +316,7 @@ public class AddressInfoTab extends UserTab {
 		}
 	}
 
+	public String getBundleIdentifier() {
+		return IW_BUNDLE_IDENTIFIER;
+	}
 } // Class AddressInfoTab
