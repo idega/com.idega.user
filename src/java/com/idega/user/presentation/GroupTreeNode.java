@@ -331,6 +331,10 @@ public class GroupTreeNode implements ICTreeNode {
 		return getNodeName();
 	}
 	
+	public String getNodeName(Locale locale, IWApplicationContext iwac){
+		return getNodeName(locale);
+	}
+	
 	public String getGroupType() {
 		if (this._nodeType == TYPE_GROUP)
 			return _group.getGroupType();
