@@ -8,7 +8,6 @@ import java.util.Iterator;
 import javax.swing.event.ChangeListener;
 
 import com.idega.block.help.presentation.Help;
-import com.idega.builder.presentation.IBPageChooser;
 import com.idega.builder.presentation.StyledIBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
