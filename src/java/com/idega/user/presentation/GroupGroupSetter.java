@@ -160,7 +160,6 @@ import com.idega.user.data.User;
     	iwrb = getResourceBundle(iwc);
     	
     	setTitle(iwrb.getLocalizedString("groupgroupsetter.title","Add a group to a group"));
-			addTitle(iwrb.getLocalizedString("groupgroupsetter.title","Add a group to a group"));
 			setName(iwrb.getLocalizedString("groupgroupsetter.title","Add a group to a group"));
 
       String save = iwc.getParameter("save");
