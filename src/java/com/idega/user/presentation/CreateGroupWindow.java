@@ -109,7 +109,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 
 	public void main(IWContext iwc) throws Exception {
 		//this.debugParameters(iwc);
-		IWBundle iwb = getBundle(iwc);
+		//IWBundle iwb = getBundle(iwc);
 		CreateGroupWindowPS _ps = (CreateGroupWindowPS) this.getPresentationState(iwc);
 		
 
