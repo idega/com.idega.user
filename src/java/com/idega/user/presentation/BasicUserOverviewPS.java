@@ -33,11 +33,11 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
 //  String color2 = "FF0000";
 //  String color = color1;
 
-  private Group parentGroupOfSelection = null;
-  private IBDomain parentDomainOfSelection = null;
+  protected Group parentGroupOfSelection = null;
+	protected IBDomain parentDomainOfSelection = null;
 
-  Group _selectedGroup = null;
-  IBDomain _selectedDomain = null;
+	protected Group _selectedGroup = null;
+	protected IBDomain _selectedDomain = null;
 
   private int _selectedPartitionDefaultValue = 0;
   private int _partitionSizeDefaultValue = 30;

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.swing.event.ChangeListener;
 
@@ -57,7 +58,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	private IWPresentationEvent _controlEvent = null;
 	private IWResourceBundle iwrb = null;
 	private IWBundle iwb = null;
-	private BasicUserOverviewPS _presentationState = null;
+	protected BasicUserOverviewPS _presentationState = null;
 	private BasicUserOverViewToolbar toolbar = null;
 	private com.idega.core.user.data.User administratorUser = null;//TODO convert to new user system
 	private boolean isCurrentUserSuperAdmin = false;
@@ -66,6 +67,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	
 	protected BasicUserOverviewPS ps;
 	protected Group selectedGroup;
+	protected IBDomain selectedDomain;
+	protected Group aliasGroup;
+	protected AccessController accessController;
+	
 	public BasicUserOverview() {
 		super();
 	}
@@ -73,38 +78,47 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	public void setControlEventModel(IWPresentationEvent model) {
 		_controlEvent = model;
 		if (toolbar == null)
-			toolbar = new BasicUserOverViewToolbar();
+			toolbar = getToolbar();
 		toolbar.setControlEventModel(model);
 	}
 	
 	public void setControlTarget(String controlTarget) {
 		_controlTarget = controlTarget;
 		if (toolbar == null)
-			toolbar = new BasicUserOverViewToolbar();
+			toolbar = getToolbar();
 		toolbar.setControlTarget(controlTarget);
 	}
 	
-	protected Table getUsers(IWContext iwc) throws Exception {
-		
-		AccessController access = iwc.getAccessController();
-
-		if (toolbar == null) toolbar = new BasicUserOverViewToolbar();
-		BasicUserOverviewPS ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
-		IBDomain selectedDomain = ps.getSelectedDomain();
-		Group selectedGroup = ps.getSelectedGroup();
-		Group aliasGroup = null;
+	protected Collection getEntries(IWContext iwc){
 		Collection users = null;
-				
-		//for the link to open the user properties
-		boolean canEditUserTemp = false;
-		if( selectedGroup!=null ){
-			canEditUserTemp = access.hasEditPermissionFor(selectedGroup,iwc);
-			if(!canEditUserTemp) canEditUserTemp = access.isOwner(selectedGroup,iwc);//is this necessery (eiki)
-			if(!canEditUserTemp) canEditUserTemp = isCurrentUserSuperAdmin;
+		try {
+			if ( selectedGroup!= null ){	
+				if (aliasGroup != null){
+					users = this.getUserBusiness(iwc).getUsersInGroup(aliasGroup);
+				}
+				else{
+					users = this.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
+				}
+			}
+			else if (selectedDomain != null) {
+				users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
+			}
 		}
-		canEditUser = canEditUserTemp;
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+		}
 		
-		//create the return table
+		return users;
+	}
+	
+	
+	protected Table getList(IWContext iwc) throws Exception {		
+		
+		if (toolbar == null) toolbar = getToolbar();
+		//	create the return table
 		Table returnTable = new Table(1, 2);
 		returnTable.setCellpaddingAndCellspacing(0);
 		returnTable.setWidth(Table.HUNDRED_PERCENT);
@@ -112,29 +126,26 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		returnTable.setHeight(2, Table.HUNDRED_PERCENT);
 		returnTable.setHeight(1, 22);
 		returnTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
-
-		//setup the toolbar and get the users
-		if (selectedGroup != null) {
-			toolbar.setSelectedGroup(selectedGroup);
-			toolbar.setDomain(ps.getParentDomainOfSelection());
-			toolbar.setParentGroup(ps.getParentGroupOfSelection());
-			returnTable.add(toolbar, 1, 1);
+		
+		returnTable.add(toolbar, 1, 1);
 			
+		//for the link to open the user properties
+		boolean canEditUserTemp = false;
+		if( selectedGroup!=null ){
+			//alias stuff
 			if ( selectedGroup.getGroupType().equals("alias") ) {
-				aliasGroup = selectedGroup.getAlias();
+				aliasGroup = selectedGroup.getAlias();//TODO should I check for permissions on this group?
 			}
 			
-			if (aliasGroup != null){
-				users = this.getUserBusiness(iwc).getUsersInGroup(aliasGroup);
-			}
-			else{
-				users = this.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
-			}
+			canEditUserTemp = accessController.hasEditPermissionFor(selectedGroup,iwc);
+			if(!canEditUserTemp) canEditUserTemp = accessController.isOwner(selectedGroup,iwc);//is this necessery (eiki)
+			if(!canEditUserTemp) canEditUserTemp = isCurrentUserSuperAdmin;
+
 		}
-		else if (selectedDomain != null) {
-			System.out.println("[BasicUserOverview]: selectedDomain = " + selectedDomain);
-			users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
-		}
+		canEditUser = canEditUserTemp;
+		
+		
+		Collection users = getEntries(iwc);
 
 //fill the returnTable
 		if (users != null) {
@@ -151,8 +162,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			IWResourceBundle resourceBundle = getResourceBundle(iwc);
 			
 			if( (users.size()>0) && selectedGroup!=null){	
-				boolean canDelete = access.hasDeletePermissionFor(selectedGroup,iwc);
-				if(!canDelete) canDelete = access.isOwner(selectedGroup, iwc);
+				boolean canDelete = accessController.hasDeletePermissionFor(selectedGroup,iwc);
+				if(!canDelete) canDelete = accessController.isOwner(selectedGroup, iwc);
 				if(!canDelete) canDelete = isCurrentUserSuperAdmin;
 				
 				if(canDelete){
@@ -176,6 +187,25 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		else return returnTable;  //users == null
 		
 	}
+	/**
+	 * @param iwc
+	 * @return
+	 */
+	protected BasicUserOverViewToolbar getToolbar() {
+		if( toolbar == null){
+			toolbar = new BasicUserOverViewToolbar();
+		}
+
+		if( selectedGroup != null ){
+			toolbar.setSelectedGroup(selectedGroup);
+			toolbar.setDomain(ps.getParentDomainOfSelection());
+			toolbar.setParentGroup(ps.getParentGroupOfSelection());
+		}
+		
+		return toolbar;
+				
+	}
+
 	/**
 	 * @param users
 	 * @return
@@ -393,9 +423,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		iwrb = this.getResourceBundle(iwc);
 		this.getParentPage().setAllMargins(0);
 		
-		AccessController access = iwc.getAccessController();
+		accessController = iwc.getAccessController();
 		ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
 		selectedGroup = ps.getSelectedGroup();
+		selectedDomain = ps.getSelectedDomain();
+		
 		if (administratorUser == null) {
 			try {
 				administratorUser = iwc.getAccessController().getAdministratorUser();
@@ -411,15 +443,15 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		isCurrentUserSuperAdmin = iwc.isSuperAdmin();
 		
 		if(selectedGroup!=null && !isCurrentUserSuperAdmin){
-			if(access.hasViewPermissionFor(selectedGroup,iwc) || access.isOwner(selectedGroup,iwc)){
-				this.add(getUsers(iwc));
+			if(accessController.hasViewPermissionFor(selectedGroup,iwc) || accessController.isOwner(selectedGroup,iwc)){
+				this.add(getList(iwc));
 			}
 			else{
 				add(iwrb.getLocalizedString("no.view.permission","You are not allowed to view the data for this group."));
 			}
 		}
 		else if(isCurrentUserSuperAdmin){
-			this.add(getUsers(iwc));
+			this.add(getList(iwc));
 		}
 
 	}
