@@ -227,7 +227,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                     }
                     toolbar1.setAlignment(9,1,"center");
                 }
-                if(showISStuff && (selectedGroup.getGroupType().equals("iwma_run"))) {
+                if(selectedGroup.getGroupType().equals("iwma_run")) {
                   Table t = new Table();
                   t.setStyleClass(styleButton);
                   t.setAlignment(1,1,Table.HORIZONTAL_ALIGN_CENTER);
