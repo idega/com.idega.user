@@ -532,7 +532,7 @@ public class Toolbar extends Page implements IWBrowserView {
 			tLin.setStyleClass(styledLink);
 			tLin.setWindowToOpen(com.idega.block.cal.presentation.CalendarWindow.class);
 			butt.add(tLin, 2, 1);
-			toolbar1.add(butt, 11, 1);
+			//toolbar1.add(butt, 11, 1);
 
 			SelectOption calendar = new SelectOption(iwrb.getLocalizedString("button.calendar", "Calendar Window"), "1");
 			calendar.setWindowToOpenOnSelect(com.idega.block.cal.presentation.CalendarWindow.class, null);
