@@ -142,7 +142,7 @@ import java.util.Iterator;
               Group gr = userBusiness.getGroupHome().findByPrimaryKey(new Integer(id));
               if(!currentRelationShip.remove(gr)){
                 //user.addTo(gr);
-                gr.addUser(user);
+                gr.addGroup(user);
               }
             }
 
@@ -159,7 +159,7 @@ import java.util.Iterator;
               //((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(Integer.parseInt(related[i])).addUser(user);
               //com.idega.user.data.GroupBMPBean.addUser(Integer.parseInt(related[i]),user);
               Group gr = userBusiness.getGroupHome().findByPrimaryKey(new Integer(related[i]));
-              gr.addUser(user);
+              gr.addGroup(user);
             }
           }
 

@@ -1,23 +1,24 @@
 package com.idega.user.app;
 
-import com.idega.user.presentation.GroupTreeNode;
-import com.idega.user.business.GroupBusiness;
-import java.util.Iterator;
-import com.idega.user.data.UserGroupRepresentative;
 import com.idega.business.IBOLookup;
-import com.idega.user.data.Group;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.EventListenerList;
-import com.idega.presentation.*;
-import com.idega.event.*;
-import com.idega.presentation.event.TreeViewerEvent;
+import com.idega.event.IWActionListener;
+import com.idega.event.IWPresentationEvent;
+import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.Page;
+import com.idega.presentation.StatefullPresentation;
+import com.idega.presentation.StatefullPresentationImplHandler;
+import com.idega.user.business.GroupBusiness;
+import com.idega.user.presentation.GroupTreeNode;
 import com.idega.user.presentation.GroupTreeView;
 import com.idega.util.IWColor;
-import java.util.Collection;
+
+import javax.swing.event.ChangeListener;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -124,7 +125,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
     }
 
     groupTree.setToShowSuperRootNode(true);
-    groupTree.setDefaultOpenLevel(0);
+    groupTree.setDefaultOpenLevel(1);
     groupTree.setSuperRootNodeName("idegaWeb");
     Image icon = iwb.getImage("super_root_icon.gif");
     groupTree.setSuperRootNodeIcon(icon);
