@@ -187,30 +187,33 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		returnTable.add(middleTable,1,2);
 		
 		//for the link to open the user properties
-		boolean canEditUserTemp = false;
+		boolean canEditUserTemp = isCurrentUserSuperAdmin;
 		if (selectedGroup != null) {
-			//alias stuff
-			if (selectedGroup.getGroupType().equals("alias")) {
-				aliasGroup = selectedGroup.getAlias(); //TODO should I check
-														 // for permissions on
-														 // this group?
-			}
-			//TODO: Have to fix this once and for all. It looks like the class is cloned and not instanciated, so this variable doesn't become null.
-			else {
-				aliasGroup = null;
-			}
-			canEditUserTemp = accessController.hasEditPermissionFor(selectedGroup, iwc);
 			
 			if (!canEditUserTemp){
-				canEditUserTemp = accessController.isOwner(selectedGroup, iwc); //is
+	
+				if(aliasGroup!=null){//thats the real group
+					canEditUserTemp = accessController.hasEditPermissionFor(aliasGroup, iwc);
+				}
+				else{
+					canEditUserTemp = accessController.hasEditPermissionFor(selectedGroup, iwc);
+				}
+				
+				if (!canEditUserTemp){
+					if(aliasGroup!=null){//thats the real group
+						canEditUserTemp = accessController.isOwner(aliasGroup, iwc); 
+					}
+					else{
+						canEditUserTemp = accessController.isOwner(selectedGroup, iwc); 
+					}
+					
+				}
+				
+				
 			}
-																				// this
-																				// necessery
-																				// (eiki)
-			if (!canEditUserTemp)
-				canEditUserTemp = isCurrentUserSuperAdmin;
-
+			
 		}
+		
 		canEditUser = canEditUserTemp;
 	
 		
@@ -262,12 +265,28 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			IWResourceBundle resourceBundle = getResourceBundle(iwc);
 
 			if ((users.size() > 0) && selectedGroup != null) {
-				boolean canDelete = accessController.hasDeletePermissionFor(selectedGroup, iwc);
-				if (!canDelete)
-					canDelete = accessController.isOwner(selectedGroup, iwc);
-				if (!canDelete)
-					canDelete = isCurrentUserSuperAdmin;
-
+				
+				boolean canDelete = isCurrentUserSuperAdmin;
+				
+				if(!canDelete){
+					if(aliasGroup==null){
+						accessController.hasDeletePermissionFor(selectedGroup, iwc);
+					}
+					else{
+						accessController.hasDeletePermissionFor(aliasGroup, iwc);				
+					}
+						
+					if (!canDelete){
+						if(aliasGroup==null){
+							canDelete = accessController.isOwner(selectedGroup, iwc);
+						}
+						else{
+							canDelete = accessController.isOwner(aliasGroup, iwc);
+						}
+					}
+				}
+				
+				
 				if (canDelete) {
 					String confirmDeleting = resourceBundle.getLocalizedString("buo_delete_selected_users", "Delete selected users");
 					confirmDeleting += " ?";
@@ -740,18 +759,17 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
 		selectedGroup = ps.getSelectedGroup();
 		selectedDomain = ps.getSelectedDomain();
-
-		// not needed, this is done in UserApplicationMainArea
-		//	added for stylesheet writout:
-		//			parentPage = this.getParentPage();
-		//			styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
-		//			parentPage.addStyleSheetURL(styleSrc);
-
-		/*
-		 * if(selectedGroup!=null){
-		 * iwc.setSessionAttribute(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID,selectedGroup.getPrimaryKey().toString());
-		 */
-	//	 setBottomURL(getIWApplicationContext().getApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));
+		
+		if (selectedGroup != null) {
+			//alias stuff
+			if (selectedGroup.getGroupType().equals("alias")) {
+				aliasGroup = selectedGroup.getAlias(); 
+			}
+			//TODO PALLI: Have to fix this once and for all. It looks like the class is cloned and not instanciated, so this variable doesn't become null.
+			else {
+				aliasGroup = null;
+			}
+		}
 
 		if (administratorUser == null) {
 			try {
@@ -768,10 +786,14 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		isCurrentUserSuperAdmin = iwc.isSuperAdmin();
 	
 		if (selectedGroup != null && !isCurrentUserSuperAdmin) {
-			if (accessController.hasViewPermissionFor(selectedGroup, iwc)) {//|| accessController.isOwner(selectedGroup, iwc) not needed checked in hasview
+			//TODO eiki find out why this only works for owner if second isOwner is called? because basicusero. is stored?
+			if (aliasGroup == null && accessController.hasViewPermissionFor(selectedGroup, iwc)|| accessController.isOwner(selectedGroup, iwc) ) {//|| accessController.isOwner(selectedGroup, iwc) not needed checked in hasview
 				this.add(getList(iwc));
 			}
-			else {
+			else if( aliasGroup!=null  && accessController.hasViewPermissionFor(aliasGroup, iwc)|| accessController.isOwner(aliasGroup, iwc)  ){
+				this.add(getList(iwc));
+			}
+			else{
 				add(iwrb.getLocalizedString("no.view.permission", "You are not allowed to view the data for this group."));
 			}
 		}
