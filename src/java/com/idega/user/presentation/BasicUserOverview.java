@@ -102,6 +102,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     private boolean hasEditPermissionForRealGroup = false;
     private boolean hasDeletePermissionForRealGroup = false;
     private boolean hasOwnerPermissionForRealGroup = false;
+	private boolean hasPermitPermissionForRealGroup = false;
     
     public BasicUserOverview() {
         super();
@@ -768,7 +769,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
         else if(selectedGroup!=null) {
             //add the list if we have the permissions to
-            if (hasViewPermissionForRealGroup){
+            if (hasViewPermissionForRealGroup || hasPermitPermissionForRealGroup){
                 this.add(getList(iwc));
             }
             else{
@@ -817,6 +818,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         hasEditPermissionForRealGroup = isCurrentUserSuperAdmin;
         hasDeletePermissionForRealGroup = isCurrentUserSuperAdmin;
         hasOwnerPermissionForRealGroup = isCurrentUserSuperAdmin;
+        hasPermitPermissionForRealGroup = isCurrentUserSuperAdmin;
         
         if (!isCurrentUserSuperAdmin){
             if(aliasGroup!=null){//thats the real group
@@ -825,12 +827,14 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                     hasViewPermissionForRealGroup = accessController.hasViewPermissionFor(aliasGroup, iwc);
                     hasEditPermissionForRealGroup = accessController.hasEditPermissionFor(aliasGroup, iwc);
                     hasDeletePermissionForRealGroup = accessController.hasDeletePermissionFor(aliasGroup, iwc);
+                    hasPermitPermissionForRealGroup = accessController.hasPermitPermissionFor(aliasGroup, iwc);
                 }
                 else {
                     //the user is the owner so he can do anything
                     hasViewPermissionForRealGroup = true;
                     hasEditPermissionForRealGroup = true;
                     hasDeletePermissionForRealGroup = true;
+                    hasPermitPermissionForRealGroup = true;
                 }
             }
             else if(selectedGroup!=null){//the third case: selectedGroup == null happens when doing a search for example
@@ -839,12 +843,14 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                     hasViewPermissionForRealGroup = accessController.hasViewPermissionFor(selectedGroup, iwc);
                     hasEditPermissionForRealGroup = accessController.hasEditPermissionFor(selectedGroup, iwc);
                     hasDeletePermissionForRealGroup = accessController.hasDeletePermissionFor(selectedGroup, iwc);
+                    hasPermitPermissionForRealGroup = accessController.hasPermitPermissionFor(selectedGroup, iwc);
                 }
                 else {
                     //the user is the owner so he can do anything
                     hasViewPermissionForRealGroup = true;
                     hasEditPermissionForRealGroup = true;
                     hasDeletePermissionForRealGroup = true;
+                    hasPermitPermissionForRealGroup = true;
                 }
             }
             
