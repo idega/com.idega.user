@@ -192,12 +192,8 @@ public class Toolbar extends Page implements IWBrowserView {
 		// adding some toolbar elements that belong to this bundle
 		toolbarElements.add(new MassMovingWindowPlugin());
 		
+		boolean addPlugins = false;
 		if (!toolbarElements.isEmpty()) {
-			Image dottedImage = iwb.getImage("dotted.gif");
-			toolbarTable.setCellpaddingLeft(2, 1, 10);
-			toolbarTable.setCellpaddingRight(2, 1, 3);
-			toolbarTable.add(dottedImage, 2, 1);
-
 			Table toolbar2 = new Table();
 			toolbar2.setCellpadding(0);
 			toolbar2.setCellspacing(0);
@@ -229,6 +225,7 @@ public class Toolbar extends Page implements IWBrowserView {
 			while (toolbarElementsIterator.hasNext()) {
 				ToolbarElement toolbarElement = (ToolbarElement) toolbarElementsIterator.next();
 				if (toolbarElement.isValid(iwc)) {
+					addPlugins = true;
 					Class toolPresentationClass = toolbarElement.getPresentationObjectClass(iwc);
 					Map parameterMap = toolbarElement.getParameterMap(iwc);
 					// a special parameter, very few plugins are using it
@@ -261,22 +258,28 @@ public class Toolbar extends Page implements IWBrowserView {
 				}
 			}		
 
-			if (useDropdown) {
-				Form form = new Form();
-				menu.addMenuElementFirst("", "");
-				form.add(menu);
-
-				Image iconOtherChanges = iwb.getImage("other_choises.gif");
-				Text menuText =  new Text(iwrb.getLocalizedString("button.other_choices", "Other choices"));
-				menuText.setStyleClass(styledText);
-				toolbar2.setCellpaddingLeft(toolbarColumn, 1, 7);
-				toolbar2.setCellpaddingRight(toolbarColumn, 1, 3);
-				toolbar2.add(iconOtherChanges, toolbarColumn++, 1);
-				toolbar2.add(menuText, toolbarColumn++, 1);
-				toolbar2.setCellpaddingLeft(toolbarColumn, 1, 7);
-				toolbar2.add(form, toolbarColumn++, 1);
+			if (addPlugins) {
+				Image dottedImage = iwb.getImage("dotted.gif");
+				toolbarTable.setCellpaddingLeft(2, 1, 10);
+				toolbarTable.setCellpaddingRight(2, 1, 3);
+				toolbarTable.add(dottedImage, 2, 1);
+				
+				if (useDropdown) {
+					Form form = new Form();
+					menu.addMenuElementFirst("", "");
+					form.add(menu);
+	
+					Image iconOtherChanges = iwb.getImage("other_choises.gif");
+					Text menuText =  new Text(iwrb.getLocalizedString("button.other_choices", "Other choices"));
+					menuText.setStyleClass(styledText);
+					toolbar2.setCellpaddingLeft(toolbarColumn, 1, 7);
+					toolbar2.setCellpaddingRight(toolbarColumn, 1, 3);
+					toolbar2.add(iconOtherChanges, toolbarColumn++, 1);
+					toolbar2.add(menuText, toolbarColumn++, 1);
+					toolbar2.setCellpaddingLeft(toolbarColumn, 1, 7);
+					toolbar2.add(form, toolbarColumn++, 1);
+				}
 			}
-
 		}
 		
 		//search
