@@ -186,27 +186,36 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		returnTable.add(toolbar, 1, 1);
 		returnTable.add(middleTable,1,2);
 		
+		Collection users = getEntries(iwc);
+		
 		if (selectedGroup != null) {
 			topTable.add(selectedGroup.getName() + Text.NON_BREAKING_SPACE,1,1);
 			returnTable.add(topTable,2,3);
 		}
-		else {
-			Table frameTable = new Table(1,1);
-			frameTable.setCellpaddingAndCellspacing(0);
-			frameTable.setStyleClass("mainDisplay");
-			frameTable.setHeight(1,1,"100%");
-			frameTable.setWidth(1,1,"100%");
-			IFrame frontPage = new IFrame();
-			String frontPageId = getBundle(iwc).getProperty(USER_APPLICATION_FRONT_PAGE_ID);
-			if(!"-1".equals(frontPageId)) {
-				frontPage.setHeight("99%");
-				frontPage.setWidth("99%");
-				frontPage.setIBPage(Integer.parseInt(frontPageId));
-				frontPage.setScrolling(IFrame.SCROLLING_AUTO);
-				frontPage.setBorder(1);
-				returnTable.add(frontPage,2,4);
-			}
+		
+		else if(selectedGroup == null) {
+			if(users == null || users.isEmpty()) {
+				Table frameTable = new Table(1,1);
+				frameTable.setCellpaddingAndCellspacing(0);
+				frameTable.setStyleClass("mainDisplay");
+				frameTable.setHeight(1,1,"100%");
+				frameTable.setWidth(1,1,"100%");
+				IFrame frontPage = new IFrame();
+				String frontPageId = getBundle(iwc).getProperty(USER_APPLICATION_FRONT_PAGE_ID);
+				if(!"-1".equals(frontPageId)) {
+					frontPage.setHeight("99%");
+					frontPage.setWidth("99%");
+					frontPage.setIBPage(Integer.parseInt(frontPageId));
+					frontPage.setScrolling(IFrame.SCROLLING_AUTO);
+					frontPage.setBorder(1);
+					returnTable.add(frontPage,2,4);
+				}
+			}			
 		}
+			
+			
+
+		
 		
 		//for the link to open the user properties
 		boolean canEditUserTemp = false;
@@ -230,7 +239,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		}
 		canEditUser = canEditUserTemp;
 
-		Collection users = getEntries(iwc);
+		
 
 		//fill the returnTable
 		if (users != null && !users.isEmpty()) {
