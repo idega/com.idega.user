@@ -31,8 +31,7 @@ public class CreateGroupEvent extends IWPresentationEvent {
 	private String _groupHomePage = null;
 	private int _groupParentID = 0;
 	private int _groupParentType = 0;
-	private int _groupAliasID = 0;
-	private int _groupAliasType = 0;
+	private String _groupAliasID = null;
 
 	private String _groupCommit = null;
 	private String _groupCancel = null;
@@ -54,9 +53,12 @@ public class CreateGroupEvent extends IWPresentationEvent {
 	}
 	
 	public int getAliasID() {
-		return _groupAliasID;
+		if (_groupAliasID != null && _groupAliasID.length() > 0) {
+			return Integer.parseInt(_groupAliasID);
+		}
+		return -1;
 	}
-
+	
 	public int getParentType() {
 		return _groupParentType;
 	}
@@ -121,12 +123,10 @@ public class CreateGroupEvent extends IWPresentationEvent {
 		_groupHomePage = iwc.getParameter(getIONameForHomePage());
 		String groupParentTypeAndID = iwc.getParameter(getIONameForParentID());
 		String aliasID = iwc.getParameter(getIONameForAliasID());
-		System.out.println("aliasID = " + aliasID);
 		if (aliasID != null && !aliasID.equals("")) {
 			try {
 				int index = aliasID.indexOf("_");
-				_groupAliasID = Integer.parseInt(aliasID.substring(0,index));	
-				_groupAliasType = Integer.parseInt(aliasID.substring(index+1));
+				_groupAliasID = aliasID.substring(index+1);	
 			}
 			catch(Exception e) {
 				e.printStackTrace();

@@ -141,7 +141,7 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			Text descText = new Text(iwrb.getLocalizedString("group_description", "Description") + ":");
 			descText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 			tab.add(descText, 1, 2);
-			tab.add(descriptionTextArea, 2, 2);
+			tab.add(descriptionTextArea, 2, 2); 
 
 			GroupChooser groupChooser = getGroupChooser(_createEvent.getIONameForParentID(), iwc);
 			Text createUnderText = new Text(iwrb.getLocalizedString("parent_group", "Create group under") + ":");
