@@ -53,10 +53,10 @@
       <type>java.lang.String</type>
       <value>com.idega.user</value>
     </key>
-    <key>
-      <name>iwme_list_all</name>
+<key>
+      <name>iw_bundle_starter_class</name>
       <type>java.lang.String</type>
-      <value>true</value>
+      <value>com.idega.user.business.GroupRelationDaemonBundleStarter</value>
     </key>
   </map>
 </pxml>
