@@ -84,8 +84,10 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 			GroupTypeHome groupTypeHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
 			for(int i=0; i<values.length; i++) {
 				GroupType gType = groupTypeHome.findByPrimaryKey(values[i]);
+				String tName = gType.getType();
 				if(gType!=null) {
-					groupTypes.add(gType);
+					//groupTypes.add(gType);
+					groupTypes.add(tName);
 				}
 			}
 		}
