@@ -1,17 +1,12 @@
 package com.idega.user.block.search.business;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Vector;
+
 import com.idega.business.IBOServiceBean;
 import com.idega.data.IDOLookup;
 import com.idega.user.block.search.event.UserSearchEvent;
-import com.idega.user.data.Gender;
-import com.idega.user.data.Group;
-import com.idega.user.data.GroupHome;
 import com.idega.user.data.User;
 import com.idega.user.data.UserHome;
-import com.idega.util.ListUtil;
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description: </p>
