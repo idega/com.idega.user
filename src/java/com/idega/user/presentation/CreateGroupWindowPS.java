@@ -1,7 +1,10 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -19,6 +22,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.User;
@@ -62,6 +66,8 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 
 	private int _homePageID = -1;
 
+	private List _errorMessages = null;
+
 	public CreateGroupWindowPS() {
 	}
 
@@ -75,6 +81,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 		failedToCreateGroup = false;
 		_parentGroup = null;
 		groupId = null;
+		_errorMessages = null;
 		eventContext = null;
 	}
 
@@ -138,7 +145,10 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 						_parentGroup = groupBusiness.getGroupByGroupID(parentGroupId);
 						// create under the supplied parent group
 						//if (false) {
-						if (eventContext.getAccessController().hasEditPermissionFor(_parentGroup, eventContext)) {
+						
+						List errors = canCreateSubGroupPluginCheck(_parentGroup,eventContext);
+						
+						if (errors.isEmpty() && eventContext.getAccessController().hasEditPermissionFor(_parentGroup, eventContext)) {
 							group = groupBusiness.createGroupUnder(_groupName, _groupDescription,
 									_groupType, _homePageID, _aliasID, _parentGroup);
 							copyGroupNumberFromParent(group, _parentGroup);
@@ -146,6 +156,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 						else {
 							//todo set error message key
 							failedToCreateGroup = true;
+							_errorMessages = errors;
 						}
 						/////////////
 					}
@@ -167,7 +178,11 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 						// get groupType tree and iterate through it and create
 						// default sub groups.
 						createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(group, groupBusiness,
-								e.getIWContext(), currentUser);
+								eventContext, currentUser);
+						
+						callAfterCreatePluginMethods(group,eventContext);
+						
+						
 						//TODO fix this what is it doing? some caching stuff?
 						e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
 						e.getIWContext().getApplicationContext().removeApplicationAttribute("group_tree");
@@ -220,6 +235,60 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 				}
 			}
 		}
+	}
+
+	/**
+	 * TODO move to groupbusiness
+	 * Call after create or update plugin methods
+	 * @param group
+	 * @param eventContext2
+	 */
+	protected void callAfterCreatePluginMethods(Group group, IWContext iwc) {
+		GroupBusiness groupBiz = getGroupBusiness(iwc);
+		try {
+			Collection plugins = groupBiz.getUserGroupPluginsForGroup(group);
+			Iterator iter = plugins.iterator();
+			while(iter.hasNext()){
+				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness)iter.next();
+				try {
+					pluginBiz.afterGroupCreateOrUpdate(group);
+				}
+				catch (CreateException e1) {
+					// TODO this should cancel the transaction...if there was one
+					e1.printStackTrace();
+				}
+			}
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Call after create or update plugin methods
+	 * @param group
+	 * @param eventContext2
+	 * @return A list of messages why we cannot create a sub group
+	 */
+	protected List canCreateSubGroupPluginCheck(Group parentGroup, IWContext iwc) {
+		GroupBusiness groupBiz = getGroupBusiness(iwc);
+		List errors = new ArrayList();
+		try {
+			Collection plugins = groupBiz.getUserGroupPluginsForGroup(parentGroup);
+			Iterator iter = plugins.iterator();
+			while(iter.hasNext()){
+				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness)iter.next();
+				String error = pluginBiz.canCreateSubGroup(parentGroup);
+				if(error!=null){
+					errors.add(error);
+				}
+			}
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		return errors;
 	}
 
 	/**
@@ -381,5 +450,12 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 			return homePage;
 		}
 		return homePage;
+	}
+
+	/**
+	 * @return
+	 */
+	public List getFailedToCreateGroupErrorMessages() {
+		return _errorMessages;
 	}
 }

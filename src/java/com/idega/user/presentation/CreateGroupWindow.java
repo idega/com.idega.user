@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import javax.swing.event.ChangeListener;
 import com.idega.builder.presentation.StyledIBPageChooser;
@@ -257,8 +258,26 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			
 			//if the last creation failed
 			if(_ps.hasFailedToCreateGroup()){
-				this.setAlertOnLoad(iwrb.getLocalizedString("cannot.create.group.no.edit.permission","You cannot create a group under that group, you do not have edit permission for it."));
-				
+				List errorMessages = _ps.getFailedToCreateGroupErrorMessages();
+				if(errorMessages!=null && !errorMessages.isEmpty()){
+					StringBuffer allReasons = new StringBuffer();
+					allReasons.append(iwrb.getLocalizedString("cannot.create.group.because.of.following.reasons","Cannot create the group because of the following reasons: "));
+					Iterator iter = errorMessages.iterator();
+					while (iter.hasNext()) {
+						String errorMessageStringAlsoUsedAsLocalizationKey = (String) iter.next();
+						allReasons.append(iwrb.getLocalizedString(errorMessageStringAlsoUsedAsLocalizationKey,errorMessageStringAlsoUsedAsLocalizationKey));
+						if(iter.hasNext()){
+							allReasons.append(",");
+						}
+					}
+					
+					this.setAlertOnLoad(allReasons.toString());
+					
+					
+				}
+				else{
+					this.setAlertOnLoad(iwrb.getLocalizedString("cannot.create.group.no.edit.permission","You cannot create a group under that group, you do not have edit permission for it."));
+				}
 			}
 			
 			_ps.reset();
