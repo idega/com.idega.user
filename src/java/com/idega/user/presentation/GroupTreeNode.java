@@ -277,21 +277,20 @@ public class GroupTreeNode implements ICTreeNode {
 				}
 			case TYPE_GROUP :
 				if (isAlias()){
-					//TODO Sigtryggur 22.06.2004 Here needs to be a check if the alias is an alias on an ancestor
-					//because then the tree renders forever in an infinite loop
-					//if it points to an ancestor it must return 0 in childCount 
 					Group aliasGroup = getAlias();
-					Collection allAncestors = null;
-					try {
-						allAncestors = getGroupBusiness(_iwc).getParentGroupsRecursive(this.getNodeID());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					if (allAncestors.contains(aliasGroup)) {
-						System.out.println("Alias with ID = "+this.getNodeID()+" links to an ancestor with ID = "+aliasGroup.getPrimaryKey()+" The relationship is disabled to avoid endless loop");
-						return 0;
-					}
-					else if(aliasGroup!=null) return aliasGroup.getChildCount();
+//TODO Sigtryggur enable this bugfix, but cache the values
+//					Collection allAncestors = null;
+//					try {
+//						allAncestors = getGroupBusiness(_iwc).getParentGroupsRecursive(this.getNodeID());
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//					}
+//					if (allAncestors.contains(aliasGroup)) {
+//						System.out.println("Alias with ID = "+this.getNodeID()+" links to an ancestor with ID = "+aliasGroup.getPrimaryKey()+" The relationship is disabled to avoid endless loop");
+//						return 0;
+//					}
+//					else 
+					if(aliasGroup!=null) return aliasGroup.getChildCount();
 					else{
 						System.err.println("GroupTreeNode: Error - no alias for group :"+getNodeName()+" id: "+getNodeID());
 						return 0;
