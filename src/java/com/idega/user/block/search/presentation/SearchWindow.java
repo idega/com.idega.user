@@ -137,7 +137,7 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		
 		SelectionBox groupSel = new SelectionBox(UserSearchEvent.SEARCH_FIELD_GROUPS);
 		groupSel.setHeight(13);
-		//TODO Eiki temporary make a method that only returns all groups with view permission and owner (edit)
+
 		Collection groupsCol = getUserBusiness(iwc).getAllGroupsWithViewPermission(iwc.getCurrentUser(),iwc);
 		
 		Iterator nodes = groupsCol.iterator();
