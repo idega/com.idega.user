@@ -368,6 +368,28 @@ public class CreateUser extends Window {
 
 		try {
 			String fullName = iwc.getParameter(fullNameFieldParameterName);
+			IWTimestamp t = null;
+			if (ssn != null) {
+				t = new IWTimestamp();
+			
+				String day = ssn.substring(0,2);
+				String month = ssn.substring(2,4);
+				String year = ssn.substring(4,6);
+				
+				int iDay = Integer.parseInt(day);
+				int iMonth = Integer.parseInt(month);
+				int iYear = Integer.parseInt(year);
+				if (ssn.substring(9).equals("9"))
+					iYear += 1900;
+				else if (ssn.substring(9).equals("0"))
+					iYear += 2000;
+				else if (ssn.substring(9).equals("8"))
+					iYear += 1800;
+				t.setHour(0);
+				t.setMinute(0);
+				t.setSecond(0);
+				t.setMilliSecond(0);
+			}
 			newUser =
 				getUserBusiness(iwc).createUserWithLogin(
 					null,
@@ -377,7 +399,7 @@ public class CreateUser extends Window {
 					null,
 					null,
 					null,
-					null,
+					t,
 					primaryGroupId,
 					login,
 					password,
