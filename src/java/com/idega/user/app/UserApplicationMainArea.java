@@ -129,8 +129,8 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 	}
 
 	public void initializeInMain(IWContext iwc) {
-		System.out.println("in initializeInMain getClassToShow:"
-				+ ((UserApplicationMainAreaPS) this.getPresentationState(iwc)).getClassNameToShow());
+//		System.out.println("in initializeInMain getClassToShow:"
+//				+ ((UserApplicationMainAreaPS) this.getPresentationState(iwc)).getClassNameToShow());
 		iwb = getBundle(iwc);
 		IWLocation location = (IWLocation) this.getLocation().clone();
 		location.setSubID(1);//bara eitthva? id...herma eftir instance id
