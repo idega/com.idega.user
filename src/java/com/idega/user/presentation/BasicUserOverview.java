@@ -126,11 +126,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 //      this.add(" ("+sel+")");
 
       userTable = new Table(3, ((users.size()>33)?users.size():33)+1  );
+      userTable.setCellpaddingAndCellspacing(0);
       userTable.setLineAfterColumn(1);
       userTable.setLineAfterColumn(2);
       userTable.setLineColor("#DBDCDF");
       
-      userTable.setBackgroundImage(1,1,this.getBundle(iwc).getImage("glass_column_dark.gif"));
+      userTable.setBackgroundImage(1,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
       userTable.setBackgroundImage(2,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
       userTable.setBackgroundImage(3,1,this.getBundle(iwc).getImage("glass_column_light.gif"));      
       userTable.setHeight(1,16);
