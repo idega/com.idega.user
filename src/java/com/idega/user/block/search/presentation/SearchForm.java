@@ -72,6 +72,7 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 		
 		if(textValue != null) {
 			searchInput.setContent(textValue);
+			searchInput.setOnFocus("if(this.value==\'" + iwrb.getLocalizedString("insert_search_string","Insert a search string") + "\')this.value=\'\' ");
 		}
 		
 		if (_controlTarget != null) {
