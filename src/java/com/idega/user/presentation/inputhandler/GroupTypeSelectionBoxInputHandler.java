@@ -100,7 +100,7 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 	/* (non-Javadoc)
 	 * @see com.idega.business.InputHandler#getDisplayNameOfValue(java.lang.Object, com.idega.presentation.IWContext)
 	 */
-	public String getDisplayNameOfValue(Object value, IWContext iwc) {
+	public String getDisplayStringForResultingObject(Object value, IWContext iwc) {
 		String result = null;
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		if(value!=null && value instanceof Collection) {
