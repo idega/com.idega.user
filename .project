@@ -12,7 +12,6 @@
     <project>com.idega.developer</project>
     <project>com.idega.block.media</project>
     <project>com.idega.block.staff</project>
-    <project>com.idega.block.importer</project>
     <project>com.idega.block.dataquery</project>
   </projects>
   <buildSpec>

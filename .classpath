@@ -19,8 +19,6 @@
   </classpathentry>
   <classpathentry kind="src" path="/com.idega.block.staff">
   </classpathentry>
-  <classpathentry kind="src" path="/com.idega.block.importer">
-  </classpathentry>
   <classpathentry kind="src" path="/com.idega.block.dataquery">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar">
