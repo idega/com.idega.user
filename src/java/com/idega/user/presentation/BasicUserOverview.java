@@ -433,8 +433,16 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 						aLink.setWindowToOpen(UserPropertyWindow.class);
 						aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
 						
-						if(ps.getSelectedGroup()!=null){
-							aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID, ps.getSelectedGroup().getPrimaryKey().toString());
+						/*String selectedGroupId = (String) iwc.getSessionAttribute(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
+						
+						if(selectedGroupId!=null){
+							aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID, selectedGroupId);			
+						}
+						*/
+					
+						
+						if(selectedGroup!=null){
+							aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID, selectedGroup.getPrimaryKey().toString());			
 						}
 						
 					}
@@ -536,6 +544,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
 		selectedGroup = ps.getSelectedGroup();
 		selectedDomain = ps.getSelectedDomain();
+		
+		/*if(selectedGroup!=null){
+			iwc.setSessionAttribute(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID,selectedGroup.getPrimaryKey().toString());
+		}*/
+
 		
 		if (administratorUser == null) {
 			try {
