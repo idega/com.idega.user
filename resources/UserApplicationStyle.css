@@ -82,7 +82,11 @@ h1{
 	background: #ffffff url(menu_tile.gif) repeat;
 }
 .banner{
-	background: #ffffff url(banner_tile.gif) repeat;
+	/*background: #ffffff url(banner_tile.gif) repeat;*/
+	background: #9eb400;
+	background-image: url(top.gif);
+	background-repeat: no-repeat;
+	height: 50px;
 }
 .back{
 	background-color: #f5f5f5;
@@ -94,8 +98,16 @@ h1{
 	font-size: 10px;
 	font-weight: bold;
 }
-.mainDisplay{
+.borderAll{
 	border: 1px solid #cccccc;
+}
+.borderTopRightBottom{
+	border-top: 1px solid #cccccc;
+	border-right: 1px solid #cccccc;
+	border-bottom: 1px solid #cccccc;
+}
+.borderRight{
+	border-right: 1px solid #cccccc;
 }
 .topTable{
 	border-top: 1px solid #cccccc;
@@ -107,6 +119,10 @@ h1{
 	border-top: 1px solid #cccccc;
 	border-right: 1px solid #cccccc;
 	background: #f1f1f1 url(middleTable_tile.gif) repeat;
+}
+.grayBorderBottom{
+	background-color: #f5f5f5;
+	border-bottom: 1px solid #cccccc;
 }
 .box{
 	border: 1px solid #bbbbbb;
@@ -153,34 +169,7 @@ input.checkbox{
 	border: 1px solid #cccccc;
 	background-color: #ffffff;
 }
-textarea.navigationtree{
-	border: 1px solid #cccccc;
-	height: 200px;
-	scrollbar-face-color: #ffffff;
-	scrollbar-highlight-color: #ffffff;
-	scrollbar-shadow-color: #bbbbbb;
-	scrollbar-3dlight-color: #dddddd;
-	scrollbar-arrow-color: #cccccc;
-	scrollbar-darkshadow-color: #eeeeee
-}
-button.defaultbutton{
-	border: 1px solid #bbbbbb;
-	font: 9px;
-	background: #eeeeee; 	
-	cursor: hand;
-	cursor: pointer;
-}
-button.panebutton{
-	border: 1px solid #bbbbbb;
-	font: 9px helvetica,verdana,arial,sans-serif;
-	color:  #777777;
-	font-style: italic;
-	font-weight: bold;
-	background: #eeeeee;
-	cursor: hand;
-	cursor: pointer;
-	width: 100px;
-}
+
 textarea{
 	border: 1px solid #bbbbbb;
 }
@@ -188,14 +177,9 @@ textarea{
 select {
 	border: 1px solid #bbbbbb; 
 	font-family: Verdana, Arial, Helvetica, sans-serif; 
-        font-size: 10px; 
+    font-size: 10px; 
 } 
-option.op1{
-	border-bottom: 1px solid #bbbbbb;
-	border-top: 1px solid #bbbbbb;
-	font: 9px verdana,helvetica,arial,sans-serif;
-	color: #111111;	
-}
+
 
 
 
