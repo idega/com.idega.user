@@ -3,9 +3,9 @@ package com.idega.user.presentation;
 import java.rmi.RemoteException;
 
 import javax.ejb.CreateException;
-import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
+import com.idega.block.help.presentation.Help;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
@@ -79,11 +79,15 @@ public class CreateUser extends StyledIWAdminWindow {
 	private SubmitButton continueButton;
 	private CloseButton cancelButton;
 	private BackButton backButton;
+	
+	private Help help; 
+	private static final String HELP_TEXT_KEY = "create_user";
 
 	private Form myForm;
 	private Table mainTable; 
 	private Table inputTable;
 	private Table buttonTable;
+	private Table helpTable;
 	private Table warningTable;
 
 	private String selectedGroupId = null;
@@ -133,7 +137,7 @@ public class CreateUser extends StyledIWAdminWindow {
 	public CreateUser() {
 		super();
 		setHeight(250);
-		setWidth(360);
+		setWidth(380);
 	//	setBackgroundColor(new IWColor(207, 208, 210));
 		setScrollbar(false);
 		setResizable(true);
@@ -175,6 +179,8 @@ public class CreateUser extends StyledIWAdminWindow {
 //			this.setToLoadAlert(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
 //		}
 //		primaryGroupField.setAsNotEmpty(iwrb.getLocalizedString(primaryGroupFieldParameterName,"A group must be selected"));
+
+		help = getHelp(HELP_TEXT_KEY);
 		
 		okButton = new SubmitButton(iwrb.getLocalizedString("save", "Save"), submitButtonParameterName, okButtonParameterValue);
     okButton.setAsImageButton(true);
@@ -195,7 +201,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		mainTable.setStyleClass(mainTableStyle);
 		mainTable.setCellspacing(10);
 		mainTable.setCellpadding(0);
-		mainTable.setWidth(180);
+		mainTable.setWidth(300);
 		mainTable.setHeight(180);
 		//mainTable end
 		
@@ -212,7 +218,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		//inputTable end
 	
 		// buttonTable begin
-		buttonTable = new Table(3, 1);
+		buttonTable = new Table(5, 1);
 		buttonTable.setCellpadding(0);
 		buttonTable.setCellspacing(0);
 		buttonTable.setHeight(1, rowHeight);
@@ -223,12 +229,20 @@ public class CreateUser extends StyledIWAdminWindow {
 		buttonTable.add(cancelButton, 3, 1);			
 		// buttonTable end
 		
+		helpTable = new Table(1,1);
+		helpTable.setCellpadding(0);
+		helpTable.setCellspacing(0);
+		helpTable.setHeight(1,rowHeight);
+		helpTable.setVerticalAlignment("bottom");
+		helpTable.add(help,1,1);
+		
 		//warningTable begin
 		warningTable = new Table(1,1);
 		warningTable.setCellpadding(0);
 		warningTable.setCellspacing(0);
 		mainTable.add(inputTable, 1,1);
 		mainTable.add(buttonTable, 2,2);
+		mainTable.add(helpTable,1,2);
 		
 		myForm.add(mainTable);
 	}
