@@ -83,9 +83,8 @@ public class UserApplicationMenuAreaPS extends IWControlFramePresentationState i
     if (object instanceof BasicUserOverviewPS) {
       BasicUserOverviewPS state = (BasicUserOverviewPS) object;
       Group group = state.getSelectedGroup();
-      selectedGroupId = (Integer) group.getPrimaryKey();
-      // refresh the view 
-      setOnLoad("parent.frames['iwb_menu'].location.reload()");
+      if (group != null)
+        selectedGroupId = (Integer) group.getPrimaryKey();
     }
     else if (object instanceof DeleteGroupConfirmWindowPS)  {
       // the former selected group does not exist any longer!

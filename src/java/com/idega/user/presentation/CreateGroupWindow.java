@@ -80,17 +80,9 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
     if (iwc.isParameterSet(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY)) {
       selectedGroupProviderStateId = iwc.getParameter(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
     }      
-		StringBuffer id = new StringBuffer(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);
-		id.append(IWMainApplication.getEncryptedClassName(UserApplication.class));
-		id.append(Frame.COMPOUND_ID_FRAME_NAME_KEY);
-		id.append("iwb_main_left");
-		setArtificialCompoundId(id.toString(), iwc);
 		IWPresentationState state = this.getPresentationState(iwc);
 		// add action listener
 		addActionListener((IWActionListener) state);
-		// get and set change listener
-		id = new StringBuffer(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);
-		id.append(IWMainApplication.getEncryptedClassName(UserApplication.Top.class));
 		IWStateMachine stateMachine;
     // add all change listeners
     Collection changeListeners;
