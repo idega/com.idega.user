@@ -54,12 +54,13 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
   public static final String SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY = "selected_group_pp_id_key";
+  public static final String NO_GROUP_SELECTED = "no_group_selected";
   
 	private StatefullPresentationImplHandler _stateHandler = null;
 	private CreateGroupEvent _createEvent;
   private String selectedGroupProviderStateId = null; 
   private Group selectedGroup = null;
-
+  private Collection groupTypes = null;
 
 	public CreateGroupWindow() {
 		_stateHandler = new StatefullPresentationImplHandler();
@@ -98,7 +99,10 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
     while (iterator.hasNext())  {
       state.addChangeListener((ChangeListener) iterator.next());
     }
-    
+    // fill collection of grouptypes stored as strings
+    // used for drop down menu group type
+    // used for alias group 
+    groupTypes = getGroupTypes(iwc);
 	}
 
 	public void main(IWContext iwc) throws Exception {
@@ -195,6 +199,11 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			tab.add(mnu, 2, 5);
 
 			GroupChooser aliasGroupChooser = getGroupChooser(_createEvent.getIONameForAliasID(), false, iwc);
+      String filter = NO_GROUP_SELECTED;
+      if (selectedGroup != null)  {
+        filter = selectedGroup.getPrimaryKey().toString();
+      }
+      aliasGroupChooser.setFilter(filter);
 			Text aliasText = new Text(iwrb.getLocalizedString("alias_group", "Alias for group") + ":");
 			aliasText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 
@@ -225,17 +234,9 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
   
   private DropdownMenu getGroupTypeMenu(IWResourceBundle iwrb, IWContext iwc)  {
     DropdownMenu menu = new DropdownMenu(_createEvent.getIONameForGroupType());
-    GroupBusiness groupBusiness;
-    try {
-      groupBusiness =(GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
-    }
-    catch (RemoteException ex)  {
-      throw new RuntimeException(ex.getMessage());
-    }
-    Iterator iterator = groupBusiness.getAllAllowedGroupTypesForChildren(selectedGroup, iwc).iterator();
+    Iterator iterator = groupTypes.iterator();
     while (iterator.hasNext())  {
-      GroupType item = (GroupType) iterator.next();
-      String value = item.getType();
+      String value = (String) iterator.next();
       menu.addMenuElement(value, iwrb.getLocalizedString(value, value));
     }
     return menu;
@@ -308,4 +309,28 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
     }
     return null;
   }   
+  
+  private Collection getGroupTypes(IWContext iwc)  {
+    Collection groupTypes = new ArrayList();
+    // get group types
+    GroupBusiness groupBusiness;
+    try {
+      groupBusiness =(GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+    }
+    catch (RemoteException ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+    Iterator iterator = groupBusiness.getAllAllowedGroupTypesForChildren(selectedGroup, iwc).iterator();
+    while (iterator.hasNext())  {
+      GroupType item = (GroupType) iterator.next();
+      String value = item.getType();
+      groupTypes.add(value);
+    }
+    return groupTypes;
+  }   
+  
+  
+
+        
+    
 }

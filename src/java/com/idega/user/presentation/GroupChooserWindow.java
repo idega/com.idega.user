@@ -1,11 +1,13 @@
 package com.idega.user.presentation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
 import com.idega.builder.business.BuilderLogic;
+import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWLocation;
@@ -13,9 +15,12 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.AbstractChooser;
 import com.idega.presentation.ui.AbstractChooserWindow;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
+import com.idega.user.data.GroupType;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -70,11 +75,32 @@ public class GroupChooserWindow extends AbstractChooserWindow {
 			}
 			else{
 				UserBusiness biz = getUserBusiness(iwc);
-				Collection groups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
+				Collection allGroups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
+        // filter groups
+        Collection allowedGroupTypes = null;
+        if (iwc.isParameterSet(AbstractChooser.FILTER_PARAMETER))  {
+          String filter = iwc.getParameter(AbstractChooser.FILTER_PARAMETER);
+          if (filter.length() > 0)  {
+            allowedGroupTypes = getGroupTypes(filter, iwc);
+          }
+        }
+          
+        Collection groups = new ArrayList();
+        if (allowedGroupTypes == null)  {
+          groups = allGroups;
+        }
+        else {
+          Iterator iterator = allGroups.iterator();
+          while (iterator.hasNext())  {
+            Group group = (Group) iterator.next();
+            if (checkGroupType(group, allowedGroupTypes))  {
+              groups.add(group);
+            }
+          }
+        }
 				Collection groupNodes = convertGroupCollectionToGroupNodeCollection(groups,iwc.getApplicationContext());
 				viewer.setFirstLevelNodes(groupNodes.iterator());
-
-}
+      } 
 
       viewer.setLocation((IWLocation)this.getLocation().clone());
       viewer.getLocation().setSubID(1);
@@ -118,6 +144,8 @@ public class GroupChooserWindow extends AbstractChooserWindow {
       getParentPage().setStyleDefinition("A:hover",_linkHoverStyle);
     }
   }
+  
+
 
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
 		if (userBiz == null) {
@@ -145,4 +173,41 @@ public class GroupChooserWindow extends AbstractChooserWindow {
 		return list;
 	}
 	
+  private Collection getGroupTypes(String selectedGroup, IWContext iwc)  {
+    Collection groupTypes = new ArrayList();
+    Group group = null;
+    // get group types
+    GroupBusiness groupBusiness;
+    try {
+      groupBusiness =(GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+      if (! CreateGroupWindow.NO_GROUP_SELECTED.equals(selectedGroup))  {
+        group = groupBusiness.getGroupByGroupID((new Integer(selectedGroup)).intValue());
+      }
+    }
+    // Remote and FinderException
+    catch (Exception ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+    Iterator iterator = groupBusiness.getAllAllowedGroupTypesForChildren(group, iwc).iterator();
+    while (iterator.hasNext())  {
+      GroupType item = (GroupType) iterator.next();
+      String value = item.getType();
+      groupTypes.add(value);
+    }
+    return groupTypes;
+  }  
+  
+  private boolean checkGroupType(Group group, Collection allowedGroupTypes) {
+    String groupType = group.getGroupTypeValue();
+    Iterator iterator = allowedGroupTypes.iterator();
+    while (iterator.hasNext())  {
+      String type = (String) iterator.next();
+      if (type.equals(groupType)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  
 }
