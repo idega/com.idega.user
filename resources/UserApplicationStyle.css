@@ -13,10 +13,12 @@ body, p, h1, h2, h3, table, td, th, textarea, input{
 	font-family: verdana,helvetica,arial,sans-serif;
 	font-size: 10px;
 }
+td{
+	font-weight: bold;
+}
 a.styledLink{
 	font-family: verdana,helvetica,arial,sans-serif;
-	font-size: 10px;
-	font-style: italic;
+	font-size: 8px;
 	font-weight: bold;
 	color: #5d5d5d;
 	text-decoration: none;
@@ -24,8 +26,7 @@ a.styledLink{
 }
 a:hover.styledLink{
 	font-family: verdana,helvetica,arial,sans-serif;
-	font-size: 10px;
-	font-style: italic;
+	font-size: 8px;
 	font-weight: bold;
 	color: 5d5d5d
 	text-decoration: none;
@@ -33,14 +34,12 @@ a:hover.styledLink{
 }
 a:active.styledLink{
 	font-family: verdana,helvetica,arial,sans-serif;
-	font-size: 10px;
-	font-style: italic;
+	font-size: 8px;
 	font-weight: bold;
 	color: 5d5d5d
 	text-decoration: none;
 	text-transform: uppercase;
 }
-
 
 h1{
 	font-family: verdana,helvetica,arial,sans-serif;
@@ -125,7 +124,8 @@ textarea{
 	border: 1px solid #bbbbbb;
 }
 
-select { 
+select {
+	border: 1px solid #bbbbbb; 
 	font-family: Verdana, Arial, Helvetica, sans-serif; 
         font-size: 10px; 
 } 
