@@ -52,8 +52,8 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
 	    panel.addTab(new UserGroupList(),++count,iwc);
 	    
 	    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFamilyTab").newInstance() ,++count,iwc);
-	    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFinanceTab").newInstance() ,++count,iwc);
-	    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserHistoryTab").newInstance() ,++count,iwc);
+	    //panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFinanceTab").newInstance() ,++count,iwc);
+	    //panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserHistoryTab").newInstance() ,++count,iwc);
 		
 	
 	//temp shit
