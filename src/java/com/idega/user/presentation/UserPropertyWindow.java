@@ -27,6 +27,8 @@ import com.idega.util.IWColor;
 
 public class UserPropertyWindow extends TabbedPropertyWindow {
 
+	public static final String PARAMETERSTRING_SELECTED_GROUP_ID = "";
+
 	public static final String PARAMETERSTRING_USER_ID = "ic_user_id";
 
 	public static final String SESSION_ADDRESS = "ic_user_property_window";
@@ -59,7 +61,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
 			int userId = Integer.parseInt(id);
 			User user = getUserBusiness(iwc).getUser(userId);
-			String grpid = iwc.getParameter("laufey_pjasa");
+			String grpid = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
 			
 			int iGrpId = -1;
 			if (grpid != null) 

@@ -433,7 +433,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 						aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
 						
 						if(ps.getSelectedGroup()!=null){
-							aLink.addParameter("laufey_pjasa", ps.getSelectedGroup().getPrimaryKey().toString());
+							aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID, ps.getSelectedGroup().getPrimaryKey().toString());
 						}
 						
 					}
