@@ -221,7 +221,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	public Layer displayTable(IWContext iwc) {
 		Layer layer = new Layer(Layer.DIV);
 		layer.setWidth(174);
-		layer.setHeight(300);
+		layer.setHeight(Table.HUNDRED_PERCENT);
 		layer.setStyleClass("main");
 		layer.setPadding(4);
 		layer.add(groupTree);
