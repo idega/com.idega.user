@@ -30,6 +30,7 @@ import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
@@ -219,13 +220,20 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 						BasicUserOverview.MOVE_USERS_KEY,
 						BasicUserOverview.MOVE_USERS_KEY);
 				moveToButton.setSubmitConfirm(confirmMoving);		
+        
         // add group drop down list
-        DropdownMenu targetGroupMenu = getGroupList(iwc);
+        //DropdownMenu targetGroupMenu = getGroupList(iwc);
+        GroupChooser targetGroupChooser = new GroupChooser(SELECTED_TARGET_GROUP_KEY);
+				targetGroupChooser.setInputStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+				if (selectedGroup != null)  {
+					targetGroupChooser.setSelectedNode(new GroupTreeNode(selectedGroup));
+				} 
+        
         //form.add(moveToButton);
         //form.add(Text.getNonBrakingSpace());
         //form.add(targetGroupMenu);
         entityBrowser.addPresentationObjectToBottom(moveToButton);
-        entityBrowser.addPresentationObjectToBottom(targetGroupMenu);
+        entityBrowser.addPresentationObjectToBottom(targetGroupChooser);
 			}
 			
 			

@@ -122,7 +122,12 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
         mainIwc.isParameterSet(BasicUserOverview.SELECTED_USERS_KEY) &&
         mainIwc.isParameterSet(BasicUserOverview.SELECTED_TARGET_GROUP_KEY)) {
         userIds = mainIwc.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
-        int targetGroupId = Integer.parseInt(mainIwc.getParameter(BasicUserOverview.SELECTED_TARGET_GROUP_KEY));
+        
+        String selectedGroupId = mainIwc.getParameter(BasicUserOverview.SELECTED_TARGET_GROUP_KEY);
+        //cut it down because it is in the form "domain_id"_"group_id"
+				selectedGroupId = selectedGroupId.substring( Math.max(selectedGroupId.indexOf("_")+1,0),selectedGroupId.length());
+        int targetGroupId = Integer.parseInt(selectedGroupId);
+        
         // move users to a group
         resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup, targetGroupId, mainIwc);
         this.targetGroupId = targetGroupId; 
