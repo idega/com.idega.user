@@ -23,6 +23,7 @@ import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.data.Address;
 import com.idega.core.data.Email;
 import com.idega.core.data.Phone;
+import com.idega.data.EntityRepresentation;
 import com.idega.data.GenericEntity;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
@@ -461,7 +462,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 					ex.printStackTrace(System.err);
 				}
 				StringBuffer displayValues = new StringBuffer();
-				values = path.getValues((GenericEntity) address);
+				values = path.getValues((EntityRepresentation) address);
 				// com.idega.core.data.Address.STREET_NUMBER plus com.idega.core.data.Address.STREET_NUMBER 
 				displayValues.append(getValue(0)).append(' ').append(getValue(1));
 				// com.idega.core.data.Address.P_O_BOX
@@ -964,7 +965,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
           ex.printStackTrace(System.err);
         }
         StringBuffer displayValues = new StringBuffer();
-        values = path.getValues((GenericEntity) address);
+        values = path.getValues((EntityRepresentation) address);
         // com.idega.core.data.Address.STREET_NUMBER plus com.idega.core.data.Address.STREET_NUMBER 
         displayValues.append(getValue(0)).append(' ').append(getValue(1));
         // com.idega.core.data.Address.P_O_BOX
