@@ -87,7 +87,8 @@ public class SearchResultsWindow extends BasicUserOverview {
 		SearchResultsWindowPS sPs = (SearchResultsWindowPS)ps;
 		if(sPs!=null && iwrb!=null){
 			String search = sPs.getSearchString() ;
-			toolbar.setTitle(iwrb.getLocalizedString("searchresultswindow.search:","Search")+" : " +search+ Text.NON_BREAKING_SPACE);
+			search = (search!=null)? (" : "+search) : "";
+			toolbar.setTitle(iwrb.getLocalizedString("searchresultswindow.search:","Search")+search+ Text.NON_BREAKING_SPACE);
 		}
 		
 		return toolbar;
