@@ -110,6 +110,14 @@ h1{
 	font-size: 8px;
 	background: #ffffff url(button_tile.gif) repeat;
 }
+.errorMessage{
+	font-family: verdana,helvetica,arial,sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #ff0000;
+	border: 1px solid #cccccc;
+}
+
 table.selectedBox{
 	border: 1px solid #bbbbbb;
 	width: 100px;
