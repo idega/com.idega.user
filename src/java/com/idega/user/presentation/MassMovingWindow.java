@@ -1,7 +1,9 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import javax.ejb.FinderException;
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
@@ -165,6 +167,10 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     form.addParameter(MOVE_SELECTED_GROUPS,"w");
     form.setName("mass_form");
     form.addEventModel(event, iwc);
+    // define headline
+    String headlineString = iwrb.getLocalizedString("mm_choose_desired_divisions_or_groups_to_age_and_gender_sort", "Choose the desired divisions or groups to age and gender sort");
+    Text headline = new Text(headlineString);
+    headline.setBold();
     // get entities
     Collection coll = getChildrenOfGroup(iwc);
     // define browser
@@ -175,12 +181,13 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     close.setOnClick("window.close(); return false;");
     move.setOnClick("mass_form.submit(); window.close();");
     // assemble table
-    Table table = new Table(1,2);
+    Table table = new Table(1,3);
     Table buttons = new Table(2,1);
     buttons.add(close, 1, 1);
     buttons.add(move, 2, 1);
-    table.add(browser,1,1);
-    table.add(buttons,1,2);    
+    table.add(headline,1 ,1);
+    table.add(browser,1,2);
+    table.add(buttons,1,3);    
     form.add(table);
     add(form);
     // add action listener
@@ -205,11 +212,28 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     
 
   private Collection getChildrenOfGroup(IWContext iwc) {
+    Collection coll = null;
     try {
-      return getGroupBusiness(iwc).getChildGroups(group);
+       coll = getGroupBusiness(iwc).getChildGroups(group);
     }
     catch (Exception ex)  {
       throw new RuntimeException(ex.getMessage());
+    }
+    // if the group is a club show only children that are divisions
+    String groupType = group.getGroupType();
+    if (GROUP_TYPE_CLUB.equals(groupType))  {
+      Collection result = new ArrayList();
+      Iterator iterator = coll.iterator();
+      while (iterator.hasNext())  {
+        Group child = (Group) iterator.next();
+        if (GROUP_TYPE_CLUB_DIVISION.equals(child.getGroupType()))  {
+          result.add(child);
+        }
+      }
+      return result;
+    }
+    else {
+      return coll;
     }
   }
         
@@ -254,6 +278,7 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     browser.setUseExternalForm(true);
     return browser;
   }    
+   
     
   /*
   private DropdownMenu getGroupList(IWContext iwc) {
