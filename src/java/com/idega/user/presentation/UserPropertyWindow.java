@@ -33,10 +33,18 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
     panel.addTab(new AddressInfoTab(), 1, iwc);
     panel.addTab(new UserPhoneTab(), 2, iwc);
     panel.addTab(new UserGroupList(),3,iwc);
-
+    
+    try {//temporary before plugins work
+		
+    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFamilyTab").newInstance() ,4,iwc);
+    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFinanceTab").newInstance() ,5,iwc);
+    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserHistoryTab").newInstance() ,6,iwc);
+	} catch (Exception e) {
+	}
+	
     UserLoginTab ult = new UserLoginTab();
     ult.displayLoginInfoSettings();
-    panel.addTab(ult,4,iwc);
+    panel.addTab(ult,7,iwc);
 
 
   }
