@@ -59,6 +59,7 @@ public class GroupTreeView extends IWTreeControl {
     folderAndFileIcons = new Image[3][3];
     this.setColumns(2);
     this.setTreeColumnWidth(1,"16");
+    setWrap(false);
   }
 
 
@@ -250,21 +251,21 @@ public class GroupTreeView extends IWTreeControl {
 //          l.addParameter(nodeActionPrm,node.getNodeID());
 //        }
         this.setLinkToMaintainOpenAndClosedNodes(l);
-        if(_nowrap){
+        /*if(_nowrap){
           return getNoWrapLayerClone(l);
-        } else {
+        } else {*/
           return l;
-        }
+        //}
     }
     return null;
   }
 
   public void setWrap(){
-    _nowrap = false;
+    setWrap(false);
   }
 
   public void setWrap(boolean value){
-    _nowrap = value;
+    super.setNowrap(!value);
   }
 
   public void setNodeActionParameter(String prm){
