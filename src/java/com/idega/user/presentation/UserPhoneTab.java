@@ -1,20 +1,16 @@
 package com.idega.user.presentation;
 
-import com.idega.presentation.Table;
-import com.idega.presentation.ui.TextInput;
-import com.idega.presentation.ui.DropdownMenu;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.text.Text;
-import com.idega.user.business.UserBusiness;
-//import com.idega.block.staff.data.StaffInfo;
-import com.idega.util.IWTimestamp;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-import com.idega.user.presentation.UserTab;
+import java.sql.SQLException;
+
+import com.idega.core.data.Email;
 import com.idega.core.data.Phone;
 import com.idega.core.data.PhoneType;
-import com.idega.core.data.Email;
-import java.sql.SQLException;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.TextInput;
 
 /**
  * Title:        User
@@ -24,290 +20,380 @@ import java.sql.SQLException;
  * @version 1.0
  */
 
-public class UserPhoneTab extends UserTab{
+public class UserPhoneTab extends UserTab {
+	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
-  private TextInput homePhoneField;
-  private TextInput workPhoneField;
-  private TextInput mobilePhoneField;
-  private TextInput faxPhoneField;
-  private DropdownMenu homePhoneMenu;
-  private DropdownMenu workPhoneMenu;
-  private DropdownMenu mobilePhoneMenu;
-  private DropdownMenu faxPhoneMenu;
-  private TextInput emailField;
+	private static final String TAB_NAME = "usr_phone_tab_name";
+	private static final String DEFAULT_TAB_NAME = "Phone/Mail";
 
-  public static String homePhoneFieldName = "homePhone";
-  public static String workPhoneFieldName = "workPhone";
-  public static String mobilePhoneFieldName = "mobilePhone";
-  public static String faxPhoneFieldName = "faxPhone";
-  public static String homePhoneMenuName = "homeChoice";
-  public static String workPhoneMenuName = "workChoice";
-  public static String mobilePhoneMenuName = "mobileChoice";
-  public static String faxPhoneMenuName = "faxChoice";
-  public static String emailFieldName = "email";
+	private TextInput homePhoneField;
+	private TextInput workPhoneField;
+	private TextInput mobilePhoneField;
+	private TextInput faxPhoneField;
+	private DropdownMenu homePhoneMenu;
+	private DropdownMenu workPhoneMenu;
+	private DropdownMenu mobilePhoneMenu;
+	private DropdownMenu faxPhoneMenu;
+	private TextInput emailField;
 
-  private Text homePhoneText;
-  private Text workPhoneText;
-  private Text mobilePhoneText;
-  private Text faxPhoneText;
-  private Text emailText;
+	public static String homePhoneFieldName = "homePhone";
+	public static String workPhoneFieldName = "workPhone";
+	public static String mobilePhoneFieldName = "mobilePhone";
+	public static String faxPhoneFieldName = "faxPhone";
+	public static String homePhoneMenuName = "homeChoice";
+	public static String workPhoneMenuName = "workChoice";
+	public static String mobilePhoneMenuName = "mobileChoice";
+	public static String faxPhoneMenuName = "faxChoice";
+	public static String emailFieldName = "email";
 
-  public UserPhoneTab() {
-    super();
-    this.setName("Phone/Mail");
-  }
+	private Text homePhoneText;
+	private Text workPhoneText;
+	private Text mobilePhoneText;
+	private Text faxPhoneText;
+	private Text emailText;
 
-  public UserPhoneTab(int userId){
-    this();
-    this.setUserID(userId);
-  }
+	public UserPhoneTab() {
+		super();
+		IWContext iwc = IWContext.getInstance();
+		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-  public void initializeFieldNames(){
-  }
+		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
+		
+//		this.setName("Phone/Mail");
+	}
 
-  public void initializeFieldValues(){
-    fieldValues.put(this.homePhoneFieldName,"");
-    fieldValues.put(this.workPhoneFieldName,"");
-    fieldValues.put(this.mobilePhoneFieldName,"");
-    fieldValues.put(this.faxPhoneFieldName,"");
-    fieldValues.put(this.homePhoneMenuName,"");
-    fieldValues.put(this.workPhoneMenuName,"");
-    fieldValues.put(this.mobilePhoneMenuName,"");
-    fieldValues.put(this.faxPhoneMenuName,"");
-    fieldValues.put(this.emailFieldName,"");
+	public UserPhoneTab(int userId) {
+		this();
+		this.setUserID(userId);
+	}
 
-    this.updateFieldsDisplayStatus();
-  }
+	public void initializeFieldNames() {
+	}
 
-  public void updateFieldsDisplayStatus(){
-    homePhoneField.setContent((String)fieldValues.get(this.homePhoneFieldName));
-    workPhoneField.setContent((String)fieldValues.get(this.workPhoneFieldName));
-    mobilePhoneField.setContent((String)fieldValues.get(this.mobilePhoneFieldName));
-    faxPhoneField.setContent((String)fieldValues.get(this.faxPhoneFieldName));
+	public void initializeFieldValues() {
+		fieldValues.put(this.homePhoneFieldName, "");
+		fieldValues.put(this.workPhoneFieldName, "");
+		fieldValues.put(this.mobilePhoneFieldName, "");
+		fieldValues.put(this.faxPhoneFieldName, "");
+		fieldValues.put(this.homePhoneMenuName, "");
+		fieldValues.put(this.workPhoneMenuName, "");
+		fieldValues.put(this.mobilePhoneMenuName, "");
+		fieldValues.put(this.faxPhoneMenuName, "");
+		fieldValues.put(this.emailFieldName, "");
 
-    if ( (String)fieldValues.get(this.homePhoneMenuName) != null  && ((String)fieldValues.get(this.homePhoneMenuName)).length() > 0)
-      homePhoneMenu.setSelectedElement((String)fieldValues.get(this.homePhoneMenuName));
-    if ( (String)fieldValues.get(this.workPhoneMenuName) != null  && ((String)fieldValues.get(this.workPhoneMenuName)).length() > 0)
-      workPhoneMenu.setSelectedElement((String)fieldValues.get(this.workPhoneMenuName));
-    if ( (String)fieldValues.get(this.mobilePhoneMenuName) != null  && ((String)fieldValues.get(this.mobilePhoneMenuName)).length() > 0)
-      mobilePhoneMenu.setSelectedElement((String)fieldValues.get(this.mobilePhoneMenuName));
-    if ( (String)fieldValues.get(this.faxPhoneMenuName) != null && ((String)fieldValues.get(this.faxPhoneMenuName)).length() > 0 )
-      faxPhoneMenu.setSelectedElement((String)fieldValues.get(this.faxPhoneMenuName));
+		this.updateFieldsDisplayStatus();
+	}
 
-    emailField.setContent((String)fieldValues.get(this.emailFieldName));
-  }
+	public void updateFieldsDisplayStatus() {
+		homePhoneField.setContent((String)fieldValues.get(this.homePhoneFieldName));
+		workPhoneField.setContent((String)fieldValues.get(this.workPhoneFieldName));
+		mobilePhoneField.setContent(
+			(String)fieldValues.get(this.mobilePhoneFieldName));
+		faxPhoneField.setContent((String)fieldValues.get(this.faxPhoneFieldName));
 
+		if ((String)fieldValues.get(this.homePhoneMenuName) != null
+			&& ((String)fieldValues.get(this.homePhoneMenuName)).length() > 0)
+			homePhoneMenu.setSelectedElement(
+				(String)fieldValues.get(this.homePhoneMenuName));
+		if ((String)fieldValues.get(this.workPhoneMenuName) != null
+			&& ((String)fieldValues.get(this.workPhoneMenuName)).length() > 0)
+			workPhoneMenu.setSelectedElement(
+				(String)fieldValues.get(this.workPhoneMenuName));
+		if ((String)fieldValues.get(this.mobilePhoneMenuName) != null
+			&& ((String)fieldValues.get(this.mobilePhoneMenuName)).length() > 0)
+			mobilePhoneMenu.setSelectedElement(
+				(String)fieldValues.get(this.mobilePhoneMenuName));
+		if ((String)fieldValues.get(this.faxPhoneMenuName) != null
+			&& ((String)fieldValues.get(this.faxPhoneMenuName)).length() > 0)
+			faxPhoneMenu.setSelectedElement(
+				(String)fieldValues.get(this.faxPhoneMenuName));
 
-  public void initializeFields() {
-    PhoneType[] phoneTypes = null;
-    try {
-      phoneTypes = (PhoneType[]) com.idega.core.data.PhoneTypeBMPBean.getStaticInstance(PhoneType.class).findAll();
-    }
-    catch (SQLException ex) {
-      ex.printStackTrace();
-    }
+		emailField.setContent((String)fieldValues.get(this.emailFieldName));
+	}
 
-    homePhoneField = new TextInput(homePhoneFieldName);
-    homePhoneField.setLength(24);
+	public void initializeFields() {
+		PhoneType[] phoneTypes = null;
+		try {
+			phoneTypes =
+				(PhoneType[])com
+					.idega
+					.core
+					.data
+					.PhoneTypeBMPBean
+					.getStaticInstance(PhoneType.class)
+					.findAll();
+		}
+		catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		
+		if (phoneTypes != null) {
+			if (phoneTypes.length > 0) {
+				IWContext iwc = IWContext.getInstance();
+				IWResourceBundle iwrb = getResourceBundle(iwc);
+				
+				for (int i = 0; i < phoneTypes.length; i++) {
+					String n = phoneTypes[i].getName();
+					if (n != null) {
+						String l = iwrb.getLocalizedString("usr_phone_" + n,n);
+						phoneTypes[i].setName(l);
+					} 					
+				}
+			}
+		}
+		
+		homePhoneField = new TextInput(homePhoneFieldName);
+		homePhoneField.setLength(24);
 
-    workPhoneField = new TextInput(workPhoneFieldName);
-    workPhoneField.setLength(24);
+		workPhoneField = new TextInput(workPhoneFieldName);
+		workPhoneField.setLength(24);
 
-    mobilePhoneField = new TextInput(mobilePhoneFieldName);
-    mobilePhoneField.setLength(24);
+		mobilePhoneField = new TextInput(mobilePhoneFieldName);
+		mobilePhoneField.setLength(24);
 
-    faxPhoneField = new TextInput(faxPhoneFieldName);
-    faxPhoneField.setLength(24);
+		faxPhoneField = new TextInput(faxPhoneFieldName);
+		faxPhoneField.setLength(24);
 
-    homePhoneMenu = new DropdownMenu(phoneTypes,homePhoneMenuName);
-    workPhoneMenu = new DropdownMenu(phoneTypes,workPhoneMenuName);
-    mobilePhoneMenu = new DropdownMenu(phoneTypes,mobilePhoneMenuName);
-    faxPhoneMenu = new DropdownMenu(phoneTypes,faxPhoneMenuName);
+		homePhoneMenu = new DropdownMenu(phoneTypes, homePhoneMenuName);
+		workPhoneMenu = new DropdownMenu(phoneTypes, workPhoneMenuName);
+		mobilePhoneMenu = new DropdownMenu(phoneTypes, mobilePhoneMenuName);
+		faxPhoneMenu = new DropdownMenu(phoneTypes, faxPhoneMenuName);
 
-    for ( int a = 0; a < phoneTypes.length; a++ ) {
-      if ( a == 0 ) {
-        homePhoneMenu.setSelectedElement(Integer.toString(phoneTypes[a].getID()));
-      }
-      else if ( a == 1 ) {
-        workPhoneMenu.setSelectedElement(Integer.toString(phoneTypes[a].getID()));
-      }
-      else if ( a == 2 ) {
-        mobilePhoneMenu.setSelectedElement(Integer.toString(phoneTypes[a].getID()));
-      }
-      else if ( a == 3 ) {
-        faxPhoneMenu.setSelectedElement(Integer.toString(phoneTypes[a].getID()));
-      }
-    }
+		for (int a = 0; a < phoneTypes.length; a++) {
+			if (a == 0) {
+				homePhoneMenu.setSelectedElement(
+					Integer.toString(phoneTypes[a].getID()));
+			}
+			else if (a == 1) {
+				workPhoneMenu.setSelectedElement(
+					Integer.toString(phoneTypes[a].getID()));
+			}
+			else if (a == 2) {
+				mobilePhoneMenu.setSelectedElement(
+					Integer.toString(phoneTypes[a].getID()));
+			}
+			else if (a == 3) {
+				faxPhoneMenu.setSelectedElement(
+					Integer.toString(phoneTypes[a].getID()));
+			}
+		}
 
-    emailField = new TextInput(emailFieldName);
-    emailField.setLength(24);
-  }
+		emailField = new TextInput(emailFieldName);
+		emailField.setLength(24);
+	}
 
-  public void initializeTexts(){
-    homePhoneText = new Text("Phone"+" 1:");
-    homePhoneText.setFontSize(fontSize);
+	public void initializeTexts() {
+		IWContext iwc = IWContext.getInstance();
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+		
+		homePhoneText = new Text(iwrb.getLocalizedString(homePhoneFieldName,"Phone 1") + ":");
+		homePhoneText.setFontSize(fontSize);
 
-    workPhoneText = new Text("Phone"+" 2:");
-    workPhoneText.setFontSize(fontSize);
+		workPhoneText = new Text(iwrb.getLocalizedString(workPhoneFieldName,"Phone 2") + ":");
+		workPhoneText.setFontSize(fontSize);
 
-    mobilePhoneText = new Text("Phone"+" 3:");
-    mobilePhoneText.setFontSize(fontSize);
+		mobilePhoneText = new Text(iwrb.getLocalizedString(mobilePhoneFieldName,"Phone 3") + ":");
+		mobilePhoneText.setFontSize(fontSize);
 
-    faxPhoneText = new Text("Phone"+" 4:");
-    faxPhoneText.setFontSize(fontSize);
+		faxPhoneText = new Text(iwrb.getLocalizedString(faxPhoneFieldName,"Phone 4") + ":");
+		faxPhoneText.setFontSize(fontSize);
 
-    emailText = new Text("E-mail"+":");
-    emailText.setFontSize(fontSize);
-  }
+		emailText = new Text(iwrb.getLocalizedString(emailFieldName,"E-mail") + ":");
+		emailText.setFontSize(fontSize);
+	}
 
+	public void lineUpFields() {
+		this.resize(1, 3);
 
-  public void lineUpFields(){
-    this.resize(1,3);
+		Table staffTable = new Table(3, 4);
+		staffTable.setWidth("100%");
+		staffTable.setCellpadding(0);
+		staffTable.setCellspacing(0);
+		staffTable.setHeight(1, rowHeight);
+		staffTable.setHeight(2, rowHeight);
+		staffTable.setHeight(3, rowHeight);
+		staffTable.setHeight(4, rowHeight);
 
-    Table staffTable = new Table(3,4);
-    staffTable.setWidth("100%");
-    staffTable.setCellpadding(0);
-    staffTable.setCellspacing(0);
-    staffTable.setHeight(1,rowHeight);
-    staffTable.setHeight(2,rowHeight);
-    staffTable.setHeight(3,rowHeight);
-    staffTable.setHeight(4,rowHeight);
+		staffTable.add(homePhoneText, 1, 1);
+		staffTable.add(homePhoneMenu, 3, 1);
+		staffTable.add(homePhoneField, 2, 1);
+		staffTable.add(workPhoneText, 1, 2);
+		staffTable.add(workPhoneMenu, 3, 2);
+		staffTable.add(workPhoneField, 2, 2);
+		staffTable.add(mobilePhoneText, 1, 3);
+		staffTable.add(mobilePhoneMenu, 3, 3);
+		staffTable.add(mobilePhoneField, 2, 3);
+		staffTable.add(faxPhoneText, 1, 4);
+		staffTable.add(faxPhoneMenu, 3, 4);
+		staffTable.add(faxPhoneField, 2, 4);
+		this.add(staffTable, 1, 1);
 
-    staffTable.add(homePhoneText,1,1);
-    staffTable.add(homePhoneMenu,3,1);
-    staffTable.add(homePhoneField,2,1);
-    staffTable.add(workPhoneText,1,2);
-    staffTable.add(workPhoneMenu,3,2);
-    staffTable.add(workPhoneField,2,2);
-    staffTable.add(mobilePhoneText,1,3);
-    staffTable.add(mobilePhoneMenu,3,3);
-    staffTable.add(mobilePhoneField,2,3);
-    staffTable.add(faxPhoneText,1,4);
-    staffTable.add(faxPhoneMenu,3,4);
-    staffTable.add(faxPhoneField,2,4);
-    this.add(staffTable,1,1);
+		Table mailTable = new Table(2, 1);
+		mailTable.setWidth("100%");
+		mailTable.setCellpadding(0);
+		mailTable.setCellspacing(0);
+		mailTable.setHeight(1, rowHeight);
 
-    Table mailTable = new Table(2,1);
-    mailTable.setWidth("100%");
-    mailTable.setCellpadding(0);
-    mailTable.setCellspacing(0);
-    mailTable.setHeight(1,rowHeight);
+		mailTable.add(emailText, 1, 1);
+		mailTable.add(emailField, 2, 1);
+		this.add(mailTable, 1, 3);
+	}
 
-    mailTable.add(emailText,1,1);
-    mailTable.add(emailField,2,1);
-    this.add(mailTable,1,3);
-  }
+	public boolean collect(IWContext iwc) {
+		if (iwc != null) {
 
+			String homePhone = iwc.getParameter(this.homePhoneFieldName);
+			String workPhone = iwc.getParameter(this.workPhoneFieldName);
+			String mobilePhone = iwc.getParameter(this.mobilePhoneFieldName);
+			String faxPhone = iwc.getParameter(this.faxPhoneFieldName);
+			String homePhoneType = iwc.getParameter(this.homePhoneMenuName);
+			String workPhoneType = iwc.getParameter(this.workPhoneMenuName);
+			String mobilePhoneType = iwc.getParameter(this.mobilePhoneMenuName);
+			String faxPhoneType = iwc.getParameter(this.faxPhoneMenuName);
+			String email = iwc.getParameter(this.emailFieldName);
 
-  public boolean collect(IWContext iwc){
-    if(iwc != null){
+			if (homePhone != null) {
+				fieldValues.put(this.homePhoneFieldName, homePhone);
+			}
+			if (workPhone != null) {
+				fieldValues.put(this.workPhoneFieldName, workPhone);
+			}
+			if (mobilePhone != null) {
+				fieldValues.put(this.mobilePhoneFieldName, mobilePhone);
+			}
+			if (faxPhone != null) {
+				fieldValues.put(this.faxPhoneFieldName, faxPhone);
+			}
+			if (homePhoneType != null) {
+				fieldValues.put(this.homePhoneMenuName, homePhoneType);
+			}
+			if (workPhoneType != null) {
+				fieldValues.put(this.workPhoneMenuName, workPhoneType);
+			}
+			if (mobilePhoneType != null) {
+				fieldValues.put(this.mobilePhoneMenuName, mobilePhoneType);
+			}
+			if (faxPhoneType != null) {
+				fieldValues.put(this.faxPhoneMenuName, faxPhoneType);
+			}
+			if (email != null) {
+				fieldValues.put(this.emailFieldName, email);
+			}
 
-      String homePhone = iwc.getParameter(this.homePhoneFieldName);
-      String workPhone = iwc.getParameter(this.workPhoneFieldName);
-      String mobilePhone = iwc.getParameter(this.mobilePhoneFieldName);
-      String faxPhone = iwc.getParameter(this.faxPhoneFieldName);
-      String homePhoneType = iwc.getParameter(this.homePhoneMenuName);
-      String workPhoneType = iwc.getParameter(this.workPhoneMenuName);
-      String mobilePhoneType = iwc.getParameter(this.mobilePhoneMenuName);
-      String faxPhoneType = iwc.getParameter(this.faxPhoneMenuName);
-      String email = iwc.getParameter(this.emailFieldName);
+			this.updateFieldsDisplayStatus();
 
-      if(homePhone != null){
-        fieldValues.put(this.homePhoneFieldName,homePhone);
-      }
-      if(workPhone != null){
-        fieldValues.put(this.workPhoneFieldName,workPhone);
-      }
-      if(mobilePhone != null){
-        fieldValues.put(this.mobilePhoneFieldName,mobilePhone);
-      }
-      if(faxPhone != null){
-        fieldValues.put(this.faxPhoneFieldName,faxPhone);
-      }
-      if(homePhoneType != null){
-        fieldValues.put(this.homePhoneMenuName,homePhoneType);
-      }
-      if(workPhoneType != null){
-        fieldValues.put(this.workPhoneMenuName,workPhoneType);
-      }
-      if(mobilePhoneType != null){
-        fieldValues.put(this.mobilePhoneMenuName,mobilePhoneType);
-      }
-      if(faxPhoneType != null){
-        fieldValues.put(this.faxPhoneMenuName,faxPhoneType);
-      }
-      if(email != null){
-        fieldValues.put(this.emailFieldName,email);
-      }
+			return true;
+		}
+		return false;
+	}
 
-      this.updateFieldsDisplayStatus();
+	public boolean store(IWContext iwc) {
+		try {
+			if (getUserId() > -1) {
+				String[] phoneString =
+					{
+						(String)fieldValues.get(this.homePhoneFieldName),
+						(String)fieldValues.get(this.workPhoneFieldName),
+						(String)fieldValues.get(this.mobilePhoneFieldName),
+						(String)fieldValues.get(this.faxPhoneFieldName)};
+				String[] phoneTypeString =
+					{
+						(String)fieldValues.get(this.homePhoneMenuName),
+						(String)fieldValues.get(this.workPhoneMenuName),
+						(String)fieldValues.get(this.mobilePhoneMenuName),
+						(String)fieldValues.get(this.faxPhoneMenuName)};
 
-      return true;
-    }
-    return false;
-  }
+				for (int a = 0; a < phoneString.length; a++) {
+					if (phoneString[a] != null && phoneString[a].length() > 0) {
+						//business.updateUserPhone(getUserId(),Integer.parseInt(phoneTypeString[a]),phoneString[a]);
+						super.getUserBusiness(iwc).updateUserPhone(
+							getUserId(),
+							Integer.parseInt(phoneTypeString[a]),
+							phoneString[a]);
+					}
+				}
+				if ((String)fieldValues.get(this.emailFieldName) != null
+					&& ((String)fieldValues.get(this.emailFieldName)).length() > 0)
+					//business.updateUserMail(getUserId(),(String)fieldValues.get(this.emailFieldName));
+					super.getUserBusiness(iwc).updateUserMail(
+						getUserId(),
+						(String)fieldValues.get(this.emailFieldName));
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace(System.err);
+			throw new RuntimeException("update user exception");
+		}
+		return true;
+	}
 
-  public boolean store(IWContext iwc){
-    try{
-      if(getUserId() > -1){
-        String[] phoneString = { (String)fieldValues.get(this.homePhoneFieldName),(String)fieldValues.get(this.workPhoneFieldName),(String)fieldValues.get(this.mobilePhoneFieldName),(String)fieldValues.get(this.faxPhoneFieldName) };
-        String[] phoneTypeString = { (String)fieldValues.get(this.homePhoneMenuName),(String)fieldValues.get(this.workPhoneMenuName),(String)fieldValues.get(this.mobilePhoneMenuName),(String)fieldValues.get(this.faxPhoneMenuName) };
+	public void initFieldContents() {
 
-        for ( int a = 0; a < phoneString.length; a++ ) {
-          if ( phoneString[a] != null && phoneString[a].length() > 0 ) {
-            //business.updateUserPhone(getUserId(),Integer.parseInt(phoneTypeString[a]),phoneString[a]);
-            super.getUserBusiness(iwc).updateUserPhone(getUserId(),Integer.parseInt(phoneTypeString[a]),phoneString[a]);
-          }
-        }
-        if ( (String)fieldValues.get(this.emailFieldName) != null && ((String)fieldValues.get(this.emailFieldName)).length() > 0 )
-          //business.updateUserMail(getUserId(),(String)fieldValues.get(this.emailFieldName));
-          super.getUserBusiness(iwc).updateUserMail(getUserId(),(String)fieldValues.get(this.emailFieldName));
-      }
-    }
-    catch(Exception e){
-      e.printStackTrace(System.err);
-      throw new RuntimeException("update user exception");
-    }
-    return true;
-  }
+		try {
+			Phone[] phones =
+				this.getUserBusiness(this.getEventIWContext()).getUserPhones(getUser());
+			Email mail =
+				this.getUserBusiness(this.getEventIWContext()).getUserMail(getUser());
 
+			for (int a = 0; a < phones.length; a++) {
+				if (a == 0) {
+					fieldValues.put(
+						this.homePhoneMenuName,
+						(phones[a].getPhoneTypeId() != -1)
+							? Integer.toString(phones[a].getPhoneTypeId())
+							: "");
+					fieldValues.put(
+						this.homePhoneFieldName,
+						(phones[a].getNumber() != null) ? phones[a].getNumber() : "");
+				}
+				else if (a == 1) {
+					fieldValues.put(
+						this.workPhoneMenuName,
+						(phones[a].getPhoneTypeId() != -1)
+							? Integer.toString(phones[a].getPhoneTypeId())
+							: "");
+					fieldValues.put(
+						this.workPhoneFieldName,
+						(phones[a].getNumber() != null) ? phones[a].getNumber() : "");
+				}
+				else if (a == 2) {
+					fieldValues.put(
+						this.mobilePhoneMenuName,
+						(phones[a].getPhoneTypeId() != -1)
+							? Integer.toString(phones[a].getPhoneTypeId())
+							: "");
+					fieldValues.put(
+						this.mobilePhoneFieldName,
+						(phones[a].getNumber() != null) ? phones[a].getNumber() : "");
+				}
+				else if (a == 3) {
+					fieldValues.put(
+						this.faxPhoneMenuName,
+						(phones[a].getPhoneTypeId() != -1)
+							? Integer.toString(phones[a].getPhoneTypeId())
+							: "");
+					fieldValues.put(
+						this.faxPhoneFieldName,
+						(phones[a].getNumber() != null) ? phones[a].getNumber() : "");
+				}
+			}
+			if (mail != null)
+				fieldValues.put(
+					this.emailFieldName,
+					(mail.getEmailAddress() != null) ? mail.getEmailAddress() : "");
 
-  public void initFieldContents(){
+			this.updateFieldsDisplayStatus();
 
-    try{
-      Phone[] phones = this.getUserBusiness(this.getEventIWContext()).getUserPhones(getUser());
-      Email mail = this.getUserBusiness(this.getEventIWContext()).getUserMail(getUser());
+		}
+		catch (Exception e) {
+			System.err.println(
+				"UserPhoneTab error initFieldContents, userId : " + getUserId());
+		}
 
-      for ( int a = 0; a < phones.length; a++ ) {
-        if ( a == 0 ) {
-          fieldValues.put(this.homePhoneMenuName,(phones[a].getPhoneTypeId() != -1) ? Integer.toString(phones[a].getPhoneTypeId()):"" );
-          fieldValues.put(this.homePhoneFieldName,(phones[a].getNumber() != null) ? phones[a].getNumber():"" );
-        }
-        else if ( a == 1 ) {
-          fieldValues.put(this.workPhoneMenuName,(phones[a].getPhoneTypeId() != -1) ? Integer.toString(phones[a].getPhoneTypeId()):"" );
-          fieldValues.put(this.workPhoneFieldName,(phones[a].getNumber() != null) ? phones[a].getNumber():"" );
-        }
-        else if ( a == 2 ) {
-          fieldValues.put(this.mobilePhoneMenuName,(phones[a].getPhoneTypeId() != -1) ? Integer.toString(phones[a].getPhoneTypeId()):"" );
-          fieldValues.put(this.mobilePhoneFieldName,(phones[a].getNumber() != null) ? phones[a].getNumber():"" );
-        }
-        else if ( a == 3 ) {
-          fieldValues.put(this.faxPhoneMenuName,(phones[a].getPhoneTypeId() != -1) ? Integer.toString(phones[a].getPhoneTypeId()):"" );
-          fieldValues.put(this.faxPhoneFieldName,(phones[a].getNumber() != null) ? phones[a].getNumber():"" );
-        }
-      }
-      if ( mail != null )
-        fieldValues.put(this.emailFieldName,(mail.getEmailAddress() != null) ? mail.getEmailAddress():"" );
+	}
 
-      this.updateFieldsDisplayStatus();
-
-    }
-    catch(Exception e){
-      System.err.println("UserPhoneTab error initFieldContents, userId : " + getUserId());
-    }
-
-
-  }
-
+	public String getBundleIdentifier() {
+		return IW_BUNDLE_IDENTIFIER;
+	}
 
 } // Class UserPhoneTab
