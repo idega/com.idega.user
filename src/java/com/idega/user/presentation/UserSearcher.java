@@ -14,10 +14,16 @@ import java.util.Vector;
 
 import javax.ejb.FinderException;
 
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
+import com.idega.business.IBORuntimeException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.event.IWPageEventListener;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -29,6 +35,7 @@ import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
+import com.idega.user.business.UserSession;
 import com.idega.user.data.User;
 import com.idega.user.data.UserHome;
 import com.idega.util.PersonalIDFormatter;
@@ -39,7 +46,7 @@ import com.idega.util.text.TextSoap;
  * @author aron 
  * @version 1.0
  */
-public class UserSearcher extends Block {
+public class UserSearcher extends Block implements IWPageEventListener {
 	private static final String SEARCH_PERSONAL_ID = "usrch_search_pid";
 	private static final String SEARCH_LAST_NAME = "usrch_search_lname";
 	private static final String SEARCH_MIDDLE_NAME = "usrch_search_mname";
@@ -138,6 +145,15 @@ public class UserSearcher extends Block {
 	
 	private String legalNonDigitPIDLetters = null;
 	
+	protected UserSession getUserSession(IWUserContext iwuc) {
+		try {
+			return (UserSession) IBOLookup.getSessionInstance(iwuc, UserSession.class);
+		}
+		catch (IBOLookupException e) {
+			throw new IBORuntimeException(e);
+		}
+	}
+
 	private void initStyleNames() {
 		if (textFontStyleName == null)
 			textFontStyleName = getStyleName(STYLENAME_TEXT);
@@ -179,6 +195,7 @@ public class UserSearcher extends Block {
 		}
 		if (OwnFormContainer) {
 			Form form = new Form();
+			form.setEventListener(UserSearcher.class);
 			form.add(T);
 			add(form);
 		}
@@ -301,8 +318,10 @@ public class UserSearcher extends Block {
 			// if some users found
 			if (!usersFound.isEmpty()) {
 				hasManyUsers = usersFound.size() > 1;
-				if (!hasManyUsers)
+				if (!hasManyUsers) {
 					user = (User) usersFound.iterator().next();
+					getUserSession(iwc).setUser(user);
+				}
 			}
 			// if no user found
 			else {
@@ -1005,4 +1024,20 @@ public boolean isUseFlexiblePersonalID(){
 		this.legalNonDigitPIDLetters = legalNonDigitPIDLetters;
 	}
 
+	public boolean actionPerformed(IWContext iwc) throws IWException {
+		try {
+			processSearch(iwc);
+			return true;
+		}
+		catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 }
