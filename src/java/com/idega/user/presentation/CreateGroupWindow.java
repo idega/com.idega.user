@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.ejb.CreateException;
 import javax.ejb.EJBException;
+import javax.ejb.FinderException;
 import javax.swing.event.ChangeListener;
 
 import com.idega.builder.business.BuilderLogic;
@@ -43,6 +45,7 @@ import com.idega.user.app.UserApplication;
 import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
+import com.idega.user.data.GroupTypeBMPBean;
 import com.idega.user.data.GroupTypeHome;
 import com.idega.user.event.CreateGroupEvent;
 
@@ -63,7 +66,7 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 	private StatefullPresentationImplHandler _stateHandler = null;
 	private CreateGroupEvent _createEvent;
   private String selectedGroupProviderStateId = null; 
-  private Integer selectedGroupId = null;
+  private Group selectedGroup = null;
 
 
 	public CreateGroupWindow() {
@@ -89,10 +92,11 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
     try {
       stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
       changeListeners = stateMachine.getAllChangeListeners();
-      // try to get the selected group id 
+      // try to get the selected group  
       if (selectedGroupProviderStateId != null) {
         UserApplicationMenuAreaPS groupProviderState = (UserApplicationMenuAreaPS) stateMachine.getStateFor(selectedGroupProviderStateId, UserApplicationMenuAreaPS.class);
-        selectedGroupId = (Integer) groupProviderState.getSelectedGroupId();
+        Integer selectedGroupId = (Integer) groupProviderState.getSelectedGroupId();
+        selectedGroup = getGroup(selectedGroupId); 
       }
     }
     catch (RemoteException e) {
@@ -173,7 +177,9 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			tab.add(pageText, 1, 4);
 			tab.add(pageChooser, 2, 4);
 
-			DropdownMenu mnu = new DropdownMenu(_createEvent.getIONameForGroupType());
+			DropdownMenu mnu = getGroupTypeMenu(iwrb);
+      /* 
+      new DropdownMenu(_createEvent.getIONameForGroupType());
 			try {
 				GroupTypeHome gtHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
 				Collection types = gtHome.findVisibleGroupTypes();
@@ -187,7 +193,7 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			}
 			catch (RemoteException ex) {
 				throw new EJBException(ex);
-			}
+			}*/
 			//    mnu.setSelectedElement(type);
 			mnu.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 
@@ -214,6 +220,105 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			tab.add(button, 2, 8);
 		}
 	}
+  
+  private DropdownMenu getGroupTypeMenu(IWResourceBundle iwrb)  {
+    DropdownMenu menu = new DropdownMenu(_createEvent.getIONameForGroupType());
+    GroupType selectedGroupType;
+    GroupTypeHome groupTypeHome;
+    String selectedGroupTypeString = null;
+    try {
+      //get home
+      groupTypeHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
+      if (selectedGroup == null)  {
+        selectedGroupType = GroupTypeBMPBean.getStaticInstance();
+      }
+      else {
+        selectedGroupTypeString = selectedGroup.getGroupType();
+        // get home
+        groupTypeHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
+        // get type of selected group
+        selectedGroupType = groupTypeHome.findByPrimaryKey(selectedGroupTypeString);
+      }
+    }
+    catch (Exception ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+    
+    GroupType generalType = findOrCreateGeneralGroupType(selectedGroupType, groupTypeHome);
+    String generalTypeString = generalType.getType();
+    
+    GroupType aliasType = findOrCreateAliasGroupType(selectedGroupType, groupTypeHome);
+    String aliasTypeString = aliasType.getType();
+
+    // selected group is null
+    if (selectedGroup == null)  {
+      addElement(menu, generalTypeString, iwrb);
+      addElement(menu, aliasTypeString, iwrb);
+      return menu;
+    }
+    // selected group is not null
+          
+    // first: type of selected group
+    addElement(menu, selectedGroupTypeString, iwrb);
+    // second: general type
+    if (! generalTypeString.equals(selectedGroupTypeString))
+      addElement(menu, generalTypeString, iwrb);
+    // third: alias type
+    if (! aliasTypeString.equals(selectedGroupTypeString))
+      addElement(menu, aliasTypeString, iwrb);
+    // then add children of type of selected group
+    Iterator childrenIterator = selectedGroupType.getChildren();
+    if (childrenIterator != null) { 
+      // there are some childrens
+      while (childrenIterator.hasNext())  {
+        GroupType item = (GroupType) childrenIterator.next();
+        String value = item.getType();
+        addElement(menu,value,iwrb);
+      }  
+    }
+    return menu;
+  }
+      
+  private void addElement(DropdownMenu menu, String value, IWResourceBundle resourceBundle)  {
+    menu.addMenuElement(value, resourceBundle.getLocalizedString(value, value));
+  }       
+
+  private GroupType findOrCreateAliasGroupType(GroupType aGroupType, GroupTypeHome home) {  
+    try {
+      GroupType type = home.findByPrimaryKey(aGroupType.getAliasGroupTypeString());
+      return type;
+    }
+    catch (FinderException findEx)  {
+      try {
+      GroupType type = home.create();
+      type.setGroupTypeAsAliasGroup();
+      return type;
+      }
+      catch (CreateException createEx)  {
+        throw new RuntimeException(createEx.getMessage());
+      }
+    }
+  }
+    
+
+  private GroupType findOrCreateGeneralGroupType(GroupType aGroupType, GroupTypeHome home) {  
+    try {
+      GroupType type = home.findByPrimaryKey(aGroupType.getGeneralGroupTypeString());
+      return type;
+    }
+    catch (FinderException findEx)  {
+      try {
+      GroupType type = home.create();
+      type.setGroupTypeAsGeneralGroup();
+      return type;
+      }
+      catch (CreateException createEx)  {
+        throw new RuntimeException(createEx.getMessage());
+      }
+    }
+  }
+
+
 
 	/*
 	 *
@@ -224,12 +329,11 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 
 		try {
 			IBDomain domain = iwc.getDomain();
-      if (selectedGroupId != null)  {
-        Group group = getGroup(selectedGroupId);
-        chooser.setSelectedNode(new GroupTreeNode(group));
+      if (selectedGroup != null)  {
+        chooser.setSelectedNode(new GroupTreeNode(selectedGroup));
       }
       else  {
-        chooser.setSelectedNode(new GroupTreeNode(domain,iwc.getApplicationContext()));
+        //chooser.setSelectedNode(new GroupTreeNode(domain,iwc.getApplicationContext()));
       }
 		}
 		catch (Exception e) {
