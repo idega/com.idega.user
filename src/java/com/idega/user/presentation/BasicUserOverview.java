@@ -182,8 +182,6 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             EntityBrowser entityBrowser = getEntityBrowser(users, iwc);
             // put print button to bottom
             entityBrowser.addPresentationObjectToBottom(new PrintButton(iwb.getImage("print.gif")));
-//          switch off the inherent form of the entity browser
-            entityBrowser.setUseExternalForm(true);
             // put browser into a form
             Form form = new Form();
             form.add(entityBrowser);
@@ -429,7 +427,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
      */
     protected EntityBrowser getEntityBrowser(Collection users, IWContext iwc) {
         // define entity browser
-        EntityBrowser entityBrowser = EntityBrowser.getInstanceUsingEventSystem();
+        EntityBrowser entityBrowser = EntityBrowser.getInstanceUsingEventSystemAndExternalForm();
         PresentationObject parentObject = this.getParentObject();
         entityBrowser.setArtificialCompoundId(parentObject.getCompoundId(), iwc);
         IWPresentationState presentationStateParent = ((StatefullPresentation) parentObject).getPresentationState(iwc);
