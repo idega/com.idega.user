@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWLocation;
@@ -70,6 +71,7 @@ public class Toolbar extends Page implements IWBrowserView {
 	private String menuTableStyle = "menu";
 
 	private String styledLink = "styledLink";
+	private String styledText = "styledText";
 
 	public Toolbar() {
 		// default constructor
@@ -98,109 +100,90 @@ public class Toolbar extends Page implements IWBrowserView {
 		this.empty();
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
-
-
-		//	added for stylesheet writout:
-		//			parentPage = this.getParentPage();
-		//			styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
-		//			parentPage.addStyleSheetURL(styleSrc);
-
-		Table toolbarTable = new Table(3, 3);
 		boolean useDropdown = iwb.getBooleanProperty("use_dropdown_in_toolbar", false);
 
-		//	added for isi style
-		//		toolbarTable.setStyleClass(menuTableStyle); --- changed
-
+		Table toolbarTable = new Table(4, 1);
 		toolbarTable.setCellpadding(0);
 		toolbarTable.setCellspacing(0);
+		toolbarTable.setBorder(0);
 		toolbarTable.setStyleClass(menuTableStyle);
 		toolbarTable.setWidth(Table.HUNDRED_PERCENT);
-		toolbarTable.setHeight(2, Table.HUNDRED_PERCENT);
-
-		toolbarTable.setAlignment(2, 2, Table.HORIZONTAL_ALIGN_RIGHT);
-
+		toolbarTable.setWidth(4, Table.HUNDRED_PERCENT);
+		toolbarTable.setHeight(1, Table.HUNDRED_PERCENT);
+		toolbarTable.setAlignment(4, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 		add(toolbarTable);
 
-		Table toolbar1 = new Table(11, 1);
-
+		Table toolbar1 = new Table();
 		toolbar1.setCellpadding(0);
 		toolbar1.setCellspacing(0);
-
+		toolbar1.setBorder(0);
+		toolbarTable.add(toolbar1, 1, 1);
+		int toolbarColumn = 1;
+		
 		//User
-		Table button = new Table(2, 1);
-		button.setCellpadding(0);
 		Image iconCrUser = iwb.getImage("new_user.gif");
-		button.setCellpaddingLeft(1, 1, 7);
-		button.add(iconCrUser, 1, 1);
-		Text text = new Text(iwrb.getLocalizedString("new.member", "New member"));
-		Link tLink11 = new Link(text);
+		iconCrUser.setPaddingLeft(7);
+		iconCrUser.setPaddingRight(3);
+		Link tLink11 = new Link(iwrb.getLocalizedString("new.member", "New member"));
 		tLink11.setStyleClass(styledLink);
 		tLink11.setWindowToOpen(CreateUser.class);
-		button.setWidth(2, 10);
-		button.setCellpaddingTop(2, 1, 2);
-		button.setVerticalAlignment(2, 1, Table.VERTICAL_ALIGN_TOP);
-		button.add(tLink11, 2, 1);
-		toolbar1.add(button, 2, 1);
+		toolbar1.add(iconCrUser, toolbarColumn++, 1);
+		toolbar1.setVerticalAlignment(toolbarColumn, 1, Table.VERTICAL_ALIGN_TOP);
+		toolbar1.setCellpaddingTop(toolbarColumn, 1, 3);
+		toolbar1.add(tLink11, toolbarColumn++, 1);
 
 		//Group
-		Table button2 = new Table(2, 1);
-		button2.setCellpadding(0);
 		Image iconCrGroup = iwb.getImage("new_group.gif");
-		button2.add(iconCrGroup, 1, 1);
-		Text text2 = new Text(iwrb.getLocalizedString("new.group", "New group"));
-		//    text2.setFontFace(Text.FONT_FACE_VERDANA);
-		//    text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
-		Link tLink12 = new Link(text2);
+		iconCrGroup.setPaddingLeft(7);
+		iconCrGroup.setPaddingRight(3);
+		Link tLink12 = new Link(iwrb.getLocalizedString("new.group", "New group"));
 		tLink12.setStyleClass(styledLink);
 		tLink12.setWindowToOpen(CreateGroupWindow.class);
 		if (selectedGroupProviderStateId != null)
 			tLink12.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
-		button2.setWidth(2, 10);
-		button2.setCellpaddingTop(2, 1, 2);
-		button2.setVerticalAlignment(2, 1, Table.VERTICAL_ALIGN_TOP);
-		button2.add(tLink12, 2, 1);
-		toolbar1.add(button2, 3, 1);
+		toolbar1.add(iconCrGroup, toolbarColumn++, 1);
+		toolbar1.setVerticalAlignment(toolbarColumn, 1, Table.VERTICAL_ALIGN_TOP);
+		toolbar1.setCellpaddingTop(toolbarColumn, 1, 3);
+		toolbar1.add(tLink12, toolbarColumn++, 1);
 
 		if (iwc.isSuperAdmin()) {
-			Table button4 = new Table(2, 1);
-			button4.setCellpadding(0);
-			Image iconRoleMasters = iwb.getImage("other_choises.gif");
-			button4.add(iconRoleMasters, 1, 1);
-			Text text4 = new Text(iwrb.getLocalizedString("button.role_masters", "Role Masters"));
-			Link tLink14 = new Link(text4);
+			Image iconRoleMasters = iwb.getImage("key_icon.gif");
+			iconRoleMasters.setPaddingLeft(7);
+			iconRoleMasters.setPaddingRight(3);
+			Link tLink14 = new Link(iwrb.getLocalizedString("button.role_masters", "Role Masters"));
 			tLink14.setStyleClass(styledLink);
 			tLink14.setWindowToOpen(RoleMastersWindow.class);
-			button4.setWidth(2, 10);
-			button4.setCellpaddingTop(2, 1, 2);
-			button4.setVerticalAlignment(2, 1, Table.VERTICAL_ALIGN_TOP);
-			button4.add(tLink14, 2, 1);
-			toolbar1.add(button4, 4, 1);
+			toolbar1.add(iconRoleMasters, toolbarColumn++, 1);
+			toolbar1.setVerticalAlignment(toolbarColumn, 1, Table.VERTICAL_ALIGN_TOP);
+			toolbar1.setCellpaddingTop(toolbarColumn, 1, 3);
+			toolbar1.add(tLink14, toolbarColumn++, 1);
 		}
 
 		//Search temp
-		Table button3 = new Table(3, 1);
-		button3.setCellpadding(0);
 		Image iconSearch = iwb.getImage("search.gif");
-		button3.add(iconSearch, 1, 1);
-		Text text3 = new Text(iwrb.getLocalizedString("button.search", "Search"));
-		//		text3.setFontFace(Text.FONT_FACE_VERDANA);
-		//		text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
-		Link tLink13 = new Link(text3);
+		iconSearch.setPaddingLeft(7);
+		iconSearch.setPaddingRight(3);
+		Link tLink13 = new Link(iwrb.getLocalizedString("button.search", "Search"));
 		tLink13.setStyleClass(styledLink);
 		if (userApplicationMainAreaStateId != null)
 			tLink13.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, userApplicationMainAreaStateId);
 		tLink13.setWindowToOpen(SearchWindow.class);
-		button3.setCellpaddingTop(2, 1, 2);
-		button3.setVerticalAlignment(2, 1, Table.VERTICAL_ALIGN_TOP);
-		button3.add(tLink13, 2, 1);
-		button3.setWidth(2, 10);
-		button3.setWidth(3, 20);
-		button3.add(Text.NON_BREAKING_SPACE, 3, 1);
-		Image dottedImage = iwb.getImage("dotted.gif");
-		button3.setAlignment(3, 1, "right");
-		button3.add(dottedImage, 3, 1);
-		toolbar1.add(button3, 5, 1);
+		toolbar1.add(iconSearch, toolbarColumn++, 1);
+		toolbar1.setVerticalAlignment(toolbarColumn, 1, Table.VERTICAL_ALIGN_TOP);
+		toolbar1.setCellpaddingTop(toolbarColumn, 1, 3);
+		toolbar1.add(tLink13, toolbarColumn++, 1);
 
+		Image dottedImage = iwb.getImage("dotted.gif");
+		dottedImage.setPaddingLeft(5);
+		dottedImage.setPaddingRight(3);
+		toolbarTable.add(dottedImage, 2, 1);
+
+		Table toolbar2 = new Table();
+		toolbar2.setCellpadding(0);
+		toolbar2.setCellspacing(0);
+		toolbar2.setBorder(0);
+		toolbarTable.add(toolbar2, 4, 1);
+		toolbarColumn = 1;
 
 		DropdownMenu menu  = null;
 		if (useDropdown) {
@@ -208,28 +191,17 @@ public class Toolbar extends Page implements IWBrowserView {
 			menu = new DropdownMenu("other_choices");
 			menu.addMenuElement("", "");
 			form.add(menu);
-			Table menuButton = new Table(2, 1);
-			menuButton.setCellpadding(0);
+
 			Image iconOtherChanges = iwb.getImage("other_choises.gif");
-			menuButton.add(iconOtherChanges, 1, 1);
+			iconOtherChanges.setPaddingLeft(7);
+			iconOtherChanges.setPaddingRight(3);
 			Text menuText =  new Text(iwrb.getLocalizedString("button.other_choices", "Other choices"));
-			menuText.setStyleClass(styledLink);
-			menuButton.setWidth(2, 10);
-			menuButton.setCellpaddingTop(2, 1, 2);
-			menuButton.setVerticalAlignment(2, 1, Table.VERTICAL_ALIGN_TOP);
-			menuButton.add(menuText, 2, 1);
-			toolbar1.add(menuButton, 6, 1);
-			toolbar1.setCellpaddingLeft(7, 1, 10);
-			toolbar1.add(form, 7, 1);
+			menuText.setStyleClass(styledText);
+			toolbar2.add(iconOtherChanges, toolbarColumn++, 1);
+			toolbar2.add(form, toolbarColumn++, 1);
 		}
-		//finance
-		// toolbar1.add(
-		// this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("finance","Finance"),
-		// iwb.getImage("finance.gif"),
-		// com.idega.block.finance.presentation.AccountViewer.class),4,1);
 
 		// adding all plugins that implement the interface ToolbarElement
-		int column = 6;
 		List  toolbarElements = ImplementorRepository.getInstance().newInstances(ToolbarElement.class, this.getClass());
 		final IWContext finalIwc = iwc;
 		Comparator priorityComparator = new Comparator() {
@@ -270,34 +242,21 @@ public class Toolbar extends Page implements IWBrowserView {
 					menu.addOption(toolOption);
 				}
 				else {
-					Text toolText = new Text(toolName);
-					Link toolLink = new Link(toolText);
+					Image toolImage = toolbarElement.getButtonImage(finalIwc);
+					toolImage.setPaddingLeft(7);
+					toolImage.setPaddingRight(3);
+					Link toolLink = new Link(toolName);
 					toolLink.setStyleClass(styledLink);
 					toolLink.setParameter(parameterMap);
 					toolLink.setWindowToOpen(toolPresentationClass);
-					Table toolButton = new Table(2,1);
-					toolButton.setCellpadding(0);
-					toolButton.add(toolLink,2,1);
-					toolbar1.add(toolButton, column++, 1);
+					
+					toolbar2.add(toolImage, toolbarColumn++, 1);
+					toolbar2.setVerticalAlignment(toolbarColumn, 1, Table.VERTICAL_ALIGN_TOP);
+					toolbar2.setCellpaddingTop(toolbarColumn, 1, 3);
+					toolbar2.add(toolLink, toolbarColumn++, 1);
 				}
 			}
 		}		
-		//To do - stickies
-		//    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("To do",
-		// iwb.getImage("todo.gif"),
-		// com.idega.block.news.presentation.News.class),7,1);
-
-		//settings
-		//  toolbar1.add(
-		// this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("settings","Settings"),
-		// iwb.getImage("settings.gif"),com.idega.block.news.presentation.News.class
-		// ),4,1);
-
-		//view
-		//dropdownmenu
-		// toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Yfirlit",
-		// iwb.getImage("views.gif"),
-		// com.idega.block.news.presentation.News.class),7,1);
 
 		//search
 		Table button9 = new Table(2, 1);
@@ -310,17 +269,10 @@ public class Toolbar extends Page implements IWBrowserView {
 		searchForm.setArtificialCompoundId(getCompoundId(), iwc);
 		searchForm.setHorizontalAlignment("right");
 		searchForm.setTextInputValue(iwrb.getLocalizedString("insert_search_string", "Insert a search string"));
-
-		toolbarTable.setAlignment(2, 2, "right");
-		toolbarTable.setVerticalAlignment(2, 2, "top");
-		toolbarTable.add(searchForm, 3, 2);
-
-		toolbarTable.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_LEFT);
-		toolbarTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
-		toolbarTable.add(toolbar1, 1, 2);
-
+		toolbarTable.setCellpaddingRight(4, 1, 6);
+		toolbarTable.add(searchForm, 4, 1);
 	}
-
+	
 	protected Table getToolbarButtonWithChangeClassEvent(String textOnButton, Image icon, Class changeClass) {
 		Table button = new Table(2, 1);
 		button.setCellpadding(0);

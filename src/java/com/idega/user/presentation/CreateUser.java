@@ -127,7 +127,7 @@ public class CreateUser extends StyledIWAdminWindow {
 	public CreateUser() {
 		super();
 		setHeight(300);
-		setWidth(240);
+		setWidth(310);
 		setScrollbar(false);
 		setResizable(true);
 	}
@@ -150,7 +150,8 @@ public class CreateUser extends StyledIWAdminWindow {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		fullNameField = new TextInput(fullNameFieldParameterName);
-		fullNameField.setLength(20);
+		//fullNameField.setLength(20);
+		fullNameField.setWidth(Table.HUNDRED_PERCENT);
 		fullNameField.setStyleClass("text");
 
 		ssnField = new TextInput(ssnFieldParameterName);
