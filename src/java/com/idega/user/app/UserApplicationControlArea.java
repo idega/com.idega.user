@@ -8,7 +8,6 @@ import java.util.Vector;
 
 import javax.swing.event.ChangeListener;
 
-import com.idega.block.datareport.business.jasperdesignxml.Text;
 import com.idega.block.login.presentation.Login;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICDomain;
@@ -205,9 +204,9 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
    * @return
    */
   public Table displayTable(IWContext iwc) {
-  	IWBundle iwb = getBundle(iwc);
-  	Image logoutImage = iwb.getImage("logout.gif");
-  	Image lockImage = iwb.getImage("las.gif");
+  	//IWBundle iwb = getBundle(iwc);
+  	//Image logoutImage = iwb.getImage("logout.gif");
+  	//Image lockImage = iwb.getImage("las.gif");
   	
   	Table table = new Table(1,3);
   	table.setCellspacing(0);
