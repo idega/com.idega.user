@@ -7,10 +7,13 @@ import com.idega.user.business.GroupBusiness;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.event.*;
 import com.idega.user.data.Group;
+import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.event.SelectGroupEvent;
 
 import java.util.Collection;
+import java.util.Iterator;
+
 import javax.swing.event.EventListenerList;
 
 import com.idega.idegaweb.IWApplicationContext;
@@ -69,6 +72,17 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
 	    	String groupType = _selectedGroup.getGroupType();
 	    	_plugins = getGroupBusiness( e.getIWContext()).getUserGroupPluginsForGroupTypeString(groupType);
 	    	if( _plugins==null ) System.out.println("Plugins are null fro group_type ="+groupType);
+	    	
+	    	Iterator iter = _plugins.iterator();
+    	
+	    	while (iter.hasNext()) {
+	    		
+				UserGroupPlugIn plugin = (UserGroupPlugIn) iter.next();
+				String className = plugin.getBusinessICObject().getClassName();
+				System.out.println("Plugin business class : "+className);
+
+			}
+		
       		this.fireStateChanged();
     	}
     	catch( Exception ex ){
