@@ -145,7 +145,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 */
 	public Group getRootGroup() {
 		return rootGroup;
-	}
+	} 
 
 	/**
 	 * Sets the rootGroup.
@@ -163,6 +163,22 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	public void setAddToAvailableGroups(Group group) {
 		if( availableGroups==null ) availableGroups = new ArrayList();
 		availableGroups.add(group);
+		
+	}
+	
+	/**
+	 * adds a group to the available selection
+	 * @param group The group to add
+	 * @param name display string
+	 * 
+	 */
+	public void setAddToAvailableGroups(Group group, String name) {
+		/**
+		 * Had to add this method because the former one doesn't work as multivalued.
+		 * FIX!!!
+		 */
+		setAddToAvailableGroups(group);
+	
 		
 	}
 	
