@@ -139,7 +139,6 @@ public class BasicUserOverViewToolbar extends Toolbar {
 
 				toolbar1.add(button4, 4, 1);
 			}
-
 		}
 
 		//calendar
@@ -155,6 +154,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
 				Image iconCrGroup = iwb.getImage("import.gif");
 				button3.add(iconCrGroup,1,1);
 			Text text3 = new Text(iwrb.getLocalizedString("import","Import"));
+>>>>>>> 1.15
 			text3.setFontFace(Text.FONT_FACE_VERDANA);
 			text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
 				Link tLink12 = new Link(text3);
