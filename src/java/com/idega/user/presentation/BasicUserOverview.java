@@ -119,7 +119,6 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
     returnTable.add(toolbar,1,1);
 
-
     /**
      * @todo important: change back to  List adminUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
      */
