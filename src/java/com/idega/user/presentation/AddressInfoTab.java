@@ -96,7 +96,7 @@ public class AddressInfoTab extends UserTab{
     provinceField.setContent((String)fieldValues.get(provinceFieldName));
 
 	String postalId = (String) fieldValues.get(postalCodeFieldName);
-	if( postalId!=null ) postalCodeField.setSelectedElement(postalId);
+	if( postalId!=null ) postalCodeField.setSelectedElement(Integer.parseInt(postalId));
 
     countryField.setContent((String)fieldValues.get(countryFieldName));
 
@@ -279,7 +279,7 @@ public class AddressInfoTab extends UserTab{
       
       /** @todo remove this fieldValues bullshit!**/
       String street = addr.getStreetAddress();
-      PostalCode code = addr.getPostalCode();      
+      int code = addr.getPostalCodeID();     
       String country = addr.getCountry().getName();
       String city = addr.getCity();
       String province = addr.getProvince(); 	
@@ -289,7 +289,7 @@ public class AddressInfoTab extends UserTab{
 	      if( street!=null ) fieldValues.put(streetFieldName, street );
 	      if( city!=null ) fieldValues.put(cityFieldName, city );
 	      if ( province!=null ) fieldValues.put(provinceFieldName, province );
-	      if ( code!=null ) fieldValues.put(postalCodeFieldName, code.getPrimaryKey().toString() );
+	      if ( code!=-1 ) fieldValues.put(postalCodeFieldName, String.valueOf(code) );
 	      if ( country!=null ) fieldValues.put(countryFieldName, country );
 	      if ( poBox!=null ) fieldValues.put(poBoxFieldName, poBox);
 	  }
