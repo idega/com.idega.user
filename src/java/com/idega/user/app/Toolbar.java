@@ -54,15 +54,8 @@ public class Toolbar extends Page implements IWBrowserView {
   private String selectedGroupProviderStateId = null;
   private String userApplicationMainAreaStateId = null;
   
-//	/**
-//			 * added 7/10/03 for stylesheet writeout
-//			 * @author birna
-//			 */
-//			private Page parentPage;
-//			private String styleScript = "UserApplicationStyle.css";
-//			private String styleSrc = "";
-			private String menuTableStyle = "menu";
-			private String styledLink = "styledLink";
+	private String menuTableStyle = "menu";
+	private String styledLink = "styledLink";
 
 
   public Toolbar(){
