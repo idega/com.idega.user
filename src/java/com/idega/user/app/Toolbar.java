@@ -29,11 +29,11 @@ import com.idega.util.IWColor;
 
 public class Toolbar extends Page implements IWBrowserView {
 
-  private IWBundle iwb;
-  private String _controlTarget = null;
-  private IWPresentationEvent _controlEvent = null;
+  protected IWBundle iwb;
+  protected String _controlTarget = null;
+  protected IWPresentationEvent _controlEvent = null;
 
-  private Vector _toolbarElements = new Vector();
+  protected Vector _toolbarElements = new Vector();
 
   public Toolbar(){
     if(this.isChildOfOtherPage()){

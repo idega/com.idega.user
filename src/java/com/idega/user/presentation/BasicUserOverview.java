@@ -130,24 +130,25 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
       userTable.setBackgroundImage(2,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
       userTable.setBackgroundImage(3,1,this.getBundle(iwc).getImage("glass_column_light.gif"));      
       userTable.setHeight(1,16);
+      
+      userTable.setWidth(1,"200");
+      userTable.setWidth(2,"200");
+            
       Text name = new Text("Nafn");
  	  name.setFontFace(Text.FONT_FACE_VERDANA);
  	  name.setFontSize(Text.FONT_SIZE_7_HTML_1);
  	  userTable.add(name,1,1);
  	  
- 	  Text ssn = new Text("Kennitala");
- 	  ssn.setFontFace(Text.FONT_FACE_VERDANA);
- 	  ssn.setFontSize(Text.FONT_SIZE_7_HTML_1);
- 	  userTable.add(ssn,2,1);
+ 	  Text address = new Text("Heimilisfang");
+ 	  address.setFontFace(Text.FONT_FACE_VERDANA);
+ 	  address.setFontSize(Text.FONT_SIZE_7_HTML_1);
+ 	  userTable.add(address,2,1);
  	 	  
  	  Text del = new Text("Eyða félaga");
  	  del.setFontFace(Text.FONT_FACE_VERDANA);
  	  del.setFontSize(Text.FONT_SIZE_7_HTML_1);
  	  userTable.add(del,3,1);
- 	  
- 	
-
-    
+ 	      
       userTable.setCellspacing(0);
       userTable.setHorizontalZebraColored("#FFFFFF",IWColor.getHexColorString(246,246,247));
       userTable.setWidth("100%");
@@ -171,7 +172,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             Link aLink = new Link(new Text(tempUser.getName()));
             aLink.setWindowToOpen(UserPropertyWindow.class);
             aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
-            userTable.add(aLink,2,line);
+            userTable.add(aLink,1,line);
             delete = true;
             line++;
           }else if(userIsSuperAdmin && iwc.isSuperAdmin() ){
@@ -180,7 +181,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             Link aLink = new Link(new Text(tempUser.getName()));
             aLink.setWindowToOpen(AdministratorPropertyWindow.class);
             aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
-            userTable.add(aLink,2,line);
+            userTable.add(aLink,1,line);
             delete = true;
             line++;
           }
@@ -378,6 +379,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
   public Class getPresentationStateClass(){
     return BasicUserOverviewPS.class;
+  }
+  
+  public String getBundleIdentifier(){
+  	return "com.idega.user";
   }
 
 
