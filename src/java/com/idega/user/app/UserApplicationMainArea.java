@@ -118,7 +118,7 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 
 
   public void initializeInMain(IWContext iwc){
-
+		
     System.out.println("in initializeInMain getClassToShow:"+((UserApplicationMainAreaPS)this.getPresentationState(iwc)).getClassNameToShow());
 
 
