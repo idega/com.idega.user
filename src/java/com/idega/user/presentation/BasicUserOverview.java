@@ -93,7 +93,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	protected BasicUserOverviewPS ps;
 	Group selectedGroup;
 	protected ICDomain selectedDomain;
-	protected Group aliasGroup;
+	private Group aliasGroup;
 	protected AccessController accessController;
 
 	private Page parentPage;
@@ -194,7 +194,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 				aliasGroup = selectedGroup.getAlias(); //TODO should I check
 														 // for permissions on
 														 // this group?
-			}	
+			}
+			//TODO: Have to fix this once and for all. It looks like the class is cloned and not instanciated, so this variable doesn't become null.
+			else {
+				aliasGroup = null;
+			}
 			canEditUserTemp = accessController.hasEditPermissionFor(selectedGroup, iwc);
 			
 			if (!canEditUserTemp){
