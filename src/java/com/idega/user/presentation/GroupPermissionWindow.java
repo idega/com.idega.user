@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.ejb.FinderException;
+
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
@@ -39,7 +41,6 @@ import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupComparator;
 import com.idega.user.data.CachedGroup;
 import com.idega.user.data.Group;
-import com.idega.user.data.GroupTypeConstants;
 import com.idega.user.data.User;
 import com.idega.user.event.SelectGroupEvent;
 import com.idega.user.presentation.inputhandler.GroupTypeSelectionBoxInputHandler;
