@@ -88,13 +88,13 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 			this.setStyle((Text) obj);
 		}
 		else {
-			obj.setAttribute("style", STYLE);
+			obj.setMarkupAttribute("style", STYLE);
 		}
 	}
 	public void setStyle(Text obj) {
-		obj.setAttribute("style", STYLE_2);
+		obj.setMarkupAttribute("style", STYLE_2);
 	}
 	public void setStyle(PresentationObject obj, String style) {
-		obj.setAttribute("style", style);
+		obj.setMarkupAttribute("style", style);
 	}
 }

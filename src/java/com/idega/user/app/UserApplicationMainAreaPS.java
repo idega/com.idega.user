@@ -190,7 +190,7 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
     }
     if (object instanceof IWTabbedPane) {
       IWTabbedPane pane = (IWTabbedPane) object;
-      String attribute = pane.getAttributeString();
+      String attribute = pane.getMarkupAttributesString();
       String userPropertyString = UserPropertyWindow.SESSION_ADDRESS;
       String groupPropertyString = GroupPropertyWindow.SESSION_ADDRESS;
       boolean groupProperty = (attribute.indexOf(groupPropertyString) > -1);
