@@ -24,7 +24,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	private List availableGroups = null;
 	private Map namedAvailableGroups = null;
 	private String selectedGroupsParameter = null;
-	private static final String selectedGroupsParameterDefaultValue = "iw_us_sel_group_id";
+	public static final String selectedGroupsParameterDefaultValue = "iw_us_sel_group_id";
 	private Group rootGroup = null;
 
 	/**
