@@ -42,7 +42,7 @@ public class AddressInfoTab extends UserTab{
   private static final String cityFieldName = "UMcity";
   private static final String provinceFieldName = "UMprovince";
   private static final String postalCodeFieldName = PostalCodeDropdownMenu.IW_POSTAL_CODE_MENU_PARAM_NAME;
-  private static final String countryFieldName = "UMconty";
+  private static final String countryFieldName = "UMcountry";
   private static final String poBoxFieldName = "UMpoBox";
 
   private Text streetText;
@@ -58,26 +58,12 @@ public class AddressInfoTab extends UserTab{
   }
 
   public void initializeFieldNames(){
-   /* streetFieldName = "UMstreet";
-    cityFieldName = "UMcity";
-    provinceFieldName = "UMprovince";
-    postalCodeFieldName = "UMpostal";
-    countryFieldName = "UMconty";
-    poBoxFieldName = "UMpoBox";
-
-    streetFieldName += this.getID();
-    cityFieldName += this.getID();
-    provinceFieldName += this.getID();
-    postalCodeFieldName += this.getID();
-    countryFieldName += this.getID();
-    poBoxFieldName += this.getID();
-*/
   }
 
 
   public void initializeFieldValues(){
 
-    fieldValues = new Hashtable();
+    if( fieldValues==null ) fieldValues = new Hashtable();
     
     /*fieldValues.put(streetFieldName,"");
     fieldValues.put(cityFieldName,"");
@@ -85,7 +71,6 @@ public class AddressInfoTab extends UserTab{
     fieldValues.put(postalCodeFieldName,"");
     fieldValues.put(countryFieldName,"");
     fieldValues.put(poBoxFieldName,"");*/
-    
 
   }
 
@@ -111,7 +96,7 @@ public class AddressInfoTab extends UserTab{
   public void initializeFields(){
     streetField = new TextInput(streetFieldName);
     streetField.setLength(20);
-    //streetField.setOnFocus();
+
 
     cityField = new TextInput(cityFieldName);
     cityField.setLength(20);
@@ -122,10 +107,6 @@ public class AddressInfoTab extends UserTab{
 //only works for Iceland
     postalCodeField = new PostalCodeDropdownMenu();
     postalCodeField.setCountry("Iceland");//hack
-    
-    //TextInput(postalCodeFieldName);
-    //postalCodeField.setLength(4);
-    //postalCodeField.setDisabled(true);
 
     countryField = new TextInput(countryFieldName);
     countryField.setLength(20);
