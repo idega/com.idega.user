@@ -57,7 +57,10 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
         Iterator iter = userGroups.iterator();
         while (iter.hasNext()) {
           Group item = (Group)iter.next();
-          primaryGroupField.addMenuElement(item.getPrimaryKey().toString(),item.getName());
+          String groupId = item.getPrimaryKey().toString();
+          String groupName = item.getName();
+          if(groupName==null) groupName = "untitled";
+          primaryGroupField.addMenuElement(groupId,groupName);
         }
       }
       //User user = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(this.getUserId());
