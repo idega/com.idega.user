@@ -38,6 +38,7 @@ public class UserChooserWindow extends AbstractChooserWindow {
 	private IWResourceBundle iwrb; 	
 	private String searchString = "";
 	private Collection users;
+	public static String AVAILABLE_USER_PKS_SESSION_PARAMETER = "us_ch_av_us_sp";
 	private int currentPage = 0;
 
 	public UserChooserWindow() {
@@ -51,6 +52,7 @@ public class UserChooserWindow extends AbstractChooserWindow {
 	}
 
 	private void init(IWContext iwc) {
+	
 		searchString = iwc.getParameter(PARAMETER_SEARCH);
     iwrb = iwc.getApplication().getBundle(BuilderLogic.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
     showAll = iwc.isParameterSet(PARAMETER_VIEW_ALL);
@@ -60,11 +62,27 @@ public class UserChooserWindow extends AbstractChooserWindow {
 		}
     
 		try {
+			Collection availableUserPks = (Collection) iwc.getSessionAttribute(AVAILABLE_USER_PKS_SESSION_PARAMETER);
+			if (availableUserPks != null && searchString == null) {
+				showAll = true;	
+			}
+
 	    UserHome uHome = (UserHome) IDOLookup.getHome(User.class);
 	    if (showAll) {
-	    	users = uHome.findAllUsersOrderedByFirstName();
+	    	if (availableUserPks != null) {
+		    	String[] userIds = new String[availableUserPks.size()];
+	    		Iterator iter = availableUserPks.iterator();
+	    		int counter = 0;
+	    		while (iter.hasNext()) {
+	    			userIds[counter++] = ((Integer) iter.next()).toString();	
+	    		}
+	    		users = uHome.findUsers(userIds);
+	    	}else {
+		    	users = uHome.findAllUsersOrderedByFirstName();
+	    	}
 	    }else if (searchString != null) {
-	    	users = uHome.findUsersBySearchCondition(searchString);
+	    	System.out.println("[UserChooserWindow] searchString != null");
+	    	users = uHome.findUsersBySearchCondition(searchString, availableUserPks);
 	    }
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
@@ -77,7 +95,12 @@ public class UserChooserWindow extends AbstractChooserWindow {
 	public void displaySelection(IWContext iwc) {
 		String uId = iwc.getParameter(PARAMETER_USER_ID);
 		if (uId != null) {
-			getParentPage().setOnLoad(SELECT_FUNCTION_NAME + "('" + uId + "','" + uId + "')");
+			try {
+				User user = getUserHome().findByPrimaryKey(new Integer(uId));
+			getParentPage().setOnLoad(SELECT_FUNCTION_NAME + "('" + user.getName() + "','" + uId + "')");
+			} catch (RemoteException e) {
+			} catch (FinderException e) {
+			}
 		}else {
 	
 	
@@ -267,4 +290,5 @@ public class UserChooserWindow extends AbstractChooserWindow {
 	private UserHome getUserHome() throws RemoteException{
 		return (UserHome) IDOLookup.getHome(User.class);	
 	}
+	
 }
