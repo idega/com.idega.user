@@ -31,9 +31,6 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
   private StatefullPresentationImplHandler _stateHandler = null;
   private String _controlTarget = null;
   private IWPresentationEvent _controlEvent = null;
-
-  private SearchForm searchForm = new SearchForm();
-  private Table toolbarTable = new Table(1,3);
   private Toolbar toolbar = new Toolbar();
   private static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
@@ -48,16 +45,13 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
   public void setControlEventModel(IWPresentationEvent model){
 //    System.out.print("UserApplicationMenuArea: setControlEventModel(IWPresentationEvent model)");
     _controlEvent = model;
-
-    searchForm.setControlEventModel(model);
-	toolbar.setControlEventModel(model);
+    toolbar.setControlEventModel(model);
   }
 
   public void setControlTarget(String controlTarget){
 //    System.out.print("UserApplicationMenuArea: setControlTarget(String controlTarget)");
     _controlTarget = controlTarget;
-    searchForm.setControlTarget(controlTarget);
-	toolbar.setControlTarget(controlTarget);
+    toolbar.setControlTarget(controlTarget);
   }
 
   public Class getPresentationStateClass(){
@@ -77,96 +71,17 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
   }
 
 
-  public void empty(){
+ /* public void empty(){
     toolbarTable.empty();
-  }
+  }*/
 
 
   public void initializeInMain(IWContext iwc){
-
+    this.empty();
     iwb = getBundle(iwc);
-
-    IWLocation location = (IWLocation)this.getLocation().clone();
-    location.setSubID(1);
-    searchForm.setLocation(location,iwc);
-
-	searchForm.setHorizontalAlignment("right");
-
-
-	toolbarTable.setCellpadding(0);
-    toolbarTable.setCellspacing(0);
-    toolbarTable.setWidth("100%");
-    toolbarTable.setHeight("100%");
-    toolbarTable.setHeight(1,1);
-    toolbarTable.setHeight(3,1);
-
-    //IWColor color = new IWColor(212,208,200);
-    IWColor color = new IWColor(207,208,210);//jonni color
-
-    toolbarTable.setColor(color);
-    toolbarTable.setColor(1,1,color.brighter());
-    toolbarTable.setColor(1,3,color.darker());
-
-
-    toolbarTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_RIGHT);
-
-    super.add(toolbarTable);
-
-
-	Table table = new Table(2,1);
-	table.setCellpadding(0);
-    table.setCellspacing(0);
-    table.setWidth("100%");
-
-	table.setAlignment(1,1,Table.HORIZONTAL_ALIGN_LEFT);
-	table.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
-
-	table.add(toolbar,1,1);
-	table.add(searchForm,2,1);
-	toolbarTable.add(table,1,2);
-
-//	this.add(toolbar);
-//
-//    this.add(searchForm);
-
-//    this.setIWUserContext(iwc);
-
-//	CreateGroupWindow createGroup = new CreateGroupWindow();
-//
-//    toolbar.add((ToolbarElement)createGroup);
-
-//    IWPresentationState sfState = searchForm.getPresentationState(iwc);
-//    if(sfState instanceof IWActionListener){
-//      ((UserApplicationMenuAreaPS)this.getPresentationState(iwc)).addIWActionListener((IWActionListener)sfState);
-//    }
-
-//    ChangeListener[] chListeners = this.getPresentationState(iwc).getChangeListener();
-//    if(chListeners != null){
-//      for (int i = 0; i < chListeners.length; i++) {
-//        searchForm.addChangeListener(chListeners[i]);
-//      }
-//    }
-
-//    this.debugEventListanerList(iwc);
-//    groupTree.debugEventListanerList(iwc);
-
-    this.getParentPage().setBackgroundColor(IWColor.getHexColorString(212,208,200));
-
+    this.setBackgroundColor(IWColor.getHexColorString(212,208,200));
+    getParentPage().setBackgroundColor(IWColor.getHexColorString(212,208,200));
+    super.add(toolbar);
   }
-
-//  public void add(PresentationObject obj){
-//    toolbarTable.add(obj,1,2);
-//  }
-
-//  public void main(IWContext iwc) throws Exception {
-//
-    //GroupBusiness gBusiness = (GroupBusiness)IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
-//
-//    this.empty();
-//
-//
-//  }
-
-
 
 }
