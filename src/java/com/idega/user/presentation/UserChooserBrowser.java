@@ -17,7 +17,7 @@ import com.idega.presentation.ui.AbstractChooser;
 
 public class UserChooserBrowser extends AbstractChooser {
 	
-	private String imgName = "magnifyingglass.gif";
+	private String imgName = "open.gif";
 	private boolean isUserBundle = false;
 	
   public UserChooserBrowser(String chooserName) {
@@ -39,7 +39,7 @@ public class UserChooserBrowser extends AbstractChooser {
     else{
     		iwb = iwc.getIWMainApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
     }
-    setChooseButtonImage(iwb.getImage(imgName,"Choose"));
+    setChooseButtonImage(iwb.getImage(imgName,getResourceBundle(iwc).getLocalizedString("user_chooser.choose","Choose")));
   }
 
   public Class getChooserWindowClass() {

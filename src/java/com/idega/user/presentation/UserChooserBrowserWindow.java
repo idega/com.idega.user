@@ -11,7 +11,6 @@ package com.idega.user.presentation;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
@@ -23,9 +22,9 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.AbstractChooserWindow;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.RadioButton;
+import com.idega.presentation.ui.StyledAbstractChooserWindow;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.data.User;
@@ -33,7 +32,7 @@ import com.idega.user.data.UserHome;
 import com.idega.util.IWColor;
 
 
-public class UserChooserBrowserWindow extends AbstractChooserWindow {
+public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
   
   private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
   
@@ -51,7 +50,6 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
   public UserChooserBrowserWindow() {
     setWidth(600);
     setHeight(300);
-    setCellpadding(5);
     setScrollbar(true);
     setResizable(true);
   }
@@ -69,6 +67,8 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
     String action = parseRequest(iwc);
     
     Table mainTable = new Table(1,4);
+    mainTable.setCellpadding(5);
+
     Table searchTable = getSearchInputField(resourceBundle);
     mainTable.add(searchTable ,1 ,1);
     String message; 

@@ -367,9 +367,12 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 				false),
 			1,
 			1);
+		
+		UserChooserBrowser ucb = new UserChooserBrowser(PARAM_USER_CHOOSER_USER_ID);
+		ucb.setImageName("magnifyingglass.gif");
 
 		table.add(browser, 1, 2);
-		table.add(new UserChooserBrowser(PARAM_USER_CHOOSER_USER_ID), 1, 2);
+		table.add(ucb, 1, 2);
 		table.setVerticalAlignment(1, 3, "bottom");
 		table.setVerticalAlignment(2, 3, "bottom");
 		table.add(help, 1, 3);
