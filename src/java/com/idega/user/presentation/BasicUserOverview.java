@@ -272,10 +272,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 				
 				if(!canDelete){
 					if(aliasGroup==null){
-						accessController.hasDeletePermissionFor(selectedGroup, iwc);
+					    canDelete = accessController.hasDeletePermissionFor(selectedGroup, iwc);
 					}
 					else{
-						accessController.hasDeletePermissionFor(aliasGroup, iwc);				
+					    canDelete = accessController.hasDeletePermissionFor(aliasGroup, iwc);				
 					}
 						
 					if (!canDelete){
