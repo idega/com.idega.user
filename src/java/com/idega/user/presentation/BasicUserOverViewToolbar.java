@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -41,19 +42,33 @@ public class BasicUserOverViewToolbar extends Toolbar {
     iwrb = getResourceBundle(iwc);
 
 
-    Table toolbarTable = new Table(1,3);
+    Table toolbarTable = new Table(2,3);
     toolbarTable.setCellpadding(0);
     toolbarTable.setCellspacing(0);
-    toolbarTable.setWidth("100%");
-    toolbarTable.setHeight("100%");
+    toolbarTable.setWidth(Table.HUNDRED_PERCENT);
+    toolbarTable.setHeight(Table.HUNDRED_PERCENT);
     toolbarTable.setHeight(1,1);
     toolbarTable.setHeight(3,1);
+    toolbarTable.setAlignment(1,2,Table.HORIZONTAL_ALIGN_LEFT);
+		toolbarTable.setAlignment(2,2,Table.HORIZONTAL_ALIGN_RIGHT);
+    
+		if(selectedGroup!=null){
+			Text groupName = new Text(selectedGroup.getName()+Text.NON_BREAKING_SPACE);
+			groupName.setFontFace(Text.FONT_FACE_VERDANA);
+			groupName.setFontSize(Text.FONT_SIZE_7_HTML_1);
+			groupName.setBold();
+				
+			toolbarTable.add(groupName,2,2);
+			
+		}
 
     IWColor color = new IWColor(230,230,230);//jonni color
 
     toolbarTable.setColor(color);
     toolbarTable.setColor(1,1,color.brighter());
+		toolbarTable.setColor(2,1,color.brighter());
     toolbarTable.setColor(1,3,color.darker());
+		toolbarTable.setColor(2,3,color.darker());
 
     add(toolbarTable);
 
@@ -91,56 +106,64 @@ public class BasicUserOverViewToolbar extends Toolbar {
 	    toolbar1.add(button2,3,1);
 	}
     
-   //calendar
-  // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("calendar","Calendar"), iwb.getImage("calendar.gif"), com.idega.block.news.presentation.News.class),4,1);
-   //history
-  // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("history","History"), iwb.getImage("history.gif"), com.idega.block.news.presentation.News.class),5,1);
-   //import
-   
-   
-  /* 
-   if(selectedGroup!=null){
-	 	Table button3 = new Table(2,1);
-	 	button3.setCellpadding(0);
-	    Image iconCrGroup = iwb.getImage("import.gif");
-	    button3.add(iconCrGroup,1,1);
-		Text text3 = new Text(iwrb.getLocalizedString("import","Import"));
-	 	text3.setFontFace(Text.FONT_FACE_VERDANA);
-	 	text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
-	    Link tLink12 = new Link(text3);
-	    tLink12.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID,((Integer)selectedGroup.getPrimaryKey()).toString() );
-	   tLink12.setWindowToOpen(com.idega.block.importer.presentation.Importer.class);
-	 
-	    button3.add(tLink12,2,1);
-	    toolbar1.add(button3,6,1);
-	}
-	*/
-	
+//permission	
 	if(selectedGroup!=null){
-		Table button4 = new Table(2,1);
-		button4.setCellpadding(0);
-		Image iconCrGroup = iwb.getImage("lock.gif");
-		button4.add(iconCrGroup,1,1);
-		Text text3 = new Text(iwrb.getLocalizedString("permissions","Permissions"));
+		AccessController access = iwc.getAccessController();
+		boolean isOwner = access.isOwner(selectedGroup,iwc);
+		
+		if(isOwner){
+			Table button4 = new Table(2,1);
+			button4.setCellpadding(0);
+			Image iconCrGroup = iwb.getImage("lock.gif");
+			button4.add(iconCrGroup,1,1);
+			Text text3 = new Text(iwrb.getLocalizedString("permissions","Permissions"));
+			text3.setFontFace(Text.FONT_FACE_VERDANA);
+			text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
+			Link tLink12 = new Link(text3);
+			SelectGroupEvent selectGroup = new SelectGroupEvent();
+			selectGroup.setGroupToSelect(selectedGroup.getNodeID());
+	
+			// set controller (added by Thomas)
+			String id = IWMainApplication.getEncryptedClassName(UserApplication.Top.class);
+			id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + id;
+			selectGroup.setController(id);
+			button4.add(tLink12,2,1);
+			selectGroup.setSource(this);
+			tLink12.addEventModel(selectGroup);
+			
+			tLink12.setWindowToOpen(GroupPermissionWindow.class);
+	
+			toolbar1.add(button4,4,1);
+		}
+		
+	}
+	
+	
+	
+	//calendar
+	// toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("calendar","Calendar"), iwb.getImage("calendar.gif"), com.idega.block.news.presentation.News.class),4,1);
+	 //history
+	// toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("history","History"), iwb.getImage("history.gif"), com.idega.block.news.presentation.News.class),5,1);
+	 //import
+   
+   
+	/* 
+	 if(selectedGroup!=null){
+		Table button3 = new Table(2,1);
+		button3.setCellpadding(0);
+			Image iconCrGroup = iwb.getImage("import.gif");
+			button3.add(iconCrGroup,1,1);
+		Text text3 = new Text(iwrb.getLocalizedString("import","Import"));
 		text3.setFontFace(Text.FONT_FACE_VERDANA);
 		text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
-		Link tLink12 = new Link(text3);
-		SelectGroupEvent selectGroup = new SelectGroupEvent();
-		selectGroup.setGroupToSelect(selectedGroup.getNodeID());
-
-		// set controller (added by Thomas)
-		String id = IWMainApplication.getEncryptedClassName(UserApplication.Top.class);
-		id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + id;
-		selectGroup.setController(id);
-		button4.add(tLink12,2,1);
-		selectGroup.setSource(this);
-		tLink12.addEventModel(selectGroup);
-		
-		tLink12.setWindowToOpen(GroupPermissionWindow.class);
-
-		toolbar1.add(button4,4,1);
-		
+			Link tLink12 = new Link(text3);
+			tLink12.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID,((Integer)selectedGroup.getPrimaryKey()).toString() );
+		 tLink12.setWindowToOpen(com.idega.block.importer.presentation.Importer.class);
+	 
+			button3.add(tLink12,2,1);
+			toolbar1.add(button3,6,1);
 	}
+	*/
     
    
    //toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("import","Import"), iwb.getImage("import.gif"), com.idega.block.news.presentation.News.class),6,1);
