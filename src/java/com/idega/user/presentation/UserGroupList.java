@@ -1,7 +1,9 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import com.idega.event.IWLinkEvent;
@@ -237,8 +239,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
 		User user = getUser();
 		
-		Collection directGroups = userBusiness.getUserGroupsDirectlyRelated(this.getUserId());
-		filterGroups(iwc, directGroups, user);
+		Collection directGroups = Collections.unmodifiableCollection(userBusiness.getUserGroupsDirectlyRelated(this.getUserId()));
+		directGroups = getFilteredGroups(iwc, directGroups, user);
 		if (directGroups != null) {
 			iwc.setSessionAttribute(
 				UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED,
@@ -248,8 +250,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 				UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
 		}
 
-		Collection indirectGroups = userBusiness.getParentGroupsInDirectForUser(this.getUserId());
-		filterGroups(iwc, indirectGroups, user);
+		Collection indirectGroups = Collections.unmodifiableCollection(userBusiness.getParentGroupsInDirectForUser(this.getUserId()));
+		indirectGroups = getFilteredGroups(iwc, indirectGroups, user);
 		if (indirectGroups != null) {
 			iwc.setSessionAttribute(
 				UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED,
@@ -261,11 +263,12 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		}
 	}
 	
-	private void filterGroups(IWContext iwc, Collection groups, User user) {
+	private Collection getFilteredGroups(IWContext iwc, Collection groups, User user) {
+		Collection result = new ArrayList();
 		boolean isAdmin = iwc.isSuperAdmin();
 		boolean isSameUser = iwc.getUser().getPrimaryKey().equals(user.getPrimaryKey());
 		if(isAdmin || isSameUser) {
-			return;
+			return result;
 		}
 		UserBusiness userBusiness = this.getUserBusiness(iwc);
 		Iterator groupIter = groups.iterator();
@@ -275,14 +278,17 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 			try {
 				ok = userBusiness.isGroupUnderUsersTopGroupNode(iwc, group, user);
 			} catch (RemoteException e) {
-				System.out.println("Could not check if group was descendant og a users top group, group not shown");
+				System.out.println("Could not check if group was descendant of a users top group, group not shown");
 				e.printStackTrace();
 			}
 			if(!ok) {
+				result.add(group);
+			} else {
 				System.out.println("Group " + group.getName() + " not shown");
-				groups.remove(group);
 			}
 		}
+		
+		return result;
 	}
 	
 	/**
