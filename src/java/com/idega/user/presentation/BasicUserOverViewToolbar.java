@@ -182,7 +182,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
 					toolbar1.add(button3, 7, 1);
 				}
 				
-				if (selectedGroup != null && showISStuff) {
+				if (selectedGroup != null && showISStuff &&  ( selectedGroup.getGroupType().equals("iwme_league") || selectedGroup.getGroupType().equals("iwme_club_division_template") ) ) {
 					Table button4 = new Table(2, 1);
 					button4.setCellpadding(0);
 					Image iconRegister = iwb.getImage("export.gif");
