@@ -593,11 +593,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             Status status = null;
             int userStatusID = -1;
             try {
-                userStatusID = getUserStatusBusiness(iwc).getUserGroupStatus(Integer.parseInt(user.getPrimaryKey().toString()),Integer.parseInt(ps.getSelectedGroup().getPrimaryKey().toString()));
-                if(userStatusID != -1) {
-                		userStatus = getUserStatusBusiness(iwc).getUserStatusHome().findByPrimaryKey(new Integer(userStatusID));
-                		status = getUserStatusBusiness(iwc).getStatusByStatusId(Integer.parseInt(userStatus.getPrimaryKey().toString()));
-                }
+	            if (ps.getSelectedGroup() != null) {
+	                userStatusID = getUserStatusBusiness(iwc).getUserGroupStatus(Integer.parseInt(user.getPrimaryKey().toString()),Integer.parseInt(ps.getSelectedGroup().getPrimaryKey().toString()));
+	                if(userStatusID != -1) {	
+	                    status = getUserStatusBusiness(iwc).getStatusHome().findByPrimaryKey(new Integer(userStatusID));
+	                }
+            	}
             }
             catch (RemoteException ex) {
                 System.err.println("[BasicUserOverview]: Status could not be retrieved.Message was :" + ex.getMessage());
@@ -607,7 +608,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             		ex.printStackTrace(System.err);
             }
             IWResourceBundle iwrb = getResourceBundle(iwc);
-            Text text = new Text(iwrb.getLocalizedString(browser.getDefaultConverter().getPresentationObject((GenericEntity) status, path, browser, iwc).toString(),browser.getDefaultConverter().getPresentationObject((GenericEntity) status, path, browser, iwc).toString()));
+            //Text text = new Text(iwrb.getLocalizedString(browser.getDefaultConverter().getPresentationObject((GenericEntity) status, path, browser, iwc).toString(),browser.getDefaultConverter().getPresentationObject((GenericEntity) status, path, browser, iwc).toString()));
+            Text text = null;
+            if (status!= null)
+                text = new Text(iwrb.getLocalizedString(status.getStatusKey()));
             return text; 
         }
     
@@ -1222,7 +1226,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 values = path.getValues((EntityRepresentation) address);
                 // com.idega.core.data.Address.STREET_NUMBER plus
                 // com.idega.core.data.Address.STREET_NUMBER
-                displayValues.append(getValue(0)).append(' ').append(getValue(1));
+                displayValues.append(TextSoap.capitalize(getValue(0))).append(' ').append(getValue(1));
                 // com.idega.core.data.Address.P_O_BOX
                 String displayValue = getValue(2);
                 if (displayValue.length() != 0)
