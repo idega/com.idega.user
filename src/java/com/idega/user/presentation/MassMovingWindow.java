@@ -59,7 +59,7 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
   public static final String GROUP_TYPE_CLUB_DIVISION = "iwme_club_division";
   
   // display settings
-  private final int NUMBER_OF_ROWS = 15;
+  private final int NUMBER_OF_ROWS = 40;
   
   private Group group;
   private UserApplicationMenuAreaPS groupProviderState;
