@@ -200,18 +200,21 @@ public class Toolbar extends Page implements IWBrowserView {
     toolbar1.add(button2,3,1);
     
 	if(iwc.getAccessController().isRoleMaster(iwc)){
-		Table button4 = new Table(1,1);
+		Table button4 = new Table(2,1);
 		button4.setCellpadding(0);
+		Image iconRoleMasters = iwb.getImage("other_choises.gif");
+		button4.add(iconRoleMasters,1,1);
 		Text text4 = new Text(iwrb.getLocalizedString("button.role_masters","Role Masters"));
 		Link tLink14 = new Link(text4);
 		tLink14.setStyleClass(styledLink);
 	   tLink14.setWindowToOpen(RoleMastersWindow.class);
-	   button4.add(tLink14,1,1);
+	   button4.setWidth(2,10);
+	   button4.add(tLink14,2,1);
 	   toolbar1.add(button4,4,1);  
 	}
     
 		//Search temp
-		Table button3 = new Table(4,1);
+		Table button3 = new Table(3,1);
 		button3.setCellpadding(0);
 		Image iconSearch = iwb.getImage("search.gif");
 		button3.add(iconSearch,1,1);
@@ -224,10 +227,12 @@ public class Toolbar extends Page implements IWBrowserView {
 			tLink13.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, userApplicationMainAreaStateId);
 		tLink13.setWindowToOpen(SearchWindow.class);
 		button3.add(tLink13,2,1);
-		button3.setWidth(3,15);
-		button3.add(Text.NON_BREAKING_SPACE);
+		button3.setWidth(2,10);
+		button3.setWidth(3,20);
+		button3.add(Text.NON_BREAKING_SPACE,3,1);
 		Image dottedImage = iwb.getImage("dotted.gif");
-		button3.add(dottedImage,4,1);
+		button3.setAlignment(3,1,"right");
+		button3.add(dottedImage,3,1);
 		toolbar1.add(button3,5,1);
 			
 
@@ -247,6 +252,7 @@ public class Toolbar extends Page implements IWBrowserView {
 			tLink15.setStyleClass(styledLink);
 			//TODO Eiki add somekind of plugin lookup for toolbar items
 			tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.ClubMemberExchangeWindow");
+			button5.setWidth(2,10);
 			button5.add(tLink15,2,1);
 			toolbar1.add(button5,6,1);
 
