@@ -162,7 +162,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                     tLink14.setParameter(Importer.PARAMETER_IMPORT_FILE, ColumnSeparatedImportFile.class.getName());
 
                     Class pinLookupToGroupImportHandler = ImplementorRepository.getInstance().getAnyClassImpl(UserPinLookupToGroupImportHandler.class, this.getClass());
-                    if (pinLookupToGroupImportHandler == null) {
+                    if (pinLookupToGroupImportHandler != null) {
         				logWarning("[StyledBasicUserOverviewToolbar] Implementation of UserPinLookupToGroupImportHandler could not be found. Implementing bundle was not loaded.");
         				tLink14.setParameter(Importer.PARAMETER_IMPORT_HANDLER, pinLookupToGroupImportHandler.getName());
                     
@@ -217,7 +217,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                         tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, aliasGroup.getPrimaryKey().toString());
                     }
                     Class updateClubDivisionTemplate = ImplementorRepository.getInstance().getAnyClassImpl(UserUpdateClubDivisionTemplate.class,this.getClass());
-                    if (updateClubDivisionTemplate  == null) {
+                    if (updateClubDivisionTemplate  != null) {
         				logWarning("[StyledBasicUserOverviewToolbar] Implementation of UserUpdateClubDivisionTemplate could not be found. Implementing bundle was not loaded.");
                 
         				tLink15.setWindowToOpen(updateClubDivisionTemplate);
@@ -253,7 +253,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                     tLink15.setStyleClass(styledLinkClass);
                     tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
                     Class cashierWindow = ImplementorRepository.getInstance().getAnyClassImpl(UserCashierWindow.class,this.getClass());
-                    if (cashierWindow == null) {
+                    if (cashierWindow != null) {
         				logWarning("[StyledBasicUserOverviewToolbar] Implementation of UserCashierWindow could not be found. Implementing bundle was not loaded.");
         				tLink15.setWindowToOpen(cashierWindow);
         				button4.add(tLink15, 1, 1);

@@ -289,7 +289,7 @@ public class Toolbar extends Page implements IWBrowserView {
 			toolbar1.add(button5, 6, 1);
 
 			Class clubMemberExchangeWindow = ImplementorRepository.getInstance().getAnyClassImpl(UserClubMemberExchangeWindow.class, this.getClass());
-			if (clubMemberExchangeWindow == null) {
+			if (clubMemberExchangeWindow != null) {
 				logWarning("[Toolbar]  Implementation of UserClubMemberExchangeWindow could not be found. Implementing bundle was not loaded.");
 				///tLink15.setWindowToOpen(clubMemberExchangeWindow);
 				SelectOption exchange = new SelectOption(iwrb.getLocalizedString("button.club_member_exchange", "Member exhange"), "1");
