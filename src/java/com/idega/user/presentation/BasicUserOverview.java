@@ -14,6 +14,7 @@ import javax.swing.event.ChangeListener;
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
+import com.idega.block.entity.presentation.converters.DateConverter;
 import com.idega.block.entity.presentation.converters.MessageConverter;
 import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
@@ -477,6 +478,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		String emailKey = "com.idega.core.data.Email.ADDRESS";
 		String phoneKey = "com.idega.core.data.PhoneType.IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + "com.idega.core.data.Phone.PHONE_NUMBER";
 		String pinKey = "com.idega.user.data.User.PERSONAL_ID";
+    
+    String dateOfBirthKey = "com.idega.user.data.User.DATE_OF_BIRTH";
 			
 		String identifier = (selectedGroup==null)? "" : selectedGroup.getName();
 		identifier += (ps.getSelectedDomain() != null) ? ps.getSelectedDomain().getPrimaryKey().toString() : "";
@@ -508,6 +511,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		entityBrowser.setEntityToPresentationConverter("Delete", converterToDeleteButton);
 		entityBrowser.setEntityToPresentationConverter(nameKey, converterLink);
 		entityBrowser.setEntityToPresentationConverter(completeAddressKey, converterCompleteAddress);
+    entityBrowser.setEntityToPresentationConverter(dateOfBirthKey, new DateConverter());
 		// set converter for all columns of this class
 		entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Address", converterAddress);
 		entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Email", converterEmail);
