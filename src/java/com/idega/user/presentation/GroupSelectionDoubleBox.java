@@ -22,7 +22,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 * Constructor for GroupSelectionDoubleBox.
 	 */
 	public GroupSelectionDoubleBox() {
-		super();
+		super(selectedGroupsParameterDefaultValue);
 	}
 
 	/**
