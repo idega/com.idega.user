@@ -9,7 +9,6 @@ package com.idega.user.presentation.inputhandler;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 	}
 	
 	
-	public void main(IWContext iwc) {
+	private void initialize(IWContext iwc) {
 		try {
 			IWResourceBundle iwrb = this.getResourceBundle(iwc);
 			GroupTypeHome groupTypeHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
@@ -73,10 +72,10 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 	 * @see com.idega.business.InputHandler#getHandlerObject(java.lang.String, java.lang.String, com.idega.presentation.IWContext)
 	 */
 	public PresentationObject getHandlerObject(String name, String value, IWContext iwc) {
-		String stringValue = (String) value;
+		initialize(iwc);
 		this.setName(name);
-		if (stringValue != null) {
-			this.setContent(stringValue);
+		if (value != null) {
+			this.setSelectedElement(value);
 		}
 		return this;
 	}
@@ -103,10 +102,10 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 	 * @see com.idega.business.InputHandler#getDisplayNameOfValue(java.lang.Object, com.idega.presentation.IWContext)
 	 */
 	public String getDisplayForResultingObject(Object value, IWContext iwc) {
+		Collection groupTypes = (Collection) value;
 		String result = null;
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		if(value!=null && value instanceof Collection) {
-			Collection groupTypes = (Collection) value;
+		if(groupTypes != null) {
 			StringBuffer buf = new StringBuffer();
 			Iterator gtIter = groupTypes.iterator();
 			boolean isFirst = true;
@@ -130,8 +129,15 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 	}
 
 	public PresentationObject getHandlerObject(String name, Collection values, IWContext iwc) {
-		String value = (String) Collections.min(values);
-		return getHandlerObject(name, value, iwc);
+		SelectionBox box = (SelectionBox) getHandlerObject(name, (String) null, iwc);
+		if (values != null) {
+			Iterator iterator = values.iterator();
+			while (iterator.hasNext()) {
+				String value = (String) iterator.next(); 
+				box.setSelectedElement(value);
+			}
+		}
+		return box;		
 	}
 
 
