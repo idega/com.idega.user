@@ -259,7 +259,7 @@ public class Toolbar extends Page implements IWBrowserView {
       text7.setFontFace(Text.FONT_FACE_VERDANA);
       text7.setFontSize(Text.FONT_SIZE_7_HTML_1);
       Link tLink17 = new Link(text7);
-      tLink17.setWindowToOpen("com.idega.user.presentation.QueryBuilderWindow");
+      tLink17.setWindowToOpen(com.idega.user.presentation.QueryBuilderWindow.class);
       button7.add(tLink17,2,1);
       toolbar1.add(button7,8,1);
     }
@@ -273,7 +273,7 @@ public class Toolbar extends Page implements IWBrowserView {
       text8.setFontFace(Text.FONT_FACE_VERDANA);
       text8.setFontSize(Text.FONT_SIZE_7_HTML_1);
       Link tLink18 = new Link(text8);
-      tLink18.setWindowToOpen("com.idega.block.datareport.presentation.ReportLayoutChooserWindow");
+      tLink18.setWindowToOpen(com.idega.block.datareport.presentation.ReportLayoutChooserWindow.class);
       ICFile queryFolder = lookUpFile(QUERY_FOLDER_NAME);
       ICFile layoutFolder = lookUpFile(LAYOUT_FOLDER_NAME);
       if (queryFolder != null)  {
