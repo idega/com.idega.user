@@ -79,8 +79,10 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
     	Iterator iter = plugins.iterator();
     	
     	while (iter.hasNext()) {
+    		
 			UserGroupPlugIn plugin = (UserGroupPlugIn) iter.next();
 			className = plugin.getBusinessICObject().getClassName();
+			System.out.println("Plugin business class : "+className);
 			UserGroupPlugInBusiness biz = (UserGroupPlugInBusiness) IBOLookup.getServiceInstance(iwc,Class.forName(className));
 			PresentationObject obj = biz.instanciateViewer(ps.getSelectedGroup());
 			
