@@ -228,7 +228,7 @@ public class Toolbar extends Page implements IWBrowserView {
     toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Views", iwb.getImage("views.gif"), com.idega.block.news.presentation.News.class),7,1);
    //search
    	//text input
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Search", iwb.getImage("search.gif"), com.idega.block.news.presentation.News.class),8,1);
+   // toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Search", iwb.getImage("search.gif"), com.idega.block.news.presentation.News.class),8,1);
 
 
    Text text3 = new Text("Reset");
@@ -243,7 +243,7 @@ public class Toolbar extends Page implements IWBrowserView {
      resetLink.setTarget(_controlTarget);
    }
 
-   toolbar1.add(resetLink,9,1);
+   toolbar1.add(resetLink,8,1);
 
    //    toolbarTable.add(toolbar1,1,2);
 //	this.add(toolbar1);
