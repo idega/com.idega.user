@@ -795,7 +795,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         				frameTable.setWidth("100%");
         				frameTable.setHeight(1, 40);
         				frameTable.setStyleClass(1, 2, "main");
-        				frameTable.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_CENTER);
+        				frameTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
         				frameTable.setLeftCellBorderWidth(1, 2, 0);
         				frameTable.setRightCellBorderWidth(1, 2, 0);
         
