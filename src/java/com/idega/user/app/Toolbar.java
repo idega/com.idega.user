@@ -3,7 +3,7 @@ package com.idega.user.app;
 import java.util.List;
 import java.util.Vector;
 
-import com.idega.block.datareport.presentation.ReportOverview;
+import com.idega.block.datareport.presentation.ReportQueryOverview;
 import com.idega.block.importer.presentation.Importer;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
@@ -347,10 +347,10 @@ public class Toolbar extends Page implements IWBrowserView {
       ICFile queryFolder = lookUpFile(QUERY_FOLDER_NAME);
       ICFile layoutFolder = lookUpFile(LAYOUT_FOLDER_NAME);
       if (queryFolder != null)  {
-        tLink18.addParameter(ReportOverview.SET_ID_OF_QUERY_FOLDER_KEY, queryFolder.getPrimaryKey().toString());
+        tLink18.addParameter(ReportQueryOverview.SET_ID_OF_QUERY_FOLDER_KEY, queryFolder.getPrimaryKey().toString());
       }
       if (layoutFolder != null) {
-        tLink18.addParameter(ReportOverview.SET_ID_OF_DESIGN_FOLDER_KEY, layoutFolder.getPrimaryKey().toString());
+        tLink18.addParameter(ReportQueryOverview.SET_ID_OF_DESIGN_FOLDER_KEY, layoutFolder.getPrimaryKey().toString());
       }
       button8.add(tLink18,2,1);
       toolbar1.add(button8,9,1);
