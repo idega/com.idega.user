@@ -13,6 +13,7 @@ import com.idega.presentation.TabbedPropertyWindow;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
+import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.user.data.UserGroupPlugIn;
 import com.idega.util.IWColor;
@@ -59,6 +60,12 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
 			int userId = Integer.parseInt(id);
 			User user = getUserBusiness(iwc).getUser(userId);
+			String grpid = iwc.getParameter("laufey_pjasa");
+			
+			int iGrpId = -1;
+			if (grpid != null) 
+				iGrpId = Integer.parseInt(grpid);
+			
 
 			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
 			Iterator iter = plugins.iterator();
@@ -73,6 +80,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 					Iterator tab = tabs.iterator();
 					while (tab.hasNext()) {
 						UserTab el = (UserTab) tab.next();
+						el.setGroupID(iGrpId);						
 						panel.addTab(el, ++count, iwc);
 					}
 				}

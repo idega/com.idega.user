@@ -66,7 +66,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	protected boolean canEditUser;
 	
 	protected BasicUserOverviewPS ps;
-	protected Group selectedGroup;
+	Group selectedGroup;
 	protected IBDomain selectedDomain;
 	protected Group aliasGroup;
 	protected AccessController accessController;
@@ -356,7 +356,6 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		};
 		// define user properties link converter class
 		EntityToPresentationObjectConverter converterLink = new EntityToPresentationObjectConverter() {
-			
       public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
         return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
       } 
@@ -556,5 +555,4 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	public String getBundleIdentifier() {
 		return "com.idega.user";
 	}
-    
 }

@@ -26,6 +26,7 @@ import java.util.Iterator;
 public abstract class UserTab extends Table implements Collectable{
 
   private int userId = -1;
+	private int groupId = -1;
 
   private List errorStrings;
 
@@ -86,6 +87,14 @@ public abstract class UserTab extends Table implements Collectable{
     }
     return (Text)proxyText.clone();
   }
+
+	public void setGroupID(int id) {
+		groupId = id;
+	}
+	
+	public int getGroupID() {
+		return groupId;
+	}
 
   public void setUserID(int id){
     userId = id;
