@@ -136,7 +136,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
     }
 
     groupTree.setToShowSuperRootNode(true);
-    groupTree.setDefaultOpenLevel(1);
+    groupTree.setDefaultOpenLevel(0);
     groupTree.setSuperRootNodeName("IW Member");
     Image icon = iwb.getImage("super_root_icon.gif");
     groupTree.setSuperRootNodeIcon(icon);
