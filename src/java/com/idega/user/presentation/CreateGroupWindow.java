@@ -124,10 +124,6 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			_createEvent = new CreateGroupEvent();
 			//_createEvent.setSource(this.getLocation());
 			_createEvent.setSource(this);
-			// set controller (added by Thomas)
-			String id = IWMainApplication.getEncryptedClassName(UserApplication.Top.class);
-			id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + id;
-			_createEvent.setController(id);
 			
 			IWResourceBundle iwrb = getResourceBundle(iwc);
 			Form form = new Form();

@@ -218,10 +218,6 @@ public class BasicUserOverViewToolbar extends Toolbar {
 				SelectGroupEvent selectGroup = new SelectGroupEvent();
 				selectGroup.setGroupToSelect(selectedGroup.getNodeID());
 
-				// set controller (added by Thomas)
-				String id = IWMainApplication.getEncryptedClassName(UserApplication.Top.class);
-				id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + id;
-				selectGroup.setController(id);
 				button4.add(tLink12, 2, 1);
 				selectGroup.setSource(this);
 				tLink12.addEventModel(selectGroup);
