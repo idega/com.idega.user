@@ -15,7 +15,7 @@ import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessControl;
-import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.accesscontrol.business.*;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWResourceBundle;
@@ -164,7 +164,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 				
 				//refresh permissions PermissionCacher.updatePermissions()
 				
-				
+				iwc.getApplicationContext().removeApplicationAttribute("ic_permission_map_"+AccessController.CATEGORY_GROUP_ID);
 				
 			}
 			catch (Exception e) {
