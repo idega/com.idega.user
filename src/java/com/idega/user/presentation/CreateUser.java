@@ -3,6 +3,7 @@ package com.idega.user.presentation;
 import java.rmi.RemoteException;
 
 import javax.ejb.CreateException;
+import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
 import com.idega.idegaweb.IWApplicationContext;
@@ -30,7 +31,7 @@ import com.idega.user.data.User;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -100,9 +101,9 @@ public class CreateUser extends StyledIWAdminWindow {
 	public static String confirmPasswordFieldParameterName = "confirmPassword";
 	public static String ssnFieldParameterName = "ssn";
 	
-	private String ssn;
-	private String fullName;
-	private String primaryGroup;
+	private String ssn = null;
+	private String fullName = null;
+	private String primaryGroup = null;
 	
 	private TextInput groupInput = null;
 /*
@@ -132,7 +133,7 @@ public class CreateUser extends StyledIWAdminWindow {
 	public CreateUser() {
 		super();
 		setHeight(250);
-		setWidth(350);
+		setWidth(360);
 	//	setBackgroundColor(new IWColor(207, 208, 210));
 		setScrollbar(false);
 		setResizable(true);
@@ -168,7 +169,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		
 		primaryGroupField = new GroupChooser(primaryGroupFieldParameterName);
 		groupInput = (TextInput)primaryGroupField.getPresentationObject(iwc);
-		groupInput.setAsNotEmpty(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
+//		groupInput.setAsNotEmpty(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
 //		if(primaryGroupField.isEmpty()) {
 //			this.setErrorMessage(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
 //			this.setToLoadAlert(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
@@ -194,10 +195,8 @@ public class CreateUser extends StyledIWAdminWindow {
 		mainTable.setStyleClass(mainTableStyle);
 		mainTable.setCellspacing(10);
 		mainTable.setCellpadding(0);
-		mainTable.setWidth("98%");
-		mainTable.setHeight("98%");
-		mainTable.setAlignment("center");
-		mainTable.setVerticalAlignment("middle");
+		mainTable.setWidth(180);
+		mainTable.setHeight(180);
 		//mainTable end
 		
 		//inputTable begin
@@ -240,17 +239,30 @@ public class CreateUser extends StyledIWAdminWindow {
 
 		User newUser = null;
 		Group group = null;
-
-		if(fullName == null || fullName.equals("")) {			
-				fullName = ssn;			
-		}
-				
+								
 		Integer primaryGroupId = null;
 			
-		try {
+		try {			
 			if (primaryGroup != null && !primaryGroup.equals("")) {
+				
 				primaryGroupId = new Integer(primaryGroup);
-				newUser = getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(fullName,ssn,null,null);			
+				
+				if((ssn != null || !ssn.equals("")) && (fullName == null || fullName.equals(""))) {
+					try { 
+						newUser = getUserBusiness(iwc).getUser(ssn);
+					}
+					catch (Exception e) {
+						newUser = null;
+					}
+					
+					if(newUser != null) {
+						fullName = newUser.getName();
+					}
+					else {
+						fullName = ssn; 
+					}
+				}
+				newUser = getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(fullName,ssn,null,null);					
 				group = getGroupBusiness(iwc).getGroupByGroupID(primaryGroupId.intValue());
 				group.addGroup(newUser);
 				newUser.setPrimaryGroupID(primaryGroupId);
@@ -313,7 +325,12 @@ public class CreateUser extends StyledIWAdminWindow {
 		ssn = iwc.getParameter(ssnFieldParameterName);
 		fullName = iwc.getParameter(fullNameFieldParameterName);
 		primaryGroup = iwc.getParameter(primaryGroupFieldParameterName);
-		primaryGroup = primaryGroup.substring(primaryGroup.lastIndexOf("_")+1);
+		
+		if(primaryGroup == null || primaryGroup.equals(""))
+			primaryGroup = "";
+		else
+			primaryGroup = primaryGroup.substring(primaryGroup.lastIndexOf("_")+1);
+	
 
 		if(ssn == null || ssn.equals("") || fullName == null || fullName.equals("")) 
 			formNotComplete = true;			
@@ -324,10 +341,6 @@ public class CreateUser extends StyledIWAdminWindow {
 				//2. entered only the name
 				//3. entered only the social security number
 				if (submit.equals("ok") && formNotComplete) {
-					//is addressed if no group is selected
-					if (primaryGroup == null && primaryGroup.equals("")) {
-						setAlertOnLoad(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
-					}
 					//is addressed if both name and social security number are empty
 					if((ssn == null || ssn.equals("")) && (fullName == null || fullName.equals("")))
 						setAlertOnLoad(iwrb.getLocalizedString("new_user.ssn_or_fullName_required","Personal ID or name is required"));
@@ -340,7 +353,12 @@ public class CreateUser extends StyledIWAdminWindow {
 						formNotComplete = false;
 						buttonTable.remove(okButton);
 						buttonTable.add(continueButton,1,1);
-						
+						if(primaryGroup != null || !primaryGroup.equals("")) {
+	//						primaryGroupField.setValue(primaryGroup);
+							Integer primaryGroupId = new Integer(primaryGroup);
+							primaryGroupField.setSelectedGroup(primaryGroup,getGroupBusiness(iwc).getGroupByGroupID(primaryGroupId.intValue()).getName());
+						}
+													
 					}
 					//is addressed if the only the social security number is entered
 					else if((ssn != null || !ssn.equals("")) && (fullName == null || fullName.equals(""))) {
@@ -351,6 +369,12 @@ public class CreateUser extends StyledIWAdminWindow {
 						formNotComplete = false;
 						buttonTable.remove(okButton);
 						buttonTable.add(continueButton,1,1);
+						if(primaryGroup != null || !primaryGroup.equals("")) {
+//							primaryGroupField.setValue(primaryGroup);	
+							Integer primaryGroupId = new Integer(primaryGroup);
+							primaryGroupField.setSelectedGroup(primaryGroup,getGroupBusiness(iwc).getGroupByGroupID(primaryGroupId.intValue()).getName());	
+								
+						}				
 					}		
 				}
 				//is addressed if both name and social security number are entered
