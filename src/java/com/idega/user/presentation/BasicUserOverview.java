@@ -1,17 +1,24 @@
 package com.idega.user.presentation;
 
-import com.idega.idegaweb.*;
-import com.idega.util.ListUtil;
-import com.idega.user.data.*;
-import com.idega.data.IDOLookup;
-import com.idega.presentation.*;
-import com.idega.user.event.PartitionSelectEvent;
+import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Vector;
+
 import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
+import com.idega.presentation.StatefullPresentation;
+import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
@@ -19,13 +26,10 @@ import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.Window;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.data.Group;
+import com.idega.user.data.User;
 import com.idega.util.IWColor;
-
-import java.awt.ActiveEvent;
-import java.rmi.RemoteException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Vector;
+import com.idega.util.ListUtil;
 
 /**
  * Title:        User
@@ -74,9 +78,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     //List users = EntityFinder.findAllOrdered(com.idega.user.data.UserBMPBean.getStaticInstance(),com.idega.user.data.UserBMPBean.getColumnNameFirstName());
 //    Collection users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
     if( toolbar == null ) toolbar = new BasicUserOverViewToolbar();
+    
     BasicUserOverviewPS ps = (BasicUserOverviewPS)this.getPresentationState(iwc);
     Group selectedGroup = ps.getSelectedGroup();
     IBDomain selectedDomain = ps.getSelectedDomain();
+    toolbar.setSelectedGroup(selectedGroup);
     Collection users = null;
     int userCount = 0;
     if(selectedGroup  != null){

@@ -44,6 +44,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
     iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
 
+
     Table toolbarTable = new Table(1,3);
     toolbarTable.setCellpadding(0);
     toolbarTable.setCellspacing(0);
@@ -113,5 +114,21 @@ public class BasicUserOverViewToolbar extends Toolbar {
 
   }
 
+
+	/**
+	 * Returns the selectedGroup.
+	 * @return Group
+	 */
+	public Group getSelectedGroup() {
+		return selectedGroup;
+	}
+
+	/**
+	 * Sets the selectedGroup.
+	 * @param selectedGroup The selectedGroup to set
+	 */
+	public void setSelectedGroup(Group selectedGroup) {
+		this.selectedGroup = selectedGroup;
+	}
 
 }
