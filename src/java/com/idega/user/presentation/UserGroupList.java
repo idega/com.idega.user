@@ -300,10 +300,10 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	 *         <code>group</code>
 	 */
 	public boolean isUserAllowedToSeeGroupMembershipForUser(User viewer, Group group, User user) {
-		boolean ok = true;
+		/*boolean ok = true;
 		boolean isSameUser = viewer.getPrimaryKey().toString()!=user.getPrimaryKey().toString();
 		boolean viewerIsAdmin = false;
-		/*try {
+		try {
 			viewerIsAdmin = viewer.equals(.getAdministratorUser());
 		} catch (Exception e) {
 			e.printStackTrace();
