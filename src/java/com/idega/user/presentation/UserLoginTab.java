@@ -93,9 +93,10 @@ public class UserLoginTab extends UserTab {
 	public void initFieldContents() {
 		try {
 			LoginTable lTable = LoginDBHandler.getUserLogin(getUserId());
-			LoginInfo lInfo = LoginDBHandler.getLoginInfo(lTable.getID());
+			LoginInfo lInfo = null;
 
 			if (lTable != null) {
+				lInfo = LoginDBHandler.getLoginInfo(lTable.getID());
 				fieldValues.put(_PARAM_USER_LOGIN, lTable.getUserLogin());
 			}
 			if (lInfo != null) {
@@ -115,6 +116,7 @@ public class UserLoginTab extends UserTab {
 			this.updateFieldsDisplayStatus();
 		}
 		catch (Exception ex) {
+			ex.printStackTrace();
 			System.err.println(
 				"UserLoginTab: error in initFieldContents() for user: "
 					+ this.getUserId());
