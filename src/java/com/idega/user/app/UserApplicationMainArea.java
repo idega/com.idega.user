@@ -67,8 +67,8 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
   public void main(IWContext iwc) throws Exception {
     this.empty();
     UserApplicationMainAreaPS ps = (UserApplicationMainAreaPS)this.getPresentationState(iwc);
-	String className = ps.getClassNameToShow();
-	Collection plugins = ps.getUserGroupPlugins();
+		String className = ps.getClassNameToShow();
+		Collection plugins = ps.getUserGroupPlugins();
 
     if( className != null ){
     	PresentationObject obj = (PresentationObject)Class.forName(className).newInstance();

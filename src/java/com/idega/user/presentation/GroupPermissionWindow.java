@@ -428,6 +428,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 			
 		}
 		
+		permissionTypes.remove("owner");
 		
 		return permissionTypes;
 			
