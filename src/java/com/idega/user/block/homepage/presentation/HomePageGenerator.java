@@ -17,7 +17,7 @@ import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
-import com.idega.developer.presentation.IWDeveloper;
+import com.idega.development.presentation.IWDeveloper;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
