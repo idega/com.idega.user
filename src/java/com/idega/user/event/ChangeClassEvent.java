@@ -15,22 +15,22 @@ import com.idega.event.*;
  */
 
 public class ChangeClassEvent extends IWPresentationEvent {
-	
-  private final String ENCRYPTED_CLASS_PARAMETER = IWMainApplication.classToInstanciateParameter;
+
+  private static final String ENCRYPTED_CLASS_PARAMETER = "iw_cc_ev_"+IWMainApplication.classToInstanciateParameter;
   private String _className;
 
   public ChangeClassEvent(Class theClass){
 	setChangeClass(theClass);
   }
-  
+
   public void setChangeClass(Class theClass){
     addParameter(ENCRYPTED_CLASS_PARAMETER,IWMainApplication.getEncryptedClassName(theClass));
   }
-  
+
   public String getChangeClassName(){
     return _className;
   }
-  
+
   private void setChangeClassName(String theClass){
     _className = theClass;
   }
@@ -43,7 +43,7 @@ public class ChangeClassEvent extends IWPresentationEvent {
    		setChangeClassName(IWMainApplication.decryptClassName(className));
  		return true;
    	}
-    
+
     return false;
 
 
