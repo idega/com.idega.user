@@ -251,6 +251,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         String buttonMoving;
         boolean addMoveOrAddButton = true;
         if (selectedGroup == null) {
+        	//TODO ADD BOTH BUTTONS!
             confirmMoving = iwrb.getLocalizedString("buo_add_selected_users", "Add selected users");
             buttonMoving = iwrb.getLocalizedString("Add to", "Add to");
         }
