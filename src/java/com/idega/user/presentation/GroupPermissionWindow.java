@@ -239,7 +239,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		
 		int column = 1;
 		String groupIdColumn = "ICPermission.PERMISSION_CONTEXT_VALUE";
-		String applyRecursively = "Recursively";
 		//browser.setLeadingEntity("com.idega.core.accesscontrol.data.ICPermission");
 		//browser.setMandatoryColumn(column,"com.idega.core.accesscontrol.data.ICPermission.GROUP_ID");
 
@@ -622,8 +621,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	 * @param iwc
 	 */
 	private Form getGroupPermissionForm(EntityBrowser browser) throws Exception {
-
-		IWContext iwc = IWContext.getInstance();
 		Help help = getHelp(HELP_TEXT_KEY);
 		
 		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"),PARAM_SAVING,"TRUE");
