@@ -9,6 +9,7 @@ package com.idega.user.presentation.inputhandler;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.SelectionBox;
+import com.idega.user.business.GroupTypeComparator;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.GroupTypeHome;
 
@@ -41,6 +43,10 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 		super(name);
 	}
 	
+	public void main(IWContext iwc) {
+        initialize(iwc);
+        super.main(iwc);
+	}
 	
 	private void initialize(IWContext iwc) {
 		try {
@@ -50,6 +56,8 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 			Collection groupTypes = groupTypeHome.findVisibleGroupTypes();
 
 			if (groupTypes != null) {
+				GroupTypeComparator groupTypeComparator = new GroupTypeComparator(iwc);
+				Collections.sort((List)groupTypes, groupTypeComparator);
 				Iterator iter = groupTypes.iterator();
 				while (iter.hasNext()) {
 					GroupType groupType = (GroupType) iter.next();
@@ -72,7 +80,7 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 	 * @see com.idega.business.InputHandler#getHandlerObject(java.lang.String, java.lang.String, com.idega.presentation.IWContext)
 	 */
 	public PresentationObject getHandlerObject(String name, String value, IWContext iwc) {
-		initialize(iwc);
+		//initialize(iwc); //this is now done in the main function
 		this.setName(name);
 		if (value != null) {
 			this.setSelectedElement(value);
