@@ -1092,6 +1092,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         table.add(movedUsersNumberMessageText, 1, 1);
         if (notMovedUsers > 0) {
             EntityBrowser browser = getEntityBrowserForResult(notMovedUsersColl, completeResultOfMoving, state, iwc);
+            // put print button to bottom
+            browser.addPresentationObjectToBottom(new PrintButton(iwb.getImage("print.gif")));
             table.add(notMovedUsersNumberMessageText, 1, 2);
             table.add(notMovedUsersMessageText, 1, 3);
             table.add(browser, 1, 4);
