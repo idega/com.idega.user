@@ -13,7 +13,6 @@ import com.idega.presentation.TabbedPropertyWindow;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.Group;
-import com.idega.user.data.User;
 import com.idega.user.data.UserGroupPlugIn;
 import com.idega.util.IWColor;
 
@@ -28,6 +27,7 @@ import com.idega.util.IWColor;
 
 public class GroupPropertyWindow extends TabbedPropertyWindow {
 
+  public static final String PARENT_GROUP_ID_KEY = "parent_group_id";
 	public static final String PARAMETERSTRING_GROUP_ID = "ic_group_id";
   public static final String SESSION_ADDRESS = "ic_group_property_window";
   
@@ -72,6 +72,9 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 	}
 
 	public void main(IWContext iwc) throws Exception {
+    int parentGroupId = -1;
+    if (iwc.isParameterSet(PARENT_GROUP_ID_KEY))
+      parentGroupId = Integer.parseInt(iwc.getParameter(PARENT_GROUP_ID_KEY));    
 		String id = iwc.getParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID);
 		if (id != null) {
 			int newId = Integer.parseInt(id);
@@ -79,7 +82,7 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 			for (int i = 0; i < obj.length; i++) {
 				PresentationObject mo = obj[i];
 				if (mo instanceof UserGroupTab && ((UserGroupTab) mo).getGroupId() != newId) {
-					((UserGroupTab) mo).setGroupId(newId);
+					((UserGroupTab) mo).setGroupIds(newId, parentGroupId);
 				}
 			}
 		}

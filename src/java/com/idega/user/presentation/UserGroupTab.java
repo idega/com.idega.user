@@ -21,6 +21,7 @@ import java.util.Hashtable;
 public abstract class UserGroupTab extends Table implements Collectable {
 
  private int groupId = -1;
+ private int selectedParentGroupId = -1;
 
   protected String rowHeight = "40";
   protected int fontSize = 2;
@@ -74,6 +75,16 @@ public abstract class UserGroupTab extends Table implements Collectable {
     return (Text)proxyText.clone();
   }
 
+  /** Sets group id and id of the selected parent group.
+   * 
+   * @param groupId
+   * @param selectedParentGroupId
+   */
+  public void setGroupIds(int groupId, int selectedParentGroupId) {
+    this.selectedParentGroupId = selectedParentGroupId;
+    setGroupId(groupId);
+  }
+
   public void setGroupId(int id){
     groupId = id;
     initFieldContents();
@@ -81,6 +92,10 @@ public abstract class UserGroupTab extends Table implements Collectable {
 
   public int getGroupId(){
     return groupId;
+  }
+  
+  public int getSelectedParentGroupId() {
+    return selectedParentGroupId;
   }
 
   public UserBusiness getUserBusiness(IWApplicationContext iwc){

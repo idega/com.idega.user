@@ -4,26 +4,25 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.ejb.EJBException;
-
 import com.idega.builder.business.PageTreeNode;
 import com.idega.builder.presentation.IBPageChooser;
-import com.idega.data.IDOLookup;
+import com.idega.business.IBOLookup;
+
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.CheckBox;
+
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupType;
-import com.idega.user.data.GroupTypeHome;
 import com.idega.util.Disposable;
 
 /**
@@ -60,6 +59,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private Link addLink;
 	private IFrame memberofFrame;
 	public static final String PARAMETER_GROUP_ID = "ic_group_id";
+  public static final String PARENT_GROUP_ID = "parent_group_id";
 	public static final String SESSIONADDRESS_GROUPS_DIRECTLY_RELATED = "ic_group_ic_group_direct_GGIT";
 	public static final String SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED = "ic_group_ic_group_not_direct_GGIT";
 
@@ -75,8 +75,12 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	}
 
 	public void initFieldContents() {
+    IWContext iwc = IWContext.getInstance();
+    IWResourceBundle iwrb = getResourceBundle(iwc);
+    fillGroupTypeMenu(iwc, iwrb);
 		addLink.setWindowToOpen(GroupGroupSetter.class);
-		addLink.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID, getGroupId());
+		addLink.addParameter(PARAMETER_GROUP_ID, getGroupId());
+    addLink.addParameter(PARENT_GROUP_ID, getSelectedParentGroupId());
 
 		try {
 			Group group = (Group) (((GroupHome) com.idega.data.IDOLookup.getHome(Group.class)).findByPrimaryKey(new Integer(getGroupId())));
@@ -124,25 +128,6 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		homepageField = new IBPageChooser(homepageFieldName);
 
 		grouptypeField = new DropdownMenu(grouptypeFieldName);
-		try {
-			//			IWResourceBundle iwrb = 
-			GroupTypeHome gtHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
-			Collection types = gtHome.findVisibleGroupTypes();
-			Iterator iter = types.iterator();
-			while (iter.hasNext()) {
-				GroupType item = (GroupType) iter.next();
-				String value = item.getType();
-				String name = item.getType(); //item.getName();
-				if (_iwrb != null)
-					grouptypeField.addMenuElement(value, _iwrb.getLocalizedString(name, name));
-				else
-					grouptypeField.addMenuElement(value, name);
-			}
-		}
-		catch (Exception ex) {
-			throw new EJBException(ex);
-		}
-
 		memberofFrame = new IFrame("ic_user_memberof_ic_group", GroupList.class);
 		memberofFrame.setHeight(150);
 		memberofFrame.setWidth(367);
@@ -322,4 +307,32 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 
 		_iwrb = getResourceBundle(iwc);
 	}
+  
+  private void fillGroupTypeMenu(IWContext iwc, IWResourceBundle iwrb)  {
+    GroupBusiness groupBusiness;
+    Group group;
+    String groupTypeString;
+    try {
+      groupBusiness =(GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+      group = groupBusiness.getGroupByGroupID(getGroupId());
+      groupTypeString = group.getGroupType();
+    }
+    // Remote- and FinderException
+    catch (Exception ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+    Collection groupTypes = groupBusiness.getAllAllowedGroupTypesForChildren(getSelectedParentGroupId(), iwc);
+    boolean groupTypeOfCurrentGroupIsInList = false;
+    Iterator iterator = groupTypes.iterator();
+    while (iterator.hasNext())  {
+      GroupType item = (GroupType) iterator.next();
+      String value = item.getType();
+      // check if the current group of this tab is in the returned list (usually it should be contained)
+      if (value.equals(groupTypeString))
+        groupTypeOfCurrentGroupIsInList = true; 
+      grouptypeField.addMenuElement(value, iwrb.getLocalizedString(value, value));
+    }  
+    if (!groupTypeOfCurrentGroupIsInList)
+      grouptypeField.addMenuElementFirst(groupTypeString, iwrb.getLocalizedString(groupTypeString, groupTypeString));
+  }
 }
