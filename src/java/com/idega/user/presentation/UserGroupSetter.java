@@ -99,7 +99,7 @@ import java.util.List;
           iter = directGroups.iterator();
           while (iter.hasNext()) {
             Group item = (Group) iter.next();
-            right.addElement(item.getPrimaryKey().toString(),groupBusiness.getNameOfGroupWithParentName(item).getText());
+            right.addElement(item.getPrimaryKey().toString(),groupBusiness.getNameOfGroupWithParentName(item));
           }
         }
         // former:Collection notDirectGroups = userBusiness.getNonParentGroups(userId);
@@ -121,7 +121,7 @@ import java.util.List;
           iter = allGroups.iterator();
           while (iter.hasNext()) {
             Group item = (Group) iter.next();
-            left.addElement(item.getPrimaryKey().toString(),groupBusiness.getNameOfGroupWithParentName(item).getText());
+            left.addElement(item.getPrimaryKey().toString(),groupBusiness.getNameOfGroupWithParentName(item));
           }
         }
 

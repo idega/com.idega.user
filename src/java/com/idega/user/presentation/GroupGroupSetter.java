@@ -82,7 +82,7 @@ import com.idega.util.IWColor;
         iter = directGroups.iterator();
         while (iter.hasNext()) {
           Group item = (Group) iter.next();
-          right.addElement(item.getPrimaryKey().toString(),groupBusiness.getNameOfGroupWithParentName(item).getText());
+          right.addElement(item.getPrimaryKey().toString(),groupBusiness.getNameOfGroupWithParentName(item));
         }
       }
       
@@ -107,7 +107,7 @@ import com.idega.util.IWColor;
           // filter
           if (map.containsKey(group.getGroupType()))
               // can not add a text
-            left.addElement(item.getPrimaryKey().toString(), groupBusiness.getNameOfGroupWithParentName(item).getText());
+            left.addElement(item.getPrimaryKey().toString(), groupBusiness.getNameOfGroupWithParentName(item));
         }
       }
 
