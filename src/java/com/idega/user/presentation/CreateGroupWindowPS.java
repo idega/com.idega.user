@@ -113,14 +113,21 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
                         int parentGroupId = event.getParentID();
 
                         parentGroup = groupBusiness.getGroupByGroupID(parentGroupId);
-                        group = groupBusiness.createGroupUnder(event.getName(),
+                        
+                        if(iwc.getAccessController().hasEditPermissionFor(parentGroup,iwc)){
+                        		group = groupBusiness.createGroupUnder(event.getName(),
                                 event.getDescription(), event.getGroupType(),
                                 event.getHomePageID(), event.getAliasID(),
                                 parentGroup);
                         
                         
-                        copyGroupNumberFromParent(group, parentGroup);
-                        
+                        		copyGroupNumberFromParent(group, parentGroup);
+                        }
+                        else{
+                        	//TODO throw an exception! you should not be able to create this group
+                        	
+                        }
+
                         /////////////
 
                     } else {
@@ -128,23 +135,25 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
                         System.err.println("[CreateGroupWindow]: parentGroupType "+ event.getParentType() + "not found. Use a proper parent type (0=domain, 1=group)");
                         
                     }
-
-                    // store group id and context, so change listners are able
-                    // to open windows (e.g. the group property window)
-                    groupId = (Integer) group.getPrimaryKey();
-                    eventContext = e.getIWContext();
-                    User currentUser = iwc.getCurrentUser();
                     
-                    //Apply permission stuff
-                    groupBusiness.applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(iwc, group, currentUser);
-
-                    // get groupType tree and iterate through it and create default sub groups.
-                    createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(group, groupBusiness, e.getIWContext(), currentUser);
-
-                    //TODO fix this what is it doing? some caching stuff?
-                    e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
-                    e.getIWContext().getApplicationContext().removeApplicationAttribute("group_tree");
                     
+                    if(group!=null){
+	                    // store group id and context, so change listners are able
+	                    // to open windows (e.g. the group property window)
+	                    groupId = (Integer) group.getPrimaryKey();
+	                    eventContext = e.getIWContext();
+	                    User currentUser = iwc.getCurrentUser();
+	                    
+	                    //Apply permission stuff
+	                    groupBusiness.applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(iwc, group, currentUser);
+	
+	                    // get groupType tree and iterate through it and create default sub groups.
+	                    createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(group, groupBusiness, e.getIWContext(), currentUser);
+	
+	                    //TODO fix this what is it doing? some caching stuff?
+	                    e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
+	                    e.getIWContext().getApplicationContext().removeApplicationAttribute("group_tree");
+                    }
                     
                 } catch (CreateException ce) {
                     throw new EJBException(ce);
