@@ -2,6 +2,7 @@ package com.idega.user.event;
 
 import com.idega.event.IWPresentationEvent;
 import com.idega.presentation.IWContext;
+import com.idega.user.business.GroupTreeNode;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -12,8 +13,8 @@ import com.idega.presentation.IWContext;
  * @version 1.0
  */
 public class CreateGroupEvent extends IWPresentationEvent {
-	public static final int TYPE_DOMAIN = 0;
-	public static final int TYPE_GROUP = 1;
+	public static final int TYPE_DOMAIN = GroupTreeNode.TYPE_DOMAIN;
+	public static final int TYPE_GROUP = GroupTreeNode.TYPE_GROUP;
 
 	private static String PRM_NAME = "group_name";
 	private static String PRM_DESCRIPTION = "group_description";
