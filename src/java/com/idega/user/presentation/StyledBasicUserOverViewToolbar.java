@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.builder.data.ICDomain;
@@ -15,7 +16,6 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.app.Toolbar;
 import com.idega.user.app.ToolbarElement;
 import com.idega.user.business.UserGroupPlugInBusiness;
