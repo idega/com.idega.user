@@ -35,6 +35,7 @@ import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupComparator;
+import com.idega.user.data.CachedGroup;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupTypeConstants;
 import com.idega.user.data.User;
@@ -253,7 +254,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	    while (it.hasNext()) {
 	        List permissionCollection = (List)it.next();
 	        String groupID = ((ICPermission) permissionCollection.iterator().next()).getContextValue();
-	        Group tempGroup = (Group) groupComparator.getCachedGroups().get(groupID);
+	        CachedGroup tempGroup = (CachedGroup) groupComparator.getApplicationCachedGroups().get(groupID);
 	        //System.out.println(tempGroup.getGroupType());
 	        if (groupTypes.contains(tempGroup.getGroupType())) {
 	            filteredEntityList.add(permissionCollection);
@@ -306,24 +307,27 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 				while (iterator.hasNext()) {
 					ICPermission perm = (ICPermission) iterator.next();
+					CachedGroup cachedGroup = null;
 					Group group = null;
 					try {
 						Integer groupID = Integer.valueOf(perm.getContextValue());
 						String key = groupID.toString();
-					    if (getGroupComparator().getCachedGroups()!=null) {
-							if (getGroupComparator().getCachedGroups().containsKey(key))
-							    group = (Group)getGroupComparator().getCachedGroups().get(key);
+					    if (getGroupComparator().getApplicationCachedGroups()!=null) {
+							if (getGroupComparator().getApplicationCachedGroups().containsKey(key))
+							    cachedGroup = (CachedGroup)getGroupComparator().getApplicationCachedGroups().get(key);
 							else
 							{	
 							    group = getGroupBusiness(iwc).getGroupByGroupID(groupID.intValue());
-							    groupComparator.getCachedGroups().put(key, group);
+							    cachedGroup = new CachedGroup(group);
+							    groupComparator.getApplicationCachedGroups().put(key, cachedGroup);
 							}
 						}
 						else {
 						    group = getGroupBusiness(iwc).getGroupByGroupID(groupID.intValue());
+						    cachedGroup = new CachedGroup(group);
 						}
 						
-						String name = getGroupComparator().getIndentedGroupName(group);
+						String name = getGroupComparator().getIndentedGroupName(cachedGroup);
 //						String number = group.getMetaData(ICUserConstants.META_DATA_GROUP_NUMBER);
 						return new Text(name);
 					}
