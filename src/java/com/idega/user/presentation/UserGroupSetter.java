@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
@@ -9,11 +10,16 @@ import com.idega.presentation.ui.SelectionBox;
 import com.idega.presentation.ui.SelectionDoubleBox;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.Window;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.IWColor;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -36,9 +42,9 @@ import java.util.Iterator;
     public UserGroupSetter(){
       super("add user to groups");
       this.setAllMargins(0);
-      this.setWidth(400);
-      this.setHeight(300);
-      this.setBackgroundColor("#d4d0c8");
+      this.setWidth(500);
+      this.setHeight(400);
+      this.setBackgroundColor(new IWColor(207,208,210));
     }
 
     public UserBusiness getUserBusiness(IWApplicationContext iwc){
@@ -83,6 +89,8 @@ import java.util.Iterator;
         String stringUserId = iwc.getParameter(UserGroupList.PARAMETER_USER_ID);
         int userId = Integer.parseInt(stringUserId);
         form.addParameter(UserGroupList.PARAMETER_USER_ID,stringUserId);
+        
+        GroupBusiness groupBusiness = getGroupBusiness(iwc);
 
         Collection directGroups = userBusiness.getUserGroupsDirectlyRelated(userId);
 
@@ -90,16 +98,30 @@ import java.util.Iterator;
         if(directGroups != null){
           iter = directGroups.iterator();
           while (iter.hasNext()) {
-            Object item = iter.next();
-            right.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
+            Group item = (Group) iter.next();
+            right.addElement(item.getPrimaryKey().toString(),groupBusiness.getNameOfGroupWithParentName(item).getText());
           }
         }
-        Collection notDirectGroups = userBusiness.getNonParentGroups(userId);
-        if(notDirectGroups != null){
-          iter = notDirectGroups.iterator();
+        // former:Collection notDirectGroups = userBusiness.getNonParentGroups(userId);
+ 
+
+        User user = iwc.getCurrentUser();
+        Collection notDirectGroups  = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user);
+        Iterator topGroupsIterator = notDirectGroups.iterator();
+        List allGroups = new ArrayList();
+        while (topGroupsIterator.hasNext())  {
+          Group parentGroup = (Group) topGroupsIterator.next();
+          allGroups.add(parentGroup);
+          Collection coll = groupBusiness.getChildGroupsRecursive(parentGroup);
+          if (coll != null)
+            allGroups.addAll(coll);
+        }        
+                
+        if(allGroups != null){
+          iter = allGroups.iterator();
           while (iter.hasNext()) {
-            Object item = iter.next();
-            left.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
+            Group item = (Group) iter.next();
+            left.addElement(item.getPrimaryKey().toString(),groupBusiness.getNameOfGroupWithParentName(item).getText());
           }
         }
 
@@ -107,7 +129,9 @@ import java.util.Iterator;
         frameTable.setAlignment(2,2,"center");
         frameTable.add("UserId: "+userId,2,1);
         frameTable.add(sdb,2,2);
-        frameTable.add(new SubmitButton("  Save  ","save","true"),2,3);
+        SubmitButton save = new SubmitButton("  Save  ","save","true");
+        save.setAsImageButton(true);
+        frameTable.add(save,2,3);
         frameTable.setAlignment(2,3,"right");
         form.add(frameTable);
       }
@@ -198,5 +222,17 @@ import java.util.Iterator;
       }
   */
     }
+
+    private GroupBusiness getGroupBusiness(IWApplicationContext iwc){
+      GroupBusiness business;
+      try {
+        business = (GroupBusiness) IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
+      }
+      catch(java.rmi.RemoteException rme){
+        throw new RuntimeException(rme.getMessage());
+      }
+      return business;
+    }
+
 
   }

@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,11 +14,12 @@ import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SelectionBox;
 import com.idega.presentation.ui.SelectionDoubleBox;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.Window;
+import com.idega.presentation.ui.Window; 
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
+import com.idega.user.data.User;
 import com.idega.util.IWColor;
 
  public class GroupGroupSetter extends Window {
@@ -73,25 +75,39 @@ import com.idega.util.IWColor;
       Group group = groupBusiness.getGroupByGroupID(groupId);
       String value = group.getGroupType();
       map.put(value, value);
-      
+        
       Collection directGroups = groupBusiness.getParentGroups(groupId);
-
       Iterator iter = null;
       if(directGroups != null){
         iter = directGroups.iterator();
         while (iter.hasNext()) {
           Group item = (Group) iter.next();
-          right.addElement(item.getPrimaryKey().toString(),item.getName());
+          right.addElement(item.getPrimaryKey().toString(),groupBusiness.getNameOfGroupWithParentName(item).getText());
         }
       }
       
-      Collection notDirectGroups = getGroupBusiness(iwc).getNonParentGroups(groupId);
-      if(notDirectGroups != null){
-        iter = notDirectGroups.iterator();
+      // former: Collection notDirectGroups = getGroupBusiness(iwc).getNonParentGroups(groupId);
+      User user = iwc.getCurrentUser();
+      UserBusiness userBusiness = getUserBusiness(iwc);
+      Collection notDirectGroups  = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user);
+      Iterator topGroupsIterator = notDirectGroups.iterator();
+      List allGroups = new ArrayList();
+      while (topGroupsIterator.hasNext())  {
+        Group parentGroup = (Group) topGroupsIterator.next();
+        allGroups.add(parentGroup);
+        Collection coll = groupBusiness.getChildGroupsRecursive(parentGroup);
+        if (coll != null)
+          allGroups.addAll(coll);
+      }
+      
+      if(allGroups != null){
+        iter = allGroups.iterator();
         while (iter.hasNext()) {
           Group item = (Group) iter.next();
+          // filter
           if (map.containsKey(group.getGroupType()))
-            left.addElement(item.getPrimaryKey().toString(),item.getName());
+              // can not add a text
+            left.addElement(item.getPrimaryKey().toString(), groupBusiness.getNameOfGroupWithParentName(item).getText());
         }
       }
 
@@ -102,7 +118,9 @@ import com.idega.util.IWColor;
       //frameTable.add("GroupId: "+groupId,2,1);
 			System.out.println("GroupId: "+groupId);
       frameTable.add(sdb,2,2);
-      frameTable.add(new SubmitButton("  Save  ","save","true"),2,3);
+      SubmitButton save = new SubmitButton("  Save  ","save","true");
+      save.setAsImageButton(true);
+      frameTable.add(save,2,3);
       frameTable.setAlignment(2,3,"right");
       form.add(frameTable);
       this.add(form);
