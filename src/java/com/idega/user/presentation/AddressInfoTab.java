@@ -232,28 +232,31 @@ public class AddressInfoTab extends UserTab{
 
   public boolean store(IWContext iwc){
 
-    try{
-    	
     	Integer userId = new Integer(getUserId());
     	String street = iwc.getParameter(streetFieldName);
-    	Integer postalCodeId = null;
-    	String postal = iwc.getParameter(postalCodeFieldName);
-    	if(postal!=null) postalCodeId = new Integer(postal);
-    	String country = iwc.getParameter(countryFieldName);
-      	String city = iwc.getParameter(cityFieldName);
-      	String province = iwc.getParameter(provinceFieldName);     	
-      	String poBox = iwc.getParameter(poBoxFieldName);
+    	
+    	if( street!=null ){	
+				try{
+		    	Integer postalCodeId = null;
+		    	String postal = iwc.getParameter(postalCodeFieldName);
+		    	if(postal!=null) postalCodeId = new Integer(postal);
+		    	String country = iwc.getParameter(countryFieldName);
+		      	String city = iwc.getParameter(cityFieldName);
+		      	String province = iwc.getParameter(provinceFieldName);     	
+		      	String poBox = iwc.getParameter(poBoxFieldName);
+		
+		
+		      this.getUserBusiness(iwc).updateUsersMainAddressOrCreateIfDoesNotExist(userId,street,postalCodeId,country,city,province,poBox);
+					
 
-
-      this.getUserBusiness(iwc).updateUsersMainAddressOrCreateIfDoesNotExist(userId,street,postalCodeId,country,city,province,poBox);
-	
-
-
-      return true;
-    }catch(Exception e){
-      e.printStackTrace();
-      return false;
-    }
+	    	}catch(Exception e){
+	      	e.printStackTrace();
+	      	return false;
+	    	}
+    	}
+  	
+  	return true;
+    						
   }
 
   public void initFieldContents(){
@@ -266,7 +269,10 @@ public class AddressInfoTab extends UserTab{
         hasAddress = true;
       }
       
-      /** @todo remove this fieldValues bullshit!**/
+
+      
+	  if( hasAddress){
+	  	      /** @todo remove this fieldValues bullshit!**/
       String street = addr.getStreetAddress();
       int code = addr.getPostalCodeID();     
       Country country = addr.getCountry();
@@ -276,7 +282,6 @@ public class AddressInfoTab extends UserTab{
       String province = addr.getProvince(); 	
       String poBox = addr.getPOBox();
       
-	  if( hasAddress){
 	      if( street!=null ) fieldValues.put(streetFieldName, street );
 	      if( city!=null ) fieldValues.put(cityFieldName, city );
 	      if ( province!=null ) fieldValues.put(provinceFieldName, province );
