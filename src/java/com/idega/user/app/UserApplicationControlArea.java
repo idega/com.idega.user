@@ -53,6 +53,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
   private StatefullPresentationImplHandler _stateHandler = null;
   private String _controlTarget = null;
   private IWPresentationEvent _contolEvent = null;
+  private 	String styleScript = "UserApplicationStyle.css";
 
   private GroupTreeView groupTree = new GroupTreeView();
 	private UserBusiness userBiz = null;
@@ -191,7 +192,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
   public void main(IWContext iwc) throws Exception {
     this.empty();
-	String styleScript = "UserApplicationStyle.css";
+
 	IWBundle iwb = getBundle(iwc);
 	Page parentPage = this.getParentPage();
 	String styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
