@@ -3,6 +3,7 @@ package com.idega.user.presentation;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Vector;
 
 import javax.ejb.FinderException;
 
@@ -15,7 +16,6 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.AbstractChooserWindow;
-import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
@@ -26,6 +26,11 @@ import com.idega.user.data.UserHome;
  * @author gimmi
  */
 public class UserChooserWindow extends AbstractChooserWindow {
+
+	/**
+	 * @todo Add order functions
+	 * 
+	 */
 
 	private String PARAMETER_SEARCH = "ucw_ss";
 	private String PARAMETER_VIEW_ALL= "ucw_va";
@@ -38,7 +43,9 @@ public class UserChooserWindow extends AbstractChooserWindow {
 	private IWResourceBundle iwrb; 	
 	private String searchString = "";
 	private Collection users;
+	private boolean usingUserPks = false;
 	public static String AVAILABLE_USER_PKS_SESSION_PARAMETER = "us_ch_av_us_sp";
+	public static String USING_AVAILABLE_USER_PKS_SESSION_PARAMETER = "ucw_upsp";
 	private int currentPage = 0;
 
 	public UserChooserWindow() {
@@ -62,27 +69,33 @@ public class UserChooserWindow extends AbstractChooserWindow {
 		}
     
 		try {
+			String useUserPks = (String) iwc.getSessionAttribute(USING_AVAILABLE_USER_PKS_SESSION_PARAMETER);
+			if (useUserPks != null) {
+				usingUserPks = true;
+			}
 			Collection availableUserPks = (Collection) iwc.getSessionAttribute(AVAILABLE_USER_PKS_SESSION_PARAMETER);
-			if (availableUserPks != null && searchString == null) {
+			String[] userIds = null;
+			if (usingUserPks && availableUserPks != null) {
+				userIds = new String[availableUserPks.size()];
+				Iterator iter = availableUserPks.iterator();
+				int counter = 0;
+				while (iter.hasNext()) {
+					userIds[counter++] = ((Integer) iter.next()).toString();	
+				}
+			}
+			if (usingUserPks && searchString == null) {
 				showAll = true;	
 			}
 
 	    UserHome uHome = (UserHome) IDOLookup.getHome(User.class);
 	    if (showAll) {
-	    	if (availableUserPks != null) {
-		    	String[] userIds = new String[availableUserPks.size()];
-	    		Iterator iter = availableUserPks.iterator();
-	    		int counter = 0;
-	    		while (iter.hasNext()) {
-	    			userIds[counter++] = ((Integer) iter.next()).toString();	
-	    		}
+	    	if (usingUserPks && userIds != null) {
 	    		users = uHome.findUsers(userIds);
 	    	}else {
 		    	users = uHome.findAllUsersOrderedByFirstName();
 	    	}
 	    }else if (searchString != null) {
-	    	System.out.println("[UserChooserWindow] searchString != null");
-	    	users = uHome.findUsersBySearchCondition(searchString, availableUserPks);
+	    	users = uHome.findUsersBySearchCondition(searchString, userIds);
 	    }
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
@@ -97,7 +110,7 @@ public class UserChooserWindow extends AbstractChooserWindow {
 		if (uId != null) {
 			try {
 				User user = getUserHome().findByPrimaryKey(new Integer(uId));
-			getParentPage().setOnLoad(SELECT_FUNCTION_NAME + "('" + user.getName() + "','" + uId + "')");
+				getParentPage().setOnLoad(SELECT_FUNCTION_NAME + "('" + user.getName() + "','" + uId + "')");
 			} catch (RemoteException e) {
 			} catch (FinderException e) {
 			}
