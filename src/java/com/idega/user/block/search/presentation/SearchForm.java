@@ -1,5 +1,6 @@
 package com.idega.user.block.search.presentation;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.*;
 import com.idega.presentation.*;
@@ -15,12 +16,13 @@ import com.idega.idegaweb.browser.presentation.IWBrowserView;
  * @version 1.0
  */
 public class SearchForm extends PresentationObjectContainer implements IWBrowserView {
+	private IWResourceBundle iwrb;
 	private IWBundle iwb;
-	private TextInput _searchString;
+	private TextInput searchInput;
 	//	private SubmitButton _groupSearch;
 	//	private SubmitButton _userSearch;
-	private SubmitButton _search;
-	private DropdownMenu _searchType;
+	private SubmitButton searchButton;
+	private DropdownMenu searchTypeDropDown;
 	public final static String STYLE = "font-family:arial; font-size:7pt; color:#000000; text-align: justify; border: 1 solid #000000;";
 	public final static String STYLE_2 = "font-family:arial; font-size:7pt; color:#000000; text-align: justify;";
 	private String _controlTarget = null;
@@ -28,18 +30,7 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 	
 	
 	public SearchForm() {
-		_searchString = new TextInput(SimpleSearchEvent.FIELDNAME_TEXTINPUT);
-		this.setStyle(_searchString);
-		//		_userSearch = new SubmitButton("Search for User",SimpleSearchEvent.FIELDNAME_SEARCHTYPE,Integer.toString(SimpleSearchEvent.SEARCHTYPE_USER));
-		//		this.setStyle(_userSearch);
-		//		_groupSearch = new SubmitButton("Search for Group",SimpleSearchEvent.FIELDNAME_SEARCHTYPE,Integer.toString(SimpleSearchEvent.SEARCHTYPE_GROUP));
-		//        this.setStyle(_groupSearch);
-		_search = new SubmitButton("  Search", "submit_", Integer.toString(SimpleSearchEvent.SEARCHTYPE_GROUP));
-		this.setStyle(_search);
-		_searchType = new DropdownMenu(SimpleSearchEvent.FIELDNAME_SEARCHTYPE);
-		_searchType.addMenuElement(Integer.toString(SimpleSearchEvent.SEARCHTYPE_USER), "User");
-		_searchType.addMenuElement(Integer.toString(SimpleSearchEvent.SEARCHTYPE_GROUP), "Group");
-		this.setStyle(_searchType);
+	
 	}
 	public String getBundleIdentifier() {
 		return "com.idega.user";
@@ -47,15 +38,37 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
 		iwb = getBundle(iwc);
+		iwrb = getResourceBundle(iwc);
+		
+		searchInput = new TextInput(SimpleSearchEvent.FIELDNAME_TEXTINPUT);
+		setStyle(searchInput);
+		searchButton = new SubmitButton(iwrb.getLocalizedString("searchform","Search"));
+		//setStyle(searchButton);
+		
+		HiddenInput type = new HiddenInput(SimpleSearchEvent.FIELDNAME_SEARCHTYPE, Integer.toString(SimpleSearchEvent.SEARCHTYPE_USER));
+		
+		
+		/*searchTypeDropDown = new DropdownMenu(SimpleSearchEvent.FIELDNAME_SEARCHTYPE);
+		searchTypeDropDown.addMenuElement(Integer.toString(SimpleSearchEvent.SEARCHTYPE_USER), "User");
+		searchTypeDropDown.addMenuElement(Integer.toString(SimpleSearchEvent.SEARCHTYPE_GROUP), "Group");
+		setStyle(searchTypeDropDown);*/
+		
 		Form form = new Form();
+		form.add(type);
 		SimpleSearchEvent event = new SimpleSearchEvent();
 		Table table = new Table(3, 1);
-		table.add(_searchString, 2, 1);
-		table.add(_search, 3, 1);
-		table.add(_searchType, 1, 1);
+		table.setHorizontalAlignment(Table.HORIZONTAL_ALIGN_RIGHT);
+		table.setCellpadding(0);
+		table.setCellspacing(1);
+		
+		table.add(searchInput, 2, 1);
+		table.add(searchButton, 3, 1);
+		//table.add(searchTypeDropDown, 1, 1);
+		
 		form.addEventModel(event, iwc);
 		form.add(table);
-		_search.setButtonImage(iwb.getImage("search.gif"));
+		searchButton.setButtonImage(iwb.getImage("search.gif"));
+		
 		if (_controlTarget != null) {
 			form.setTarget(_controlTarget);
 		}

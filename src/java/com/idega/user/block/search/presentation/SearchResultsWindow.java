@@ -2,7 +2,6 @@
  * Title:        A window class that displays the results of a search
  * Copyright:    Idega Software Copyright (c) 2003
  * Company:      Idega Software
- * @author <a href="mailto:thomas@idega.is">Thomas Hilbig</a>
  * @author <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  * @version 1.0
 
@@ -15,18 +14,20 @@ import java.util.Collection;
 
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.text.Text;
 import com.idega.user.block.search.business.SearchEngine;
+import com.idega.user.block.search.event.SimpleSearchEvent;
+import com.idega.user.presentation.BasicUserOverViewToolbar;
 import com.idega.user.presentation.BasicUserOverview;
 
 
 public class SearchResultsWindow extends BasicUserOverview {
   
   private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-  
-  private String searchString = null;
-  
-  
+
   public SearchResultsWindow() {
   }
   
@@ -38,7 +39,10 @@ public class SearchResultsWindow extends BasicUserOverview {
 		SearchResultsWindowPS sPs = (SearchResultsWindowPS)ps;
 		 try {
 		 	SearchEngine engine = getSearchEngine(iwc);
-			return engine.getResult( sPs.getSearchType() , sPs.getSearchString() );
+			if(sPs.getSearchString().length()>1){//so we cannot search for 'a' for example. temporary until better solution.
+				return engine.getResult( sPs.getSearchType() ,sPs.getSearchString()  );
+			}
+			else return null;
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
@@ -46,6 +50,12 @@ public class SearchResultsWindow extends BasicUserOverview {
 		return null;
 	}
 	
+	
+	protected PresentationObject getEmptyListPresentationObject() {
+		Text text = new Text(iwrb.getLocalizedString("searchresultswindow.search_had_no_match", "The search did not return any results"));
+		
+		return text;
+	}
 	
 
 	public static SearchEngine getSearchEngine(IWApplicationContext iwc) {
@@ -64,6 +74,19 @@ public class SearchResultsWindow extends BasicUserOverview {
 		return SearchResultsWindowPS.class;
 	}
 	
-
+	
+	/* (non-Javadoc)
+	 * @see com.idega.user.presentation.BasicUserOverview#getToolbar()
+	 */
+	protected BasicUserOverViewToolbar getToolbar() {
+		BasicUserOverViewToolbar toolbar = super.getToolbar();
+		SearchResultsWindowPS sPs = (SearchResultsWindowPS)ps;
+		if(sPs!=null && iwrb!=null){
+			String search = sPs.getSearchString() ;
+			toolbar.setTitle(iwrb.getLocalizedString("searchresultswindow.search:","Search")+" : " +search+ Text.NON_BREAKING_SPACE);
+		}
+		
+		return toolbar;
+	}
 
 }
