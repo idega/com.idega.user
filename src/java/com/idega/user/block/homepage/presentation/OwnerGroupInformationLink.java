@@ -5,10 +5,10 @@ package com.idega.user.block.homepage.presentation;
 
 import javax.ejb.FinderException;
 
+import com.idega.builder.dynamicpagetrigger.presentation.DPTCrawlableLink;
 import com.idega.data.IDOLookup;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
-import com.idega.presentation.text.Link;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 
@@ -21,7 +21,7 @@ import com.idega.user.data.GroupHome;
  * @author 2004 - idega team - <br><a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a><br>
  * @version 1.0
  */
-public class OwnerGroupInformationLink extends Link {
+public class OwnerGroupInformationLink extends DPTCrawlableLink {
 
 	public final int SHOW_NAME = 0;
 	public final int SHOW_SHROT_NAME = 1;
