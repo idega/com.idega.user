@@ -136,8 +136,8 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			TextInput inputName = new TextInput(_createEvent.getIONameForName());
 			inputName.setLength(28);
 			inputName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+      
 			Text inputText = new Text();
-
 			inputText.setText(iwrb.getLocalizedString("group_name", "Group name") + ":");
 
 			inputText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
@@ -204,9 +204,18 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 			tab.add(layer2, 1, 6);
 			tab.add(aliasGroupChooser, 2, 6);
  			SubmitButton button = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), _createEvent.getIONameForCommit());
-			SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
-      button.setOnClick("window.close()");
-			close.setOnClick("window.close()");
+      String message = iwrb.getLocalizedString("group_please_set_name_choose_group", "Please set name and choose a group as parent");
+      getAssociatedScript().addFunction("mandatoryCheck", "function mandatoryCheck(form) { " +
+          "\n\t if ((form."+
+          _createEvent.getIONameForParentID() +
+          ".value == \"\") || (form." +
+          _createEvent.getIONameForName() +
+          ".value == \"\")) { \n\t alert(\""
+          + message +
+          "\") \n\t return false \n\t } \n\t else \n\t { \n\t window.close() \n\t return true \n\t } \n\t }");
+      form.setOnSubmit("return mandatoryCheck(this)");
+      SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"), _createEvent.getIONameForCancel());
+      close.setOnClick("window.close();return false;");
 			tab.add(close, 2, 8);
 			tab.add(Text.getNonBrakingSpace(), 2, 8);
 			tab.add(button, 2, 8);
