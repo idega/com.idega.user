@@ -234,7 +234,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		
 		browser.setEntities("gpw_" + selectedGroupId, entityList);
 		//browser.setDefaultNumberOfRows(entityCollection.size() );
-		browser.setDefaultNumberOfRows(16);
+		browser.setDefaultNumberOfRows(32);
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
 		browser.setWidth(browser.HUNDRED_PERCENT);
 		//disable top set browser
