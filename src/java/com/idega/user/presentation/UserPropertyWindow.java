@@ -1,9 +1,15 @@
 package com.idega.user.presentation;
 
+import java.rmi.RemoteException;
+import java.util.*;
+
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.TabbedPropertyWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.TabbedPropertyPanel;
 import com.idega.presentation.PresentationObject;
+import com.idega.user.business.*;
+import com.idega.user.data.*;
 import com.idega.util.IWColor;
 
 /**
@@ -28,24 +34,55 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
   }
 
   public void initializePanel( IWContext iwc, TabbedPropertyPanel panel){
+  	int count = 0;
     GeneralUserInfoTab genTab = new GeneralUserInfoTab();
 
-    panel.addTab(genTab, 0, iwc);
-    panel.addTab(new AddressInfoTab(), 1, iwc);
-    panel.addTab(new UserPhoneTab(), 2, iwc);
-    panel.addTab(new UserGroupList(),3,iwc);
+    panel.addTab(genTab, count, iwc);
+    panel.addTab(new AddressInfoTab(), ++count, iwc);
+    panel.addTab(new UserPhoneTab(), ++count, iwc);
+    panel.addTab(new UserGroupList(),++count,iwc);
     
     try {//temporary before plugins work
 		
-    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFamilyTab").newInstance() ,4,iwc);
-    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFinanceTab").newInstance() ,5,iwc);
-    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserHistoryTab").newInstance() ,6,iwc);
+    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFamilyTab").newInstance() ,++count,iwc);
+    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserFinanceTab").newInstance() ,++count,iwc);
+    panel.addTab((PresentationObject)Class.forName("is.idega.idegaweb.member.presentation.UserHistoryTab").newInstance() ,++count,iwc);
+	
+	
+	//temp shit
+	String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
+      int userId = Integer.parseInt(id);
+      User user = getUserBusiness(iwc).getUser(userId);
+   
+	  Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
+	  Iterator iter = plugins.iterator();
+	  
+	  while (iter.hasNext()) {
+		UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
+		
+		
+		UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness)
+				 com.idega.business.IBOLookup.getServiceInstance(iwc,Class.forName(element.getBusinessICObject().getClassName()));
+			
+		
+		
+		
+		List tabs = pluginBiz.getUserPropertiesTabs(user);
+		Iterator tab = tabs.iterator();
+		while (tab.hasNext()) {
+			UserTab el = (UserTab) tab.next();
+			panel.addTab(el,++count,iwc);
+		}
+		
+	  }
+		
 	} catch (Exception e) {
+		e.printStackTrace();
 	}
 	
     UserLoginTab ult = new UserLoginTab();
     ult.displayLoginInfoSettings();
-    panel.addTab(ult,7,iwc);
+    panel.addTab(ult,++count,iwc);
 
 
   }
@@ -63,6 +100,14 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
         }
       }
     }
+  }
+  
+  public GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws RemoteException{
+  	return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac,GroupBusiness.class);
+  }
+  
+  public UserBusiness getUserBusiness(IWApplicationContext iwac) throws RemoteException{
+  	return (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac,UserBusiness.class);
   }
 
 }
