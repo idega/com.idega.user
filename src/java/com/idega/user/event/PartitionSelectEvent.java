@@ -51,6 +51,7 @@ public class PartitionSelectEvent extends IWPresentationEvent {
   public boolean initializeEvent(IWContext iwc) {
     try {
       partitionSize = Integer.parseInt(iwc.getParameter(PARTITION_SIZE));
+      System.out.println("PartionSelectionEvent: partsize = "+partitionSize);
     }
     catch (NumberFormatException ex) {
       System.err.println(ex.getMessage());
