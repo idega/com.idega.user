@@ -62,7 +62,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 	}
 	
 	private void addForm(IWContext iwc, boolean verifyForm) {
-		Help help = getHelp(HELP_TEXT_KEY,iwc);
+		Help help = getHelp(HELP_TEXT_KEY);
 		Form form = new Form();
 		form.maintainParameter(PARAMETER_GROUP_ID);
 		Table table = new Table();

@@ -183,7 +183,7 @@ public class MassMovingWindow extends StyledIWAdminWindow implements ToolbarElem
     // define browser
     EntityBrowser browser = getBrowser(coll);
     // define button
-    Help help = getHelp(HELP_TEXT_KEY,iwc);
+    Help help = getHelp(HELP_TEXT_KEY);
     SubmitButton move = new SubmitButton(iwrb.getLocalizedImageButton("move", "Move to"));
     SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
     String wait = iwrb.getLocalizedString("mm_please_wait_processing_request", "Please wait. Processing request");

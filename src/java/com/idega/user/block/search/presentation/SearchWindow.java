@@ -236,7 +236,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		tab.add(genders, 3, 12); 		
 
 		//buttons
-		Help help = getHelp(HELP_TEXT_KEY,iwc);
+		Help help = getHelp(HELP_TEXT_KEY);
 		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("user.search.window.search", "Search"));
    	SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("user.search.window.close", "Close") );
     close.setOnClick("window.close();return false;");

@@ -125,7 +125,7 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
       explanation2.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);   
     }
 		// get buttons
-		Help help = getHelp(HELP_TEXT_KEY,iwc);
+		Help help = getHelp(HELP_TEXT_KEY);
     SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("Close", "Close"), DeleteGroupEvent.CANCEL_KEY);
 		SubmitButton ok = new SubmitButton(iwrb.getLocalizedImageButton("yes", "Yes"), DeleteGroupEvent.OKAY_KEY);
 		SubmitButton cancel = new SubmitButton(iwrb.getLocalizedImageButton("cancel", "Cancel"), DeleteGroupEvent.CANCEL_KEY);

@@ -485,7 +485,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow {//implements Sta
 	private Form getGroupPermissionForm(EntityBrowser browser) throws Exception{
 		
 		IWContext iwc = IWContext.getInstance();
-		Help help = getHelp(HELP_TEXT_KEY,iwc);
+		Help help = getHelp(HELP_TEXT_KEY);
 		
 		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"));
 		save.setSubmitConfirm(iwrb.getLocalizedString("grouppermissionwindow.confirm_message","Change selected permissions?"));

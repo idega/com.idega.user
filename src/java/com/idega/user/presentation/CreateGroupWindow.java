@@ -46,7 +46,7 @@ import com.idega.user.event.CreateGroupEvent;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0 
  */
 public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullPresentation, ToolbarElement { //changed from extends IWAdminWindow
@@ -238,7 +238,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
       SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"), _createEvent.getIONameForCancel());
       //button.setOnClick("mandatoryCheck(this)")
       close.setOnClick("window.close();return false;");
-      Help help = getHelp(HELP_TEXT_KEY,iwc);
+      Help help = getHelp(HELP_TEXT_KEY);
       tab.add(help,1,11);
 			tab.add(close, 2, 11); //changed from (close,2,8) - birna
 			tab.add(Text.getNonBrakingSpace(), 2, 11); //changed from (Text.getNonBrakingSpace(),2,8) - birna
