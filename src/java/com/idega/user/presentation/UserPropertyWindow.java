@@ -19,7 +19,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
 
   public UserPropertyWindow(){
     super();
-    this.setBackgroundColor("#d4d0c8");
+    this.setBackgroundColor("#e6e6e6");
   }
 
   public String getSessionAddressString(){
