@@ -27,23 +27,25 @@ import com.idega.user.data.UserHome;
  */
 public class UserChooserWindow extends StyledAbstractChooserWindow {
 
-	private String PARAMETER_SEARCH = "ucw_ss";
-	private String PARAMETER_VIEW_ALL = "ucw_va";
-	private String PARAMETER_CURRENT_PAGE = "ucw_pc";
-	private String PARAMETER_USER_ID = "ucw_uid";
-	private String TABLE_WIDTH = "75%";
+	protected String PARAMETER_SEARCH = "ucw_ss";
+	protected String PARAMETER_VIEW_ALL = "ucw_va";
+	protected String PARAMETER_CURRENT_PAGE = "ucw_pc";
+	protected String PARAMETER_USER_ID = "ucw_uid";
+	protected String TABLE_WIDTH = "75%";
 	private int USERS_PER_PAGE = 25;
 
-	private boolean showAll = false;
-	private IWResourceBundle iwrb;
-	private String searchString = "";
-	private Collection users;
+	protected boolean showAll = false;
+	protected IWResourceBundle iwrb;
+	protected String searchString = "";
+	//protected so it can be used in SchoolUserChooserWindow
+	protected Collection users;
 	private boolean usingUserPks = false;
 	public static String AVAILABLE_USER_PKS_SESSION_PARAMETER = "us_ch_av_us_sp";
 	public static String USING_AVAILABLE_USER_PKS_SESSION_PARAMETER = "ucw_upsp";
-	private int currentPage = 0;
+	protected int currentPage = 0;
 
 	private String mainTableStyle = "main";
+	protected Form form = null;
 
 	public UserChooserWindow() {
 		setTitle("User chooser");
@@ -54,9 +56,9 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 		this.getLocation().setApplicationClass(this.getClass());
 		this.getLocation().isInPopUpWindow(true);
 	}
-
-	private void init(IWContext iwc) {
-
+//œr private ’ protected
+	protected void init(IWContext iwc) {
+		form = new Form();
 		searchString = iwc.getParameter(PARAMETER_SEARCH);
 		iwrb = iwc.getIWMainApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
 		showAll = iwc.isParameterSet(PARAMETER_VIEW_ALL);
@@ -126,7 +128,6 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 
 			addTitle(iwrb.getLocalizedString("select_a_user", "Select a user"), TITLE_STYLECLASS);
 
-			Form form = new Form();
 			form.maintainParameter(SCRIPT_PREFIX_PARAMETER);
 			form.maintainParameter(SCRIPT_SUFFIX_PARAMETER);
 			form.maintainParameter(DISPLAYSTRING_PARAMETER_NAME);
