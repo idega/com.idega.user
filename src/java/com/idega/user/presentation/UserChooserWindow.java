@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 import javax.ejb.FinderException;
 
-import com.idega.builder.business.BuilderLogic;
+import com.idega.core.builder.business.BuilderConstants;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
@@ -60,7 +60,7 @@ public class UserChooserWindow extends AbstractChooserWindow {
 	private void init(IWContext iwc) {
 	
 		searchString = iwc.getParameter(PARAMETER_SEARCH);
-    iwrb = iwc.getApplication().getBundle(BuilderLogic.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+    iwrb = iwc.getApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
     showAll = iwc.isParameterSet(PARAMETER_VIEW_ALL);
     
 		if (iwc.isParameterSet(PARAMETER_CURRENT_PAGE)) {

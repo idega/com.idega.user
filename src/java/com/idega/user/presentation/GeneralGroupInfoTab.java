@@ -1,10 +1,12 @@
 package com.idega.user.presentation;
 
+import java.rmi.RemoteException;
 import java.util.Map;
 
-import com.idega.builder.business.PageTreeNode;
 import com.idega.builder.presentation.IBPageChooser;
 import com.idega.business.IBOLookup;
+import com.idega.core.ICTreeNode;
+import com.idega.core.builder.business.BuilderService;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
@@ -106,13 +108,25 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 
 		Integer page = (Integer) fieldValues.get(homepageFieldName);
 		if (page != null) {
+			int pageId = page.intValue();
 			IWApplicationContext iwc = getIWApplicationContext();
-			Map tree = PageTreeNode.getTree(iwc);
-			if (tree != null) {
-				PageTreeNode node = (PageTreeNode) tree.get(page);
-				if (node != null)
-					homepageField.setSelectedPage(node.getNodeID(), node.getNodeName());
-			}
+			//Map tree = PageTreeNode.getTree(iwc);
+			//if (tree != null) {
+				BuilderService bservice;
+				try
+				{
+					bservice = getBuilderService(iwc);
+					ICTreeNode node = (ICTreeNode) bservice.getPageTree(pageId);
+					if (node != null)
+						homepageField.setSelectedPage(node.getNodeID(), node.getNodeName());
+				}
+				catch (RemoteException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			//}
 		}
 
 		shortNameField.setContent((String) fieldValues.get(shortNameFieldName));

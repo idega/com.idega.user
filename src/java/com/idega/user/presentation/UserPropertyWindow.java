@@ -35,6 +35,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 
 	public UserPropertyWindow() {
 		super(410, 550);
+		super.setResizable(true);
 		this.setBackgroundColor(new IWColor(207, 208, 210));
 	}
 

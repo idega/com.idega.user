@@ -1,6 +1,6 @@
 package com.idega.user.presentation;
 
-import com.idega.builder.business.BuilderLogic;
+import com.idega.core.builder.business.BuilderConstants;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.ui.AbstractChooser;
@@ -29,7 +29,7 @@ public class GroupChooser extends AbstractChooser {
 
   public void main(IWContext iwc){
     empty();
-    IWBundle iwb = iwc.getApplication().getBundle(BuilderLogic.IW_BUNDLE_IDENTIFIER);
+    IWBundle iwb = iwc.getApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
     setChooseButtonImage(iwb.getImage("open.gif","Choose"));
   }
 
