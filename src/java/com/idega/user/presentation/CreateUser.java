@@ -113,9 +113,10 @@ public class CreateUser extends Window {
 	public CreateUser() {
 		super();
 		setHeight(490);
-		setWidth(390);
+		setWidth(490);
 		setBackgroundColor(new IWColor(207, 208, 210));
 		setScrollbar(false);
+		setResizable(true);
 	}
 
 	protected void initializeTexts() {
@@ -150,8 +151,8 @@ public class CreateUser extends Window {
 		confirmPasswordField.setLength(12);
 		ssnField = new TextInput(ssnFieldParameterName);
 		ssnField.setLength(12);
-		ssnField.setMaxlength(10);
-		ssnField.setAsIcelandicSSNumber();
+		ssnField.setMaxlength(12);
+		//ssnField.setAsIcelandicSSNumber();
 
 		generateLoginField = new CheckBox(generateLoginFieldParameterName);
 		generatePasswordField = new CheckBox(generatePasswordFieldParameterName);
