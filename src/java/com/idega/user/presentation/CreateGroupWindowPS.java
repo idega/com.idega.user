@@ -1,7 +1,6 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.Iterator;
 
 import javax.ejb.CreateException;
@@ -10,21 +9,15 @@ import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
-import com.idega.core.accesscontrol.business.AccessControl;
-import com.idega.core.accesscontrol.business.AccessController;
-import com.idega.core.accesscontrol.data.ICPermission;
-import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationStateImpl;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
-import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.User;
 import com.idega.user.event.CreateGroupEvent;
