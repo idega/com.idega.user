@@ -31,7 +31,9 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupComparator;
@@ -40,6 +42,7 @@ import com.idega.user.data.Group;
 import com.idega.user.data.GroupTypeConstants;
 import com.idega.user.data.User;
 import com.idega.user.event.SelectGroupEvent;
+import com.idega.user.presentation.inputhandler.GroupTypeSelectionBoxInputHandler;
 import com.idega.util.IWColor;
 
 /**
@@ -59,12 +62,10 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	private static final String RECURSE_PERMISSIONS_TO_CHILDREN_KEY = "gpw_recurse_ch_of_gr";
 	private static final String PARAM_OVERRIDE_INHERITANCE = "gpw_over";
 	private static final String PARAM_IS_PERMISSION_CONTROLLER = "gpw_permission_ctrl";
-	private static final String PARAM_FILTER_CLUBS = "gpw_filter_clubs";
-	private static final String PARAM_FILTER_DIVISIONS = "gpw_filter_divisions";
+	private static final String PARAM_FILTER_GROUP_TYPES = "gpw_filter_group_types";
 	private static final String HELP_TEXT_KEY = "group_permission_window";
 
-	private boolean filterClubs = false;
-	private boolean filterDivisions = false;
+	private String[] filterGroupTypes = null;
 
 	private String mainStyleClass = "main";
 	
@@ -227,11 +228,10 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		Collections.sort(entityList, groupComparator); 
 		List browserList = null;
 		List groupTypes = new ArrayList();
-		if (filterClubs) {
-		    groupTypes.add(GroupTypeConstants.GROUP_TYPE_CLUB);
-		}
-		if (filterDivisions) {
-		    groupTypes.add("iwme_club_division");
+		if (filterGroupTypes != null) {
+		    for (int i=0; i<filterGroupTypes.length; i++) {
+		        groupTypes.add(filterGroupTypes[i]);
+		    }
 		}
 		if (!groupTypes.isEmpty()) {
 		    browserList = getFilteredEntityListByGroupType(entityList, groupTypes);
@@ -870,47 +870,41 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	private Form getGroupPermissionForm(EntityBrowser browser) throws Exception {
 		Help help = getHelp(HELP_TEXT_KEY);
 		
-		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"),PARAM_SAVING,"TRUE");
+		SubmitButton save = new SubmitButton(iwrb.getLocalizedString("save", "Save"),PARAM_SAVING,"TRUE");
 		save.setSubmitConfirm(iwrb.getLocalizedString("grouppermissionwindow.confirm_message", "Change selected permissions?"));
-
-		CloseButton close = new CloseButton(iwrb.getLocalizedImageButton("close", "Close"));
-
-		Link owners = new Link(iwrb.getLocalizedString("owner.button", "Owners"));
+		StyledButton styledSave = new StyledButton(save);
+		CloseButton close = new CloseButton(iwrb.getLocalizedString("close", "Close"));
+		StyledButton styledClose = new StyledButton(close);
+		GenericButton owners = new GenericButton(iwrb.getLocalizedString("owner.button", "Owners"));
 		owners.setWindowToOpen(GroupOwnersWindow.class);
-		owners.setAsImageButton(true);
 		owners.addParameter(PARAM_SELECTED_GROUP_ID, selectedGroupId);
-
+		StyledButton styledOwners = new StyledButton(owners);
 		Table mainTable = new Table();
 		mainTable.setWidth(620);
 		mainTable.setHeight(480);
 		mainTable.setCellpadding(0);
 		mainTable.setCellspacing(0);
 		
-		Table filterTable = new Table(1, 2);
-		filterTable.setWidth(Table.HUNDRED_PERCENT);
+		Table filterTable = new Table(5, 1);
 		filterTable.setCellpadding(0);
 		filterTable.setCellspacing(0);
-		filterTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
-		filterTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
-		filterTable.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_RIGHT);
-		filterTable.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_RIGHT);
-		
-		Text filterClubsText = new Text(iwrb.getLocalizedString("grouppermissionwindow.filter_clubs","Filter clubs"));
-		filterTable.add(filterClubsText, 1, 1);
-		filterTable.add(Text.NON_BREAKING_SPACE, 1, 1);
-		CheckBox filterClubsCheckBox = new CheckBox(PARAM_FILTER_CLUBS, "filter_clubs");
-		filterClubsCheckBox.setChecked(filterClubs);
-		filterClubsCheckBox.setToSubmit();
-		Text filterDivisionText = new Text(iwrb.getLocalizedString("grouppermissionwindow.filter_divisions","Filter divisions"));
-		filterTable.add(filterDivisionText, 1, 2);
-		filterTable.add(Text.NON_BREAKING_SPACE, 1, 2);
-		CheckBox filterDivisionsCheckBox = new CheckBox(PARAM_FILTER_DIVISIONS, "filter_divisions");
-		filterDivisionsCheckBox.setChecked(filterDivisions);
-		filterDivisionsCheckBox.setToSubmit();
-		
-		filterTable.add(filterClubsCheckBox, 1, 1);
-		filterTable.add(filterDivisionsCheckBox, 1, 2);
+		Text filterGroupTypeText = new Text(iwrb.getLocalizedString("grouppermissionwindow.filter_group_types","Filter grouptypes"));
+		filterTable.add(filterGroupTypeText, 1, 1);
+		filterTable.add(Text.NON_BREAKING_SPACE, 2, 1);
+		GroupTypeSelectionBoxInputHandler filterGroupTypes = new GroupTypeSelectionBoxInputHandler(PARAM_FILTER_GROUP_TYPES);
+		StyledButton filterButton = new StyledButton(new SubmitButton(iwrb.getLocalizedString("grouppermissionwindow.filter_button","Filter")));
+		filterTable.add(filterGroupTypes, 3, 1);
+		filterTable.add(Text.NON_BREAKING_SPACE, 4, 1);
+		filterTable.add(filterButton, 5, 1);
 
+		Table filterContainingTable = new Table(1, 1);
+		filterContainingTable.setWidth(Table.HUNDRED_PERCENT);
+		filterContainingTable.setCellpadding(0);
+		filterContainingTable.setCellspacing(5);
+		filterContainingTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
+		filterContainingTable.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+		filterContainingTable.add(filterTable);
+		
 		Table table = new Table(2, 3);
 		table.setRowHeight(1,"20");
 		table.setStyleClass(mainStyleClass);
@@ -937,7 +931,16 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		
 		
 		table.add(browser, 1, 2);
-		table.add(filterTable, 2, 3);
+		table.add(filterContainingTable, 2, 3);
+		
+		Table bottomButtonTable = new Table();
+		bottomButtonTable.setCellpadding(0);
+		bottomButtonTable.setCellspacing(0);
+		bottomButtonTable.add(styledOwners,1,1);
+		bottomButtonTable.add(Text.NON_BREAKING_SPACE,2,1);
+		bottomButtonTable.add(styledSave, 3, 1);
+		bottomButtonTable.add(Text.NON_BREAKING_SPACE, 4, 1);
+		bottomButtonTable.add(styledClose, 5, 1);
 		
     Table bottomTable = new Table();
 		bottomTable.setCellpadding(0);
@@ -945,13 +948,10 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		bottomTable.setWidth(Table.HUNDRED_PERCENT);
 		bottomTable.setHeight(39);
 		bottomTable.setStyleClass(mainStyleClass);
+		bottomTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_LEFT);
 		bottomTable.add(help,1,1);
 		bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
-		bottomTable.add(owners,2,1);
-		bottomTable.add(Text.NON_BREAKING_SPACE,2,1);
-		bottomTable.add(save, 2, 1);
-		bottomTable.add(Text.NON_BREAKING_SPACE, 2, 1);
-		bottomTable.add(close, 2, 1);
+		bottomTable.add(bottomButtonTable,2,1);
 		
 		 mainTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
 	   mainTable.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_TOP);
@@ -1016,8 +1016,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	    permissionTypes = getAllPermissionTypes();
 	    access = iwc.getAccessController();
 		
-		filterClubs = iwc.isParameterSet(PARAM_FILTER_CLUBS);
-		filterDivisions = iwc.isParameterSet(PARAM_FILTER_DIVISIONS);
+		filterGroupTypes = iwc.getParameterValues(PARAM_FILTER_GROUP_TYPES);
 	}
 
 	public String getBundleIdentifier() {
