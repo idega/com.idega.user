@@ -138,6 +138,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
 
   public void main(IWContext iwc) throws Exception{
+    this.empty();
     iwb = getBundle(iwc);
 
     Table toolbarTable = new Table(1,1);
