@@ -17,7 +17,7 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.business.GroupBusiness;
 
 import com.idega.user.data.User;
-import com.idega.util.idegaTimestamp;
+import com.idega.util.IWTimeStamp;
 import com.idega.user.data.Group;
 import com.idega.core.accesscontrol.data.PermissionGroup;
 

@@ -20,7 +20,7 @@ import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.presentation.UserPropertyWindow;
 import com.idega.core.accesscontrol.business.AccessControl;
-import com.idega.util.idegaTimestamp;
+import com.idega.util.IWTimeStamp;
 import com.idega.transaction.IdegaTransactionManager;
 import javax.transaction.TransactionManager;
 
@@ -373,7 +373,7 @@ public class CreateUser extends Window {
                                    null,null,null,null,primaryGroupId);
 
 
-      LoginDBHandler.createLogin(newUser.getID(),login,password,bEnabledAccount,idegaTimestamp.RightNow(),
+      LoginDBHandler.createLogin(newUser.getID(),login,password,bEnabledAccount,IWTimeStamp.RightNow(),
                                  5000,bPasswNeverExpires,bAllowedToChangePassw,bMustChage,null);
 
       transaction.commit();
@@ -386,7 +386,7 @@ public class CreateUser extends Window {
       String firstName = iwc.getParameter(firstNameFieldParameterName);
       String middleName = iwc.getParameter(middleNameFieldParameterName);
       String lastName = iwc.getParameter(lastNameFieldParameterName);
-      newUser = getUserBusiness(iwc).createUserWithLogin(firstName,middleName,lastName,null,null,null,null,primaryGroupId,login,password,bEnabledAccount,idegaTimestamp.RightNow(),5000,bPasswNeverExpires,bAllowedToChangePassw,bMustChange,null);
+      newUser = getUserBusiness(iwc).createUserWithLogin(firstName,middleName,lastName,null,null,null,null,primaryGroupId,login,password,bEnabledAccount,IWTimeStamp.RightNow(),5000,bPasswNeverExpires,bAllowedToChangePassw,bMustChange,null);
     }
     catch(Exception e){
       add("Error: "+e.getMessage());
