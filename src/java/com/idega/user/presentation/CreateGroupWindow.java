@@ -73,7 +73,8 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
       _ps.doneClosing();
     } else {
       _createEvent = new CreateGroupEvent();
-      _createEvent.setSource(this.getLocation());
+      //_createEvent.setSource(this.getLocation());
+      _createEvent.setSource(this);
 
       IWResourceBundle iwrb = iwc.getApplication().getBundle(BuilderLogic.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
       Form form = new Form();

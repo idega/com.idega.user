@@ -143,7 +143,7 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
     if(_presentationState == null){
       try {
         IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-        _presentationState = (BasicUserOverviewPS)stateMachine.getStateFor(this.getLocation(),this.getPresentationStateClass());
+        _presentationState = (BasicUserOverviewPS)stateMachine.getStateFor(getCompoundId(),this.getPresentationStateClass());
       }
       catch (RemoteException re) {
         throw new RuntimeException(re.getMessage());

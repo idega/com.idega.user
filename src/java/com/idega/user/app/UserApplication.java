@@ -68,9 +68,15 @@ public class UserApplication extends IWBrowser {
     boolean useBasic = (this.getIWApplicationContext().getApplication().getSettings().getProperty("USE_BASIC")!=null);//temporary solutions
     
     if( useBasic ) this.addToMain(new BasicUserOverview());
-    else this.addToMain(new UserApplicationMainArea());
+    else {
+      UserApplicationMainArea area = new UserApplicationMainArea();
+      String id = getCompoundId();
+      //area.setArtificialCompoundId(id,iwc);
+      this.addToMain(area);
+    } 
 
-    this.addToBottom(new Bottom());
+    //this.addToBottom(new Bottom());
+    this.setBottomURL(IWPresentationEvent.IW_EVENT_HANDLER_URL);
 
 //    this.setBorder(20);
 //    this.getMiddleFrameset().setBorder(10);
@@ -98,9 +104,9 @@ public class UserApplication extends IWBrowser {
     PresentationObject buo = f.getPresentationObject();
     IWActionListener l = (IWActionListener)((StatefullPresentation)buo).getPresentationState(iwc);
 
-    this.addIWActionListener(POS_LEFTMAIN,l);
-    this.addIWActionListener(POS_MENU,l);
-    this.addIWActionListener(POS_MAIN,l);
+    this.addActionListener(POS_LEFTMAIN,l);
+    this.addActionListener(POS_MENU,l);
+    this.addActionListener(POS_MAIN,l); 
 
 
     Frame left = this.getFrame(this.getFrameName(POS_LEFTMAIN));
@@ -108,8 +114,8 @@ public class UserApplication extends IWBrowser {
     PresentationObject bgo = left.getPresentationObject();
     IWActionListener listener = (IWActionListener)((StatefullPresentation)bgo).getPresentationState(iwc);
 
-    this.addIWActionListener(POS_LEFTMAIN,listener);
-    this.addIWActionListener(POS_MENU,listener);
+    this.addActionListener(POS_LEFTMAIN,listener);
+    this.addActionListener(POS_MENU,listener);
   }
 
 
@@ -141,7 +147,7 @@ public class UserApplication extends IWBrowser {
       if(_presentationState == null){
         try {
           IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-          _presentationState = (IWControlFramePresentationState)stateMachine.getStateFor(this.getLocation(),this.getPresentationStateClass());
+          _presentationState = (IWControlFramePresentationState)stateMachine.getStateFor(getCompoundId(),this.getPresentationStateClass());
         }
         catch (RemoteException re) {
           throw new RuntimeException(re.getMessage());

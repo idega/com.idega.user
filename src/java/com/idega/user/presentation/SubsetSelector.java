@@ -73,7 +73,8 @@ public class SubsetSelector extends PresentationObjectContainer implements IWBro
 
 					begin.setText("<");
 					PartitionSelectEvent event = new PartitionSelectEvent();
-					event.setSource(this.getLocation());
+					//event.setSource(this.getLocation());
+          event.setSource(this);
 					int newFirstPartition = Math.max(0,_firstPartition-_maxShowedPartitions);
 					event.setFirstPartitionIndex(newFirstPartition);
 					event.setPartitionSize(_subsetSize);

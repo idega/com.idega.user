@@ -84,6 +84,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
     IWLocation location = (IWLocation)this.getLocation().clone();
     location.setSubID(1);
     groupTree.setLocation(location,iwc);
+    groupTree.setArtificialCompoundId(getCompoundId(),iwc);
 
 
 //    IWPresentationState gtState = groupTree.getPresentationState(iwc);
