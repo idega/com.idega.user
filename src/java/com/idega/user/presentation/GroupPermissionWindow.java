@@ -268,6 +268,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 						    name = getGroupBusiness(iwc).getNameOfGroupWithParentName(group);
 						}
 						
+						//the collection items all contain the same group so break here
 						return new Text(name);
 					}
 					catch (RemoteException e) {
@@ -279,7 +280,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 				}
 
-				return new Text("NO GROUP NAME");
+				return new Text("THE PERMISSION MAP WAS EMPTY!");
 
 			}
 		};
