@@ -131,14 +131,20 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
 		int parSize = ps.getPartitionSize();
 		int sel = ps.getSelectedPartition();
+		int firstIndex = ps.getFirstPartitionIndex();
+		//debug
+System.out.println(" parSize = "+parSize);
+System.out.println(" sel = "+sel);
+System.out.println(" firstIndex = "+firstIndex);
 
 		SubsetSelector selector = new SubsetSelector(parSize,userCount,6);
 		selector.setControlEventModel(_controlEvent);
 		selector.setControlTarget(_controlTarget);
 		IWLocation location = (IWLocation)this.getLocation().clone();
+		
 		selector.setLocation(this.getLocation());
 		selector.setSelectedSubset(sel);
-		selector.setFirstSubset(ps.getFirstPartitionIndex());
+		selector.setFirstSubset(firstIndex);
 
 		this.add(selector);
 
@@ -147,10 +153,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
 
 //      System.out.println("BasicUserOverview: sel = "+sel+" & parSize = "+parSize);
-      users = ListUtil.convertCollectionToList(users).subList( (sel*parSize), Math.min((users.size()),((sel+1)*parSize)) );
+      users = ListUtil.convertCollectionToList(users).subList( (sel*parSize), Math.min(userCount,((sel+1)*parSize)) );
 //      this.add(" ("+sel+")");
 
-      userTable = new Table(3, ((users.size()>33)?users.size():33)+1  );
+      userTable = new Table(3, ((userCount>33)?userCount:33)+1  );
       returnTable.add(userTable,1,2);
       userTable.setCellpaddingAndCellspacing(0);
       userTable.setLineAfterColumn(1);
