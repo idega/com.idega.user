@@ -75,20 +75,22 @@ public class AddressInfoTab extends UserTab{
   }
 
   public void updateFieldsDisplayStatus(){
-    streetField.setContent((String)fieldValues.get(streetFieldName));
-
-    cityField.setContent((String)fieldValues.get(cityFieldName));
-
-    provinceField.setContent((String)fieldValues.get(provinceFieldName));
-
-	String postalId = (String) fieldValues.get(postalCodeFieldName);
-	System.out.println("PostalCodeId = "+postalId);
+  	String street = (String)fieldValues.get(streetFieldName);
+    String city = (String)fieldValues.get(cityFieldName);
+    String province = (String)fieldValues.get(provinceFieldName);
+    String postalId = (String)fieldValues.get(postalCodeFieldName);
+    String country = (String)fieldValues.get(countryFieldName);
+    String poBox = (String)fieldValues.get(poBoxFieldName);
+      
+    if( street!=null ) streetField.setContent(street);
+    if( city!=null ) cityField.setContent(city);
+	if( province!=null) provinceField.setContent(province);
 	
+	System.out.println("PostalCodeId = "+postalId);
 	if( postalId!=null && !postalId.equals("") ) postalCodeField.setSelectedElement(Integer.parseInt(postalId));
 
-    countryField.setContent((String)fieldValues.get(countryFieldName));
-
-    poBoxField.setContent((String)fieldValues.get(poBoxFieldName));
+    if(country!=null) countryField.setContent(country);
+    if( poBox!=null ) poBoxField.setContent(poBox);
 
   }
 
