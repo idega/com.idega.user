@@ -28,7 +28,7 @@ import com.idega.presentation.ui.TextInput;
  * @author <a href="eiki@idega.is">Eirikur Hrafnsson</a>
  * @version 1.0 
  */
-public class PostalCodeEditorWindow extends IWAdminWindow{
+public class PostalCodeEditorWindow extends StyledIWAdminWindow{
 
 	private static final String PARAM_POSTAL_CODE = "postal_edwin_code";
 	private static final String PARAM_COUNTRY_ID= "postal_edwin_country_id";
@@ -39,13 +39,15 @@ public class PostalCodeEditorWindow extends IWAdminWindow{
 	private AddressBusiness addressBiz;
 	private IWResourceBundle iwrb = null;
 	
+	private String mainStyleClass = "main";
+	
 
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
   
 
 	public PostalCodeEditorWindow() {
-		setWidth(300);
-		setHeight(160);
+		setWidth(350);
+		setHeight(200);
 		setScrollbar(false);
 		setResizable(true);
 	}
@@ -91,17 +93,18 @@ public class PostalCodeEditorWindow extends IWAdminWindow{
 			addTitle(iwrb.getLocalizedString("postalcodeeditorwindow.title", "Postal codes"), IWConstants.BUILDER_FONT_STYLE_TITLE);
 			setName(iwrb.getLocalizedString("postalcodeeditorwindow.title", "Postal codes"));
 	
-			add(form);
-			Table tab = new Table(2,4);
+			add(form,iwc);
+			Table tab = new Table(2,5);
 			form.add(tab);
 			
+			tab.setStyleClass(mainStyleClass);
 			tab.setColumnVerticalAlignment(1, Table.VERTICAL_ALIGN_TOP);
 			tab.setColumnVerticalAlignment(2, Table.VERTICAL_ALIGN_TOP);
 	
-			tab.setCellspacing(3);
+			tab.setCellspacing(0);
 			//tab.setAlignment(2, 4, Table.HORIZONTAL_ALIGN_RIGHT);
-			tab.setWidth(Table.HUNDRED_PERCENT);
-			tab.setHeight(Table.HUNDRED_PERCENT);
+			tab.setWidth(300);
+			tab.setHeight(120);
 			
 			
 			Text codeText = new Text();
@@ -140,9 +143,10 @@ public class PostalCodeEditorWindow extends IWAdminWindow{
 			SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("postalcodeeditorwindow.save","save"), PARAM_SAVE,"true");
 	   	CloseButton close = new CloseButton(iwrb.getLocalizedImageButton("postalcodeeditorwindow.close", "close") );
 	    
-			tab.add(close, 2, 4);
-			tab.add(Text.getNonBrakingSpace(), 2, 4);
-			tab.add(save, 2, 4);
+	    tab.setAlignment(2,5,"right");
+			tab.add(close, 2, 5);
+			tab.add(Text.getNonBrakingSpace(), 2, 5);
+			tab.add(save, 2, 5);
 		}
 				
 	}
