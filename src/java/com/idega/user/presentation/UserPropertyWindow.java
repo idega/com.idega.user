@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.ejb.FinderException;
+
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
@@ -28,32 +31,49 @@ import com.idega.util.IWColor;
 
 public class UserPropertyWindow extends TabbedPropertyWindow {
 
-	public static final String PARAMETERSTRING_SELECTED_GROUP_ID = "selected_ic_group_id";
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-	
-
+	public static final String PARAMETERSTRING_SELECTED_GROUP_ID = "selected_ic_group_id";
 	public static final String PARAMETERSTRING_USER_ID = "ic_user_id";
-	private int userId = -1; 
-
 	public static final String SESSION_ADDRESS = "ic_user_property_window";
+	private int userId = -1;
 
 	public UserPropertyWindow() {
 		super(500, 600); //changed from super(410,550); - birna
 		super.setResizable(true);
 		super.setScrollbar(true);
 		this.setBackgroundColor(new IWColor(207, 208, 210));
+		
 	}
 
-	public String getSessionAddressString() {
+//	public UserBusiness getUserBusiness(IWApplicationContext iwac) throws RemoteException {
+//		return (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+//	}
+
+	/**
+	 * @see com.idega.presentation.TabbedPropertyWindow#disposeOfPanel(com.idega.presentation.IWContext)
+	 */
+	public boolean disposeOfPanel(IWContext iwc) {
+		return iwc.isParameterSet(PARAMETERSTRING_USER_ID);
+	}
+
+	public String getBundleIdentifier() {
+		return IW_BUNDLE_IDENTIFIER;
+	}
+
+	public GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws RemoteException {
+		return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+	}
+
+    public String getSessionAddressString() {
 		return SESSION_ADDRESS;
 	}
 
 	public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
 		int count = 0;
-		GeneralUserInfoTab genTab = new GeneralUserInfoTab();
+		
 
 		try { //temporary before plugins work
-			panel.addTab(genTab, count, iwc);
+			panel.addTab(new GeneralUserInfoTab(), count, iwc);
 //			panel.addTab(new UserImageTab(), ++count, iwc); //not needed because image added to the general tab - birna
 			panel.addTab(new AddressInfoTab(), ++count, iwc);
 			panel.addTab(new UserPhoneTab(), ++count, iwc);
@@ -66,10 +86,12 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			//temp 
 			String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
 			int userId = Integer.parseInt(id);
+			
+			//get the user
 			User user = getUserBusiness(iwc).getUser(userId);
 			
-
 			
+			//get plugins
 			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
 			Iterator iter = plugins.iterator();
 
@@ -129,29 +151,46 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			userId = ((UserTab) obj[0]).getUserId();
 			User user = getUserBusiness(iwc).getUser(userId);
 			String userName = user.getName();
-			addTitle(userName);
+			if(userName!=null) {
+			    addTitle(userName);
+			}
 		}
 		addTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
 
 	}
 
-	public GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws RemoteException {
-		return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
-	}
-
-//	public UserBusiness getUserBusiness(IWApplicationContext iwac) throws RemoteException {
-//		return (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, UserBusiness.class);
-//	}
-
 	/**
-	 * @see com.idega.presentation.TabbedPropertyWindow#disposeOfPanel(com.idega.presentation.IWContext)
+	 * overrides the default behaviour to check for edit permissions
 	 */
-	public boolean disposeOfPanel(IWContext iwc) {
-		return iwc.isParameterSet(PARAMETERSTRING_USER_ID);
-	}
-	
-	public String getBundleIdentifier() {
-		return IW_BUNDLE_IDENTIFIER;
-	}
+	protected TabbedPropertyPanel getPanelInstance(IWContext iwc) {
+        boolean useOkButton = false;
+        boolean useApplyButton = false;
+        boolean useCancelButton = true;
+        
+//		check if we have edit permissions, otherwise disable saving
+		String groupId = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
+		
+		boolean isAdmin = iwc.isSuperAdmin();
+		if(groupId!=null && !"-1".equals(groupId) && !isAdmin) {
+		    try {
+                useOkButton = iwc.getAccessController().hasEditPermissionFor(getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(groupId)), iwc);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+		    useApplyButton = useOkButton;
+		}
+		else {
+		    if(!isAdmin) {//only super admin can edit without permission
+		        useOkButton = false;
+		        useApplyButton = false;
+		    }
+		}
+		
+		
+		return new TabbedPropertyPanel(getSessionAddressString(),iwc,useOkButton,useCancelButton,useApplyButton);
+    }
+
+
 
 }
