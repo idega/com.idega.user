@@ -65,8 +65,8 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 	public CreateGroupWindow() {
 		_stateHandler = new StatefullPresentationImplHandler();
 		_stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
-		setWidth(320);
-		setHeight(260);
+		setWidth(330);
+		setHeight(270);
 		setScrollbar(false);
 		getLocation().setApplicationClass(CreateGroupWindow.class);
 		getLocation().isInPopUpWindow(true);
