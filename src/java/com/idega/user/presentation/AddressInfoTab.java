@@ -78,14 +78,15 @@ public class AddressInfoTab extends UserTab{
   public void initializeFieldValues(){
 
     fieldValues = new Hashtable();
-    fieldValues.put(this.streetFieldName,"");
-    fieldValues.put(this.cityFieldName,"");
-    fieldValues.put(this.provinceFieldName,"");
-    fieldValues.put(this.postalCodeFieldName,"");
-    fieldValues.put(this.countryFieldName,"");
-    fieldValues.put(this.poBoxFieldName,"");
+    
+    /*fieldValues.put(streetFieldName,"");
+    fieldValues.put(cityFieldName,"");
+    fieldValues.put(provinceFieldName,"");
+    fieldValues.put(postalCodeFieldName,"");
+    fieldValues.put(countryFieldName,"");
+    fieldValues.put(poBoxFieldName,"");*/
+    initFieldContents();
 
-    this.updateFieldsDisplayStatus();
   }
 
   public void updateFieldsDisplayStatus(){
@@ -96,7 +97,7 @@ public class AddressInfoTab extends UserTab{
     provinceField.setContent((String)fieldValues.get(provinceFieldName));
 
 	String postalId = (String) fieldValues.get(postalCodeFieldName);
-	if( postalId!=null ) postalCodeField.setSelectedElement(Integer.parseInt(postalId));
+	if( postalId!=null && !postalId.equals("") ) postalCodeField.setSelectedElement(Integer.parseInt(postalId));
 
     countryField.setContent((String)fieldValues.get(countryFieldName));
 
@@ -246,14 +247,14 @@ public class AddressInfoTab extends UserTab{
     try{
     	
     	Integer userId = new Integer(getUserId());
-    	String street = iwc.getParameter(this.streetFieldName);
+    	String street = iwc.getParameter(streetFieldName);
     	Integer postalCodeId = null;
-    	String postal = (String)fieldValues.get(postalCodeFieldName);
+    	String postal = iwc.getParameter(postalCodeFieldName);
     	if(postal!=null) postalCodeId = new Integer(postal);
-    	String country = iwc.getParameter(this.countryFieldName);
-      	String city = iwc.getParameter(this.cityFieldName);
-      	String province = iwc.getParameter(this.provinceFieldName);     	
-      	String poBox = iwc.getParameter(this.poBoxFieldName);
+    	String country = iwc.getParameter(countryFieldName);
+      	String city = iwc.getParameter(cityFieldName);
+      	String province = iwc.getParameter(provinceFieldName);     	
+      	String poBox = iwc.getParameter(poBoxFieldName);
 
 
       this.getUserBusiness(iwc).updateUsersMainAddressOrCreateIfDoesNotExist(userId,street,postalCodeId,country,city,province,poBox);
