@@ -130,34 +130,55 @@ public class UserLoginTab extends UserTab {
 
 	public void initializeFields() {
 		userLoginField = new TextInput(_PARAM_USER_LOGIN);
-		userLoginField.setLength(14);
-		//userLoginField.setDisabled(true);
-		//userLoginField.setContent("userlogin");
+		userLoginField.setLength(32);
 
 		passwordField = new PasswordInput(_PARAM_PASSWORD);
-		passwordField.setLength(14);
+		passwordField.setLength(32);
+
 		confirmPasswordField = new PasswordInput(_PARAM_CONFIRM_PASSWORD);
-		confirmPasswordField.setLength(14);
+		confirmPasswordField.setLength(32);
 
 		mustChangePasswordField = new CheckBox(_PARAM_MUST_CHANGE_PASSWORD);
-		cannotChangePasswordField = new CheckBox(_PARAM_CANNOT_CHANGE_PASSWORD);
-		passwordNeverExpiresField = new CheckBox(_PARAM_PASSWORD_NEVER_EXPIRES);
-		disableAccountField = new CheckBox(_PARAM_DISABLE_ACCOUNT);
+		mustChangePasswordField.setHeight("10");
+		mustChangePasswordField.setWidth("10");
 
+		cannotChangePasswordField = new CheckBox(_PARAM_CANNOT_CHANGE_PASSWORD);
+		cannotChangePasswordField.setHeight("10");
+		cannotChangePasswordField.setWidth("10");
+		
+		passwordNeverExpiresField = new CheckBox(_PARAM_PASSWORD_NEVER_EXPIRES);
+		passwordNeverExpiresField.setHeight("10");
+		passwordNeverExpiresField.setWidth("10");
+		
+		disableAccountField = new CheckBox(_PARAM_DISABLE_ACCOUNT);
+		disableAccountField.setHeight("10");
+		disableAccountField.setWidth("10");
 	}
+
 	public void initializeTexts() {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		userLoginText = new Text(iwrb.getLocalizedString(_PARAM_USER_LOGIN,"User login"));
+		userLoginText.setBold();
+		
 		passwordText = new Text(iwrb.getLocalizedString(_PARAM_PASSWORD,"New password"));
+		passwordText.setBold();
+		
 		confirmPasswordText = new Text(iwrb.getLocalizedString(_PARAM_CONFIRM_PASSWORD,"Confirm password"));
+		confirmPasswordText.setBold();
 
-		mustChangePasswordText =
-			new Text(iwrb.getLocalizedString(_PARAM_MUST_CHANGE_PASSWORD,"User must change password at next login"));
+		mustChangePasswordText = new Text(iwrb.getLocalizedString(_PARAM_MUST_CHANGE_PASSWORD,"User must change password at next login"));
+		mustChangePasswordText.setBold();
+		
 		cannotChangePasswordText = new Text(iwrb.getLocalizedString(_PARAM_CANNOT_CHANGE_PASSWORD,"User cannot change password"));
+		cannotChangePasswordText.setBold();
+		
 		passwordNeverExpiresText = new Text(iwrb.getLocalizedString(_PARAM_PASSWORD_NEVER_EXPIRES,"Password never expires"));
+		passwordNeverExpiresText.setBold();
+		
 		disableAccountText = new Text(iwrb.getLocalizedString(_PARAM_DISABLE_ACCOUNT,"Account is disabled"));
+		disableAccountText.setBold();
 	}
 
 	public boolean store(IWContext iwc) {
@@ -274,56 +295,57 @@ public class UserLoginTab extends UserTab {
 	}
 
 	public void lineUpFields() {
-		Table frameTable = new Table(2, 1);
-		frameTable.setCellpadding(0);
-		frameTable.setCellspacing(0);
+		Table table = new Table();
+		table.setWidth(Table.HUNDRED_PERCENT);
+		table.setCellpadding(5);
+		table.setCellspacing(0);
+		table.setBorder(0);
+		int row = 1;
 
-		// loginTable begin
-		Table loginTable = new Table(2, 4);
-		loginTable.setCellpadding(0);
-		loginTable.setCellspacing(0);
-		loginTable.setWidth(1, "120");
+		table.add(this.userLoginText, 1, row);
+		table.add(Text.getBreak(), 1, row);
+		table.add(this.userLoginField, 1, row++);
 
-		loginTable.add(this.userLoginText, 1, 1);
-		loginTable.add(this.userLoginField, 2, 1);
-		loginTable.add(this.passwordText, 1, 2);
-		loginTable.add(this.passwordField, 2, 2);
-		loginTable.add(this.confirmPasswordText, 1, 3);
-		loginTable.add(this.confirmPasswordField, 2, 3);
-//		loginTable.add(getHelpButton(),1,4);
-		// loginTable end
+		table.add(this.passwordText, 1, row);
+		table.add(Text.getBreak(), 1, row);
+		table.add(this.passwordField, 1, row++);
+		
+		table.add(this.confirmPasswordText, 1, row);
+		table.add(Text.getBreak(), 1, row);
+		table.add(this.confirmPasswordField, 1, row++);
 
-		// AccountPropertyTable begin
-		Table AccountPropertyTable = new Table(2, 5);
-		AccountPropertyTable.setCellpadding(0);
-		AccountPropertyTable.setCellspacing(0);
-
-		AccountPropertyTable.add(this.mustChangePasswordField, 1, 1);
-		AccountPropertyTable.add(this.mustChangePasswordText, 2, 1);
-		AccountPropertyTable.add(this.cannotChangePasswordField, 1, 2);
-		AccountPropertyTable.add(this.cannotChangePasswordText, 2, 2);
-		AccountPropertyTable.add(this.passwordNeverExpiresField, 1, 3);
-		AccountPropertyTable.add(this.passwordNeverExpiresText, 2, 3);
-		AccountPropertyTable.add(this.disableAccountField, 1, 4);
-		AccountPropertyTable.add(this.disableAccountText, 2, 4);
-		// AccountPropertyTable end
+		row++;
+		
+		table.mergeCells(1, row, 2, row);
+		table.add(this.mustChangePasswordField, 1, row);
+		table.add(this.mustChangePasswordText, 1, row++);
+		
+		table.mergeCells(1, row, 2, row);
+		table.add(this.cannotChangePasswordField, 1, row);
+		table.add(this.cannotChangePasswordText, 1, row++);
+		
+		table.mergeCells(1, row, 2, row);
+		table.add(this.passwordNeverExpiresField, 1, row);
+		table.add(this.passwordNeverExpiresText, 1, row++);
+		
+		table.mergeCells(1, row, 2, row);
+		table.add(this.disableAccountField, 1, row);
+		table.add(this.disableAccountText, 1, row++);
 
 		errorMessageTable.setHeight(1);
 		errorMessageTable.setCellpadding(0);
 		errorMessageTable.setCellspacing(0);
+		table.mergeCells(1, row, 2, row);
+		table.add(errorMessageTable, 1, row);
 
-		frameTable.add(Text.getBreak(), 2, 1);
-		frameTable.add(loginTable, 2, 1);
-		frameTable.add(Text.getBreak(), 2, 1);
-		frameTable.add(AccountPropertyTable, 2, 1);
-		frameTable.add(errorMessageTable, 2, 1);
-
-		this.add(frameTable);
+		this.add(table);
 
 	}
 
 	public void main(IWContext iwc) {
-		getPanel().addHelpButton(getHelpButton());		
+		if (getPanel() != null) {
+			getPanel().addHelpButton(getHelpButton());		
+		}
 	}
 
 	public boolean collect(IWContext iwc) {
