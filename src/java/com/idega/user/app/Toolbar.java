@@ -149,16 +149,16 @@ public class Toolbar extends Page implements IWBrowserView {
     button2.add(tLink12,2,1);
     toolbar1.add(button2,3,1);
    //finance
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("finance","Finance"), iwb.getImage("finance.gif"), com.idega.block.finance.presentation.AccountViewer.class),4,1);
+   // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("finance","Finance"), iwb.getImage("finance.gif"), com.idega.block.finance.presentation.AccountViewer.class),4,1);
 
    //reports
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("reports","Reports"), iwb.getImage("reports.gif"), com.idega.block.reports.presentation.Reporter.class),5,1);
+   // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("reports","Reports"), iwb.getImage("reports.gif"), com.idega.block.reports.presentation.Reporter.class),5,1);
 
    //To do - stickies
 //    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("To do", iwb.getImage("todo.gif"), com.idega.block.news.presentation.News.class),7,1);
 
    //settings
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("setttings","Settings"), iwb.getImage("settings.gif"),com.idega.block.news.presentation.News.class ),6,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("settings","Settings"), iwb.getImage("settings.gif"),com.idega.block.news.presentation.News.class ),4,1);
 
    //view
    //dropdownmenu
