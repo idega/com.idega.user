@@ -353,22 +353,14 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 				while (iterator.hasNext()) {
 					ICPermission perm = (ICPermission) iterator.next();
-					Group group;
-					try {
+				
 
-						group = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(perm.getContextValue()));
 						
-						String checkBoxKey = (useShortKeyAsKey) ? path.getShortKey() : key; 
-						CheckBox checkBox = new CheckBox(checkBoxKey, group.getPrimaryKey().toString());
+						String checkBoxKey = path.getShortKey(); 
+						CheckBox checkBox = new CheckBox(checkBoxKey, perm.getContextValue());
 						
 						return checkBox;
-					}
-					catch (RemoteException e) {
-						e.printStackTrace();
-					}
-					catch (FinderException ex) {
-						ex.printStackTrace();
-					}
+				
 
 				}
 
@@ -626,6 +618,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		owners.addParameter(PARAM_SELECTED_GROUP_ID, selectedGroupId);
 
 		Table table = new Table(2, 3);
+		table.setRowHeight(1,"20");
 		table.setStyleClass(mainStyleClass);
 		table.setWidth(620);
 		table.setHeight(480);
