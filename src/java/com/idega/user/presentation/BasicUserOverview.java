@@ -436,34 +436,26 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 					
 				PresentationObject text = browser.getDefaultConverter().getPresentationObject(entity, path, browser, iwc);
 					
-				if(!canEditUser && !isCurrentUserSuperAdmin){
-					return text; 
-				}
-				else{		
+				//if(!canEditUser && !isCurrentUserSuperAdmin){//TODO: Eiki move to userpropertywindow instead
+				//	return text; 
+				//}
+				//else{		
 					Link aLink = new Link(text);
 					if (!user.equals(administratorUser)) {
 						aLink.setWindowToOpen(UserPropertyWindow.class);
 						aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
-						
-						/*String selectedGroupId = (String) iwc.getSessionAttribute(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
-						
-						if(selectedGroupId!=null){
-							aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID, selectedGroupId);			
-						}
-						*/
 					
-						
 						if(selectedGroup!=null){
 							aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID, selectedGroup.getPrimaryKey().toString());			
 						}
 						
 					}
-					else if (isCurrentUserSuperAdmin) {
+					else if (user.equals(administratorUser) && isCurrentUserSuperAdmin) {
 						aLink.setWindowToOpen(AdministratorPropertyWindow.class);
 						aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
 					}
 					return aLink;
-				}
+				//}
 			}
 		};
 		// define checkbox button converter class
