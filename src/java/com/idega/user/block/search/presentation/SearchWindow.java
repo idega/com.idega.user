@@ -54,11 +54,13 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 	private UserSearchEvent searchEvent;
   private String userApplicationMainAreaPSId = null; 
   private Group selectedGroup = null;
+  
+  private String mainTableStyle = "main";
 
 
 	public SearchWindow() {
-		setWidth(480);
-		setHeight(380);
+		setWidth(510);
+		setHeight(470);
 		setScrollbar(false);
 		setResizable(true);
 	}
@@ -102,6 +104,9 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		
 		add(form,iwc);
 		Table tab = new Table(3,13);
+		tab.setStyleClass(mainTableStyle);
+		tab.setWidth(400);
+		tab.setHeight(380);
 		form.add(tab);
 		
 		tab.setColumnVerticalAlignment(1, Table.VERTICAL_ALIGN_TOP);
@@ -110,8 +115,6 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		tab.setCellspacing(2);
 		//tab.setAlignment(3, 13, Table.HORIZONTAL_ALIGN_RIGHT);
 		tab.mergeCells(1,4,2,12);
-		tab.setWidth(Table.HUNDRED_PERCENT);
-		tab.setHeight(Table.HUNDRED_PERCENT);
 		
 		//names params
 		//first name
