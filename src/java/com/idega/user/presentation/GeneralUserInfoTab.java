@@ -210,10 +210,9 @@ public class GeneralUserInfoTab extends UserTab {
 		createdField.setYearRange(time.getYear(), time.getYear() - 50);
 		
 		imageField = new ImageInserter(imageFieldName + getUserId());
-		imageField.setWidth(String.valueOf(90));
+		imageField.setWidth(String.valueOf(107));
 		imageField.setHeight(String.valueOf(138));
-		imageField.setMaxImageWidth(90);
-		imageField.limitImageWidth(true);
+		imageField.setMaxImageWidth(107);
 		imageField.setHasUseBox(false);
 		removeImageField = new CheckBox(removeImageFieldName);
 
