@@ -212,6 +212,8 @@ public class GeneralUserInfoTab extends UserTab {
 		imageField = new ImageInserter(imageFieldName + getUserId());
 		imageField.setWidth(String.valueOf(90));
 		imageField.setHeight(String.valueOf(138));
+		imageField.setMaxImageWidth(90);
+		imageField.limitImageWidth(true);
 		imageField.setHasUseBox(false);
 		removeImageField = new CheckBox(removeImageFieldName);
 
