@@ -240,8 +240,12 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		else {
 			iwc.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
 		}
-		Collection indirectGroups = Collections.unmodifiableCollection(userBusiness.getParentGroupsInDirectForUser(this.getUserId()));
-		indirectGroups = getFilteredGroups(iwc, indirectGroups, user,topGroupNodes);
+		Collection indirects = userBusiness.getParentGroupsInDirectForUser(this.getUserId());
+		Collection indirectGroups = null;
+		if(indirects!=null){
+		    indirectGroups = Collections.unmodifiableCollection(indirects);
+		    indirectGroups = getFilteredGroups(iwc, indirectGroups, user,topGroupNodes);
+		}
 
 		if (indirectGroups != null) {
 			iwc.setSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED, indirectGroups);
