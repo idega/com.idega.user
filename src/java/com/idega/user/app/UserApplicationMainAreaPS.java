@@ -2,7 +2,7 @@
 
 package com.idega.user.app;
 
-import com.idega.user.block.simplesearch.event.SimpleSearchEvent;
+import com.idega.user.block.search.event.SimpleSearchEvent;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.event.*;
 import javax.swing.event.EventListenerList;

@@ -2,7 +2,7 @@ package com.idega.user.app;
 
 import com.idega.user.presentation.*;
 import com.idega.presentation.*;
-import com.idega.user.block.simplesearch.presentation.SearchForm;
+import com.idega.user.block.search.presentation.SearchForm;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
