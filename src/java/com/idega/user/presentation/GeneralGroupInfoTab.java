@@ -174,7 +174,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 				
 				String delete = (String)fieldValues.get(deletegroupFieldName);
 				if (delete != null && delete.equals("true")) {
-					group.remove();	
+					group.removeGroup();	
 					
 				}
 				else {
