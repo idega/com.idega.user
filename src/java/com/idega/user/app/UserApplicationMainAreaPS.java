@@ -155,11 +155,12 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
 
   public void stateChanged(ChangeEvent e) {
     Object object = e.getSource();
-    if (object instanceof DeleteGroupConfirmWindowPS) { 
+    if (object instanceof DeleteGroupConfirmWindowPS || object instanceof CreateGroupWindowPS) { 
       // refresh
       setOnLoad("parent.frames['iwb_main_left'].location.reload()");
     }
-    else if (object instanceof CreateGroupWindowPS) {
+    // do not use "else if" !
+    if (object instanceof CreateGroupWindowPS) {
       CreateGroupWindowPS state = (CreateGroupWindowPS) e.getSource();
       IWContext eventContext = state.getEventContext();
       Integer groupId = state.getGroupId();
@@ -168,7 +169,7 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
       gotoLink.addParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, groupId.toString());
       setOnLoad(gotoLink.getWindowToOpenCallingScript(eventContext));
     }
-    else if (object instanceof IWTabbedPane) {
+    if (object instanceof IWTabbedPane) {
         IWTabbedPane pane = (IWTabbedPane) object;
         String attribute = pane.getAttributeString();
         if (attribute.indexOf("group_property_window") > -1)
