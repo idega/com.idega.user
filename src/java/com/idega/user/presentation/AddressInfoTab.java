@@ -85,7 +85,7 @@ public class AddressInfoTab extends UserTab{
     fieldValues.put(postalCodeFieldName,"");
     fieldValues.put(countryFieldName,"");
     fieldValues.put(poBoxFieldName,"");*/
-    initFieldContents();
+    
 
   }
 
@@ -97,6 +97,8 @@ public class AddressInfoTab extends UserTab{
     provinceField.setContent((String)fieldValues.get(provinceFieldName));
 
 	String postalId = (String) fieldValues.get(postalCodeFieldName);
+	System.out.println("PostalCodeId = "+postalId);
+	
 	if( postalId!=null && !postalId.equals("") ) postalCodeField.setSelectedElement(Integer.parseInt(postalId));
 
     countryField.setContent((String)fieldValues.get(countryFieldName));
@@ -294,7 +296,8 @@ public class AddressInfoTab extends UserTab{
 	      if ( country!=null ) fieldValues.put(countryFieldName, country );
 	      if ( poBox!=null ) fieldValues.put(poBoxFieldName, poBox);
 	  }
-      this.updateFieldsDisplayStatus();
+      
+      updateFieldsDisplayStatus();
 
     }catch(Exception e){
       e.printStackTrace();	
