@@ -14,6 +14,7 @@ import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
@@ -139,7 +140,9 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
         // try to get the action listener
         //TODO thomas change this in the way that actually the userApplicationMainAreaPs is used
         //actionListener = (UserApplicationMainAreaPS) stateMachine.getStateFor(actionListenerStateId, UserApplicationMainAreaPS.class);
-        actionListener = (BasicUserOverviewPS) stateMachine.getStateFor(":6900", BasicUserOverviewPS.class);
+        String code = IWMainApplication.getEncryptedClassName("BasicUserOverviewPS");
+        code = ":" + code;
+        actionListener = (BasicUserOverviewPS) stateMachine.getStateFor( code , BasicUserOverviewPS.class);
       }
       catch (RemoteException ex)  {
         throw new RuntimeException(ex.getMessage());
