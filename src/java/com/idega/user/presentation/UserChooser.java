@@ -6,6 +6,7 @@ import com.idega.core.builder.business.BuilderConstants;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.ui.AbstractChooser;
+import com.idega.user.data.User;
 
 /**
  * @author gimmi
@@ -43,6 +44,11 @@ public class UserChooser extends AbstractChooser {
     super.setChooserValue(userId,userId);
     super.setParameterValue("user_id",userId);
   }
+ 
+ public void setSelected(User user) {
+ 		super.setChooserValue(user.getName(), user.getPrimaryKey().toString());
+ 		super.setParameterValue("user_id",user.getPrimaryKey().toString());
+ }
   
  	/**
 	 * @see com.idega.presentation.ui.AbstractChooser#getChooserWindowClass()
