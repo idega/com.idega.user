@@ -46,6 +46,7 @@ private String bannerTableStyle = "banner";
 private UserBusiness userBusiness = null;
 private boolean titleIsSet = false;
 private Text adminTitle = null; 
+private Image helpImage = null;
 
 
 	public StyledIWAdminWindow(){
@@ -112,7 +113,9 @@ private Text adminTitle = null;
 		mainTable.setWidth("100%");
 		mainTable.setHeight("100%");
 		mainTable.setCellspacing(0);
-		mainTable.setVerticalAlignment(1,1,"top");
+		mainTable.setHeight(1,1,"6");
+		mainTable.setWidth(1,2,"6");
+		mainTable.setVerticalAlignment(2,2,"top");
 		adminForm.add(mainTable);
 	}
 	/**
@@ -133,7 +136,7 @@ private Text adminTitle = null;
 				super.add(headerTable);
 				super.add(mainTable);
 			}
-			mainTable.add(obj,1,1);
+			mainTable.add(obj,2,2);
 		}
 		else super.add(obj);
 	}
@@ -197,18 +200,19 @@ private Text adminTitle = null;
 		return T;
 	}
 	public void _main(IWContext iwc)throws Exception{
+		iwb = getBundle(iwc);
 		userBusiness = getUserBusiness(iwc);
 		parentPage = this.getParentPage();
 		styleSrc = userBusiness.getUserApplicationStyleSheet(parentPage, iwc);
 		parentPage.addStyleSheetURL(styleSrc);
+		
+		helpImage = iwb.getImage("help.gif");
 		super._main(iwc);
 	}
 	public void main(IWContext iwc)throws Exception{
 	}
-	public Help getHelp(String helpTextKey, IWContext iwc) {
-	 	iwb = getBundle(iwc);
+	public Help getHelp(String helpTextKey) {
 	 	Help help = new Help();
-	  Image helpImage = iwb.getImage("help.gif");
  	  help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
 	  help.setHelpTextKey(helpTextKey);
 	  help.setImage(helpImage);
