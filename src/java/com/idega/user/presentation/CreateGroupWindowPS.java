@@ -120,6 +120,10 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 			} else {
 			  System.err.println("[CreateGroupWindow]: parentGroupType "+event.getParentType()+"not found");
 			}
+			
+			//TODO fix this
+			e.getIWContext().getApplicationContext().setApplicationAttribute("domain_group_tree",null);
+			e.getIWContext().getApplicationContext().setApplicationAttribute("group_tree",null);			
 		}
 		catch (CreateException ce)
 		{

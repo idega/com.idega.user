@@ -59,7 +59,7 @@ public class GroupChooserWindow extends AbstractChooserWindow {
 
       GroupTreeView viewer = new GroupTreeView();
 
-      GroupTreeNode node = new GroupTreeNode(iwc.getDomain());
+      GroupTreeNode node = new GroupTreeNode(iwc.getDomain(),iwc.getApplicationContext());
 
       viewer.setRootNode(node);
 

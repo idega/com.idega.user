@@ -1,16 +1,23 @@
 package com.idega.user.presentation;
 
-import com.idega.data.IDOLookup;
-import com.idega.user.data.*;
-import com.idega.user.event.CreateGroupEvent;
-import java.util.*;
-import com.idega.builder.data.IBDomainHome;
 import java.rmi.RemoteException;
-import javax.ejb.EJBException;
-import com.idega.data.IDORelationshipException;
-import javax.ejb.FinderException;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
 import com.idega.builder.data.IBDomain;
+import com.idega.builder.data.IBDomainHome;
 import com.idega.core.ICTreeNode;
+import com.idega.data.IDOLookup;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.user.data.Group;
+import com.idega.user.data.GroupHome;
+import com.idega.user.data.GroupType;
+import com.idega.user.data.GroupTypeHome;
+import com.idega.user.event.CreateGroupEvent;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -28,15 +35,64 @@ public class GroupTreeNode implements ICTreeNode {
 	private IBDomain _domain = null;
 	private Group _group = null;
 	private int _nodeType;
+	
+	private List _children = null;
+	
 	public static final int TYPE_DOMAIN = CreateGroupEvent.TYPE_DOMAIN;
 	public static final int TYPE_GROUP = CreateGroupEvent.TYPE_GROUP;
 
-	public GroupTreeNode(IBDomain domain) {
+	public GroupTreeNode(IBDomain domain,  IWApplicationContext iwc) {
+		Map m = (Map)iwc.getApplicationAttribute("domain_group_tree");
+		if (m == null) {
+			m = new Hashtable();
+			iwc.setApplicationAttribute("domain_group_tree",m);
+		}		
+
+		GroupTreeNode node = (GroupTreeNode)m.get(domain.getPrimaryKey());
+		if (node == null) {
+			_domain = domain;
+			_nodeType = TYPE_DOMAIN;
+		
+			m.put(domain.getPrimaryKey(),this);
+		}
+		else {
+			_parent = node._parent;
+			_domain = node._domain;
+			_group = node._group;
+			_nodeType = node._nodeType;
+			_children = node._children;
+		}			
+	}
+
+	public GroupTreeNode(Group group,  IWApplicationContext iwc) {
+		Map m = (Map)iwc.getApplicationAttribute("group_tree");
+		if (m == null) {
+			m = new Hashtable();
+			iwc.setApplicationAttribute("group_tree",m);
+		}		
+
+		GroupTreeNode node = (GroupTreeNode)m.get(group.getPrimaryKey());
+		if (node == null) {
+			_group = group;
+			_nodeType = TYPE_DOMAIN;
+		
+			m.put(group.getPrimaryKey(),this);
+		}
+		else {
+			_parent = node._parent;
+			_domain = node._domain;
+			_group = node._group;
+			_nodeType = node._nodeType;
+			_children = node._children;
+		}
+	}
+
+	protected GroupTreeNode(IBDomain domain) {
 		_domain = domain;
 		_nodeType = TYPE_DOMAIN;
 	}
 
-	public GroupTreeNode(Group group) {
+	protected GroupTreeNode(Group group) {
 		_group = group;
 		_nodeType = TYPE_GROUP;
 	}
@@ -44,6 +100,7 @@ public class GroupTreeNode implements ICTreeNode {
 	private GroupTypeHome getGroupTypeHome() throws RemoteException {
 		return ((GroupTypeHome) IDOLookup.getHome(GroupType.class));
 	}
+
 	private GroupHome getGroupHome() throws RemoteException {
 		return ((GroupHome) IDOLookup.getHome(Group.class));
 	}
@@ -57,6 +114,10 @@ public class GroupTreeNode implements ICTreeNode {
 	}
 
 	public Iterator getChildren() {
+		if (_children != null) {
+			return _children.iterator();
+		}
+			
 		switch (_nodeType) {
 			case TYPE_DOMAIN :
 				/**
@@ -75,6 +136,7 @@ public class GroupTreeNode implements ICTreeNode {
 						l.add(node);
 					}
 
+					_children = l;
 					return l.iterator();
 
 				}
@@ -100,6 +162,8 @@ public class GroupTreeNode implements ICTreeNode {
 					node.setParent(this);
 					l.add(node);
 				}
+
+				_children = l;
 
 				return l.iterator();
 			default :
@@ -155,6 +219,11 @@ public class GroupTreeNode implements ICTreeNode {
 	}
 
 	public ICTreeNode getChildAtIndex(int childIndex) {
+		if (_children != null) {
+			System.out.println("Getting child at index from vector");
+			return (ICTreeNode)_children.get(childIndex);
+		}
+			
 		switch (_nodeType) {
 			case TYPE_DOMAIN :
 				try {
@@ -185,6 +254,12 @@ public class GroupTreeNode implements ICTreeNode {
 	}
 
 	public int getChildCount() {
+		if (_children != null){
+			System.out.println("Getting child count from vector");
+
+			return _children.size();
+		}
+			
 		switch (_nodeType) {
 			case TYPE_DOMAIN :
 				try {

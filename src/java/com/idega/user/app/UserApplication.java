@@ -50,8 +50,8 @@ public class UserApplication extends IWBrowser {
   }
 
   public void initializePresentation(){
-    this.setWidth(933);
-    this.setHeight(700);
+    this.setWidth(800);
+    this.setHeight(600);
 
     this.addToTop(new Top());
     this.setSpanPixels(POS_TOP,68);

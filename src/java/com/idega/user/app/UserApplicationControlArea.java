@@ -132,20 +132,12 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
     Image icon = iwb.getImage("super_root_icon.gif");
     groupTree.setSuperRootNodeIcon(icon);
 
-
-
     ChangeListener[] chListeners = this.getPresentationState(iwc).getChangeListener();
     if(chListeners != null){
       for (int i = 0; i < chListeners.length; i++) {
         gtState.addChangeListener(chListeners[i]);
       }
     }
-
-//    this.debugEventListanerList(iwc);
-//    groupTree.debugEventListanerList(iwc);
-
-    //this.getParentPage().setBackgroundColor(IWColor.getHexColorString(Color.white));
-
   }
 
   public void main(IWContext iwc) throws Exception {
@@ -154,9 +146,9 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
     this.empty();
     this.add(groupTree);
-
-    GroupTreeNode node = new GroupTreeNode(iwc.getDomain());
-
+    
+    GroupTreeNode node = new GroupTreeNode(iwc.getDomain(),iwc.getApplicationContext());
+    
     groupTree.setRootNode(node);
 
 //    Collection topGroups = iwc.getDomain().getTopLevelGroupsUnderDomain();

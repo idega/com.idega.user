@@ -42,6 +42,11 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
               removeRelation( parentDomain, group);
             }
           }
+          
+					//TODO fix this
+					e.getIWContext().getApplicationContext().setApplicationAttribute("domain_group_tree",null);
+					e.getIWContext().getApplicationContext().setApplicationAttribute("group_tree",null);			
+          
         }
          catch (RemoteException ex)  {
         }

@@ -210,7 +210,7 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 
 		try {
 			IBDomain domain = iwc.getDomain();
-			chooser.setSelectedNode(new GroupTreeNode(domain));
+			chooser.setSelectedNode(new GroupTreeNode(domain,iwc.getApplicationContext()));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
