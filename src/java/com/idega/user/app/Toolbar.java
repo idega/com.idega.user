@@ -140,7 +140,7 @@ public class Toolbar extends Page implements IWBrowserView {
 		Image iconCrUser = iwb.getImage("new_user.gif");
 		Link tLink11 = getToolbarLink(new Text(iwrb.getLocalizedString("new.member", "New member")), CreateUser.class, null);
 		tLink11.setStyleClass(styledLink);
-		toolbar1.setCellpaddingLeft(toolbarColumn, 1, 7);
+		toolbar1.setCellpaddingLeft(toolbarColumn, 1, 12);
 		toolbar1.setCellpaddingRight(toolbarColumn, 1, 3);
 		toolbar1.add(getToolbarLink(iconCrUser, CreateUser.class, null), toolbarColumn++, 1);
 		toolbar1.setVerticalAlignment(toolbarColumn, 1, Table.VERTICAL_ALIGN_TOP);

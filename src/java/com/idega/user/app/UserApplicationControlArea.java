@@ -252,6 +252,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		welcomeMessageTable.setVerticalAlignment(2, 1, "middle");
 		if (iwc.isLoggedOn())
 			welcomeMessageTable.add(lockImage, 1, 1);
+		welcomeMessageTable.setCellpaddingLeft(2, 1, 7);
 		welcomeMessageTable.add(welcomeMessage, 2, 1);
 		welcomeMessageTable.add(Text.BREAK, 2, 1);
 		welcomeMessageTable.add(date, 2, 1);
@@ -277,7 +278,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		table.setHeight(1, 2, Table.HUNDRED_PERCENT);
 		table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
 		table.setCellpadding(1, 2, 7);
-		table.setCellpaddingLeft(1, 1, 7);
+		table.setCellpaddingLeft(1, 1, 12);
 		table.setStyleClass(1, 2, "back");
 		
 		table.add(welcomeMessageTable(iwc), 1, 1);
