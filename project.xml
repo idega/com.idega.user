@@ -5,7 +5,7 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb User</name>
   <artifactId>com.idega.user</artifactId>
-  <currentVersion>1.1.1</currentVersion>
+  <currentVersion>1.2.0-SNAPSHOT</currentVersion>
   <inceptionYear>2000</inceptionYear>
   <shortDescription>Basic user functionality</shortDescription>
   <versions>
@@ -60,8 +60,8 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
-      <version>3.0.4</version>
-      <!--version>SNAPSHOT</version-->
+      <!--version>3.0.4</version-->
+      <version>SNAPSHOT</version>
 
       <type>jar</type>
       <url>http://www.idega.com/</url>
@@ -72,8 +72,8 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.block.login</artifactId>
-      <version>1.1.3</version>
-      <!--version>SNAPSHOT</version-->
+      <!--version>1.1.3</version-->
+      <version>SNAPSHOT</version>
 
       <type>jar</type>
       <url>http://www.idega.com/</url>
@@ -84,8 +84,8 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.builder</artifactId>
-      <version>1.4.1</version>
-      <!--version>SNAPSHOT</version-->
+      <!--version>1.4.1</version-->
+      <version>SNAPSHOT</version>
 
       <type>jar</type>
       <url>http://www.idega.com/</url>
@@ -96,8 +96,8 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.block.entity</artifactId>
-      <version>1.1.1</version>
-      <!--version>SNAPSHOT</version-->
+      <!--version>1.1.1</version-->
+      <version>SNAPSHOT</version>
 
       <type>jar</type>
       <url>http://www.idega.com/</url>
@@ -108,8 +108,8 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.block.media</artifactId>
-      <version>1.1.1</version>
-      <!--version>SNAPSHOT</version-->
+      <!--version>1.1.1</version-->
+      <version>SNAPSHOT</version>
 
       <type>jar</type>
       <url>http://www.idega.com/</url>
