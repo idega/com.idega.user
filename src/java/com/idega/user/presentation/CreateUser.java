@@ -116,8 +116,6 @@ public class CreateUser extends StyledIWAdminWindow {
 
 	private UserBusiness userBiz;
 	
-	private boolean ssnWarningDisplay = false;
-	private boolean fullNameWarningDisplay = false;
 	private boolean formNotComplete = false;
 	
 	private String inputTextStyle = "text";
@@ -169,7 +167,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		help = getHelp(HELP_TEXT_KEY);
 		
 		okButton = new StyledButton(new SubmitButton(iwrb.getLocalizedString("save", "Save"), submitButtonParameterName, okButtonParameterValue));
-    continueButton = new StyledButton(new SubmitButton(iwrb.getLocalizedString("yes", "Yes"), submitButtonParameterName, submitButtonParameterValue));
+		continueButton = new StyledButton(new SubmitButton(iwrb.getLocalizedString("yes", "Yes"), submitButtonParameterName, submitButtonParameterValue));
 		cancelButton = new StyledButton(new CloseButton(iwrb.getLocalizedString("close", "Close")));
 		backButton = new StyledButton(new BackButton(iwrb.getLocalizedString("back", "Back")));
 	}
@@ -243,6 +241,7 @@ public class CreateUser extends StyledIWAdminWindow {
 				if((ssn != null || !ssn.equals("")) && (fullName == null || fullName.equals(""))) {
 					try { 
 						newUser = getUserBusiness(iwc).getUser(ssn);
+						fullName = newUser.getName();
 					}
 					catch (Exception e) {
 						newUser = null;
@@ -257,16 +256,26 @@ public class CreateUser extends StyledIWAdminWindow {
 				}
 				newUser = getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(fullName,ssn,null,null);					
 				group = getGroupBusiness(iwc).getGroupByGroupID(primaryGroupId.intValue());
-				group.addGroup(newUser);
-				newUser.setPrimaryGroupID(primaryGroupId);
-				newUser.store();	
-				Link gotoLink = new Link();
-				gotoLink.setWindowToOpen(UserPropertyWindow.class);
-				gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, newUser.getPrimaryKey().toString());
-				close();
-				setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
-				String script = "window.opener." + gotoLink.getWindowToOpenCallingScript(iwc);
-				setOnLoad(script);						
+				
+				if(iwc.getAccessController().hasEditPermissionFor(group, iwc)){
+					group.addGroup(newUser);
+					if(newUser.getPrimaryGroupID()<0){
+						newUser.setPrimaryGroupID(primaryGroupId);
+					}
+					newUser.store();	
+					Link gotoLink = new Link();
+					gotoLink.setWindowToOpen(UserPropertyWindow.class);
+					gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, newUser.getPrimaryKey().toString());
+					close();
+					setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
+					String script = "window.opener." + gotoLink.getWindowToOpenCallingScript(iwc);
+					setOnLoad(script);			
+				}
+				else{
+					setAlertOnLoad(iwrb.getLocalizedString("new_user.no_edit_permission_for_parent_group","You cannot add the user to this group because you do not have edit permission to it."));
+					ssnField.setContent(ssn);
+					fullNameField.setContent(fullName);
+				}
 			}
 			else {
 				setAlertOnLoad(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
@@ -321,14 +330,16 @@ public class CreateUser extends StyledIWAdminWindow {
 		fullName = iwc.getParameter(fullNameFieldParameterName);
 		primaryGroup = iwc.getParameter(primaryGroupFieldParameterName);
 		
-		if(primaryGroup == null || primaryGroup.equals(""))
+		if(primaryGroup == null || primaryGroup.equals("")){
 			primaryGroup = "";
-		else
+		}
+		else{
 			primaryGroup = primaryGroup.substring(primaryGroup.lastIndexOf("_")+1);
-	
+		}
 
-		if(ssn == null || ssn.equals("") || fullName == null || fullName.equals("")) 
+		if(ssn == null || ssn.equals("") || fullName == null || fullName.equals("")){ 
 			formNotComplete = true;			
+		}
 					
 			if(submit != null) {
 				//is addressed if the okButton is pressed and the user has:
@@ -337,12 +348,12 @@ public class CreateUser extends StyledIWAdminWindow {
 				//3. entered only the social security number
 				if (submit.equals("ok") && formNotComplete) {
 					//is addressed if both name and social security number are empty
-					if((ssn == null || ssn.equals("")) && (fullName == null || fullName.equals("")))
+					if((ssn == null || ssn.equals("")) && (fullName == null || fullName.equals(""))){
 						setAlertOnLoad(iwrb.getLocalizedString("new_user.ssn_or_fullName_required","Personal ID or name is required"));
-					//is addressed if only the name is entered
+					}
 					else if(ssn == null || ssn.equals("") && (fullName != null || !fullName.equals(""))) {
+//						is addressed if only the name is entered
 						inputTable.add(iwrb.getLocalizedString("new_user.ssn_warning","You have selected to create a user with no Personal ID, do you want to continue?"),1,4);
-						ssnWarningDisplay = true;
 						fullNameField.setContent(fullName);
 						formNotComplete = false;
 						buttonTable.remove(okButton);
@@ -355,8 +366,19 @@ public class CreateUser extends StyledIWAdminWindow {
 					}
 					//is addressed if the only the social security number is entered
 					else if((ssn != null || !ssn.equals("")) && (fullName == null || fullName.equals(""))) {
-						inputTable.add(iwrb.getLocalizedString("new_user.fullName_warning","You have selected to create a user with no name, do you want to continue?"),1,4);
-						fullNameWarningDisplay = true;
+						try {
+							//todo fill in the name field if found by ssn
+							User user = getUserBusiness(iwc).getUser(ssn);
+							fullName = user.getName();
+							fullNameField.setContent(fullName);
+							fullNameField.setDisabled(true);
+							inputTable.add(iwrb.getLocalizedString("new_user.user_found","You are adding a user that exists in the database to the selected group, do you want to continue?"),1,4);
+						}
+						catch (FinderException e) {
+							//
+							inputTable.add(iwrb.getLocalizedString("new_user.fullName_warning","You have selected to create a user with no name, do you want to continue?"),1,4);
+						}
+						
 						ssnField.setContent(ssn);
 						formNotComplete = false;
 						buttonTable.remove(okButton);
