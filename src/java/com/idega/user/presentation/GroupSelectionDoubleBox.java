@@ -1,8 +1,9 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import com.idega.business.IBOLookup;
 import com.idega.presentation.IWContext;
@@ -16,8 +17,8 @@ import com.idega.user.data.Group;
  */
 public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	
-	private Collection selectedGroups = null;
-	private Collection availableGroups = null;
+	private List selectedGroups = null;
+	private List availableGroups = null;
 	private String selectedGroupsParameter = null;
 	private static final String selectedGroupsParameterDefaultValue = "iw_us_sel_group_id";
 	private Group rootGroup = null;
@@ -66,7 +67,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 		super.main(iwc);
 		
 		if( rootGroup!=null ){
-			setAvailableGroups(getGroupBusiness(iwc).getGroupsContained(rootGroup));
+			setAvailableGroups( com.idega.util.ListUtil.convertCollectionToList(getGroupBusiness(iwc).getGroupsContained(rootGroup)) );
 		}
 		
 		if( (availableGroups != null) &&  !availableGroups.isEmpty() ){
@@ -89,17 +90,17 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 
 	/**
 	 * Returns the availableGroups.
-	 * @return Collection
+	 * @return List
 	 */
-	public Collection getAvailableGroups() {
+	public List getAvailableGroups() {
 		return availableGroups;
 	}
 
 	/**
 	 * Returns the selectedGroups.
-	 * @return Collection
+	 * @return List
 	 */
-	public Collection getSelectedGroups() {
+	public List getSelectedGroups() {
 		return selectedGroups;
 	}
 
@@ -107,7 +108,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 * Sets the availableGroups.
 	 * @param availableGroups The availableGroups to set
 	 */
-	public void setAvailableGroups(Collection availableGroups) {
+	public void setAvailableGroups(List availableGroups) {
 		this.availableGroups = availableGroups;
 	}
 
@@ -115,7 +116,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 * Sets the selectedGroups.
 	 * @param selectedGroups The selectedGroups to set
 	 */
-	public void setSelectedGroups(Collection selectedGroups) {
+	public void setSelectedGroups(List selectedGroups) {
 		this.selectedGroups = selectedGroups;
 	}
 	
@@ -152,6 +153,17 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 */
 	public void setRootGroup(Group rootGroup) {
 		this.rootGroup = rootGroup;
+	}
+	
+	
+	/**
+	 * adds a group to the available selection
+	 * @param group The group to add
+	 */
+	public void setAddToAvailableGroups(Group group) {
+		if( availableGroups==null ) availableGroups = new ArrayList();
+		availableGroups.add(group);
+		
 	}
 	
 	private GroupBusiness getGroupBusiness(IWContext iwc) throws RemoteException {
