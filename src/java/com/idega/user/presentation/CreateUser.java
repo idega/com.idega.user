@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
@@ -23,9 +22,7 @@ import com.idega.presentation.ui.Window;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
-import com.idega.user.data.GroupHome;
 import com.idega.user.data.User;
-import com.idega.user.data.UserGroupRepresentative;
 import com.idega.util.IWColor;
 import com.idega.util.IWTimestamp;
 
@@ -165,7 +162,7 @@ public class CreateUser extends Window {
 		primaryGroupField = new DropdownMenu(primaryGroupFieldParameterName);
 		primaryGroupField.addSeparator();
 
-		String[] gr = new String[1];
+		//String[] gr = new String[1];
 		
 		Collection groups = null;
 		groupBiz = getGroupBusiness(iwc);
