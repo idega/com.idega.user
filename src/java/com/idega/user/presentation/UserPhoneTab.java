@@ -13,7 +13,6 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
@@ -39,10 +38,10 @@ public class UserPhoneTab extends UserTab {
 	private TextInput workPhoneField;
 	private TextInput mobilePhoneField;
 	private TextInput faxPhoneField;
-	private DropdownMenu homePhoneMenu;
-	private DropdownMenu workPhoneMenu;
-	private DropdownMenu mobilePhoneMenu;
-	private DropdownMenu faxPhoneMenu;
+	private Text homePhoneTypeText;
+	private Text workPhoneTypeText;
+	private Text mobilePhoneTypeText;
+	private Text faxPhoneTypeText;
 	private TextInput emailField;
   private TextInput jobField;
 	private TextInput workPlaceField;
@@ -59,10 +58,10 @@ public class UserPhoneTab extends UserTab {
   public static String jobFieldName = "job";
 	public static String workPlaceFieldName = "workplace";
 
-	private Text homePhoneText;
-	private Text workPhoneText;
-	private Text mobilePhoneText;
-	private Text faxPhoneText;
+	private Text firstPhoneText;
+	private Text secondPhoneText;
+	private Text thirdPhoneText;
+	private Text fourthPhoneText;
 	private Text emailText;
   private Text jobText;
 	private Text workPlaceText;
@@ -106,7 +105,7 @@ public class UserPhoneTab extends UserTab {
 			(String)fieldValues.get(this.mobilePhoneFieldName));
 		faxPhoneField.setContent((String)fieldValues.get(this.faxPhoneFieldName));
 
-		if ((String)fieldValues.get(this.homePhoneMenuName) != null
+/*		if ((String)fieldValues.get(this.homePhoneMenuName) != null
 			&& ((String)fieldValues.get(this.homePhoneMenuName)).length() > 0)
 			homePhoneMenu.setSelectedElement(
 				(String)fieldValues.get(this.homePhoneMenuName));
@@ -121,7 +120,7 @@ public class UserPhoneTab extends UserTab {
 		if ((String)fieldValues.get(this.faxPhoneMenuName) != null
 			&& ((String)fieldValues.get(this.faxPhoneMenuName)).length() > 0)
 			faxPhoneMenu.setSelectedElement(
-				(String)fieldValues.get(this.faxPhoneMenuName));
+				(String)fieldValues.get(this.faxPhoneMenuName));*/
 
 		emailField.setContent((String)fieldValues.get(this.emailFieldName));
     jobField.setContent((String)fieldValues.get(jobFieldName));
@@ -130,6 +129,8 @@ public class UserPhoneTab extends UserTab {
 
 	public void initializeFields() {
 		PhoneType[] phoneTypes = null;
+		IWContext iwc = IWContext.getInstance();
+		IWResourceBundle iwrb = getResourceBundle(iwc);
 		try {
 			phoneTypes =
 				(PhoneType[])PhoneTypeBMPBean.getStaticInstance(PhoneType.class).findAll();
@@ -140,8 +141,7 @@ public class UserPhoneTab extends UserTab {
 		
 		if (phoneTypes != null) {
 			if (phoneTypes.length > 0) {
-				IWContext iwc = IWContext.getInstance();
-				IWResourceBundle iwrb = getResourceBundle(iwc);
+				
 				
 				for (int i = 0; i < phoneTypes.length; i++) {
 					String n = phoneTypes[i].getName();
@@ -165,12 +165,12 @@ public class UserPhoneTab extends UserTab {
 		faxPhoneField = new TextInput(faxPhoneFieldName);
 		faxPhoneField.setLength(24);
 
-		homePhoneMenu = new DropdownMenu(phoneTypes, homePhoneMenuName);
-		workPhoneMenu = new DropdownMenu(phoneTypes, workPhoneMenuName);
-		mobilePhoneMenu = new DropdownMenu(phoneTypes, mobilePhoneMenuName);
-		faxPhoneMenu = new DropdownMenu(phoneTypes, faxPhoneMenuName);
+		homePhoneTypeText = new Text(iwrb.getLocalizedString("usr_phone.home_phone", "Home phone")); //new DropdownMenu(phoneTypes, homePhoneMenuName);
+		workPhoneTypeText = new Text(iwrb.getLocalizedString("usr_phone.work_phone", "Work phone")); // new DropdownMenu(phoneTypes, workPhoneMenuName);
+		mobilePhoneTypeText = new Text(iwrb.getLocalizedString("usr_phone.mobile_phone", "Mobile phone")); //new DropdownMenu(phoneTypes, mobilePhoneMenuName);
+		faxPhoneTypeText = new Text(iwrb.getLocalizedString("usr_phone.fax_phone", "Fax")); //new DropdownMenu(phoneTypes, faxPhoneMenuName);
 
-		for (int a = 0; a < phoneTypes.length; a++) {
+/*		for (int a = 0; a < phoneTypes.length; a++) {
 			if (a == 0) {
 				homePhoneMenu.setSelectedElement(
 					Integer.toString(phoneTypes[a].getID()));
@@ -187,7 +187,7 @@ public class UserPhoneTab extends UserTab {
 				faxPhoneMenu.setSelectedElement(
 					Integer.toString(phoneTypes[a].getID()));
 			}
-		}
+		}*/
 
 		emailField = new TextInput(emailFieldName);
 		emailField.setLength(24);
@@ -203,16 +203,16 @@ public class UserPhoneTab extends UserTab {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
-		homePhoneText = new Text(iwrb.getLocalizedString(homePhoneFieldName,"Phone 1") + ":");
+		firstPhoneText = new Text(iwrb.getLocalizedString(homePhoneFieldName,"Phone 1") + ":");
 //		homePhoneText.setFontSize(fontSize);
 
-		workPhoneText = new Text(iwrb.getLocalizedString(workPhoneFieldName,"Phone 2") + ":");
+		secondPhoneText = new Text(iwrb.getLocalizedString(mobilePhoneFieldName,"Phone 2") + ":");
 //		workPhoneText.setFontSize(fontSize);
 
-		mobilePhoneText = new Text(iwrb.getLocalizedString(mobilePhoneFieldName,"Phone 3") + ":");
+		thirdPhoneText = new Text(iwrb.getLocalizedString(workPhoneFieldName,"Phone 3") + ":");
 //		mobilePhoneText.setFontSize(fontSize);
 
-		faxPhoneText = new Text(iwrb.getLocalizedString(faxPhoneFieldName,"Phone 4") + ":");
+		fourthPhoneText = new Text(iwrb.getLocalizedString(faxPhoneFieldName,"Phone 4") + ":");
 //		faxPhoneText.setFontSize(fontSize);
 
 		emailText = new Text(iwrb.getLocalizedString(emailFieldName,"E-mail") + ":");
@@ -248,17 +248,17 @@ public class UserPhoneTab extends UserTab {
 		staffTable.setHeight(3, rowHeight);
 		staffTable.setHeight(4, rowHeight);
 
-		staffTable.add(homePhoneText, 1, 1);
-		staffTable.add(homePhoneMenu, 3, 1);
+		staffTable.add(firstPhoneText, 1, 1);
+		staffTable.add(homePhoneTypeText, 3, 1);
 		staffTable.add(homePhoneField, 2, 1);
-		staffTable.add(workPhoneText, 1, 2);
-		staffTable.add(workPhoneMenu, 3, 2);
-		staffTable.add(workPhoneField, 2, 2);
-		staffTable.add(mobilePhoneText, 1, 3);
-		staffTable.add(mobilePhoneMenu, 3, 3);
-		staffTable.add(mobilePhoneField, 2, 3);
-		staffTable.add(faxPhoneText, 1, 4);
-		staffTable.add(faxPhoneMenu, 3, 4);
+		staffTable.add(secondPhoneText, 1, 2);
+		staffTable.add(mobilePhoneTypeText, 3, 2);
+		staffTable.add(mobilePhoneField, 2, 2);
+		staffTable.add(thirdPhoneText, 1, 3);
+		staffTable.add(workPhoneTypeText, 3, 3);
+		staffTable.add(workPhoneField, 2, 3);
+		staffTable.add(fourthPhoneText, 1, 4);
+		staffTable.add(faxPhoneTypeText, 3, 4);
 		staffTable.add(faxPhoneField, 2, 4);
 		this.add(staffTable, 1, 1);
 
