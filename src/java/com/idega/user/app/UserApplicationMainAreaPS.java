@@ -70,7 +70,10 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
     		System.out.println("Select group event! getting plugins");
 	    	_selectedGroup = ((SelectGroupEvent)e).getSelectedGroup();
 	    	String groupType = _selectedGroup.getGroupType();
+	    	System.out.println("Selected group type = "+groupType);
+	    	
 	    	_plugins = getGroupBusiness( e.getIWContext()).getUserGroupPluginsForGroupTypeString(groupType);
+	    	
 	    	if( _plugins==null ) System.out.println("Plugins are null fro group_type ="+groupType);
 	    	
 	    	Iterator iter = _plugins.iterator();
