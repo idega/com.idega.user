@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<projectDescription>
+  <name>com.idega.user</name>
+  <comment>
+  </comment>
+  <projects>
+    <project>com.idega.core</project>
+    <project>com.idega.block.login</project>
+    <project>com.idega.builder</project>
+    <project>com.idega.block.entity</project>
+    <project>com.idega.developer</project>
+    <project>com.idega.block.media</project>
+    <project>com.idega.block.importer</project>
+    <project>com.idega.block.dataquery</project>
+    <project>com.idega.block.datareport</project>
+    <project>com.idega.block.cal</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+      <arguments>
+      </arguments>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>
