@@ -30,7 +30,7 @@ import com.idega.user.event.CreateGroupEvent;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -124,6 +124,14 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 				GroupHome gHome = (GroupHome)IDOLookup.getHome(Group.class);
 				Group parentGroup = gHome.findByPrimaryKey(new Integer(parentGroupId));
 				group = business.createGroupUnder(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID(),event.getAliasID(),parentGroup);
+				
+				//do some permission stuff
+				//check if to inherit permissions from parent or its permission controller
+				checkForPermissionInheritance(eventContext,parentGroup,group);
+				
+				
+				
+				
 				//Group parentGroup = (Group)IDOLookup.findByPrimaryKey(Group.class,event.getParentID());
 				//parentGroup.addGroup(group);
 			} else {
@@ -135,7 +143,9 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 			groupId = (Integer) group.getPrimaryKey();
 			eventContext = e.getIWContext();
 			//set current user a owner of group
-			setCurrentUserAsOwnerOfGroup(e.getIWContext(), group);
+			setCurrentUserAsOwnerOfGroup(eventContext, group);
+			
+			
 			
 			//get groupType tree and iterate through it and create default sub groups.
 			createDefaultSubGroups(group,business,e.getIWContext());
@@ -235,6 +245,10 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 						Group newGroup = business.createGroupUnder(name,"",typeString,group);
 						setCurrentUserAsOwnerOfGroup(iwc,newGroup);
 						setCurrentUsersPrimaryGroupPermissionsForGroup(iwc,newGroup);
+						
+						checkForPermissionInheritance(iwc,group,newGroup);
+						
+						
 						if(!type.isLeaf()){
 							createDefaultSubGroups(newGroup,business,iwc);
 						}
@@ -252,7 +266,33 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 		}
 	}
   
-  private void setCurrentUserAsOwnerOfGroup(IWUserContext iwc, Group group){
+  /**
+   * If the groups parent has inherited permission this will also have it, or if the parent is a permission controlling group this group inherits.
+	 * @param iwc
+	 * @param parentGroup
+	 * @param newlyCreatedGroup
+	 */
+	private void checkForPermissionInheritance(IWContext iwc, Group parentGroup, Group newlyCreatedGroup) {
+		
+		if(parentGroup!=null ){
+			//is controller
+			if(parentGroup.isPermissionControllingGroup()){
+				newlyCreatedGroup.setPermissionControllingGroup(parentGroup);
+				newlyCreatedGroup.store();
+			}
+			//is being controlled
+			if(parentGroup.getPermissionControllingGroupID()>0){
+				newlyCreatedGroup.setPermissionControllingGroup(parentGroup.getPermissionControllingGroup());
+				newlyCreatedGroup.store();
+			}
+			
+		}
+		
+		
+	}
+
+
+private void setCurrentUserAsOwnerOfGroup(IWUserContext iwc, Group group){
 		User user = iwc.getCurrentUser();
 		AccessController access = iwc.getAccessController();
 		//get users and add them as owners also, user.getPrimaryGroup();
@@ -273,7 +313,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 			Group primary = user.getPrimaryGroup();
 			String primaryGroupId = primary.getPrimaryKey().toString();
 			String newGroupId = group.getPrimaryKey().toString();
-			//TDOD create methods for this in accesscontrol
+			//TODO Eiki create methods for this in accesscontrol
 			//create permission
 			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_CREATE,Boolean.TRUE);
 			//edit permission
@@ -288,5 +328,29 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 			ex.printStackTrace();
 		
 		}
+	}
+	
+	private void giveParentGroupsOwnersReadAccessToGroup(IWUserContext iwc, Group parentGroup, Group group){
+		User user = iwc.getCurrentUser();
+		AccessController access = iwc.getAccessController();
+		//TODO Eiki get all owners and give them read access
+		
+		/*try {
+			
+			access.
+			Group primary = user.getPrimaryGroup();
+			String primaryGroupId = primary.getPrimaryKey().toString();
+			String newGroupId = group.getPrimaryKey().toString();
+			
+			//view permission
+			access.setPermission(AccessController.CATEGORY_GROUP_ID,iwc,primaryGroupId,newGroupId,access.PERMISSION_KEY_VIEW,Boolean.TRUE);
+					
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		
+		}
+		
+		*/
 	}
 }

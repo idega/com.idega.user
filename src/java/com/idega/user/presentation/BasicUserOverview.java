@@ -228,8 +228,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			}
 
 			canEditUserTemp = accessController.hasEditPermissionFor(selectedGroup, iwc);
-			if (!canEditUserTemp)
+			
+			if (!canEditUserTemp){
 				canEditUserTemp = accessController.isOwner(selectedGroup, iwc); //is
+			}
 																				// this
 																				// necessery
 																				// (eiki)
@@ -764,7 +766,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		isCurrentUserSuperAdmin = iwc.isSuperAdmin();
 	
 		if (selectedGroup != null && !isCurrentUserSuperAdmin) {
-			if (accessController.hasViewPermissionFor(selectedGroup, iwc) || accessController.isOwner(selectedGroup, iwc)) {
+			if (accessController.hasViewPermissionFor(selectedGroup, iwc)) {//|| accessController.isOwner(selectedGroup, iwc) not needed checked in hasview
 				this.add(getList(iwc));
 			}
 			else {
