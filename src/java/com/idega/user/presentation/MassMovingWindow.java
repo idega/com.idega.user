@@ -140,7 +140,7 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
         // try to get the action listener
         //TODO thomas change this in the way that actually the userApplicationMainAreaPs is used
         //actionListener = (UserApplicationMainAreaPS) stateMachine.getStateFor(actionListenerStateId, UserApplicationMainAreaPS.class);
-        String code = IWMainApplication.getEncryptedClassName("BasicUserOverviewPS");
+        String code = IWMainApplication.getEncryptedClassName(BasicUserOverviewPS.class);
         code = ":" + code;
         actionListener = (BasicUserOverviewPS) stateMachine.getStateFor( code , BasicUserOverviewPS.class);
       }
