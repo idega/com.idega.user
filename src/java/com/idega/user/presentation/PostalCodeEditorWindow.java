@@ -1,42 +1,23 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
-import java.util.Iterator;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.business.AddressBusiness;
-import com.idega.event.IWActionListener;
-import com.idega.event.IWStateMachine;
-import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Image;
-import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.CountryDropdownMenu;
-import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
-import com.idega.presentation.ui.HiddenInput;
-import com.idega.presentation.ui.SelectionBox;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
-import com.idega.user.app.ToolbarElement;
-import com.idega.user.app.UserApplication;
-import com.idega.user.app.UserApplicationMainArea;
-import com.idega.user.app.UserApplicationMainAreaPS;
-import com.idega.user.block.search.event.UserSearchEvent;
-import com.idega.user.business.GroupBusiness;
-import com.idega.user.business.UserBusiness;
-import com.idega.user.data.Group;
 
 
 /**

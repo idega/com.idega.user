@@ -276,7 +276,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
           
           //called when going between subsets
           public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
-						Map permissionMap = getPermissionMapFromSession(iwc,entityPath.getShortKey(),true);//zero the map
+						getPermissionMapFromSession(iwc,entityPath.getShortKey(),true);//zero the map
             return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
           } 
   

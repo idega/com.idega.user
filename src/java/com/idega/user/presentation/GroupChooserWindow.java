@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;

@@ -216,7 +216,7 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 
           
           public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
-						Map permissionMap = getPermissionMapFromSession(iwc,permissionTypeOwner,true);
+						getPermissionMapFromSession(iwc,permissionTypeOwner,true);
             return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
           } 
   
