@@ -14,6 +14,7 @@ public class UserChooser extends AbstractChooser {
 
 	private int _userId = -1;
 	private Collection userPks;
+	private boolean useUserPks = false;
 
   public UserChooser(String chooserName) {
     addForm(false);
@@ -26,8 +27,12 @@ public class UserChooser extends AbstractChooser {
   }
 
   public void main(IWContext iwc){
-  	if (userPks != null && userPks.size() > 0) {
+  	if (useUserPks) {
 	  	iwc.setSessionAttribute(UserChooserWindow.AVAILABLE_USER_PKS_SESSION_PARAMETER, userPks);
+	  	iwc.setSessionAttribute(UserChooserWindow.USING_AVAILABLE_USER_PKS_SESSION_PARAMETER, "true");
+  	}else {
+  		iwc.removeSessionAttribute(UserChooserWindow.AVAILABLE_USER_PKS_SESSION_PARAMETER);
+  		iwc.removeSessionAttribute(UserChooserWindow.USING_AVAILABLE_USER_PKS_SESSION_PARAMETER);	
   	}
     IWBundle iwb = iwc.getApplication().getBundle(BuilderLogic.IW_BUNDLE_IDENTIFIER);
     setChooseButtonImage(iwb.getImage("open.gif","Choose"));
@@ -47,7 +52,8 @@ public class UserChooser extends AbstractChooser {
 	}
 	
 	public void setValidUserPks(Collection userPks) {
-		this.userPks = userPks;	
+		this.userPks = userPks;
+		this.useUserPks = true;	
 	}
 
 }
