@@ -74,7 +74,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 
 	public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
 		int count = 0;
-		IWResourceBundle iwrb = getResourceBundle(iwc);
+		//IWResourceBundle iwrb = getResourceBundle(iwc);
 		String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
 		int userId = Integer.parseInt(userIdString);
 		String groupIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
