@@ -692,17 +692,14 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	 * @return
 	 */
 	private Collection getAllPermissionForSelectedGroupAndCurrentUser(IWContext iwc) {
-		Collection allPermissions = null;
-
+		Collection allPermissions = new ArrayList();
 		try {
 			User user = iwc.getCurrentUser();
 			
 			//for this group
-			allPermissions = AccessControl.getAllGroupPermissionsForGroup(selectedGroup);
+			allPermissions.addAll(AccessControl.getAllGroupPermissionsForGroup(selectedGroup));
 			//for the user
 			Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
-			
-						
 			//add the permissions to one big list
 			allPermissions.addAll(ownedPermissions);
 			
