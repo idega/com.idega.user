@@ -53,6 +53,7 @@ import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.PrintButton;
 import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
@@ -186,15 +187,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             
             EntityBrowser entityBrowser = getEntityBrowser(users, iwc);
             // put print button to bottom
-    		Link link = new Link(iwb.getImage("search.gif"));
-    		if (selectedGroup!= null) {
-    		    link.addParameter("dr_group", selectedGroup.getNodeID());
+    		LinkToUserStats linkToUserStats = (LinkToUserStats)ImplementorRepository.getInstance().newInstanceOrNull(LinkToUserStats.class, this.getClass());
+    		if (linkToUserStats != null) {
+    		    linkToUserStats.setSelectedGroup(selectedGroup);
+    		    Link link = linkToUserStats.getLink();
+    		    link.setImage(iwb.getImage("search.gif"));
+        		entityBrowser.addPresentationObjectToBottom(link);
     		}
-    		link.addParameter(UserStatsWindow.STATS_INVOCATION_NAME_FROM_BUNDLE, "Invocation-UserStats.xml");
-    		link.addParameter(UserStatsWindow.STATS_LAYOUT_NAME_FROM_BUNDLE, "Layout-UserStats.xml");
-    		link.addParameter(UserStatsWindow.STATS_LOCALIZABLE_KEY_NAME, "userstatswindow.userstats");
-    		link.setWindowToOpen(UserStatsWindow.class);
-    		entityBrowser.addPresentationObjectToBottom(link);
             // put browser into a form
             Form form = new Form();
             form.add(entityBrowser);
