@@ -28,6 +28,7 @@ import com.idega.presentation.ui.Window;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.core.data.Address;
 import com.idega.util.IWColor;
 import com.idega.util.ListUtil;
 
@@ -36,7 +37,7 @@ import com.idega.util.ListUtil;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>
  * @version 1.0
  */
 
@@ -225,9 +226,13 @@ System.out.println(" firstIndex = "+firstIndex);
             line++;
           }
 
-
-          userTable.add(getUserBusiness(iwc).getUsersMainAddress(tempUser).getName(),2,line-1);
-
+			
+		  Address userAddress = getUserBusiness(iwc).getUsersMainAddress(tempUser);
+		  
+		  if( userAddress!=null ){
+         	 userTable.add(userAddress.getName() ,2,line-1);
+		  }
+		  
           if(delete && !adminUsers.contains(tempUser) && !userIsSuperAdmin && iwc.getAccessController().isAdmin(iwc)){
             Link delLink = new Link(new Text("Delete"));
             delLink.setWindowToOpen(ConfirmWindow.class);
