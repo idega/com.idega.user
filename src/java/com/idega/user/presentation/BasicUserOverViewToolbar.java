@@ -71,15 +71,16 @@ public class BasicUserOverViewToolbar extends Toolbar {
 			text.setBold();
 
 			toolbarTable.add(title, 2, 2);
+			
+			IWColor color = new IWColor(230, 230, 230); //jonni color
+
+			toolbarTable.setColor(color);
+			toolbarTable.setColor(1, 1, color.brighter());
+			toolbarTable.setColor(2, 1, color.brighter());
+			toolbarTable.setColor(1, 3, color.darker());
+			toolbarTable.setColor(2, 3, color.darker());
 		}
 
-		IWColor color = new IWColor(230, 230, 230); //jonni color
-
-		toolbarTable.setColor(color);
-		toolbarTable.setColor(1, 1, color.brighter());
-		toolbarTable.setColor(2, 1, color.brighter());
-		toolbarTable.setColor(1, 3, color.darker());
-		toolbarTable.setColor(2, 3, color.darker());
 
 		add(toolbarTable);
 
