@@ -23,7 +23,6 @@ import com.idega.user.block.search.presentation.SearchForm;
 import com.idega.user.block.search.presentation.SearchWindow;
 import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.presentation.CreateGroupWindow;
-import com.idega.user.presentation.CreateUser;
 import com.idega.user.presentation.MassMovingWindow;
 
 
