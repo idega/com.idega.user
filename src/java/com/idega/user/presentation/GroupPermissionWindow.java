@@ -161,8 +161,10 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		Text permissionControlGroupName = new Text(selectedGroup.getPermissionControllingGroup().getName(),true,false,false);
 		
 		Table mainTable = new Table();
-		mainTable.setWidth(width-60);
-		mainTable.setHeight(height-50);
+		int mainTableWidth = (width > 60) ? width - 60: 10;
+		int mainTableHeight = (height > 50) ? height - 50 : 10;
+		mainTable.setWidth(mainTableWidth);
+		mainTable.setHeight(mainTableHeight);
 		mainTable.setCellpadding(0);
 		mainTable.setCellspacing(0);
 		
@@ -242,7 +244,9 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		browser.setDefaultNumberOfRows(18);
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
 		browser.setWidth(browser.HUNDRED_PERCENT);
-		browser.setScrollableWithHeightAndWidth(height-250, width-60);
+		int scrollableHeight = (height > 250) ? height -250 : 20;
+		int scrollableWidth =(width > 60) ? width -60 : 20;
+		browser.setScrollableWithHeightAndWidth(scrollableHeight, scrollableWidth);
 		//disable top set browser
 		browser.setShowNavigation(false, true);
 		//		set color of rows
