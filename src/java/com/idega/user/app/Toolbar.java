@@ -102,6 +102,8 @@ public class Toolbar extends Page implements IWBrowserView {
     this.empty();
     iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
+    boolean showISStuff = iwc.getApplicationSettings().getProperty("temp_show_is_related_stuff")!=null;
+		
 
     Table toolbarTable = new Table(2,3);
     toolbarTable.setCellpadding(0);
@@ -180,38 +182,43 @@ public class Toolbar extends Page implements IWBrowserView {
 		toolbar1.add(button3,4,1);
 
   
-    //Search temp
-    Table button4 = new Table(2,1);
-    button4.setCellpadding(0);
-    Image iconMassMoving = iwb.getImage("new_group.gif");
-    button4.add(iconMassMoving,1,1);
-    Text text4 = new Text(iwrb.getLocalizedString("button.massMoving","Move"));
-    text4.setFontFace(Text.FONT_FACE_VERDANA);
-    text4.setFontSize(Text.FONT_SIZE_7_HTML_1);
-    Link tLink14 = new Link(text4);
-    if (userApplicationMainAreaStateId != null) {
-      tLink14.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, userApplicationMainAreaStateId);
+    //mass moving
+    if(showISStuff){
+    
+	    Table button4 = new Table(2,1);
+	    button4.setCellpadding(0);
+	    Image iconMassMoving = iwb.getImage("new_group.gif");
+	    button4.add(iconMassMoving,1,1);
+	    Text text4 = new Text(iwrb.getLocalizedString("button.massMoving","Move"));
+	    text4.setFontFace(Text.FONT_FACE_VERDANA);
+	    text4.setFontSize(Text.FONT_SIZE_7_HTML_1);
+	    Link tLink14 = new Link(text4);
+	    if (userApplicationMainAreaStateId != null) {
+	      tLink14.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, userApplicationMainAreaStateId);
+	    }
+	    if (selectedGroupProviderStateId  != null) {
+	      tLink14.addParameter(MassMovingWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
+	    }
+	    tLink14.setWindowToOpen(MassMovingWindow.class);
+	    button4.add(tLink14,2,1);
+	    toolbar1.add(button4,5,1);  
     }
-    if (selectedGroupProviderStateId  != null) {
-      tLink14.addParameter(MassMovingWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
-    }
-    tLink14.setWindowToOpen(MassMovingWindow.class);
-    button4.add(tLink14,2,1);
-    toolbar1.add(button4,5,1);  
   
 		//Member exchange window temp
-		Table button5 = new Table(2,1);
-		button5.setCellpadding(0);
-		Image iconExchange = iwb.getImage("new_group.gif");
-		button5.add(iconExchange,1,1);
-		Text text5 = new Text(iwrb.getLocalizedString("button.club_member_exchange","Club exchange"));
-		text5.setFontFace(Text.FONT_FACE_VERDANA);
-		text5.setFontSize(Text.FONT_SIZE_7_HTML_1);
-		Link tLink15 = new Link(text5);
-		//TODO Eiki add somekind of plugin lookup for toolbar items
-		tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.ClubMemberExchangeWindow");
-		button5.add(tLink15,2,1);
-		toolbar1.add(button5,6,1);
+		if(showISStuff){
+			Table button5 = new Table(2,1);
+			button5.setCellpadding(0);
+			Image iconExchange = iwb.getImage("new_group.gif");
+			button5.add(iconExchange,1,1);
+			Text text5 = new Text(iwrb.getLocalizedString("button.club_member_exchange","Club exchange"));
+			text5.setFontFace(Text.FONT_FACE_VERDANA);
+			text5.setFontSize(Text.FONT_SIZE_7_HTML_1);
+			Link tLink15 = new Link(text5);
+			//TODO Eiki add somekind of plugin lookup for toolbar items
+			tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.ClubMemberExchangeWindow");
+			button5.add(tLink15,2,1);
+			toolbar1.add(button5,6,1);
+		}
     
    //finance
    // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("finance","Finance"), iwb.getImage("finance.gif"), com.idega.block.finance.presentation.AccountViewer.class),4,1);

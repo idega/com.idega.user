@@ -1,5 +1,7 @@
 package com.idega.user.presentation;
 
+import com.idega.block.importer.data.ColumnSeparatedImportFile;
+import com.idega.block.importer.presentation.Importer;
 import com.idega.builder.data.IBDomain;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.idegaweb.IWMainApplication;
@@ -45,6 +47,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
 		this.empty();
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
+		boolean showISStuff = iwc.getApplicationSettings().getProperty("temp_show_is_related_stuff")!=null;
 		AccessController access = iwc.getAccessController();
 
 		Table toolbarTable = new Table(2, 3);
@@ -134,7 +137,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
 				toolbar1.add(button2, 3, 1);
 				
 				//import button
-				if(selectedGroup!=null){
+				if(selectedGroup!=null && showISStuff){
 					Table button3 = new Table(2,1);
 					button3.setCellpadding(0);
 						Image iconImport = iwb.getImage("import.gif");
@@ -143,8 +146,16 @@ public class BasicUserOverViewToolbar extends Toolbar {
 					text3.setFontFace(Text.FONT_FACE_VERDANA);
 					text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
 						Link tLink14 = new Link(text3);
-						tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID,((Integer)selectedGroup.getPrimaryKey()).toString() );
-					 tLink14.setWindowToOpen(com.idega.block.importer.presentation.Importer.class);
+				
+					
+					tLink14.setParameter(Importer.PARAMETER_GROUP_ID,((Integer)selectedGroup.getPrimaryKey()).toString() );
+					tLink14.setParameter(Importer.PARAMETER_IMPORT_FILE,ColumnSeparatedImportFile.class.getName());
+					//TODO: Eiki make plugin based
+					tLink14.setParameter(Importer.PARAMETER_IMPORT_HANDLER,"is.idega.idegaweb.member.block.importer.business.PinLookupToGroupImportHandler");
+					 
+					 //setja import handler 
+					 //setja import file
+					 tLink14.setWindowToOpen(Importer.class);
 		 
 						button3.add(tLink14,2,1);
 						toolbar1.add(button3,6,1);
@@ -152,7 +163,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
 				
 				
 				//mass registering button
-				if(selectedGroup!=null){
+				if(selectedGroup!=null && showISStuff){
 					Table button3 = new Table(2,1);
 					button3.setCellpadding(0);
 						Image iconRegister = iwb.getImage("export.gif");
