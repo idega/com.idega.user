@@ -2,8 +2,8 @@ package com.idega.user.presentation;
 
 import java.util.Hashtable;
 
-import com.idega.core.data.Address;
-import com.idega.core.data.Country;
+import com.idega.core.location.data.Address;
+import com.idega.core.location.data.Country;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;

@@ -8,8 +8,8 @@ import java.util.Vector;
 
 import javax.swing.event.ChangeListener;
 
-import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationState;
@@ -163,7 +163,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
     
     BasicUserOverviewPS state = getPresentationStateOfBasicUserOverview(iwc);
     Group group = state.getSelectedGroup();
-    IBDomain domain = state.getSelectedDomain();
+    ICDomain domain = state.getSelectedDomain();
     if (group != null) {
       int groupId = ((Integer) group.getPrimaryKey()).intValue();
       groupTree.setSelectedGroupId(groupId);

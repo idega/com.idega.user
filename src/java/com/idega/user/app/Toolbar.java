@@ -5,8 +5,8 @@ import java.util.Vector;
 
 import com.idega.block.datareport.presentation.ReportLayoutChooser;
 import com.idega.block.importer.presentation.Importer;
-import com.idega.core.data.ICFile;
-import com.idega.core.data.ICFileHome;
+import com.idega.core.file.data.ICFile;
+import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWBundle;

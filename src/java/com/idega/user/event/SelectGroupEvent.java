@@ -1,7 +1,7 @@
 package com.idega.user.event;
 
 import com.idega.user.data.Group;
-import com.idega.builder.data.IBDomain;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDOLookup;
 import com.idega.presentation.IWContext;
 import com.idega.event.*;
@@ -58,10 +58,10 @@ public class SelectGroupEvent extends IWPresentationEvent {
     }
   }
   
-  public IBDomain getParentDomainOfSelection(){
+  public ICDomain getParentDomainOfSelection(){
     if(parentDomainOfSelection != null){
       try {
-        return (IBDomain)IDOLookup.findByPrimaryKey(IBDomain.class, parentDomainOfSelection);
+        return (ICDomain)IDOLookup.findByPrimaryKey(ICDomain.class, parentDomainOfSelection);
       }
       catch (Exception ex) {
         ex.printStackTrace();

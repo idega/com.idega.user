@@ -1,6 +1,6 @@
 package com.idega.user.event;
 
-import com.idega.builder.data.IBDomain;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWPresentationEvent;
 import com.idega.presentation.IWContext;
@@ -79,10 +79,10 @@ public class DeleteGroupEvent extends IWPresentationEvent {
     }
   }    
 
-  public IBDomain getParentDomain(){
+  public ICDomain getParentDomain(){
     if(parentDomainId != null && (! new Integer(-1).equals(parentDomainId))) {
       try {
-        return (IBDomain)IDOLookup.findByPrimaryKey(IBDomain.class, parentDomainId);
+        return (ICDomain)IDOLookup.findByPrimaryKey(ICDomain.class, parentDomainId);
       }
       catch (Exception ex) {
         ex.printStackTrace();

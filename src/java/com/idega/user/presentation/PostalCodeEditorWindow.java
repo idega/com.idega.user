@@ -6,7 +6,7 @@ import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
-import com.idega.core.business.AddressBusiness;
+import com.idega.core.location.business.AddressBusiness;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.IWAdminWindow;

@@ -1,6 +1,6 @@
 package com.idega.user.event;
 
-import com.idega.builder.data.IBDomain;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWPresentationEvent;
 import com.idega.presentation.IWContext;
@@ -32,10 +32,10 @@ public class SelectDomainEvent extends IWPresentationEvent {
   }
 
 
-  public IBDomain getSelectedDomain(){
+  public ICDomain getSelectedDomain(){
     if(_selectedDomain != null){
       try {
-        return (IBDomain)IDOLookup.findByPrimaryKey(IBDomain.class,_selectedDomain);
+        return (ICDomain)IDOLookup.findByPrimaryKey(ICDomain.class,_selectedDomain);
       }
       catch (Exception ex) {
         ex.printStackTrace();

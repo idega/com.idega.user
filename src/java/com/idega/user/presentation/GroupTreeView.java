@@ -1,6 +1,6 @@
 package com.idega.user.presentation;
 
-import com.idega.core.ICTreeNode;
+import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.browser.presentation.IWTreeControl;
 import com.idega.presentation.IWContext;

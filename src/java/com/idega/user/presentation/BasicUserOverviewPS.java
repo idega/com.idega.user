@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.swing.event.ChangeEvent;
 
 import com.idega.block.entity.event.EntityBrowserEvent;
-import com.idega.builder.data.IBDomain;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWException;
@@ -35,10 +35,10 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
 //  String color = color1;
 
   protected Group parentGroupOfSelection = null;
-	protected IBDomain parentDomainOfSelection = null;
+	protected ICDomain parentDomainOfSelection = null;
 
 	protected Group _selectedGroup = null;
-	protected IBDomain _selectedDomain = null;
+	protected ICDomain _selectedDomain = null;
   
   private Map resultOfMovingUsers = null;
   private int targetGroupId;
@@ -58,7 +58,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
     return _selectedGroup;
   }
 
-  public IBDomain getSelectedDomain(){
+  public ICDomain getSelectedDomain(){
     return _selectedDomain;
   }
 
@@ -153,7 +153,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
 	 * Returns the parentDomainOfSelection.
 	 * @return IBDomain
 	 */
-	public IBDomain getParentDomainOfSelection() {
+	public ICDomain getParentDomainOfSelection() {
 		return parentDomainOfSelection;
 	}
 

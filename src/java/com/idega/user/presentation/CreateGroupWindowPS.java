@@ -7,9 +7,9 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
-import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
@@ -127,7 +127,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 			// Create under
 			if(event.getParentType() == CreateGroupEvent.TYPE_DOMAIN){  // under Domain
 			  GroupDomainRelationTypeHome gdrHome = (GroupDomainRelationTypeHome)IDOLookup.getHome(GroupDomainRelationType.class);
-			  IBDomain domain = (IBDomain)IDOLookup.findByPrimaryKey(IBDomain.class,event.getParentID());
+			  ICDomain domain = (ICDomain)IDOLookup.findByPrimaryKey(ICDomain.class,event.getParentID());
 			  business.addGroupUnderDomain(domain,group,gdrHome.getTopNodeRelationType());
 			} else if(event.getParentType() == CreateGroupEvent.TYPE_GROUP){ // under other group
 			  Group parentGroup = (Group)IDOLookup.findByPrimaryKey(Group.class,event.getParentID());

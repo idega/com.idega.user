@@ -2,8 +2,8 @@ package com.idega.user.presentation;
 
 import com.idega.block.importer.data.ColumnSeparatedImportFile;
 import com.idega.block.importer.presentation.Importer;
-import com.idega.builder.data.IBDomain;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -29,7 +29,7 @@ import com.idega.util.IWColor;
 public class BasicUserOverViewToolbar extends Toolbar {
 	private Group selectedGroup;
 	private Group parentGroup;
-	private IBDomain parentDomain;
+	private ICDomain parentDomain;
 
 	public static final String PARAMETERSTRING_GROUP_ID = "ic_group_id";
 
@@ -296,7 +296,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
 	 * Returns the domain.
 	 * @return IBDomain
 	 */
-	public IBDomain getDomain() {
+	public ICDomain getDomain() {
 		return parentDomain;
 	}
 
@@ -312,7 +312,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
 	 * Sets the domain.
 	 * @param domain The domain to set
 	 */
-	public void setDomain(IBDomain parentDomain) {
+	public void setDomain(ICDomain parentDomain) {
 		this.parentDomain = parentDomain;
 	}
 

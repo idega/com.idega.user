@@ -8,9 +8,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
-import com.idega.builder.data.IBDomain;
-import com.idega.builder.data.IBDomainHome;
-import com.idega.core.ICTreeNode;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.core.builder.data.ICDomainHome;
+import com.idega.core.data.ICTreeNode;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.user.data.Group;
@@ -32,7 +32,7 @@ public class GroupTreeNode implements ICTreeNode {
 
 	private ICTreeNode _parent = null;
 
-	private IBDomain _domain = null;
+	private ICDomain _domain = null;
 	private Group _group = null;
 	private int _nodeType;
 	
@@ -41,7 +41,7 @@ public class GroupTreeNode implements ICTreeNode {
 	public static final int TYPE_DOMAIN = CreateGroupEvent.TYPE_DOMAIN;
 	public static final int TYPE_GROUP = CreateGroupEvent.TYPE_GROUP;
 
-	public GroupTreeNode(IBDomain domain,  IWApplicationContext iwc) {
+	public GroupTreeNode(ICDomain domain,  IWApplicationContext iwc) {
 		Map m = (Map)iwc.getApplicationAttribute("domain_group_tree");
 		if (m == null) {
 			m = new Hashtable();
@@ -87,7 +87,7 @@ public class GroupTreeNode implements ICTreeNode {
 		}
 	}
 
-	protected GroupTreeNode(IBDomain domain) {
+	protected GroupTreeNode(ICDomain domain) {
 		_domain = domain;
 		_nodeType = TYPE_DOMAIN;
 	}
@@ -230,7 +230,7 @@ public class GroupTreeNode implements ICTreeNode {
 		switch (_nodeType) {
 			case TYPE_DOMAIN :
 				try {
-					GroupTreeNode node = new GroupTreeNode(((IBDomainHome) _domain.getEJBLocalHome()).findByPrimaryKey(new Integer(childIndex)));
+					GroupTreeNode node = new GroupTreeNode(((ICDomainHome) _domain.getEJBLocalHome()).findByPrimaryKey(new Integer(childIndex)));
 					node.setParent(this);
 					return node;
 				}

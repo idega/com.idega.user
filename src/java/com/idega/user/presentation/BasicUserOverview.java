@@ -17,15 +17,16 @@ import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.block.entity.presentation.converters.DateConverter;
 import com.idega.block.entity.presentation.converters.MessageConverter;
-import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
-import com.idega.core.data.Address;
-import com.idega.core.data.Country;
-import com.idega.core.data.Email;
-import com.idega.core.data.Phone;
-import com.idega.core.data.PhoneType;
-import com.idega.core.data.PostalCode;
+import com.idega.core.location.data.Address;
+import com.idega.core.location.data.Country;
+import com.idega.core.contact.data.Email;
+import com.idega.core.contact.data.Phone;
+import com.idega.core.contact.data.PhoneType;
+import com.idega.core.location.data.PostalCode;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.core.builder.data.ICPage;
 import com.idega.data.EntityRepresentation;
 import com.idega.data.GenericEntity;
 import com.idega.event.IWActionListener;
@@ -86,7 +87,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	
 	protected BasicUserOverviewPS ps;
 	Group selectedGroup;
-	protected IBDomain selectedDomain;
+	protected ICDomain selectedDomain;
 	protected Group aliasGroup;
 	protected AccessController accessController;
 	

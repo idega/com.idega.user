@@ -4,10 +4,10 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.idega.builder.data.IBDomain;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.data.ICPermission;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
@@ -38,7 +38,7 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
       if (event.isDeletingConfirmed())  {
         Group group = event.getGroup();
         Group parentGroup = event.getParentGroup();
-        IBDomain parentDomain = event.getParentDomain();
+        ICDomain parentDomain = event.getParentDomain();
         IWApplicationContext iwac = e.getIWContext().getApplicationContext();
         GroupBusiness groupBusiness = getGroupBusiness(iwac);
         if (groupBusiness.isGroupRemovable(group))  {
@@ -116,7 +116,7 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
 			return allPermissions;
 		}
 
-	private void removeRelation(IBDomain domain, Group group, User currentUser)  {
+	private void removeRelation(ICDomain domain, Group group, User currentUser)  {
     try {
       GroupDomainRelationHome home = (GroupDomainRelationHome) 
         IDOLookup.getHome(GroupDomainRelation.class);
