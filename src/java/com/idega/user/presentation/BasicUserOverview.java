@@ -121,10 +121,34 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
       users = ListUtil.convertCollectionToList(users).subList( (sel*parSize), Math.min((users.size()),((sel+1)*parSize)) );
 //      this.add(" ("+sel+")");
 
-      userTable = new Table(3,(users.size()>33)?users.size():33);
-//      userTable = new Table(3,(users.size()>16)?users.size():16);
+      userTable = new Table(3, ((users.size()>33)?users.size():33)+1  );
+      userTable.setLineAfterColumn(1);
+      userTable.setLineAfterColumn(2);
+      userTable.setLineColor("#DBDCDF");
+      
+      userTable.setBackgroundImage(1,1,this.getBundle(iwc).getImage("glass_column_dark.gif"));
+      userTable.setBackgroundImage(2,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
+      userTable.setBackgroundImage(3,1,this.getBundle(iwc).getImage("glass_column_light.gif"));      
+      userTable.setHeight(1,16);
+      Text name = new Text("Nafn");
+ 	  name.setFontFace(Text.FONT_FACE_VERDANA);
+ 	  name.setFontSize(Text.FONT_SIZE_7_HTML_1);
+ 	  userTable.add(name,1,1);
+ 	  
+ 	  Text ssn = new Text("Kennitala");
+ 	  ssn.setFontFace(Text.FONT_FACE_VERDANA);
+ 	  ssn.setFontSize(Text.FONT_SIZE_7_HTML_1);
+ 	  userTable.add(ssn,2,1);
+ 	 	  
+ 	  Text del = new Text("Eyða félaga");
+ 	  del.setFontFace(Text.FONT_FACE_VERDANA);
+ 	  del.setFontSize(Text.FONT_SIZE_7_HTML_1);
+ 	  userTable.add(del,3,1);
+ 	  
+ 	
+
+    
       userTable.setCellspacing(0);
-//      userTable.setHorizontalZebraColored("D8D4CD","C3BEB5");
       userTable.setHorizontalZebraColored("#FFFFFF",IWColor.getHexColorString(246,246,247));
       userTable.setWidth("100%");
       for (int i = 1; i <= userTable.getRows() ; i++) {
@@ -132,7 +156,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
       }
 
 
-      int line = 1;
+      int line = 2;
       Iterator iter = users.iterator();
       while (iter.hasNext()) {
         User tempUser = (User)iter.next();

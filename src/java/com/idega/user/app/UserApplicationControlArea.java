@@ -41,6 +41,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
 
   public UserApplicationControlArea() {
+  	this.setAllMargins(0);
     _stateHandler = new StatefullPresentationImplHandler();
     _stateHandler.setPresentationStateClass(UserApplicationControlAreaPS.class);
   }
