@@ -10,14 +10,9 @@
             <value>
               <map>
                 <key>
-                  <name>component_name</name>
+                  <name>component_property_file</name>
                   <type>java.lang.String</type>
-                  <value>UserApplication</value>
-                </key>
-                <key>
-                  <name>component_type</name>
-                  <type>java.lang.String</type>
-                  <value>iw.application</value>
+                  <value>com.idega.user.app.UserApplication.pxml</value>
                 </key>
               </map>
             </value>
@@ -28,14 +23,9 @@
             <value>
               <map>
                 <key>
-                  <name>component_name</name>
+                  <name>component_property_file</name>
                   <type>java.lang.String</type>
-                  <value>GroupDomainRelation</value>
-                </key>
-                <key>
-                  <name>component_type</name>
-                  <type>java.lang.String</type>
-                  <value>iw.data</value>
+                  <value>com.idega.user.data.GroupDomainRelation.pxml</value>
                 </key>
               </map>
             </value>
@@ -46,14 +36,9 @@
             <value>
               <map>
                 <key>
-                  <name>component_name</name>
+                  <name>component_property_file</name>
                   <type>java.lang.String</type>
-                  <value>GroupDomainRelationType</value>
-                </key>
-                <key>
-                  <name>component_type</name>
-                  <type>java.lang.String</type>
-                  <value>iw.element</value>
+                  <value>com.idega.user.data.GroupDomainRelationType.pxml</value>
                 </key>
               </map>
             </value>
