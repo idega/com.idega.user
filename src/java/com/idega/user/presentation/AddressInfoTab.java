@@ -7,6 +7,8 @@ import com.idega.business.IBOLookup;
 import com.idega.core.location.business.CommuneBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.Country;
+import com.idega.core.location.data.CountryHome;
+import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
@@ -124,7 +126,14 @@ public class AddressInfoTab extends UserTab {
 		if (postalId != null && !postalId.equals(""))
 			postalCodeField.setSelectedElement(Integer.parseInt(postalId));
 		if(countryId!=null && !countryId.equals("") ){
-			countryField.setSelectedElement(countryId);	
+			Country country = null;
+			try {
+				country = getCountryHome().findByPrimaryKey(Integer.valueOf(countryId));
+			} catch (Exception e) {
+			    e.printStackTrace();
+			}
+		    countryField.setSelectedCountry(country);
+		    postalCodeField.setCountry(country);
 		}
 		if (poBox != null)
 			poBoxField.setContent(poBox); 
@@ -146,7 +155,14 @@ public class AddressInfoTab extends UserTab {
     if (postalId != null && !postalId.equals(""))
       secondPostalCodeField.setSelectedElement(Integer.parseInt(postalId));
     if(countryId!=null && !countryId.equals("") ){
-      secondCountryField.setSelectedElement(countryId);	
+        Country country = null;
+		try {
+			country = getCountryHome().findByPrimaryKey(Integer.valueOf(countryId));
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
+	    secondCountryField.setSelectedCountry(country);
+	    secondPostalCodeField.setCountry(country);
     }
     if (poBox != null)
       secondPoBoxField.setContent(poBox);
@@ -170,7 +186,6 @@ public class AddressInfoTab extends UserTab {
 		if (postalCodeField == null) {
 			postalCodeField = new PostalCodeDropdownMenu();
       postalCodeField.setDisabled(true);
-			postalCodeField.setCountry("Iceland"); //TODO remove hack
 		}
 
 		SelectorUtility su = new SelectorUtility();
@@ -181,7 +196,6 @@ public class AddressInfoTab extends UserTab {
 		
 		countryField = new CountryDropdownMenu(countryFieldName);
     countryField.setDisabled(true);
-		countryField.setSelectedCountry("Iceland"); //TODO remove hack
 
 		poBoxField = new TextInput(poBoxFieldName);
     poBoxField.setDisabled(true);
@@ -200,12 +214,9 @@ public class AddressInfoTab extends UserTab {
     if (secondPostalCodeField == null) {
       secondPostalCodeField = new PostalCodeDropdownMenu();
       secondPostalCodeField.setName(secondPostalCodeFieldName);
-      secondPostalCodeField.setCountry("Iceland"); //hack
     }
 
     secondCountryField = new CountryDropdownMenu(secondCountryFieldName);
-		secondCountryField.setDisabled(true);
-		secondCountryField.setSelectedCountry("Iceland"); //TODO remove hack
 
     secondPoBoxField = new TextInput(secondPoBoxFieldName);
     secondPoBoxField.setLength(10);
@@ -443,7 +454,13 @@ public class AddressInfoTab extends UserTab {
 				String postal = iwc.getParameter(postalCodeFieldName);
 				if (postal != null)
 					postalCodeId = new Integer(postal);
-				String country = iwc.getParameter(countryFieldName);
+				String countryId = iwc.getParameter(countryFieldName);
+				Country country = null;
+				try {
+					country = getCountryHome().findByPrimaryKey(Integer.valueOf(countryId));
+				} catch (Exception e) {
+				    e.printStackTrace();
+				}
 				String city = iwc.getParameter(cityFieldName);
 				String province = iwc.getParameter(provinceFieldName);
 				String poBox = iwc.getParameter(poBoxFieldName);
@@ -457,7 +474,7 @@ public class AddressInfoTab extends UserTab {
 					userId,
 					street,
 					postalCodeId,
-					country,
+					country.getName(),
 					city,
 					province,
 					poBox,
@@ -479,7 +496,13 @@ public class AddressInfoTab extends UserTab {
         String postal = iwc.getParameter(secondPostalCodeFieldName);
         if (postal != null)
           postalCodeId = new Integer(postal);
-        String country = iwc.getParameter(secondCountryFieldName);
+        String countryId = iwc.getParameter(secondCountryFieldName);
+        Country country = null;
+		try {
+			country = getCountryHome().findByPrimaryKey(Integer.valueOf(countryId));
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
         String city = iwc.getParameter(secondCityFieldName);
         String province = iwc.getParameter(secondProvinceFieldName);
         String poBox = iwc.getParameter(secondPoBoxFieldName);
@@ -493,7 +516,7 @@ public class AddressInfoTab extends UserTab {
           userId,
           street,
           postalCodeId,
-          country,
+          country.getName(),
           city,
           province,
           poBox,
@@ -521,13 +544,13 @@ public class AddressInfoTab extends UserTab {
 			}
 
 			if (hasAddress) {
-				/** @todo remove this fieldValues bullshit!**/
+				// TODO remove this fieldValues bullshit!**/
 				String street = addr.getStreetAddress();
 				int code = addr.getPostalCodeID();
 				Country country = addr.getCountry();
-				String countryName = null;
+				String countryId = null;
 				if (country != null)
-					countryName = country.getName();
+					countryId = country.getPrimaryKey().toString();
 				String city = addr.getCity();
 				String province = addr.getProvince();
 				String poBox = addr.getPOBox();
@@ -540,8 +563,8 @@ public class AddressInfoTab extends UserTab {
 					fieldValues.put(provinceFieldName, province);
 				if (code != -1)
 					fieldValues.put(postalCodeFieldName, String.valueOf(code));
-				if (countryName != null)
-					fieldValues.put(countryFieldName, countryName);
+				if (countryId != null)
+					fieldValues.put(countryFieldName, countryId);
 				if (poBox != null)
 					fieldValues.put(poBoxFieldName, poBox);
 			}
@@ -554,13 +577,13 @@ public class AddressInfoTab extends UserTab {
       }
 
       if (hasAddress) {
-        /** @todo remove this fieldValues bullshit!**/
+        // TODO remove this fieldValues bullshit!**/
         String street = addr.getStreetAddress();
         int code = addr.getPostalCodeID();
         Country country = addr.getCountry();
-        String countryName = null;
+        String countryId = null;
         if (country != null)
-          countryName = country.getName();
+          countryId = country.getPrimaryKey().toString();
         String city = addr.getCity();
         String province = addr.getProvince();
         String poBox = addr.getPOBox();
@@ -573,8 +596,8 @@ public class AddressInfoTab extends UserTab {
           fieldValues.put(secondProvinceFieldName, province);
         if (code != -1)
           fieldValues.put(secondPostalCodeFieldName, String.valueOf(code));
-        if (countryName != null)
-          fieldValues.put(secondCountryFieldName, countryName);
+        if (countryId != null)
+          fieldValues.put(secondCountryFieldName, countryId);
         if (poBox != null)
           fieldValues.put(secondPoBoxFieldName, poBox);
       }
@@ -593,6 +616,10 @@ public class AddressInfoTab extends UserTab {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 	
+	public CountryHome getCountryHome() throws RemoteException {
+		return (CountryHome) IDOLookup.getHome(Country.class);
+	}
+
 	public CommuneBusiness getCommuneBusiness (IWApplicationContext iwac) throws RemoteException {
 		return (CommuneBusiness) IBOLookup.getServiceInstance(iwac, CommuneBusiness.class);
 	}	
