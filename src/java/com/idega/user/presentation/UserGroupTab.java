@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import com.idega.presentation.TabbedPropertyPanel;
 import com.idega.presentation.Table;
 import com.idega.presentation.IWContext;
 import com.idega.idegaweb.IWApplicationContext;
@@ -23,14 +24,12 @@ public abstract class UserGroupTab extends Table implements Collectable {
  private int groupId = -1;
  private int selectedParentGroupId = -1;
 
-  protected String rowHeight = "40";
-  protected int fontSize = 2;
-
   protected Text proxyText;
 
   //protected UserBusiness business;
 
   protected Hashtable fieldValues;
+	private TabbedPropertyPanel panel;
 
 
   public UserGroupTab() {
@@ -63,18 +62,13 @@ public abstract class UserGroupTab extends Table implements Collectable {
   
 //  public abstract String getLocalizedLabel(IWContext iwc);
 
-  private void initProxyText(){
-    proxyText = new Text("");
-    proxyText.setFontSize(fontSize);
-
-  }
-
-  public Text getTextObject(){
-    if(proxyText == null){
-      initProxyText();
-    }
-    return (Text)proxyText.clone();
-  }
+	public void setPanel(TabbedPropertyPanel panel) {
+		this.panel = panel;
+	}
+	
+	public TabbedPropertyPanel getPanel() {
+		return panel;
+	}
 
   /** Sets group id and id of the selected parent group.
    * 
