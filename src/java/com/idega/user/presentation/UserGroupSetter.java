@@ -94,7 +94,7 @@ import java.util.Iterator;
             right.addElement(((Group)item).getPrimaryKey().toString(),((Group)item).getName());
           }
         }
-        Collection notDirectGroups = userBusiness.getAllGroupsNotDirectlyRelated(userId,iwc);
+        Collection notDirectGroups = userBusiness.getNonParentGroups(userId);
         if(notDirectGroups != null){
           iter = notDirectGroups.iterator();
           while (iter.hasNext()) {

@@ -196,14 +196,14 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
   }
 
   public void main(IWContext iwc) throws Exception {
-    Object obj =  this.getGroupBusiness(iwc).getGroupsContainingDirectlyRelated(this.getGroupId());
+    Object obj =  this.getGroupBusiness(iwc).getParentGroups(this.getGroupId());
     if(obj != null){
       iwc.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED,obj);
     }else{
       iwc.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
     }
 
-    Object ob = this.getGroupBusiness(iwc).getGroupsContainingNotDirectlyRelated(this.getGroupId());
+    Object ob = this.getGroupBusiness(iwc).getParentGroupsInDirect(this.getGroupId());
     if(ob != null){
       iwc.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED,ob);
     }else{

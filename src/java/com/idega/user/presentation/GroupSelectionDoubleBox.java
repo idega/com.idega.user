@@ -72,7 +72,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 		getRightBox().selectAllOnSubmit();
 		
 		if( rootGroup!=null ){
-			setAvailableGroups( com.idega.util.ListUtil.convertCollectionToList(getGroupBusiness(iwc).getGroupsContained(rootGroup)) );
+			setAvailableGroups( com.idega.util.ListUtil.convertCollectionToList(getGroupBusiness(iwc).getChildGroupsRecursive(rootGroup)) );
 		}
 		else if( namedAvailableGroups!=null ){
 			Iterator iter = namedAvailableGroups.keySet().iterator();

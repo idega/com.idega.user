@@ -55,7 +55,7 @@ import com.idega.user.data.Group;
       int groupId = Integer.parseInt(stringGroupId);
       form.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID,stringGroupId);
 
-      Collection directGroups = getGroupBusiness(iwc).getGroupsContainingDirectlyRelated(groupId);
+      Collection directGroups = getGroupBusiness(iwc).getParentGroups(groupId);
 
       Iterator iter = null;
       if(directGroups != null){
@@ -66,7 +66,7 @@ import com.idega.user.data.Group;
         }
       }
       
-      Collection notDirectGroups = getGroupBusiness(iwc).getAllGroupsNotDirectlyRelated(groupId,iwc);
+      Collection notDirectGroups = getGroupBusiness(iwc).getNonParentGroups(groupId);
       if(notDirectGroups != null){
         iter = notDirectGroups.iterator();
         while (iter.hasNext()) {
@@ -99,7 +99,7 @@ import com.idega.user.data.Group;
 
         //Group group = ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(groupId);
         Group group = getGroupBusiness(iwc).getGroupByGroupID(groupId);
-        List currentRelationShip = group.getListOfAllGroupsContainingThis();
+        List currentRelationShip = group.getParentGroups();
 
 
         if(related != null){

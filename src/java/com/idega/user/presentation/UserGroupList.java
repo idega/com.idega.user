@@ -171,7 +171,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
       iwc.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
     }
 
-    Object ob = userBusiness.getUserGroupsNotDirectlyRelated(this.getUserId());
+    Object ob = userBusiness.getParentGroupsInDirectForUser(this.getUserId());
     if(ob != null){
       iwc.setSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED,ob);
     }else{

@@ -93,14 +93,14 @@ public class GroupMembershipTab extends UserGroupTab {
   }
 
   public void main(IWContext iwc) throws Exception {
-    Object obj = this.getGroupBusiness(iwc).getGroupsContainedDirectlyRelated(this.getGroupId());
+    Object obj = this.getGroupBusiness(iwc).getChildGroups(this.getGroupId());
     if(obj != null){
       iwc.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED,obj);
     }else{
       iwc.removeSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
     }
 
-    Object ob = getGroupBusiness(iwc).getGroupsContainedNotDirectlyRelated(this.getGroupId());
+    Object ob = getGroupBusiness(iwc).getChildGroupsInDirect(this.getGroupId());
     if(ob != null){
       iwc.setSessionAttribute(GroupMembershipTab.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED,ob);
     }else{
