@@ -19,6 +19,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.TextInput;
 import com.idega.user.block.search.presentation.SearchForm;
 import com.idega.user.block.search.presentation.SearchWindow;
 import com.idega.user.event.ChangeClassEvent;
@@ -408,6 +409,7 @@ public class Toolbar extends Page implements IWBrowserView {
    searchForm.setLocation(location,iwc);
    searchForm.setArtificialCompoundId(getCompoundId(),iwc);
    searchForm.setHorizontalAlignment("right");
+   searchForm.setTextInputValue(iwrb.getLocalizedString("insert_search_string","Insert a search string"));
    //toolbar1.add(button9,10,1);
    toolbarTable.setAlignment(2,2,"right");
    toolbarTable.setVerticalAlignment(2,2,"top");

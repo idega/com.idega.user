@@ -12,7 +12,7 @@ import com.idega.idegaweb.browser.presentation.IWBrowserView;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 public class SearchForm extends PresentationObjectContainer implements IWBrowserView {
@@ -27,6 +27,7 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 	public final static String STYLE_2 = "font-family:arial; font-size:7pt; color:#000000; text-align: justify;";
 	private String _controlTarget = null;
 	private IWPresentationEvent _contolEvent = null;
+	private String textValue = null;
 	
 	
 	public SearchForm() {
@@ -69,6 +70,10 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 		form.add(table);
 		searchButton.setButtonImage(iwb.getImage("search.gif"));
 		
+		if(textValue != null) {
+			searchInput.setContent(textValue);
+		}
+		
 		if (_controlTarget != null) {
 			form.setTarget(_controlTarget);
 		}
@@ -96,5 +101,9 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 	}
 	public void setStyle(PresentationObject obj, String style) {
 		obj.setMarkupAttribute("style", style);
+	}
+	public void setTextInputValue(String textValue) {
+		this.textValue = textValue;
+
 	}
 }
