@@ -68,7 +68,7 @@ import com.idega.user.data.User;
       //frameTable.setBorder(1);
 
 
-      SelectionDoubleBox sdb = new SelectionDoubleBox(GroupGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX,iwrb.getLocalizedString("groupgroupsetter.in","Not in"),iwrb.getLocalizedString("groupgroupsetter.not_in","In"));
+      SelectionDoubleBox sdb = new SelectionDoubleBox(GroupGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX,iwrb.getLocalizedString("groupgroupsetter.not_in","Not in"),iwrb.getLocalizedString("groupgroupsetter.in","In"));
 
       SelectionBox left = sdb.getLeftBox();
       left.setHeight(15);
