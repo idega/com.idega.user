@@ -31,9 +31,10 @@ public class GeneralUserInfoTab extends UserTab {
 	private static final String TAB_NAME = "usr_info_tab_name";
 	private static final String DEFAULT_TAB_NAME = "General";
 	
-	private TextInput firstNameField;
-	private TextInput middleNameField;
-	private TextInput lastNameField;
+//	private TextInput firstNameField;
+//	private TextInput middleNameField;
+//	private TextInput lastNameField;
+	private TextInput fullNameField;
 	private TextInput displayNameField;
 	private TextArea descriptionField;
 	private DateInput dateOfBirthField;
@@ -41,9 +42,10 @@ public class GeneralUserInfoTab extends UserTab {
 	private TextInput personalIDField;
 	private DateInput createdField;
 
-	private String firstNameFieldName;
-	private String middleNameFieldName;
-	private String lastNameFieldName;
+//	private String firstNameFieldName;
+//	private String middleNameFieldName;
+//	private String lastNameFieldName;
+	private String fullNameFieldName;
 	private String displayNameFieldName;
 	private String descriptionFieldName;
 	private String dateOfBirthFieldName;
@@ -51,9 +53,10 @@ public class GeneralUserInfoTab extends UserTab {
 	private String personalIDFieldName;
 	private String createdFieldName;
 
-	private Text firstNameText;
-	private Text middleNameText;
-	private Text lastNameText;
+//	private Text firstNameText;
+//	private Text middleNameText;
+//	private Text lastNameText;
+	private Text fullNameText;
 	private Text displayNameText;
 	private Text descriptionText;
 	private Text dateOfBirthText;
@@ -68,18 +71,19 @@ public class GeneralUserInfoTab extends UserTab {
 
 		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
 		
-//		this.setName("General");
+//		setName("General");
 	}
 
 	public GeneralUserInfoTab(int userId) {
 		this();
-		this.setUserID(userId);
+		setUserID(userId);
 	}
 
 	public void initializeFieldNames() {
-		firstNameFieldName = "usr_info_UMfname";
-		middleNameFieldName = "usr_info_UMmname";
-		lastNameFieldName = "usr_info_UMlname";
+//		firstNameFieldName = "usr_info_UMfname";
+//		middleNameFieldName = "usr_info_UMmname";
+//		lastNameFieldName = "usr_info_UMlname";
+		fullNameFieldName = "usr_info_UMflname";
 		displayNameFieldName = "usr_info_UMdname";
 		descriptionFieldName = "usr_info_UMdesc";
 		dateOfBirthFieldName = "usr_info_UMdateofbirth";
@@ -89,31 +93,28 @@ public class GeneralUserInfoTab extends UserTab {
 	}
 
 	public void initializeFieldValues() {
-		fieldValues.put(this.firstNameFieldName, "");
-		fieldValues.put(this.middleNameFieldName, "");
-		fieldValues.put(this.lastNameFieldName, "");
-		fieldValues.put(this.displayNameFieldName, "");
-		fieldValues.put(this.descriptionFieldName, "");
-		fieldValues.put(this.dateOfBirthFieldName, "");
-		fieldValues.put(this.genderFieldName, "");
-		fieldValues.put(this.personalIDFieldName, "");
-		fieldValues.put(this.createdFieldName, "");
+//		fieldValues.put(firstNameFieldName, "");
+//		fieldValues.put(middleNameFieldName, "");
+//		fieldValues.put(lastNameFieldName, "");
+		fieldValues.put(fullNameFieldName, "");
+		fieldValues.put(displayNameFieldName, "");
+		fieldValues.put(descriptionFieldName, "");
+		fieldValues.put(dateOfBirthFieldName, "");
+		fieldValues.put(genderFieldName, "");
+		fieldValues.put(personalIDFieldName, "");
+		fieldValues.put(createdFieldName, "");
 
-		this.updateFieldsDisplayStatus();
+		updateFieldsDisplayStatus();
 	}
 
 	public void updateFieldsDisplayStatus() {
-		firstNameField.setContent((String) fieldValues.get(this.firstNameFieldName));
-
-		middleNameField.setContent((String) fieldValues.get(this.middleNameFieldName));
-
-		lastNameField.setContent((String) fieldValues.get(this.lastNameFieldName));
-
-		displayNameField.setContent((String) fieldValues.get(this.displayNameFieldName));
-
-		descriptionField.setContent((String) fieldValues.get(this.descriptionFieldName));
-
-		StringTokenizer date = new StringTokenizer((String) fieldValues.get(this.dateOfBirthFieldName), " -");
+//		firstNameField.setContent((String) fieldValues.get(firstNameFieldName));
+//		middleNameField.setContent((String) fieldValues.get(middleNameFieldName));
+//		lastNameField.setContent((String) fieldValues.get(lastNameFieldName));
+		fullNameField.setContent((String) fieldValues.get(fullNameFieldName));
+		displayNameField.setContent((String) fieldValues.get(displayNameFieldName));
+		descriptionField.setContent((String) fieldValues.get(descriptionFieldName));
+		StringTokenizer date = new StringTokenizer((String) fieldValues.get(dateOfBirthFieldName), " -");
 
 		if (date.hasMoreTokens()) {
 			dateOfBirthField.setYear(date.nextToken());
@@ -125,11 +126,10 @@ public class GeneralUserInfoTab extends UserTab {
 			dateOfBirthField.setDay(date.nextToken());
 		}
 
-		genderField.setSelectedElement((String) fieldValues.get(this.genderFieldName));
+		genderField.setSelectedElement((String) fieldValues.get(genderFieldName));
+		personalIDField.setContent((String) fieldValues.get(personalIDFieldName));
 
-		personalIDField.setContent((String) fieldValues.get(this.personalIDFieldName));
-
-		StringTokenizer created = new StringTokenizer((String) fieldValues.get(this.createdFieldName), " -");
+		StringTokenizer created = new StringTokenizer((String) fieldValues.get(createdFieldName), " -");
 		if (created.hasMoreTokens()) {
 			createdField.setYear(created.nextToken());
 		}
@@ -142,14 +142,17 @@ public class GeneralUserInfoTab extends UserTab {
 	}
 
 	public void initializeFields() {
-		firstNameField = new TextInput(firstNameFieldName);
-		firstNameField.setLength(12);
+//		firstNameField = new TextInput(firstNameFieldName);
+//		firstNameField.setLength(12);
+//
+//		middleNameField = new TextInput(middleNameFieldName);
+//		middleNameField.setLength(5);
+//
+//		lastNameField = new TextInput(lastNameFieldName);
+//		lastNameField.setLength(12);
 
-		middleNameField = new TextInput(middleNameFieldName);
-		middleNameField.setLength(5);
-
-		lastNameField = new TextInput(lastNameFieldName);
-		lastNameField.setLength(12);
+		fullNameField = new TextInput(fullNameFieldName);
+		fullNameField.setLength(20);
 
 		displayNameField = new TextInput(displayNameFieldName);
 		displayNameField.setLength(12);
@@ -201,14 +204,17 @@ public class GeneralUserInfoTab extends UserTab {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		firstNameText = getTextObject();		
-		firstNameText.setText(iwrb.getLocalizedString(firstNameFieldName,"First name"));
+//		firstNameText = getTextObject();		
+//		firstNameText.setText(iwrb.getLocalizedString(firstNameFieldName,"First name"));
+//
+//		middleNameText = getTextObject();
+//		middleNameText.setText(iwrb.getLocalizedString(middleNameFieldName,"Middle name"));
+//
+//		lastNameText = getTextObject();
+//		lastNameText.setText(iwrb.getLocalizedString(lastNameFieldName,"Last name"));
 
-		middleNameText = getTextObject();
-		middleNameText.setText(iwrb.getLocalizedString(middleNameFieldName,"Middle name"));
-
-		lastNameText = getTextObject();
-		lastNameText.setText(iwrb.getLocalizedString(lastNameFieldName,"Last name"));
+		fullNameText = getTextObject();		
+		fullNameText.setText(iwrb.getLocalizedString(fullNameFieldName,"Name"));
 
 		displayNameText = getTextObject();
 		displayNameText.setText(iwrb.getLocalizedString(displayNameFieldName,"Display name"));
@@ -231,10 +237,10 @@ public class GeneralUserInfoTab extends UserTab {
 	}
 
 	public void lineUpFields() {
-		this.resize(1, 3);
+		resize(1, 3);
 
 		//First Part (names)
-		Table nameTable = new Table(4, 3);
+		Table nameTable = new Table(3, 2);
 		nameTable.setWidth("100%");
 		nameTable.setCellpadding(0);
 		nameTable.setCellspacing(0);
@@ -242,33 +248,29 @@ public class GeneralUserInfoTab extends UserTab {
 		nameTable.setHeight(2, columnHeight);
 		nameTable.setHeight(3, columnHeight);
 
-		nameTable.add(firstNameText, 1, 1);
-		nameTable.add(this.firstNameField, 2, 1);
-		nameTable.add(middleNameText, 3, 1);
-		nameTable.add(this.middleNameField, 4, 1);
-		nameTable.add(lastNameText, 1, 2);
-		nameTable.add(this.lastNameField, 2, 2);
-		nameTable.add(displayNameText, 1, 3);
-		nameTable.add(this.displayNameField, 2, 3);
-		nameTable.add(genderText, 3, 3);
-		nameTable.add(this.genderField, 4, 3);
-		this.add(nameTable, 1, 1);
+		nameTable.add(personalIDText, 1, 1);
+		nameTable.add(personalIDField, 2, 1);
+		nameTable.add(displayNameText, 1, 2);
+		nameTable.add(displayNameField, 2, 2);
+		nameTable.add(genderText, 1, 3);
+		nameTable.add(genderField, 2, 3);
+		add(nameTable, 1, 1);
 		//First Part ends
 
 		//Second Part (Date of birth)
-		Table dateofbirthTable = new Table(2, 3);
+		Table dateofbirthTable = new Table(2, 2);
 		dateofbirthTable.setCellpadding(0);
 		dateofbirthTable.setCellspacing(0);
 		dateofbirthTable.setHeight(1, columnHeight);
 		dateofbirthTable.setHeight(2, columnHeight);
-		dateofbirthTable.setHeight(3, columnHeight);
-		dateofbirthTable.add(personalIDText, 1, 1);
-		dateofbirthTable.add(personalIDField, 2, 1);
-		dateofbirthTable.add(dateOfBirthText, 1, 2);
-		dateofbirthTable.add(this.dateOfBirthField, 2, 2);
-		dateofbirthTable.add(createdText, 1, 3);
-		dateofbirthTable.add(this.createdField, 2, 3);
-		this.add(dateofbirthTable, 1, 2);
+//		dateofbirthTable.setHeight(3, columnHeight);
+//		dateofbirthTable.add(personalIDText, 1, 1);
+//		dateofbirthTable.add(personalIDField, 2, 1);
+		dateofbirthTable.add(dateOfBirthText, 1, 1);
+		dateofbirthTable.add(dateOfBirthField, 2, 1);
+		dateofbirthTable.add(createdText, 1, 2);
+		dateofbirthTable.add(createdField, 2, 2);
+		add(dateofbirthTable, 1, 2);
 		//Second Part Ends
 
 		//Third Part (description)
@@ -277,54 +279,58 @@ public class GeneralUserInfoTab extends UserTab {
 		descriptionTable.setCellspacing(0);
 		descriptionTable.setHeight(1, columnHeight);
 		descriptionTable.add(descriptionText, 1, 1);
-		descriptionTable.add(this.descriptionField, 1, 2);
-		this.add(descriptionTable, 1, 3);
+		descriptionTable.add(descriptionField, 1, 2);
+		add(descriptionTable, 1, 3);
 		//Third Part ends
 	}
 
 	public boolean collect(IWContext iwc) {
 		if (iwc != null) {
 
-			String fname = iwc.getParameter(this.firstNameFieldName);
-			String mname = iwc.getParameter(this.middleNameFieldName);
-			String lname = iwc.getParameter(this.lastNameFieldName);
+//			String fname = iwc.getParameter(firstNameFieldName);
+//			String mname = iwc.getParameter(middleNameFieldName);
+//			String lname = iwc.getParameter(lastNameFieldName);
+			String name = iwc.getParameter(fullNameFieldName);
 
-			String dname = iwc.getParameter(this.displayNameFieldName);
-			String desc = iwc.getParameter(this.descriptionFieldName);
-			String dateofbirth = iwc.getParameter(this.dateOfBirthFieldName);
-			String gender = iwc.getParameter(this.genderFieldName);
-			String personalID = iwc.getParameter(this.personalIDFieldName);
-			String created = iwc.getParameter(this.createdFieldName);
+			String dname = iwc.getParameter(displayNameFieldName);
+			String desc = iwc.getParameter(descriptionFieldName);
+			String dateofbirth = iwc.getParameter(dateOfBirthFieldName);
+			String gender = iwc.getParameter(genderFieldName);
+			String personalID = iwc.getParameter(personalIDFieldName);
+			String created = iwc.getParameter(createdFieldName);
 
-			if (fname != null) {
-				fieldValues.put(this.firstNameFieldName, fname);
-			}
-			if (mname != null) {
-				fieldValues.put(this.middleNameFieldName, mname);
-			}
-			if (lname != null) {
-				fieldValues.put(this.lastNameFieldName, lname);
-			}
+//			if (fname != null) {
+//				fieldValues.put(firstNameFieldName, fname);
+//			}
+//			if (mname != null) {
+//				fieldValues.put(middleNameFieldName, mname);
+//			}
+//			if (lname != null) {
+//				fieldValues.put(lastNameFieldName, lname);
+//			}
+			if (name != null) {
+				fieldValues.put(fullNameFieldName, name);
+			}	
 			if (dname != null) {
-				fieldValues.put(this.displayNameFieldName, dname);
+				fieldValues.put(displayNameFieldName, dname);
 			}
 			if (desc != null) {
-				fieldValues.put(this.descriptionFieldName, desc);
+				fieldValues.put(descriptionFieldName, desc);
 			}
 			if (dateofbirth != null) {
-				fieldValues.put(this.dateOfBirthFieldName, dateofbirth);
+				fieldValues.put(dateOfBirthFieldName, dateofbirth);
 			}
 			if (gender != null) {
-				fieldValues.put(this.genderFieldName, gender);
+				fieldValues.put(genderFieldName, gender);
 			}
 			if (personalID != null) {
-				fieldValues.put(this.personalIDFieldName, personalID);
+				fieldValues.put(personalIDFieldName, personalID);
 			}
 			if (created != null) {
-				fieldValues.put(this.createdFieldName, created);
+				fieldValues.put(createdFieldName, created);
 			}
 
-			this.updateFieldsDisplayStatus();
+			updateFieldsDisplayStatus();
 
 			return true;
 		}
@@ -335,8 +341,8 @@ public class GeneralUserInfoTab extends UserTab {
 		try {
 			if (getUserId() > -1) {
 				IWTimestamp dateOfBirthTS = null;
-				String st = (String) fieldValues.get(this.dateOfBirthFieldName);
-				Integer gen = (fieldValues.get(this.genderFieldName).equals("")) ? null : new Integer((String) fieldValues.get(this.genderFieldName));
+				String st = (String) fieldValues.get(dateOfBirthFieldName);
+				Integer gen = (fieldValues.get(genderFieldName).equals("")) ? null : new Integer((String) fieldValues.get(genderFieldName));
 				if (st != null && !st.equals("")) {
 					try {
 						dateOfBirthTS = new IWTimestamp(st);
@@ -347,7 +353,7 @@ public class GeneralUserInfoTab extends UserTab {
 				}
 
 				IWTimestamp createdTS = null;
-				String createdString = (String) fieldValues.get(this.createdFieldName);
+				String createdString = (String) fieldValues.get(createdFieldName);
 				if (createdString != null & !createdString.equals("")) {
 					try {
 						createdTS = new IWTimestamp(createdString);
@@ -359,15 +365,17 @@ public class GeneralUserInfoTab extends UserTab {
 
 				super.getUserBusiness(iwc).updateUser(
 					getUserId(),
-					(String) fieldValues.get(this.firstNameFieldName),
-					(String) fieldValues.get(this.middleNameFieldName),
-					(String) fieldValues.get(this.lastNameFieldName),
-					(String) fieldValues.get(this.displayNameFieldName),
-					(String) fieldValues.get(this.descriptionFieldName),
+					null,
+					null,
+					null,
+					(String) fieldValues.get(displayNameFieldName),
+					(String) fieldValues.get(descriptionFieldName),
 					gen,
-					(String) fieldValues.get(this.personalIDFieldName),
+					(String) fieldValues.get(personalIDFieldName),
 					dateOfBirthTS,
-					null);
+					null,
+				    (String) fieldValues.get(fullNameFieldName)
+					);
 				if (createdTS != null)
 					getUser().setCreated(createdTS.getTimestamp());
 			}
@@ -385,22 +393,27 @@ public class GeneralUserInfoTab extends UserTab {
 		try {
 			User user = getUser();
 
-			fieldValues.put(this.firstNameFieldName, (user.getFirstName() != null) ? user.getFirstName() : "");
-			fieldValues.put(this.middleNameFieldName, (user.getMiddleName() != null) ? user.getMiddleName() : "");
-			fieldValues.put(this.lastNameFieldName, (user.getLastName() != null) ? user.getLastName() : "");
-			fieldValues.put(this.displayNameFieldName, (user.getDisplayName() != null) ? user.getDisplayName() : "");
-			fieldValues.put(this.descriptionFieldName, (user.getDescription() != null) ? user.getDescription() : "");
-			fieldValues.put(this.dateOfBirthFieldName, (user.getDateOfBirth() != null) ? new IWTimestamp(user.getDateOfBirth()).toSQLDateString() : "");
-			fieldValues.put(this.genderFieldName, (user.getGenderID() != -1) ? Integer.toString(user.getGenderID()) : "");
-			fieldValues.put(this.personalIDFieldName, (user.getPersonalID() != null) ? user.getPersonalID() : "");
-			fieldValues.put(this.createdFieldName, (user.getCreated() != null) ? new IWTimestamp(user.getCreated()).toSQLDateString() : "");
-			this.updateFieldsDisplayStatus();
+//			fieldValues.put(firstNameFieldName, (user.getFirstName() != null) ? user.getFirstName() : "");
+//			fieldValues.put(middleNameFieldName, (user.getMiddleName() != null) ? user.getMiddleName() : "");
+//			fieldValues.put(lastNameFieldName, (user.getLastName() != null) ? user.getLastName() : "");
+			fieldValues.put(fullNameFieldName, (user.getName() != null) ? user.getLastName() : "");
+			fieldValues.put(displayNameFieldName, (user.getDisplayName() != null) ? user.getDisplayName() : "");
+			fieldValues.put(descriptionFieldName, (user.getDescription() != null) ? user.getDescription() : "");
+			fieldValues.put(dateOfBirthFieldName, (user.getDateOfBirth() != null) ? new IWTimestamp(user.getDateOfBirth()).toSQLDateString() : "");
+			fieldValues.put(genderFieldName, (user.getGenderID() != -1) ? Integer.toString(user.getGenderID()) : "");
+			fieldValues.put(personalIDFieldName, (user.getPersonalID() != null) ? user.getPersonalID() : "");
+			fieldValues.put(createdFieldName, (user.getCreated() != null) ? new IWTimestamp(user.getCreated()).toSQLDateString() : "");
+			updateFieldsDisplayStatus();
 
 		}
 		catch (Exception e) {
 			System.err.println("GeneralUserInfoTab error initFieldContents, userId : " + getUserId());
 		}
 
+	}
+
+	public String getBundleIdentifier() {
+		return IW_BUNDLE_IDENTIFIER;
 	}
 
 } // Class GeneralUserInfoTab
