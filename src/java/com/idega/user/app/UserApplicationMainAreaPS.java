@@ -4,14 +4,19 @@ package com.idega.user.app;
 
 import com.idega.user.block.search.event.SimpleSearchEvent;
 import com.idega.user.business.GroupBusiness;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.IWTabbedPane;
 import com.idega.presentation.event.ResetPresentationEvent;
+import com.idega.presentation.text.Link;
 import com.idega.event.*;
 import com.idega.user.data.Group;
 import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.event.DeleteGroupEvent;
 import com.idega.user.event.SelectGroupEvent;
+import com.idega.user.presentation.CreateGroupWindowPS;
 import com.idega.user.presentation.DeleteGroupConfirmWindowPS;
+import com.idega.user.presentation.GroupPropertyWindow;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -149,9 +154,25 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
   }
 
   public void stateChanged(ChangeEvent e) {
-    if (e.getSource() instanceof DeleteGroupConfirmWindowPS) { 
+    Object object = e.getSource();
+    if (object instanceof DeleteGroupConfirmWindowPS) { 
       // refresh
       setOnLoad("parent.frames['iwb_main_left'].location.reload()");
+    }
+    else if (object instanceof CreateGroupWindowPS) {
+      CreateGroupWindowPS state = (CreateGroupWindowPS) e.getSource();
+      IWContext eventContext = state.getEventContext();
+      Integer groupId = state.getGroupId();
+      Link gotoLink = new Link();   
+      gotoLink.setWindowToOpen(GroupPropertyWindow.class);
+      gotoLink.addParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, groupId.toString());
+      setOnLoad(gotoLink.getWindowToOpenCallingScript(eventContext));
+    }
+    else if (object instanceof IWTabbedPane) {
+        IWTabbedPane pane = (IWTabbedPane) object;
+        String attribute = pane.getAttributeString();
+        if (attribute.indexOf("group_property_window") > -1)
+          setOnLoad("parent.frames['iwb_main'].location.reload()");
     }
   }
 
