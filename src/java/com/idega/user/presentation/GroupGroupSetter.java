@@ -14,6 +14,7 @@ import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.Window;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
+import com.idega.util.IWColor;
 
  public class GroupGroupSetter extends Window {
 
@@ -22,9 +23,9 @@ import com.idega.user.data.Group;
     public GroupGroupSetter(){
       super("add groups to groups");
       this.setAllMargins(0);
-      this.setWidth(400);
-      this.setHeight(300);
-      this.setBackgroundColor("#d4d0c8");
+      this.setWidth(500);
+      this.setHeight(400);
+      this.setBackgroundColor(new IWColor(207,208,210));
     }
 
 
@@ -79,7 +80,8 @@ import com.idega.user.data.Group;
       //right.addSeparator();
 
       frameTable.setAlignment(2,2,"center");
-      frameTable.add("GroupId: "+groupId,2,1);
+      //frameTable.add("GroupId: "+groupId,2,1);
+			System.out.println("GroupId: "+groupId);
       frameTable.add(sdb,2,2);
       frameTable.add(new SubmitButton("  Save  ","save","true"),2,3);
       frameTable.setAlignment(2,3,"right");
