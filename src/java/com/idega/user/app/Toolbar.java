@@ -221,7 +221,7 @@ public class Toolbar extends Page implements IWBrowserView {
 			toolbar1.add(button5,6,1);
 		}
 		
-		if (showISStuff) {
+		if (showISStuff && iwc.isSuperAdmin()) {
 			Table button6 = new Table(2, 1);
 			button6.setCellpadding(0);
 			Image iconImport = iwb.getImage("import.gif");
