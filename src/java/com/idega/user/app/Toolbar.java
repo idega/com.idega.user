@@ -90,11 +90,11 @@ public class Toolbar extends Page implements IWBrowserView {
     iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
 
-    Table toolbarTable = new Table(1,3);
+    Table toolbarTable = new Table(2,3);
     toolbarTable.setCellpadding(0);
     toolbarTable.setCellspacing(0);
     toolbarTable.setWidth(Table.HUNDRED_PERCENT);
-    toolbarTable.setHeight(Table.HUNDRED_PERCENT);
+    toolbarTable.setHeight(2,Table.HUNDRED_PERCENT);
     toolbarTable.setHeight(1,1);
     toolbarTable.setHeight(3,1);
 
@@ -102,22 +102,24 @@ public class Toolbar extends Page implements IWBrowserView {
     this.setBackgroundColor(color);
     this.getParentPage().setBackgroundColor(color);
 
-    toolbarTable.setColor(color);
+    toolbarTable.setColor(1,2,color);
     toolbarTable.setColor(1,1,color.brighter());
+    toolbarTable.setColor(2,1,color.brighter());
     toolbarTable.setColor(1,3,color.darker());
+    toolbarTable.setColor(2,3,color.darker());
 
 
-//    toolbarTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_RIGHT);
+    toolbarTable.setAlignment(2,2,Table.HORIZONTAL_ALIGN_RIGHT);
 
     add(toolbarTable);
 
-    Table toolbar1 = new Table(7,1);
+    Table toolbar1 = new Table(6,1);
+    toolbar1.setColor(color);
     toolbar1.setCellpadding(0);
     toolbar1.setCellspacing(0);
     toolbar1.setAlignment(Table.HORIZONTAL_ALIGN_LEFT);
-    toolbar1.setAlignment(7,1,Table.HORIZONTAL_ALIGN_RIGHT);
-    toolbar1.setWidth(Table.HUNDRED_PERCENT);
-    toolbar1.setHeight(Table.HUNDRED_PERCENT);
+    //toolbar1.setWidth(Table.HUNDRED_PERCENT);
+    //toolbar1.setHeight(Table.HUNDRED_PERCENT);
     //int iconDimentions = 20;
 
 
@@ -167,7 +169,7 @@ public class Toolbar extends Page implements IWBrowserView {
    location.setSubID(1);
    searchForm.setLocation(location,iwc);
    searchForm.setHorizontalAlignment("right");
-   toolbar1.add(searchForm,7,1);
+   toolbarTable.add(searchForm,2,2);
 
 /*
    Text text3 = new Text("&nbsp;Reset");
@@ -186,7 +188,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
    //    toolbarTable.add(toolbar1,1,2);
 //	this.add(toolbar1);
-	toolbarTable.add(toolbar1,1,1);
+	toolbarTable.add(toolbar1,1,2);
   }
 
 
