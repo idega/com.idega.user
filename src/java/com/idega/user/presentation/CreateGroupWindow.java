@@ -347,7 +347,9 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
     while (iterator.hasNext())  {
       GroupType item = (GroupType) iterator.next();
       String value = item.getType();
-      groupTypes.add(value);
+	  if(!groupTypes.contains(value)){
+	  	groupTypes.add(value);
+	  }
     }
     return groupTypes;
   }   
