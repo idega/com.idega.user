@@ -204,12 +204,11 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
         return (Group)IDOLookup.findByPrimaryKey(Group.class, groupId);
       }
       catch (Exception ex) {
-        ex.printStackTrace();
-        return null;
+        // FinderException and RemoteException
+        throw new RuntimeException(ex.getMessage());
       }
-    } else {
-      return null;
     }
+    return null;
   }   
   
   private GroupBusiness getGroupBusiness(IWApplicationContext iwac)   { 
