@@ -18,8 +18,8 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Text;
 import com.idega.user.block.search.business.SearchEngine;
-import com.idega.user.presentation.BasicUserOverViewToolbar;
 import com.idega.user.presentation.BasicUserOverview;
+import com.idega.user.presentation.StyledBasicUserOverViewToolbar;
 
 
 public class SearchResultsWindow extends BasicUserOverview {
@@ -82,8 +82,8 @@ public class SearchResultsWindow extends BasicUserOverview {
 	/* (non-Javadoc)
 	 * @see com.idega.user.presentation.BasicUserOverview#getToolbar()
 	 */
-	protected BasicUserOverViewToolbar getToolbar() {
-		BasicUserOverViewToolbar toolbar = super.getToolbar();
+	protected StyledBasicUserOverViewToolbar getToolbar() {
+		StyledBasicUserOverViewToolbar toolbar = super.getToolbar();
 		SearchResultsWindowPS sPs = (SearchResultsWindowPS)ps;
 		if(sPs!=null && iwrb!=null){
 			String search = sPs.getSearchString();

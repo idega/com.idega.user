@@ -76,7 +76,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	protected IWResourceBundle iwrb = null;
 	private IWBundle iwb = null;
 	protected BasicUserOverviewPS _presentationState = null;
-	private BasicUserOverViewToolbar toolbar = null;
+	private StyledBasicUserOverViewToolbar toolbar = null;
 	private com.idega.core.user.data.User administratorUser = null; //TODO
 																	// convert
 																	// to new
@@ -95,6 +95,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	private Page parentPage;
 	//private String styleScript = "UserApplicationStyle.css";
 	private String styleSrc = "";
+	private String styledLink = "styledLinkGeneral";
+	private String styledLinkUnderline = "styledLinkUnderline";
+	private String styleTable = "mainDisplay";
+	private String topTableStyle = "topTable";
 
 	public BasicUserOverview() {
 		super();
@@ -147,16 +151,24 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		}
 
 		toolbar = getToolbar();
+		Table topTable = topTable();
 		//	create the return table
-		Table returnTable = new Table(1, 2);
+		Table returnTable = new Table(1, 3);
 		returnTable.setCellpaddingAndCellspacing(0);
 		returnTable.setWidth(Table.HUNDRED_PERCENT);
 		returnTable.setHeight(Table.HUNDRED_PERCENT);
-		returnTable.setHeight(2, Table.HUNDRED_PERCENT);
-		returnTable.setHeight(1, 22);
-		returnTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
+		returnTable.setHeight(3, Table.HUNDRED_PERCENT);
+		returnTable.setHeight(1, 30);
+		returnTable.setHeight(2,16);
+		returnTable.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_TOP);
+		returnTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_BOTTOM);
 
 		returnTable.add(toolbar, 1, 1);
+		returnTable.add(topTable,1,2);
+		
+		if (selectedGroup != null) {
+			topTable.add(selectedGroup.getName() + Text.NON_BREAKING_SPACE,1,1);
+		}
 
 		//for the link to open the user properties
 		boolean canEditUserTemp = false;
@@ -251,19 +263,31 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 				entityBrowser.addPresentationObjectToBottom(targetGroupChooser);
 			}
 
-			returnTable.add(form, 1, 2);
+			returnTable.add(form, 1, 3);
 			return returnTable;
 
 		}
 		else {
 			PresentationObject po = getEmptyListPresentationObject();
 			if (po != null) {
-				returnTable.add(po, 1, 2);
+				returnTable.add(po, 1, 3);
 			}
 
 			return returnTable;
 		}
 
+	}
+	/**
+	 * 
+	 * @return
+	 */
+	public Table topTable() {
+		Table topTable = new Table();
+		topTable.setCellpadding(0);
+		topTable.setCellspacing(0);
+		topTable.setStyleClass(topTableStyle);
+		topTable.setWidth("100%");
+		return topTable;
 	}
 	/**
 	 * This method is called everytime the getEntities method returns null or
@@ -278,9 +302,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	/**
 	 * @return BasicUserOverViewToolbar
 	 */
-	protected BasicUserOverViewToolbar getToolbar() {
+	protected StyledBasicUserOverViewToolbar getToolbar() {
 		if (toolbar == null || selectedGroup == null) {
-			toolbar = new BasicUserOverViewToolbar();
+			toolbar = new StyledBasicUserOverViewToolbar();
 		}
 
 		if (selectedGroup != null) {
@@ -521,6 +545,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 				//}
 				//else{
 				Link aLink = new Link(text);
+				//added to match new style links
+				aLink.setStyleClass(styledLinkUnderline);
 				if (!user.equals(administratorUser)) {
 					aLink.setWindowToOpen(UserPropertyWindow.class);
 					aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
@@ -595,9 +621,20 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		//		set color of rows
 		entityBrowser.setColorForEvenRows(IWColor.getHexColorString(246, 246, 247));
 		entityBrowser.setColorForOddRows("#FFFFFF");
+		
+		//set a style for the display table:
+		entityBrowser.setStyleClass(styleTable);
 
 		//entityBrowser.setVerticalZebraColored("#FFFFFF",IWColor.getHexColorString(246,
 		// 246, 247)); why does this not work!??
+		
+		Table emptyTopTable = new Table(1,1);
+		emptyTopTable.setCellpadding(0);
+		emptyTopTable.setCellspacing(0);
+		emptyTopTable.setHeight(16);
+		emptyTopTable.emptyCell(1,1);
+		
+		entityBrowser.add(emptyTopTable);
 
 		entityBrowser.setDefaultColumn(1, nameKey);
 		entityBrowser.setDefaultColumn(2, pinKey);
