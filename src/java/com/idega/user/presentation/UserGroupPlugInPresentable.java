@@ -1,5 +1,8 @@
 package com.idega.user.presentation;
 
+import com.idega.user.business.*;
+import com.idega.user.data.*;
+
 /**
  * Title:        idegaWeb User Subsystem
  * Description:  idegaWeb User Subsystem is the base system for Users and Group management
@@ -10,4 +13,9 @@ package com.idega.user.presentation;
  */
 
 public interface UserGroupPlugInPresentable{
+
+  //public void initialize(IWApplicationContext iwac);
+  public void initialize(Group group);
+  public UserGroupPlugIn getPlugIn();
+
 }
