@@ -1,5 +1,4 @@
-#Wed Oct 29 18:32:06 GMT 2003
-=
+#Fri Oct 31 01:19:43 CET 2003
 Add\ to=
 Address.CITY=
 AddressInfoTab.postalcodewindow.add=
@@ -250,7 +249,7 @@ usergroupsetter.close=
 usergroupsetter.in=
 usergroupsetter.not_in=
 usergroupsetter.save=
-usergroupsetter.title=
+usergroupsetter.title=L\u00E4gg till eller ta bort ur grupper
 usr_create_tab_name=
 usr_fam_custodians=
 usr_grp_memberof=
