@@ -193,11 +193,11 @@ public class UserApplication extends IWBrowser {
         headerTable.setWidth("100%");
         headerTable.setHeight("100%");
  
-				//setting the styleSheet 
-		 		parentPage = this.getParentPage();
-				userBusiness = getUserBusiness(iwc); 
-				styleSrc = userBusiness.getUserApplicationStyleSheet(parentPage, iwc);
-				parentPage.addStyleSheetURL(styleSrc);
+		//setting the styleSheet 
+		userBusiness = getUserBusiness(iwc); 
+		styleSrc = userBusiness.getUserApplicationStyleSheetURL();
+		parentPage = getParentPage();
+		parentPage.addStyleSheetURL(styleSrc);
 
         /** @todo setja inn mynd i header**/
 //        headerTable.add(this.getBundle(iwc).getImage("/top.gif","idegaWeb Member"),1,1);
