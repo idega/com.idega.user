@@ -238,6 +238,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		
 		WelcomeMessage welcomeMessage = new WelcomeMessage();
 		welcomeMessage.setBold();
+		welcomeMessage.showDate(true);
 		
 		
   	Table welcomeMessageTable = new Table(2,1);
