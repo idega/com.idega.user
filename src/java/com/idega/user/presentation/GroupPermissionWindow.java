@@ -41,6 +41,7 @@ import com.idega.user.business.GroupComparator;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.user.event.SelectGroupEvent;
+import com.idega.user.util.ICUserConstants;
 import com.idega.util.IWColor;
 
 /**
@@ -256,9 +257,18 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 					Group group;
 					try {
 						group = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(perm.getContextValue()));
-
-						return new Text(getGroupBusiness(iwc).getNameOfGroupWithParentName(group));
-
+						
+						String name = group.getName();
+						String number = group.getMetaData(ICUserConstants.META_DATA_GROUP_NUMBER);
+						
+						if(number!=null && !"".equals(name)) {
+						    name = number + " "+name;
+						}
+						else {
+						    name = getGroupBusiness(iwc).getNameOfGroupWithParentName(group);
+						}
+						
+						return new Text(name);
 					}
 					catch (RemoteException e) {
 						e.printStackTrace();
