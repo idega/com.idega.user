@@ -235,6 +235,7 @@ import com.idega.util.IWColor;
           }
 
         this.close();
+        iwc.setSessionAttribute(TabbedPropertyPanel.TAB_STORE_WINDOW, "TRUE");
         setParentPageFormToSubmitOnUnLoad(TabbedPropertyPanel.TAB_FORM_NAME);
         } else {
         LineUpElements(iwc);
