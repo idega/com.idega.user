@@ -184,8 +184,10 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     // define button
     SubmitButton move = new SubmitButton(iwrb.getLocalizedImageButton("move", "Move to"));
     SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
+    String wait = iwrb.getLocalizedString("mm_please_wait_processing_request", "Please wait. Processing request");
+    wait += "....";
     close.setOnClick("window.close(); return false;");
-    move.setOnClick("mass_form.submit(); window.close();");
+    move.setOnClick("window.opener.parent.frames['iw_event_frame'].document.write('"+wait+"'); mass_form.submit(); window.close();");
     // assemble table
     Table table = new Table(1,3);
     Table buttons = new Table(2,1);
