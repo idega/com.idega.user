@@ -84,7 +84,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
 	 	button2.setCellpadding(0);
 	    Image iconCrGroup = iwb.getImage("new_group.gif");
 	    button2.add(iconCrGroup,1,1);
-		Text text2 = new Text(iwrb.getLocalizedString("new.group","Edit group"));
+		Text text2 = new Text(iwrb.getLocalizedString("edit.group","Edit group"));
 	 	text2.setFontFace(Text.FONT_FACE_VERDANA);
 	 	text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
 	    Link tLink12 = new Link(text2);
