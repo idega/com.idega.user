@@ -111,6 +111,9 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 	 */
 	public String getDisplayForResultingObject(Object value, IWContext iwc) {
 		Collection groupTypes = (Collection) value;
+		if (groupTypes == null || groupTypes.isEmpty()) {
+			return this.getResourceBundle(iwc).getLocalizedString("GroupTypeSelectionBox.all_or_none_selected","All");
+		}
 		String result = null;
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		if(groupTypes != null) {
