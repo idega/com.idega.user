@@ -25,6 +25,7 @@ import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
@@ -36,8 +37,10 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
+import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
@@ -52,8 +55,11 @@ import com.idega.util.IWColor;
  */
 public class BasicUserOverview extends Page implements IWBrowserView, StatefullPresentation {
 
-	public static final String PARAMETER_DELETE_USERS = "delete_users";
+	public static final String SELECTED_USERS_KEY = "selected_users";
+  public static final String SELECTED_TARGET_GROUP_KEY = "selected_target_group";
+  public static final String SELECTED_GROUP_KEY = "selected_group_key";
 	public static final String DELETE_USERS_KEY = "delete_selected_users";
+  public static final String MOVE_USERS_KEY = "move_users";
 	private String _controlTarget = null;
 	private IWPresentationEvent _controlEvent = null;
 	protected IWResourceBundle iwrb = null;
@@ -116,6 +122,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	
 	
 	protected Table getList(IWContext iwc) throws Exception {		
+    
+    if (ps.moveResult)  {
+      return getResultList(iwc);
+    }
 		
 		toolbar = getToolbar();
 		//	create the return table
@@ -167,17 +177,36 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 				if(!canDelete) canDelete = isCurrentUserSuperAdmin;
 				
 				if(canDelete){
-					
+          String confirmDeleting = resourceBundle.getLocalizedString("buo_delete_selected_users", "Delete selected users");
+          confirmDeleting += " ?";
 					SubmitButton deleteButton =
 						new SubmitButton(
 							resourceBundle.getLocalizedImageButton("Delete selection", "Delete selection"),
 							BasicUserOverview.DELETE_USERS_KEY,
 							BasicUserOverview.DELETE_USERS_KEY);
-					deleteButton.setSubmitConfirm("Delete selected users?");
+					deleteButton.setSubmitConfirm(confirmDeleting);
 					form.add(deleteButton);
+          form.add(Text.getNonBrakingSpace());
 				}
 			}
 			
+			// add move to group
+			if (users.size()>0) {
+				String confirmMoving = resourceBundle.getLocalizedString("buo_move_selected_users", "Move selected users");
+				confirmMoving += " ?";
+				SubmitButton moveToButton = 
+					new SubmitButton(resourceBundle.getLocalizedImageButton("Move to", "Move to"),
+						BasicUserOverview.MOVE_USERS_KEY,
+						BasicUserOverview.MOVE_USERS_KEY);
+				moveToButton.setSubmitConfirm(confirmMoving);		
+        // add group drop down list
+        DropdownMenu targetGroupMenu = getGroupList(iwc);
+        form.add(moveToButton);
+        form.add(Text.getNonBrakingSpace());
+        form.add(targetGroupMenu);
+        			
+				
+			}
 			
 			
 			returnTable.add(form, 1, 2);
@@ -219,6 +248,21 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		return toolbar;
 				
 	}
+  
+  private DropdownMenu getGroupList(IWContext iwc) {
+    DropdownMenu groupList = new DropdownMenu(SELECTED_TARGET_GROUP_KEY);
+    UserBusiness business = BasicUserOverview.getUserBusiness(iwc);
+    User user = iwc.getCurrentUser();
+    Collection coll = business.getAllGroupsWithEditPermission(user, iwc);
+    Iterator iterator = coll.iterator();
+    while (iterator.hasNext())  {
+      Group group = (Group) iterator.next();
+      String id = ((Integer) group.getPrimaryKey()).toString();
+      String name = group.getName();
+      groupList.addMenuElement(id,name);
+    }
+    return groupList;
+  }
 
 	/**
 	 * @param users
@@ -392,7 +436,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     
       public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
         CheckBox checkAllCheckBox = new CheckBox("checkAll");
-        checkAllCheckBox.setToCheckOnClick(BasicUserOverview.PARAMETER_DELETE_USERS, "this.checked");
+        checkAllCheckBox.setToCheckOnClick(BasicUserOverview.SELECTED_USERS_KEY, "this.checked");
         return checkAllCheckBox;
       } 
       
@@ -400,7 +444,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 				User user = (User) entity;
 
 				if (!user.equals(administratorUser)) {
-					CheckBox checkBox = new CheckBox(BasicUserOverview.PARAMETER_DELETE_USERS, Integer.toString(user.getID()));
+					CheckBox checkBox = new CheckBox(BasicUserOverview.SELECTED_USERS_KEY, Integer.toString(user.getID()));
 					return checkBox;
 				}
 				else
@@ -517,6 +561,21 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		return business;
 	}
   
+  public static GroupBusiness getGroupBusiness(IWApplicationContext iwc) {
+    GroupBusiness business = null;
+    if (business == null) {
+      try {
+        business = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+      }
+      catch (java.rmi.RemoteException rme) {
+        throw new RuntimeException(rme.getMessage());
+      }
+    }
+    return business;
+  }  
+  
+  
+  
 	public static List removeUsers(Collection userIds, Group parentGroup, IWContext iwc) {
 		UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
 		ArrayList notRemovedUsers = new ArrayList();
@@ -537,6 +596,14 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		}
 		return notRemovedUsers;
 	}
+  
+  public static Collection moveUsers(Collection userIds, Group parentGroup, int targetGroupId, IWContext iwc)  {
+    UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
+    User currentUser = iwc.getCurrentUser();
+    Collection list = userBusiness.moveUsers(userIds, parentGroup, targetGroupId, currentUser);
+    return list;
+  }
+  
 	public IWPresentationState getPresentationState(IWUserContext iwuc) {
 		if (_presentationState == null) {
 			try {
@@ -555,4 +622,227 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	public String getBundleIdentifier() {
 		return "com.idega.user";
 	}
+
+ 
+ 
+////////////////////////////////////////////////////////// hack for friday /////////////////////////////////////////////////////////////////////////////////////  
+    
+  private Table getResultList(IWContext iwc)  {
+    String movedUsersMessage  = getLocalizedString("number_of_sucessfully_moved_users", "Number of successfully moved users", iwc );
+    String notMovedUsersMessage = getLocalizedString("the_following_users_were_not moved", "Following users could not moved to the specified group", iwc);
+    String success = getLocalizedString("all_users_were_moved_to the_specified_group","All users were moved to the specified group.",iwc);
+    Collection notMovedUsers = ps.getNotMovedUsers();
+    int movedUsers = ps.getNumberOfMovedUsers();
+    movedUsersMessage = movedUsersMessage + ": " + movedUsers;
+    notMovedUsersMessage = notMovedUsersMessage + ": ";
+    Text movedUsersMessageText = new Text(movedUsersMessage);
+    movedUsersMessageText.setBold(); //setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+    Text notMovedUsersMessageText = new Text(notMovedUsersMessage);
+    notMovedUsersMessageText.setBold(); //setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+    Text successText = new Text(success);
+    successText.setBold();
+    Table table = new Table(1,3);
+    table.add(movedUsersMessageText,1,1);
+    if (notMovedUsers.size() > 0) {
+      EntityBrowser browser = getEntityBrowserForResult(notMovedUsers, iwc);
+      table.add(notMovedUsersMessageText,1,2);
+      table.add(browser,1,3);
+    }
+    else {
+      table.add(successText,1,2);
+    }
+    return table;
+  }
+  
+  protected EntityBrowser getEntityBrowserForResult(Collection users, IWContext iwc) {
+    // define entity browser
+    EntityBrowser entityBrowser = new EntityBrowser();
+    PresentationObject parentObject = this.getParentObject();
+    entityBrowser.setArtificialCompoundId(parentObject.getCompoundId(), iwc);
+    IWPresentationState presentationStateParent = ((StatefullPresentation) parentObject).getPresentationState(iwc);
+    IWPresentationState presentationStateChild = entityBrowser.getPresentationState(iwc);
+    ChangeListener[] chListeners = presentationStateParent.getChangeListener();
+    if (chListeners != null) {
+      for (int i = 0; i < chListeners.length; i++) {
+        presentationStateChild.addChangeListener(chListeners[i]);
+      }
+    }
+    // add BasisUserOverviewPs as ActionListener to the entityBrowser
+    entityBrowser.addActionListener((IWActionListener) presentationStateParent);
+      
+      
+    //    define address converter class
+    EntityToPresentationObjectConverter converterAddress = new EntityToPresentationObjectConverter() {
+      public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+      }     
+      
+      public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+          // entity is a user, try to get the corresponding address
+        User user = (User) entity;
+        Address address = null;
+        try {
+          address = BasicUserOverview.getUserBusiness(iwc).getUsersMainAddress(user);
+        }
+        catch (RemoteException ex) {
+          System.err.println("[BasicUserOverview]: Address could not be retrieved.Message was : " + ex.getMessage());
+              
+          ex.printStackTrace(System.err);
+        }
+        // now the corresponding address was found, now just use the default converter 
+        return (browser.getDefaultConverter().getPresentationObject((GenericEntity) address, path, browser, iwc));
+      }
+    };
+      
+    // define email converter class
+    EntityToPresentationObjectConverter converterEmail = new EntityToPresentationObjectConverter() {
+      public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+      }     
+      
+      public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+          // entity is a user, try to get the corresponding address
+        User user = (User) entity;
+        Email email = null;
+        try {
+          email = BasicUserOverview.getUserBusiness(iwc).getUserMail(user);
+        }
+        catch (RemoteException ex) {
+          System.err.println("[BasicUserOverview]: Email could not be retrieved.Message was :" + ex.getMessage());
+          ex.printStackTrace(System.err);
+        }
+        // now the corresponding email was found, now just use the default converter 
+        return browser.getDefaultConverter().getPresentationObject((GenericEntity) email, path, browser, iwc);
+      }
+    };
+      
+    // define phone converter class
+    EntityToPresentationObjectConverter converterPhone = new EntityToPresentationObjectConverter() {
+      public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+      }     
+      
+      public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+          // entity is a user, try to get the corresponding address
+        User user = (User) entity;
+        Phone[] phone = null;
+        try {
+          phone = BasicUserOverview.getUserBusiness(iwc).getUserPhones(user);
+        }
+        catch (RemoteException ex) {
+          System.err.println("[BasicUserOverview]: Phone could not be retrieved.Message was :" + ex.getMessage());
+          ex.printStackTrace(System.err);
+        }
+        // now the corresponding address was found, now just use the default converter 
+          int i;
+          Table table = new Table();
+          for (i = 0; i < phone.length; i++) {
+            table.add(browser.getDefaultConverter().getPresentationObject((GenericEntity) phone[i], path, browser, iwc));
+          }
+          return table;
+      }
+    };
+    // define special converter class for complete address
+    EntityToPresentationObjectConverter converterCompleteAddress = new EntityToPresentationObjectConverter() {
+      private List values;
+      
+      public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
+      } 
+      
+      public PresentationObject getPresentationObject(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+        // entity is a user, try to get the corresponding address
+        User user = (User) genericEntity;
+        Address address = null;
+        try {
+          address = BasicUserOverview.getUserBusiness(iwc).getUsersMainAddress(user);
+        }
+        catch (RemoteException ex) {
+          System.err.println("[BasicUserOverview]: Address could not be retrieved.Message was :" + ex.getMessage());
+          ex.printStackTrace(System.err);
+        }
+        StringBuffer displayValues = new StringBuffer();
+        values = path.getValues((GenericEntity) address);
+        // com.idega.core.data.Address.STREET_NUMBER plus com.idega.core.data.Address.STREET_NUMBER 
+        displayValues.append(getValue(0)).append(' ').append(getValue(1));
+        // com.idega.core.data.Address.P_O_BOX
+        String displayValue = getValue(2);
+        if (displayValue.length() != 0)
+          displayValues.append(", P.O. Box ").append(displayValue).append(", ");            
+          // com.idega.core.data.PostalCode.POSTAL_CODE_ID|POSTAL_CODE plus com.idega.core.data.Address.CITY 
+          displayValue = getValue(3);
+        if (displayValue.length() != 0)
+          displayValues.append(", ").append(getValue(3)).append(' ').append(getValue(4));
+        // com.idega.core.data.Country.IC_COUNTRY_ID|COUNTRY_NAME
+        displayValue = getValue(5);
+        if (displayValue.length() != 0)
+          displayValues.append(", ").append(displayValue);
+        return new Text(displayValues.toString());
+      }
+      private String getValue(int i) {
+        Object object = values.get(i);
+        return ((object == null) ? "" : object.toString());
+      }
+    };
+
+
+    // set default columns
+    String nameKey = "com.idega.user.data.User.FIRST_NAME:" + "com.idega.user.data.User.MIDDLE_NAME:"+"com.idega.user.data.User.LAST_NAME";
+    String completeAddressKey =
+      "com.idega.core.data.Address.STREET_NAME:"
+        + "com.idega.core.data.Address.STREET_NUMBER:"
+        + "com.idega.core.data.Address.P_O_BOX:"
+        + "com.idega.core.data.PostalCode.POSTAL_CODE_ID|POSTAL_CODE:"
+        + "com.idega.core.data.Address.CITY:"
+        + "com.idega.core.data.Country.IC_COUNTRY_ID|COUNTRY_NAME";
+    String emailKey = "com.idega.core.data.Email.ADDRESS";
+    String phoneKey = "com.idega.core.data.PhoneType.IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + "com.idega.core.data.Phone.PHONE_NUMBER";
+    String pinKey = "com.idega.user.data.User.PERSONAL_ID";
+      
+    String identifier = (selectedGroup==null)? "" : selectedGroup.getName();
+    identifier += (ps.getSelectedDomain() != null) ? ps.getSelectedDomain().getPrimaryKey().toString() : "";
+      
+    entityBrowser.setEntities(identifier, users);
+    entityBrowser.setDefaultNumberOfRows(Math.min(users.size(), 30));
+    //entityBrowser.setLineColor("#DBDCDF");
+    entityBrowser.setWidth(Table.HUNDRED_PERCENT);
+    //entityBrowser.setLinesBetween(true);
+      
+    //fonts
+    Text column = new Text();
+    column.setBold();
+    entityBrowser.setColumnTextProxy(column);
+      
+    //    set color of rows
+    entityBrowser.setColorForEvenRows(IWColor.getHexColorString(246, 246, 247));
+    entityBrowser.setColorForOddRows("#FFFFFF");
+      
+    //entityBrowser.setVerticalZebraColored("#FFFFFF",IWColor.getHexColorString(246, 246, 247)); why does this not work!??
+      
+    entityBrowser.setDefaultColumn(1, nameKey);
+    entityBrowser.setDefaultColumn(2, pinKey);
+    entityBrowser.setDefaultColumn(3, emailKey);
+    entityBrowser.setDefaultColumn(4, completeAddressKey);
+    entityBrowser.setDefaultColumn(5, phoneKey);
+
+    // set special converters
+
+    entityBrowser.setEntityToPresentationConverter(completeAddressKey, converterCompleteAddress);
+    // set converter for all columns of this class
+    entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Address", converterAddress);
+    entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Email", converterEmail);
+    entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Phone", converterPhone);
+    // set foreign entities
+    entityBrowser.addEntity("com.idega.core.data.Address");
+    entityBrowser.addEntity("com.idega.core.data.Email");
+    entityBrowser.addEntity("com.idega.core.data.Phone");
+    // change display
+    entityBrowser.setCellspacing(2);
+    entityBrowser.setAcceptUserSettingsShowUserSettingsButton(false,false);
+    
+    return entityBrowser;
+  }
+
+    
 }
+

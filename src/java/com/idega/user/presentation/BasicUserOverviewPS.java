@@ -1,6 +1,8 @@
 package com.idega.user.presentation;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import javax.swing.event.ChangeEvent;
 
@@ -38,13 +40,39 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
 	protected Group _selectedGroup = null;
 	protected IBDomain _selectedDomain = null;
 
- 
+
+  private int _selectedPartitionDefaultValue = 0;
+  private int _partitionSizeDefaultValue = 30;
+  private int _firstPartitionIndexDefaultValue = 0;
+
+  private int _selectedPartition = _selectedPartitionDefaultValue;
+  private int _partitionSize = _partitionSizeDefaultValue;
+  private int _firstPartitionIndex = _firstPartitionIndexDefaultValue;
+  
+  public boolean moveResult = false;
+  private Collection notMovedUsers;
+  private int numberOfMovedUsers;
+  
+
 
   public BasicUserOverviewPS() {
 
   }
   
+  public Collection getNotMovedUsers() {
+    Collection coll = new ArrayList();
+    coll.addAll(notMovedUsers);
+    notMovedUsers = null;
+    moveResult = false;
+    return coll;
+  }
 
+  public int getNumberOfMovedUsers()  {
+    int number = numberOfMovedUsers;
+    numberOfMovedUsers = 0;
+    return number;
+  }
+  
 
   public Group getSelectedGroup(){
     return _selectedGroup;
@@ -93,12 +121,30 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
       IWContext mainIwc = e.getIWContext();
       String[] userIds;
       if (mainIwc.isParameterSet(BasicUserOverview.DELETE_USERS_KEY) &&
-          mainIwc.isParameterSet(BasicUserOverview.PARAMETER_DELETE_USERS)) {
-        userIds = mainIwc.getParameterValues(BasicUserOverview.PARAMETER_DELETE_USERS);
+          mainIwc.isParameterSet(BasicUserOverview.SELECTED_USERS_KEY)) {
+        userIds = mainIwc.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
         // delete users (if something has been chosen)
         BasicUserOverview.removeUsers(Arrays.asList(userIds), _selectedGroup, mainIwc); 
       }
     }
+    if (e instanceof EntityBrowserEvent)  {
+      IWContext mainIwc = e.getIWContext();
+      String[] userIds;
+      if (mainIwc.isParameterSet(BasicUserOverview.MOVE_USERS_KEY) &&
+        mainIwc.isParameterSet(BasicUserOverview.SELECTED_USERS_KEY) &&
+        mainIwc.isParameterSet(BasicUserOverview.SELECTED_TARGET_GROUP_KEY)) {
+        userIds = mainIwc.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
+        int targetGroupId = Integer.parseInt(mainIwc.getParameter(BasicUserOverview.SELECTED_TARGET_GROUP_KEY));
+        // move users to a group
+        Collection notMovedUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup, targetGroupId, mainIwc);
+        this.notMovedUsers = notMovedUsers;
+        numberOfMovedUsers = userIds.length - notMovedUsers.size();
+        moveResult = true;
+      }
+    }   
+
+
+
 
   }
 

@@ -16,7 +16,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.IWTabbedPane;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.presentation.text.Link;
-import com.idega.user.block.search.event.UserSearchEvent;
+import com.idega.user.block.search.event.SimpleSearchEvent;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.event.ChangeClassEvent;
@@ -106,9 +106,9 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
     }
     
     
-    if(e instanceof UserSearchEvent){
-      System.out.println("[UserAppMainArea]: search for "+((UserSearchEvent)e).getSearchString());
-      System.out.println("[UserAppMainArea]: searchType =  "+((UserSearchEvent)e).getSearchType());
+    if(e instanceof SimpleSearchEvent){
+      System.out.println("[UserAppMainArea]: search for "+((SimpleSearchEvent)e).getSearchString());
+      System.out.println("[UserAppMainArea]: searchType =  "+((SimpleSearchEvent)e).getSearchType());
       this.search = true;  
       this.fireStateChanged();
     }
