@@ -75,7 +75,7 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
    */
   public String getName(IWContext iwc) {
     IWResourceBundle resourceBundle = this.getBundle(iwc).getResourceBundle(iwc);
-    return resourceBundle.getLocalizedString("massMovingWindow.name", "Move...");
+    return resourceBundle.getLocalizedString("massMovingWindow.name", "Mass moving automatic...");
   }
 
 
@@ -92,18 +92,17 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
 
   public void main(IWContext iwc) throws Exception {
     IWResourceBundle iwrb = getResourceBundle(iwc);
-    setTitle(iwrb.getLocalizedString("massmovingWindow.title", "Moving"));
-    addTitle(iwrb.getLocalizedString("massmovingWindow.title", "Moving"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+    setTitle(iwrb.getLocalizedString("massmovingWindow.title", "Mass moving automatic"));
+    addTitle(iwrb.getLocalizedString("massmovingWindow.title", "Mass moving automatic"), IWConstants.BUILDER_FONT_STYLE_TITLE);
     
     String action = parseRequest(iwc);
     if (SHOW_CHILDREN_OF_GROUP_ACTION.equals(action)) {
       showListOfChildren(iwrb, iwc);
     }
-    // show error message
-    String errorMessage = iwrb.getLocalizedString("mm_select_club", "Select a club or club division first, please.");
-    Text error = new Text(errorMessage);
-    error.setBold();
-    add(error);
+    else {
+      // show error message
+      showErrorContent(iwrb, iwc);
+    }
   }
 
   private String parseRequest(IWContext iwc) {
@@ -138,7 +137,7 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
         // try to get the action listener
         //TODO thomas change this in the way that actually the userApplicationMainAreaPs is used
         //actionListener = (UserApplicationMainAreaPS) stateMachine.getStateFor(actionListenerStateId, UserApplicationMainAreaPS.class);
-        actionListener = (BasicUserOverviewPS) stateMachine.getStateFor(":6893", BasicUserOverviewPS.class);
+        actionListener = (BasicUserOverviewPS) stateMachine.getStateFor(":6900", BasicUserOverviewPS.class);
       }
       catch (RemoteException ex)  {
         throw new RuntimeException(ex.getMessage());
@@ -187,6 +186,22 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     // add action listener
     addActionListener(actionListener);
   } 
+    
+  private void showErrorContent(IWResourceBundle iwrb, IWContext iwc) {
+    String errorMessage = iwrb.getLocalizedString("mm_select_club", "Select a club or club division first, please.");
+    Text error = new Text(errorMessage);
+    error.setBold();
+    // define button
+    SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
+    close.setOnClick("window.close(); return false;");
+    // assemble table
+    Table table = new Table(1,2);
+    table.add(error,1,1);
+    table.add(close,1,2);   
+    Form form = new Form(); 
+    form.add(table);
+    add(form);
+  }
     
 
   private Collection getChildrenOfGroup(IWContext iwc) {

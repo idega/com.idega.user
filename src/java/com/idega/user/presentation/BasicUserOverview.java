@@ -655,10 +655,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
   private Table getResultList(IWContext iwc)  {
     String movedUsersNumberMessage  = getLocalizedString("number_of_sucessfully_moved_users", "Number of successfully moved users", iwc );
     String notMovedUsersNumberMessage  = getLocalizedString("number_of_not_moved_users", "Number of not moved users", iwc );
-    String notMovedUsersMessage = getLocalizedString("the_following_users_were_not moved", "Following users could not moved to the specified group", iwc);
-    String success = getLocalizedString("all_users_were_moved_to the_specified_group","All users were moved to the specified group.",iwc);
+    String notMovedUsersMessage = getLocalizedString("the_following_users_were_not moved", "Following users were not moved", iwc);
+    String success = getLocalizedString("all_users_were_moved_to the_specified_group","All users were successfully moved.",iwc);
     Map resultOfMovingUsers = ps.getResultOfMovingUsers();
     UserBusiness userBusiness = BasicUserOverview.getUserBusiness(iwc);
+    GroupBusiness groupBusiness = BasicUserOverview.getGroupBusiness(iwc);
     // map has ids of groups as key and groupMaps as values.
     // groupMaps has user's ids as key and messages as values.
     // if a message is null the corresponding user was successfully moved
@@ -667,9 +668,20 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     int notMovedUsers = 0; 
     Map completeResultOfMoving = new HashMap();
     Collection notMovedUsersColl = new ArrayList();
-    Iterator iterator = resultOfMovingUsers.values().iterator();
+    Iterator iterator = resultOfMovingUsers.entrySet().iterator();
     while (iterator.hasNext())  {
-      Map map = (Map) iterator.next();
+      Map.Entry groupMap = (Map.Entry) iterator.next();
+      Map map = (Map) groupMap.getValue();
+      Integer groupId = (Integer) groupMap.getKey();
+      Group group;
+      try {
+        group = groupBusiness.getGroupByGroupID(groupId.intValue());
+      }
+      // Remote and FinderException
+      catch (Exception ex)  {
+        throw new RuntimeException(ex.getMessage());
+      }
+      String groupName = groupBusiness.getNameOfGroupWithParentName(group);
       Iterator entryIterator = map.entrySet().iterator();
       while (entryIterator.hasNext()) {
         Map.Entry entry = (Map.Entry) entryIterator.next();
@@ -677,7 +689,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         if (message != null) {
           notMovedUsers++;
           Integer userId = (Integer) entry.getKey();
-          completeResultOfMoving.put(userId, message);
+          StringBuffer buffer = new StringBuffer(groupName);
+          buffer.append(" ").append(message);
+          completeResultOfMoving.put(userId, buffer.toString());
           try {
             User notMovedUser = userBusiness.getUser(userId);
             notMovedUsersColl.add(notMovedUser);

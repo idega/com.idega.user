@@ -128,7 +128,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
         // move users 
         resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(Arrays.asList(groupIds), mainIwc);
         showMoveResult = true;
-           
+        fireStateChanged();
       }
     }     
   }
