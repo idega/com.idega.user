@@ -9,7 +9,7 @@ import javax.ejb.FinderException;
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.event.EntityBrowserEvent;
 import com.idega.block.entity.presentation.EntityBrowser;
-import com.idega.block.entity.presentation.converters.CheckBoxConverter;
+import com.idega.block.entity.presentation.converter.CheckBoxConverter;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWBundle;

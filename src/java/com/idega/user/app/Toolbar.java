@@ -404,7 +404,7 @@ public class Toolbar extends Page implements IWBrowserView {
       text8.setFontFace(Text.FONT_FACE_VERDANA);
       text8.setFontSize(Text.FONT_SIZE_7_HTML_1);
       Link tLink18 = new Link(text8);
-      tLink18.setWindowToOpen(com.idega.block.datareport.presentation.ReportLayoutChooserWindow.class);
+      tLink18.setWindowToOpen(com.idega.block.datareport.presentation.ReportOverviewWindow.class);
       ICFile queryFolder = lookUpFile(QUERY_FOLDER_NAME);
       ICFile layoutFolder = lookUpFile(LAYOUT_FOLDER_NAME);
       if (queryFolder != null)  {
