@@ -59,9 +59,9 @@ public class SubsetSelector extends PresentationObjectContainer implements IWBro
 	{
 		Layer partitionSelection = new Layer();
 		partitionSelection.setHorizontalAlignment("center");
-		this.add(partitionSelection);
 
-		if (_size > subsetSize){
+
+		if (_size > _subsetSize){
 			int partitionCount = 0;
 			for( int i = _firstPartition; ((i < _maxPartitions)&&((i-_firstPartition) < _maxShowedPartitions)); i++)
 			{
@@ -144,6 +144,7 @@ public class SubsetSelector extends PresentationObjectContainer implements IWBro
 					partitionSelection.add(end);
 				}
 			}
+			this.add(partitionSelection);
 		}
 	}
 }
