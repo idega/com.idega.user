@@ -80,8 +80,8 @@ public class UserApplication extends IWBrowser {
 
     //this.addToBottom(new Bottom());
    // System.out.println("SERVLET URL : "+getIWApplicationContext().getApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));
-    this.setEventURL(getIWApplicationContext().getIWMainApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));
-    
+    //this.setEventURL(getIWApplicationContext().getIWMainApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));
+		this.setEventURL(IWPresentationEvent.getEventHandlerFrameURL(IWContext.getInstance()));
     
 //    this.setBorder(20);
 //    this.getMiddleFrameset().setBorder(10);
