@@ -32,7 +32,7 @@ import com.idega.user.data.UserHome;
 public class MassRegisteringWindow extends IWAdminWindow {
 
 	public static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-	public static final String PARAMETER_GROUP_ID = "prm_grp_id";
+	public static final String PARAMETER_GROUP_ID = GroupPropertyWindow.PARAMETERSTRING_GROUP_ID;
 
 	private String ACTION = "mrw_act";
 	private String ACTION_NEXT ="mrw_act_nx";

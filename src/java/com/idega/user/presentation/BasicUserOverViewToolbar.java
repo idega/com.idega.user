@@ -149,6 +149,24 @@ public class BasicUserOverViewToolbar extends Toolbar {
 						button3.add(tLink14,2,1);
 						toolbar1.add(button3,6,1);
 				}
+				
+				
+				//mass registering button
+				if(selectedGroup!=null){
+					Table button3 = new Table(2,1);
+					button3.setCellpadding(0);
+						Image iconRegister = iwb.getImage("export.gif");
+						button3.add(iconRegister,1,1);
+					Text text3 = new Text(iwrb.getLocalizedString("massregistering","Bulk registering"));
+					text3.setFontFace(Text.FONT_FACE_VERDANA);
+					text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
+						Link tLink14 = new Link(text3);
+						tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID,((Integer)selectedGroup.getPrimaryKey()).toString() );
+					 tLink14.setWindowToOpen(MassRegisteringWindow.class);
+		 
+						button3.add(tLink14,2,1);
+						toolbar1.add(button3,7,1);
+				}
 			}
 				
 		}
@@ -206,8 +224,10 @@ public class BasicUserOverViewToolbar extends Toolbar {
 			}
 		}
 
+		if(selectedGroup!= null || this.title!=null){
+			toolbar1.add(new PrintButton(iwb.getImage("print.gif")),8,1);
+		}
 
-		toolbar1.add(new PrintButton(iwb.getImage("print.gif")),7,1);
 
 		
 		//calendar
