@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.ejb.FinderException;
 
@@ -30,6 +31,8 @@ import com.idega.user.data.GroupTypeHome;
  */
 public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements InputHandler {
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
+	private List _allGroupTypes = new ArrayList();
+	
 	public GroupTypeSelectionBoxInputHandler() {
 		super();
 	}
@@ -53,6 +56,7 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 					String name = groupType.getType();
 					if(name!=null) {
 						addMenuElement(name, iwrb.getLocalizedString(name,name));
+						_allGroupTypes.add(name);
 					}
 				}
 			}
@@ -80,13 +84,14 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 	 */
 	public Object getResultingObject(String[] values, IWContext iwc) throws Exception {
 		Collection groupTypes = null;
-		int count = values.length;
-		if (values != null && count > 0) {
+		if (values != null && values.length > 0) {
 			groupTypes = new ArrayList();
 			
 			for(int i=0; i<values.length; i++) {
-					groupTypes.add(values[i]);
+				groupTypes.add(values[i]);
 			}
+		} else {
+			groupTypes = _allGroupTypes;
 		}
 
 		return groupTypes;
@@ -107,7 +112,7 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 				if(isFirst) {
 					isFirst=false;
 				} else {
-					buf.append(", ");
+					buf.append(",");
 				}
 				String name = (String) gtIter.next();
 				
