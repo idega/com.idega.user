@@ -9,6 +9,7 @@ import javax.swing.event.ChangeListener;
 
 import com.idega.block.help.presentation.Help;
 import com.idega.builder.presentation.IBPageChooser;
+import com.idega.builder.presentation.StyledIBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
@@ -68,7 +69,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	public CreateGroupWindow() {
 		_stateHandler = new StatefullPresentationImplHandler();
 		_stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
-		setWidth(400);//380
+		setWidth(420);//380
 		setHeight(400);//320
 		setResizable(true);
 		setScrollbar(false);
@@ -184,7 +185,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			tab.add(layer, 1, 3);
 			tab.add(groupChooser, 1, 4); //changed from (groupChooser, 2,3) - birna
 
-			IBPageChooser pageChooser = new IBPageChooser(_createEvent.getIONameForHomePage(), IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+			StyledIBPageChooser pageChooser = new StyledIBPageChooser(_createEvent.getIONameForHomePage(), IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 			Text pageText = new Text(iwrb.getLocalizedString("home_page", "Select homepage") + ":");
 			pageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 			tab.add(pageText, 1, 5); //changed from (pageText,1,4) - birna

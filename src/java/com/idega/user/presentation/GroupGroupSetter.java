@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
@@ -31,6 +32,8 @@ import com.idega.user.data.User;
     private static final String FIELDNAME_SELECTION_DOUBLE_BOX = "related_groups";
     private IWResourceBundle iwrb = null;
 		private static final String IW_BUNDLE_IDENTIFIER  = "com.idega.user";
+		
+		private static final String HELP_TEXT_KEY = "group_group_setter";
 		
 		private String mainStyleClass = "main";
 	
@@ -138,6 +141,8 @@ import com.idega.user.data.User;
 
       //left.addSeparator();
       //right.addSeparator();
+      
+      Help help = getHelp(HELP_TEXT_KEY);
 
       frameTable.setAlignment(2,2,"center");
       //frameTable.add("GroupId: "+groupId,2,1);
@@ -147,6 +152,7 @@ import com.idega.user.data.User;
       save.setAsImageButton(true);
 			CloseButton close = new CloseButton(iwrb.getLocalizedString("groupgroupsetter.close","close"));
 			close.setAsImageButton(true);
+			frameTable.add(help,1,3);
 			frameTable.add(save,2,3);
 			frameTable.add(Text.NON_BREAKING_SPACE,2,3);
       frameTable.add(close,2,3);

@@ -1,27 +1,28 @@
 package com.idega.user.presentation;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SelectionBox;
 import com.idega.presentation.ui.SelectionDoubleBox;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.Window;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWColor;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 
 /**
@@ -29,7 +30,7 @@ import java.util.List;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -37,13 +38,16 @@ import java.util.List;
   * Former innerClass of UserGroupList
   */
 
-  public class UserGroupSetter extends Window {
+  public class UserGroupSetter extends StyledIWAdminWindow {
 
     private static final String FIELDNAME_SELECTION_DOUBLE_BOX = "related_groups";
 		private IWResourceBundle iwrb = null;
 		private static final String IW_BUNDLE_IDENTIFIER  = "com.idega.user";
-		private int width = 500;
-		private int height = 300;
+		private static final String HELP_TEXT_KEY = "user_group_setter";
+		private int width = 510;
+		private int height = 400;
+		
+		private String mainStyleClass = "main";
 		
     public UserGroupSetter(){
       super("add user to groups");
@@ -74,8 +78,9 @@ import java.util.List;
         UserBusiness userBusiness = getUserBusiness(iwc);
 
         Table frameTable = new Table(3,3);
-        frameTable.setWidth("100%");
-        frameTable.setHeight("100%");
+        frameTable.setStyleClass(mainStyleClass);
+        frameTable.setWidth(490);
+        frameTable.setHeight(320);
 				frameTable.setVerticalAlignment(Table.VERTICAL_ALIGN_TOP);
 				frameTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
 				frameTable.setVerticalAlignment(1,2,Table.VERTICAL_ALIGN_TOP);
@@ -147,16 +152,20 @@ import java.util.List;
 	          }
 	        }
 				}
+				
+				Help help = getHelp(HELP_TEXT_KEY);
 
         frameTable.setAlignment(2,2,"center");
         System.out.println("UserId: "+userId);
         frameTable.add(sdb,2,2);
-				SubmitButton save = new SubmitButton(iwrb.getLocalizedString("usergroupsetter.save","save"),"save","true");
+				SubmitButton save = new SubmitButton(iwrb.getLocalizedString("save","save"),"save","true");
         save.setAsImageButton(true);
-				CloseButton close = new CloseButton(iwrb.getLocalizedString("usergroupsetter.close","close"));
+				CloseButton close = new CloseButton(iwrb.getLocalizedString("close","close"));
 				close.setAsImageButton(true);
-				frameTable.add(close,2,3);
-        frameTable.add(save,2,3);
+				frameTable.add(help,1,3);
+				frameTable.add(save,2,3);
+				frameTable.add(Text.NON_BREAKING_SPACE,2,3);
+        frameTable.add(close,2,3);
         frameTable.setAlignment(2,3,"right");
         form.add(frameTable);
       }
@@ -164,7 +173,7 @@ import java.util.List;
         add(new ExceptionWrapper(e,this));
         e.printStackTrace();
       }
-      this.add(form);
+      this.add(form,iwc);
     }
 
     public void main(IWContext iwc) throws Exception{    	
