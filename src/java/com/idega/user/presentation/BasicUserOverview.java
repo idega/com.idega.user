@@ -36,7 +36,7 @@ import java.util.Vector;
 
 public class BasicUserOverview extends Page implements IWBrowserView, StatefullPresentation {
 
-  private static final String PARAMETER_DELETE_USER =  "delte_ic_user";
+  private static final String PARAMETER_DELETE_USER =  "delete_ic_user";
   private String _controlTarget = null;
   private IWPresentationEvent _contolEvent = null;
 
@@ -123,7 +123,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 //      userTable = new Table(3,(users.size()>16)?users.size():16);
       userTable.setCellspacing(0);
 //      userTable.setHorizontalZebraColored("D8D4CD","C3BEB5");
-      userTable.setHorizontalZebraColored(IWColor.getHexColorString(250,245,240),IWColor.getHexColorString(242,237,232));
+      userTable.setHorizontalZebraColored(IWColor.getHexColorString(0,0,0),IWColor.getHexColorString(246,246,247));
       userTable.setWidth("100%");
       for (int i = 1; i <= userTable.getRows() ; i++) {
         userTable.setHeight(i,"20");
@@ -187,7 +187,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
 
 //    this.getParentPage().setBackgroundColor("#d4d0c8");
-      this.getParentPage().setBackgroundColor(IWColor.getHexColorString(250,245,240));
+     // this.getParentPage().setBackgroundColor(IWColor.getHexColorString(250,245,240));
 
 //    this.getParentPage().setBackgroundColor(((BasicUserOverviewPS)this.getPresentationState(iwc)).getColor());
   }

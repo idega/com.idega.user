@@ -148,7 +148,7 @@ public class Toolbar extends Page implements IWBrowserView {
 //    toolbarTable.setHeight(1,1);
 //    toolbarTable.setHeight(3,1);
 //
-    IWColor color = new IWColor(212,208,200);
+//    IWColor color = new IWColor(212,208,200);
 //    toolbarTable.setColor(color);
 //    toolbarTable.setColor(1,1,color.brighter());
 //    toolbarTable.setColor(1,3,color.darker());
@@ -178,25 +178,37 @@ public class Toolbar extends Page implements IWBrowserView {
     toolbar1.add(table,1,1);
 */
 
-    int iconDimentions = 20;
+    //int iconDimentions = 20;
+    
+   
 
-    Image iconCrUser = iwb.getImage("new_group.gif");
-    iconCrUser.setHeight(iconDimentions);
-    iconCrUser.setWidth(iconDimentions);
-    Link tLink12 = new Link(iconCrUser);
-    tLink12.setWindowToOpen(CreateGroupWindow.class);
-    toolbar1.add(tLink12,2,1);
-
-    Image iconCrGroup = iwb.getImage("new_user.gif");
-    iconCrGroup.setHeight(iconDimentions);
-    iconCrGroup.setWidth(iconDimentions);
-    Link tLink11 = new Link(iconCrGroup);
+    Table button = new Table(2,1);
+ 	button.setCellpadding(0);
+    Image iconCrUser = iwb.getImage("new_user.gif");
+    button.add(iconCrUser,1,1);
+   	Text text = new Text("New User");
+ 	text.setFontFace(Text.FONT_FACE_VERDANA);
+ 	text.setFontSize(Text.FONT_SIZE_10_HTML_2);
+    Link tLink11 = new Link(text);
     tLink11.setWindowToOpen(CreateUser.class);
-    toolbar1.add(tLink11,3,1);
+    button.add(tLink11,2,1);
+    toolbar1.add(button,2,1);
+    
+ 	Table button2 = new Table(2,1);
+ 	button2.setCellpadding(0);
+    Image iconCrGroup = iwb.getImage("new_group.gif");
+    button2.add(iconCrGroup,1,1);
+	Text text2 = new Text("New Group");
+ 	text2.setFontFace(Text.FONT_FACE_VERDANA);
+ 	text2.setFontSize(Text.FONT_SIZE_10_HTML_2);
+    Link tLink12 = new Link(iconCrGroup);
+    tLink12.setWindowToOpen(CreateGroupWindow.class);
+    button2.add(tLink12,2,1);
+    toolbar1.add(button2,3,1);
 
 
-    toolbar1.setWidth(2,"26");
-    toolbar1.setWidth(3,"26");
+    //toolbar1.setWidth(2,"26");
+   // toolbar1.setWidth(3,"26");
 
 
     Link resetLink = new Link("reset");

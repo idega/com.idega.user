@@ -126,7 +126,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
     groupTree.setToShowSuperRootNode(true);
     groupTree.setDefaultOpenLevel(1);
-    groupTree.setSuperRootNodeName("idegaWeb");
+    groupTree.setSuperRootNodeName("IW Member");
     Image icon = iwb.getImage("super_root_icon.gif");
     groupTree.setSuperRootNodeIcon(icon);
 
@@ -142,7 +142,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 //    this.debugEventListanerList(iwc);
 //    groupTree.debugEventListanerList(iwc);
 
-    this.getParentPage().setBackgroundColor(IWColor.getHexColorString(250,245,240));
+    this.getParentPage().setBackgroundColor(IWColor.getHexColorString(0,0,0));
 
   }
 

@@ -97,7 +97,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
     toolbarTable.setHeight(3,1);
 
     //IWColor color = new IWColor(212,208,200);
-    IWColor color = new IWColor(207,208,210);
+    IWColor color = new IWColor(207,208,210);//jonni color
         
     toolbarTable.setColor(color);
     toolbarTable.setColor(1,1,color.brighter());

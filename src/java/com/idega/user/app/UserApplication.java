@@ -58,8 +58,8 @@ public class UserApplication extends IWBrowser {
     this.addToTop(new Top());
     this.setSpanPixels(POS_TOP,33);
     this.setSpanPixels(POS_LEFTMAIN, 200);
-    this.setSpanPixels(POS_MENU,28);
-    this.setSpanPixels(POS_BOTTOM,28);
+    this.setSpanPixels(POS_MENU,22);
+    this.setSpanPixels(POS_BOTTOM,22);
 
 
 //    Toolbar toolbar = new Toolbar();
