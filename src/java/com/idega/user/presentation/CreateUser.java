@@ -68,15 +68,16 @@ public class CreateUser extends Window {
 	private PasswordInput confirmPasswordField;
 	private TextInput ssnField;
 
-	private CheckBox generateLoginField;
+/*	private CheckBox generateLoginField;
 	private CheckBox generatePasswordField;
 	private CheckBox mustChangePasswordField;
 	private CheckBox cannotChangePasswordField;
 	private CheckBox passwordNeverExpiresField;
 	private CheckBox disableAccountField;
-	private CheckBox goToPropertiesField;
-
-	private DropdownMenu primaryGroupField;
+	*/
+	private HiddenInput goToPropertiesField;
+	
+	private GroupChooser primaryGroupField;
 
 	private SubmitButton okButton;
 	private CloseButton cancelButton;
@@ -96,13 +97,13 @@ public class CreateUser extends Window {
 	public static String passwordFieldParameterName = "password";
 	public static String confirmPasswordFieldParameterName = "confirmPassword";
 	public static String ssnFieldParameterName = "ssn";
-
+/*
 	public static String generateLoginFieldParameterName = "generateLogin";
 	public static String generatePasswordFieldParameterName = "generatePassword";
 	public static String mustChangePasswordFieldParameterName = "mustChange";
 	public static String cannotChangePasswordFieldParameterName = "cannotChange";
 	public static String passwordNeverExpiresFieldParameterName = "neverExpires";
-	public static String disableAccountFieldParameterName = "disableAccount";
+	public static String disableAccountFieldParameterName = "disableAccount";*/
 	public static String goToPropertiesFieldParameterName = "gotoProperties";
 	public static String primaryGroupFieldParameterName = "primarygroup";
 
@@ -112,8 +113,8 @@ public class CreateUser extends Window {
 
 	public CreateUser() {
 		super();
-		setHeight(490);
-		setWidth(490);
+		setHeight(200);
+		setWidth(300);
 		setBackgroundColor(new IWColor(207, 208, 210));
 		setScrollbar(false);
 		setResizable(true);
@@ -129,13 +130,13 @@ public class CreateUser extends Window {
 		confirmPasswordText = new Text(iwrb.getLocalizedString(confirmPasswordFieldParameterName,"Confirm password"));
 		ssnText = new Text(iwrb.getLocalizedString(ssnFieldParameterName,"Personal ID (SSN)"));
 
-		generateLoginText = new Text(iwrb.getLocalizedString(generateLoginFieldParameterName,"generate"));
+	/*	generateLoginText = new Text(iwrb.getLocalizedString(generateLoginFieldParameterName,"generate"));
 		generatePasswordText = new Text(iwrb.getLocalizedString(generatePasswordFieldParameterName,"generate"));
 		mustChangePasswordText = new Text(iwrb.getLocalizedString(mustChangePasswordFieldParameterName,"User must change password at next login"));
 		cannotChangePasswordText = new Text(iwrb.getLocalizedString(cannotChangePasswordFieldParameterName,"User cannot change password"));
 		passwordNeverExpiresText = new Text(iwrb.getLocalizedString(passwordNeverExpiresFieldParameterName,"Password never expires"));
 		disableAccountText = new Text(iwrb.getLocalizedString(disableAccountFieldParameterName,"Account is disabled"));
-		goToPropertiesText = new Text(iwrb.getLocalizedString(goToPropertiesFieldParameterName,"go to properties"));
+		goToPropertiesText = new Text(iwrb.getLocalizedString(goToPropertiesFieldParameterName,"go to properties"));*/
 
 		primaryGroupText = new Text(iwrb.getLocalizedString(primaryGroupFieldParameterName,"Primarygroup"));
 	}
@@ -154,25 +155,25 @@ public class CreateUser extends Window {
 		ssnField.setMaxlength(12);
 		//ssnField.setAsIcelandicSSNumber();
 
-		generateLoginField = new CheckBox(generateLoginFieldParameterName);
+		/*generateLoginField = new CheckBox(generateLoginFieldParameterName);
 		generatePasswordField = new CheckBox(generatePasswordFieldParameterName);
 		mustChangePasswordField = new CheckBox(mustChangePasswordFieldParameterName);
 		cannotChangePasswordField = new CheckBox(cannotChangePasswordFieldParameterName);
 		passwordNeverExpiresField = new CheckBox(passwordNeverExpiresFieldParameterName);
 		passwordNeverExpiresField.setChecked(true);
-		disableAccountField = new CheckBox(disableAccountFieldParameterName);
-		goToPropertiesField = new CheckBox(goToPropertiesFieldParameterName);
-		goToPropertiesField.setChecked(true);
+		disableAccountField = new CheckBox(disableAccountFieldParameterName);*/
+		goToPropertiesField = new HiddenInput(goToPropertiesFieldParameterName,"TRUE");
+		//goToPropertiesField.setChecked(true);
 
-		primaryGroupField = new DropdownMenu(primaryGroupFieldParameterName);
-		primaryGroupField.addSeparator();
+		primaryGroupField = new GroupChooser(primaryGroupFieldParameterName);
+		
 
 		//String[] gr = new String[1];
 		
 		Collection groups = null;
 		groupBiz = getGroupBusiness(iwc);
 		
-		if(!iwc.isSuperAdmin()){
+		/*if(!iwc.isSuperAdmin()){
 			groups = getUserBusiness(iwc).getAllGroupsWithEditPermission(iwc.getCurrentUser(),iwc );
 		}
 		else{
@@ -222,7 +223,7 @@ public class CreateUser extends Window {
 				primaryGroupField.addMenuElement(item.getPrimaryKey().toString(), groupBiz.getNameOfGroupWithParentName(item));
 			}
 		}
-
+*/
 
 		okButton = new SubmitButton("     OK     ", submitButtonParameterName, okButtonParameterValue);
     okButton.setAsImageButton(true);
@@ -233,7 +234,7 @@ public class CreateUser extends Window {
 
 	public void lineUpElements() {
 
-		Table frameTable = new Table(1, 6);
+		Table frameTable = new Table(1, 4);
 		frameTable.setAlignment("center");
 		frameTable.setVerticalAlignment("middle");
 		frameTable.setCellpadding(0);
@@ -253,7 +254,7 @@ public class CreateUser extends Window {
 		// nameTable end
 
 		// loginTable begin
-		Table loginTable = new Table(4, 3);
+		/*Table loginTable = new Table(4, 3);
 		loginTable.setCellpadding(0);
 		loginTable.setCellspacing(0);
 		loginTable.setHeight(1, rowHeight);
@@ -270,7 +271,7 @@ public class CreateUser extends Window {
 		loginTable.add(generatePasswordField, 3, 2);
 		loginTable.add(generatePasswordText, 4, 2);
 		loginTable.add(confirmPasswordText, 1, 3);
-		loginTable.add(confirmPasswordField, 2, 3);
+		loginTable.add(confirmPasswordField, 2, 3);*/
 		// loginTable end
 
 		// groupTable begin
@@ -285,7 +286,7 @@ public class CreateUser extends Window {
 		// groupTable end
 
 		// AccountPropertyTable begin
-		Table AccountPropertyTable = new Table(2, 4);
+		/*Table AccountPropertyTable = new Table(2, 4);
 		AccountPropertyTable.setCellpadding(0);
 		AccountPropertyTable.setCellspacing(0);
 		AccountPropertyTable.setHeight(1, rowHeight);
@@ -300,7 +301,7 @@ public class CreateUser extends Window {
 		AccountPropertyTable.add(passwordNeverExpiresField, 1, 3);
 		AccountPropertyTable.add(passwordNeverExpiresText, 2, 3);
 		AccountPropertyTable.add(disableAccountField, 1, 4);
-		AccountPropertyTable.add(disableAccountText, 2, 4);
+		AccountPropertyTable.add(disableAccountText, 2, 4);*/
 		// AccountPropertyTable end
 
 		// propertyTable begin
@@ -309,7 +310,7 @@ public class CreateUser extends Window {
 		propertyTable.setCellspacing(0);
 		propertyTable.setHeight(1, rowHeight);
 
-		propertyTable.add(goToPropertiesText, 1, 1);
+	//	propertyTable.add(goToPropertiesText, 1, 1);
 		propertyTable.add(goToPropertiesField, 2, 1);
 		// propertyTable end
 
@@ -325,13 +326,12 @@ public class CreateUser extends Window {
 		// buttonTable end
 
 		frameTable.add(nameTable, 1, 1);
-		frameTable.add(loginTable, 1, 2);
-		frameTable.add(groupTable, 1, 3);
-		frameTable.add(AccountPropertyTable, 1, 4);
-		frameTable.add(propertyTable, 1, 5);
-		frameTable.setAlignment(1, 5, "right");
-		frameTable.add(buttonTable, 1, 6);
-		frameTable.setAlignment(1, 6, "right");
+		//frameTable.add(loginTable, 1, 2);
+		frameTable.add(groupTable, 1, 2);
+		//frameTable.add(AccountPropertyTable, 1, 4);
+		frameTable.add(propertyTable, 1, 3);
+		frameTable.add(buttonTable, 1, 4);
+		frameTable.setAlignment(1, 4, "right");
 
 		myForm.add(frameTable);
 
@@ -347,16 +347,17 @@ public class CreateUser extends Window {
 		String password = null;
 		String ssn = iwc.getParameter(ssnFieldParameterName);
 
-		String mustChage = iwc.getParameter(mustChangePasswordFieldParameterName);
+		/*String mustChage = iwc.getParameter(mustChangePasswordFieldParameterName);
 		String cannotchangePassw = iwc.getParameter(cannotChangePasswordFieldParameterName);
 		String passwNeverExpires = iwc.getParameter(passwordNeverExpiresFieldParameterName);
-		String disabledAccount = iwc.getParameter(disableAccountFieldParameterName);
+		String disabledAccount = iwc.getParameter(disableAccountFieldParameterName);*/
 		String primaryGroup = iwc.getParameter(primaryGroupFieldParameterName);
+		primaryGroup = primaryGroup.substring(primaryGroup.lastIndexOf("_")+1);
 
-		Boolean bMustChange;
-		Boolean bAllowedToChangePassw;
-		Boolean bPasswNeverExpires;
-		Boolean bEnabledAccount;
+		Boolean bMustChange = Boolean.FALSE;
+		Boolean bAllowedToChangePassw = Boolean.TRUE;
+		Boolean bPasswNeverExpires = Boolean.TRUE;
+		Boolean bEnabledAccount = Boolean.TRUE;
 
 		Integer primaryGroupId = null;
 
@@ -364,7 +365,7 @@ public class CreateUser extends Window {
 			primaryGroupId = new Integer(primaryGroup);
 		}
 
-		if (mustChage != null && !"".equals(mustChage)) {
+	/*	if (mustChage != null && !"".equals(mustChage)) {
 			bMustChange = Boolean.TRUE;
 		}
 		else {
@@ -397,7 +398,7 @@ public class CreateUser extends Window {
 		}
 		else if (passw != null && cfPassw != null && !passw.equals(cfPassw)) {
 			throw new Exception("password and confirmed password not the same");
-		}
+		}*/
 
 		try {
 			String fullName = iwc.getParameter(fullNameFieldParameterName);
@@ -482,7 +483,7 @@ public class CreateUser extends Window {
 		
 		selectedGroupId = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
 		if (selectedGroupId != null) {
-			primaryGroupField.setSelectedElement(selectedGroupId);
+			primaryGroupField.setSelectedNode(new GroupTreeNode(this.getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(selectedGroupId))));
 			myForm.add(new HiddenInput(PARAMETERSTRING_GROUP_ID, selectedGroupId));
 		}
 		if (submit != null) {
