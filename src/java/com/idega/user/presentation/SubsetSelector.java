@@ -61,7 +61,7 @@ public class SubsetSelector extends PresentationObjectContainer implements IWBro
 		partitionSelection.setHorizontalAlignment("center");
 		this.add(partitionSelection);
 
-		if (_size != 0){
+		if (_size > subsetSize){
 			int partitionCount = 0;
 			for( int i = _firstPartition; ((i < _maxPartitions)&&((i-_firstPartition) < _maxShowedPartitions)); i++)
 			{
