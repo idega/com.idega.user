@@ -226,13 +226,13 @@ public class Toolbar extends Page implements IWBrowserView {
 
    //view
    	//dropdownmenu
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Yfirlit", iwb.getImage("views.gif"), com.idega.block.news.presentation.News.class),7,1);
+   // toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Yfirlit", iwb.getImage("views.gif"), com.idega.block.news.presentation.News.class),7,1);
    //search
    	//text input
    // toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Search", iwb.getImage("search.gif"), com.idega.block.news.presentation.News.class),8,1);
 
 
-   Text text3 = new Text("Reset");
+   Text text3 = new Text("&nbsp;Reset");
    text3.setFontFace(Text.FONT_FACE_VERDANA);
    text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
    Link resetLink = new Link(text3);
