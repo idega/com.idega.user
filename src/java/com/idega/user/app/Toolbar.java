@@ -39,10 +39,11 @@ public class Toolbar extends Page implements IWBrowserView {
     if(this.isChildOfOtherPage()){
       Page parent = this.getParentPage();
       parent.setAllMargins(0);
-      parent.setBackgroundColor(IWColor.getHexColorString(212,208,200));
+      parent.setBackgroundColor("#CFD0D2");
     } else {
       setAllMargins(0);
-      setBackgroundColor(IWColor.getHexColorString(212,208,200));
+      setBackgroundColor("#CFD0D2");
+      //"#E6E6E6" ljosari
     }
 
   }
@@ -161,7 +162,7 @@ public class Toolbar extends Page implements IWBrowserView {
     toolbar1.setCellpadding(0);
     toolbar1.setCellspacing(0);
 
-
+/*
     Table table = new Table(4,3);
     table.setCellpadding(0);
     table.setCellspacing(0);
@@ -175,17 +176,18 @@ public class Toolbar extends Page implements IWBrowserView {
     table.setColor(2,2,color.brighter());
     table.setColor(3,2,color.darker());
     toolbar1.add(table,1,1);
+*/
 
     int iconDimentions = 20;
 
-    Image iconCrUser = iwb.getImage("group.gif");
+    Image iconCrUser = iwb.getImage("new_group.gif");
     iconCrUser.setHeight(iconDimentions);
     iconCrUser.setWidth(iconDimentions);
     Link tLink12 = new Link(iconCrUser);
     tLink12.setWindowToOpen(CreateGroupWindow.class);
     toolbar1.add(tLink12,2,1);
 
-    Image iconCrGroup = iwb.getImage("user.gif");
+    Image iconCrGroup = iwb.getImage("new_user.gif");
     iconCrGroup.setHeight(iconDimentions);
     iconCrGroup.setWidth(iconDimentions);
     Link tLink11 = new Link(iconCrGroup);
@@ -211,17 +213,17 @@ public class Toolbar extends Page implements IWBrowserView {
    //Group
    //user
    //finance
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Finance", iwb.getImage("group.gif"), com.idega.block.news.presentation.News.class),5,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Finance", iwb.getImage("finance.gif"), com.idega.block.news.presentation.News.class),5,1);
    //reports
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Reports", iwb.getImage("group.gif"), com.idega.block.news.presentation.News.class),6,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Reports", iwb.getImage("reports.gif"), com.idega.block.news.presentation.News.class),6,1);
    //To do
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("To do", iwb.getImage("group.gif"), com.idega.block.news.presentation.News.class),7,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("To do", iwb.getImage("todo.gif"), com.idega.block.news.presentation.News.class),7,1);
    //settings
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Settings", iwb.getImage("group.gif"), com.idega.block.news.presentation.News.class),8,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Settings", iwb.getImage("settings.gif"), com.idega.block.news.presentation.News.class),8,1);
    //view
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Views", iwb.getImage("group.gif"), com.idega.block.news.presentation.News.class),9,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Views", iwb.getImage("views.gif"), com.idega.block.news.presentation.News.class),9,1);
    //search
-    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Search", iwb.getImage("group.gif"), com.idega.block.news.presentation.News.class),10,1);
+    toolbar1.add( this.getToolbarButtonWithChangeClassEvent("Search", iwb.getImage("search.gif"), com.idega.block.news.presentation.News.class),10,1);
    
    //    toolbarTable.add(toolbar1,1,2);
 	this.add(toolbar1);
@@ -242,6 +244,7 @@ public class Toolbar extends Page implements IWBrowserView {
   
  private Table getToolbarButtonWithChangeClassEvent(String textOnButton, Image icon, Class changeClass){
  	Table button = new Table(2,1);
+ 	button.setCellpadding(0);
  	Text text = new Text(textOnButton);
  	text.setFontFace(Text.FONT_FACE_VERDANA);
  	text.setFontSize(Text.FONT_SIZE_10_HTML_2);
