@@ -80,7 +80,7 @@ public class UserSearchEvent extends IWPresentationEvent
 				else if( searchType == this.SEARCHTYPE_ADVANCED ){// advanced search
 					
 					firstName = iwc.getParameter(SEARCH_FIELD_FIRST_NAME);
-					middleName = iwc.getParameter(SEARCH_FIELD_FIRST_NAME);
+					middleName = iwc.getParameter(SEARCH_FIELD_MIDDLE_NAME);
 					lastName = iwc.getParameter(SEARCH_FIELD_LAST_NAME);
 					groups = iwc.getParameterValues(this.SEARCH_FIELD_GROUPS);
 					genderId = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_GENDER_ID));
