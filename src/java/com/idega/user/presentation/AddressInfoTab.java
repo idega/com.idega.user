@@ -284,6 +284,7 @@ public class AddressInfoTab extends UserTab{
       this.updateFieldsDisplayStatus();
 
     }catch(Exception e){
+      e.printStackTrace();	
       System.err.println("AddressInfoTab error initFieldContents, userId : " + getUserId());
     }
   }
