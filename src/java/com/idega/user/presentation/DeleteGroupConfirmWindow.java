@@ -100,7 +100,6 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
   }
 
 	private Table getContent(IWResourceBundle iwrb, Group group, boolean askForConfirmation) {
-		IWContext iwc = IWContext.getInstance();
     // get selected group
     String groupName;
     groupName = group.getName();
