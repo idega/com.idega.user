@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -234,27 +235,78 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		primaryGroupField.setSelectedElement(
 			(String)fieldValues.get(primaryGroupFieldName));
 
-		Object obj = userBusiness.getUserGroupsDirectlyRelated(this.getUserId());
-		if (obj != null) {
+		User user = getUser();
+		
+		Collection directGroups = userBusiness.getUserGroupsDirectlyRelated(this.getUserId());
+		filterGroups(iwc, directGroups, user);
+		if (directGroups != null) {
 			iwc.setSessionAttribute(
 				UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED,
-				obj);
-		}
-		else {
+				directGroups);
+		} else {
 			iwc.removeSessionAttribute(
 				UserGroupList.SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED);
 		}
 
-		Object ob = userBusiness.getParentGroupsInDirectForUser(this.getUserId());
-		if (ob != null) {
+		Collection indirectGroups = userBusiness.getParentGroupsInDirectForUser(this.getUserId());
+		filterGroups(iwc, indirectGroups, user);
+		if (indirectGroups != null) {
 			iwc.setSessionAttribute(
 				UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED,
-				ob);
+				indirectGroups);
 		}
 		else {
 			iwc.removeSessionAttribute(
 				UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
 		}
+	}
+	
+	private void filterGroups(IWContext iwc, Collection groups, User user) {
+		boolean isAdmin = iwc.isSuperAdmin();
+		boolean isSameUser = iwc.getUser().getPrimaryKey().equals(user.getPrimaryKey());
+		if(isAdmin || isSameUser) {
+			return;
+		}
+		UserBusiness userBusiness = this.getUserBusiness(iwc);
+		Iterator groupIter = groups.iterator();
+		while(groupIter.hasNext()) {
+			Group group = (Group) groupIter.next();
+			boolean ok = false;
+			try {
+				ok = userBusiness.isGroupUnderUsersTopGroupNode(iwc, group, user);
+			} catch (RemoteException e) {
+				System.out.println("Could not check if group was descendant og a users top group, group not shown");
+				e.printStackTrace();
+			}
+			if(!ok) {
+				System.out.println("Group " + group.getName() + " not shown");
+				groups.remove(group);
+			}
+		}
+	}
+	
+	/**
+	 * Checks if a user is allowed to see membership of a certain user for a certain group.
+	 * @param viewer The user veiwing membership
+	 * @param group The group being veiwed for membership
+	 * @param user The user being veiwed for membership
+	 * @return true if <code>viewer</code> is allowed to see <code>user</code>s membership in 
+	 *         <code>group</code>
+	 */
+	public boolean isUserAllowedToSeeGroupMembershipForUser(User viewer, Group group, User user) {
+		boolean ok = true;
+		boolean isSameUser = viewer.getPrimaryKey().toString()!=user.getPrimaryKey().toString();
+		boolean viewerIsAdmin = false;
+		/*try {
+			viewerIsAdmin = viewer.equals(.getAdministratorUser());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if(!(isSameUser || viewerIsAdmin)) {
+			Group topLevelGroup = viewer.getPrimaryGroup();
+			
+		}*/
+		return true;
 	}
 
 	//  public class GroupList extends Page {
