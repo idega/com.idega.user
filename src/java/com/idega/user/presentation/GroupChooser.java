@@ -39,5 +39,10 @@ public class GroupChooser extends AbstractChooser {
   public void setSelectedNode(GroupTreeNode groupNode) {
       super.setChooserValue(groupNode.getNodeName(),groupNode.getNodeType()+"_"+groupNode.getNodeID());
   }
+  
+	public void setSelectedGroup(String userId, String userName) {
+		super.setChooserValue(userName,userId);
+	}
+  
 
 }

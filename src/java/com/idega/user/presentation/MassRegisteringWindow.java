@@ -263,6 +263,5 @@ public class MassRegisteringWindow extends IWAdminWindow {
 	
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
-	}
-	
+	}	
 }
