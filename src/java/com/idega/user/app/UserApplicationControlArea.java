@@ -231,25 +231,36 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	 * @return
 	 */
 	public Table displayTable(IWContext iwc) {
+		boolean ie = iwc.isIE();
+		String height = iwb.getProperty("menu_height", "350");
+		
 		Table table = new Table(1, 2);
 		table.setCellpadding(7);
 		table.setCellpaddingTop(1, 2, 0);
 		table.setWidth(Table.HUNDRED_PERCENT);
-		table.setHeight(Table.HUNDRED_PERCENT);
 		table.setHeight(1, Table.HUNDRED_PERCENT);
 		table.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_CENTER);
+		table.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
 		
 		Table borderTable = new Table(1, 1);
 		borderTable.setCellpadding(0);
 		borderTable.setCellspacing(0);
 		borderTable.setWidth(Table.HUNDRED_PERCENT);
-		borderTable.setHeight(Table.HUNDRED_PERCENT);
+		if (ie) {
+			borderTable.setHeight(Table.HUNDRED_PERCENT);
+		}
 		borderTable.setCellBorder(1, 1, 1, "#cccccc", "solid");
 		borderTable.setColor(1, 1, "#FFFFFF");
+		borderTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
 		
 		Layer layer = new Layer(Layer.DIV);
 		layer.setWidth(208);
-		layer.setHeight("100%");
+		if (ie) {
+			layer.setHeight("100%");
+		}
+		else {
+			layer.setHeight(height);
+		}
 		//layer.setStyleAttribute("border", "1px #cccccc solid");
 		//layer.setStyleAttribute("background-color", "#ffffff");
 		//layer.setStyleClass("main");
