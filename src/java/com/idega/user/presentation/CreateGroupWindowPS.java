@@ -1,6 +1,7 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
+import java.util.Iterator;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -15,13 +16,17 @@ import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationStateImpl;
 import com.idega.idegaweb.IWException;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupDomainRelationTypeHome;
+import com.idega.user.data.GroupType;
 import com.idega.user.data.User;
 import com.idega.user.event.CreateGroupEvent;
+
 
 /**
  * <p>Title: idegaWeb</p>
@@ -39,6 +44,8 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
   private String _groupName = null;
   private String _groupDescription = null;
   private String _groupType = null;
+  private IWResourceBundle iwrb;
+	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 //  private String _groupParentID = null;
 
 
@@ -81,6 +88,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
   public void actionPerformed(IWPresentationEvent e) throws IWException {
 //    System.out.println("[CreateGroupWindowPS]: ps = "+this);
 //    System.out.println("[CreateGroupWindowPS] : event = " + e);
+		iwrb = e.getIWContext().getApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(e.getIWContext());
 
     if(e instanceof CreateGroupEvent ){
 //      System.out.println("[CreateGroupWindowPS] : (e instanceof CreateGroupEvent) = true");
@@ -95,18 +103,11 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 			GroupBusiness business = (GroupBusiness)IBOLookup.getServiceInstance(e.getIWContext(),GroupBusiness.class);
 			Group group = business.createGroup(event.getName(),event.getDescription(),event.getGroupType(),event.getHomePageID(),event.getAliasID());
 
-			//set owner
-			IWUserContext iwc =  e.getIWContext();
-			User user = iwc.getCurrentUser();
-			AccessController access = iwc.getAccessController();
-			try {
-				access.setAsOwner(group,((Integer)user.getPrimaryKey()).intValue(), iwc);
-			}
-			catch (Exception ex) {
-				ex.printStackTrace();
-				
-			}
-			
+			//set current user a owner of group
+			setCurrentUserAsOwnerOfGroup(e.getIWContext(), group);
+			//get groupType tree and iterate through it and create default sub groups.
+			createDefaultSubGroups(group,business,e.getIWContext());
+					
 			
 			// Create under
 			if(event.getParentType() == CreateGroupEvent.TYPE_DOMAIN){  // under Domain
@@ -146,5 +147,67 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
       }
 
     }
+  }
+	/**
+	 * Method createDefaultSubGroups.
+	 * @param group
+	 * @param business
+	 * @param iWContext
+	 */
+	private void createDefaultSubGroups(Group group, GroupBusiness business, IWContext iwc) throws RemoteException{
+		GroupType type;
+		try {
+			type = business.getGroupTypeHome().findByPrimaryKey(group.getGroupType());
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		
+		Iterator iterator = type.getChildren();
+			
+		while (iterator!=null && iterator.hasNext()) {
+			GroupType gType = (GroupType) iterator.next();
+			String name = gType.getDefaultGroupName();
+			
+			String typeString = gType.getType();
+			System.out.println("TYPE :" +typeString );
+			//to avoid circular reference with beginning type
+			//if( this.getGroupType().equals(typeString) ) continue; rather add all types to a map to check
+			
+			if(name==null){
+				name =  iwrb.getLocalizedString(typeString,typeString);
+			}
+			//create group then call recursive
+			try {
+				Group newGroup = business.createGroup(name,gType.getDescription(),typeString);
+				setCurrentUserAsOwnerOfGroup(iwc,newGroup);
+				group.addGroup(newGroup);
+				if(!type.isLeaf()){
+					createDefaultSubGroups(newGroup,business,iwc);
+				}
+							
+				
+			}
+			catch (CreateException e) {
+				e.printStackTrace();
+				return;
+			}
+			
+			
+		}
+	}
+  
+  private void setCurrentUserAsOwnerOfGroup(IWUserContext iwc, Group group){
+		User user = iwc.getCurrentUser();
+		AccessController access = iwc.getAccessController();
+		try {
+			access.setAsOwner(group,((Integer)user.getPrimaryKey()).intValue(), iwc);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		
+		}
   }
 }
