@@ -39,6 +39,7 @@ import com.idega.user.business.GroupTreeNode;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
 import com.idega.user.event.CreateGroupEvent;
+import com.idega.user.util.ICUserConstants;
 
 /**
  *
@@ -248,6 +249,9 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 		while (iterator.hasNext())  {
 			String value = (String) iterator.next();
 			menu.addMenuElement(value, iwrb.getLocalizedString(value, value));
+		}
+		if(groupTypes.contains(ICUserConstants.GROUP_TYPE_GENERAL)){
+			menu.setSelectedElement(ICUserConstants.GROUP_TYPE_GENERAL);
 		}
 		return menu;
 	}
