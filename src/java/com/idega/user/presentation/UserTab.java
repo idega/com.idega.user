@@ -38,7 +38,6 @@ public abstract class UserTab extends Table implements Collectable{
 
   protected Text proxyText;
 	protected UserBusiness business = null;
-	protected User user = null;
 	
 
   //protected UserBusiness business;
@@ -102,15 +101,9 @@ public abstract class UserTab extends Table implements Collectable{
     return userId;
   }
   
-  public User getUser(){
-  	if(user==null){
-			user = reGetUser();
-  	}
-  	
-  	return user;
-  }
-  
-  protected User reGetUser(){
+
+  //cannot store it because some tabs might update it via the userid and not by this bean
+  protected User getUser(){
   	try {
 			return this.getUserBusiness(this.getIWApplicationContext()).getUser(getUserId());
 		}

@@ -48,6 +48,11 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 
 
 
-
+	/**
+	 * @see com.idega.presentation.TabbedPropertyWindow#disposeOfPanel(com.idega.presentation.IWContext)
+	 */
+	public boolean disposeOfPanel(IWContext iwc) {
+		return iwc.isParameterSet(PARAMETERSTRING_GROUP_ID);
+	}
 
 }
