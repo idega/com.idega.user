@@ -1,7 +1,6 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
-import java.util.Map;
 
 import com.idega.builder.presentation.IBPageChooser;
 import com.idega.business.IBOLookup;
