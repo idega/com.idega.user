@@ -22,6 +22,7 @@ import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserStatusBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
@@ -233,11 +234,12 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
         
         table.add(formatText(iwrb.getLocalizedString("save_failed_for_users", "Save failed for the following user/s:")), 1, row);
         Iterator iter = failedInserts.iterator();
-        User user;
+        FailedRegisterUser user;
         while (iter.hasNext()) {
             ++row;
-            user = (User) iter.next();
-            table.add(user.getName()+" ("+user.getPersonalID()+")", 1, row);	
+            user = (FailedRegisterUser) iter.next();
+            table.add(user.user.getName()+" ("+user.user.getPersonalID()+")", 1, row);
+            table.add(user.msg, 2, row);
         }
         
         ++row;
@@ -256,6 +258,8 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
         UserStatusBusiness usb = (UserStatusBusiness) IBOLookup.getServiceInstance(iwc, UserStatusBusiness.class);
         failedInserts = new Vector();
         boolean errorFree = true;
+        UserBusiness userBuis = getUserBusiness(iwc);
+        
         
         for (int i = 1; i <= numberOfRows; i++) {
             if (iwc.isParameterSet(PARAMETER_SAVE+"_"+i)) {
@@ -268,17 +272,25 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
                     }
                     else {
                         stat = sHome.findByPrimaryKey(new Integer(sStat));
-                    }					
-                    group.addGroup(user);
-                    if ( stat != null && (! usb.setUserGroupStatus(user.getID(), ((Integer)group.getPrimaryKey()).intValue(), ((Integer)stat.getPrimaryKey()).intValue(),iwc.getCurrentUserId()) )) {
-                        failedInserts.add(user);
+                    }		
+                    String msg = userBuis.isUserSuitedForGroup(user,group);
+                    if(msg!=null){
+                    		group.addGroup(user);
+                    		 if ( stat != null && (! usb.setUserGroupStatus(user.getID(), ((Integer)group.getPrimaryKey()).intValue(), ((Integer)stat.getPrimaryKey()).intValue(),iwc.getCurrentUserId()) )) {
+                                 failedInserts.add(new FailedRegisterUser(user,""));
+                                 errorFree = false;
+                           }
+                             
+                           if (user.getPrimaryGroup() == null) {
+                                 user.setPrimaryGroup(group);
+                                 user.store();
+                           }
+                	   }
+                    else{
+                        failedInserts.add(new FailedRegisterUser(user,msg));
                         errorFree = false;
                     }
-                    
-                    if (user.getPrimaryGroup() == null) {
-                        user.setPrimaryGroup(group);
-                        user.store();
-                    }
+                   
                 } catch (FinderException e) {
                     e.printStackTrace(System.err);
                 }
@@ -307,6 +319,16 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
             }
         }
         iwrb = getResourceBundle(iwc);
+    }
+    
+    private class FailedRegisterUser{
+        	String msg;
+        	User user;
+        	
+        	public FailedRegisterUser(User user,String msg){
+        	    this.msg = msg;
+        	    this.user = user;
+        	}
     }
     
     
