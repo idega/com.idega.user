@@ -15,6 +15,8 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	
 	private Collection selectedGroups = null;
 	private Collection availableGroups = null;
+	private String selectedGroupsParameter = null;
+	private static final String selectedGroupsParameterDefaultValue = "iw_us_sel_group_id";
 
 	/**
 	 * Constructor for GroupSelectionDoubleBox.
@@ -27,8 +29,10 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 * Constructor for GroupSelectionDoubleBox.
 	 * @param nameOfRightBox
 	 */
-	public GroupSelectionDoubleBox(String nameOfRightBox) {
-		super(nameOfRightBox);
+	public GroupSelectionDoubleBox(String parameterName) {
+		super(parameterName);
+		selectedGroupsParameter = parameterName;
+				
 	}
 
 	/**
@@ -37,22 +41,18 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 * @param headerOfLeftBox
 	 * @param headerOfRightBox
 	 */
-	public GroupSelectionDoubleBox(
-		String nameOfRightBox,
-		String headerOfLeftBox,
-		String headerOfRightBox) {
-		super(nameOfRightBox, headerOfLeftBox, headerOfRightBox);
+	public GroupSelectionDoubleBox(String parameterName,String headerOfLeftBox,String headerOfRightBox) {
+		super(parameterName, headerOfLeftBox, headerOfRightBox);
+		selectedGroupsParameter = parameterName;
 	}
 
 	/**
 	 * Constructor for GroupSelectionDoubleBox.
-	 * @param nameOfLeftBox
-	 * @param nameOfRightBox
+	 * @param headerOfLeftBox
+	 * @param headerOfRightBox
 	 */
-	public GroupSelectionDoubleBox(
-		String nameOfLeftBox,
-		String nameOfRightBox) {
-		super(nameOfLeftBox, nameOfRightBox);
+	public GroupSelectionDoubleBox(String headerOfLeftBox,String headerOfRightBox) {
+		super(selectedGroupsParameterDefaultValue, headerOfLeftBox, headerOfRightBox);
 	}
 
 	/**
@@ -109,6 +109,25 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 */
 	public void setSelectedGroups(Collection selectedGroups) {
 		this.selectedGroups = selectedGroups;
+	}
+	
+	
+
+	/**
+	 * Returns the selectedGroupsParameter.
+	 * @return String
+	 */
+	public String getSelectedGroupsParameter() {
+		return (selectedGroupsParameter==null) ? selectedGroupsParameterDefaultValue : selectedGroupsParameter;
+	}
+
+	/**
+	 * Sets the selectedGroupsParameter.
+	 * @param selectedGroupsParameter The selectedGroupsParameter to set
+	 */
+	public void setSelectedGroupsParameter(String selectedGroupsParameter) {
+		this.selectedGroupsParameter = selectedGroupsParameter;
+		this.getRightBox().setName(selectedGroupsParameter);
 	}
 
 }
