@@ -1,5 +1,4 @@
-#Fri Oct 31 01:30:45 CET 2003
-=
+#Fri Oct 31 02:37:48 CET 2003
 Add\ to=L\u00E4gg till i
 Address.CITY=Stad
 AddressInfoTab.postalcodewindow.add=L\u00E4gg till
@@ -40,7 +39,7 @@ The\ selected\ group\ has\ children.=Vald grupp har barn (anv\u00E4ndare eller g
 UM_coAddress=C/O adress
 UMcity=Stad
 UMcommune=Kommun
-UMcountry=Country
+UMcountry=Land
 UMpoBox=P.O.Box
 UMprovince=L\u00E4n
 UMstreet=Gata
