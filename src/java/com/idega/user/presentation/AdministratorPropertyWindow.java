@@ -24,8 +24,7 @@ public class AdministratorPropertyWindow extends UserPropertyWindow {
 
 	public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
 		UserLoginTab ult = new UserLoginTab();
+		ult.setPanel(panel);
 		panel.addTab(ult, 0, iwc);
-
 	}
-	
 }
