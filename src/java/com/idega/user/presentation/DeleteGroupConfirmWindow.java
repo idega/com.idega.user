@@ -43,6 +43,7 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
   public static final String GROUP_ID_KEY = "group_id_key";
   public static final String PARENT_GROUP_ID_KEY = "parent_group_id";
   public static final String PARENT_DOMAIN_ID_KEY = "parent_domain_id";
+  public static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
   
   public DeleteGroupConfirmWindow() {
     setWidth(240);
@@ -51,9 +52,13 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
     setResizable(false);
   }
   
+  public String getBundleIdentifier(){
+  	return IW_BUNDLE_IDENTIFIER;
+  }
+  
   public void main(IWContext iwc) {
     DeleteGroupConfirmWindowPS state = (DeleteGroupConfirmWindowPS) this.getPresentationState(iwc);
-    // get groupid
+    // get groupid 
     Integer groupId = new Integer(-1);
     if (iwc.isParameterSet(GROUP_ID_KEY)) {
       String groupIdString = iwc.getParameter(GROUP_ID_KEY);
