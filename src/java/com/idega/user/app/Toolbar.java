@@ -14,6 +14,7 @@ import com.idega.presentation.Image;
 import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.text.LinkContainer;
 import com.idega.presentation.text.Text;
 import com.idega.user.block.search.presentation.SearchForm;
 import com.idega.user.block.search.presentation.SearchWindow;
@@ -129,7 +130,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
     add(toolbarTable);
 
-    Table toolbar1 = new Table(8,1);
+    Table toolbar1 = new Table(9,1);
     toolbar1.setColor(color);
     toolbar1.setCellpadding(0);
     toolbar1.setCellspacing(0);
@@ -260,7 +261,26 @@ public class Toolbar extends Page implements IWBrowserView {
    //finance
    // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("finance","Finance"), iwb.getImage("finance.gif"), com.idega.block.finance.presentation.AccountViewer.class),4,1);
 
-   //reports
+   //work reports window temp
+	 if(showISStuff){
+		 Table button5 = new Table(2,1);
+		 button5.setCellpadding(0);
+		 Image iconExchange = iwb.getImage("new_group.gif");
+		 button5.add(iconExchange,1,1);
+		 Text text5 = new Text(iwrb.getLocalizedString("button.work_reports","Work Reports"));
+		 text5.setFontFace(Text.FONT_FACE_VERDANA);
+		 text5.setFontSize(Text.FONT_SIZE_7_HTML_1);
+		 LinkContainer tLink15 = new LinkContainer();
+		 tLink15.add(text5);
+		 tLink15.setURL("/index.jsp?ib_page=4");
+		 tLink15.setAsPopup(iwrb.getLocalizedString("button.work_reports","Work Reports"),"800","600");
+		 
+		 //tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.WorkReportWindow");
+		 
+		 button5.add(tLink15,2,1);
+		 toolbar1.add(button5,9,1);
+	 }
+	 
    // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("reports","Reports"), iwb.getImage("reports.gif"), com.idega.block.reports.presentation.Reporter.class),5,1);
 
    //To do - stickies
