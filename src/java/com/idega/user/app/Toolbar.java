@@ -243,14 +243,15 @@ public class Toolbar extends Page implements IWBrowserView {
 				}
 				else {
 					Image toolImage = toolbarElement.getButtonImage(finalIwc);
-					toolImage.setPaddingLeft(7);
-					toolImage.setPaddingRight(3);
 					Link toolLink = new Link(toolName);
 					toolLink.setStyleClass(styledLink);
 					toolLink.setParameter(parameterMap);
 					toolLink.setWindowToOpen(toolPresentationClass);
-					
-					toolbar2.add(toolImage, toolbarColumn++, 1);
+					if (toolImage != null) {
+					    toolImage.setPaddingLeft(7);
+					    toolImage.setPaddingRight(3);
+					    toolbar2.add(toolImage, toolbarColumn++, 1);
+					}
 					toolbar2.setVerticalAlignment(toolbarColumn, 1, Table.VERTICAL_ALIGN_TOP);
 					toolbar2.setCellpaddingTop(toolbarColumn, 1, 3);
 					toolbar2.add(toolLink, toolbarColumn++, 1);
