@@ -11,6 +11,7 @@ import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -79,7 +80,11 @@ public class UserChooserWindow extends AbstractChooserWindow {
 				Iterator iter = availableUserPks.iterator();
 				int counter = 0;
 				while (iter.hasNext()) {
-					userIds[counter++] = ((Integer) iter.next()).toString();	
+					
+					
+						
+					Object i = iter.next();
+					userIds[counter++] = i.toString();
 				}
 			}
 			if (usingUserPks && searchString == null) {
@@ -109,7 +114,8 @@ public class UserChooserWindow extends AbstractChooserWindow {
 		if (uId != null) {
 			try {
 				User user = getUserHome().findByPrimaryKey(new Integer(uId));
-				getParentPage().setOnLoad(SELECT_FUNCTION_NAME + "('" + user.getName() + "','" + uId + "')");
+				Page page = getParentPage();
+				page.setOnLoad(SELECT_FUNCTION_NAME + "('" + user.getName() + "','" + uId + "')");
 			} catch (RemoteException e) {
 			} catch (FinderException e) {
 			}

@@ -49,6 +49,7 @@ public class UserChooser extends AbstractChooser {
 	 */
 	public Class getChooserWindowClass() {
 		return UserChooserWindow.class;
+		
 	}
 	
 	public void setValidUserPks(Collection userPks) {
