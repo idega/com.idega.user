@@ -63,7 +63,10 @@ public class UserApplication extends IWBrowser {
     this.showMenuFrame(true);
     this.showBottomFrame(true);
     this.addToLeftMain(new UserApplicationControlArea());
-    this.addToMain(new UserApplicationMainArea());
+    
+    this.addToMain(new BasicUserOverview());
+    
+    //this.addToMain(new UserApplicationMainArea());
 
     this.addToBottom(new Bottom());
 
