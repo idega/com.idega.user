@@ -745,7 +745,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
       table.add(notMovedUsersMessageText,1,3);
       table.add(browser,1,4);
     }
-    else {
+    else if (movedUsers > 0) {
       table.add(successText,1,2);
     }
     return table;

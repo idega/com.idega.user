@@ -39,16 +39,12 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
 	protected Group _selectedGroup = null;
 	protected IBDomain _selectedDomain = null;
   
-  public boolean showMoveResult = false;
   private Map resultOfMovingUsers = null;
-
 
   public BasicUserOverviewPS() {
   }
   
   public Map getResultOfMovingUsers() {
-    // prevent showing the result a second time
-    showMoveResult = false;
     return resultOfMovingUsers;
   }
 
@@ -76,6 +72,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
   public void actionPerformed(IWPresentationEvent e)throws IWException{
 
     if(e instanceof ResetPresentationEvent){
+      resultOfMovingUsers = null;
       this.reset();
       this.fireStateChanged();
     }
@@ -85,12 +82,14 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
       _selectedDomain = null;
       parentGroupOfSelection = ((SelectGroupEvent)e).getParentGroupOfSelection();
       parentDomainOfSelection = ((SelectGroupEvent)e).getParentDomainOfSelection();
+      resultOfMovingUsers = null;
       this.fireStateChanged();
     }
 
     if(e instanceof SelectDomainEvent){
       _selectedDomain = ((SelectDomainEvent)e).getSelectedDomain();
       _selectedGroup = null;
+      resultOfMovingUsers = null;
       this.fireStateChanged();
     }
 
@@ -115,7 +114,6 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
         int targetGroupId = Integer.parseInt(mainIwc.getParameter(BasicUserOverview.SELECTED_TARGET_GROUP_KEY));
         // move users to a group
         resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup, targetGroupId, mainIwc);
-        showMoveResult = true;
       }
     }  
     
@@ -127,7 +125,6 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
         groupIds = mainIwc.getParameterValues(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY);
         // move users 
         resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(Arrays.asList(groupIds), mainIwc);
-        showMoveResult = true;
         fireStateChanged();
       }
     }     
