@@ -3,6 +3,7 @@ package com.idega.user.app;
 import java.util.List;
 import java.util.Vector;
 
+import com.idega.block.importer.presentation.Importer;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWLocation;
@@ -128,7 +129,7 @@ public class Toolbar extends Page implements IWBrowserView {
 
     add(toolbarTable);
 
-    Table toolbar1 = new Table(6,1);
+    Table toolbar1 = new Table(7,1);
     toolbar1.setColor(color);
     toolbar1.setCellpadding(0);
     toolbar1.setCellspacing(0);
@@ -219,6 +220,27 @@ public class Toolbar extends Page implements IWBrowserView {
 			button5.add(tLink15,2,1);
 			toolbar1.add(button5,6,1);
 		}
+		
+		if (showISStuff) {
+			Table button6 = new Table(2, 1);
+			button6.setCellpadding(0);
+			Image iconImport = iwb.getImage("import.gif");
+			button6.add(iconImport, 1, 1);
+			Text text6 = new Text(iwrb.getLocalizedString("nationRegister", "National Register"));
+			text6.setFontFace(Text.FONT_FACE_VERDANA);
+			text6.setFontSize(Text.FONT_SIZE_7_HTML_1);
+			Link tLink16 = new Link(text6);
+
+			//TODO: Eiki make plugin based
+			tLink16.setParameter(Importer.PARAMETER_IMPORT_FILE, "is.idega.block.nationalregister.data.NationalRegisterImportFile");
+			tLink16.setParameter(Importer.PARAMETER_IMPORT_HANDLER, "is.idega.block.nationalregister.business.NationalRegisterFileImportHandler");
+
+			tLink16.setWindowToOpen(Importer.class);
+
+			button6.add(tLink16, 2, 1);
+			toolbar1.add(button6, 7, 1);
+		}
+
     
    //finance
    // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("finance","Finance"), iwb.getImage("finance.gif"), com.idega.block.finance.presentation.AccountViewer.class),4,1);
