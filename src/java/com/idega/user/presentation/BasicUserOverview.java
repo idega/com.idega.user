@@ -346,9 +346,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			
 			entityBrowser.setEntities(identifier, users);
 			entityBrowser.setDefaultNumberOfRows(Math.min(users.size(), 30));
-			entityBrowser.setLineColor("#DBDCDF");
+			//entityBrowser.setLineColor("#DBDCDF");
 			entityBrowser.setWidth(Table.HUNDRED_PERCENT);
-			entityBrowser.setLinesBetween(true);
+			//entityBrowser.setLinesBetween(true);
 			
 			//fonts
 			Text column = new Text();
@@ -356,8 +356,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			entityBrowser.setColumnTextProxy(column);
 			
 			//		set color of rows
-			entityBrowser.setColorForEvenRows("#FFFFFF");
-			entityBrowser.setColorForOddRows(IWColor.getHexColorString(246, 246, 247));
+			entityBrowser.setColorForEvenRows(IWColor.getHexColorString(246, 246, 247));
+			entityBrowser.setColorForOddRows("#FFFFFF");
+			
 			//entityBrowser.setVerticalZebraColored("#FFFFFF",IWColor.getHexColorString(246, 246, 247)); why does this not work!??
 			
 			entityBrowser.setDefaultColumn(1, nameKey);
