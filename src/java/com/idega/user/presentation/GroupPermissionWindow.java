@@ -19,12 +19,13 @@ import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.data.ICPermission;
+import com.idega.data.IDOStoreException;
 import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.help.presentation.Help;
-import com.idega.idegaweb.presentation.*;
+import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentationImplHandler;
@@ -58,10 +59,9 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	private static final String SESSION_PARAM_PERMISSIONS_BEFORE_SAVE = "gpw_permissions_b_s";
 	private static final String RECURSE_PERMISSIONS_TO_CHILDREN_KEY = "gpw_recurse_ch_of_gr";
 	private static final String PARAM_OVERRIDE_INHERITANCE = "gpw_over";
-	private static final String PARAM_PERMISSIONS_SET_TO_CHILDREN = "gpw_inherit_perm";
+	private static final String PARAM_IS_PERMISSION_CONTROLLER = "gpw_permission_ctrl";
 	private static final String HELP_TEXT_KEY = "group_permission_window";
 
-	//private static final String PARA = "com.idega.user";
 
 	private String mainStyleClass = "main";
 	
@@ -77,10 +77,11 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 	private String selectedGroupId = null;
 
-	private List permissionType;
 	private IWResourceBundle iwrb = null;
 	private Group selectedGroup;
 	private boolean hasInheritedPermissions;
+    private List permissionTypes;
+    private AccessController access;
 
 	
 	/**
@@ -127,30 +128,23 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		iwrb = this.getResourceBundle(iwc);
 		addTitle(iwrb.getLocalizedString("group_permission_window", "Group Permission Window"), IWConstants.BUILDER_FONT_STYLE_TITLE);
 
+		//set initial variables
 		parseAction(iwc);
-
+		////////////////////////////////////
 
 		//if this group has inherited permissions it cannot change them
 		if (hasInheritedPermissions) {
 			addInheritedPermissionsView(iwc);
 		}
 		else {
-
-			//get permission, order and use entitybrowser
-			Collection allPermissions = getAllPermissionForSelectedGroupAndCurrentUser(iwc);
-			List permissionTypes = getAllPermissionTypes(allPermissions);
-
+		    //save if the user clicked save
 			if (saveChanges) {
-				saveChanges(iwc, permissionTypes);
-				//refetch
-				allPermissions = getAllPermissionForSelectedGroupAndCurrentUser(iwc);
-				permissionTypes = getAllPermissionTypes(allPermissions);
+				saveChanges(iwc);
 			}
 			
-			
-			addPermissionsForm(iwc, allPermissions, permissionTypes);
-			
-			
+			//add the permission form
+			addPermissionsForm(iwc);
+		
 		}
 
 	}
@@ -198,19 +192,21 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		add(form,iwc);
 	}
 	
-	private void addPermissionsForm(IWContext iwc, Collection allPermissions, List permissionTypes) throws Exception {
-		List entityList = orderAndGroupPermissionsByContextValue(allPermissions, iwc);
+	private void addPermissionsForm(IWContext iwc) throws Exception {
+	    //get permission, order, sort alphabetically and use entitybrowser
+		Collection allPermissions = getAllPermissionForSelectedGroupAndCurrentUser(iwc);
+	    List entityList = orderAndGroupPermissionsByContextValue(allPermissions, iwc);
 		GroupComparator groupComparator = new GroupComparator(iwc.getCurrentLocale());
 		groupComparator.setObjectsAreICPermissions(true);
-		groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));
-		Collections.sort(entityList, groupComparator); //sort alphabetically
-
+		groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));		
+		Collections.sort(entityList, groupComparator); 
 		EntityBrowser browser = getEntityBrowser(permissionTypes, entityList);
+		//////////////////////////
+		
 		Form form = getGroupPermissionForm(browser);
+		//needed for the entitybrowser...I think...can't remember...need more beer ;)
 		form.add(new HiddenInput(PARAM_SELECTED_GROUP_ID, selectedGroupId));
-		
-		
-		
+
 		add(form, iwc);
 	}
 	
@@ -236,9 +232,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		
 		int column = 1;
 		String groupIdColumn = "ICPermission.PERMISSION_CONTEXT_VALUE";
-		//browser.setLeadingEntity("com.idega.core.accesscontrol.data.ICPermission");
-		//browser.setMandatoryColumn(column,"com.idega.core.accesscontrol.data.ICPermission.GROUP_ID");
-
+		
 		
 		//CONVERTERS
 		// define groupname converter
@@ -313,6 +307,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 				final String permitType = "permit";
 				final int selectedId = Integer.parseInt(selectedGroupId);
 				
+				//here we add to the permission map in session for saving purposes
 				Map permissionMap = getPermissionMapFromSession(iwc, columnName, false);
 
 				String groupId = null;
@@ -380,24 +375,33 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		
 			public PresentationObject getPresentationObject(Object permissions, EntityPath path, EntityBrowser browser, IWContext iwc) {
 
+			    String checkBoxKey = path.getShortKey(); 
+			    String groupID = null;
+			    boolean checked = false;
+			    
 				Collection col = (Collection) permissions;
-
 				Iterator iterator = col.iterator();
 
 				while (iterator.hasNext()) {
 					ICPermission perm = (ICPermission) iterator.next();
-				
-
 						
-						String checkBoxKey = path.getShortKey(); 
-						CheckBox checkBox = new CheckBox(checkBoxKey, perm.getContextValue());
-						
-						return checkBox;
-				
+					groupID = perm.getContextValue();
 
+					//we only care for permission that have a positive and active value
+						if(perm.getPermissionValue()) {
+							checked = perm.doesInheritToChildren();
+							break;//we can stop right here because all the permission in this collection should have the same value
+						}
+						else {
+						    continue;
+						}
 				}
-
-				return new Text("");
+				
+				
+				CheckBox checkBox = new CheckBox(checkBoxKey, groupID);
+				checkBox.setChecked(checked);
+				
+				return checkBox;
 
 			}
 		};
@@ -412,93 +416,204 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 		return browser;
 	}
-	private void saveChanges(IWContext iwc, List permissionTypes) {
-		AccessController access = iwc.getAccessController();
+	private void saveChanges(IWContext iwc) {
 		
 		try {
-			checkForInheritanceChanges(iwc);
+		    
+		    //Adds or removes this group as a permission controlling group to its child groups.
+			checkForPermissionControllingGroupChanges(iwc);
 			
 			
+			//iterate for each permission key, view, edit etc.
 			Iterator iterator = permissionTypes.iterator();
 
 			while (iterator.hasNext()) {
+			    //permission key, view, edit etc.
 				String key = (String) iterator.next();
-				String[] values = iwc.getParameterValues(key);
+				//group ids for this key
+				String[] groupIDs = iwc.getParameterValues(key);
+				//get a map of permissions by groups and key that the selected group has BEFORE THE SAVE
+				//then we remove the ones we add from the list and the rest are those we need to remove! smart eh?
 				Map permissions = this.getPermissionMapFromSession(iwc, key, false);
 
-				//adding new values
-				if (values != null && values.length > 0) {
-
-					for (int i = 0; i < values.length; i++) {
-						access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, selectedGroupId, values[i], key, Boolean.TRUE);
-					
-						
-						if(groupIdsToRecurseChangesOn!=null && groupIdsToRecurseChangesOn.contains(new Integer(values[i]))){
-							//recurse through children and give same rights
-							Group parent = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(values[i]));
-							Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(parent);
-							if(children!=null && !children.isEmpty()){
-								Iterator childIter = children.iterator();
-								while (childIter.hasNext()) {
-									Group childGroup = (Group) childIter.next();
-									//only if current user owns the group
-									if(iwc.isSuperAdmin() || access.isOwner(childGroup,iwc)){
-										access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, selectedGroupId, childGroup.getPrimaryKey().toString(), key, Boolean.TRUE);
-									}
-								}
-							}
-						}
-						
-						permissions.remove(values[i]);
-					
-					
-					
-					}
-
-				}
-
-				//does not remove record only set the permission to false
-				//todo remove if I am owner (see todo on owner stuff in this class)
-				//AccessControl.removePermissionRecords(AccessController.CATEGORY_GROUP_ID,iwc, instanceId,(String)item, groupsToRemove);
-
-				Iterator entries = permissions.values().iterator();
-				while (entries.hasNext()) {	
-					ICPermission permission = (ICPermission) entries.next();
-					access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, selectedGroupId, permission.getContextValue(), permission.getPermissionString(), Boolean.FALSE);
-					
-					  
-					 if(groupIdsToRecurseChangesOn!=null && groupIdsToRecurseChangesOn.contains(new Integer(permission.getContextValue()))){
-						//recurse through children and remove same rights	
-						Group parent = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(permission.getContextValue()));
-						Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(parent);
-						if(children!=null && !children.isEmpty()){
-							Iterator childIter = children.iterator();
-							while (childIter.hasNext()) {
-								Group childGroup = (Group) childIter.next();
-								
-								access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, selectedGroupId, childGroup.getPrimaryKey().toString(), key, Boolean.FALSE);
-							
-							}
-						}
-						
-					}
-					
-				}
+				//If inherit is checked and had not been done before we add those permissions to that group and to its
+				//children. If inherit is checked but a single permission like "edit" is unchecked then it is removed from
+				//that group and its children. If you only want to detactivate the inheritance but not change the children
+				//just uncheck inheritance.
+				
+				//add permissions and inherit if needed
+				addPermissions(iwc, key, groupIDs, permissions);
+				
+				//remove permissions and inherited if needed
+				removePermissions(iwc, key, permissions);
 
 			}
 
 			//refresh permissions PermissionCacher.updatePermissions()
+			//temporary way of updating the permission map for groups
 			iwc.getApplicationContext().removeApplicationAttribute("ic_permission_map_" + AccessController.CATEGORY_GROUP_ID);
+			
 
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	private void checkForInheritanceChanges(IWContext iwc) throws RemoteException {
+	
+	
+	/**
+     * @param iwc
+     * @param key
+     * @param permissions
+     * @throws Exception
+     * @throws FinderException
+     * @throws RemoteException
+     */
+    private void removePermissions(IWContext iwc, String key, Map permissions) throws Exception, FinderException, RemoteException {
+       
+        //removing (setting to false) permissions
+        Iterator entries = permissions.values().iterator();
+        while (entries.hasNext()) {	
+        	ICPermission permission = (ICPermission) entries.next();
+        	
+        	removePermission(iwc, key, permission.getContextValue());
+        	  
+        	removeInheritedPermissionFromChildGroups(iwc, key, permission);
+        	
+        }
+    }
+    /**
+     * @param iwc
+     * @param key
+     * @param permission
+     * @throws FinderException
+     * @throws RemoteException
+     * @throws Exception
+     */
+    private void removeInheritedPermissionFromChildGroups(IWContext iwc, String key, ICPermission permission) throws FinderException, RemoteException, Exception {
+       //if inherit is checked then we remove the permissions that we want to change from its children otherwise we set 
+        //it to not inherit to children
+        if(groupIdsToRecurseChangesOn!=null && groupIdsToRecurseChangesOn.contains(new Integer(permission.getContextValue()))){
+       
+            //recurse through children and remove same rights	
+        	Group parent = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(permission.getContextValue()));
+        	Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(parent);
+        	if(children!=null && !children.isEmpty()){
+        		Iterator childIter = children.iterator();
+        		while (childIter.hasNext()) {
+        			Group childGroup = (Group) childIter.next();
+        			//only if the user is allowed
+        			if(iwc.isSuperAdmin() || access.isOwner(childGroup,iwc) || access.hasPermitPermissionFor(childGroup,iwc)){
+        			    removePermission(iwc, key, childGroup.getPrimaryKey().toString());
+        			}
+        		
+        		}
+        	}
+        	
+        }
+      
+    }
+    /**
+     * @param iwc
+     * @param key
+     * @param childGroup
+     * @throws Exception
+     */
+    private void removePermission(IWContext iwc, String key, String groupId) throws Exception {
+        access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, selectedGroupId, groupId, key, Boolean.FALSE);
+    }
+    /**
+     * @param iwc
+     * @param key
+     * @param values
+     * @param permissions
+     * @throws Exception
+     * @throws FinderException
+     * @throws RemoteException
+     */
+    private void addPermissions(IWContext iwc, String key, String[] groupIds, Map permissions) throws Exception, FinderException, RemoteException {
+        //
+        //adding new permissions
+        //
+        if (groupIds != null && groupIds.length > 0) {
+            
+            //Add permissions and recurse to the child groups if needed
+        	for (int i = 0; i < groupIds.length; i++) {
+        	    addPermission(iwc, key, groupIds[i]);
+        	
+        		addInheritedPermissionToChildGroups(iwc, key, groupIds[i]);
+        		 
+        		//remove from the list so we know which ones to remove later
+        		permissions.remove(groupIds[i]);
+        	
+        	}
+        }
+        
+    }
+    /**
+	 * Inherits the permission to the children
+     * @param iwc
+     * @param key
+     * @param values
+     * @param i
+     * @throws FinderException
+     * @throws RemoteException
+     * @throws Exception
+     */
+    private void addInheritedPermissionToChildGroups(IWContext iwc, String key, String groupId) throws FinderException, RemoteException, Exception {
+        //get the permission to mark if it should inherit to children or not
+        ICPermission perm = AccessControl.getGroupICPermissionForGroupAndPermissionKeyAndContextValue(selectedGroup,key,groupId);
+       
+        //check if we need to recurse (inherit) the permission to the children of the group we are setting the permission to
+        if(groupIdsToRecurseChangesOn!=null && groupIdsToRecurseChangesOn.contains(new Integer(groupId))){
+             
+            perm.setToInheritToChildren();
+            perm.store();
+           
+            
+        	//recurse through children and give same rights
+        	Group parent = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(groupId));
+        	Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(parent);
+        	if(children!=null && !children.isEmpty()){
+        		Iterator childIter = children.iterator();
+        		while (childIter.hasNext()) {
+        			Group childGroup = (Group) childIter.next();
+        			//only if current user owns the group or has permit permission to it
+        			if(iwc.isSuperAdmin() || access.isOwner(childGroup,iwc) || access.hasPermitPermissionFor(childGroup,iwc)){
+        				addPermission(iwc, key, childGroup.getPrimaryKey().toString());
+        			}
+        		}
+        	}
+        }
+        else {
+            perm.setToNOTInheritToChildren();
+            perm.store();
+        }
+    }
+    
+    
+    /**
+	 * Adds the permission from the selected group to the group it gets permission to
+     * @param iwc
+     * @param key view,edit,create,delete,permit
+     * @param groupId the id of the group to get permission to
+     * @param i
+     * @throws Exception
+     */
+    private void addPermission(IWContext iwc, String key, String groupId) throws Exception {
+        //Add the permission
+        access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, selectedGroupId, groupId, key, Boolean.TRUE);
+    }
+    /**
+	 * Adds or removes this group as a permission controlling group to its child groups.
+	 * @param iwc
+	 * @throws RemoteException
+	 */
+	private void checkForPermissionControllingGroupChanges(IWContext iwc) throws Exception {
 		//inheritance stuff
-		String inheritToChildren = iwc.getParameter(PARAM_PERMISSIONS_SET_TO_CHILDREN);
-		if(inheritToChildren!=null && !selectedGroup.isPermissionControllingGroup()){//its true and we don't have to do it again
+		String inheritToChildren = iwc.getParameter(PARAM_IS_PERMISSION_CONTROLLER);
+		if(inheritToChildren!=null && !selectedGroup.isPermissionControllingGroup()){
+		    //its true and we don't have to do it again
 			selectedGroup.setIsPermissionControllingGroup(true);
 			selectedGroup.store();
 			
@@ -507,9 +622,11 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			if(children!=null && !children.isEmpty()){
 				Iterator itering = children.iterator();
 				while (itering.hasNext()) {
-					Group child = (Group) itering.next();
-					child.setPermissionControllingGroup(selectedGroup);
-					child.store();
+					Group childGroup = (Group) itering.next();
+					if(iwc.isSuperAdmin() || access.isOwner(childGroup,iwc) || access.hasPermitPermissionFor(childGroup,iwc)){
+					    childGroup.setPermissionControllingGroup(selectedGroup);
+					    childGroup.store();
+					}
 				}
 			}
 		}
@@ -527,6 +644,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 				  Iterator itering = children.iterator();
 				  while (itering.hasNext()) {
 					  Group child = (Group) itering.next();
+					  //we control the selected group so we do not have to ask permission to remove it
 					  if(id==child.getPermissionControllingGroupID()){
 					  	child.setPermissionControllingGroup(null);
 					  	
@@ -538,33 +656,27 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			}
 		}
 	}
+	
+	
+	/**
+	 * Gets all the ICPermission entries for the selected group and the current user.
+	 * @param iwc
+	 * @return
+	 */
 	private Collection getAllPermissionForSelectedGroupAndCurrentUser(IWContext iwc) {
 		Collection allPermissions = null;
 
 		try {
 			User user = iwc.getCurrentUser();
+			
+			//for this group
 			allPermissions = AccessControl.getAllGroupPermissionsForGroup(selectedGroup);
+			//for the user
 			Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
-			
-			Collection directlyRelatedParents = getGroupBusiness(iwc).getParentGroups(user);
-			
-			Iterator iterating = directlyRelatedParents.iterator();
-			ArrayList parents = new ArrayList();
-			
-			while (iterating.hasNext()) {
-				Group parent = (Group) iterating.next();
-				if(parent.getPermissionControllingGroupID()>0){
-					parents.add(parent.getPermissionControllingGroup());
-				}
-				else{
-					parents.add(parent);
-				}	
-			}
-			
-			//get all view permissions for direct parent and put in a list
-			Collection permitPermissions = AccessControl.getAllGroupPermitPermissions(parents);
+			//get all permit permissions from parents or their permission controlling groups
+			Collection permitPermissions = AccessControl.getAllGroupPermitPermissions(getAllParentOrPermissionControllingGroupsForUser(iwc, user));
 						
-			//ownedPermissions.removeAll(allPermissions);
+			//add the permissions to one big list
 			allPermissions.addAll(ownedPermissions);
 			allPermissions.addAll(permitPermissions);
 
@@ -577,6 +689,31 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	}
 
 	/**
+     * @param iwc
+     * @param user
+     * @return
+     * @throws RemoteException
+     */
+    private ArrayList getAllParentOrPermissionControllingGroupsForUser(IWContext iwc, User user) throws RemoteException {
+        //permissions from the users direct parent groups or their permission controlling groups 
+        ArrayList parents = new ArrayList();
+        Collection directlyRelatedParents = getGroupBusiness(iwc).getParentGroups(user);
+        
+        Iterator iterating = directlyRelatedParents.iterator();
+        
+        
+        while (iterating.hasNext()) {
+        	Group parent = (Group) iterating.next();
+        	if(parent.getPermissionControllingGroupID()>0){
+        		parents.add(parent.getPermissionControllingGroup());
+        	}
+        	else{
+        		parents.add(parent);
+        	}	
+        }
+        return parents;
+    }
+    /**
 	 * Method getAndOrderAllPermissions orders by groupId and returns the permissions as a collection of collections.
 	 * 
 	 * @param iwc
@@ -623,35 +760,31 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	 * @param permissions
 	 * @return List
 	 */
-	public List getAllPermissionTypes(Collection permissions) {
+	//public List getAllPermissionTypes(Collection permissions) {
+	protected List getAllPermissionTypes() {
 
-		List permissionTypes = new ArrayList();
-
-		permissionTypes.add(0, "view");
-		permissionTypes.add(1, "edit");
-		permissionTypes.add(2, "create");
-		permissionTypes.add(3, "delete");
-		permissionTypes.add(4, "permit");//the permission to give others permissions
-
+		if(permissionTypes == null ) {
+		    permissionTypes = new ArrayList();
+			
+	        permissionTypes.add(0, "view");
+			permissionTypes.add(1, "edit");
+			permissionTypes.add(2, "create");
+			permissionTypes.add(3, "delete");
+			permissionTypes.add(4, "permit");//the permission to give others permissions
+		}
 		//we shall only support these group permission for now. Use roles for other stuff.
 		/*
 		Iterator iter = permissions.iterator();
-
 		String permissionType;
 		while (iter.hasNext()) {
 			ICPermission perm = (ICPermission) iter.next();
-
 			permissionType = perm.getPermissionString();
-
 			if (!permissionTypes.contains(permissionType)) {
 				permissionTypes.add(permissionType);
 			}
-
 		}
-
 		permissionTypes.remove("owner");
 */
-		
 		return permissionTypes;
 
 	}
@@ -695,7 +828,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		Text inherit = new Text(iwrb.getLocalizedString("grouppermissionwindow.apply_recursively_to_children","Apply on children"));
 		table.add(inherit, 2, 1);
 		table.add(Text.NON_BREAKING_SPACE, 2, 1);
-		CheckBox setSamePermissionsOnChildrenCheckBox = new CheckBox(PARAM_PERMISSIONS_SET_TO_CHILDREN,"inherit_to_children");
+		CheckBox setSamePermissionsOnChildrenCheckBox = new CheckBox(PARAM_IS_PERMISSION_CONTROLLER,"inherit_to_children");
 		setSamePermissionsOnChildrenCheckBox.setChecked(selectedGroup.isPermissionControllingGroup());
 		table.add(setSamePermissionsOnChildrenCheckBox, 2, 1);
 		
@@ -719,7 +852,9 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	}
 
 	private void parseAction(IWContext iwc) throws RemoteException {
-		selectedGroupId = iwc.getParameter(GroupPermissionWindow.PARAM_SELECTED_GROUP_ID);
+		
+	   //get the id and the group with it
+	    selectedGroupId = iwc.getParameter(GroupPermissionWindow.PARAM_SELECTED_GROUP_ID);
 
 		if (selectedGroupId == null) {
 			selectedGroupId = (String) iwc.getSessionAttribute(GroupPermissionWindow.PARAM_SELECTED_GROUP_ID);
@@ -727,14 +862,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		else {
 			iwc.setSessionAttribute(GroupPermissionWindow.PARAM_SELECTED_GROUP_ID, selectedGroupId);
 		}
-
-		saveChanges = iwc.isParameterSet(PARAM_SAVING);
 		
-
-		if (iwc.isParameterSet(RECURSE_PERMISSIONS_TO_CHILDREN_KEY))	{
-			groupIdsToRecurseChangesOn = CheckBoxConverter.getResultByParsing(iwc, RECURSE_PERMISSIONS_TO_CHILDREN_KEY);
-		}
-
 		try {
 			selectedGroup = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(selectedGroupId));
 		}
@@ -744,16 +872,36 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		catch (FinderException e) {
 			e.printStackTrace();
 		}
+		////////////////////////////////////
+		
+		
 
+		//did the user ask to inherit permissions to any of the permissions
+		if (iwc.isParameterSet(RECURSE_PERMISSIONS_TO_CHILDREN_KEY))	{
+			groupIdsToRecurseChangesOn = CheckBoxConverter.getResultByParsing(iwc, RECURSE_PERMISSIONS_TO_CHILDREN_KEY);
+		}
+		////////////////////////////////////
+
+
+		//does this group have inherited permissions? then the user cannot change them unless they detach it
 		hasInheritedPermissions = selectedGroup.getPermissionControllingGroupID() > 0;
 	
+		//are we detaching from the inheritance?
 		if(iwc.isParameterSet(PARAM_OVERRIDE_INHERITANCE)){
 			selectedGroup.setPermissionControllingGroup(null);
 			selectedGroup.store();
 			hasInheritedPermissions = false;
 		}
-	
-
+		////////////////////////////////////	
+		
+		//Are we saving the changes
+		saveChanges = iwc.isParameterSet(PARAM_SAVING);
+		
+		
+	    //get all types or keys. view, edit etc.
+	    permissionTypes = getAllPermissionTypes();
+	    access = iwc.getAccessController();
+		
 	}
 
 	public String getBundleIdentifier() {
