@@ -6,6 +6,7 @@ import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.DateInput;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.FramePane;
+import com.idega.presentation.ui.PostalCodeDropdownMenu;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Text;
 import com.idega.util.datastructures.Collectable;
@@ -22,6 +23,7 @@ import com.idega.core.data.Address;
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2002 <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  * @version 1.0
  */
 
@@ -30,16 +32,16 @@ public class AddressInfoTab extends UserTab{
   private TextInput streetField;
   private TextInput cityField;
   private TextInput provinceField;
-  private TextInput postalCodeField;
+  private PostalCodeDropdownMenu postalCodeField;
   private TextInput countryField;
   private TextInput poBoxField;
 
-  private String streetFieldName = "UMstreet";
-  private String cityFieldName = "UMcity";
-  private String provinceFieldName = "UMprovince";
-  private String postalCodeFieldName = "UMpostal";
-  private String countryFieldName = "UMconty";
-  private String poBoxFieldName = "UMpoBox";
+  private static final String streetFieldName = "UMstreet";
+  private static final String cityFieldName = "UMcity";
+  private static final String provinceFieldName = "UMprovince";
+  private static final String postalCodeFieldName = PostalCodeDropdownMenu.IW_POSTAL_CODE_MENU_PARAM_NAME;
+  private static final String countryFieldName = "UMconty";
+  private static final String poBoxFieldName = "UMpoBox";
 
   private Text streetText;
   private Text cityText;
@@ -54,13 +56,13 @@ public class AddressInfoTab extends UserTab{
   }
 
   public void initializeFieldNames(){
-    streetFieldName = "UMstreet";
+   /* streetFieldName = "UMstreet";
     cityFieldName = "UMcity";
     provinceFieldName = "UMprovince";
     postalCodeFieldName = "UMpostal";
     countryFieldName = "UMconty";
     poBoxFieldName = "UMpoBox";
-/*
+
     streetFieldName += this.getID();
     cityFieldName += this.getID();
     provinceFieldName += this.getID();
@@ -111,9 +113,12 @@ public class AddressInfoTab extends UserTab{
     provinceField = new TextInput(provinceFieldName);
     provinceField.setLength(20);
 
-    postalCodeField = new TextInput(postalCodeFieldName);
-    postalCodeField.setLength(4);
-    postalCodeField.setDisabled(true);
+//only works for Iceland
+    postalCodeField = new PostalCodeDropdownMenu();
+    
+    //TextInput(postalCodeFieldName);
+    //postalCodeField.setLength(4);
+    //postalCodeField.setDisabled(true);
 
     countryField = new TextInput(countryFieldName);
     countryField.setLength(20);
@@ -235,12 +240,21 @@ public class AddressInfoTab extends UserTab{
   public boolean store(IWContext iwc){
 
     try{
-      StringTokenizer tok = new StringTokenizer((String)fieldValues.get(this.streetFieldName));
+    	
+    	Integer userId = new Integer(getUserId());
+    	String street = iwc.getParameter(this.streetFieldName);
+    	Integer postalCodeId = null;
+    	String postal = (String)fieldValues.get(postalCodeFieldName);
+    	if(postal!=null) postalCodeId = new Integer(postal);
+    	String country = iwc.getParameter(this.countryFieldName);
+      	String city = iwc.getParameter(this.cityFieldName);
+      	String province = iwc.getParameter(this.provinceFieldName);     	
+      	String poBox = iwc.getParameter(this.poBoxFieldName);
 
-      //fieldValues.get(this.postalCodeFieldName);
-      //fieldValues.get(this.countryFieldName);
 
-      this.getUserBusiness(iwc).updateUserAddress1(this.getUserId(), (tok.hasMoreTokens())?tok.nextToken():"", (tok.hasMoreTokens())?tok.nextToken():"", (String)fieldValues.get(this.cityFieldName), null, (String)fieldValues.get(this.provinceFieldName), null, (String)fieldValues.get(this.poBoxFieldName));
+      this.getUserBusiness(iwc).updateUsersMainAddressOrCreateIfDoesNotExist(userId,street,postalCodeId,country,city,province,poBox);
+	
+
 
       return true;
     }catch(Exception e){
