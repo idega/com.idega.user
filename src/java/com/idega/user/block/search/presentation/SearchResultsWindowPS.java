@@ -36,7 +36,6 @@ public class SearchResultsWindowPS extends BasicUserOverviewPS {
 	 * @see com.idega.event.IWActionListener#actionPerformed(com.idega.event.IWPresentationEvent)
 	 */
 	public void actionPerformed(IWPresentationEvent e) throws IWException {
-		super.actionPerformed(e);
 		
 		if( e instanceof UserSearchEvent){
 			lastUserSearchEvent = (UserSearchEvent) e;
