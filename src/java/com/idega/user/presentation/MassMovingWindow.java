@@ -57,6 +57,8 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
   private static final String SHOW_CHILDREN_OF_GROUP_ACTION = "show_children_of_group_action";
   private static final String SHOW_ERROR_MESSAGE_ACTION = "error_message";
   
+  public static final String GROUP_TYPE_CLUB = "iwme_club";
+  
   // display settings
   private final int NUMBER_OF_ROWS = 15;
   
@@ -138,7 +140,7 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
       }
       // type of group correct?
       String groupType = group.getGroupType();
-      if ("general".equals(groupType))  {
+      if (GROUP_TYPE_CLUB.equals(groupType))  {
         return SHOW_CHILDREN_OF_GROUP_ACTION;
       }
     }
