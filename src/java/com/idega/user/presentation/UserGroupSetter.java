@@ -11,6 +11,7 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.TabbedPropertyPanel;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
@@ -234,8 +235,8 @@ import com.idega.util.IWColor;
           }
 
         this.close();
-        this.setParentToReload();
-      } else {
+        setParentPageFormToSubmitOnUnLoad(TabbedPropertyPanel.TAB_FORM_NAME);
+        } else {
         LineUpElements(iwc);
       }
 
