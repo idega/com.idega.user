@@ -270,7 +270,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
                         stat = sHome.findByPrimaryKey(new Integer(sStat));
                     }					
                     group.addGroup(user);
-                    if ( stat != null && (! usb.setUserGroupStatus(user.getID(), ((Integer)group.getPrimaryKey()).intValue(), ((Integer)stat.getPrimaryKey()).intValue()) )) {
+                    if ( stat != null && (! usb.setUserGroupStatus(user.getID(), ((Integer)group.getPrimaryKey()).intValue(), ((Integer)stat.getPrimaryKey()).intValue(),iwc.getCurrentUserId()) )) {
                         failedInserts.add(user);
                         errorFree = false;
                     }
