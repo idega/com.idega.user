@@ -28,6 +28,9 @@ public class OwnerGroupInformationText extends Text {
 	public final int SHOW_ABBREVATION = 3;
 	
 	
+	private String textBefore = "";
+	private String textAfter = "";
+	
 	private int informationToShow = SHOW_NAME;
 	
 	
@@ -73,16 +76,16 @@ public class OwnerGroupInformationText extends Text {
 					
 					switch (informationToShow) {
 						case SHOW_NAME:
-							this.setText(gr.getName());
+							this.setText(textBefore+gr.getName()+textAfter);
 							break;
 						case SHOW_SHROT_NAME:
-							this.setText(gr.getShortName());
+							this.setText(textBefore+gr.getShortName()+textAfter);
 							break;
 						case SHOW_ABBREVATION:
-							this.setText(gr.getAbbrevation());
+							this.setText(textBefore+gr.getAbbrevation()+textAfter);
 							break;
 						default:
-							this.setText(gr.getName());
+							this.setText(textBefore+gr.getName()+textAfter);
 							break;
 					}
 					
@@ -97,4 +100,16 @@ public class OwnerGroupInformationText extends Text {
 		
 	}
 
+	/**
+	 * @param textAfer The textAfer to set.
+	 */
+	public void setTextAfter(String textAfter) {
+		this.textAfter = textAfter;
+	}
+	/**
+	 * @param textBefore The textBefore to set.
+	 */
+	public void setTextBefore(String textBefore) {
+		this.textBefore = textBefore;
+	}
 }
