@@ -59,8 +59,11 @@ public class GroupChooserWindow extends AbstractChooserWindow {
    *
    */
   public void displaySelection(IWContext iwc) {
-    IWResourceBundle iwrb = iwc.getApplication().getBundle(BuilderLogic.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+    IWResourceBundle iwrb = this.getResourceBundle(iwc);
     addTitle(iwrb.getLocalizedString("select_group","Select group"),IWConstants.BUILDER_FONT_STYLE_TITLE);
+    setTitle(iwrb.getLocalizedString("select_group","Select group"));
+    setName(iwrb.getLocalizedString("select_group","Select group"));
+    
     setStyles();
 
     Text text = new Text(iwrb.getLocalizedString("select_group","Select group")+":");
