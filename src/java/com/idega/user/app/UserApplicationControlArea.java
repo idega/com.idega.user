@@ -5,9 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-
 import javax.swing.event.ChangeListener;
-
 import com.idega.block.login.presentation.WelcomeMessage;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICDomain;
@@ -30,6 +28,7 @@ import com.idega.presentation.Script;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
@@ -87,6 +86,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	private GroupTreeView groupTree = new GroupTreeView();
 
 	private UserBusiness userBiz = null;
+	
 
 	public UserApplicationControlArea() {
 		this.setAllMargins(0);
@@ -205,7 +205,19 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		groupTree.setSuperRootNodeName(iwrb.getLocalizedString("tree.super.node.name", "My groups"));
 		Image icon = iwb.getImage("super_root_icon.gif");
 		groupTree.setSuperRootNodeIcon(icon);
-
+		Collection topGroupNodes = null;
+		try {
+			topGroupNodes = getUserBusiness(iwc).getStoredTopGroupNodes(iwc.getCurrentUser());
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		if(topGroupNodes != null && !topGroupNodes.isEmpty()) {
+			Image refreshIcon = iwb.getImage("refresh.gif");
+			Link refreshLink = new Link(refreshIcon);
+			groupTree.setRefreshLink(refreshLink);
+		}
+		
 		ChangeListener[] chListeners = this.getPresentationState(iwc).getChangeListener();
 		if (chListeners != null) {
 			for (int i = 0; i < chListeners.length; i++) {

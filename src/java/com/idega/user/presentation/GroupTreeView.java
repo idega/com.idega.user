@@ -17,7 +17,7 @@ import com.idega.user.event.SelectGroupEvent;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -55,6 +55,8 @@ public class GroupTreeView extends IWTreeControl {
   private int selectedDomainId;
 	
 	private IWBundle bundle;
+	
+	private boolean isModelSet = false;
 
 	public GroupTreeView() {
 		super();
@@ -113,7 +115,7 @@ public class GroupTreeView extends IWTreeControl {
 	public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
 		return getObjectToAddToColumn(colIndex, (GroupTreeNode) node, iwc, nodeIsOpen, nodeHasChild, isRootNode);
 	}
-
+	
 	public PresentationObject getObjectToAddToColumn(int colIndex, GroupTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
 		//System.out.println("adding into column "+ colIndex + " for node " + node);
 		String image = "treeviewer";
@@ -122,6 +124,19 @@ public class GroupTreeView extends IWTreeControl {
 		
 		switch (colIndex) {
 			case 1 :
+				if(!isModelSet) {
+					if(getRefreshLink() != null) {
+						if(this.getControlEventModel() != null) {
+							getRefreshLink().addEventModel(this.getControlEventModel());
+							isModelSet = true;
+						}
+						if(this.getControlTarget() != null) {
+							getRefreshLink().setTarget(this.getControlTarget());
+						}
+					}
+				}
+				
+
 				if (!node.isLeaf()) {
 					if (nodeIsOpen) {
 						if (isRootNode && !showRootNodeTreeIcons()) {
