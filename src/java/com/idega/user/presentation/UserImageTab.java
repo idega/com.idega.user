@@ -55,7 +55,6 @@ public class UserImageTab extends UserTab{
   public void initializeFields(){
     imageField = new ImageInserter(imageFieldName);
     imageField.setHasUseBox(false);
-		imageField.setImSessionImageName(imageFieldName+getUserId()); 
   }
   
   public void initializeTexts(){
@@ -128,7 +127,11 @@ public class UserImageTab extends UserTab{
 
   public void initFieldContents(){
 
+
     try{
+  	
+			imageField.setImSessionImageName(imageFieldName+getUserId()); 
+			
       if( user == null ) user = getUserBusiness(getIWApplicationContext()).getUser(this.getUserId());
 			
 			systemImageId = getSelectedImageId(user);
