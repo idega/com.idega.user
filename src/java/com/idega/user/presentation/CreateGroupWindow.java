@@ -52,20 +52,20 @@ import com.idega.user.event.CreateGroupEvent;
  */
 public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullPresentation, ToolbarElement { //changed from extends IWAdminWindow
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-
-  public static final String SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY = "selected_group_pp_id_key";
-  public static final String NO_GROUP_SELECTED = "no_group_selected";
-  
-  private static final String HELP_TEXT_KEY = "create_group_window";
-  
+	
+	public static final String SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY = "selected_group_pp_id_key";
+	public static final String NO_GROUP_SELECTED = "no_group_selected";
+	
+	private static final String HELP_TEXT_KEY = "create_group_window";
+	
 	private StatefullPresentationImplHandler _stateHandler = null;
 	private CreateGroupEvent _createEvent;
-  private String selectedGroupProviderStateId = null; 
-  private Group selectedGroup = null;
-  private Collection groupTypes = null;
-  
-  private String mainTableStyle = "main";
-
+	private String selectedGroupProviderStateId = null; 
+	private Group selectedGroup = null;
+	private Collection groupTypes = null;
+	
+	private String mainTableStyle = "main";
+	
 	public CreateGroupWindow() {
 		_stateHandler = new StatefullPresentationImplHandler();
 		_stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
@@ -76,46 +76,46 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 		getLocation().setApplicationClass(CreateGroupWindow.class);
 		getLocation().isInPopUpWindow(true);
 	}
-
+	
 	public void initializeInMain(IWContext iwc) {
-    if (iwc.isParameterSet(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY)) {
-      selectedGroupProviderStateId = iwc.getParameter(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
-    }      
+		if (iwc.isParameterSet(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY)) {
+			selectedGroupProviderStateId = iwc.getParameter(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
+		}      
 		IWPresentationState state = this.getPresentationState(iwc);
 		// add action listener
 		addActionListener((IWActionListener) state);
 		IWStateMachine stateMachine;
-    // add all change listeners
-    Collection changeListeners;
-    try {
-      stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
-      changeListeners = stateMachine.getAllChangeListeners();
-      // try to get the selected group  
-      if (selectedGroupProviderStateId != null) {
-        UserApplicationMenuAreaPS groupProviderState = (UserApplicationMenuAreaPS) stateMachine.getStateFor(selectedGroupProviderStateId, UserApplicationMenuAreaPS.class);
-        Integer selectedGroupId = (Integer) groupProviderState.getSelectedGroupId();
-        selectedGroup = getGroup(selectedGroupId); 
-      }
-    }
-    catch (RemoteException e) {
-      changeListeners = new ArrayList();
-    }
-    Iterator iterator = changeListeners.iterator();
-    while (iterator.hasNext())  {
-      state.addChangeListener((ChangeListener) iterator.next());
-    }
-    // fill collection of grouptypes stored as strings
-    // used for drop down menu group type
-    // used for alias group 
-    groupTypes = getGroupTypes(iwc);
+		// add all change listeners
+		Collection changeListeners;
+		try {
+			stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
+			changeListeners = stateMachine.getAllChangeListeners();
+			// try to get the selected group  
+			if (selectedGroupProviderStateId != null) {
+				UserApplicationMenuAreaPS groupProviderState = (UserApplicationMenuAreaPS) stateMachine.getStateFor(selectedGroupProviderStateId, UserApplicationMenuAreaPS.class);
+				Integer selectedGroupId = (Integer) groupProviderState.getSelectedGroupId();
+				selectedGroup = getGroup(selectedGroupId); 
+			}
+		}
+		catch (RemoteException e) {
+			changeListeners = new ArrayList();
+		}
+		Iterator iterator = changeListeners.iterator();
+		while (iterator.hasNext())  {
+			state.addChangeListener((ChangeListener) iterator.next());
+		}
+		// fill collection of grouptypes stored as strings
+		// used for drop down menu group type
+		// used for alias group 
+		groupTypes = getGroupTypes(iwc);
 	}
-
+	
 	public void main(IWContext iwc) throws Exception {
 		//this.debugParameters(iwc);
 		//IWBundle iwb = getBundle(iwc);
 		CreateGroupWindowPS _ps = (CreateGroupWindowPS) this.getPresentationState(iwc);
 		
-
+		
 		if (_ps.doClose()) {
 			close();
 			_ps.doneClosing();
@@ -128,14 +128,14 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			String id = IWMainApplication.getEncryptedClassName(UserApplication.Top.class);
 			id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + id;
 			_createEvent.setController(id);
-
+			
 			IWResourceBundle iwrb = getResourceBundle(iwc);
 			Form form = new Form();
 			form.addEventModel(_createEvent, iwc);
-
+			
 			setTitle(iwrb.getLocalizedString("create_new_group", "Create a new Group"));
 			addTitle(iwrb.getLocalizedString("create_new_group", "Create a new Group"), IWConstants.BUILDER_FONT_STYLE_TITLE);
-
+			
 			add(form,iwc);
 			Table tab = new Table(2, 11); //changed from Table(2,8) - birna
 			tab.setStyleClass(mainTableStyle);
@@ -148,123 +148,123 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			tab.setColumnVerticalAlignment(1, "top");
 			tab.setColumnVerticalAlignment(2, "top"); //added - birna
 			tab.setAlignment(2, 11, "right"); // changed from (2,8,"right");
-				
+			
 			tab.setWidth(1, "130");
 			tab.setCellspacing(3);
 			form.add(tab);
 			TextInput inputName = new TextInput(_createEvent.getIONameForName());
 			inputName.setAsNotEmpty(iwrb.getLocalizedString("new_group.group_name_required","Group name must be selected"));
-		//	inputName.setLength(28); //commented out - birna
+			//	inputName.setLength(28); //commented out - birna
 			//added for isi styles - birna:
 			inputName.setStyleClass("text");
 			inputName.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-      
+			
 			Text inputText = new Text();
 			inputText.setText(iwrb.getLocalizedString("group_name", "Group name") + ":");
-
+			
 			inputText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 			tab.add(inputText, 1, 1);
 			tab.add(inputName, 1, 2); //changed from (inputName, 2,1) - birna
-
+			
 			TextArea descriptionTextArea = new TextArea(_createEvent.getIONameForDescription());
 			descriptionTextArea.setHeight(6); //changed from (4)
 			descriptionTextArea.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-
+			
 			Text descText = new Text(iwrb.getLocalizedString("group_description", "Description") + ":");
 			descText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 			tab.add(descText, 2, 1); // changed from (descText,1,2); - birna
 			tab.mergeCells(2,2,2,6); //added - birna
 			tab.add(descriptionTextArea, 2, 2); 
-
+			
 			GroupChooser groupChooser = getGroupChooser(_createEvent.getIONameForParentID(), true, iwc);
 			Text createUnderText = new Text(iwrb.getLocalizedString("parent_group", "Create group under") + ":");
 			createUnderText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-
+			
 			Layer layer = new Layer();
 			layer.add(createUnderText);
 			layer.setNoWrap();
 			tab.add(layer, 1, 3);
 			tab.add(groupChooser, 1, 4); //changed from (groupChooser, 2,3) - birna
-
+			
 			StyledIBPageChooser pageChooser = new StyledIBPageChooser(_createEvent.getIONameForHomePage(), IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 			Text pageText = new Text(iwrb.getLocalizedString("home_page", "Select homepage") + ":");
 			pageText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 			tab.add(pageText, 1, 5); //changed from (pageText,1,4) - birna
 			tab.add(pageChooser, 1, 6); //changed from (pageChooser, 2,4) - birna
-
+			
 			DropdownMenu mnu = getGroupTypeMenu(iwrb, iwc);
-      /* 
-      new DropdownMenu(_createEvent.getIONameForGroupType());
-			try {
-				GroupTypeHome gtHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
-				Collection types = gtHome.findVisibleGroupTypes();
-				Iterator iter = types.iterator();
-				while (iter.hasNext()) {
-					GroupType item = (GroupType) iter.next();
-					String value = item.getType();
-					String name = item.getType(); //item.getName();
-					mnu.addMenuElement(value, iwrb.getLocalizedString(name, name));
-				}
-			}
-			catch (RemoteException ex) {
-				throw new EJBException(ex);
-			}*/
+			/* 
+			 new DropdownMenu(_createEvent.getIONameForGroupType());
+			 try {
+			 GroupTypeHome gtHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
+			 Collection types = gtHome.findVisibleGroupTypes();
+			 Iterator iter = types.iterator();
+			 while (iter.hasNext()) {
+			 GroupType item = (GroupType) iter.next();
+			 String value = item.getType();
+			 String name = item.getType(); //item.getName();
+			 mnu.addMenuElement(value, iwrb.getLocalizedString(name, name));
+			 }
+			 }
+			 catch (RemoteException ex) {
+			 throw new EJBException(ex);
+			 }*/
 			//    mnu.setSelectedElement(type);
 			mnu.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-
+			
 			Text typeText = new Text(iwrb.getLocalizedString("select_type", "Select type") + ":");
 			typeText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 			tab.add(typeText, 1, 7); //changed from (typeText,1,5) - birna
 			tab.add(mnu, 1, 8); //changed from (mnu,2,5) - birna
-
+			
 			GroupChooser aliasGroupChooser = getGroupChooser(_createEvent.getIONameForAliasID(), false, iwc);
-      String filter = NO_GROUP_SELECTED;
-      if (selectedGroup != null)  {
-        filter = selectedGroup.getPrimaryKey().toString();
-      }
-      aliasGroupChooser.setFilter(filter);
+			String filter = NO_GROUP_SELECTED;
+			if (selectedGroup != null)  {
+				filter = selectedGroup.getPrimaryKey().toString();
+			}
+			aliasGroupChooser.setFilter(filter);
 			Text aliasText = new Text(iwrb.getLocalizedString("alias_group", "Alias for group") + ":");
 			aliasText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-
+			
 			Layer layer2 = new Layer();
 			layer2.add(aliasText);
 			layer2.setNoWrap();
 			tab.add(layer2, 1, 9); //changed from (layer2,1,6) - birna
 			tab.add(aliasGroupChooser, 1, 10); //changed from (aliasGroupcChooser,2,3) - birna
- 			SubmitButton button = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), _createEvent.getIONameForCommit());
-//      String message = iwrb.getLocalizedString("group_please_set_name_choose_group", "Please set name and choose a group as parent");
-//      getAssociatedScript().addFunction("mandatoryCheck", "function mandatoryCheck(form) { " +
-//          "\n\t if ((form."+
-//          _createEvent.getIONameForParentID() +
-//          ".value == \"\") || (form." +
-//          _createEvent.getIONameForName() +
-//          ".value == \"\")) { \n\t alert(\""
-//          + message +
-//          "\") \n\t return false \n\t } \n\t } "); //else  \n\t { \n\t window.close() \n\t }  \n\t }" );
-//      form.setOnSubmit("mandatoryCheck(this)");
-      SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"), _createEvent.getIONameForCancel());
-      //button.setOnClick("mandatoryCheck(this)")
-      close.setOnClick("window.close();return false;");
-      Help help = getHelp(HELP_TEXT_KEY);
-      tab.add(help,1,11);
+			SubmitButton button = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), _createEvent.getIONameForCommit());
+//			String message = iwrb.getLocalizedString("group_please_set_name_choose_group", "Please set name and choose a group as parent");
+//			getAssociatedScript().addFunction("mandatoryCheck", "function mandatoryCheck(form) { " +
+//			"\n\t if ((form."+
+//			_createEvent.getIONameForParentID() +
+//			".value == \"\") || (form." +
+//			_createEvent.getIONameForName() +
+//			".value == \"\")) { \n\t alert(\""
+//			+ message +
+//			"\") \n\t return false \n\t } \n\t } "); //else  \n\t { \n\t window.close() \n\t }  \n\t }" );
+//			form.setOnSubmit("mandatoryCheck(this)");
+			SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"), _createEvent.getIONameForCancel());
+			//button.setOnClick("mandatoryCheck(this)")
+			close.setOnClick("window.close();return false;");
+			Help help = getHelp(HELP_TEXT_KEY);
+			tab.add(help,1,11);
 			tab.add(button, 2, 11); 
 			tab.add(Text.getNonBrakingSpace(), 2, 11); 
 			tab.add(close, 2, 11);
 		}
 	}
-  
-  private DropdownMenu getGroupTypeMenu(IWResourceBundle iwrb, IWContext iwc)  {
-    DropdownMenu menu = new DropdownMenu(_createEvent.getIONameForGroupType());
-    Iterator iterator = groupTypes.iterator();
-    while (iterator.hasNext())  {
-      String value = (String) iterator.next();
-      menu.addMenuElement(value, iwrb.getLocalizedString(value, value));
-    }
-    return menu;
-  }
-    
-
-
+	
+	private DropdownMenu getGroupTypeMenu(IWResourceBundle iwrb, IWContext iwc)  {
+		DropdownMenu menu = new DropdownMenu(_createEvent.getIONameForGroupType());
+		Iterator iterator = groupTypes.iterator();
+		while (iterator.hasNext())  {
+			String value = (String) iterator.next();
+			menu.addMenuElement(value, iwrb.getLocalizedString(value, value));
+		}
+		return menu;
+	}
+	
+	
+	
 	/*
 	 *
 	 */
@@ -274,91 +274,91 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 		GroupChooser chooser = new GroupChooser(name);
 		chooser.setInputStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 		chooser.setChooseButtonImage(chooserImage);
-
+		
 		try {
 			//IBDomain domain = iwc.getDomain();
-      if (selectedGroup != null && preselectSelectedGroup)  {
-        chooser.setSelectedNode(new GroupTreeNode(selectedGroup));
-      }
-      else  {
-        //chooser.setSelectedNode(new GroupTreeNode(domain,iwc.getApplicationContext()));
-      }
+			if (selectedGroup != null && preselectSelectedGroup)  {
+				chooser.setSelectedNode(new GroupTreeNode(selectedGroup));
+			}
+			else  {
+				//chooser.setSelectedNode(new GroupTreeNode(domain,iwc.getApplicationContext()));
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
 		return (chooser);
 	}
-
+	
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
-
+	
 	public Class getPresentationStateClass() {
 		return _stateHandler.getPresentationStateClass();
 	}
-
+	
 	public IWPresentationState getPresentationState(IWUserContext iwuc) {
 		return _stateHandler.getPresentationState(this, iwuc);
 	}
-
+	
 	public StatefullPresentationImplHandler getStateHandler() {
 		return _stateHandler;
 	}
-
+	
 	public Image getButtonImage(IWContext iwc) {
 		IWBundle bundle = this.getBundle(iwc);
 		return bundle.getImage("create_group.gif", "Create group");
 	}
-
+	
 	public String getName(IWContext iwc) {
 		IWResourceBundle rBundle = this.getBundle(iwc).getResourceBundle(iwc);
 		return rBundle.getLocalizedString("create_group", "Create group");
 	}
-
+	
 	public PresentationObject getPresentationObject(IWContext iwc) {
 		return this;
 	}
-  
-  private Group getGroup(Integer groupId){
-    if(groupId != null){
-      try {
-        return (Group)IDOLookup.findByPrimaryKey(Group.class, groupId);
-      }
-      catch (Exception ex) {
-        // FinderException and RemoteException
-        throw new RuntimeException(ex.getMessage());
-      }
-    }
-    return null;
-  }   
-  
-  private Collection getGroupTypes(IWContext iwc)  {
-    Collection groupTypes = new ArrayList();
-    //TODO make sure no duplications and order alphabetically by localizedname
-    // get group types
-    GroupBusiness groupBusiness;
-    try {
-      groupBusiness =(GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
-    }
-    catch (RemoteException ex)  {
-      throw new RuntimeException(ex.getMessage());
-    }
-    
-    Iterator iterator = groupBusiness.getAllAllowedGroupTypesForChildren(selectedGroup, iwc).iterator();
-    while (iterator.hasNext())  {
-      GroupType item = (GroupType) iterator.next();
-      String value = item.getType();
-	  if(!groupTypes.contains(value)){
-	  	groupTypes.add(value);
-	  }
-    }
-    return groupTypes;
-  }   
-  
-  
-
-        
-    
+	
+	private Group getGroup(Integer groupId){
+		if(groupId != null){
+			try {
+				return (Group)IDOLookup.findByPrimaryKey(Group.class, groupId);
+			}
+			catch (Exception ex) {
+				// FinderException and RemoteException
+				throw new RuntimeException(ex.getMessage());
+			}
+		}
+		return null;
+	}   
+	
+	private Collection getGroupTypes(IWContext iwc)  {
+		Collection groupTypes = new ArrayList();
+		//TODO make sure no duplications and order alphabetically by localizedname
+		// get group types
+		GroupBusiness groupBusiness;
+		try {
+			groupBusiness =(GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+		}
+		catch (RemoteException ex)  {
+			throw new RuntimeException(ex.getMessage());
+		}
+		
+		Iterator iterator = groupBusiness.getAllAllowedGroupTypesForChildren(selectedGroup, iwc).iterator();
+		while (iterator.hasNext())  {
+			GroupType item = (GroupType) iterator.next();
+			String value = item.getType();
+			
+			groupTypes.add(value);
+			
+		}
+		return groupTypes;
+	}   
+	
+	
+	
+	
+	
 }
