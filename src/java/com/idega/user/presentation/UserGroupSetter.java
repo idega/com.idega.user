@@ -2,9 +2,11 @@ package com.idega.user.presentation;
 
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
+import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SelectionBox;
 import com.idega.presentation.ui.SelectionDoubleBox;
@@ -38,12 +40,16 @@ import java.util.List;
   public class UserGroupSetter extends Window {
 
     private static final String FIELDNAME_SELECTION_DOUBLE_BOX = "related_groups";
-
+		private IWResourceBundle iwrb = null;
+		private static final String IW_BUNDLE_IDENTIFIER  = "com.idega.user";
+		private int width = 500;
+		private int height = 300;
+		
     public UserGroupSetter(){
       super("add user to groups");
       this.setAllMargins(0);
-      this.setWidth(500);
-      this.setHeight(400);
+			this.setWidth(width);
+			this.setHeight(height);
       this.setBackgroundColor(new IWColor(207,208,210));
     }
 
@@ -70,18 +76,30 @@ import java.util.List;
         Table frameTable = new Table(3,3);
         frameTable.setWidth("100%");
         frameTable.setHeight("100%");
+				frameTable.setVerticalAlignment(Table.VERTICAL_ALIGN_TOP);
+				frameTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
+				frameTable.setVerticalAlignment(1,2,Table.VERTICAL_ALIGN_TOP);
+				frameTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
+				frameTable.setVerticalAlignment(2,1,Table.VERTICAL_ALIGN_TOP);
+				frameTable.setVerticalAlignment(2,2,Table.VERTICAL_ALIGN_TOP);
+				frameTable.setVerticalAlignment(2,3,Table.VERTICAL_ALIGN_TOP);
+				frameTable.setVerticalAlignment(3,1,Table.VERTICAL_ALIGN_TOP);
+				frameTable.setVerticalAlignment(3,2,Table.VERTICAL_ALIGN_TOP);
+				frameTable.setVerticalAlignment(3,3,Table.VERTICAL_ALIGN_TOP);
         //frameTable.setBorder(1);
 
 
-        SelectionDoubleBox sdb = new SelectionDoubleBox(FIELDNAME_SELECTION_DOUBLE_BOX,"Not in","In");
+        SelectionDoubleBox sdb = new SelectionDoubleBox(FIELDNAME_SELECTION_DOUBLE_BOX,iwrb.getLocalizedString("groupgroupsetter.in","Not in"),iwrb.getLocalizedString("groupgroupsetter.not_in","In"));
 
         SelectionBox left = sdb.getLeftBox();
-        left.setHeight(8);
+        left.setHeight(15);
+        left.setWidth("200");
         left.selectAllOnSubmit();
 
 
         SelectionBox right = sdb.getRightBox();
-        right.setHeight(8);
+        right.setHeight(15);
+				right.setWidth("200");
         right.selectAllOnSubmit();
 
 
@@ -95,7 +113,7 @@ import java.util.List;
         Collection directGroups = userBusiness.getUserGroupsDirectlyRelated(userId);
 
         Iterator iter = null;
-        if(directGroups != null){
+        if(directGroups!=null && !directGroups.isEmpty()){
           iter = directGroups.iterator();
           while (iter.hasNext()) {
             Group item = (Group) iter.next();
@@ -107,30 +125,35 @@ import java.util.List;
 
         User user = iwc.getCurrentUser();
         Collection notDirectGroups  = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwc);
-        Iterator topGroupsIterator = notDirectGroups.iterator();
-        List allGroups = new ArrayList();
-        while (topGroupsIterator.hasNext())  {
-          Group parentGroup = (Group) topGroupsIterator.next();
-          allGroups.add(parentGroup);
-          Collection coll = groupBusiness.getChildGroupsRecursive(parentGroup);
-          if (coll != null)
-            allGroups.addAll(coll);
-        }        
-                
-        if(allGroups != null){
-          iter = allGroups.iterator();
-          while (iter.hasNext()) {
-            Group item = (Group) iter.next();
-            left.addElement(item.getPrimaryKey().toString(),groupBusiness.getNameOfGroupWithParentName(item));
-          }
-        }
 
+				if(notDirectGroups!=null && !notDirectGroups.isEmpty()){
+	        Iterator topGroupsIterator = notDirectGroups.iterator();
+	        List allGroups = new ArrayList();
+	        while (topGroupsIterator.hasNext())  {
+	          Group parentGroup = (Group) topGroupsIterator.next();
+	          allGroups.add(parentGroup);
+	          Collection coll = groupBusiness.getChildGroupsRecursive(parentGroup);
+	          if (coll != null)
+	            allGroups.addAll(coll);
+	        }        
+	                
+	        if(allGroups != null){
+	          iter = allGroups.iterator();
+	          while (iter.hasNext()) {
+	            Group item = (Group) iter.next();
+	            left.addElement(item.getPrimaryKey().toString(),groupBusiness.getNameOfGroupWithParentName(item));
+	          }
+	        }
+				}
 
         frameTable.setAlignment(2,2,"center");
-        frameTable.add("UserId: "+userId,2,1);
+        System.out.println("UserId: "+userId);
         frameTable.add(sdb,2,2);
-        SubmitButton save = new SubmitButton("  Save  ","save","true");
+				SubmitButton save = new SubmitButton(iwrb.getLocalizedString("usergroupsetter.save","save"),"save","true");
         save.setAsImageButton(true);
+				CloseButton close = new CloseButton(iwrb.getLocalizedString("groupgroupsetter.close","close"));
+				close.setAsImageButton(true);
+				frameTable.add(close,2,3);
         frameTable.add(save,2,3);
         frameTable.setAlignment(2,3,"right");
         form.add(frameTable);
@@ -142,8 +165,12 @@ import java.util.List;
       this.add(form);
     }
 
-    public void main(IWContext iwc) throws Exception {
-
+    public void main(IWContext iwc) throws Exception{    	
+			iwrb = getResourceBundle(iwc);
+			
+			setTitle(iwrb.getLocalizedString("usergroupsetter.title","Add a user to a group"));
+			setName(iwrb.getLocalizedString("usergroupsetter.title","Add a user to a group"));
+			
       UserBusiness userBusiness = getUserBusiness(iwc);
       String save = iwc.getParameter("save");
       if(save != null){
@@ -234,5 +261,9 @@ import java.util.List;
       return business;
     }
 
+
+		public String getBundleIdentifier() {
+			return IW_BUNDLE_IDENTIFIER;
+		}
 
   }
