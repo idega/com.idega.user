@@ -97,11 +97,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	protected AccessController accessController;
 
 	private Page parentPage;
-	//private String styleScript = "UserApplicationStyle.css";
 	private String styleSrc = "";
 	private String styledLink = "styledLinkGeneral";
 	private String styledLinkUnderline = "styledLinkUnderline";
-	private String styleTable = "mainDisplay";
+	private String styleTable = "borderAll";
 	private String topTableStyle = "topTable";
 	private String middleTableStyle = "middleTable";
 

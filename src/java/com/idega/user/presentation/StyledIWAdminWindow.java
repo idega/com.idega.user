@@ -36,7 +36,6 @@ private String method = "post";
 private int _cellPadding = 0;
 
 private Page parentPage;
-private String styleScript = "UserApplicationStyle.css";
 private String styleSrc = "";
 private String inputTextStyle = "text";
 private String backTableStyle = "back";
@@ -122,17 +121,17 @@ private Image helpImage = null;
 	 * Adds an image to the top banner of the page
 	 * @param topImage - is added to the header.
 	 */
-	public void addTopImage(Image topImage) {
-		headerTable.add(topImage);
-	}
+//	public void addTopImage(Image topImage) {
+//		headerTable.add(topImage);
+//	}
 
 	public void add(PresentationObject obj, IWContext iwc) {
 		userBusiness = getUserBusiness(iwc);
-		Image topImage = userBusiness.getTopImage(iwc);
+//		Image topImage = userBusiness.getTopImage(iwc);
 		if( !displayEmpty ){
 			if(adminTable==null){
 				makeTables();
-				addTopImage(topImage);
+//				addTopImage(topImage);
 				super.add(headerTable);
 				super.add(mainTable);
 			}
@@ -145,9 +144,7 @@ private Image helpImage = null;
 		adminTitle = new Text(title+"&nbsp;&nbsp;");
 //		adminTitle.setBold();
 		adminTitle.setFontColor("#FFFFFF");
-//		adminTitle.setFontSize("3");
-//		adminTitle.setFontFace(Text.FONT_FACE_ARIAL);
-//		super.setTitle(title);
+
 		titleIsSet = true;
 
 		headerTable.add(adminTitle,2,1);
@@ -168,9 +165,6 @@ private Image helpImage = null;
 			T= new Text(s);
 			if ( bold )
 				T.setBold();
-//			T.setFontColor("#000000");
-//			T.setFontSize(Text.FONT_SIZE_7_HTML_1);
-//			T.setFontFace(Text.FONT_FACE_VERDANA);
 		}
 		return T;
 	}
@@ -178,9 +172,6 @@ private Image helpImage = null;
 	public void formatText(Text text, boolean bold){
 		if ( bold )
 			text.setBold();
-//		text.setFontColor("#000000");
-//		text.setFontSize(Text.FONT_SIZE_7_HTML_1);
-//		text.setFontFace(Text.FONT_FACE_VERDANA);
 	}
 
 	public Text formatText(String s) {
@@ -193,9 +184,7 @@ private Image helpImage = null;
 		if ( s != null ) {
 			T= new Text(s);
 			T.setBold();
-//			T.setFontColor("#000000");
-//			T.setFontSize(Text.FONT_SIZE_10_HTML_2);
-//			T.setFontFace(Text.FONT_FACE_VERDANA);
+
 		}
 		return T;
 	}
@@ -213,11 +202,21 @@ private Image helpImage = null;
 	public Help getHelp(String helpTextKey) {
 	 	Help help = new Help();
 	 	helpImage = new Image();
-	 	helpImage.setSrc("/idegaweb/bundles/com.idega.user.bundle/resources/help.gif");
+	 	helpImage.setSrc("/iw/idegaweb/bundles/com.idega.user.bundle/resources/help.gif");
  	  help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
 	  help.setHelpTextKey(helpTextKey);
 	  help.setImage(helpImage);
 	  return help;
+	}
+	public Help getHelpWithSmallImage(String helpTextKey) {
+		Help help = new Help();
+		helpImage = new Image();
+		helpImage.setSrc("/iw/idegaweb/bundles/com.idega.user.bundle/resources/help_small.gif");
+		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+		help.setHelpTextKey(helpTextKey);
+		help.setImage(helpImage);
+		return help;
+		
 	}
 
 
