@@ -53,8 +53,11 @@ import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserStatusBusiness;
 import com.idega.user.data.Group;
+import com.idega.user.data.Status;
 import com.idega.user.data.User;
+import com.idega.user.data.UserStatus;
 import com.idega.util.IWColor;
 import com.idega.util.text.TextSoap;
 /**
@@ -577,6 +580,40 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                     return new Text("");
             }
         };
+        
+        EntityToPresentationObjectConverter converterUserStatus = new EntityToPresentationObjectConverter() {
+          public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
+        }
+        
+        public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+            // entity is a user, try to get the corresponding address
+            User user = (User) entity;
+            UserStatus userStatus = null;
+            Status status = null;
+            int userStatusID = -1;
+            try {
+                userStatusID = getUserStatusBusiness(iwc).getUserGroupStatus(Integer.parseInt(user.getPrimaryKey().toString()),Integer.parseInt(ps.getSelectedGroup().getPrimaryKey().toString()));
+                if(userStatusID != -1) {
+                		userStatus = getUserStatusBusiness(iwc).getUserStatusHome().findByPrimaryKey(new Integer(userStatusID));
+                		status = getUserStatusBusiness(iwc).getStatusByStatusId(Integer.parseInt(userStatus.getPrimaryKey().toString()));
+                }
+            }
+            catch (RemoteException ex) {
+                System.err.println("[BasicUserOverview]: Status could not be retrieved.Message was :" + ex.getMessage());
+                ex.printStackTrace(System.err);
+            }
+            catch(FinderException ex) {
+            		ex.printStackTrace(System.err);
+            }
+            IWResourceBundle iwrb = getResourceBundle(iwc);
+            Text text = new Text(iwrb.getLocalizedString(browser.getDefaultConverter().getPresentationObject((GenericEntity) status, path, browser, iwc).toString(),browser.getDefaultConverter().getPresentationObject((GenericEntity) status, path, browser, iwc).toString()));
+            return text; 
+        }
+    
+        	
+        	
+        };
         // set default columns
         String nameKey = User.class.getName() + ".FIRST_NAME:" + User.class.getName() + ".MIDDLE_NAME:" + User.class.getName() + ".LAST_NAME";
         String completeAddressKey =
@@ -601,6 +638,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         String lastNameKey = User.class.getName() + ".LAST_NAME";
         String displayNameKey = User.class.getName() + ".DISPLAY_NAME";
         String descriptionKey = User.class.getName() + ".DESCRIPTION";
+        String statusKey = Status.class.getName() + ".STATUS_KEY";
         
         String dateOfBirthKey = User.class.getName() + ".DATE_OF_BIRTH";
         
@@ -649,10 +687,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         entityBrowser.setEntityToPresentationConverter(Address.class.getName(), converterAddress);
         entityBrowser.setEntityToPresentationConverter(Email.class.getName(), converterEmail);
         entityBrowser.setEntityToPresentationConverter(Phone.class.getName(), converterPhone);
+        entityBrowser.setEntityToPresentationConverter(Status.class.getName(), converterUserStatus);
         // set foreign entities
         entityBrowser.addEntity(Address.class.getName());
         entityBrowser.addEntity(Email.class.getName());
         entityBrowser.addEntity(Phone.class.getName());
+        entityBrowser.addEntity(Status.class.getName());
         
         //set the option columns
         entityBrowser.setOptionColumn(0,firstNameKey);
@@ -660,6 +700,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         entityBrowser.setOptionColumn(2,lastNameKey);
         entityBrowser.setOptionColumn(3,displayNameKey);
         entityBrowser.setOptionColumn(4,descriptionKey);
+        entityBrowser.setOptionColumn(5,statusKey);
         // change display
         entityBrowser.setCellspacing(2);
         
@@ -852,6 +893,18 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
         return business;
     }
+	  	public UserStatusBusiness getUserStatusBusiness(IWApplicationContext iwc){
+	  		UserStatusBusiness business = null;
+	  		if(business == null){
+	  			try{
+	  				business = (UserStatusBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserStatusBusiness.class);
+	  			}
+	  			catch(java.rmi.RemoteException rme){
+	  				throw new RuntimeException(rme.getMessage());
+	  			}
+	  		}
+	  		return business;
+	  	}
     
     public static List removeUsers(Collection userIds, Group parentGroup, IWContext iwc) {
         UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
