@@ -94,7 +94,7 @@ public class OwnerGroupInformationText extends Text {
 					System.out.println("["+this.getClassName()+"]: no Group has this page("+rootPageID+") as homepage");
 				}
 			} else {
-				this.setText(textBefore+" <pre> <info> </pre> "+textAfter);
+				this.setText(textBefore+"-"+textAfter);
 			}
 		}
 		

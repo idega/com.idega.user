@@ -73,7 +73,7 @@ public class OwnerGroupInformationLink extends Link {
 					this.setPage(rootPageID);
 				}
 			} else {
-				this.setText(textBefore+" <pre> <info> </pre> "+textAfter);
+				this.setText(textBefore+"-"+textAfter);
 			}
 		}
 		
