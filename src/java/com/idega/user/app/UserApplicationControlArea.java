@@ -201,7 +201,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 			groupTree.setSelectedGroupId(domainId);
 		}
 		groupTree.setToShowSuperRootNode(true);
-		groupTree.setDefaultOpenLevel(0);
+		groupTree.setDefaultOpenLevel(1);
 		groupTree.setSuperRootNodeName(iwrb.getLocalizedString("tree.super.node.name", "My groups"));
 		Image icon = iwb.getImage("super_root_icon.gif");
 		groupTree.setSuperRootNodeIcon(icon);
@@ -301,7 +301,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		table.add(welcomeMessageTable(iwc), 1, 1);
 		table.add(displayTable(iwc), 1, 2);
 		add(table);
-
+		
 		if (iwc.isSuperAdmin()) {
 			GroupTreeNode node = new GroupTreeNode(iwc.getDomain(), iwc.getApplicationContext());
 			groupTree.setRootNode(node);
