@@ -57,6 +57,7 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
   private static final String IW_BUNDLE_IDENTIFIER  = "com.idega.user";
   private StatefullPresentationImplHandler _stateHandler = null;
   private CreateGroupEvent _createEvent;
+  private IWResourceBundle iwrb;
 
 
   public CreateGroupWindow() {
@@ -109,7 +110,7 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
       id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + id;
       _createEvent.setController(id);
 
-      IWResourceBundle iwrb = iwc.getApplication().getBundle(BuilderLogic.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+      iwrb = this.getResourceBundle(iwc);
       Form form = new Form();
       form.addEventModel(_createEvent, iwc);
 
