@@ -13,7 +13,6 @@ import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.block.entity.presentation.converter.CheckBoxConverter;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
-import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
@@ -23,6 +22,7 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.GenericButton;
+import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.app.Toolbar;
 import com.idega.user.app.UserApplicationMenuAreaPS;
@@ -77,7 +77,7 @@ public class MassMovingWindow extends StyledIWAdminWindow {
   public void main(IWContext iwc) throws Exception {
     IWResourceBundle iwrb = getResourceBundle(iwc);
     setTitle(iwrb.getLocalizedString("massmovingWindow.title", "Mass moving automatic"));
-    addTitle(iwrb.getLocalizedString("massmovingWindow.title", "Mass moving automatic"), IWConstants.BUILDER_FONT_STYLE_TITLE);
+    addTitle(iwrb.getLocalizedString("massmovingWindow.title", "Mass moving automatic"), TITLE_STYLECLASS);
 		
     
     String action = parseRequest(iwc);
@@ -91,22 +91,7 @@ public class MassMovingWindow extends StyledIWAdminWindow {
   }
 
   private String parseRequest(IWContext iwc) {
-    /* 
-     * see to do item below
-     * 
-    String actionListenerStateId = "";
-    if (iwc.isParameterSet(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY)) {
-      actionListenerStateId = iwc.getParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY);
-    }
-    else {
-      return SHOW_ERROR_MESSAGE_ACTION;
-    }
-		if (!iwc.isParameterSet(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY)) {
-			return SHOW_ERROR_MESSAGE_ACTION;
-		}
-    *
-    */
-    // try to get the group 
+   // try to get the group 
     if (iwc.isParameterSet(Toolbar.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY))  {
       String selectedGroupProviderStateId = iwc.getParameter(Toolbar.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
       GroupBusiness groupBusiness = getGroupBusiness(iwc);
@@ -164,18 +149,19 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     EntityBrowser browser = getBrowser(coll);
     // define button
     Help help = getHelp(HELP_TEXT_KEY);
-    GenericButton move = new GenericButton();
-    move.setButtonImage(iwrb.getLocalizedImageButton("move", "Move to"));
-    SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
+    GenericButton moveButton = new GenericButton("move", iwrb.getLocalizedString("move", "Move to"));
+    StyledButton move = new StyledButton(moveButton);
+    
+    SubmitButton closeButton = new SubmitButton(iwrb.getLocalizedString("close", "Close"));
+    StyledButton close = new StyledButton(closeButton);
     String wait = iwrb.getLocalizedString("mm_please_wait_processing_request", "Please wait. Processing request");
     wait += "....";
-    close.setOnClick("window.close(); return false;");
-    move.setOnClick("window.opener.parent.frames['iw_event_frame'].document.write('"+wait+"'); mass_form.submit(); window.close();");
+    closeButton.setOnClick("window.close(); return false;");
+    moveButton.setOnClick("window.opener.parent.frames['iw_event_frame'].document.write('"+wait+"'); mass_form.submit(); window.close();");
     // assemble table
 
     Table mainTable = new Table();
-		mainTable.setWidth(380);
-		mainTable.setHeight(200);
+		mainTable.setWidth(Table.HUNDRED_PERCENT);
 		mainTable.setCellpadding(0);
 		mainTable.setCellspacing(0);
     
@@ -192,20 +178,21 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     
     Table buttons = new Table();
     buttons.setStyleClass(mainTableStyle);
-    
     buttons.setCellpadding(0);
 		buttons.setCellspacing(5);
 		buttons.setWidth(Table.HUNDRED_PERCENT);
-		buttons.setHeight(39);
 		buttons.add(help,1,1);
 		buttons.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
-		buttons.add(move,2,1);
-		buttons.add(Text.NON_BREAKING_SPACE,2,1);
-		buttons.add(close,2,1);
+		
+		Table buttonTable = new Table(3, 1);
+		buttonTable.setCellpaddingAndCellspacing(0);
+		buttonTable.setWidth(2, 5);
+		buttonTable.add(move,1,1);
+		buttonTable.add(close,3,1);
+		buttons.add(buttonTable, 2, 1);
    
-    mainTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
-		mainTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
 		mainTable.add(table,1,1);
+		mainTable.setHeight(2, 5);
 		mainTable.add(buttons,1,3);
     
     form.add(mainTable);
@@ -219,13 +206,19 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     Text error = new Text(errorMessage);
     error.setBold();
     // define button
-    SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
+    SubmitButton close = new SubmitButton(iwrb.getLocalizedString("close", "Close"));
     close.setOnClick("window.close(); return false;");
+    StyledButton closeButton = new StyledButton(close);
+    
     // assemble table
     Table table = new Table(1,2);
+    table.setWidth(Table.HUNDRED_PERCENT);
+    table.setCellspacing(0);
+    table.setCellpadding(5);
     table.setStyleClass(mainTableStyle);
     table.add(error,1,1);
-    table.add(close,1,2);   
+    table.add(closeButton,1,2);   
+    
     Form form = new Form(); 
     form.add(table);
     add(form,iwc);
@@ -257,7 +250,6 @@ public class MassMovingWindow extends StyledIWAdminWindow {
 
   }
         
-    
   // service method  
   private GroupBusiness getGroupBusiness(IWContext iwc) {
     try {
@@ -268,7 +260,6 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     }
   } 
     
-
   private EntityBrowser getBrowser(Collection entities)  {
     // define checkbox button converter class
     EntityToPresentationObjectConverter checkBoxConverter = new CheckBoxConverter(SELECTED_CHECKED_GROUPS_KEY); 
@@ -295,37 +286,4 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     browser.setEntityToPresentationConverter("Choose", checkBoxConverter);
     return browser;
   }    
-   
-    
-  /*
-  private DropdownMenu getGroupList(IWContext iwc) {
-    DropdownMenu groupList = new DropdownMenu(SELECTED_TARGET_GROUP_KEY);
-    GroupBusiness groupBusiness = BasicUserOverview.getGroupBusiness(iwc);
-    UserBusiness business = BasicUserOverview.getUserBusiness(iwc);
-    User user = iwc.getCurrentUser();
-    Collection coll = business.getAllGroupsWithEditPermission(user, iwc);
-    Iterator iterator = coll.iterator();
-    while (iterator.hasNext())  {
-      Group group = (Group) iterator.next();
-      String id = ((Integer) group.getPrimaryKey()).toString();
-      String name = groupBusiness.getNameOfGroupWithParentName(group);
-      groupList.addMenuElement(id,name);
-    }
-    return groupList;
-  }    
-  */
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-  
-
 }
