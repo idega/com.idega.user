@@ -87,6 +87,10 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 			UserGroupPlugInBusiness biz = (UserGroupPlugInBusiness) IBOLookup.getServiceInstance(iwc,Class.forName(className));
 			PresentationObject obj = biz.instanciateViewer(ps.getSelectedGroup());
 			
+			if(obj==null){
+				add(_buo);
+			}
+			
 			add(obj);
 		}
     }
