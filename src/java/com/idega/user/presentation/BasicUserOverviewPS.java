@@ -1,12 +1,16 @@
 package com.idega.user.presentation;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
+import javax.ejb.FinderException;
 import javax.swing.event.ChangeEvent;
 
 import com.idega.block.entity.event.EntityBrowserEvent;
 import com.idega.core.builder.data.ICDomain;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWException;
@@ -15,6 +19,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.user.block.search.event.UserSearchEvent;
 import com.idega.user.data.Group;
+import com.idega.user.data.GroupHome;
 import com.idega.user.event.SelectDomainEvent;
 import com.idega.user.event.SelectGroupEvent;
 
@@ -169,8 +174,18 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
             String[] groupIds;
             if (mainIwc.isParameterSet(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY) && mainIwc.isParameterSet(MassMovingWindow.MOVE_SELECTED_GROUPS)) {
                 groupIds = mainIwc.getParameterValues(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY);
-                // move users
-                resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(Arrays.asList(groupIds),MassMovingWindow.GROUP_TYPE_CLUB_DIVISION, mainIwc);
+                
+                try {
+					GroupHome grHome = (GroupHome)IDOLookup.getHome(Group.class);
+					Collection groupPKCollection = grHome.findByPrimaryKeyCollection(grHome.decode(groupIds));
+					
+					// move users
+					resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(groupPKCollection,MassMovingWindow.GROUP_TYPE_CLUB_DIVISION, mainIwc);
+				} catch (IDOLookupException e1) {
+					e1.printStackTrace();
+				} catch (FinderException e1) {
+					e1.printStackTrace();
+				}
                 targetGroupId = -1;
                 fireStateChanged();
             }

@@ -955,10 +955,15 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         return resultMap;
     }
     
-    public static Map moveContentOfGroups(Collection groupIds, String parentGroupType, IWContext iwc) {
+    public static synchronized Map moveContentOfGroups(Collection groups, String parentGroupType, IWContext iwc) {
         UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
         
-        return userBusiness.moveUsers(iwc,groupIds, parentGroupType);
+        try {
+	    		throw new RuntimeException("[BasicUserOverview - Debug]: moveContentOfGroups");
+	    	} catch (RuntimeException e) {
+	    		e.printStackTrace();
+	    	}
+        return userBusiness.moveUsers(iwc,groups, parentGroupType);
     }
     
     public IWPresentationState getPresentationState(IWUserContext iwuc) {

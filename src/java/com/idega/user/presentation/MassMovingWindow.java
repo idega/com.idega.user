@@ -4,28 +4,27 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
+
 import javax.ejb.FinderException;
+
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.event.EntityBrowserEvent;
 import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.block.entity.presentation.converter.CheckBoxConverter;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
-import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Image;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.app.Toolbar;
-import com.idega.user.app.ToolbarElement;
 import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
@@ -165,7 +164,8 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     EntityBrowser browser = getBrowser(coll);
     // define button
     Help help = getHelp(HELP_TEXT_KEY);
-    SubmitButton move = new SubmitButton(iwrb.getLocalizedImageButton("move", "Move to"));
+    GenericButton move = new GenericButton();
+    move.setButtonImage(iwrb.getLocalizedImageButton("move", "Move to"));
     SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
     String wait = iwrb.getLocalizedString("mm_please_wait_processing_request", "Please wait. Processing request");
     wait += "....";
@@ -212,7 +212,7 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     add(form,iwc);
     // add action listener
     addActionListener(actionListener);
-  } 
+  }
     
   private void showErrorContent(IWResourceBundle iwrb, IWContext iwc) {
     String errorMessage = iwrb.getLocalizedString("mm_select_club", "Select a club or club division first, please.");
