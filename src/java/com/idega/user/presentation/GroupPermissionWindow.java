@@ -55,7 +55,8 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	private static final String PARAM_SAVING = "gpw_save";
 	private static final String SESSION_PARAM_PERMISSIONS_BEFORE_SAVE = "gpw_permissions_b_s";
 	private static final String RECURSE_PERMISSIONS_TO_CHILDREN_KEY = "gpw_recurse_ch_of_gr";
-
+	private static final String PARAM_OVERRIDE_INHERITANCE = "gpw_over";
+	
 	private static final String HELP_TEXT_KEY = "group_permission_window";
 
 	//private static final String PARA = "com.idega.user";
@@ -133,10 +134,8 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 
 		//if this group has inherited permissions it cannot change them
-		//todo add detach feature
 		if (hasInheritedPermissions) {
 			addInheritedPermissionsView(iwc);
-			
 		}
 		else {
 
@@ -160,25 +159,46 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	}
 
 	private void addInheritedPermissionsView(IWContext iwc) {
+		
+		Form form = new Form();
 		Text cannotEdit = new Text(iwrb.getLocalizedString("group_permission_window.cannot_edit","You cannot edit this groups permissions."),true,false,false);
 		
 		Text cannotEdit2 = new Text(iwrb.getLocalizedString("group_permission_window.group_has_inherited_permissions","This group has inherited permissions from the group : "));
 		
 		Text permissionControlGroupName = new Text(selectedGroup.getPermissionControllingGroup().getName(),true,false,false);
 		
-		Table table = new Table();
+		Table table = new Table(1, 3);
+		table.setRowHeight(1,"20");
+		table.setStyleClass(mainStyleClass);
+		table.setWidth(620);
+		table.setHeight(480);
+		table.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
+		table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
+		table.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_BOTTOM);
+		table.setAlignment(1, 3, Table.HORIZONTAL_ALIGN_RIGHT);
+		
 		
 		table.add(cannotEdit,1,1);
-	
 		table.add(cannotEdit2,1,2);
 		table.add(permissionControlGroupName,1,2);
 		
+		SubmitButton override = new SubmitButton(iwrb.getLocalizedImageButton("group_permission_window.override", "Override inherited permissions"),PARAM_OVERRIDE_INHERITANCE,"true");
 		SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"));
 		close.setOnClick("window.close()");
 		
+		Link owners = new Link(iwrb.getLocalizedString("owner.button", "Owners"));
+				owners.setWindowToOpen(GroupOwnersWindow.class);
+				owners.setAsImageButton(true);
+				owners.addParameter(PARAM_SELECTED_GROUP_ID, selectedGroupId);
+				
+		table.add(override,1,3);
+		table.add(Text.NON_BREAKING_SPACE,1,3);
+		table.add(owners,1,3);
+		table.add(Text.NON_BREAKING_SPACE,1,3);
 		table.add(close,1,3);
 		
-		add(table,iwc);
+		form.add(table);
+		add(form,iwc);
 	}
 	
 	private void addPermissionsForm(IWContext iwc, Collection allPermissions, List permissionTypes) throws Exception {
@@ -689,6 +709,12 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		}
 
 		hasInheritedPermissions = selectedGroup.getPermissionControllingGroupID() > 0;
+	
+		if(iwc.isParameterSet(PARAM_OVERRIDE_INHERITANCE)){
+			selectedGroup.setPermissionControllingGroup(null);
+			selectedGroup.store();
+			hasInheritedPermissions = false;
+		}
 	
 
 	}
