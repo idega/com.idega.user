@@ -691,6 +691,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     String notMovedUsersNumberMessage  = getLocalizedString("number_of_not_moved_users", "Number of not moved users", iwc );
     String notMovedUsersMessage = getLocalizedString("the_following_users_were_not moved", "Following users were not moved", iwc);
     String success = getLocalizedString("all_users_were_moved_to the_specified_group","All users were successfully moved.",iwc);
+    String target = getLocalizedString("Target", "Target", iwc);
     Map resultOfMovingUsers = ps.getResultOfMovingUsers();
     UserBusiness userBusiness = BasicUserOverview.getUserBusiness(iwc);
     GroupBusiness groupBusiness = BasicUserOverview.getGroupBusiness(iwc);
@@ -756,7 +757,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         throw new RuntimeException(ex.getMessage());
       }
       String targetName = biz.getNameOfGroupWithParentName(targetGroup);
-      movedUsersNumberMessage += ": " + movedUsers + "  " + targetName;
+      movedUsersNumberMessage += ": " + movedUsers + "  " + target + ": " + targetName;
     }
     else {
       movedUsersNumberMessage += ": " + movedUsers;
