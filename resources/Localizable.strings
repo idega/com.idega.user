@@ -1,4 +1,3 @@
-#Wed Nov 12 01:38:46 GMT 2003
 =\=\=\=\=\=\=
 <<<<<<<=Localizable.strings
 >>>>>>>=1.7
@@ -187,6 +186,8 @@ nationRegister=
 neverExpires=
 new.group=
 new.member=
+new_user.group_required=
+new_user.ssn_warning=
 next=
 no.view.permission=
 noResultsWereFound=
