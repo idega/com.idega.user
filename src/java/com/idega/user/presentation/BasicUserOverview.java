@@ -50,6 +50,7 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.PrintButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
@@ -99,6 +100,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	private String styledLinkUnderline = "styledLinkUnderline";
 	private String styleTable = "mainDisplay";
 	private String topTableStyle = "topTable";
+	private String middleTableStyle = "middleTable";
 
 	public BasicUserOverview() {
 		super();
@@ -152,23 +154,32 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
 		toolbar = getToolbar();
 		Table topTable = topTable();
-		//	create the return table
-		Table returnTable = new Table(1, 3);
+		Table middleTable = middleTable();
+		
+//	create the return table
+		Table returnTable = new Table(1, 5);
 		returnTable.setCellpaddingAndCellspacing(0);
 		returnTable.setWidth(Table.HUNDRED_PERCENT);
 		returnTable.setHeight(Table.HUNDRED_PERCENT);
-		returnTable.setHeight(3, Table.HUNDRED_PERCENT);
-		returnTable.setHeight(1, 30);
-		returnTable.setHeight(2,16);
+		returnTable.setHeight(4, Table.HUNDRED_PERCENT);
+		returnTable.setHeight(1, 50);
+		returnTable.setHeight(2,6);
+
 		returnTable.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_TOP);
-		returnTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_BOTTOM);
+		returnTable.setVerticalAlignment(1, 4, Table.VERTICAL_ALIGN_TOP);
+		returnTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_BOTTOM);
 
 		returnTable.add(toolbar, 1, 1);
-		returnTable.add(topTable,1,2);
+		returnTable.add(new PrintButton(iwb.getImage("print.gif")), 1, 5);
 		
 		if (selectedGroup != null) {
 			topTable.add(selectedGroup.getName() + Text.NON_BREAKING_SPACE,1,1);
+			returnTable.add(topTable,1,3);
+//			middleTable.add(Text.NON_BREAKING_SPACE,1,1);
+			returnTable.add(middleTable,1,2);
 		}
+		
+		
 
 		//for the link to open the user properties
 		boolean canEditUserTemp = false;
@@ -263,15 +274,16 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 				entityBrowser.addPresentationObjectToBottom(targetGroupChooser);
 			}
 
-			returnTable.add(form, 1, 3);
+			returnTable.add(form, 1, 4);
 			return returnTable;
 
 		}
 		else {
 			PresentationObject po = getEmptyListPresentationObject();
 			if (po != null) {
-				returnTable.add(po, 1, 3);
+				returnTable.add(po, 1, 4);
 			}
+			
 
 			return returnTable;
 		}
@@ -284,10 +296,20 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	public Table topTable() {
 		Table topTable = new Table();
 		topTable.setCellpadding(0);
-		topTable.setCellspacing(0);
+		topTable.setCellspacing(3);
 		topTable.setStyleClass(topTableStyle);
 		topTable.setWidth("100%");
+		topTable.setHeight(16);
 		return topTable;
+	}
+	public Table middleTable() {
+		Table middleTable = new Table();
+		middleTable.setCellpadding(0);
+		middleTable.setCellspacing(3);
+		middleTable.setStyleClass(middleTableStyle);
+		middleTable.setWidth("100%");
+		middleTable.setHeight(6);
+		return middleTable;
 	}
 	/**
 	 * This method is called everytime the getEntities method returns null or

@@ -8,6 +8,8 @@ import java.util.Vector;
 
 import javax.swing.event.ChangeListener;
 
+import com.idega.block.datareport.business.jasperdesignxml.Text;
+import com.idega.block.login.presentation.Login;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.event.IWActionListener;
@@ -27,6 +29,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.Script;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
+import com.idega.presentation.Table;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.presentation.BasicUserOverview;
@@ -51,6 +54,8 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	
 	//private final static String LINK_HOVER_STYLE = "font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#FF8008;text-decoration:none;";
 	private final static String LINK_HOVER_STYLE = "font-family: verdana,helvetica,arial,sans-serif;font-size:9px;text-decoration:none;";
+	
+	private final static String LOGIN_STYLE = "font-family: verdana,helvetica,arial,sans-serif;font-size:10px;font-weight:bold;";
 	
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
@@ -195,6 +200,65 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
       }
     }
   }
+  /**
+   * 
+   * @return
+   */
+  public Table displayTable(IWContext iwc) {
+  	IWBundle iwb = getBundle(iwc);
+  	Image logoutImage = iwb.getImage("logout.gif");
+  	Image lockImage = iwb.getImage("las.gif");
+  	
+  	Table table = new Table(1,3);
+  	table.setCellspacing(0);
+  	table.setCellpadding(0);
+//  	table.setHeight(Table.HUNDRED_PERCENT);
+		table.setWidth(Table.HUNDRED_PERCENT);
+		table.setStyleClass("back");
+  	table.setAlignment(1,2,"center");		
+		table.setHeight(1,6);
+		table.setHeight(3,6); 
+		table.add(com.idega.presentation.text.Text.NON_BREAKING_SPACE,1,1);
+		table.add(com.idega.presentation.text.Text.NON_BREAKING_SPACE,1,3);
+  	table.setVerticalAlignment(1,2,"top");
+ 	
+  	Table treeTable = new Table(1,1);
+  	treeTable.setCellspacing(4);
+  	treeTable.setCellpadding(0);
+  	treeTable.setStyleClass("main");
+  	treeTable.setWidth("90%");
+  	treeTable.setHeight("90%");
+  	treeTable.add(groupTree,1,1);
+  	
+  	table.add(treeTable,1,2);
+  	
+  	return table;
+  }
+  public Table loginTable(IWContext iwc) {
+		IWBundle iwb = getBundle(iwc);
+		Image logoutImage = iwb.getImage("logout.gif");
+		Image lockImage = iwb.getImage("las.gif");
+		
+		Login login = new Login();
+		login.setTextStyle(LOGIN_STYLE);
+		login.setLogoutButton(logoutImage);
+  	
+  	Table loginTable = new Table(2,1);
+  	loginTable.setCellspacing(0);
+  	loginTable.setCellpadding(0);
+  	loginTable.setWidth(Table.HUNDRED_PERCENT);
+  	loginTable.setHeight(50);
+  	loginTable.setAlignment(1,1,"center");
+  	loginTable.setAlignment(2,1,"center");
+  	loginTable.setVerticalAlignment(1,1,"middle");
+  	loginTable.setVerticalAlignment(2,1,"middle");
+		if(iwc.isLoggedOn())
+			loginTable.add(lockImage,1,1);
+		loginTable.add(login,2,1);
+  	
+  	
+  	return loginTable;
+  }
 
   public void main(IWContext iwc) throws Exception {
     this.empty();
@@ -204,7 +268,10 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	String styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
 	parentPage.addStyleSheetURL(styleSrc);
 	
-    this.add(groupTree);
+		Table loginTable = loginTable(iwc);
+		Table table = displayTable(iwc);
+		this.add(loginTable);
+    this.add(table);
     
     
     if(iwc.isSuperAdmin()){

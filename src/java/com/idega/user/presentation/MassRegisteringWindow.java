@@ -32,10 +32,11 @@ import com.idega.user.data.UserHome;
  * Hint: This class does not use the event system at all.
  * 
  */
-public class MassRegisteringWindow extends IWAdminWindow {
+public class MassRegisteringWindow extends StyledIWAdminWindow {
 
 	public static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 	public static final String PARAMETER_GROUP_ID = GroupPropertyWindow.PARAMETERSTRING_GROUP_ID;
+	public final static String STYLE_2 = "font-family:arial; font-size:8pt; color:#000000; text-align: justify;";
 
 	private String ACTION = "mrw_act";
 	private String ACTION_NEXT ="mrw_act_nx";
@@ -149,10 +150,11 @@ public class MassRegisteringWindow extends IWAdminWindow {
     // add close button
     table.add(new SubmitButton(iwrb.getLocalizedImageButton("cancel", "Cancel"), ACTION, ACTION_CANCEL), 4, row );
 		form.add(table);
-		add(form);
+		add(form,iwc);
 	}
 	
 	private void errorList() {
+		IWContext iwc = IWContext.getInstance();
 		Form form = new Form();
 		form.maintainParameter(PARAMETER_GROUP_ID);
 		Table table = new Table();
@@ -176,7 +178,7 @@ public class MassRegisteringWindow extends IWAdminWindow {
 		table.add(new SubmitButton(iwrb.getLocalizedImageButton("back", "Back")), 1, row);
 		
 		form.add(table);
-		add(form);
+		add(form,iwc);
 	}
 	
 	private boolean handleInsert(IWContext iwc) throws RemoteException{

@@ -184,6 +184,7 @@ public class Toolbar extends Page implements IWBrowserView {
     Link tLink11 = new Link(text);
 		tLink11.setStyleClass(styledLink);
     tLink11.setWindowToOpen(CreateUser.class);
+    button.setWidth(2,10);
     button.add(tLink11,2,1);
     toolbar1.add(button,2,1);
 
@@ -200,11 +201,12 @@ public class Toolbar extends Page implements IWBrowserView {
     tLink12.setWindowToOpen(CreateGroupWindow.class);
     if (selectedGroupProviderStateId != null)
       tLink12.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
+		button2.setWidth(2,10);
     button2.add(tLink12,2,1);
     toolbar1.add(button2,3,1);
     
 		//Search temp
-		Table button3 = new Table(2,1);
+		Table button3 = new Table(4,1);
 		button3.setCellpadding(0);
 		Image iconSearch = iwb.getImage("search.gif");
 		button3.add(iconSearch,1,1);
@@ -217,6 +219,10 @@ public class Toolbar extends Page implements IWBrowserView {
 			tLink13.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, userApplicationMainAreaStateId);
 		tLink13.setWindowToOpen(SearchWindow.class);
 		button3.add(tLink13,2,1);
+		button3.setWidth(3,15);
+		button3.add(Text.NON_BREAKING_SPACE);
+		Image dottedImage = iwb.getImage("dotted.gif");
+		button3.add(dottedImage,4,1);
 		toolbar1.add(button3,4,1);
   
     
@@ -307,7 +313,7 @@ public class Toolbar extends Page implements IWBrowserView {
 			tLink16.setParameter(Importer.PARAMETER_IMPORT_HANDLER, "is.idega.block.nationalregister.business.NationalRegisterFileImportHandler");
 
 			tLink16.setWindowToOpen(Importer.class);
-
+			button6.setWidth(2,15);
 			button6.add(tLink16, 2, 1);
 			toolbar1.add(button6, 8, 1);
 		}

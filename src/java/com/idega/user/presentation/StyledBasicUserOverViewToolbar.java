@@ -32,7 +32,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 	
 	private String styledLinkClass = "styledLink";
 	private String styleSelectedBox = "selectedBox";
-	private String styleBox = "box";
+	private String styleButton = "overviewButton";
 
 	/**
 	 * Constructor for StyledBasicUserOverViewToolbar.
@@ -85,7 +85,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 			if (canCreateUserOrGroup) {
 
 				Table button = new Table(1, 1);
-				button.setStyleClass(styleBox);
+				button.setStyleClass(styleButton);
 				button.setAlignment(1,1,"center");
 				button.setCellpadding(0);
 				Text text = new Text(iwrb.getLocalizedString("new.member", "New member"));
@@ -111,7 +111,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 			if (canEditGroup) {
 				//edit group
 				Table button2 = new Table(1, 1);
-				button2.setStyleClass(styleBox);
+				button2.setStyleClass(styleButton);
 				button2.setAlignment(1,1,"center");
 				button2.setCellpadding(0);
 				Text text2 = new Text(iwrb.getLocalizedString("edit.group", "Edit group"));
@@ -130,7 +130,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 				//import button
 				if (selectedGroup != null && showISStuff) {
 					Table button3 = new Table(1, 1);
-					button3.setStyleClass(styleBox);
+					button3.setStyleClass(styleButton);
 					button3.setAlignment(1,1,"center");
 					button3.setCellpadding(0);
 					Text text3 = new Text(iwrb.getLocalizedString("import", "Import"));
@@ -154,7 +154,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 				//mass registering button
 				if (selectedGroup != null && showISStuff) {
 					Table button3 = new Table(1, 1);
-					button3.setStyleClass(styleBox);
+					button3.setStyleClass(styleButton);
 					button3.setAlignment(1,1,"center");
 					button3.setCellpadding(0);
 					Text text3 = new Text(iwrb.getLocalizedString("massregistering", "Bulk registering"));
@@ -170,7 +170,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 				
 				if (selectedGroup != null && showISStuff &&  ( selectedGroup.getGroupType().equals("iwme_league") || selectedGroup.getGroupType().equals("iwme_club_division_template") ) ) {
 					Table button4 = new Table(1, 1);
-					button4.setStyleClass(styleBox);
+					button4.setStyleClass(styleButton);
 					button4.setAlignment(1,1,"center");
 					button4.setCellpadding(0);
 					Text text4 = new Text(iwrb.getLocalizedString("updatecdiv", "Update template"));
@@ -198,7 +198,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 
 			if (isOwner) {
 				Table button4 = new Table(1, 1);
-				button4.setStyleClass(styleBox);
+				button4.setStyleClass(styleButton);
 				button4.setAlignment(1,1,"center");
 				button4.setCellpadding(0);
 				Text text3 = new Text(iwrb.getLocalizedString("permissions", "Permissions"));
@@ -223,7 +223,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 				// delete button
 
 				Table button5 = new Table(1, 1);
-				button5.setStyleClass(styleBox);
+				button5.setStyleClass(styleButton);
 				button5.setAlignment(1,1,"center");
 				button5.setCellpadding(0);
 				Text text5 = new Text(iwrb.getLocalizedString("Delete.group", "Delete group"));
@@ -242,9 +242,9 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 			}
 		}
 
-		if (selectedGroup != null || this.title != null) {
-			toolbar1.add(new PrintButton(iwb.getImage("print.gif")), 9, 1);
-		}
+//		if (selectedGroup != null || this.title != null) {
+//			toolbar1.add(new PrintButton(iwb.getImage("print.gif")), 9, 1);
+//		}
 
 		//calendar
 		// toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("calendar","Calendar"), iwb.getImage("calendar.gif"), com.idega.block.news.presentation.News.class),4,1);

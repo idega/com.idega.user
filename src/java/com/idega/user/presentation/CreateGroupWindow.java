@@ -107,6 +107,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	public void main(IWContext iwc) throws Exception {
 		//this.debugParameters(iwc);
 		CreateGroupWindowPS _ps = (CreateGroupWindowPS) this.getPresentationState(iwc);
+		
 
 		if (_ps.doClose()) {
 			close();
@@ -255,8 +256,11 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	 *
 	 */
 	private GroupChooser getGroupChooser(String name, boolean preselectSelectedGroup, IWContext iwc) {
+		IWBundle iwb = getBundle(iwc);
+		Image chooserImage = iwb.getImage("magnify.gif");
 		GroupChooser chooser = new GroupChooser(name);
 		chooser.setInputStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+		chooser.setChooseButtonImage(chooserImage);
 
 		try {
 			//IBDomain domain = iwc.getDomain();

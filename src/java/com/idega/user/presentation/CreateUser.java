@@ -4,6 +4,7 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
@@ -511,15 +512,15 @@ public class CreateUser extends Window {
 					null,
 					null,
 					t,
-					primaryGroupId,
-					login,
-					password,
-					bEnabledAccount,
+					null,
+					null,
+					null,
+					null,
 					IWTimestamp.RightNow(),
 					5000,
-					bPasswNeverExpires,
-					bAllowedToChangePassw,
-					bMustChange,
+					null,
+					null,
+					null,
 					null,
 					fullName);*/
 		}
@@ -561,6 +562,10 @@ public class CreateUser extends Window {
 		lineUpElements(iwc);
 		
 		String submit = iwc.getParameter("submit");
+		
+		//added to set a new image for the groupChooser
+		Image groupChooseImage = iwb.getImage("magnify.gif");
+		primaryGroupField.setChooseButtonImage(groupChooseImage);
 
 		
 		selectedGroupId = iwc.getParameter(PARAMETERSTRING_GROUP_ID);

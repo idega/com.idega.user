@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.swing.event.ChangeListener;
 
+import com.idega.block.login.presentation.Login;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
@@ -53,18 +54,18 @@ public class UserApplication extends IWBrowser {
 
   public void initializePresentation(){
     this.setWidth(800);
-    this.setHeight(600);
+    this.setHeight(700);
 
     this.addToTop(new Top());
     this.setSpanPixels(POS_TOP,51); //changed from (POS_TOP, 68);
-    this.setSpanPixels(POS_LEFTMAIN, 200);
+    this.setSpanPixels(POS_LEFTMAIN, 190); //changed from ...,200);
     this.setSpanPixels(POS_MENU,30); //changed from (POS_MENU,26);
     this.setSpanPixels(POS_BOTTOM,1); //changed from (POS_MENU,26)
 
     UserApplicationMenuArea menuArea = new UserApplicationMenuArea();
 		UserApplicationControlArea treeArea = new UserApplicationControlArea();
 		UserApplicationMainArea mainArea = new UserApplicationMainArea();
-		
+				
 		this.addToMenu(menuArea);
     this.showMenuFrame(true);
     this.showBottomFrame(true); //MUST BE TRUE!

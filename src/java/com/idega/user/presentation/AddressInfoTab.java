@@ -19,6 +19,7 @@ import com.idega.presentation.ui.PostalCodeDropdownMenu;
 import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.util.SelectorUtility;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.data.User;
 
 /**
  * Title:        User
@@ -80,6 +81,9 @@ public class AddressInfoTab extends UserTab {
   
   private Text coAddressText;
   boolean useCommune = false;
+  
+	private User user = null; 
+	private com.idega.core.user.data.User adminUser = null; 
   
   
 	public AddressInfoTab() {
@@ -260,6 +264,19 @@ public class AddressInfoTab extends UserTab {
 
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
+		
+		user = iwc.getCurrentUser();
+		try {
+			adminUser = iwc.getAccessController().getAdministratorUser();
+			
+		}
+		catch (Exception ex){
+			System.err.println("[BasicUserOverview] access controller failed " + ex.getMessage());
+			ex.printStackTrace(System.err);
+			adminUser = null;
+		}
+		
+  
 
 		if (useCommune) {
 			++totalRows;
@@ -346,9 +363,11 @@ public class AddressInfoTab extends UserTab {
     secondAddressTable.add(postalCodeText,1,row);
     secondAddressTable.add(secondPostalCodeField,2,row);
 		secondAddressTable.add(Text.getNonBrakingSpace(2), 2, row);
-		Link editPostalCodeLink = new Link(iwrb.getLocalizedImageButton("AddressInfoTab.postalcodewindow.add","Add"));
-		editPostalCodeLink.setWindowToOpen(PostalCodeEditorWindow.class);
-		secondAddressTable.add(editPostalCodeLink, 2, row);
+		if(user.equals(adminUser)) {
+			Link editPostalCodeLink = new Link(iwrb.getLocalizedImageButton("AddressInfoTab.postalcodewindow.add","Add"));
+			editPostalCodeLink.setWindowToOpen(PostalCodeEditorWindow.class);
+			secondAddressTable.add(editPostalCodeLink, 2, row);			
+		}
 
     //    fpane.add(secondAddressTable);
 
