@@ -55,8 +55,8 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 
 
 	public SearchWindow() {
-		setWidth(420);
-		setHeight(310);
+		setWidth(640);
+		setHeight(400);
 		setScrollbar(false);
 		setResizable(true);
 	}
