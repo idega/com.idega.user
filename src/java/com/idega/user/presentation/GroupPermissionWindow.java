@@ -87,11 +87,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	public GroupPermissionWindow() {
 		super();
 
-		/*
-		 * stateHandler = new StatefullPresentationImplHandler(); stateHandler.setPresentationStateClass(GroupPermissionWindowPS.class);
-		 * this.getLocation().setApplicationClass(GroupPermissionWindow.class);
-		 */
-
 		setWidth(width);
 		setHeight(height);
 		setScrollbar(true);
