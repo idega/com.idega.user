@@ -42,9 +42,7 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
   public static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
   
   private static final String HELP_TEXT_KEY = "delete_group_confirm_window";
-  
-  private String mainStyleClass = "main";
-  
+    
   public DeleteGroupConfirmWindow() {
     setWidth(300);
     setHeight(200);
@@ -134,30 +132,49 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
     close.setOnClick("window.close(); return false;");
 		cancel.setOnClick("window.close(); return false;");
 		ok.setOnClick("delete_form.submit();window.close();");
+		
+		Table mainTable = new Table();
+		mainTable.setWidth(280);
+		mainTable.setHeight(100);
+		mainTable.setCellpadding(0);
+		mainTable.setCellspacing(0);
+		
     //  assemble table
     Table table = new Table(3,3);
-    table.setWidth(280);
-    table.setHeight(100);
-    table.setStyleClass(mainStyleClass);
+    table.setWidth(Table.HUNDRED_PERCENT);
+    table.setHeight(60);
+    table.setStyleClass(MAIN_STYLECLASS);
     table.setAlignment(2,3,Table.HORIZONTAL_ALIGN_RIGHT);
     table.mergeCells(1,1,2,1);
 		table.add(selectedGroup, 1,1);
-		table.add(help,1,3);
-		table.setAlignment(2,3,"right");
-		table.setAlignment(3,3,"right");
+		
+		Table bottomTable = new Table();
+		bottomTable.setCellpadding(0);
+		bottomTable.setCellspacing(5);
+		bottomTable.setWidth(Table.HUNDRED_PERCENT);
+		bottomTable.setHeight(39);
+		bottomTable.setStyleClass(MAIN_STYLECLASS);
+		bottomTable.add(help,1,1);
+		bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
+
 		if (askForConfirmation) {
-      table.add(question,1,2);
-		  table.add(ok,2,3);
-//      table.add(Text.NON_BREAKING_SPACE,2,3);
-		  table.add(cancel, 3,3);
+			table.add(question,1,2);
+			bottomTable.add(ok,2,1);
+			bottomTable.add(Text.NON_BREAKING_SPACE,2,1);
+			bottomTable.add(cancel, 2,1);
 		}
 		else  { 
       table.add(explanation1,1,2);
       table.add(Text.getBreak(),1,2);
       table.add(explanation2,1,2);
-		  table.add(close, 2,3);
+      bottomTable.add(close, 2,1);
 		}
-		return table;
+		mainTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
+		mainTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
+		mainTable.add(table,1,1);
+		mainTable.add(bottomTable,1,3);
+
+		return mainTable;
 	}
 
   public void initializeInMain(IWContext iwc) {
