@@ -41,6 +41,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
   private static final String PARAMETER_DELETE_USER =  "delete_ic_user";
   private String _controlTarget = null;
   private IWPresentationEvent _controlEvent = null;
+  private IWResourceBundle iwrb = null ;
 
   private BasicUserOverviewPS _presentationState = null;
   private BasicUserOverViewToolbar toolbar = null;
@@ -69,6 +70,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
   public Table getUsers(IWContext iwc) throws Exception{
     this.empty();
+    iwrb = this.getResourceBundle(iwc);
     //List users = EntityFinder.findAllOrdered(com.idega.user.data.UserBMPBean.getStaticInstance(),com.idega.user.data.UserBMPBean.getColumnNameFirstName());
 //    Collection users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
     if( toolbar == null ) toolbar = new BasicUserOverViewToolbar();
@@ -156,17 +158,17 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
       userTable.setWidth(1,"200");
       userTable.setWidth(2,"200");
 
-      Text name = new Text("&nbsp;Nafn");
+      Text name = new Text("&nbsp;"+iwrb.getLocalizedString("name","Name"));
  	  name.setFontFace(Text.FONT_FACE_VERDANA);
  	  name.setFontSize(Text.FONT_SIZE_7_HTML_1);
  	  userTable.add(name,1,1);
 
- 	  Text address = new Text("&nbsp;Heimilisfang");
+ 	  Text address = new Text("&nbsp;"+iwrb.getLocalizedString("address","Address"));
  	  address.setFontFace(Text.FONT_FACE_VERDANA);
  	  address.setFontSize(Text.FONT_SIZE_7_HTML_1);
  	  userTable.add(address,2,1);
 
- 	  Text del = new Text("&nbsp;Eyða félaga");
+ 	  Text del = new Text("&nbsp;"+iwrb.getLocalizedString("delete.user","Delete user"));
  	  del.setFontFace(Text.FONT_FACE_VERDANA);
  	  del.setFontSize(Text.FONT_SIZE_7_HTML_1);
  	  userTable.add(del,3,1);
