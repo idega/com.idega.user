@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import com.idega.util.IWColor;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.presentation.*;
 import com.idega.event.IWPresentationEvent;
@@ -59,6 +60,7 @@ public class SubsetSelector extends PresentationObjectContainer implements IWBro
 	{
 		Layer partitionSelection = new Layer();
 		partitionSelection.setHorizontalAlignment("center");
+                partitionSelection.setBackgroundColor(new IWColor(230,230,230).getHexColorString());
 
 
 		if (_size > _subsetSize){
