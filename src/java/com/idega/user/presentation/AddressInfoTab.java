@@ -7,7 +7,9 @@ import com.idega.core.data.Country;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CountryDropdownMenu;
 import com.idega.presentation.ui.PostalCodeDropdownMenu;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.UserBusiness;
@@ -30,14 +32,14 @@ public class AddressInfoTab extends UserTab {
 	private TextInput cityField;
 	private TextInput provinceField;
 	private PostalCodeDropdownMenu postalCodeField;
-	private TextInput countryField;
+	private CountryDropdownMenu countryField;
 	private TextInput poBoxField;
 
   private TextInput secondStreetField;
   private TextInput secondCityField;
   private TextInput secondProvinceField;
   private PostalCodeDropdownMenu secondPostalCodeField;
-  private TextInput secondCountryField;
+  private CountryDropdownMenu secondCountryField;
   private TextInput secondPoBoxField;
 
 	private static final String streetFieldName = "UMstreet";
@@ -97,7 +99,7 @@ public class AddressInfoTab extends UserTab {
 		String city = (String)fieldValues.get(cityFieldName);
 		String province = (String)fieldValues.get(provinceFieldName);
 		String postalId = (String)fieldValues.get(postalCodeFieldName);
-		//String country = (String)fieldValues.get(countryFieldName);
+		String countryId = (String)fieldValues.get(countryFieldName);
 		String poBox = (String)fieldValues.get(poBoxFieldName);
 
 		if (street != null)
@@ -106,24 +108,20 @@ public class AddressInfoTab extends UserTab {
 			cityField.setContent(city);
 		if (province != null)
 			provinceField.setContent(province);
-
 		if (postalId != null && !postalId.equals(""))
 			postalCodeField.setSelectedElement(Integer.parseInt(postalId));
-
-		//if (country != null)
-      // hack
-      /** TODO remove island hack
-       * 
-       */
-			countryField.setContent("Island");
+		if(countryId!=null && !countryId.equals("") ){
+			countryField.setSelectedElement(countryId);	
+		}
 		if (poBox != null)
-			poBoxField.setContent(poBox);      
+			poBoxField.setContent(poBox); 
+		////////////////////     
     // second address
     street = (String)fieldValues.get(secondStreetFieldName);
     city = (String)fieldValues.get(secondCityFieldName);
     province = (String)fieldValues.get(secondProvinceFieldName);
     postalId = (String)fieldValues.get(secondPostalCodeFieldName);
-    //country = (String)fieldValues.get(secondCountryFieldName);
+    countryId = (String)fieldValues.get(secondCountryFieldName);
     poBox = (String)fieldValues.get(secondPoBoxFieldName);
 
     if (street != null)
@@ -132,16 +130,11 @@ public class AddressInfoTab extends UserTab {
       secondCityField.setContent(city);
     if (province != null)
       secondProvinceField.setContent(province);
-
     if (postalId != null && !postalId.equals(""))
       secondPostalCodeField.setSelectedElement(Integer.parseInt(postalId));
-
-    ///if (country != null)
-    // hack
-    /** TODO remove island hack
-     * 
-     */
-    secondCountryField.setContent("Island");
+    if(countryId!=null && !countryId.equals("") ){
+      secondCountryField.setSelectedElement(countryId);	
+    }
     if (poBox != null)
       secondPoBoxField.setContent(poBox);
 	}
@@ -163,13 +156,12 @@ public class AddressInfoTab extends UserTab {
 		if (postalCodeField == null) {
 			postalCodeField = new PostalCodeDropdownMenu();
       postalCodeField.setDisabled(true);
-			postalCodeField.setCountry("Iceland"); //hack
+			postalCodeField.setCountry("Iceland"); //TODO remove hack
 		}
 
-		countryField = new TextInput(countryFieldName);
+		countryField = new CountryDropdownMenu(countryFieldName);
     countryField.setDisabled(true);
-		countryField.setLength(20);
-		countryField.setDisabled(true);
+		countryField.setSelectedCountry("Iceland"); //TODO remove hack
 
 		poBoxField = new TextInput(poBoxFieldName);
     poBoxField.setDisabled(true);
@@ -191,9 +183,9 @@ public class AddressInfoTab extends UserTab {
       secondPostalCodeField.setCountry("Iceland"); //hack
     }
 
-    secondCountryField = new TextInput(secondCountryFieldName);
-    secondCountryField.setLength(20);
-    secondCountryField.setDisabled(true);
+    secondCountryField = new CountryDropdownMenu(secondCountryFieldName);
+		secondCountryField.setDisabled(true);
+		secondCountryField.setSelectedCountry("Iceland"); //TODO remove hack
 
     secondPoBoxField = new TextInput(secondPoBoxFieldName);
     secondPoBoxField.setLength(10);
@@ -228,6 +220,8 @@ public class AddressInfoTab extends UserTab {
 	}
 
 	public void lineUpFields() {
+		IWContext iwc = IWContext.getInstance();
+		IWResourceBundle iwrb = getResourceBundle(iwc);
 		this.resize(1, 1);
 
 		Table addressTable = new Table(2, 4);
@@ -297,6 +291,10 @@ public class AddressInfoTab extends UserTab {
     secondAddressTable.add(secondCountryField, 2, 3);
     secondAddressTable.add(postalCodeText,1,4);
     secondAddressTable.add(secondPostalCodeField,2,4);
+		secondAddressTable.add(Text.getNonBrakingSpace(2), 2, 4);
+		Link editPostalCodeLink = new Link(iwrb.getLocalizedImageButton("AddressInfoTab.postalcodewindow.add","Add"));
+		editPostalCodeLink.setWindowToOpen(PostalCodeEditorWindow.class);
+		secondAddressTable.add(editPostalCodeLink, 2, 4);
 
     //    fpane.add(secondAddressTable);
 
