@@ -2,6 +2,7 @@ package com.idega.user.app;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -256,7 +257,10 @@ public class Toolbar extends Page implements IWBrowserView {
 				Class toolPresentationClass = toolbarElement.getPresentationObjectClass(iwc);
 				Map parameterMap = toolbarElement.getParameterMap(iwc);
 				// a special parameter, very few plugins are using it
-				if (parameterMap!= null &&  selectedGroupProviderStateId != null) {
+				if (selectedGroupProviderStateId != null) {
+					if (parameterMap == null) {
+						parameterMap = new HashMap();
+					}
 					parameterMap.put(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId );
 				}
 				String toolName = toolbarElement.getName(iwc);
