@@ -7,6 +7,7 @@
 package com.idega.user.presentation.inputhandler;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -72,7 +73,9 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 	 */
 	public Object getResultingObject(String[] values, IWContext iwc) throws Exception {
 		Collection groupTypes = null;
-		if (values != null && values.length > 0) {
+		int count = values.length;
+		if (values != null && count > 0) {
+			groupTypes = new ArrayList(count);
 			GroupTypeHome groupTypeHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
 			for(int i=0; i<values.length; i++) {
 				GroupType gType = groupTypeHome.findByPrimaryKey(values[i]);
