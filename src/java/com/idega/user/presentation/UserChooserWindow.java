@@ -147,7 +147,6 @@ public class UserChooserWindow extends AbstractChooserWindow {
 	
 	public Table getListTable(IWContext iwc) throws RemoteException{
 		Table table = new Table(2, USERS_PER_PAGE+1);
-		table.setAlignment(Table.HORIZONTAL_ALIGN_CENTER);
 		table.setCellspacing(0);
 		table.setCellpadding(2);
 		table.setWidth(TABLE_WIDTH);
