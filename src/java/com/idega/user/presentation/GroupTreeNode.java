@@ -276,8 +276,13 @@ public class GroupTreeNode implements ICTreeNode {
 					throw new RuntimeException(e.getMessage());
 				}
 			case TYPE_GROUP :
-				if (isAlias())
-					return getAlias().getChildCount();
+				if (isAlias()){
+					Group aliasGroup = getAlias();
+					if(aliasGroup!=null) return aliasGroup.getChildCount();
+					else{
+						System.err.println("GroupTreeNode: Error - no alias for group :"+getNodeName()+" id: "+getNodeID());
+					}
+				}
 				else
 					return _group.getChildCount();
 			default :
