@@ -331,11 +331,11 @@ private void setCurrentUserAsOwnerOfGroup(IWUserContext iwc, Group group){
 	}
 	
 	private void giveParentGroupsOwnersReadAccessToGroup(IWUserContext iwc, Group parentGroup, Group group){
-		User user = iwc.getCurrentUser();
-		AccessController access = iwc.getAccessController();
 		//TODO Eiki get all owners and give them read access
 		
 		/*try {
+			User user = iwc.getCurrentUser();
+			AccessController access = iwc.getAccessController();
 			
 			access.
 			Group primary = user.getPrimaryGroup();
