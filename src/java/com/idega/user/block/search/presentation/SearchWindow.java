@@ -176,8 +176,8 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		Integer maleId = getUserBusiness(iwc).getGenderId("male");
 		Integer femaleId = getUserBusiness(iwc).getGenderId("female");	
 		DropdownMenu genders = new DropdownMenu(UserSearchEvent.SEARCH_FIELD_GENDER_ID);
-		genders.addMenuElement(maleId.intValue(),iwrb.getLocalizedString("user.search.window.females", "Women"));
-		genders.addMenuElement(femaleId.intValue(),iwrb.getLocalizedString("user.search.window.males", "Men"));
+		genders.addMenuElement(femaleId.intValue(),iwrb.getLocalizedString("user.search.window.females", "Women"));
+		genders.addMenuElement(maleId.intValue(),iwrb.getLocalizedString("user.search.window.males", "Men"));
 		genders.addMenuElement(-1,iwrb.getLocalizedString("user.search.window.both.genders", "Both genders"));
 		genders.setSelectedElement(-1);
 		
