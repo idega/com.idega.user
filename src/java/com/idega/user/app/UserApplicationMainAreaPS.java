@@ -2,33 +2,31 @@
 
 package com.idega.user.app;
 
-import com.idega.user.block.search.event.SimpleSearchEvent;
-import com.idega.user.business.GroupBusiness;
+import java.util.Collection;
+import java.util.Iterator;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.EventListenerList;
+
+import com.idega.event.IWActionListener;
+import com.idega.event.IWPresentationEvent;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWException;
+import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.IWTabbedPane;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.presentation.text.Link;
-import com.idega.event.*;
+import com.idega.user.block.search.event.SimpleSearchEvent;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.event.ChangeClassEvent;
-import com.idega.user.event.DeleteGroupEvent;
 import com.idega.user.event.SelectGroupEvent;
 import com.idega.user.presentation.CreateGroupWindowPS;
 import com.idega.user.presentation.DeleteGroupConfirmWindowPS;
 import com.idega.user.presentation.GroupPropertyWindow;
 import com.idega.user.presentation.UserPropertyWindow;
-
-import java.util.Collection;
-import java.util.Iterator;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.EventListenerList;
-
-import com.idega.idegaweb.IWApplicationContext;
-import com.idega.idegaweb.IWException;
-import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 
 /**
  * <p>Title: idegaWeb</p>

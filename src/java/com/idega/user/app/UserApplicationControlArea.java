@@ -5,7 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import com.idega.builder.data.IBDomain;
+import javax.swing.event.ChangeListener;
+
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
@@ -26,9 +27,6 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.presentation.GroupTreeNode;
 import com.idega.user.presentation.GroupTreeView;
-import com.idega.util.IWColor;
-
-import javax.swing.event.ChangeListener;
 
 /**
  * <p>Title: idegaWeb</p>

@@ -1,21 +1,23 @@
 package com.idega.user.app;
 
-import com.idega.idegaweb.*;
-import com.idega.user.block.search.presentation.SearchForm;
 import java.util.List;
 import java.util.Vector;
+
 import com.idega.event.IWPresentationEvent;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Page;
 import com.idega.presentation.Table;
-import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
+import com.idega.user.block.search.presentation.SearchForm;
+import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.CreateUser;
-import com.idega.user.event.ChangeClassEvent;
 import com.idega.util.IWColor;
 
 

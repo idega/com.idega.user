@@ -1,17 +1,16 @@
 package com.idega.user.app;
 
-import com.idega.event.*;
-import java.util.*;
-import com.idega.presentation.event.ResetPresentationEvent;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.EventListenerList;
+
+import com.idega.event.IWActionListener;
+import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
-import com.idega.presentation.event.TreeViewerEvent;
+import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.user.data.Group;
 import com.idega.user.presentation.BasicUserOverviewPS;
 import com.idega.user.presentation.DeleteGroupConfirmWindowPS;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.EventListenerList;
 
 /**
  * <p>Title: idegaWeb</p>

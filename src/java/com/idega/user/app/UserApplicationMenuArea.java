@@ -1,20 +1,15 @@
 package com.idega.user.app;
 
-import com.idega.user.presentation.*;
-import com.idega.presentation.*;
-import com.idega.user.block.search.presentation.SearchForm;
-import com.idega.business.IBOLookup;
-import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
-import com.idega.user.business.GroupBusiness;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
+import com.idega.presentation.StatefullPresentation;
+import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.util.IWColor;
-
-import javax.swing.event.ChangeListener;
 
 /**
  * <p>Title: idegaWeb</p>
