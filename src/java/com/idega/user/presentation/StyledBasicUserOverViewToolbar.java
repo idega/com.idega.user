@@ -48,7 +48,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
 		boolean showISStuff = iwc.getApplicationSettings().getProperty("temp_show_is_related_stuff") != null;
-		boolean showCashierTab = iwc.getApplicationSettings().getProperty("temp_show_isi_cashier_tab") != null;
+		//boolean showCashierTab = iwc.getApplicationSettings().getProperty("temp_show_isi_cashier_tab") != null;
 		AccessController access = iwc.getAccessController();
 
 		Table toolbar1 = new Table();
