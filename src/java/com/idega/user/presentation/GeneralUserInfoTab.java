@@ -1,11 +1,16 @@
 package com.idega.user.presentation;
 
+import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
+
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
@@ -15,6 +20,7 @@ import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
+import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
 
@@ -31,7 +37,7 @@ public class GeneralUserInfoTab extends UserTab {
 	private static final String TAB_NAME = "usr_info_tab_name";
 	private static final String DEFAULT_TAB_NAME = "General";
 
-	private Text idField;
+	private TextInput idField;
 	private TextInput fullNameField;
 	private TextInput displayNameField;
 	private TextArea descriptionField;
@@ -62,7 +68,6 @@ public class GeneralUserInfoTab extends UserTab {
 		super();
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-
 		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
 	}
 
@@ -96,7 +101,8 @@ public class GeneralUserInfoTab extends UserTab {
 	}
 
 	public void updateFieldsDisplayStatus() {
-		idField.setText((String) fieldValues.get(idFieldName));
+		
+		idField.setContent((String) fieldValues.get(idFieldName));		
 		fullNameField.setContent((String) fieldValues.get(fullNameFieldName));
 		displayNameField.setContent((String) fieldValues.get(displayNameFieldName));
 		descriptionField.setContent((String) fieldValues.get(descriptionFieldName));
@@ -128,7 +134,8 @@ public class GeneralUserInfoTab extends UserTab {
 	}
 
 	public void initializeFields() {
-		idField = new Text();
+		idField = new TextInput(idFieldName);
+		idField.setLength(12);
 		
 		fullNameField = new TextInput(fullNameFieldName);
 		fullNameField.setLength(20);
@@ -261,7 +268,7 @@ public class GeneralUserInfoTab extends UserTab {
 	public boolean collect(IWContext iwc) {
 		if (iwc != null) {
 			String name = iwc.getParameter(fullNameFieldName);
-
+			String ID = iwc.getParameter(idFieldName);
 			String dname = iwc.getParameter(displayNameFieldName);
 			String desc = iwc.getParameter(descriptionFieldName);
 			String dateofbirth = iwc.getParameter(dateOfBirthFieldName);
@@ -269,6 +276,9 @@ public class GeneralUserInfoTab extends UserTab {
 			String personalID = iwc.getParameter(personalIDFieldName);
 			String created = iwc.getParameter(createdFieldName);
 
+			if(ID!=null){
+				fieldValues.put(idFieldName, ID);
+			}
 			if (name != null) {
 				fieldValues.put(fullNameFieldName, name);
 			}	
@@ -300,7 +310,20 @@ public class GeneralUserInfoTab extends UserTab {
 
 	public boolean store(IWContext iwc) {
 		try {
-			if (getUserId() > -1) {
+			if (getUserId() > 0) {
+				
+				if(getGroupID()>0){//temp remove with other IWMember stuff
+					Group club = getClubForGroup(getGroup());
+					if(club!=null){				
+						boolean success = setClubMemberNumberForUser((String)fieldValues.get(idFieldName),getUser(),club);
+						if(!success){//number already taken
+							idField.setStyleAttribute("color:#FF0000"); 
+						}
+						else idField.setStyleAttribute("color:#000000"); 
+					}
+				}
+				
+				
 				IWTimestamp dateOfBirthTS = null;
 				String st = (String) fieldValues.get(dateOfBirthFieldName);
 				Integer gen = (fieldValues.get(genderFieldName).equals("")) ? null : new Integer((String) fieldValues.get(genderFieldName));
@@ -353,8 +376,16 @@ public class GeneralUserInfoTab extends UserTab {
 
 		try {
 			User user = getUser();
-			
-			fieldValues.put(idFieldName, (user.getPrimaryKey() != null) ? ((Integer)user.getPrimaryKey()).toString() : "");
+			String memberNumber =null;
+			try {
+				memberNumber = getMemberNumber(getUser());
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		
+			fieldValues.put(idFieldName, (memberNumber != null) ? memberNumber : "");
+			fieldValues.put(idFieldName, (memberNumber != null) ? memberNumber : "");
 			fieldValues.put(fullNameFieldName, (user.getName() != null) ? user.getName() : "");
 			fieldValues.put(displayNameFieldName, (user.getDisplayName() != null) ? user.getDisplayName() : "");
 			fieldValues.put(descriptionFieldName, (user.getDescription() != null) ? user.getDescription() : "");
@@ -371,7 +402,115 @@ public class GeneralUserInfoTab extends UserTab {
 
 	}
 
+
+
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
+	
+	
+	
+	//TODO Eiki inherit from this class and use plugin stuff
+	//START REMOVE
+	
+	private String getMemberNumber(User user) throws RemoteException {
+		String memberNumber = null;
+		
+		Group selectedGroup = getGroup();
+		if(selectedGroup!=null){	
+			Group club = getClubForGroup(selectedGroup);
+			if(club!=null){
+				memberNumber = getClubMemberNumberForUser(user,club);
+			}
+			else System.out.print("CLUB GROUP IS NULL");
+		}
+		else System.out.print("SELECTED GROUP IS NULL");
+		
+		return memberNumber;
+	}
+	
+	/*
+		* Returns the club that is a parent for this group.
+	 */
+	public Group getClubForGroup(Group group) throws EJBException, RemoteException{
+		Collection parents = getGroupBusiness(this.getIWApplicationContext()).getParentGroupsRecursive(group);
+
+		if(parents!=null && !parents.isEmpty()){
+			Iterator iter = parents.iterator();
+			while (iter.hasNext()) {
+				Group parentGroup = (Group) iter.next();
+				//if(IWMemberConstants.GROUP_TYPE_CLUB.equals(parentGroup.getGroupType())){
+				if("iwme_club".equals(parentGroup.getGroupType())){
+					return parentGroup;//there should only be one
+				}
+			}
+		} 
+		return null;
+	}
+	
+	public String getClubMemberNumberForUser(User user, Group club){
+		String id = user.getMetaData("CLUB_MEMB_NR_"+club.getPrimaryKey().toString());
+		if(id!=null){
+			return id;
+		}else{
+			return null;
+		}	
+	}
+	
+	/**
+	 * @return false if number is already taken, else true
+	 */
+	public synchronized boolean setClubMemberNumberForUser(String number, User user, Group club){
+		
+		boolean setNumber = false;
+		String clubId = club.getPrimaryKey().toString();
+		System.out.println(number);
+		
+		
+		try {
+			Collection users = getUserBusiness(getIWApplicationContext()).getUserHome().findUsersByMetaData("CLUB_MEMB_NR_"+clubId,number);
+			
+			if( users!=null && !users.isEmpty()){
+				Iterator iter = users.iterator();
+				
+				while (iter.hasNext()) {
+					User thingy = (User) iter.next();
+					if(thingy.equals(user)){
+						setNumber = true;//updating
+					}
+					break;//only one user should have this number
+				}
+			}
+			else setNumber = true;
+		}
+		catch (EJBException e) {
+			e.printStackTrace();
+			return false;
+		}
+		catch (FinderException e) {
+			setNumber = true;
+		} 
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		if(setNumber){
+			user.setMetaData("CLUB_MEMB_NR_"+clubId,number);
+			user.store();
+			return true;
+		}
+		
+		return false;
+	}
+	
+	//END REMOVE
+	
+	
+	
+	
+	
+	
+
+	
+	
 } // Class GeneralUserInfoTab
