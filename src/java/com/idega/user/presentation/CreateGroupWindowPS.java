@@ -175,31 +175,55 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 			GroupType gType = (GroupType) iterator.next();
 			String name = gType.getDefaultGroupName();
 			
-			String typeString = gType.getType();
-			System.out.println("TYPE :" +typeString );
-			//to avoid circular reference with beginning type
-			//if( this.getGroupType().equals(typeString) ) continue; rather add all types to a map to check
-			
-			if(name==null){
-				name =  iwrb.getLocalizedString(typeString,typeString);
-			}
-			//create group then call recursive
-			try {
-				Group newGroup = business.createGroup(name,gType.getDescription(),typeString);
-				setCurrentUserAsOwnerOfGroup(iwc,newGroup);
-				group.addGroup(newGroup);
-				if(!type.isLeaf()){
-					createDefaultSubGroups(newGroup,business,iwc);
-				}
-							
+			if(gType.getAutoCreate()){
+				Integer numberOfInstances = gType.getNumberOfInstancesToAutoCreate();
+				int nrOfGroupsToCreate = 1;
 				
-			}
-			catch (CreateException e) {
-				e.printStackTrace();
-				return;
-			}
+				if( (numberOfInstances != null) && (numberOfInstances.intValue()>1) ){
+					nrOfGroupsToCreate = numberOfInstances.intValue();
+				}
+				
+				for(int i = 1 ; i<=nrOfGroupsToCreate ; i++){
+					String typeString = gType.getType();
+					String typeLocalizingKey = "auto.create.name."+typeString;
+					String defaultValue = gType.getDescription();
+					if( (defaultValue == null ) || ("".equals(defaultValue)) ) defaultValue = typeString;
+		
+					//to avoid circular reference with beginning type
+					//if( this.getGroupType().equals(typeString) ) continue; rather add all types to a map to check
+					
+					if(name==null){
+						if(nrOfGroupsToCreate>1){
+							typeLocalizingKey=typeLocalizingKey+" "+i;
+							defaultValue = defaultValue +" "+i;
+						}
+						name =  iwrb.getLocalizedString(typeLocalizingKey,defaultValue);
+					}
+					else{
+						if(nrOfGroupsToCreate>1){
+							name=name+" "+i;
+						}
+						
+					}
+					//create group then call recursive
+					try {
+						Group newGroup = business.createGroup(name,"",typeString);
+						setCurrentUserAsOwnerOfGroup(iwc,newGroup);
+						group.addGroup(newGroup);
+						if(!type.isLeaf()){
+							createDefaultSubGroups(newGroup,business,iwc);
+						}
+									
+						
+					}
+					catch (CreateException e) {
+						e.printStackTrace();
+						return;
+					}
+				
+				}
 			
-			
+			}
 		}
 	}
   
