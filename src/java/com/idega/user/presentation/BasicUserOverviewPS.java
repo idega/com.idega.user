@@ -3,6 +3,7 @@ package com.idega.user.presentation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.swing.event.ChangeEvent;
 
@@ -39,24 +40,13 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
 
 	protected Group _selectedGroup = null;
 	protected IBDomain _selectedDomain = null;
-
-
-  private int _selectedPartitionDefaultValue = 0;
-  private int _partitionSizeDefaultValue = 30;
-  private int _firstPartitionIndexDefaultValue = 0;
-
-  private int _selectedPartition = _selectedPartitionDefaultValue;
-  private int _partitionSize = _partitionSizeDefaultValue;
-  private int _firstPartitionIndex = _firstPartitionIndexDefaultValue;
   
   public boolean moveResult = false;
   private Collection notMovedUsers;
-  private int numberOfMovedUsers;
-  
+  private int numberOfMovedUsers = -1;
 
 
   public BasicUserOverviewPS() {
-
   }
   
   public Collection getNotMovedUsers() {
@@ -141,11 +131,25 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
         numberOfMovedUsers = userIds.length - notMovedUsers.size();
         moveResult = true;
       }
-    }   
-
-
-
-
+    }  
+    
+    if (e instanceof EntityBrowserEvent && (MassMovingWindow.EVENT_NAME.equals( ((EntityBrowserEvent)e).getEventName() )))  {
+      IWContext mainIwc = e.getIWContext();
+      String[] groupIds;
+      if (mainIwc.isParameterSet(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY) && 
+          mainIwc.isParameterSet(MassMovingWindow.MOVE_SELECTED_GROUPS) &&
+          mainIwc.isParameterSet(MassMovingWindow.SELECTED_TARGET_GROUP_KEY) ) {
+        groupIds = mainIwc.getParameterValues(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY);
+        int targetGroupId = Integer.parseInt(mainIwc.getParameter(MassMovingWindow.SELECTED_TARGET_GROUP_KEY));
+        // move users 
+        Map map = BasicUserOverview.moveContentOfGroups(Arrays.asList(groupIds), targetGroupId, mainIwc);
+        this.notMovedUsers = (Collection) map.get("not_moved");
+        Collection movedUsers = (Collection) map.get("moved");
+        numberOfMovedUsers = movedUsers.size();
+        moveResult = true;
+           
+      }
+    }     
   }
 
 

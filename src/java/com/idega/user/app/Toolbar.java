@@ -19,6 +19,7 @@ import com.idega.user.block.search.presentation.SearchWindow;
 import com.idega.user.event.ChangeClassEvent;
 import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.CreateUser;
+import com.idega.user.presentation.MassMovingWindow;
 import com.idega.util.IWColor;
 
 
@@ -177,7 +178,26 @@ public class Toolbar extends Page implements IWBrowserView {
 		tLink13.setWindowToOpen(SearchWindow.class);
 		button3.add(tLink13,2,1);
 		toolbar1.add(button3,4,1);
-    
+  
+    //Search temp
+    Table button4 = new Table(2,1);
+    button4.setCellpadding(0);
+    Image iconMassMoving = iwb.getImage("new_group.gif");
+    button4.add(iconMassMoving,1,1);
+    Text text4 = new Text(iwrb.getLocalizedString("button.massMoving","Move"));
+    text4.setFontFace(Text.FONT_FACE_VERDANA);
+    text4.setFontSize(Text.FONT_SIZE_7_HTML_1);
+    Link tLink14 = new Link(text4);
+    if (userApplicationMainAreaStateId != null) {
+      tLink14.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, userApplicationMainAreaStateId);
+    }
+    if (selectedGroupProviderStateId  != null) {
+      tLink14.addParameter(MassMovingWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
+    }
+    tLink14.setWindowToOpen(MassMovingWindow.class);
+    button4.add(tLink14,2,1);
+    toolbar1.add(button4,5,1);  
+  
     
    //finance
    // toolbar1.add( this.getToolbarButtonWithChangeClassEvent(iwrb.getLocalizedString("finance","Finance"), iwb.getImage("finance.gif"), com.idega.block.finance.presentation.AccountViewer.class),4,1);

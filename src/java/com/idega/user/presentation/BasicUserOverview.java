@@ -2,8 +2,10 @@ package com.idega.user.presentation;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
@@ -609,6 +611,37 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     User currentUser = iwc.getCurrentUser();
     Collection list = userBusiness.moveUsers(userIds, parentGroup, targetGroupId, currentUser);
     return list;
+  }
+  
+  public static Map moveContentOfGroups(Collection groupIds, int targetGroupId, IWContext iwc)  {
+    UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
+    GroupBusiness groupBusiness = getGroupBusiness(iwc.getApplicationContext());
+    User currentUser = iwc.getCurrentUser();
+    Map resultMap = new HashMap();
+    resultMap.put("moved", new ArrayList());
+    resultMap.put("not_moved", new ArrayList());
+    Iterator groupIterator = groupIds.iterator();
+    while (groupIterator.hasNext())  {
+      Group group;
+      String id = (String) groupIterator.next();
+      try {
+       group = groupBusiness.getGroupByGroupID(Integer.parseInt(id));
+      }
+      // RemoteException FinderException
+      catch (Exception ex)  {
+        throw new RuntimeException(ex.getMessage());
+      }
+      Map map = userBusiness.moveUsers(group,targetGroupId, currentUser);
+      
+      Collection movedColl = (Collection) resultMap.get("moved");
+      movedColl.addAll((Collection) map.get("moved"));
+      resultMap.put("moved", movedColl);
+      
+      Collection notMovedColl = (Collection) resultMap.get("not_moved");
+      notMovedColl.addAll((Collection) map.get("not_moved"));
+      resultMap.put("not_moved", notMovedColl);      
+    }
+    return resultMap;
   }
   
 	public IWPresentationState getPresentationState(IWUserContext iwuc) {

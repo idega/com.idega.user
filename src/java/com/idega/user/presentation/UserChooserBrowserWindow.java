@@ -44,7 +44,6 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
   
   private static final String SHOW_LIST_ACTION = "show_list_action";
   private static final String DO_NOT_SHOW_LIST_ACTION = "do_not_show_list_action";
-  private static final String SELECTED_USER = "selectedUser";
   
   private String searchString = "";
   

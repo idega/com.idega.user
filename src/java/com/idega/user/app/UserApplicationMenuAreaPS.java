@@ -3,14 +3,17 @@ package com.idega.user.app;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.EventListenerList;
 
+import com.idega.block.entity.event.EntityBrowserEvent;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
+import com.idega.presentation.IWContext;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.user.data.Group;
 import com.idega.user.presentation.BasicUserOverviewPS;
 import com.idega.user.presentation.DeleteGroupConfirmWindowPS;
+import com.idega.user.presentation.MassMovingWindow;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -65,6 +68,15 @@ public class UserApplicationMenuAreaPS extends IWControlFramePresentationState i
       this.reset();
       this.fireStateChanged();
     }
+    
+    if (e instanceof EntityBrowserEvent && (MassMovingWindow.EVENT_NAME.equals( ((EntityBrowserEvent)e).getEventName() )))  {
+      IWContext mainIwc = e.getIWContext();
+      String[] groupIds;
+      if (mainIwc.isParameterSet(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY)) {
+        groupIds = mainIwc.getParameterValues(MassMovingWindow.SELECTED_CHECKED_GROUPS_KEY);
+        groupIds.hashCode();
+      }
+    }    
 
     IWActionListener[] listners =  (IWActionListener[])_listenerList.getListeners(IWActionListener.class);
     for (int i = 0; i < listners.length; i++) {

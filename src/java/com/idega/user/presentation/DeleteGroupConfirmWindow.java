@@ -83,8 +83,10 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
     deleteEvent.setSource(this);
     // form
     Form form = new Form();
+    form.setName("delete_form");
     // add event model
     form.addEventModel(deleteEvent, iwc);
+    form.addParameter(DeleteGroupEvent.OKAY_KEY,"w");
     // check if the group can be deleted
     Group group = getGroup(groupId);
     boolean askForConfirmation = getGroupBusiness(iwc).isGroupRemovable(group);   
@@ -123,9 +125,9 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
     SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("Close", "Close"), DeleteGroupEvent.CANCEL_KEY);
 		SubmitButton ok = new SubmitButton(iwrb.getLocalizedImageButton("yes", "Yes"), DeleteGroupEvent.OKAY_KEY);
 		SubmitButton cancel = new SubmitButton(iwrb.getLocalizedImageButton("cancel", "Cancel"), DeleteGroupEvent.CANCEL_KEY);
-    close.setOnClick("window.close()");
-		cancel.setOnClick("window.close()");
-		ok.setOnClick("window.close()");
+    close.setOnClick("window.close(); return false;");
+		cancel.setOnClick("window.close(); return false;");
+		ok.setOnClick("delete_form.submit();window.close();");
     //  assemble table
     Table table = new Table(1,3);
     table.setWidth(Table.HUNDRED_PERCENT);
