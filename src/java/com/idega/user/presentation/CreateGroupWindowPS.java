@@ -122,7 +122,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 					Group group = null;
 					int parentGroupId = event.getParentID();
 					_parentGroup = groupBusiness.getGroupByGroupID(parentGroupId);
-					_groupName = event.getName();
+					_groupName = event.getName().trim();//no leading or trailing white spaces thank you
 					_groupDescription = event.getDescription();
 					_groupType = event.getGroupType();
 					_aliasID = event.getAliasID();
@@ -131,8 +131,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 					if (event.getParentType() == CreateGroupEvent.TYPE_DOMAIN) {
 						// create the group under the default Domain (it's a
 						// top node (as super user))
-						group = groupBusiness.createGroup(event.getName(), event.getDescription(),
-								event.getGroupType(), _homePageID, _aliasID);
+						group = groupBusiness.createGroup(_groupName,_groupDescription,_groupType, _homePageID, _aliasID);
 					}
 					else if (event.getParentType() == CreateGroupEvent.TYPE_GROUP) {
 						// create under the supplied parent group
@@ -196,7 +195,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 				//unknown behaviour OR the parent group changed
 				try {
 					groupBusiness = getGroupBusiness(eventContext);
-					_groupName = event.getName();
+					_groupName = event.getName().trim();
 					_groupDescription = event.getDescription();
 					_groupType = event.getGroupType();
 					_aliasID = event.getAliasID();
