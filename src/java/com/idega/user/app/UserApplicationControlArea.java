@@ -1,5 +1,11 @@
 package com.idega.user.app;
 
+import com.idega.user.presentation.GroupTreeNode;
+import com.idega.user.business.GroupBusiness;
+import java.util.Iterator;
+import com.idega.user.data.UserGroupRepresentative;
+import com.idega.business.IBOLookup;
+import com.idega.user.data.Group;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 import com.idega.presentation.*;
@@ -141,13 +147,29 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
   public void main(IWContext iwc) throws Exception {
 
+    GroupBusiness gBusiness = (GroupBusiness)IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
+
     this.empty();
     this.add(groupTree);
 
-    Collection topGroups = iwc.getDomain().getTopLevelGroupsUnderDomain();
-    if(topGroups != null){
-      groupTree.setFirstLevelNodes(topGroups.iterator());
-    }
+    GroupTreeNode node = new GroupTreeNode(iwc.getDomain());
+
+    groupTree.setRootNode(node);
+
+//    Collection topGroups = iwc.getDomain().getTopLevelGroupsUnderDomain();
+//
+//    if(topGroups != null){
+//      String type = gBusiness.getGroupType(UserGroupRepresentative.class);
+//      Iterator iter = topGroups.iterator();
+//      while (iter.hasNext()) {
+//        Group item = (Group)iter.next();
+//        if(type.equals(item.getGroupType())){
+//          iter.remove();
+//        }
+//      }
+
+//      groupTree.setFirstLevelNodes(topGroups.iterator());
+//    }
 
 //    groupTree.setControlEventModel(_contolEvent);
 //    groupTree.setControlTarget(_controlTarget);

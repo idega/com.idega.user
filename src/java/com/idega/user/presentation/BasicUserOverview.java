@@ -1,14 +1,17 @@
 package com.idega.user.presentation;
 
-import com.idega.user.data.Group;
-import com.idega.util.IWColor;
-import com.idega.idegaweb.IWUserContext;
-import java.rmi.RemoteException;
+import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
-import com.idega.event.*;
-import com.idega.presentation.*;
+import com.idega.event.IWPresentationEvent;
+import com.idega.event.IWPresentationState;
+import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
+import com.idega.presentation.StatefullPresentation;
+import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
@@ -16,7 +19,10 @@ import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.Window;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.IWColor;
+import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
@@ -61,10 +67,14 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 //    Collection users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
     BasicUserOverviewPS ps = (BasicUserOverviewPS)this.getPresentationState(iwc);
     Group selectedGroup = ps.getSelectedGroup();
+    IBDomain selectedDomain = ps.getSelectedDomain();
     Collection users = null;
     if(selectedGroup  != null){
       System.out.println("[BasicUserOverview]: selectedGroup = "+selectedGroup);
       users = this.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
+    } else if(selectedDomain != null){
+      System.out.println("[BasicUserOverview]: selectedDomain = "+selectedDomain);
+      users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
     } else {
       System.out.println("[BasicUserOverview]: selectedGroup = All");
       users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();

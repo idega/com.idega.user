@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import com.idega.user.event.SelectDomainEvent;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.builder.data.IBDomain;
@@ -112,6 +113,10 @@ public class GroupTreeView extends IWTreeControl {
 */
 
   public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode){
+    return getObjectToAddToColumn(colIndex, (GroupTreeNode)node, iwc, nodeIsOpen, nodeHasChild, isRootNode);
+  }
+
+  public PresentationObject getObjectToAddToColumn(int colIndex, GroupTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode){
     //System.out.println("adding into column "+ colIndex + " for node " + node);
 
     switch (colIndex) {
@@ -126,26 +131,28 @@ public class GroupTreeView extends IWTreeControl {
               if(this.getControlTarget() != null){
                 l.setTarget(this.getControlTarget());
               }
-              if(node instanceof IBDomain){
+              if(node.getNodeType() == GroupTreeNode.TYPE_DOMAIN){
                 l.setImage(folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN]);
-              } else if(node instanceof Group){
+              } else if(node.getNodeType() == GroupTreeNode.TYPE_GROUP){
                 l.setImage(folderAndFileIcons[1][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN]);
-              } else if(node instanceof User){
-                l.setImage(folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN]);
               }
+//              else if(node instanceof User){
+//                l.setImage(folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN]);
+//              }
 
               if(!nodeIsOpen){ //   || allowRootNodeToClose ){
                 this.setLinkToOpenOrCloseNode(l,node,nodeIsOpen);
               }
               return l;
             } else {
-              if(node instanceof IBDomain){
+              if(node.getNodeType() == GroupTreeNode.TYPE_DOMAIN){
                 return folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];
-              } else if(node instanceof Group){
+              } else if(node.getNodeType() == GroupTreeNode.TYPE_GROUP){
                 return folderAndFileIcons[1][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];
-              } else if(node instanceof User){
-                return folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];
               }
+//              else if(node instanceof User){
+//                return folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];
+//              }
 
             }
           } else {
@@ -157,23 +164,25 @@ public class GroupTreeView extends IWTreeControl {
               if(this.getControlTarget() != null){
                 l.setTarget(this.getControlTarget());
               }
-              if(node instanceof IBDomain){
+              if(node.getNodeType() == GroupTreeNode.TYPE_DOMAIN){
                 l.setImage(folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED]);
-              } else if(node instanceof Group){
+              } else if(node.getNodeType() == GroupTreeNode.TYPE_GROUP){
                 l.setImage(folderAndFileIcons[1][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED]);
-              } else if(node instanceof User){
-                l.setImage(folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED]);
               }
+//              else if(node instanceof User){
+//                l.setImage(folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED]);
+//              }
               this.setLinkToOpenOrCloseNode(l,node,nodeIsOpen);
               return l;
             } else {
-              if(node instanceof IBDomain){
+              if(node.getNodeType() == GroupTreeNode.TYPE_DOMAIN){
                 return folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED];
-              } else if(node instanceof Group){
+              } else if(node.getNodeType() == GroupTreeNode.TYPE_GROUP){
                 return folderAndFileIcons[1][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED];
-              } else if(node instanceof User){
-                return folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED];
               }
+//              else if(node instanceof User){
+//                return folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED];
+//              }
 
             }
           }
@@ -186,32 +195,43 @@ public class GroupTreeView extends IWTreeControl {
               if(this.getControlTarget() != null){
                 l.setTarget(this.getControlTarget());
               }
-              if(node instanceof IBDomain){
+              if(node.getNodeType() == GroupTreeNode.TYPE_DOMAIN){
                 l.setImage(folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FILE]);
-              } else if(node instanceof Group){
+              } else if(node.getNodeType() == GroupTreeNode.TYPE_GROUP){
                 l.setImage(folderAndFileIcons[1][FOLDERANDFILE_ICONINDEX_FILE]);
-              } else if(node instanceof User){
-                l.setImage(folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FILE]);
               }
+//              else if(node instanceof User){
+//                l.setImage(folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FILE]);
+//              }
               this.setLinkToOpenOrCloseNode(l,node,nodeIsOpen);
               return l;
             } else {
-              if(node instanceof IBDomain){
+              if(node.getNodeType() == GroupTreeNode.TYPE_DOMAIN){
                 return folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FILE];
-              } else if(node instanceof Group){
+              } else if(node.getNodeType() == GroupTreeNode.TYPE_GROUP){
                 return folderAndFileIcons[1][FOLDERANDFILE_ICONINDEX_FILE];
-              } else if(node instanceof User){
-                return folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FILE];
               }
+//              else if(node instanceof User){
+//                return folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FILE];
+//              }
             }
         }
       case 2:
         Link l = this.getLinkPrototypeClone(node.getNodeName());
 
-        SelectGroupEvent grSelect = new SelectGroupEvent();
-        grSelect.setGroupToSelect(node.getNodeID());
+        switch (node.getNodeType()) {
+          case GroupTreeNode.TYPE_DOMAIN:
+            SelectDomainEvent dmSelect = new SelectDomainEvent();
+            dmSelect.setDomainToSelect(node.getNodeID());
+            l.addEventModel(dmSelect);
+            break;
+          case GroupTreeNode.TYPE_GROUP:
+            SelectGroupEvent grSelect = new SelectGroupEvent();
+            grSelect.setGroupToSelect(node.getNodeID());
+            l.addEventModel(grSelect);
+            break;
+        }
 
-        l.addEventModel(grSelect);
 
         if(_usesOnClick){
           String nodeName = node.getNodeName();

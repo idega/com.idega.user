@@ -1,5 +1,7 @@
 package com.idega.user.presentation;
 
+import com.idega.builder.data.IBDomain;
+import com.idega.user.event.SelectDomainEvent;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.user.data.Group;
 import com.idega.user.event.SelectGroupEvent;
@@ -29,7 +31,7 @@ public class BasicUserOverviewPS extends IWPresentationStateImpl implements IWAc
 //  String color = color1;
 
   Group _selectedGroup = null;
-
+  IBDomain _selectedDomain = null;
 
   public BasicUserOverviewPS() {
 
@@ -39,9 +41,14 @@ public class BasicUserOverviewPS extends IWPresentationStateImpl implements IWAc
     return _selectedGroup;
   }
 
+  public IBDomain getSelectedDomain(){
+    return _selectedDomain;
+  }
+
   public void reset(){
     super.reset();
     _selectedGroup = null;
+    _selectedDomain = null;
   }
 
 
@@ -82,15 +89,16 @@ public class BasicUserOverviewPS extends IWPresentationStateImpl implements IWAc
 //      }
 //    }
 //    System.out.println("[BasicUserOverviewPS]: e = "+e);
-    if(e instanceof SelectGroupEvent){
-//      System.out.println("[BasicUserOverviewPS]: ((SelectGroupEvent)e).getSelectedGroup() = "+((SelectGroupEvent)e).getSelectedGroup());
-//      if(color == color1){
-//        color = color2;
-//      } else {
-//        color = color1;
-//      }
-      _selectedGroup = ((SelectGroupEvent)e).getSelectedGroup();
 
+    if(e instanceof SelectGroupEvent){
+      _selectedGroup = ((SelectGroupEvent)e).getSelectedGroup();
+      _selectedDomain = null;
+      this.fireStateChanged();
+    }
+
+    if(e instanceof SelectDomainEvent){
+      _selectedDomain = ((SelectDomainEvent)e).getSelectedDomain();
+      _selectedGroup = null;
       this.fireStateChanged();
     }
 

@@ -5,7 +5,7 @@ import com.idega.presentation.IWContext;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.text.Text;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.business.UserGroupBusiness;
+import com.idega.user.business.GroupBusiness;
 import com.idega.util.datastructures.Collectable;
 import java.util.Hashtable;
 
@@ -94,11 +94,11 @@ public abstract class UserGroupTab extends Table implements Collectable {
     return business;
   }
 
-  public UserGroupBusiness getUserGroupBusiness(IWApplicationContext iwc){
-    UserGroupBusiness business = null;
+  public GroupBusiness getUserGroupBusiness(IWApplicationContext iwc){
+    GroupBusiness business = null;
     if(business == null){
       try{
-        business = (UserGroupBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserGroupBusiness.class);
+        business = (GroupBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
       }
       catch(java.rmi.RemoteException rme){
         throw new RuntimeException(rme.getMessage());

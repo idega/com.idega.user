@@ -13,7 +13,7 @@ import com.idega.presentation.ui.SelectionBox;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.Form;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.business.UserGroupBusiness;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import java.util.List;

@@ -14,7 +14,6 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.text.Text;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.business.UserGroupBusiness;
 import com.idega.user.business.GroupBusiness;
 
 import com.idega.user.data.User;
@@ -238,18 +237,18 @@ public class CreateUserGroup extends Window {
     return business;
   }
 
-  public UserGroupBusiness getUserGroupBusiness(IWApplicationContext iwc){
-    UserGroupBusiness business = null;
-    if(business == null){
-      try{
-        business = (UserGroupBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserGroupBusiness.class);
-      }
-      catch(java.rmi.RemoteException rme){
-        throw new RuntimeException(rme.getMessage());
-      }
-    }
-    return business;
-  }
+//  public UserGroupBusiness getUserGroupBusiness(IWApplicationContext iwc){
+//    UserGroupBusiness business = null;
+//    if(business == null){
+//      try{
+//        business = (UserGroupBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserGroupBusiness.class);
+//      }
+//      catch(java.rmi.RemoteException rme){
+//        throw new RuntimeException(rme.getMessage());
+//      }
+//    }
+//    return business;
+//  }
 
 
   public GroupBusiness getGroupBusiness(IWApplicationContext iwc){
