@@ -87,6 +87,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	
 	protected Table getUsers(IWContext iwc) throws Exception {
 		
+		AccessController access = iwc.getAccessController();
+
+		
 		if (toolbar == null) toolbar = new BasicUserOverViewToolbar();
 		BasicUserOverviewPS ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
 	
@@ -96,6 +99,14 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		if (selectedGroup != null && selectedGroup.getGroupType().equals("alias")) {
 			aliasGroup = selectedGroup.getAlias();
 		}
+		
+		boolean canEditUserTemp = false;
+		if( selectedGroup!=null ){
+			canEditUserTemp = access.hasEditPermissionFor(selectedGroup,iwc);
+			if(!canEditUserTemp) canEditUserTemp = access.isOwner(selectedGroup,iwc);//is this necessery (eiki)
+			if(!canEditUserTemp) canEditUserTemp = iwc.isSuperAdmin();
+		}
+		final boolean canEditUser = canEditUserTemp;
 
 		IBDomain selectedDomain = ps.getSelectedDomain();
 		Collection users = null;
@@ -274,6 +285,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 						loggedInUserIsAdmin = iwc.isSuperAdmin();
 					}
 					PresentationObject text = browser.getDefaultConverter().getPresentationObject(entity, path, browser, iwc);
+					
+					if(!canEditUser) return text;
+					
 					Link aLink = new Link(text);
 					boolean delete = false;
 					if (!user.equals(administrator)) {
@@ -376,15 +390,23 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			// add external delete button
 			IWResourceBundle resourceBundle = getResourceBundle(iwc);
 			
-			if(users.size()>0){
-				SubmitButton deleteButton =
-					new SubmitButton(
-						resourceBundle.getLocalizedImageButton("Delete selection", "Delete selection"),
-						BasicUserOverview.DELETE_USERS_KEY,
-						BasicUserOverview.DELETE_USERS_KEY);
-				deleteButton.setSubmitConfirm("Delete selected users?");
-				form.add(deleteButton);
+			if( (users.size()>0) && selectedGroup!=null){	
+				boolean canDelete = access.hasDeletePermissionFor(selectedGroup,iwc);
+				if(!canDelete) canDelete = access.isOwner(selectedGroup, iwc);
+				if(!canDelete) canDelete = iwc.isSuperAdmin();
+				
+				if(canDelete){
+					
+					SubmitButton deleteButton =
+						new SubmitButton(
+							resourceBundle.getLocalizedImageButton("Delete selection", "Delete selection"),
+							BasicUserOverview.DELETE_USERS_KEY,
+							BasicUserOverview.DELETE_USERS_KEY);
+					deleteButton.setSubmitConfirm("Delete selected users?");
+					form.add(deleteButton);
+				}
 			}
+			
 			
 			
 			returnTable.add(form, 1, 2);

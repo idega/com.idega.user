@@ -44,6 +44,7 @@ public class BasicUserOverViewToolbar extends Toolbar {
 		this.empty();
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
+		AccessController access = iwc.getAccessController();
 
 		Table toolbarTable = new Table(2, 3);
 		toolbarTable.setCellpadding(0);
@@ -81,42 +82,55 @@ public class BasicUserOverViewToolbar extends Toolbar {
 
 		if (selectedGroup != null) {
 			//user
-			Table button = new Table(2, 1);
-			button.setCellpadding(0);
-			Image iconCrUser = iwb.getImage("new_user.gif");
-			button.add(iconCrUser, 1, 1);
-			Text text = new Text(iwrb.getLocalizedString("new.member", "New member"));
-			text.setFontFace(Text.FONT_FACE_VERDANA);
-			text.setFontSize(Text.FONT_SIZE_7_HTML_1);
-			Link tLink11 = new Link(text);
-			tLink11.setWindowToOpen(CreateUser.class);
-			if (selectedGroup.getGroupType().equals("alias"))
-				tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getAlias().getPrimaryKey()).toString());
-			else
-				tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
-				
-			button.add(tLink11, 2, 1);
-			toolbar1.add(button, 2, 1);
+			boolean canCreateUserOrGroup = access.hasCreatePermissionFor(selectedGroup,iwc);
+			if(!canCreateUserOrGroup) canCreateUserOrGroup = access.isOwner(selectedGroup,iwc);//is this necessery (eiki)
+			if(!canCreateUserOrGroup) canCreateUserOrGroup = iwc.isSuperAdmin();
+			
+			if(canCreateUserOrGroup){
+			
+				Table button = new Table(2, 1);
+				button.setCellpadding(0);
+				Image iconCrUser = iwb.getImage("new_user.gif");
+				button.add(iconCrUser, 1, 1);
+				Text text = new Text(iwrb.getLocalizedString("new.member", "New member"));
+				text.setFontFace(Text.FONT_FACE_VERDANA);
+				text.setFontSize(Text.FONT_SIZE_7_HTML_1);
+				Link tLink11 = new Link(text);
+				tLink11.setWindowToOpen(CreateUser.class);
+				if (selectedGroup.getGroupType().equals("alias"))
+					tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getAlias().getPrimaryKey()).toString());
+				else
+					tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
+					
+				button.add(tLink11, 2, 1);
+				toolbar1.add(button, 2, 1);
+			}
 			//group
+			boolean canEditGroup = access.hasEditPermissionFor(selectedGroup,iwc);
+			if(!canEditGroup) canEditGroup = access.isOwner(selectedGroup,iwc);//is this necessery (eiki)
+			if(!canEditGroup) canEditGroup = iwc.isSuperAdmin();
 
-			Table button2 = new Table(2, 1);
-			button2.setCellpadding(0);
-			Image iconCrGroup = iwb.getImage("new_group.gif");
-			button2.add(iconCrGroup, 1, 1);
-			Text text2 = new Text(iwrb.getLocalizedString("edit.group", "Edit group"));
-			text2.setFontFace(Text.FONT_FACE_VERDANA);
-			text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
-			Link tLink12 = new Link(text2);
-			tLink12.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
-			// tLink12.setWindowToOpen(CreateGroupWindow.class);
-			tLink12.setWindowToOpen(GroupPropertyWindow.class);
-			button2.add(tLink12, 2, 1);
-			toolbar1.add(button2, 3, 1);
+			if(canEditGroup){
+				Table button2 = new Table(2, 1);
+				button2.setCellpadding(0);
+				Image iconCrGroup = iwb.getImage("new_group.gif");
+				button2.add(iconCrGroup, 1, 1);
+				Text text2 = new Text(iwrb.getLocalizedString("edit.group", "Edit group"));
+				text2.setFontFace(Text.FONT_FACE_VERDANA);
+				text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
+				Link tLink12 = new Link(text2);
+				tLink12.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
+				// tLink12.setWindowToOpen(CreateGroupWindow.class);
+				tLink12.setWindowToOpen(GroupPropertyWindow.class);
+				button2.add(tLink12, 2, 1);
+				toolbar1.add(button2, 3, 1);
+			}
+				
 		}
 
 		//permission	
 		if (selectedGroup != null) {
-			AccessController access = iwc.getAccessController();
+
 			boolean isOwner = access.isOwner(selectedGroup, iwc);
 			
 			if(!isOwner) isOwner = iwc.isSuperAdmin();
