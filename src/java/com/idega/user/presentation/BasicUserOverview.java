@@ -58,6 +58,7 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWColor;
+import com.idega.util.text.TextSoap;
 /**
  * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
  * 
@@ -570,7 +571,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 values = path.getValues((EntityRepresentation) address);
                 // com.idega.core.data.Address.STREET_NUMBER plus
                 // com.idega.core.data.Address.STREET_NUMBER
-                displayValues.append(getValue(0)).append(' ').append(getValue(1));
+                displayValues.append(TextSoap.capitalize(getValue(0))).append(' ').append(getValue(1));
                 // com.idega.core.data.Address.P_O_BOX
                 String displayValue = getValue(2);
                 if (displayValue.length() != 0)
