@@ -22,7 +22,7 @@ import com.idega.user.data.User;
  * Title:        User
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -394,7 +394,7 @@ public class UserPhoneTab extends UserTab {
 				userBusiness.getUserMail(user);
       String job =
         userBusiness.getUserJob(user);
-      String workPlace = userBusiness.getUserJob(user);      
+      String workPlace = userBusiness.getUserWorkPlace(user);      
 
 			for (int a = 0; a < phones.length; a++) {
 				if (a == 0) {
