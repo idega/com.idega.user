@@ -170,8 +170,8 @@ public class CreateUser extends Window {
 
 		//String[] gr = new String[1];
 		
-		Collection groups = null;
-		groupBiz = getGroupBusiness(iwc);
+	//	Collection groups = null;
+	//	groupBiz = getGroupBusiness(iwc);
 		
 		/*if(!iwc.isSuperAdmin()){
 			groups = getUserBusiness(iwc).getAllGroupsWithEditPermission(iwc.getCurrentUser(),iwc );
@@ -402,7 +402,10 @@ public class CreateUser extends Window {
 
 		try {
 			String fullName = iwc.getParameter(fullNameFieldParameterName);
-			IWTimestamp t = null;
+			newUser = getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(fullName,ssn,null,null);
+			
+			/*IWTimestamp t = null;
+			
 			if (ssn != null && ssn.length() > 0) {
 				t = new IWTimestamp();
 			
@@ -428,8 +431,9 @@ public class CreateUser extends Window {
 				t.setYear(iYear);
 				
 				
-			}
-			newUser =
+			}*/
+			
+			/*newUser =
 				getUserBusiness(iwc).createUserWithLogin(
 					null,
 					null,
@@ -449,7 +453,7 @@ public class CreateUser extends Window {
 					bAllowedToChangePassw,
 					bMustChange,
 					null,
-					fullName);
+					fullName);*/
 		}
 		catch (Exception e) {
 			add("Error: " + e.getMessage());
