@@ -38,7 +38,7 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
   private StatefullPresentationImplHandler _stateHandler = null;
   private String _controlTarget = null;
   private IWPresentationEvent _contolEvent = null;
-  private String styleScript = "UserApplicationStyle.css";
+  private String styleScript = "DefaultStyle.css";
   
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 

@@ -63,7 +63,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
   private StatefullPresentationImplHandler _stateHandler = null;
   private String _controlTarget = null;
   private IWPresentationEvent _contolEvent = null;
-  private 	String styleScript = "UserApplicationStyle.css";
+  private 	String styleScript = "DefaultStyle.css";
 
   private GroupTreeView groupTree = new GroupTreeView();
 	private UserBusiness userBiz = null;

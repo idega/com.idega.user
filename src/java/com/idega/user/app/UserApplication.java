@@ -11,6 +11,7 @@ import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.app.IWBrowser;
@@ -22,6 +23,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.Table;
+import com.idega.user.business.UserBusiness;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -37,11 +39,13 @@ public class UserApplication extends IWBrowser {
 
   private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
   
+  //userBusiness to access the stylesheet (which is a bundle property)
+	private UserBusiness userBusiness = null;
+  
 	/**
 		 * added 7/10/03 for stylesheet writeout
 		 */
 		private Page parentPage;
-		private String styleScript = "UserApplicationStyle.css";
 		private String styleSrc = "";
 		private String bannerTableStyle = "banner";
 
@@ -54,7 +58,7 @@ public class UserApplication extends IWBrowser {
     this.setHeight(750);
 
     this.addToTop(new Top());
-    this.setSpanPixels(POS_TOP,51); 
+    this.setSpanPixels(POS_TOP,50); 
     this.setSpanPixels(POS_LEFTMAIN, 200); 
     this.setSpanPixels(POS_MENU,35); 
     this.setSpanPixels(POS_BOTTOM,1); 
@@ -183,16 +187,16 @@ public class UserApplication extends IWBrowser {
         headerTable.setCellspacing(0);
         headerTable.setWidth("100%");
         headerTable.setHeight("100%");
-     //   headerTable.setColor(1,1,"#386CB7");
-     
-//			added for stylesheet writout:
-					parentPage = this.getParentPage();
-					styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
-					parentPage.addStyleSheetURL(styleSrc);
+ 
+				//setting the styleSheet 
+		 		parentPage = this.getParentPage();
+				userBusiness = getUserBusiness(iwc); 
+				styleSrc = userBusiness.getUserApplicationStyleSheet(parentPage, iwc);
+				parentPage.addStyleSheetURL(styleSrc);
 
         /** @todo setja inn mynd i header**/
 //        headerTable.add(this.getBundle(iwc).getImage("/top.gif","idegaWeb Member"),1,1);
-				headerTable.add(this.getBundle(iwc).getImage("top.gif","idegaWeb Member"),1,1);
+//				headerTable.add(this.getBundle(iwc).getImage("top.gif","idegaWeb Member"),1,1);
 
         /*Text adminTitle = new Text("F�lagakerfi �S� & UMF�");
         adminTitle.setBold();
@@ -212,9 +216,6 @@ public class UserApplication extends IWBrowser {
 
         headerTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_LEFT);
         headerTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
-
-        //headerTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
-
 
         add(headerTable);
         initialized = true;
@@ -259,4 +260,15 @@ public class UserApplication extends IWBrowser {
 //
 //
 //  }
+	protected UserBusiness getUserBusiness(IWApplicationContext iwc) {
+			if (userBusiness == null) {
+				try {
+					userBusiness = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				}
+				catch (java.rmi.RemoteException rme) {
+					throw new RuntimeException(rme.getMessage());
+				}
+			}
+			return userBusiness;
+		}
 }

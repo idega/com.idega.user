@@ -15,7 +15,7 @@ import com.idega.presentation.StatefullPresentationImplHandler;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -28,7 +28,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
   private Toolbar toolbar = new Toolbar();
   private static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 	private String userApplicationMainAreaStateId = null;
-	private String styleScript = "UserApplicationStyle.css";
+	private String styleScript = "DefaultStyle.css";
 
 
 
