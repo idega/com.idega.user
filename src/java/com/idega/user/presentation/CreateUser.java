@@ -1,22 +1,12 @@
 package com.idega.user.presentation;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.ejb.EJBException;
-
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.CloseButton;
-import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.PasswordInput;
@@ -25,10 +15,8 @@ import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.Window;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWColor;
-import com.idega.util.IWTimestamp;
 
 /**
  * Title:        User
