@@ -125,9 +125,9 @@ public class GroupTreeNode implements ICTreeNode {
 				 */
 				try {
 					List l = new Vector();
-					//          Iterator iter = _domain.getTopLevelGroupsUnderDomain().iterator();
-					Collection groupTypes = this.getGroupTypeHome().findVisibleGroupTypes();
-					Iterator iter = this.getGroupHome().findTopNodeGroupsContained(_domain, groupTypes, true).iterator();
+					Iterator iter = this.getGroupHome().findTopNodeVisibleGroupsContained(_domain).iterator();
+					
+					
 					GroupTreeNode node = null;
 					while (iter.hasNext()) {
 						Group item = (Group) iter.next();
@@ -266,11 +266,7 @@ public class GroupTreeNode implements ICTreeNode {
 		switch (_nodeType) {
 			case TYPE_DOMAIN :
 				try {
-					/**
-					 * @todo optimize
-					 */
-					Collection groupTypes = this.getGroupTypeHome().findVisibleGroupTypes();
-					return this.getGroupHome().getNumberOfTopNodeGroupsContained(_domain, groupTypes, true);
+					return this.getGroupHome().getNumberOfTopNodeVisibleGroupsContained(_domain);
 				}
 				catch (Exception e) {
 					throw new RuntimeException(e.getMessage());
