@@ -1,12 +1,14 @@
 package com.idega.user.presentation;
 
+import com.idega.presentation.ui.*;
+import com.idega.business.IWEventListener;
+import com.idega.idegaweb.browser.presentation.IWBrowserView;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.IWContext;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.Form;
 import com.idega.presentation.Page;
 import com.idega.user.data.User;
 import com.idega.user.business.UserBusiness;
@@ -15,9 +17,6 @@ import java.util.Collection;
 import java.util.Vector;
 import java.util.Iterator;
 import com.idega.user.presentation.UserPropertyWindow;
-import com.idega.presentation.ui.Window;
-import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.CloseButton;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.user.business.UserGroupBusiness;
 
@@ -30,9 +29,11 @@ import com.idega.user.business.UserGroupBusiness;
  * @version 1.0
  */
 
-public class BasicUserOverview extends Page {
+public class BasicUserOverview extends Page implements IWBrowserView {
 
   private static final String PARAMETER_DELETE_USER =  "delte_ic_user";
+  private String _controlTarget = null;
+  private Parameter _controlParameters[] = new Parameter[3];
 
   public BasicUserOverview(IWContext iwc) throws Exception {
     //this.empty();
@@ -40,6 +41,24 @@ public class BasicUserOverview extends Page {
   }
   public BasicUserOverview(){
     super();
+  }
+
+
+  public IWEventListener getListener(){return null;}
+
+  public void setControlTarget(String controlTarget){
+    _controlTarget = controlTarget;
+  }
+
+  public void setApplicationParameter(Parameter prm){
+    _controlParameters[0] = prm;
+  }
+  public void setSourceParamenter(Parameter prm){
+    _controlParameters[1] = prm;
+  }
+
+  public void setControlFrameParameter(Parameter prm){
+    _controlParameters[2] = prm;
   }
 
 

@@ -1,20 +1,18 @@
 package com.idega.user.presentation;
 
-import com.idega.presentation.PresentationObjectContainer;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.Table;
+import com.idega.idegaweb.browser.presentation.IWBrowserView;
+import com.idega.presentation.ui.*;
+import com.idega.presentation.*;
+import com.idega.core.data.GenericGroup;
+import com.idega.business.IWEventListener;
+import com.idega.idegaweb.browser.presentation.IWBrowseControl;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.Page;
 import com.idega.user.data.User;
 import com.idega.data.EntityFinder;
 import java.util.List;
 import com.idega.user.presentation.UserPropertyWindow;
 import com.idega.user.data.Group;
-import com.idega.presentation.ui.Window;
-import com.idega.presentation.ui.Form;
-import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.CloseButton;
 import com.idega.core.business.UserGroupBusiness;
 import java.util.Iterator;
 import java.util.Vector;
@@ -31,15 +29,33 @@ import com.idega.user.data.UserGroupRepresentative;
  * @version 1.0
  */
 
-public class BasicGroupOverview extends Page {
+public class BasicGroupOverview extends Page implements IWBrowserView {
 
   private static final String PARAMETER_DELETE_GROUP =  "delete_ic_group";
-
+  private String _controlTarget = null;
+  private Parameter _controlParameters[] = new Parameter[3];
+  int counter = 0;
 
   public BasicGroupOverview(){
     super();
   }
 
+  public IWEventListener getListener(){return null;}
+
+  public void setControlTarget(String controlTarget){
+    _controlTarget = controlTarget;
+  }
+
+  public void setApplicationParameter(Parameter prm){
+    _controlParameters[0] = prm;
+  }
+  public void setSourceParamenter(Parameter prm){
+    _controlParameters[1] = prm;
+  }
+
+  public void setControlFrameParameter(Parameter prm){
+    _controlParameters[2] = prm;
+  }
 
   public Table getGroups(IWContext iwc) throws Exception{
     String[] types = new String[1];
@@ -64,7 +80,7 @@ public class BasicGroupOverview extends Page {
       }
 
       for (int i = 0; i < groups.size(); i++) {
-        Group tempGroup = (Group)groups.get(i);
+        GenericGroup tempGroup = (GenericGroup)groups.get(i);
         if(tempGroup != null){
 
           Link aLink = new Link(new Text(tempGroup.getName()));
@@ -93,6 +109,27 @@ public class BasicGroupOverview extends Page {
   public void main(IWContext iwc) throws Exception {
     this.empty();
     this.add(this.getGroups(iwc));
+    if(_controlTarget != null ){
+      Link link = new Link("rugl");
+      //link.setURL("/",true,true);
+      for (int i = 0; i < _controlParameters.length; i++) {
+        link.addParameter(_controlParameters[i]);
+      }
+      link.addParameter("rugl",counter++);
+      link.setTarget(_controlTarget);
+      this.add(link);
+
+//      this.addBreak();
+//      Link linki = new Link("vitleysa");
+//      linki.setURL("http://www.idega.is");
+//      linki.setTarget(_controlTarget);
+//
+//      this.add(linki);
+
+      //System.out.println("_controlTarget != null");
+    } else {
+      //System.out.println("_controlTarget == null");
+    }
     this.getParentPage().setAllMargins(0);
     this.getParentPage().setBackgroundColor("#d4d0c8");
   }
