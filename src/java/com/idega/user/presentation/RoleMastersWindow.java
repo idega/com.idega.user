@@ -282,7 +282,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		table.setHeight(410);
 		table.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
 		table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
-		table.setAlignment(2, 2, Table.HORIZONTAL_ALIGN_RIGHT);
+		table.setAlignment(2, 3, Table.HORIZONTAL_ALIGN_RIGHT);
 
 		Form form = new Form();
 		form.add(table);
