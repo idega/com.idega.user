@@ -25,7 +25,6 @@ import com.idega.presentation.ui.SelectionBox;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.app.ToolbarElement;
-import com.idega.user.app.UserApplication;
 import com.idega.user.app.UserApplicationMainArea;
 import com.idega.user.app.UserApplicationMainAreaPS;
 import com.idega.user.block.search.event.UserSearchEvent;
