@@ -29,7 +29,8 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 
 
   public UserApplicationMainArea() {
-	_stateHandler = new StatefullPresentationImplHandler();
+    this.setAllMargins(0);
+  _stateHandler = new StatefullPresentationImplHandler();
     getStateHandler().setPresentationStateClass(UserApplicationMainAreaPS.class);
   }
 
@@ -58,18 +59,24 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
   public void main(IWContext iwc) throws Exception {
     this.empty();
     UserApplicationMainAreaPS ps = (UserApplicationMainAreaPS)this.getPresentationState(iwc);
+
     if( ps.getClassNameToShow()!= null ){
     	PresentationObject obj = (PresentationObject)Class.forName(ps.getClassNameToShow()).newInstance();
     	add(obj);
+        ps.setClassNameToShow(null);
     }
     else{
-		this.add(_buo);
+      System.out.println("ps.getClassNameToShow() is NULL!");
+      this.add(_buo);
     }
 
   }
 
 
   public void initializeInMain(IWContext iwc){
+
+    System.out.println("in initializeInMain getClassToShow:"+((UserApplicationMainAreaPS)this.getPresentationState(iwc)).getClassNameToShow());
+
 
     iwb = getBundle(iwc);
 

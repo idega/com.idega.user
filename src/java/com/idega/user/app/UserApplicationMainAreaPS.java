@@ -50,21 +50,16 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
       this.reset();
       this.fireStateChanged();
     }
-
-	if(e instanceof SimpleSearchEvent){
+    else if(e instanceof SimpleSearchEvent){
       System.out.println("[UserAppMainArea]: search for "+((SimpleSearchEvent)e).getSearchString());
-	  System.out.println("[UserAppMainArea]: searchType =  "+((SimpleSearchEvent)e).getSearchType());
+      System.out.println("[UserAppMainArea]: searchType =  "+((SimpleSearchEvent)e).getSearchType());
       this.fireStateChanged();
     }
-
- 	if(e instanceof ChangeClassEvent){
+    else if(e instanceof ChangeClassEvent){
       _class = ((ChangeClassEvent)e).getChangeClassName();
-		this.fireStateChanged();
-    }else{
-    	_class=null;
- 	}
-
-
+      System.out.println(this+"Class to change to is "+((ChangeClassEvent)e).getChangeClassName() );
+      this.fireStateChanged();
+    }
 
     IWActionListener[] listners =  (IWActionListener[])_listenerList.getListeners(IWActionListener.class);
     for (int i = 0; i < listners.length; i++) {
@@ -74,7 +69,20 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
   }
 
   public String getClassNameToShow(){
-  	return _class;
+    return _class;
   }
+
+  public void setClassNameToShow(String className){
+    _class = className;
+  }
+
+/*
+  public Object clone() {
+    UserApplicationMainAreaPS obj = null;
+    obj = (UserApplicationMainAreaPS)super.clone();
+    obj._class = this._class;
+    obj._listenerList = this._listenerList;
+    return obj;
+  }*/
 
 }
