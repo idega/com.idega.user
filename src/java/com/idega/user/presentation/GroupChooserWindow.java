@@ -1,16 +1,21 @@
 package com.idega.user.presentation;
 
-import com.idega.user.presentation.GroupTreeNode;
-import com.idega.user.presentation.GroupTreeView;
-import com.idega.idegaweb.*;
-import com.idega.presentation.text.*;
-import com.idega.presentation.Table;
-import com.idega.presentation.ui.AbstractChooserWindow;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.ui.TreeViewer;
-import com.idega.builder.data.IBDomain;
-import com.idega.builder.business.PageTreeNode;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
 import com.idega.builder.business.BuilderLogic;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.AbstractChooserWindow;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.data.Group;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -26,7 +31,7 @@ public class GroupChooserWindow extends AbstractChooserWindow {
   private static final int _width = 280;
   private static final int _height = 400;
   private static final String _linkStyle = "font-family:Arial,Helvetica,sans-serif;font-size:8pt;color:#000000;text-decoration:none;";
-
+	private UserBusiness userBiz = null;
   /**
    *
    */
@@ -59,9 +64,17 @@ public class GroupChooserWindow extends AbstractChooserWindow {
 
       GroupTreeView viewer = new GroupTreeView();
 
-      GroupTreeNode node = new GroupTreeNode(iwc.getDomain(),iwc.getApplicationContext());
+			if(iwc.isSuperAdmin()){
+				GroupTreeNode node = new GroupTreeNode(iwc.getDomain(),iwc.getApplicationContext());
+				viewer.setRootNode(node);
+			}
+			else{
+				UserBusiness biz = getUserBusiness(iwc);
+				Collection groups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser());
+				Collection groupNodes = convertGroupCollectionToGroupNodeCollection(groups,iwc.getApplicationContext());
+				viewer.setFirstLevelNodes(groupNodes.iterator());
 
-      viewer.setRootNode(node);
+}
 
       viewer.setLocation((IWLocation)this.getLocation().clone());
       viewer.getLocation().setSubID(1);
@@ -106,4 +119,30 @@ public class GroupChooserWindow extends AbstractChooserWindow {
     }
   }
 
+	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
+		if (userBiz == null) {
+			try {
+				userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+			}
+			catch (java.rmi.RemoteException rme) {
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return userBiz;
+	}
+	
+	public Collection convertGroupCollectionToGroupNodeCollection(Collection col, IWApplicationContext iwac){
+		List list = new Vector();
+		
+		Iterator iter = col.iterator();
+		while (iter.hasNext()) {
+			Group group = (Group) iter.next();
+			GroupTreeNode node = new GroupTreeNode(group,iwac);
+			list.add(node);
+		}
+	
+
+		return list;
+	}
+	
 }
