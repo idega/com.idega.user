@@ -12,9 +12,10 @@ import com.idega.block.entity.presentation.converter.CheckBoxConverter;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
-import com.idega.idegaweb.presentation.*;
+import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
@@ -237,6 +238,8 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		browser.setMandatoryColumnWithConverter(column++, DELETE_PERMISSIONS_KEY, deleteCheckBoxConverter);
 
 		//converter ends
+		setName(iwrb.getLocalizedString("role_master_title", "Role Master"));
+		addTitle(iwrb.getLocalizedString("role_master_title", "Role Master"), IWConstants.BUILDER_FONT_STYLE_TITLE);
 
 		Form form = getRoleMastersForm(browser);
 		form.add(new HiddenInput(PARAM_SAVING, "TRUE"));//cannot use this if we put in a navigator in the entitybrowser, change submit button to same value
@@ -269,7 +272,10 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 			1);
 
 		table.add(browser, 1, 2);
-		table.add(new UserChooserBrowser(PARAM_USER_CHOOSER_USER_ID), 1, 2);
+		UserChooserBrowser userChooser = new UserChooserBrowser(PARAM_USER_CHOOSER_USER_ID);
+		userChooser.setUserBundle(true);
+		userChooser.setImageName("magnifyingglass.gif");
+		table.add(userChooser, 1, 2);
 		table.setVerticalAlignment(1, 3, "bottom");
 		table.setVerticalAlignment(2, 3, "bottom");
 		table.add(help, 1, 3);
