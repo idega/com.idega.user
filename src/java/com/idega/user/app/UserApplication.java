@@ -236,10 +236,10 @@ public class UserApplication extends IWBrowser {
       if(this.isChildOfOtherPage()){
         Page parent = this.getParentPage();
         parent.setAllMargins(0);
-        parent.setBackgroundColor(IWAdminWindow.HEADER_COLOR);
+        parent.setBackgroundColor(new IWColor(207,208,210).getHexColorString());
       } else {
         setAllMargins(0);
-        setBackgroundColor(IWAdminWindow.HEADER_COLOR);
+        setBackgroundColor(new IWColor(207,208,210).getHexColorString());
       }
 
     }
