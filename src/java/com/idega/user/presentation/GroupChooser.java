@@ -1,6 +1,5 @@
 package com.idega.user.presentation;
 
-import com.idega.block.cal.presentation.AttendantChooser;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -15,7 +14,7 @@ import com.idega.presentation.ui.AbstractChooser;
  * @version 1.0
  */
 
-public class GroupChooser extends AbstractChooser implements AttendantChooser {
+public class GroupChooser extends AbstractChooser {
   private String style;
   private Image chooserButtonImage = null;
   private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";

@@ -4,8 +4,6 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import com.idega.block.cal.presentation.CalPropertyWindow;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
@@ -29,7 +27,7 @@ import com.idega.util.IWColor;
  * @version 1.0
  */
 
-public class UserPropertyWindow extends TabbedPropertyWindow implements CalPropertyWindow {
+public class UserPropertyWindow extends TabbedPropertyWindow {
 
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 	public static final String PARAMETERSTRING_SELECTED_GROUP_ID = "selected_ic_group_id";
