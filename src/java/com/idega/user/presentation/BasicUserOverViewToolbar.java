@@ -32,6 +32,8 @@ public class BasicUserOverViewToolbar extends Toolbar {
 	private ICDomain parentDomain;
 
 	public static final String PARAMETERSTRING_GROUP_ID = "ic_group_id";
+	
+	private String styledLinkClass = "styledLink";
 
 	/**
 	 * Constructor for BasicUserOverViewToolbar.
@@ -103,9 +105,8 @@ public class BasicUserOverViewToolbar extends Toolbar {
 				Image iconCrUser = iwb.getImage("new_user.gif");
 				button.add(iconCrUser, 1, 1);
 				Text text = new Text(iwrb.getLocalizedString("new.member", "New member"));
-				text.setFontFace(Text.FONT_FACE_VERDANA);
-				text.setFontSize(Text.FONT_SIZE_7_HTML_1);
 				Link tLink11 = new Link(text);
+				tLink11.setStyleClass(styledLinkClass);
 				tLink11.setWindowToOpen(CreateUser.class);
 				if (selectedGroup.getGroupType().equals("alias"))
 					tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getAlias().getPrimaryKey()).toString());
@@ -129,9 +130,8 @@ public class BasicUserOverViewToolbar extends Toolbar {
 				Image iconCrGroup = iwb.getImage("new_group.gif");
 				button2.add(iconCrGroup, 1, 1);
 				Text text2 = new Text(iwrb.getLocalizedString("edit.group", "Edit group"));
-				text2.setFontFace(Text.FONT_FACE_VERDANA);
-				text2.setFontSize(Text.FONT_SIZE_7_HTML_1);
 				Link tLink12 = new Link(text2);
+				tLink12.setStyleClass(styledLinkClass);
 				if (selectedGroup != null)
 					tLink12.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
 				if (parentGroup != null)
@@ -148,9 +148,8 @@ public class BasicUserOverViewToolbar extends Toolbar {
 					Image iconImport = iwb.getImage("import.gif");
 					button3.add(iconImport, 1, 1);
 					Text text3 = new Text(iwrb.getLocalizedString("import", "Import"));
-					text3.setFontFace(Text.FONT_FACE_VERDANA);
-					text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
 					Link tLink14 = new Link(text3);
+					tLink14.setStyleClass(styledLinkClass);
 
 					tLink14.setParameter(Importer.PARAMETER_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
 					tLink14.setParameter(Importer.PARAMETER_IMPORT_FILE, ColumnSeparatedImportFile.class.getName());
@@ -172,9 +171,8 @@ public class BasicUserOverViewToolbar extends Toolbar {
 					Image iconRegister = iwb.getImage("export.gif");
 					button3.add(iconRegister, 1, 1);
 					Text text3 = new Text(iwrb.getLocalizedString("massregistering", "Bulk registering"));
-					text3.setFontFace(Text.FONT_FACE_VERDANA);
-					text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
 					Link tLink14 = new Link(text3);
+					tLink14.setStyleClass(styledLinkClass);
 					tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
 					tLink14.setWindowToOpen(MassRegisteringWindow.class);
 
@@ -188,9 +186,8 @@ public class BasicUserOverViewToolbar extends Toolbar {
 					Image iconRegister = iwb.getImage("export.gif");
 					button4.add(iconRegister, 1, 1);
 					Text text4 = new Text(iwrb.getLocalizedString("updatecdiv", "Update template"));
-					text4.setFontFace(Text.FONT_FACE_VERDANA);
-					text4.setFontSize(Text.FONT_SIZE_7_HTML_1);
 					Link tLink15 = new Link(text4);
+					tLink15.setStyleClass(styledLinkClass);
 					tLink15.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
 					tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.UpdateClubDivisionTemplate");
 
@@ -216,9 +213,8 @@ public class BasicUserOverViewToolbar extends Toolbar {
 				Image iconCrGroup = iwb.getImage("lock.gif");
 				button4.add(iconCrGroup, 1, 1);
 				Text text3 = new Text(iwrb.getLocalizedString("permissions", "Permissions"));
-				text3.setFontFace(Text.FONT_FACE_VERDANA);
-				text3.setFontSize(Text.FONT_SIZE_7_HTML_1);
 				Link tLink12 = new Link(text3);
+				tLink12.setStyleClass(styledLinkClass);
 				SelectGroupEvent selectGroup = new SelectGroupEvent();
 				selectGroup.setGroupToSelect(selectedGroup.getNodeID());
 
@@ -241,9 +237,8 @@ public class BasicUserOverViewToolbar extends Toolbar {
 				Image iconDeleteGroup = iwb.getImage("toolbar_delete.gif");
 				button5.add(iconDeleteGroup, 1, 1);
 				Text text5 = new Text(iwrb.getLocalizedString("Delete.group", "Delete group"));
-				text5.setFontFace(Text.FONT_FACE_VERDANA);
-				text5.setFontSize(Text.FONT_SIZE_7_HTML_1);
 				Link tLink5 = new Link(text5);
+				tLink5.setStyleClass(styledLinkClass);
 				tLink5.setWindowToOpen(DeleteGroupConfirmWindow.class);
 				if (selectedGroup != null)
 					tLink5.addParameter(DeleteGroupConfirmWindow.GROUP_ID_KEY, ((Integer) selectedGroup.getPrimaryKey()).toString());

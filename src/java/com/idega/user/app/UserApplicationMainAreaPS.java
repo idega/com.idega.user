@@ -40,6 +40,8 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
   private Group _selectedGroup = null;
   private Collection _plugins = null;
   public boolean search = false;
+  
+  private String styledLinkClass = "styledLinkGeneral";
 
   
 
@@ -180,7 +182,8 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
       CreateGroupWindowPS state = (CreateGroupWindowPS) e.getSource();
       IWContext eventContext = state.getEventContext();
       Integer groupId = state.getGroupId();
-      Link gotoLink = new Link();   
+      Link gotoLink = new Link();  
+      gotoLink.setStyleClass(styledLinkClass); 
       gotoLink.setWindowToOpen(GroupPropertyWindow.class);
       gotoLink.addParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, groupId.toString());
       setOnLoad(gotoLink.getWindowToOpenCallingScript(eventContext));

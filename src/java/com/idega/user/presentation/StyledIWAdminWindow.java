@@ -101,7 +101,7 @@ private Text adminTitle = null;
 		adminTable.setColor(1,2,"#FFFFFF");
 		adminTable.mergeCells(1,2,2,2);
 		adminTable.setRowVerticalAlignment(2,"top");
-		adminForm.add(adminTable);
+//		adminForm.add(adminTable);
 
 		headerTable = new Table();
 		headerTable.setVerticalAlignment("top");
@@ -111,11 +111,10 @@ private Text adminTitle = null;
 		headerTable.setWidth("100%");
 		headerTable.setAlignment(2,1,"right");
 		headerTable.setVerticalAlignment(1,1,"top");
-		headerTable.setVerticalAlignment(2,1,"top");
 		if(titleIsSet) {
 			headerTable.add(getAdminTitle(),2,1);
 		}
-		adminTable.add(headerTable,1,1);
+//		adminTable.add(headerTable,1,1);
 
 		mainTable = new Table();
 		mainTable.setStyleClass(mainTableStyle);
@@ -125,7 +124,8 @@ private Text adminTitle = null;
 		mainTable.setHeight("100%");
 		mainTable.setCellspacing(0);
 		mainTable.setVerticalAlignment(1,1,"top");
-		adminTable.add(mainTable,1,2);
+		adminForm.add(mainTable);
+//		adminTable.add(mainTable,1,2);
 
 	}
 	/**
@@ -143,7 +143,8 @@ private Text adminTitle = null;
 			if(adminTable==null){
 				makeTables();
 				addTopImage(topImage);
-				super.add(adminTable);
+				super.add(headerTable);
+				super.add(mainTable);
 			}
 			mainTable.add(obj,1,1);
 		}
