@@ -130,10 +130,10 @@ public class Toolbar extends Page implements IWBrowserView {
 		
 		//User
 		Image iconCrUser = iwb.getImage("new_user.gif");
-		iconCrUser.setPaddingLeft(7);
-		iconCrUser.setPaddingRight(3);
 		Link tLink11 = getToolbarLink(new Text(iwrb.getLocalizedString("new.member", "New member")), CreateUser.class, null);
 		tLink11.setStyleClass(styledLink);
+		toolbar1.setCellpaddingLeft(toolbarColumn, 1, 7);
+		toolbar1.setCellpaddingRight(toolbarColumn, 1, 3);
 		toolbar1.add(getToolbarLink(iconCrUser, CreateUser.class, null), toolbarColumn++, 1);
 		toolbar1.setVerticalAlignment(toolbarColumn, 1, Table.VERTICAL_ALIGN_TOP);
 		toolbar1.setCellpaddingTop(toolbarColumn, 1, 3);
@@ -141,12 +141,12 @@ public class Toolbar extends Page implements IWBrowserView {
 
 		//Group
 		Image iconCrGroup = iwb.getImage("new_group.gif");
-		iconCrGroup.setPaddingLeft(7);
-		iconCrGroup.setPaddingRight(3);
 		Link tLink12 = getToolbarLink(new Text(iwrb.getLocalizedString("new.group", "New group")), CreateGroupWindow.class, null);
 		tLink12.setStyleClass(styledLink);
 		if (selectedGroupProviderStateId != null)
 			tLink12.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
+		toolbar1.setCellpaddingLeft(toolbarColumn, 1, 7);
+		toolbar1.setCellpaddingRight(toolbarColumn, 1, 3);
 		toolbar1.add(getToolbarLink(iconCrGroup, CreateGroupWindow.class, null), toolbarColumn++, 1);
 		toolbar1.setVerticalAlignment(toolbarColumn, 1, Table.VERTICAL_ALIGN_TOP);
 		toolbar1.setCellpaddingTop(toolbarColumn, 1, 3);
@@ -154,10 +154,10 @@ public class Toolbar extends Page implements IWBrowserView {
 
 		if (iwc.isSuperAdmin()) {
 			Image iconRoleMasters = iwb.getImage("key_icon.gif");
-			iconRoleMasters.setPaddingLeft(7);
-			iconRoleMasters.setPaddingRight(3);
 			Link tLink14 = getToolbarLink(new Text(iwrb.getLocalizedString("button.role_masters", "Role Masters")), RoleMastersWindow.class, null);
 			tLink14.setStyleClass(styledLink);
+			toolbar1.setCellpaddingLeft(toolbarColumn, 1, 7);
+			toolbar1.setCellpaddingRight(toolbarColumn, 1, 3);
 			toolbar1.add(getToolbarLink(iconRoleMasters, RoleMastersWindow.class, null), toolbarColumn++, 1);
 			toolbar1.setVerticalAlignment(toolbarColumn, 1, Table.VERTICAL_ALIGN_TOP);
 			toolbar1.setCellpaddingTop(toolbarColumn, 1, 3);
@@ -166,12 +166,12 @@ public class Toolbar extends Page implements IWBrowserView {
 
 		//Search temp
 		Image iconSearch = iwb.getImage("search.gif");
-		iconSearch.setPaddingLeft(7);
-		iconSearch.setPaddingRight(3);
 		Link tLink13 = getToolbarLink(new Text(iwrb.getLocalizedString("button.search", "Search")), SearchWindow.class, null);
 		tLink13.setStyleClass(styledLink);
 		if (userApplicationMainAreaStateId != null)
 			tLink13.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, userApplicationMainAreaStateId);
+		toolbar1.setCellpaddingLeft(toolbarColumn, 1, 7);
+		toolbar1.setCellpaddingRight(toolbarColumn, 1, 3);
 		toolbar1.add(getToolbarLink(iconSearch, SearchWindow.class, null), toolbarColumn++, 1);
 		toolbar1.setVerticalAlignment(toolbarColumn, 1, Table.VERTICAL_ALIGN_TOP);
 		toolbar1.setCellpaddingTop(toolbarColumn, 1, 3);
@@ -195,8 +195,8 @@ public class Toolbar extends Page implements IWBrowserView {
 		
 		if (!toolbarElements.isEmpty()) {
 			Image dottedImage = iwb.getImage("dotted.gif");
-			dottedImage.setPaddingLeft(10);
-			dottedImage.setPaddingRight(3);
+			toolbarTable.setCellpaddingLeft(2, 1, 10);
+			toolbarTable.setCellpaddingRight(2, 1, 3);
 			toolbarTable.add(dottedImage, 2, 1);
 
 			Table toolbar2 = new Table();
@@ -248,8 +248,8 @@ public class Toolbar extends Page implements IWBrowserView {
 					else {
 						Image toolImage = toolbarElement.getButtonImage(finalIwc);
 						if (toolImage != null) {
-							toolImage.setPaddingLeft(7);
-							toolImage.setPaddingRight(3);
+							toolbar2.setCellpaddingLeft(toolbarColumn, 1, 7);
+							toolbar2.setCellpaddingRight(toolbarColumn, 1, 3);
 							toolbar2.add(getToolbarLink(toolImage, toolPresentationClass, parameterMap), toolbarColumn++, 1);
 						}
 						Link toolLink = getToolbarLink(new Text(toolName), toolPresentationClass, parameterMap);
@@ -268,10 +268,10 @@ public class Toolbar extends Page implements IWBrowserView {
 				form.add(menu);
 
 				Image iconOtherChanges = iwb.getImage("other_choises.gif");
-				iconOtherChanges.setPaddingLeft(7);
-				iconOtherChanges.setPaddingRight(3);
 				Text menuText =  new Text(iwrb.getLocalizedString("button.other_choices", "Other choices"));
 				menuText.setStyleClass(styledText);
+				toolbar2.setCellpaddingLeft(toolbarColumn, 1, 7);
+				toolbar2.setCellpaddingRight(toolbarColumn, 1, 3);
 				toolbar2.add(iconOtherChanges, toolbarColumn++, 1);
 				toolbar2.add(menuText, toolbarColumn++, 1);
 				toolbar2.setCellpaddingLeft(toolbarColumn, 1, 7);
