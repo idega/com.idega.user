@@ -164,14 +164,6 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
       // selected group was successfully(!) removed 
       // set selected group to null
       _selectedGroup = null;
-      // refresh the view 
-      setOnLoad("parent.frames['iwb_main'].location.reload()");
-    }
-    else if (object instanceof IWTabbedPane) {
-      IWTabbedPane pane = (IWTabbedPane) object;
-      String attribute = pane.getAttributeString();
-      if (attribute.indexOf("group_property_window") > -1)
-        setOnLoad("parent.frames['iwb_main_left'].location.reload()");
     }
   }
 
