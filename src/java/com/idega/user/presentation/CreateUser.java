@@ -12,6 +12,7 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
+import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
@@ -74,7 +75,7 @@ public class CreateUser extends Window {
 	private DropdownMenu primaryGroupField;
 
 	private SubmitButton okButton;
-	private SubmitButton cancelButton;
+	private CloseButton cancelButton;
 
 	private Form myForm;
 
@@ -152,7 +153,8 @@ public class CreateUser extends Window {
 		confirmPasswordField.setLength(12);
 		ssnField = new TextInput(ssnFieldParameterName);
 		ssnField.setLength(12);
-		ssnField.setMaxlength(20);
+		ssnField.setMaxlength(10);
+		ssnField.setAsIcelandicSSNumber();
 
 		generateLoginField = new CheckBox(generateLoginFieldParameterName);
 		generatePasswordField = new CheckBox(generatePasswordFieldParameterName);
@@ -191,7 +193,8 @@ public class CreateUser extends Window {
 		}
 
 		okButton = new SubmitButton("     OK     ", submitButtonParameterName, okButtonParameterValue);
-		cancelButton = new SubmitButton(" Cancel ", submitButtonParameterName, cancelButtonParameterValue);
+		//cancelButton = new SubmitButton(" Cancel ", submitButtonParameterName, cancelButtonParameterValue);
+		cancelButton = new CloseButton();
 
 	}
 
