@@ -23,7 +23,7 @@ import javax.ejb.FinderException;
  * Title:        User
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -54,9 +54,10 @@ public abstract class UserTab extends Table implements Collectable{
     fieldValues = new Hashtable();
     init();
     this.setStyleClass("main"); //added for isi styles - birna
-    this.setCellpadding(0);
-    this.setCellspacing(10);
-    this.setWidth("97%"); //changed from 370
+    this.setCellpadding(3);
+    this.setCellspacing(0);
+    this.setWidth("100%"); //changed from 370
+    this.setHeight("100%");
     this.setVerticalAlignment("middle"); //added - birna
     initializeFieldNames();
     initializeFields();
