@@ -18,7 +18,7 @@ import com.idega.event.*;
 public class SelectGroupEvent extends IWPresentationEvent {
 
   private Integer _selectedGroup = null;
-  private static final String PRM_GROUP_ID = "usgr_id";
+  public static final String PRM_GROUP_ID = "usgr_id";
 
   public SelectGroupEvent() {
   }
