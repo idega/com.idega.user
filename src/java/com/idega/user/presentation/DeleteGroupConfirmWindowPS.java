@@ -42,28 +42,22 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
         IWApplicationContext iwac = e.getIWContext().getApplicationContext();
         GroupBusiness groupBusiness = getGroupBusiness(iwac);
         if (groupBusiness.isGroupRemovable(group))  {
-          try {
-            // remove group
-            if (parentGroup != null){
-              parentGroup.removeGroup(group, e.getIWContext().getCurrentUser());
-          	}
-            else if (parentDomain != null)  {
-              removeRelation( parentDomain, group, e.getIWContext().getCurrentUser());
-            }
-            
-            //disable permissions for group if it has no other parents.
-           removePermissions(group,e.getIWContext());
-						
-            
-            
-            //TODO fix this
-				    e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
-				    e.getIWContext().getApplicationContext().removeApplicationAttribute("group_tree");			
-            this.fireStateChanged();
-          }
-          catch (RemoteException ex)  {
-          	ex.printStackTrace();
-          }
+          if (parentGroup != null){
+					  parentGroup.removeGroup(group, e.getIWContext().getCurrentUser());
+					}
+					else if (parentDomain != null)  {
+					  removeRelation( parentDomain, group, e.getIWContext().getCurrentUser());
+					}
+					
+					//disable permissions for group if it has no other parents.
+					removePermissions(group,e.getIWContext());
+					
+					
+					
+					//TODO fix this
+					e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
+					e.getIWContext().getApplicationContext().removeApplicationAttribute("group_tree");			
+					this.fireStateChanged();
         }
       }
     }

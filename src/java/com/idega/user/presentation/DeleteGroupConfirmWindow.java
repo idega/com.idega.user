@@ -96,12 +96,7 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
 	private Table getContent(IWResourceBundle iwrb, Group group, boolean askForConfirmation) {
     // get selected group
     String groupName;
-    try {
-      groupName = group.getName();
-    }
-    catch (RemoteException re) {
-      throw new RuntimeException(re.getMessage());
-    }
+    groupName = group.getName();
     StringBuffer buffer = new StringBuffer(iwrb.getLocalizedString("Group", "Group"))
       .append(": ")
       .append(groupName);
