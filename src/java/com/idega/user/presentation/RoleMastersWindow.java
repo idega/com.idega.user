@@ -144,12 +144,11 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		Collection groups = iwc.getAccessController().getAllGroupsThatAreRoleMasters(iwc);//Users really
 			
 		
-		EntityBrowser browser = new EntityBrowser();
+		EntityBrowser browser = EntityBrowser.getInstanceUsingEventSystemAndExternalForm();
 		browser.setEntities("roles_masters", groups);
 		browser.setDefaultNumberOfRows(groups.size());
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
 		browser.setWidth(browser.HUNDRED_PERCENT);
-		browser.setUseExternalForm(true);
 
 		//	fonts
 		Text columnText = new Text();

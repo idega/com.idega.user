@@ -429,7 +429,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
      */
     protected EntityBrowser getEntityBrowser(Collection users, IWContext iwc) {
         // define entity browser
-        EntityBrowser entityBrowser = new EntityBrowser();
+        EntityBrowser entityBrowser = EntityBrowser.getInstanceUsingEventSystem();
         PresentationObject parentObject = this.getParentObject();
         entityBrowser.setArtificialCompoundId(parentObject.getCompoundId(), iwc);
         IWPresentationState presentationStateParent = ((StatefullPresentation) parentObject).getPresentationState(iwc);
@@ -1100,7 +1100,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     
     private EntityBrowser getEntityBrowserForResult(Collection users, Map messageMap, BasicUserOverviewPS state, IWContext iwc) {
         // define entity browser
-        EntityBrowser entityBrowser = new EntityBrowser();
+        EntityBrowser entityBrowser = EntityBrowser.getInstanceUsingEventSystem();
         PresentationObject parentObject = this.getParentObject();
         entityBrowser.setArtificialCompoundId(parentObject.getCompoundId(), iwc);
         IWPresentationState presentationStateParent = ((StatefullPresentation) parentObject).getPresentationState(iwc);

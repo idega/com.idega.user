@@ -230,15 +230,13 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	}
 	
 	private EntityBrowser getEntityBrowser(List permissionTypes, List entityList) {
-		EntityBrowser browser = new EntityBrowser();
+		EntityBrowser browser = EntityBrowser.getInstanceUsingExternalForm();
 		
 		browser.setEntities("gpw_" + selectedGroupId, entityList);
 		//browser.setDefaultNumberOfRows(entityCollection.size() );
 		browser.setDefaultNumberOfRows(16);
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
 		browser.setWidth(browser.HUNDRED_PERCENT);
-		browser.setUseExternalForm(true);
-		browser.setUseEventSystem(false);
 		//disable top set browser
 		browser.setShowNavigation(false, true);
 		//		set color of rows

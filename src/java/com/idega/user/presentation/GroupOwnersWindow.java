@@ -217,12 +217,11 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 		
 		
 
-		EntityBrowser browser = new EntityBrowser();
+		EntityBrowser browser = EntityBrowser.getInstanceUsingEventSystemAndExternalForm();
 		browser.setEntities("gpow_" + selectedGroupId, activePermission);
 		browser.setDefaultNumberOfRows(activePermission.size());
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
 		browser.setWidth(browser.HUNDRED_PERCENT);
-		browser.setUseExternalForm(true);
 
 		//	fonts
 		Text columnText = new Text();

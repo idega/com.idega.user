@@ -303,9 +303,7 @@ public class MassMovingWindow extends StyledIWAdminWindow implements ToolbarElem
     // set default columns
     //String columnName = GroupBMPBean.getNameColumnName();
     String nameKey = Group.class.getName()+".NAME"; //+ GroupBMPBean.getNameColumnName();
-    EntityBrowser browser = new EntityBrowser();
-    // keep things simple
-    browser.setUseEventSystem(false);
+    EntityBrowser browser = EntityBrowser.getInstanceUsingExternalForm();
     browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
     // set number of rows
     browser.setDefaultNumberOfRows(NUMBER_OF_ROWS);
@@ -323,7 +321,6 @@ public class MassMovingWindow extends StyledIWAdminWindow implements ToolbarElem
     browser.setMandatoryColumn(1, "Choose");
     // set special converters
     browser.setEntityToPresentationConverter("Choose", checkBoxConverter);
-    browser.setUseExternalForm(true);
     return browser;
   }    
    

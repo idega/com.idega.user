@@ -144,9 +144,7 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
     // set default columns
     String nameKey = User.class.getName()+".FIRST_NAME:" + User.class.getName()+".MIDDLE_NAME:"+User.class.getName()+".LAST_NAME";
     String pinKey = User.class.getName()+".PERSONAL_ID";
-    EntityBrowser browser = new EntityBrowser();
-    // keep things simple
-    browser.setUseEventSystem(false);
+    EntityBrowser browser = EntityBrowser.getInstanceUsingExternalForm();
     browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
     browser.setDefaultNumberOfRows(NUMBER_OF_ROWS);
     browser.setEntities("chooser_window_" + searchString, entities);
@@ -167,7 +165,6 @@ public class UserChooserBrowserWindow extends AbstractChooserWindow {
     browser.setMandatoryColumn(1, "Choose");
     // set special converters
     browser.setEntityToPresentationConverter("Choose", converterToChooseButton);
-    browser.setUseExternalForm(true);
     // set mandatory parameters
     browser.addMandatoryParameters(getHiddenParameters(iwc));
     browser.addMandatoryParameter(SEARCH_KEY, searchString);

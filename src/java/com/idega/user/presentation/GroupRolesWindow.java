@@ -134,13 +134,11 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         
         
         //setup the data viewer
-        EntityBrowser browser = new EntityBrowser();
+        EntityBrowser browser = EntityBrowser.getInstanceUsingEventSystemAndExternalForm();
         browser.setEntities("grw_" + selectedGroupId, permissionsForBrowser);
         browser.setDefaultNumberOfRows(permissionsForBrowser.size());
         browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
         browser.setWidth(browser.HUNDRED_PERCENT);
-        browser.setUseExternalForm(true);
-        
         
         //	fonts
         Text columnText = new Text();
