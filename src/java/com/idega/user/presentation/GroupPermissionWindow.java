@@ -58,8 +58,7 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	
 	private StatefullPresentationImplHandler stateHandler = null;
 	private GroupBusiness groupBiz = null;
-	
-	private boolean viewGroupPermissions = false;
+
 	private boolean saveChanges = false;
 
 	
@@ -201,13 +200,14 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 		EntityBrowser browser = new EntityBrowser();
 		browser.setEntities("gpw_"+selectedGroupId,entityCollection);
 		//browser.setDefaultNumberOfRows(entityCollection.size() );
-		browser.setDefaultNumberOfRows(18 );
+		browser.setDefaultNumberOfRows(16);
 		browser.setShowSettingButton(false);
 		browser.setWidth(browser.HUNDRED_PERCENT);
 		browser.setUseExternalForm(true);
 		browser.setUseEventSystem(false);
-		
-		
+		//disable top set browser
+		browser.setShowNavigation(false,true);
+	
 //	fonts
 		Text columnText = new Text();
 		columnText.setBold();
@@ -494,13 +494,15 @@ public class GroupPermissionWindow extends IWAdminWindow {//implements Statefull
 	
 	private void parseAction(IWContext iwc){
 		selectedGroupId = iwc.getParameter(GroupPermissionWindow.PARAM_SELECTED_GROUP_ID);
-		saveChanges = iwc.isParameterSet(PARAM_SAVING);
-		
-		if(selectedGroupId!=null){
-			viewGroupPermissions = true;
-		}
 
+		if(selectedGroupId == null){
+			selectedGroupId = (String) iwc.getSessionAttribute(GroupPermissionWindow.PARAM_SELECTED_GROUP_ID);
+		}else{
+			iwc.setSessionAttribute(GroupPermissionWindow.PARAM_SELECTED_GROUP_ID,selectedGroupId);
+		}
 		
+		saveChanges = iwc.isParameterSet(PARAM_SAVING);
+				
 	}
 
 	public String getBundleIdentifier() {
