@@ -638,6 +638,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         String phoneKey = PhoneType.class.getName() + ".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + Phone.class.getName() + ".PHONE_NUMBER";
         String pinKey = User.class.getName() + ".PERSONAL_ID";
         
+        String firstNameKey = User.class.getName() + ".FIRST_NAME";
+        String middleNameKey = User.class.getName() + ".MIDDLE_NAME";
+        String lastNameKey = User.class.getName() + ".LAST_NAME";
+        String displayNameKey = User.class.getName() + ".DISPLAY_NAME";
+        String descriptionKey = User.class.getName() + ".DESCRIPTION";
+        
         String dateOfBirthKey = User.class.getName() + ".DATE_OF_BIRTH";
         
         entityBrowser.setEntities(getEntityBrowserIdentifier(ps), users);
@@ -689,6 +695,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         entityBrowser.addEntity(Address.class.getName());
         entityBrowser.addEntity(Email.class.getName());
         entityBrowser.addEntity(Phone.class.getName());
+        
+        //set the option columns
+        entityBrowser.setOptionColumn(0,firstNameKey);
+        entityBrowser.setOptionColumn(1,middleNameKey);
+        entityBrowser.setOptionColumn(2,lastNameKey);
+        entityBrowser.setOptionColumn(3,displayNameKey);
+        entityBrowser.setOptionColumn(4,descriptionKey);
         // change display
         entityBrowser.setCellspacing(2);
         
