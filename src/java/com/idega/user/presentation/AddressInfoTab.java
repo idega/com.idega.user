@@ -233,7 +233,7 @@ public class AddressInfoTab extends UserTab {
 		addressTable.setCellspacing(0);
     int i;
     for (i= 1; i < 5; i++) {
-		  addressTable.setHeight(i, columnHeight);
+		  addressTable.setHeight(i, rowHeight);
     }
 		addressTable.setWidth(1, "70");
 		addressTable.add(this.cityText, 1, 1);
@@ -252,7 +252,7 @@ public class AddressInfoTab extends UserTab {
 		addressTable2.setWidth("100%");
 		addressTable2.setCellpadding(0);
 		addressTable2.setCellspacing(0);
-		addressTable2.setHeight(1, columnHeight);
+		addressTable2.setHeight(1, rowHeight);
 		addressTable2.setWidth(1, "70");
 		addressTable2.setWidth(2, "70");
 		addressTable2.setWidth(3, "70");
@@ -277,7 +277,7 @@ public class AddressInfoTab extends UserTab {
     secondAddressTable.setCellspacing(0);
 
     for (i= 1; i < 5; i++) {
-      secondAddressTable.setHeight(i, columnHeight);
+      secondAddressTable.setHeight(i, rowHeight);
     }
     secondAddressTable.setWidth(1, "70");
     
@@ -299,7 +299,7 @@ public class AddressInfoTab extends UserTab {
     secondAddressTable2.setWidth("100%");
     secondAddressTable2.setCellpadding(0);
     secondAddressTable2.setCellspacing(0);
-    secondAddressTable2.setHeight(1, columnHeight);
+    secondAddressTable2.setHeight(1, rowHeight);
     secondAddressTable2.setWidth(1, "70");
     secondAddressTable2.setWidth(2, "70");
     secondAddressTable2.setWidth(3, "70");

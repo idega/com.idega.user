@@ -42,9 +42,6 @@ public class CreateUser extends Window {
 	private static final String TAB_NAME = "usr_create_tab_name";
 	private static final String DEFAULT_TAB_NAME = "Create member";
 
-	//	private Text firstNameText;
-	//	private Text middleNameText;
-	//	private Text lastNameText;
 	private Text fullNameText;
 	private Text userLoginText;
 	private Text passwordText;
@@ -60,9 +57,6 @@ public class CreateUser extends Window {
 	private Text goToPropertiesText;
 	private Text primaryGroupText;
 
-	//	private TextInput firstNameField;
-	//	private TextInput middleNameField;
-	//	private TextInput lastNameField;
 	private TextInput fullNameField;
 	private TextInput userLoginField;
 	private PasswordInput passwordField;
@@ -92,9 +86,6 @@ public class CreateUser extends Window {
 	public static String cancelButtonParameterValue = "cancel";
 	public static String submitButtonParameterName = "submit";
 
-	//	public static String firstNameFieldParameterName = "firstName";
-	//	public static String middleNameFieldParameterName = "middleName";
-	//	public static String lastNameFieldParameterName = "lastName";
 	public static String fullNameFieldParameterName = "fullName";
 	public static String userLoginFieldParameterName = "login";
 	public static String passwordFieldParameterName = "password";
@@ -110,8 +101,6 @@ public class CreateUser extends Window {
 	public static String goToPropertiesFieldParameterName = "gotoProperties";
 	public static String primaryGroupFieldParameterName = "primarygroup";
 
-	//private UserBusiness business;
-
 	private String rowHeight = "37";
 
 	public CreateUser() {
@@ -120,14 +109,12 @@ public class CreateUser extends Window {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
 		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
-		//		setName("idegaWeb Builder - Stofna félaga");
 		setHeight(490);
 		setWidth(390);
 		setBackgroundColor(new IWColor(207, 208, 210));
 		setScrollbar(false);
 		myForm = new Form();
 		add(myForm);
-		//business = new UserBusiness();
 		initializeTexts();
 		initializeFields();
 		lineUpElements();
@@ -137,9 +124,6 @@ public class CreateUser extends Window {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-//		firstNameText = new Text("First name");
-//		middleNameText = new Text("Middle name");
-//		lastNameText = new Text("Last name");
   	fullNameText = new Text(iwrb.getLocalizedString(fullNameFieldParameterName,"Name"));
 		userLoginText = new Text(iwrb.getLocalizedString(userLoginFieldParameterName,"User login"));
 		passwordText = new Text(iwrb.getLocalizedString(passwordFieldParameterName,"Password"));
@@ -158,12 +142,6 @@ public class CreateUser extends Window {
 	}
 
 	protected void initializeFields() {
-//		firstNameField = new TextInput(firstNameFieldParameterName);
-//		firstNameField.setLength(12);
-//		middleNameField = new TextInput(middleNameFieldParameterName);
-//		middleNameField.setLength(12);
-//		lastNameField = new TextInput(lastNameFieldParameterName);
-//		lastNameField.setLength(12);
 		fullNameField = new TextInput(fullNameFieldParameterName);
 		fullNameField.setLength(20);
 		userLoginField = new TextInput(userLoginFieldParameterName);
@@ -385,29 +363,7 @@ public class CreateUser extends Window {
 			throw new Exception("password and confirmed password not the same");
 		}
 
-		/*    TransactionManager transaction = IdegaTransactionManager.getInstance();
-		    try{
-		      transaction.begin();
-		
-		      newUser = business.insertUser(iwc.getParameter(firstNameFieldParameterName),
-		                                   iwc.getParameter(middleNameFieldParameterName),
-		                                   iwc.getParameter(lastNameFieldParameterName),
-		                                   null,null,null,null,primaryGroupId);
-		
-		
-		      LoginDBHandler.createLogin(newUser.getID(),login,password,bEnabledAccount,IWTimestamp.RightNow(),
-		                                 5000,bPasswNeverExpires,bAllowedToChangePassw,bMustChage,null);
-		
-		      transaction.commit();
-		    }catch(Exception e){
-		      transaction.rollback();
-		      throw new Exception(e.getMessage()+" : User entry was removed");
-		    }
-		*/
 		try {
-//			String firstName = iwc.getParameter(firstNameFieldParameterName);
-//			String middleName = iwc.getParameter(middleNameFieldParameterName);
-//			String lastName = iwc.getParameter(lastNameFieldParameterName);
 			String fullName = iwc.getParameter(fullNameFieldParameterName);
 			newUser =
 				getUserBusiness(iwc).createUserWithLogin(
