@@ -35,6 +35,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
   private SearchForm searchForm = new SearchForm();
   private Table toolbarTable = new Table(1,3);
   private Toolbar toolbar = new Toolbar();
+  private static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
 
 
@@ -72,7 +73,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
   }
 
   public String getBundleIdentifier(){
-    return "com.idega.user";
+    return this.IW_BUNDLE_IDENTIFIER;
   }
 
 
