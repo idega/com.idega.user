@@ -2,6 +2,7 @@ package com.idega.user.presentation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -95,7 +96,7 @@ import com.idega.util.IWColor;
         //frameTable.setBorder(1);
 
 
-        SelectionDoubleBox sdb = new SelectionDoubleBox(FIELDNAME_SELECTION_DOUBLE_BOX,iwrb.getLocalizedString("usergroupsetter.in","Not in"),iwrb.getLocalizedString("usergroupsetter.not_in","In"));
+        SelectionDoubleBox sdb = new SelectionDoubleBox(FIELDNAME_SELECTION_DOUBLE_BOX,iwrb.getLocalizedString("usergroupsetter.not_in","Not in"),iwrb.getLocalizedString("usergroupsetter.in","In"));
 
         SelectionBox left = sdb.getLeftBox();
         left.setHeight(15);
@@ -194,6 +195,8 @@ import com.idega.util.IWColor;
         //User user = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId);
         User user = userBusiness.getUser(userId);
         Collection currentRelationShip = userBusiness.getUserGroupsDirectlyRelated(user);
+//		PlayerComparator playerComparator = new PlayerComparator(iwc.getCurrentLocale());
+//		Collections.sort(groups, playerComparator);//sort alphabetically
 
 
         if(related != null){
