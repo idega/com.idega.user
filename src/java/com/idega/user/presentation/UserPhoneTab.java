@@ -50,7 +50,7 @@ public class UserPhoneTab extends UserTab {
 	public static String faxPhoneMenuName = "faxChoice";
 	public static String emailFieldName = "email";
   public static String jobFieldName = "job";
-	public static String workPlaceFieldName = "job";
+	public static String workPlaceFieldName = "workplace";
 
 	private Text homePhoneText;
 	private Text workPhoneText;
@@ -261,8 +261,8 @@ public class UserPhoneTab extends UserTab {
 		mailTable.add(emailField, 2, 1);
     mailTable.add(jobText,1,2);
     mailTable.add(jobField,2,2);
-		mailTable.add(workPlaceText,1,2);
-		mailTable.add(workPlaceField,2,2);
+		mailTable.add(workPlaceText,1,3);
+		mailTable.add(workPlaceField,2,3);
     
 		this.add(mailTable, 1, 3);
 	}
