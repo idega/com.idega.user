@@ -528,7 +528,7 @@ public class Toolbar extends Page implements IWBrowserView {
 			Link tLink15 = new Link(text5);
 			tLink15.setStyleClass(styledLink);
 			Class workReportWindow = ImplementorRepository.getInstance().getAnyClassImpl(UserWorkReportWindow.class, this.getClass());
-			if (workReportWindow == null) {
+			if (workReportWindow != null) {
 				logWarning("[Toolbar]  Implementation of UserWorkReportWindow could not be found. Implementing bundle was not loaded.");
 				tLink15.setWindowToOpen(workReportWindow);
 
