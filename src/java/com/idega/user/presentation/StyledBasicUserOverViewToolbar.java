@@ -221,7 +221,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 					toolbar1.add(button4, 9, 1);
 					toolbar1.setAlignment(9,1,"center");
 				}
-				else if (selectedGroup != null && showISStuff && showCashierTab && selectedGroup.getGroupType().equals("iwme_club")) {
+				else if (selectedGroup != null && showISStuff) {
 					Table button4 = new Table(1, 1);
 					button4.setStyleClass(styleButton);
 					button4.setAlignment(1,1,"center");
