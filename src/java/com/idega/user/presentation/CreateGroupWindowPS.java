@@ -119,19 +119,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
                                 parentGroup);
                         
                         
-                        //todo refactor this to a plugin
-                        //used to see the path to groups in the permission window
-                        String groupNumber = parentGroup.getMetaData(ICUserConstants.META_DATA_GROUP_NUMBER);
-                        if(groupNumber!=null && !"".equals(groupNumber)) {
-                            if(!groupNumber.endsWith("-")) {
-                                groupNumber+="-";//add a - to thee number
-                            }
-                            
-                            group.setMetaData(ICUserConstants.META_DATA_GROUP_NUMBER,groupNumber);
-                            
-                            group.store();
-                            
-                        }
+                        copyGroupNumberFromParent(group, parentGroup);
                         
                         /////////////
 
@@ -180,6 +168,26 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
                 _groupType = event.getGroupType();
             }
 
+        }
+    }
+
+    /**
+     * @param group
+     * @param parentGroup
+     */
+    private void copyGroupNumberFromParent(Group group, Group parentGroup) {
+        //todo refactor this to a plugin
+        //used to see the path to groups in the permission window
+        String groupNumber = parentGroup.getMetaData(ICUserConstants.META_DATA_GROUP_NUMBER);
+        if(groupNumber!=null && !"".equals(groupNumber)) {
+            if(!groupNumber.endsWith("-")) {
+                groupNumber+="-";//add a - to thee number
+            }
+            
+            group.setMetaData(ICUserConstants.META_DATA_GROUP_NUMBER,groupNumber);
+            
+            group.store();
+            
         }
     }
 
@@ -268,8 +276,9 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 
                     //create group then call recursive
                     try {
-                        Group newGroup = business.createGroupUnder(name, "",
-                                typeString, group);
+                        Group newGroup = business.createGroupUnder(name, "",typeString, group);
+                        
+                        copyGroupNumberFromParent(newGroup,group);
 
                         groupBusiness.applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(iwc,newGroup, user);
 
