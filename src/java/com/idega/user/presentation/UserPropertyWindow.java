@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.idega.business.IBOLookupException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
@@ -68,27 +69,27 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		int count = 0;
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		try { //temporary before plugins work
-			UserTab userInfo = new GeneralUserInfoTab();
-			userInfo.setPanel(panel);
-			UserTab addressInfo = new AddressInfoTab();
-			addressInfo.setPanel(panel);
-			UserTab phone = new UserPhoneTab();
-			phone.setPanel(panel);
-			UserTab group = new UserGroupList();
-			group.setPanel(panel);
-			
-			panel.addTab(userInfo, count, iwc);
-			panel.addTab(addressInfo, ++count, iwc);
-			panel.addTab(phone, ++count, iwc);
-			panel.addTab(group, ++count, iwc);
+		UserTab userInfo = new GeneralUserInfoTab();
+		userInfo.setPanel(panel);
+		UserTab addressInfo = new AddressInfoTab();
+		addressInfo.setPanel(panel);
+		UserTab phone = new UserPhoneTab();
+		phone.setPanel(panel);
+		UserTab group = new UserGroupList();
+		group.setPanel(panel);
+		
+		panel.addTab(userInfo, count, iwc);
+		panel.addTab(addressInfo, ++count, iwc);
+		panel.addTab(phone, ++count, iwc);
+		panel.addTab(group, ++count, iwc);
 
-			//temp 
-			String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
-			int userId = Integer.parseInt(id);
-			
-			//get the user
-			User user = getUserBusiness(iwc).getUser(userId);
+		//temp 
+		String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
+		int tempUserId = Integer.parseInt(id);
+		
+		//get the user
+		try {
+			User user = getUserBusiness(iwc).getUser(tempUserId);
 			// ask one of the tab for the user id because the user id parameter is not set when navigating within the user property window 
 			// that is switching from one tab to another
 			String userName = user.getName();
@@ -96,33 +97,46 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			    this.addTitle(userName, TITLE_STYLECLASS);
 			}
 			setTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"));
-
+	
 			
 			
 			//get plugins
 			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
 			Iterator iter = plugins.iterator();
-
+	
 			while (iter.hasNext()) {
 				UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
-
-				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, Class.forName(element.getBusinessICObject().getClassName()));
-
-				List tabs = pluginBiz.getUserPropertiesTabs(user);
-				if (tabs != null) {
-					Iterator tab = tabs.iterator();
-					while (tab.hasNext()) {
-						UserTab el = (UserTab) tab.next();						
-						el.setPanel(panel);
-						panel.addTab(el, ++count, iwc);
+				try {
+					UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, Class.forName(element.getBusinessICObject().getClassName()));
+	
+					List tabs = pluginBiz.getUserPropertiesTabs(user);
+					if (tabs != null) {
+						Iterator tab = tabs.iterator();
+						while (tab.hasNext()) {
+							UserTab el = (UserTab) tab.next();						
+							el.setPanel(panel);
+							panel.addTab(el, ++count, iwc);
+						}
 					}
+				}
+				catch (ClassNotFoundException classNotFound) {
+					logError("[UserPropertyWindow] UserGroupPluginBusiness could not be found");
+					log(classNotFound);
+				}
+				catch (IBOLookupException ex) {
+					logError("[UserPropertyWindow] Could not look up UserGroupPluginBusiness"); 
+					log(ex);
+				}
+				catch (ClassCastException castEx) {
+					logError("[UserPropertyWindow] Servive Bean doesn't implement UserGroupPluginBusiness");
+					log(castEx);
 				}
 			}
 		}
-		catch (Exception e) {
-			e.printStackTrace();
+		catch (RemoteException remoteEx) {
+			logError("[UserPropertyWindow] Could not look up services bean");
+			throw new RuntimeException("[UserPropertyWindow] Could not look up services beans", remoteEx);
 		}
-
 		UserLoginTab ult = new UserLoginTab();
 		ult.setPanel(panel);
 		panel.addTab(ult, ++count, iwc);
