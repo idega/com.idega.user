@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.ejb.FinderException;
@@ -24,9 +25,11 @@ import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneType;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.Country;
+import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.data.EntityRepresentation;
 import com.idega.data.GenericEntity;
+import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationState;
@@ -505,7 +508,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 // com.idega.core.data.Address.P_O_BOX
                 String displayValue = getValue(2);
                 if (displayValue.length() != 0)
-                    displayValues.append(", P.O. Box ").append(displayValue).append(", ");
+                    displayValues.append(", P.O. Box ").append(displayValue);
                 // com.idega.core.data.PostalCode.POSTAL_CODE_ID|POSTAL_CODE
                 // plus com.idega.core.data.Address.CITY
                 displayValue = getValue(3);
@@ -513,8 +516,21 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                     displayValues.append(", ").append(getValue(3)).append(' ').append(getValue(4));
                 // com.idega.core.data.Country.IC_COUNTRY_ID|COUNTRY_NAME
                 displayValue = getValue(5);
-                if (displayValue.length() != 0)
+                if (displayValue.length() != 0){
+                    Country country = null;
+        			try {
+        				country = getCountryHome().findByCountryName(displayValue);
+        			} catch (Exception e) {
+        			    e.printStackTrace();
+        			}
+                    Locale currentLocale = iwc.getCurrentLocale();
+        			Locale locale = new Locale(currentLocale.getLanguage(), country.getIsoAbbreviation());
+                    String localizedCountryName = locale.getDisplayCountry(currentLocale);
+                    if (localizedCountryName != null && !localizedCountryName.equals("")) {
+                        displayValue = localizedCountryName;
+                    }
                     displayValues.append(", ").append(displayValue);
+                }
                 return new Text(displayValues.toString());
             }
             private String getValue(int i) {
@@ -1323,4 +1339,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         return identifier;
     }
     
+    public CountryHome getCountryHome() throws RemoteException {
+		return (CountryHome) IDOLookup.getHome(Country.class);
+	}
 }
