@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import javax.swing.event.ChangeListener;
 
+import com.idega.block.banner.presentation.Banner;
 import com.idega.block.login.presentation.WelcomeMessage;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICDomain;
@@ -218,16 +219,28 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	 * 
 	 * @return
 	 */
-	public Layer displayTable(IWContext iwc) {
+	public Table displayTable(IWContext iwc) {
+		Table table = new Table(1, 3);
+		table.setCellpadding(4);
+		table.setCellspacing(0);
+		table.setWidth(Table.HUNDRED_PERCENT);
+		table.setHeight(Table.HUNDRED_PERCENT);
+		table.setHeight(1, 1, Table.HUNDRED_PERCENT);
+		table.setStyleClass(1, 1, "main");
+		table.setStyleClass(1, 3, "main");
+		table.setHeight(2, 1);
+		
 		Layer layer = new Layer(Layer.DIV);
-		layer.setWidth(173);
-		layer.setHeight("98%");
-		layer.setStyleClass("main");
-		layer.setPadding(4);
+		layer.setWidth(Table.HUNDRED_PERCENT);
+		layer.setHeight(Table.HUNDRED_PERCENT);
 		layer.add(groupTree);
 		layer.setOverflow("auto");
+		table.add(layer, 1, 1);
 
-		return layer;
+		Banner banner = new Banner("userApplicationBanner");
+		table.add(banner, 1, 3);
+		
+		return table;
 	}
 
 	public Table welcomeMessageTable(IWContext iwc) {
@@ -246,13 +259,15 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		welcomeMessageTable.setCellpadding(0);
 		welcomeMessageTable.setWidth(Table.HUNDRED_PERCENT);
 		welcomeMessageTable.setHeight(42);
+		welcomeMessageTable.setBorder(0);
+		
 		welcomeMessageTable.setAlignment(1, 1, "center");
 		welcomeMessageTable.setAlignment(2, 1, "left");
 		welcomeMessageTable.setVerticalAlignment(1, 1, "middle");
 		welcomeMessageTable.setVerticalAlignment(2, 1, "middle");
 		if (iwc.isLoggedOn())
 			welcomeMessageTable.add(lockImage, 1, 1);
-		welcomeMessageTable.setCellpaddingLeft(2, 1, 7);
+		//welcomeMessageTable.setCellpaddingLeft(2, 1, 7);
 		welcomeMessageTable.add(welcomeMessage, 2, 1);
 		welcomeMessageTable.add(Text.BREAK, 2, 1);
 		welcomeMessageTable.add(date, 2, 1);
@@ -270,17 +285,19 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		parentPage.addStyleSheetURL(styleSrc);
 
 		Table table = new Table(1, 2);
-		table.setCellpaddingAndCellspacing(0);
-		table.setWidth(200);
+		table.setCellspacing(0);
+		table.setCellpadding(7);
+		table.setWidth(Table.HUNDRED_PERCENT);
+		table.setBorder(0);
 		table.setHeight(Table.HUNDRED_PERCENT);
 		table.setHeight(1, 1, 42);
 		table.setBackgroundImage(1, 1, iwb.getImage("bgtile.gif"));
 		table.setHeight(1, 2, Table.HUNDRED_PERCENT);
 		table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
-		table.setCellpadding(1, 2, 7);
+		table.setCellpadding(1, 1, 0);
 		table.setCellpaddingLeft(1, 1, 12);
 		table.setStyleClass(1, 2, "back");
-		table.setBackgroundImage(1, 1, iwb.getImage("stripe_tiler.gif"));
+		table.setBackgroundImage(1, 2, iwb.getImage("stripe_tiler.gif"));
 		
 		table.add(welcomeMessageTable(iwc), 1, 1);
 		table.add(displayTable(iwc), 1, 2);
