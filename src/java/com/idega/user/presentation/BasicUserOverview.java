@@ -186,6 +186,30 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		returnTable.add(toolbar, 1, 1);
 		returnTable.add(middleTable,1,2);
 		
+		//for the link to open the user properties
+		boolean canEditUserTemp = false;
+		if (selectedGroup != null) {
+			//alias stuff
+			if (selectedGroup.getGroupType().equals("alias")) {
+				aliasGroup = selectedGroup.getAlias(); //TODO should I check
+														 // for permissions on
+														 // this group?
+			}	
+			canEditUserTemp = accessController.hasEditPermissionFor(selectedGroup, iwc);
+			
+			if (!canEditUserTemp){
+				canEditUserTemp = accessController.isOwner(selectedGroup, iwc); //is
+			}
+																				// this
+																				// necessery
+																				// (eiki)
+			if (!canEditUserTemp)
+				canEditUserTemp = isCurrentUserSuperAdmin;
+
+		}
+		canEditUser = canEditUserTemp;
+	
+		
 		Collection users = getEntries(iwc);
 		
 		if (selectedGroup != null) {
@@ -214,32 +238,6 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		}
 			
 			
-
-		
-		
-		//for the link to open the user properties
-		boolean canEditUserTemp = false;
-		if (selectedGroup != null) {
-			//alias stuff
-			if (selectedGroup.getGroupType().equals("alias")) {
-				aliasGroup = selectedGroup.getAlias(); //TODO should I check
-													   // for permissions on
-													   // this group?
-			}
-
-			canEditUserTemp = accessController.hasEditPermissionFor(selectedGroup, iwc);
-			
-			if (!canEditUserTemp){
-				canEditUserTemp = accessController.isOwner(selectedGroup, iwc); //is
-			}
-																				// this
-																				// necessery
-																				// (eiki)
-			if (!canEditUserTemp)
-				canEditUserTemp = isCurrentUserSuperAdmin;
-
-		}
-		canEditUser = canEditUserTemp;
 
 		
 
