@@ -40,6 +40,8 @@ import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.app.ToolbarElement;
 import com.idega.user.app.UserApplication;
+import com.idega.user.app.UserApplicationMenuAreaPS;
+import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.GroupTypeHome;
 import com.idega.user.event.CreateGroupEvent;
@@ -56,8 +58,12 @@ import com.idega.user.event.CreateGroupEvent;
 public class CreateGroupWindow extends IWAdminWindow implements StatefullPresentation, ToolbarElement {
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
+  public static final String SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY = "selected_group_pp_id_key";
+  
 	private StatefullPresentationImplHandler _stateHandler = null;
 	private CreateGroupEvent _createEvent;
+  private String selectedGroupProviderStateId = null; 
+  private Integer selectedGroupId = null;
 
 
 	public CreateGroupWindow() {
@@ -71,6 +77,9 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 	}
 
 	public void initializeInMain(IWContext iwc) {
+    if (iwc.isParameterSet(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY)) {
+      selectedGroupProviderStateId = iwc.getParameter(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
+    }      
 		StringBuffer id = new StringBuffer(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);
 		id.append(IWMainApplication.getEncryptedClassName(UserApplication.class));
 		id.append(Frame.COMPOUND_ID_FRAME_NAME_KEY);
@@ -83,20 +92,16 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 		id = new StringBuffer(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);
 		id.append(IWMainApplication.getEncryptedClassName(UserApplication.Top.class));
 		IWStateMachine stateMachine;
-    /*
-		IWPresentationState changeListenerState = null;
-    try {
-			stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
-			changeListenerState = (IWControlFramePresentationState) stateMachine.getStateFor(id.toString(), IWControlFramePresentationState.class);
-    }
-		catch (RemoteException e) {
-		}
-		state.addChangeListener((ChangeListener) changeListenerState);
-    */
+    // add all change listeners
     Collection changeListeners;
     try {
       stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
       changeListeners = stateMachine.getAllChangeListeners();
+      // try to get the selected group id 
+      if (selectedGroupProviderStateId != null) {
+        UserApplicationMenuAreaPS groupProviderState = (UserApplicationMenuAreaPS) stateMachine.getStateFor(selectedGroupProviderStateId, UserApplicationMenuAreaPS.class);
+        selectedGroupId = (Integer) groupProviderState.getSelectedGroupId();
+      }
     }
     catch (RemoteException e) {
       changeListeners = new ArrayList();
@@ -227,7 +232,13 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 
 		try {
 			IBDomain domain = iwc.getDomain();
-			chooser.setSelectedNode(new GroupTreeNode(domain,iwc.getApplicationContext()));
+      if (selectedGroupId != null)  {
+        Group group = getGroup(selectedGroupId);
+        chooser.setSelectedNode(new GroupTreeNode(group));
+      }
+      else  {
+        chooser.setSelectedNode(new GroupTreeNode(domain,iwc.getApplicationContext()));
+      }
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -265,4 +276,17 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 	public PresentationObject getPresentationObject(IWContext iwc) {
 		return this;
 	}
+  
+  private Group getGroup(Integer groupId){
+    if(groupId != null){
+      try {
+        return (Group)IDOLookup.findByPrimaryKey(Group.class, groupId);
+      }
+      catch (Exception ex) {
+        // FinderException and RemoteException
+        throw new RuntimeException(ex.getMessage());
+      }
+    }
+    return null;
+  }   
 }
