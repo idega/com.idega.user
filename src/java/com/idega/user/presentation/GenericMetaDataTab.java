@@ -141,12 +141,12 @@ public class GenericMetaDataTab extends UserTab {
 		table.setCellpadding(5);
 		table.setCellspacing(0);
 		table.setBorder(0);
+		IWContext iwc = IWContext.getInstance();
+		IWResourceBundle iwrb = this.getResourceBundle(iwc);
 		
-		table.add(new Text("key"),1,1);
-		table.add(new Text("value"),2,1);
+		table.add(new Text(iwrb.getLocalizedString("GenericMetaDataTab.Key","Key"),true,false,true),1,1);
+		table.add(new Text(iwrb.getLocalizedString("GenericMetaDataTab.Value","Value"),true,false,true),2,1);
 		table.setRowVerticalAlignment(1,Table.VERTICAL_ALIGN_TOP);
-		
-		
 		
 		this.add(table, 1, 1);
 		
