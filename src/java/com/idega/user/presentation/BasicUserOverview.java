@@ -135,173 +135,182 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
 
 
-	if( !listAll ){//temporary solutions
-		int parSize = ps.getPartitionSize();
-		int sel = ps.getSelectedPartition();
-		int firstIndex = ps.getFirstPartitionIndex();
-
-		SubsetSelector selector = new SubsetSelector(parSize,userCount,6);
-		selector.setControlEventModel(_controlEvent);
-		selector.setControlTarget(_controlTarget);
-		IWLocation location = (IWLocation)this.getLocation().clone();
+			if( !listAll ){//temporary solutions
+				int parSize = ps.getPartitionSize();
+				int sel = ps.getSelectedPartition();
+				int firstIndex = ps.getFirstPartitionIndex();
 		
-		selector.setLocation(this.getLocation());
-		selector.setSelectedSubset(sel);
-		selector.setFirstSubset(firstIndex);
-
-		add(selector);
-      	users = ListUtil.convertCollectionToList(users).subList( (sel*parSize), Math.min(users.size(),((sel+1)*parSize)) );
-	
-	}
-	else{
-		users = ListUtil.convertCollectionToList(users);
-	}
-	int size = users.size();
-
-		userTable = new Table(6, ((size>33)?size:33)+1  );
-		returnTable.add(userTable,1,1);
-		userTable.setCellpaddingAndCellspacing(0);
-		userTable.setLineAfterColumn(1);
-		userTable.setLineAfterColumn(2);
-		userTable.setLineAfterColumn(3);
-		userTable.setLineAfterColumn(4);
-		userTable.setLineAfterColumn(5);
-		userTable.setLineColor("#DBDCDF");
-		
-		userTable.setBackgroundImage(1,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
-		userTable.setBackgroundImage(2,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
-		userTable.setBackgroundImage(3,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
-		userTable.setBackgroundImage(4,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
-		userTable.setBackgroundImage(5,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
-		userTable.setBackgroundImage(6,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
-		          
-	  userTable.setHeight(1,16);
-
-    userTable.setWidth(1,"160");
-    
-//	columns start
-
-      Text name = new Text("&nbsp;"+iwrb.getLocalizedString("name","Name"));
- 	  name.setFontFace(Text.FONT_FACE_VERDANA);
- 	  name.setFontSize(Text.FONT_SIZE_7_HTML_1);
- 	  userTable.add(name,1,1);
-
-
-		Text pin = new Text("&nbsp;"+iwrb.getLocalizedString("personal.id.number","Pin"));
-		pin.setFontFace(Text.FONT_FACE_VERDANA);
-		pin.setFontSize(Text.FONT_SIZE_7_HTML_1);
-		userTable.add(pin,2,1);
-		
-		Text email = new Text("&nbsp;"+iwrb.getLocalizedString("email","Email"));
-		email.setFontFace(Text.FONT_FACE_VERDANA);
-		email.setFontSize(Text.FONT_SIZE_7_HTML_1);
-		userTable.add(email,3,1);
-  
-		Text address = new Text("&nbsp;"+iwrb.getLocalizedString("address","Address"));
-		address.setFontFace(Text.FONT_FACE_VERDANA);
-		address.setFontSize(Text.FONT_SIZE_7_HTML_1);
-		userTable.add(address,4,1);
-		
-		Text phone = new Text("&nbsp;"+iwrb.getLocalizedString("phone","Phone"));
-		phone.setFontFace(Text.FONT_FACE_VERDANA);
-		phone.setFontSize(Text.FONT_SIZE_7_HTML_1);
-		userTable.add(phone,5,1);
+				SubsetSelector selector = new SubsetSelector(parSize,userCount,6);
+				selector.setControlEventModel(_controlEvent);
+				selector.setControlTarget(_controlTarget);
+				IWLocation location = (IWLocation)this.getLocation().clone();
 				
-				
- 	 /* Text del = new Text("&nbsp;"+iwrb.getLocalizedString("delete.user","Delete user"));
- 	  del.setFontFace(Text.FONT_FACE_VERDANA);
- 	  del.setFontSize(Text.FONT_SIZE_7_HTML_1);
- 	  userTable.add(del,6,1);*/
-
-      userTable.setCellspacing(0);
-      userTable.setHorizontalZebraColored("#FFFFFF",IWColor.getHexColorString(246,246,247));
-      userTable.setWidth("100%");
-      for (int i = 1; i <= userTable.getRows() ; i++) {
-        userTable.setHeight(i,"20");
-      }
-
-
-      int line = 2;
-      Iterator iter = users.iterator();
-      while (iter.hasNext()) {
-        User tempUser = (User)iter.next();
-      //for (int i = 0; i < users.size(); i++) {
-        //User tempUser = (User)users.get(i);
-        if(tempUser != null){
-
-          boolean userIsSuperAdmin = iwc.getAccessController().getAdministratorUser().equals(tempUser);
-          boolean delete = false;
-
-          if(!userIsSuperAdmin){
-            Link aLink = new Link(new Text(tempUser.getName()));
-            aLink.setWindowToOpen(UserPropertyWindow.class);
-            aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
-            userTable.add("&nbsp;",1,line);
-            userTable.add(aLink,1,line);
-            delete = true;
-          }else if(userIsSuperAdmin && iwc.isSuperAdmin() ){
-//            Text aText = new Text(tempUser.getName());
-//            userTable.add(aText,2,i+1);
-            Link aLink = new Link(new Text(tempUser.getName()));
-            aLink.setWindowToOpen(AdministratorPropertyWindow.class);
-            aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
-            userTable.add("&nbsp;",1,line);
-            userTable.add(aLink,1,line);
-            delete = true;
-          }
-
-					
-					 //pin
-					 String PIN = tempUser.getPersonalID();
-					 if(PIN!=null) userTable.add("&nbsp;"+pin,2,line);
-  
-					 //email
-					 Collection emails = tempUser.getEmails();
-					 if( emails!=null && !emails.isEmpty() ){
-						 Iterator iterator = emails.iterator();
-  	
-						 while (iterator.hasNext()) {
-							 Email e_mail = (Email) iterator.next();
-							 userTable.add("&nbsp;"+e_mail.getEmailAddress() ,3,line);
-						 }
-  	
-					 }
-
-					Address userAddress = getUserBusiness(iwc).getUsersMainAddress(tempUser);
-		  
-					if( userAddress!=null ){
-							 userTable.add(userAddress.getName() ,4,line-1);
-					}
-  
-					 //phone
-					 Collection phones = tempUser.getPhones();
-					 if( phones!=null && !phones.isEmpty() ){
-						 Iterator iterator = phones.iterator();
-  	
-						 while (iterator.hasNext()) {
-							 Phone _phone = (Phone) iterator.next();
-							 userTable.add("&nbsp;"+_phone.getNumber() ,5,line);
-					 }
-  	
-					 }
-	          
+				selector.setLocation(this.getLocation());
+				selector.setSelectedSubset(sel);
+				selector.setFirstSubset(firstIndex);
+		
+				add(selector);
+		      	users = ListUtil.convertCollectionToList(users).subList( (sel*parSize), Math.min(users.size(),((sel+1)*parSize)) );
 			
-
+			}
+			else{
+				users = ListUtil.convertCollectionToList(users);
+			}
+			
+			
+			//displaying users starts starts
+			int size = users.size();
+		
+				userTable = new Table(6, ((size>33)?size:33)+1  );
+				returnTable.add(userTable,1,1);
+				
+				
+				
+				
+				userTable.setCellpaddingAndCellspacing(0);
+				userTable.setLineAfterColumn(1);
+				userTable.setLineAfterColumn(2);
+				userTable.setLineAfterColumn(3);
+				userTable.setLineAfterColumn(4);
+				userTable.setLineAfterColumn(5);
+				userTable.setLineColor("#DBDCDF");
+				
+				userTable.setBackgroundImage(1,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
+				userTable.setBackgroundImage(2,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
+				userTable.setBackgroundImage(3,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
+				userTable.setBackgroundImage(4,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
+				userTable.setBackgroundImage(5,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
+				userTable.setBackgroundImage(6,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
+				          
+			  userTable.setHeight(1,16);
+		
+		    userTable.setWidth(1,"160");
+		    
+		//	columns start
+		
+		      Text name = new Text("&nbsp;"+iwrb.getLocalizedString("name","Name"));
+		 	  name.setFontFace(Text.FONT_FACE_VERDANA);
+		 	  name.setFontSize(Text.FONT_SIZE_7_HTML_1);
+		 	  userTable.add(name,1,1);
+		
+		
+				Text pin = new Text("&nbsp;"+iwrb.getLocalizedString("personal.id.number","Pin"));
+				pin.setFontFace(Text.FONT_FACE_VERDANA);
+				pin.setFontSize(Text.FONT_SIZE_7_HTML_1);
+				userTable.add(pin,2,1);
+				
+				Text email = new Text("&nbsp;"+iwrb.getLocalizedString("email","Email"));
+				email.setFontFace(Text.FONT_FACE_VERDANA);
+				email.setFontSize(Text.FONT_SIZE_7_HTML_1);
+				userTable.add(email,3,1);
 		  
-          if(delete && !adminUsers.contains(tempUser) && !userIsSuperAdmin && iwc.getAccessController().isAdmin(iwc)){
-            Link delLink = new Link(new Text("Delete"));
-            delLink.setWindowToOpen(ConfirmWindow.class);
-            delLink.addParameter(BasicUserOverview.PARAMETER_DELETE_USER , tempUser.getPrimaryKey().toString());
-            delLink.setAsImageButton(true);
-            userTable.add("&nbsp;",6,line);
-            userTable.add(delLink,6,line);
-          }
-          
+				Text address = new Text("&nbsp;"+iwrb.getLocalizedString("address","Address"));
+				address.setFontFace(Text.FONT_FACE_VERDANA);
+				address.setFontSize(Text.FONT_SIZE_7_HTML_1);
+				userTable.add(address,4,1);
+				
+				Text phone = new Text("&nbsp;"+iwrb.getLocalizedString("phone","Phone"));
+				phone.setFontFace(Text.FONT_FACE_VERDANA);
+				phone.setFontSize(Text.FONT_SIZE_7_HTML_1);
+				userTable.add(phone,5,1);
+						
+						
+		 	 /* Text del = new Text("&nbsp;"+iwrb.getLocalizedString("delete.user","Delete user"));
+		 	  del.setFontFace(Text.FONT_FACE_VERDANA);
+		 	  del.setFontSize(Text.FONT_SIZE_7_HTML_1);
+		 	  userTable.add(del,6,1);*/
+		
+		      userTable.setCellspacing(0);
+		      userTable.setHorizontalZebraColored("#FFFFFF",IWColor.getHexColorString(246,246,247));
+		      userTable.setWidth("100%");
+		      for (int i = 1; i <= userTable.getRows() ; i++) {
+		        userTable.setHeight(i,"20");
+		      }
+		
+		
+		      int line = 2;
+		      Iterator iter = users.iterator();
+		      while (iter.hasNext()) {
+		        User tempUser = (User)iter.next();
+		      //for (int i = 0; i < users.size(); i++) {
+		        //User tempUser = (User)users.get(i);
+		        if(tempUser != null){
+		
+		          boolean userIsSuperAdmin = iwc.getAccessController().getAdministratorUser().equals(tempUser);
+		          boolean delete = false;
+		
+		          if(!userIsSuperAdmin){
+		            Link aLink = new Link(new Text(tempUser.getName()));
+		            aLink.setWindowToOpen(UserPropertyWindow.class);
+		            aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
+		            userTable.add("&nbsp;",1,line);
+		            userTable.add(aLink,1,line);
+		            delete = true;
+		          }else if(userIsSuperAdmin && iwc.isSuperAdmin() ){
+		//            Text aText = new Text(tempUser.getName());
+		//            userTable.add(aText,2,i+1);
+		            Link aLink = new Link(new Text(tempUser.getName()));
+		            aLink.setWindowToOpen(AdministratorPropertyWindow.class);
+		            aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
+		            userTable.add("&nbsp;",1,line);
+		            userTable.add(aLink,1,line);
+		            delete = true;
+		          }
+		
+							
+							 //pin
+							 String PIN = tempUser.getPersonalID();
+							 if(PIN!=null) userTable.add("&nbsp;"+pin,2,line);
+		  
+							 //email
+							 Collection emails = tempUser.getEmails();
+							 if( emails!=null && !emails.isEmpty() ){
+								 Iterator iterator = emails.iterator();
+		  	
+								 while (iterator.hasNext()) {
+									 Email e_mail = (Email) iterator.next();
+									 userTable.add("&nbsp;"+e_mail.getEmailAddress() ,3,line);
+								 }
+		  	
+							 }
+		
+							Address userAddress = getUserBusiness(iwc).getUsersMainAddress(tempUser);
+				  
+							if( userAddress!=null ){
+									 userTable.add(userAddress.getName() ,4,line-1);
+							}
+		  
+							 //phone
+							 Collection phones = tempUser.getPhones();
+							 if( phones!=null && !phones.isEmpty() ){
+								 Iterator iterator = phones.iterator();
+		  	
+								 while (iterator.hasNext()) {
+									 Phone _phone = (Phone) iterator.next();
+									 userTable.add("&nbsp;"+_phone.getNumber() ,5,line);
+							 }
+		  	
+							 }
+			          
 					
-					line++;
-
-        }
-      }
+		
+				  
+		          if(delete && !adminUsers.contains(tempUser) && !userIsSuperAdmin && iwc.getAccessController().isAdmin(iwc)){
+		            Link delLink = new Link(new Text("Delete"));
+		            delLink.setWindowToOpen(ConfirmWindow.class);
+		            delLink.addParameter(BasicUserOverview.PARAMETER_DELETE_USER , tempUser.getPrimaryKey().toString());
+		            delLink.setAsImageButton(true);
+		            userTable.add("&nbsp;",6,line);
+		            userTable.add(delLink,6,line);
+		          }
+		          
+							
+							line++;
+		
+		        }
+		      }
+		      
+		      //display ends
     }
 
     return returnTable;
