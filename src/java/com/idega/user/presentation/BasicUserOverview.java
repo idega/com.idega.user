@@ -128,7 +128,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	
 	protected Table getList(IWContext iwc) throws Exception {		
     
-    if (ps.showMoveResult)  {
+    if (ps.getResultOfMovingUsers() != null)  {
       return getResultList(iwc);
     }
 		
@@ -901,9 +901,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     String emailKey = "com.idega.core.data.Email.ADDRESS";
     String phoneKey = "com.idega.core.data.PhoneType.IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + "com.idega.core.data.Phone.PHONE_NUMBER";
     String pinKey = "com.idega.user.data.User.PERSONAL_ID";
+        
+    Iterator iterator = messageMap.keySet().iterator();
+    String identifier = (iterator.hasNext()) ? (String) iterator.next() : "move";
       
-    String identifier = (selectedGroup==null)? "" : selectedGroup.getName();
-    identifier += (ps.getSelectedDomain() != null) ? ps.getSelectedDomain().getPrimaryKey().toString() : "";
       
     entityBrowser.setEntities(identifier, users);
     entityBrowser.setDefaultNumberOfRows(Math.min(users.size(), 30));
