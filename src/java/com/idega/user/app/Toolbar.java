@@ -2,6 +2,7 @@ package com.idega.user.app;
 
 import java.util.List;
 import java.util.Vector;
+
 import com.idega.block.importer.presentation.Importer;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWBundle;
@@ -25,7 +26,6 @@ import com.idega.user.presentation.CreateUser;
 import com.idega.user.presentation.MassMovingWindow;
 import com.idega.user.presentation.RoleMastersWindow;
 import com.idega.user.presentation.UserClubMemberExchangeWindow;
-import com.idega.user.presentation.UserUpdateClubDivisionTemplate;
 import com.idega.user.presentation.UserWorkReportWindow;
 
 
