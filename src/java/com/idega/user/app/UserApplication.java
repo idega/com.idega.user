@@ -11,6 +11,7 @@ import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.app.IWBrowser;
 import com.idega.idegaweb.browser.presentation.IWBrowseControl;
@@ -163,7 +164,8 @@ public class UserApplication extends IWBrowser {
 
 
     public void main(IWContext iwc) throws Exception{
-
+    	IWBundle iwb = getBundle(iwc);
+		
       IWControlFramePresentationState state = (IWControlFramePresentationState)this.getPresentationState(iwc);
       if(state != null){
         Set onLoadSet = state.getOnLoadSet();
@@ -187,7 +189,7 @@ public class UserApplication extends IWBrowser {
      
 //			added for stylesheet writout:
 					parentPage = this.getParentPage();
-					styleSrc = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/" + styleScript);
+					styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
 					parentPage.addStyleSheetURL(styleSrc);
 
         /** @todo setja inn mynd i header**/
