@@ -281,7 +281,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 				System.out.println("Could not check if group was descendant of a users top group, group not shown");
 				e.printStackTrace();
 			}
-			if(!ok) {
+			if(ok) {
 				result.add(group);
 			} else {
 				System.out.println("Group " + group.getName() + " not shown");
