@@ -58,6 +58,7 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		setWidth(385);
 		setHeight(300);
 		setScrollbar(false);
+		setResizable(true);
 	}
 
 	public void initializeInMain(IWContext iwc) {    
@@ -86,7 +87,7 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		searchEvent.setSource(this);
 					
 		// set controller (added by Thomas) NOT NEEDED
-	String id = IWMainApplication.getEncryptedClassName( UserApplication.Top.class );
+		String id = IWMainApplication.getEncryptedClassName( UserApplication.Top.class );
 		id = PresentationObject.COMPOUNDID_COMPONENT_DELIMITER + id;
 		searchEvent.setController(id);
 
@@ -137,8 +138,8 @@ public class SearchWindow extends IWAdminWindow implements ToolbarElement {
 		SelectionBox groupSel = new SelectionBox(UserSearchEvent.SEARCH_FIELD_GROUPS);
 		groupSel.setHeight(13);
 		//TODO Eiki temporary make a method that only returns all groups with view permission and owner (edit)
-		Collection groupsCol = getGroupBusiness(iwc).getAllGroups();
-		//getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(),iwc);
+		Collection groupsCol = getUserBusiness(iwc).getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(),iwc);
+		
 		Iterator nodes = groupsCol.iterator();
 		while (nodes.hasNext()) {
 			Group group = (Group) nodes.next();
