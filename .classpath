@@ -17,6 +17,8 @@
   </classpathentry>
   <classpathentry kind="src" path="/com.idega.block.media">
   </classpathentry>
+  <classpathentry kind="src" path="/com.idega.block.staff">
+  </classpathentry>
   <classpathentry kind="src" path="/com.idega.block.importer">
   </classpathentry>
   <classpathentry kind="src" path="/com.idega.block.dataquery">
