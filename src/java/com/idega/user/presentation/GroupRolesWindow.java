@@ -120,6 +120,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
     public void main(IWContext iwc) throws Exception {
         iwrb = this.getResourceBundle(iwc);
         access = iwc.getAccessController();
+        super.setTitle(iwrb.getLocalizedString("grouproleswindow.title", "Group Roles Window"));
         parseAction(iwc);
         
         if (saveChanges) {
@@ -176,7 +177,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
                 }
                 
                 
-                return new Text(roleName);
+                return new Text(iwrb.getLocalizedString(roleName,roleName));
                 
             }
         };
