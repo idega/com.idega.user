@@ -122,8 +122,8 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 			}
 			
 			//TODO fix this
-			e.getIWContext().getApplicationContext().setApplicationAttribute("domain_group_tree",null);
-			e.getIWContext().getApplicationContext().setApplicationAttribute("group_tree",null);			
+			e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
+			e.getIWContext().getApplicationContext().removeApplicationAttribute("group_tree");			
 		}
 		catch (CreateException ce)
 		{
