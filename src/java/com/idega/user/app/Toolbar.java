@@ -270,12 +270,15 @@ public class Toolbar extends Page implements IWBrowserView {
 		 Text text5 = new Text(iwrb.getLocalizedString("button.work_reports","Work Reports"));
 		 text5.setFontFace(Text.FONT_FACE_VERDANA);
 		 text5.setFontSize(Text.FONT_SIZE_7_HTML_1);
-		 LinkContainer tLink15 = new LinkContainer();
+		 
+		 /*LinkContainer tLink15 = new LinkContainer();
+		 
 		 tLink15.add(text5);
 		 tLink15.setURL("/index.jsp?ib_page=4");
-		 tLink15.setAsPopup(iwrb.getLocalizedString("button.work_reports","Work Reports"),"800","600");
+		 tLink15.setAsPopup(iwrb.getLocalizedString("button.work_reports","Work Reports"),"800","600");*/
 		 
-		 //tLink15.setWindowToOpen("is.idega.idegaweb.member.presentation.WorkReportWindow");
+		 Link tLink15 = new Link(text5);
+		 tLink15.setWindowToOpen("is.idega.idegaweb.member.isi.block.reports.presentation.WorkReportWindow");
 		 
 		 button5.add(tLink15,2,1);
 		 toolbar1.add(button5,9,1);
