@@ -40,9 +40,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
   private static final String PARAMETER_DELETE_USER =  "delete_ic_user";
   private String _controlTarget = null;
-  private IWPresentationEvent _contolEvent = null;
+  private IWPresentationEvent _controlEvent = null;
 
   private BasicUserOverviewPS _presentationState = null;
+  private BasicUserOverViewToolbar toolbar = new BasicUserOverViewToolbar();
 
   public BasicUserOverview(IWContext iwc) throws Exception {
     //this.empty();
@@ -54,11 +55,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
 
   public void setControlEventModel(IWPresentationEvent model){
-    _contolEvent = model;
+    _controlEvent = model;
+    toolbar.setControlEventModel(model);
   }
 
   public void setControlTarget(String controlTarget){
     _controlTarget = controlTarget;
+    toolbar.setControlTarget(controlTarget);
   }
 
 
@@ -77,7 +80,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
       	userCount = 0;
       }
       else userCount = users.size();
-      
+
     } else if(selectedDomain != null){
 //      System.out.println("[BasicUserOverview]: selectedDomain = "+selectedDomain);
       users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
@@ -90,6 +93,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     }
 
     Table userTable = null;
+    Table returnTable = new Table(1,2);
+    returnTable.setCellpaddingAndCellspacing(0);
+    returnTable.setHeight(1,22);
+
+    returnTable.add(toolbar,1,1);
+
+
     /**
      * @todo important: change back to  List adminUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
      */
@@ -108,7 +118,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		int sel = ps.getSelectedPartition();
 
 		SubsetSelector selector = new SubsetSelector(parSize,userCount,6);
-		selector.setControlEventModel(_contolEvent);
+		selector.setControlEventModel(_controlEvent);
 		selector.setControlTarget(_controlTarget);
 		IWLocation location = (IWLocation)this.getLocation().clone();
 		selector.setLocation(this.getLocation());
@@ -126,34 +136,35 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 //      this.add(" ("+sel+")");
 
       userTable = new Table(3, ((users.size()>33)?users.size():33)+1  );
+      returnTable.add(userTable,1,2);
       userTable.setCellpaddingAndCellspacing(0);
       userTable.setLineAfterColumn(1);
       userTable.setLineAfterColumn(2);
       userTable.setLineColor("#DBDCDF");
-      
+
       userTable.setBackgroundImage(1,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
       userTable.setBackgroundImage(2,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
-      userTable.setBackgroundImage(3,1,this.getBundle(iwc).getImage("glass_column_light.gif"));      
+      userTable.setBackgroundImage(3,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
       userTable.setHeight(1,16);
-      
+
       userTable.setWidth(1,"200");
       userTable.setWidth(2,"200");
-            
-      Text name = new Text("Nafn");
+
+      Text name = new Text("&nbsp;Nafn");
  	  name.setFontFace(Text.FONT_FACE_VERDANA);
  	  name.setFontSize(Text.FONT_SIZE_7_HTML_1);
  	  userTable.add(name,1,1);
- 	  
- 	  Text address = new Text("Heimilisfang");
+
+ 	  Text address = new Text("&nbsp;Heimilisfang");
  	  address.setFontFace(Text.FONT_FACE_VERDANA);
  	  address.setFontSize(Text.FONT_SIZE_7_HTML_1);
  	  userTable.add(address,2,1);
- 	 	  
- 	  Text del = new Text("Eyða félaga");
+
+ 	  Text del = new Text("&nbsp;Eyða félaga");
  	  del.setFontFace(Text.FONT_FACE_VERDANA);
  	  del.setFontSize(Text.FONT_SIZE_7_HTML_1);
  	  userTable.add(del,3,1);
- 	      
+
       userTable.setCellspacing(0);
       userTable.setHorizontalZebraColored("#FFFFFF",IWColor.getHexColorString(246,246,247));
       userTable.setWidth("100%");
@@ -177,6 +188,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             Link aLink = new Link(new Text(tempUser.getName()));
             aLink.setWindowToOpen(UserPropertyWindow.class);
             aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
+            userTable.add("&nbsp;",1,line);
             userTable.add(aLink,1,line);
             delete = true;
             line++;
@@ -186,15 +198,19 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             Link aLink = new Link(new Text(tempUser.getName()));
             aLink.setWindowToOpen(AdministratorPropertyWindow.class);
             aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
+            userTable.add("&nbsp;",1,line);
             userTable.add(aLink,1,line);
             delete = true;
             line++;
           }
 
+          userTable.add("&nsbsp;Dúfnahólar "+line+", 109 RVK",2,line);
+
           if(delete && !adminUsers.contains(tempUser) && !userIsSuperAdmin && iwc.getAccessController().isAdmin(iwc)){
             Link delLink = new Link(new Text("Delete"));
             delLink.setWindowToOpen(ConfirmWindow.class);
             delLink.addParameter(BasicUserOverview.PARAMETER_DELETE_USER , tempUser.getPrimaryKey().toString());
+            userTable.add("&nbsp;",3,line-1);
             userTable.add(delLink,3,line-1);
           }
 
@@ -203,7 +219,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
       }
     }
 
-    return userTable;
+    return returnTable;
   }
 
 
@@ -385,7 +401,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
   public Class getPresentationStateClass(){
     return BasicUserOverviewPS.class;
   }
-  
+
   public String getBundleIdentifier(){
   	return "com.idega.user";
   }

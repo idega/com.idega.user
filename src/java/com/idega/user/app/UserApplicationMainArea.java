@@ -34,12 +34,12 @@ public class UserApplicationMainArea extends Block implements IWBrowserView, Sta
 
   public void setControlEventModel(IWPresentationEvent model){
     _contolEvent = model;
-	_buo.setControlEventModel(model);
+    _buo.setControlEventModel(model);
   }
 
   public void setControlTarget(String controlTarget){
     _controlTarget = controlTarget;
-	_buo.setControlTarget(controlTarget);
+    _buo.setControlTarget(controlTarget);
   }
 
   public Class getPresentationStateClass(){
@@ -64,7 +64,7 @@ public class UserApplicationMainArea extends Block implements IWBrowserView, Sta
     else{
 		this.add(_buo);
     }
-	
+
   }
 
 

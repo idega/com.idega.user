@@ -30,7 +30,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
   private IWBundle iwb;
   private StatefullPresentationImplHandler _stateHandler = null;
   private String _controlTarget = null;
-  private IWPresentationEvent _contolEvent = null;
+  private IWPresentationEvent _controlEvent = null;
 
   private SearchForm searchForm = new SearchForm();
   private Table toolbarTable = new Table(1,3);
@@ -46,7 +46,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
 
   public void setControlEventModel(IWPresentationEvent model){
 //    System.out.print("UserApplicationMenuArea: setControlEventModel(IWPresentationEvent model)");
-    _contolEvent = model;
+    _controlEvent = model;
 
     searchForm.setControlEventModel(model);
 	toolbar.setControlEventModel(model);
@@ -101,7 +101,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
 
     //IWColor color = new IWColor(212,208,200);
     IWColor color = new IWColor(207,208,210);//jonni color
-        
+
     toolbarTable.setColor(color);
     toolbarTable.setColor(1,1,color.brighter());
     toolbarTable.setColor(1,3,color.darker());
