@@ -1,23 +1,37 @@
 package com.idega.user.app;
 
+import com.idega.business.IBOLookup;
+import com.idega.event.IWActionListener;
+import com.idega.event.IWPresentationEvent;
+import com.idega.event.IWPresentationState;
+import com.idega.event.IWStateMachine;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.browser.app.IWBrowser;
+import com.idega.idegaweb.browser.presentation.IWBrowseControl;
+import com.idega.idegaweb.browser.presentation.IWBrowserCompliant;
+import com.idega.idegaweb.browser.presentation.IWBrowserView;
+import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
+import com.idega.idegaweb.presentation.IWAdminWindow;
+import com.idega.presentation.Frame;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.StatefullPresentation;
+import com.idega.presentation.Table;
 import com.idega.presentation.event.ResetPresentationEvent;
-import com.idega.user.presentation.*;
-import com.idega.idegaweb.*;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CloseButton;
+import com.idega.user.presentation.BasicUserOverview;
+import com.idega.user.presentation.CreateUser;
+import com.idega.user.presentation.CreateUserGroup;
+import com.idega.util.IWColor;
+import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.Set;
-import com.idega.event.*;
-import java.rmi.RemoteException;
-import com.idega.idegaweb.browser.presentation.*;
-import javax.swing.event.*;
-import com.idega.business.IBOLookup;
-import com.idega.idegaweb.browser.business.IWBrowserBusiness;
-import com.idega.util.IWColor;
-import com.idega.presentation.ui.CloseButton;
-import com.idega.presentation.*;
-import com.idega.idegaweb.presentation.IWAdminWindow;
-import com.idega.presentation.text.Text;
-import com.idega.idegaweb.browser.app.IWBrowser;
+import javax.swing.event.ChangeListener;
 
 /**
  * <p>Title: idegaWeb</p>
