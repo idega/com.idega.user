@@ -36,6 +36,7 @@ public class GeneralUserInfoTab extends UserTab{
   private DateInput dateOfBirthField;
   private DropdownMenu genderField;
   private TextInput personalIDField;
+  private DateInput createdField;
 
   private String firstNameFieldName;
   private String middleNameFieldName;
@@ -45,6 +46,7 @@ public class GeneralUserInfoTab extends UserTab{
   private String dateOfBirthFieldName;
   private String genderFieldName;
   private String personalIDFieldName;
+  private String createdFieldName;
 
 
 
@@ -56,6 +58,7 @@ public class GeneralUserInfoTab extends UserTab{
   private Text dateOfBirthText;
   private Text genderText;
   private Text personalIDText;
+  private Text createdText;
 
   public GeneralUserInfoTab() {
     super();
@@ -78,6 +81,7 @@ public class GeneralUserInfoTab extends UserTab{
     dateOfBirthFieldName = "UMdateofbirth";
     genderFieldName = "UMgender";
     personalIDFieldName = "UMpersonalID";
+    createdFieldName = "UMcreated";
 /*
     firstNameFieldName += this.getID();
     middleNameFieldName += this.getID();
@@ -98,6 +102,7 @@ public class GeneralUserInfoTab extends UserTab{
     fieldValues.put(this.dateOfBirthFieldName,"");
     fieldValues.put(this.genderFieldName,"");
     fieldValues.put(this.personalIDFieldName, "");
+    fieldValues.put(this.createdFieldName, "");
 
     this.updateFieldsDisplayStatus();
   }
@@ -133,7 +138,18 @@ public class GeneralUserInfoTab extends UserTab{
 
     personalIDField.setContent((String)fieldValues.get(this.personalIDFieldName));
 
-  }
+    StringTokenizer created = new StringTokenizer((String)fieldValues.get(this.createdFieldName)," -");
+    if(created.hasMoreTokens()){
+      createdField.setYear(created.nextToken());
+    }
+    if(created.hasMoreTokens()){
+      createdField.setMonth(created.nextToken());
+    }
+    if(created.hasMoreTokens()){
+      createdField.setDay(created.nextToken());
+    }
+
+   }
 
 
   public void initializeFields(){
@@ -151,7 +167,7 @@ public class GeneralUserInfoTab extends UserTab{
     displayNameField.setMaxlength(20);
 
     descriptionField = new TextArea(descriptionFieldName);
-    descriptionField.setHeight(7);
+    descriptionField.setHeight(5);
     descriptionField.setWidth(42);
     descriptionField.setWrap(true);
 
@@ -182,6 +198,9 @@ public class GeneralUserInfoTab extends UserTab{
     
     personalIDField = new TextInput(personalIDFieldName);
     personalIDField.setLength(12);
+    
+    createdField = new DateInput(createdFieldName);
+    createdField.setYearRange(time.getYear(), time.getYear()-50);
 
   }
 
@@ -208,7 +227,10 @@ public class GeneralUserInfoTab extends UserTab{
     genderText.setText("Gender");
     
     personalIDText = getTextObject();
-    personalIDText.setText("Personal ID");
+    personalIDText.setText("Personal ID : ");
+    
+    createdText = getTextObject();
+    createdText.setText("Created : ");
 
   }
 
@@ -239,14 +261,18 @@ public class GeneralUserInfoTab extends UserTab{
     //First Part ends
 
     //Second Part (Date of birth)
-    Table dateofbirthTable = new Table(2,2);
+    Table dateofbirthTable = new Table(2,3);
     dateofbirthTable.setCellpadding(0);
     dateofbirthTable.setCellspacing(0);
     dateofbirthTable.setHeight(1,columnHeight);
-    dateofbirthTable.add(dateOfBirthText,1,1);
-    dateofbirthTable.add(this.dateOfBirthField,2,1);
-    dateofbirthTable.add(personalIDText,1,2);
-    dateofbirthTable.add(personalIDField,2,2);
+    dateofbirthTable.setHeight(2,columnHeight);
+    dateofbirthTable.setHeight(3,columnHeight);
+    dateofbirthTable.add(personalIDText,1,1);
+    dateofbirthTable.add(personalIDField,2,1);
+    dateofbirthTable.add(dateOfBirthText,1,2);
+    dateofbirthTable.add(this.dateOfBirthField,2,2);
+    dateofbirthTable.add(createdText,1,3);
+    dateofbirthTable.add(this.createdField,2,3);
     this.add(dateofbirthTable,1,2);
     //Second Part Ends
 
@@ -274,6 +300,7 @@ public class GeneralUserInfoTab extends UserTab{
       String dateofbirth = iwc.getParameter(this.dateOfBirthFieldName);
       String gender = iwc.getParameter(this.genderFieldName);
       String personalID = iwc.getParameter(this.personalIDFieldName);
+      String created = iwc.getParameter(this.createdFieldName);
 
       if(fname != null){
         fieldValues.put(this.firstNameFieldName,fname);
@@ -299,6 +326,9 @@ public class GeneralUserInfoTab extends UserTab{
       if(personalID != null){
       	fieldValues.put(this.personalIDFieldName, personalID);
       }
+      if(created != null){
+      	fieldValues.put(this.createdFieldName, created);
+      }
 
       this.updateFieldsDisplayStatus();
 
@@ -314,12 +344,31 @@ public class GeneralUserInfoTab extends UserTab{
         String st = (String)fieldValues.get(this.dateOfBirthFieldName);
         Integer gen = (fieldValues.get(this.genderFieldName).equals(""))? null : new Integer((String)fieldValues.get(this.genderFieldName));
         if( st != null && !st.equals("")){
-          dateOfBirthTS = new IWTimestamp(st);
+        	try {
+	        	dateOfBirthTS = new IWTimestamp(st);
+        	}
+        	catch (IllegalArgumentException iae) {
+        		dateOfBirthTS = null;
+        	}
         }
+        
+        IWTimestamp createdTS = null;
+        String createdString = (String)fieldValues.get(this.createdFieldName);
+        if ( createdString != null & !createdString.equals("")){
+        	try {
+	        	createdTS = new IWTimestamp(createdString);
+        	}
+        	catch (IllegalArgumentException iae) {
+        		createdTS = null;
+        	}
+        }
+        
         super.getUserBusiness(iwc).updateUser(getUserId(),(String)fieldValues.get(this.firstNameFieldName),
                             (String)fieldValues.get(this.middleNameFieldName),(String)fieldValues.get(this.lastNameFieldName),
                             (String)fieldValues.get(this.displayNameFieldName),(String)fieldValues.get(this.descriptionFieldName),
                             gen,(String)fieldValues.get(this.personalIDFieldName),dateOfBirthTS,null);
+        if ( createdTS != null )
+        	super.getUserBusiness(iwc).getUser(getUserId()).setCreated(createdTS.getTimestamp());
       }
     }catch(Exception e){
       //return false;
@@ -334,7 +383,7 @@ public class GeneralUserInfoTab extends UserTab{
 
     try{
       User user = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKey(new Integer(getUserId()));
-
+ 
       fieldValues.put(this.firstNameFieldName,(user.getFirstName() != null) ? user.getFirstName():"" );
       fieldValues.put(this.middleNameFieldName,(user.getMiddleName() != null) ? user.getMiddleName():"" );
       fieldValues.put(this.lastNameFieldName,(user.getLastName() != null) ? user.getLastName():"" );
@@ -343,6 +392,7 @@ public class GeneralUserInfoTab extends UserTab{
       fieldValues.put(this.dateOfBirthFieldName,(user.getDateOfBirth()!= null) ? new IWTimestamp(user.getDateOfBirth()).toSQLDateString() : "");
       fieldValues.put(this.genderFieldName,(user.getGenderID() != -1) ? Integer.toString(user.getGenderID()):"" );
       fieldValues.put(this.personalIDFieldName,(user.getPersonalID() != null) ? user.getPersonalID():"" );
+      fieldValues.put(this.createdFieldName,(user.getCreated()!= null) ? new IWTimestamp(user.getCreated()).toSQLDateString() : "");
       this.updateFieldsDisplayStatus();
 
     }catch(Exception e){
