@@ -122,6 +122,26 @@ public class GroupTreeView extends IWTreeControl {
 		if (node.getGroupType() != null)
 			image = node.getGroupType();
 		
+	    SelectDomainEvent dmSelect = new SelectDomainEvent();
+        SelectGroupEvent grSelect = new SelectGroupEvent();
+		
+	    switch (node.getNodeType()) {
+			case GroupTreeNode.TYPE_DOMAIN :
+				dmSelect.setDomainToSelect(node.getNodeID());
+				break;
+			case GroupTreeNode.TYPE_GROUP :
+				grSelect.setGroupToSelect(node.getNodeID());
+				if (node.getParentNode() != null) {
+					if (((GroupTreeNode) node.getParentNode()).getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
+						grSelect.setParentDomainOfSelection(node.getParentNode().getNodeID());
+					}
+					else {
+						grSelect.setParentGroupOfSelection(node.getParentNode().getNodeID());
+					}
+				}
+				break;
+	    }
+
 		switch (colIndex) {
 			case 1 :
 				if(!isModelSet) {
@@ -167,7 +187,11 @@ public class GroupTreeView extends IWTreeControl {
 								return folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];
 							}
 							else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
-								return bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[0]);
+							    Link l = this.getLinkPrototypeClone(node.getNodeName());
+							    l.setOnClick("setLinkToBold(findObj('group_id_"+node.getNodeID()+"'))");
+							    l.addEventModel(grSelect);
+							    l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[0]));
+							    return l;
 							}
 							//              else if(node instanceof User){
 							//                return folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];
@@ -201,7 +225,11 @@ public class GroupTreeView extends IWTreeControl {
 								return folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED];
 							}
 							else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
-								return bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[1]);
+							    Link l = this.getLinkPrototypeClone(node.getNodeName());
+							    l.setOnClick("setLinkToBold(findObj('group_id_"+node.getNodeID()+"'))");
+							    l.addEventModel(grSelect);
+							    l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[1]));
+							    return l;
 							}
 							//              else if(node instanceof User){
 							//                return folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED];
@@ -246,7 +274,7 @@ public class GroupTreeView extends IWTreeControl {
 			case 2 :
 				Link l = this.getLinkPrototypeClone(node.getNodeName());
 				l.setOnClick("setLinkToBold(this)");
-        l.setID(node.getNodeID());
+        l.setID("group_id_"+node.getNodeID());
         // set selection bold
         if (selectedDomainId > 0 || selectedGroupId > 0) {
           int nodeType = node.getNodeType();
@@ -258,26 +286,11 @@ public class GroupTreeView extends IWTreeControl {
           }
         }
 
-				switch (node.getNodeType()) {
-					case GroupTreeNode.TYPE_DOMAIN :
-						SelectDomainEvent dmSelect = new SelectDomainEvent();
-						dmSelect.setDomainToSelect(node.getNodeID());
-						l.addEventModel(dmSelect);
-						break;
-					case GroupTreeNode.TYPE_GROUP :
-						SelectGroupEvent grSelect = new SelectGroupEvent();
-						grSelect.setGroupToSelect(node.getNodeID());
-						if (node.getParentNode() != null) {
-							if (((GroupTreeNode) node.getParentNode()).getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
-								grSelect.setParentDomainOfSelection(node.getParentNode().getNodeID());
-							}
-							else {
-								grSelect.setParentGroupOfSelection(node.getParentNode().getNodeID());
-							}
-						}
-						l.addEventModel(grSelect);
-						break;
-				}
+		if (node.getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
+		    l.addEventModel(dmSelect);
+		} else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
+		    l.addEventModel(grSelect);
+		}
 
 				if (_usesOnClick) {
 					String nodeName = node.getNodeName();
