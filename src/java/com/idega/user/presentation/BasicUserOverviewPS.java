@@ -135,7 +135,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
           mainIwc.isParameterSet(BasicUserOverview.PARAMETER_DELETE_USERS)) {
         userIds = mainIwc.getParameterValues(BasicUserOverview.PARAMETER_DELETE_USERS);
         // delete users (if something has been chosen)
-        List notDeletedUsers = BasicUserOverview.deleteUsers(Arrays.asList(userIds),mainIwc); 
+        List notDeletedUsers = BasicUserOverview.removeUsers(Arrays.asList(userIds), _selectedGroup, mainIwc); 
       }
     }
 

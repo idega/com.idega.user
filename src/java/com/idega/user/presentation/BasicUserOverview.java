@@ -712,30 +712,26 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		}
 		return business;
 	}
-	public static List deleteUsers(Collection userIds, IWContext iwc) {
+  
+	public static List removeUsers(Collection userIds, Group parentGroup, IWContext iwc) {
 		UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
-		ArrayList notDeletedUsers = new ArrayList();
+		ArrayList notRemovedUsers = new ArrayList();
 		Iterator iterator = userIds.iterator();
 		while (iterator.hasNext()) {
 			String userId;
 			if ((userId = (String) iterator.next()) != null) {
 				try {
 					User currentUser = iwc.getCurrentUser();
-					userBusiness.deleteUser(Integer.parseInt(userId), currentUser);
+					userBusiness.removeUserFromGroup(Integer.parseInt(userId), parentGroup, currentUser);
 				}
 				catch (RemoveException e) {
 					System.err.println("[BasicUserOverview] user with id " + userId + " could not be removed" + e.getMessage());
 					e.printStackTrace(System.err);
-					notDeletedUsers.add(userId);
-				}
-				catch (RemoteException e) {
-					System.err.println("[BasicUserOverview] user with id " + userId + " could not be removed" + e.getMessage());
-					e.printStackTrace(System.err);
-					notDeletedUsers.add(userId);
+					notRemovedUsers.add(userId);
 				}
 			}
 		}
-		return notDeletedUsers;
+		return notRemovedUsers;
 	}
 	public IWPresentationState getPresentationState(IWUserContext iwuc) {
 		if (_presentationState == null) {
