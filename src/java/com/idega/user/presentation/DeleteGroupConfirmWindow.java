@@ -52,7 +52,7 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
   }
   
   public void main(IWContext iwc) {
-    DeleteGroupConfirmWindowPS state = (DeleteGroupConfirmWindowPS) this.getPresentationState(iwc);
+    getPresentationState(iwc);
     // get groupid 
     Integer groupId = new Integer(-1);
     if (iwc.isParameterSet(GROUP_ID_KEY)) {
@@ -156,7 +156,7 @@ public class DeleteGroupConfirmWindow extends IWAdminWindow implements Statefull
     // add action listener
     addActionListener((IWActionListener) state);
     IWStateMachine stateMachine;
-    IWPresentationState changeListenerState = null;
+    //IWPresentationState changeListenerState = null;
     // add all changelisteners
     Collection changeListeners;
     try {

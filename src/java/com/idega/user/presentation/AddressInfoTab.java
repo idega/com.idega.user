@@ -97,7 +97,7 @@ public class AddressInfoTab extends UserTab {
 		String city = (String)fieldValues.get(cityFieldName);
 		String province = (String)fieldValues.get(provinceFieldName);
 		String postalId = (String)fieldValues.get(postalCodeFieldName);
-		String country = (String)fieldValues.get(countryFieldName);
+		//String country = (String)fieldValues.get(countryFieldName);
 		String poBox = (String)fieldValues.get(poBoxFieldName);
 
 		if (street != null)
@@ -123,7 +123,7 @@ public class AddressInfoTab extends UserTab {
     city = (String)fieldValues.get(secondCityFieldName);
     province = (String)fieldValues.get(secondProvinceFieldName);
     postalId = (String)fieldValues.get(secondPostalCodeFieldName);
-    country = (String)fieldValues.get(secondCountryFieldName);
+    //country = (String)fieldValues.get(secondCountryFieldName);
     poBox = (String)fieldValues.get(secondPoBoxFieldName);
 
     if (street != null)

@@ -187,16 +187,13 @@ public class GroupOwnersWindow extends GroupPermissionWindow {//implements State
 					 }
 					 PresentationObject text = browser.getDefaultConverter().getPresentationObject(entity, path, browser, iwc);
 					 Link aLink = new Link(text);
-					 boolean delete = false;
 					 if (!user.equals(administrator)) {
 						 aLink.setWindowToOpen(UserPropertyWindow.class);
 						 aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
-						 delete = true;
 					 }
 					 else if (loggedInUserIsAdmin) {
 						 aLink.setWindowToOpen(AdministratorPropertyWindow.class);
 						 aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
-						 delete = true;
 					 }
 					 return aLink;
 				 }

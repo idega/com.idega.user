@@ -64,7 +64,6 @@ public class SubsetSelector extends PresentationObjectContainer implements IWBro
 
 
 		if (_size > _subsetSize){
-			int partitionCount = 0;
 			for( int i = _firstPartition; ((i < _maxPartitions)&&((i-_firstPartition) < _maxShowedPartitions)); i++)
 			{
 				if(_firstPartition == i && _firstPartition != 0)

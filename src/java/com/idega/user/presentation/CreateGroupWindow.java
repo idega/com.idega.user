@@ -7,7 +7,7 @@ import java.util.Iterator;
 
 import javax.swing.event.ChangeListener;
 
-import com.idega.builder.data.IBDomain;
+//import com.idega.builder.data.IBDomain;
 import com.idega.builder.presentation.IBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
@@ -250,7 +250,7 @@ public class CreateGroupWindow extends IWAdminWindow implements StatefullPresent
 		chooser.setInputStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 
 		try {
-			IBDomain domain = iwc.getDomain();
+			//IBDomain domain = iwc.getDomain();
       if (selectedGroup != null)  {
         chooser.setSelectedNode(new GroupTreeNode(selectedGroup));
       }

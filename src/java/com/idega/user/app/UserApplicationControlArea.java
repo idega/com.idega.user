@@ -7,7 +7,6 @@ import java.util.Vector;
 
 import javax.swing.event.ChangeListener;
 
-import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationState;
@@ -22,7 +21,6 @@ import com.idega.presentation.Image;
 import com.idega.presentation.Page;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
-import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.presentation.GroupTreeNode;
@@ -151,9 +149,6 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
   }
 
   public void main(IWContext iwc) throws Exception {
-
-    GroupBusiness gBusiness = (GroupBusiness)IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
-
     this.empty();
     this.add(groupTree);
     

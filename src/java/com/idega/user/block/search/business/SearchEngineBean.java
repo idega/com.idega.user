@@ -1,11 +1,11 @@
 package com.idega.user.block.search.business;
 
-import javax.ejb.EJBException;
-import java.rmi.RemoteException;
+//import javax.ejb.EJBException;
+//import java.rmi.RemoteException;
 import com.idega.util.ListUtil;
 import java.util.*;
-import com.idega.user.data.UserHome;
-import com.idega.data.IDOLookup;
+//import com.idega.user.data.UserHome;
+//import com.idega.data.IDOLookup;
 import com.idega.user.data.User;
 import com.idega.user.block.search.event.SimpleSearchEvent;
 import com.idega.business.IBOServiceBean;
@@ -51,9 +51,9 @@ public class SearchEngineBean extends IBOServiceBean
 			{
 				case SimpleSearchEvent.SEARCHTYPE_USER:
 					System.out.println("["+this.getClass()+"]: search for User");
-					try
+					/*try
 					{
-						UserHome usrHome = (UserHome)IDOLookup.getHome(User.class);
+						UserHome usrHome = (UserHome)IDOLookup.getHome(User.class);*/
 						// firstname = word.get(0), lastname = word.get(word.size()), middlename = word.get(1 -> (size -1))
 
 						// firstname = word.get(0->size)
@@ -63,11 +63,11 @@ public class SearchEngineBean extends IBOServiceBean
 						// middlename = word.get(0->size)
 
 						return toReturn;
-					}
+					/*}
 					catch (RemoteException ex)
 					{
 						throw new EJBException(ex);
-					}
+					}*/
 
 
 				case SimpleSearchEvent.SEARCHTYPE_GROUP:

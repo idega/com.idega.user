@@ -1,7 +1,6 @@
 package com.idega.user.presentation;
 
 import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.event.ChangeEvent;
 
@@ -131,7 +130,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState impleme
           mainIwc.isParameterSet(BasicUserOverview.PARAMETER_DELETE_USERS)) {
         userIds = mainIwc.getParameterValues(BasicUserOverview.PARAMETER_DELETE_USERS);
         // delete users (if something has been chosen)
-        List notDeletedUsers = BasicUserOverview.removeUsers(Arrays.asList(userIds), _selectedGroup, mainIwc); 
+        BasicUserOverview.removeUsers(Arrays.asList(userIds), _selectedGroup, mainIwc); 
       }
     }
 

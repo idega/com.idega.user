@@ -64,7 +64,6 @@ public class UserApplication extends IWBrowser {
     if( useBasic ) this.addToMain(new BasicUserOverview());
     else {
       UserApplicationMainArea area = new UserApplicationMainArea();
-      String id = getCompoundId();
       //area.setArtificialCompoundId(id,iwc);
       this.addToMain(area);
     }

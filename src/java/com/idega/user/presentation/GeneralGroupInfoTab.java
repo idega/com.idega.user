@@ -107,7 +107,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 			}
 		}
 
-		String type = (String) fieldValues.get(grouptypeFieldName);
+		//String type = (String) fieldValues.get(grouptypeFieldName);
 		//grouptypeField.setSelectedElement(type);
 		//grouptypeField.setText( type);
 	}

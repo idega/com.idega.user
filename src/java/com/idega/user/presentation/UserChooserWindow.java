@@ -158,7 +158,6 @@ public class UserChooserWindow extends AbstractChooserWindow {
 		if (users != null) {
 			/** Calculating page....starts */
 			int start = currentPage * USERS_PER_PAGE;
-			int end = start + USERS_PER_PAGE;
 			Iterator iter = users.iterator();
 			for (int i = 0; i < start; i++) {
 				if (iter.hasNext()) {
