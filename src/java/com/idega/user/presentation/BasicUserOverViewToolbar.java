@@ -12,9 +12,9 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.PrintButton;
 import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.app.Toolbar;
-import com.idega.user.business.UserPinLookupToGroupImportHandler;
 import com.idega.user.data.Group;
 import com.idega.user.event.SelectGroupEvent;
+import com.idega.user.handler.UserPinLookupToGroupImportHandler;
 import com.idega.util.IWColor;
 
 /**
