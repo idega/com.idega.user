@@ -1,13 +1,13 @@
 package com.idega.user.presentation;
 
-import com.idega.event.IWEventListener;
+import java.rmi.RemoteException;
+import com.idega.business.IBOLookup;
+import com.idega.event.*;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.*;
 import com.idega.core.business.UserGroupBusiness;
 import com.idega.core.data.GenericGroup;
-import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.Page;
-import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
@@ -28,12 +28,14 @@ import java.util.Vector;
  * @version 1.0
  */
 
-public class BasicGroupOverview extends Page implements IWBrowserView {
+public class BasicGroupOverview extends Page implements IWBrowserView, StatefullPresentation {
 
   private static final String PARAMETER_DELETE_GROUP =  "delete_ic_group";
   private String _controlTarget = null;
   int counter = 0;
   private IWPresentationEvent _contolEvent = null;
+
+  private BacicUserOverviewPresentationState _presentationState = null;
 
   public BasicGroupOverview(){
     super();
@@ -41,9 +43,11 @@ public class BasicGroupOverview extends Page implements IWBrowserView {
 
   public void setControlEventModel(IWPresentationEvent model){
     _contolEvent = model;
+//    _contolEvent = (IWPresentationEvent)model.clone();
+//    _contolEvent.setSource(this.getLocation());
   }
 
-  public IWEventListener getListener(){return null;}
+  public IWActionListener getListener(){return null;}
 
   public void setControlTarget(String controlTarget){
     _controlTarget = controlTarget;
@@ -128,6 +132,22 @@ public class BasicGroupOverview extends Page implements IWBrowserView {
 
 
 
+  public IWPresentationState getPresentationState(IWUserContext iwuc){
+    if(_presentationState == null){
+      try {
+        IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
+        _presentationState = (BacicUserOverviewPresentationState)stateMachine.getStateFor(this.getLocation(),this.getPresentationStateClass());
+      }
+      catch (RemoteException re) {
+        throw new RuntimeException(re.getMessage());
+      }
+    }
+    return _presentationState;
+  }
+
+  public Class getPresentationStateClass(){
+    return BacicUserOverviewPresentationState.class;
+  }
 
 
   public static class ConfirmWindowBGO extends Window{

@@ -1,12 +1,12 @@
 package com.idega.user.presentation;
 
-import com.idega.event.IWEventListener;
-import com.idega.event.IWPresentationEvent;
+import com.idega.idegaweb.IWUserContext;
+import java.rmi.RemoteException;
+import com.idega.business.IBOLookup;
+import com.idega.event.*;
+import com.idega.presentation.*;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.browser.presentation.IWBrowserView;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.Page;
-import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
@@ -28,11 +28,13 @@ import java.util.Vector;
  * @version 1.0
  */
 
-public class BasicUserOverview extends Page implements IWBrowserView {
+public class BasicUserOverview extends Page implements IWBrowserView, StatefullPresentation {
 
   private static final String PARAMETER_DELETE_USER =  "delte_ic_user";
   private String _controlTarget = null;
   private IWPresentationEvent _contolEvent = null;
+
+  private BacicUserOverviewPresentationState _presentationState = null;
 
   public BasicUserOverview(IWContext iwc) throws Exception {
     //this.empty();
@@ -47,7 +49,7 @@ public class BasicUserOverview extends Page implements IWBrowserView {
     _contolEvent = model;
   }
 
-  public IWEventListener getListener(){return null;}
+  public IWActionListener getListener(){return null;}
 
   public void setControlTarget(String controlTarget){
     _controlTarget = controlTarget;
@@ -127,7 +129,12 @@ public class BasicUserOverview extends Page implements IWBrowserView {
     this.empty();
     this.add(this.getUsers(iwc));
     this.getParentPage().setAllMargins(0);
+
+
+
+
     this.getParentPage().setBackgroundColor("#d4d0c8");
+    //this.getParentPage().setBackgroundColor(((BacicUserOverviewPresentationState)this.getPresentationState(iwc)).getColor());
   }
 
 
@@ -273,6 +280,24 @@ public class BasicUserOverview extends Page implements IWBrowserView {
     return business;
   }
 
+
+
+  public IWPresentationState getPresentationState(IWUserContext iwuc){
+    if(_presentationState == null){
+      try {
+        IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
+        _presentationState = (BacicUserOverviewPresentationState)stateMachine.getStateFor(this.getLocation(),this.getPresentationStateClass());
+      }
+      catch (RemoteException re) {
+        throw new RuntimeException(re.getMessage());
+      }
+    }
+    return _presentationState;
+  }
+
+  public Class getPresentationStateClass(){
+    return BacicUserOverviewPresentationState.class;
+  }
 
 
 } //Class end
