@@ -250,7 +250,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	}
   
   private DropdownMenu getGroupList(IWContext iwc) {
+    Group selfGroup = selectedGroup;
+    String selfGroupId = "";
+    if (selectedGroup != null)  {
+      selfGroupId = ((Integer) selectedGroup.getPrimaryKey()).toString();
+    } 
     DropdownMenu groupList = new DropdownMenu(SELECTED_TARGET_GROUP_KEY);
+    GroupBusiness groupBusiness = BasicUserOverview.getGroupBusiness(iwc);
     UserBusiness business = BasicUserOverview.getUserBusiness(iwc);
     User user = iwc.getCurrentUser();
     Collection coll = business.getAllGroupsWithEditPermission(user, iwc);
@@ -258,8 +264,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     while (iterator.hasNext())  {
       Group group = (Group) iterator.next();
       String id = ((Integer) group.getPrimaryKey()).toString();
-      String name = group.getName();
-      groupList.addMenuElement(id,name);
+      if (! selfGroupId.equals(id)) {
+        String name = groupBusiness.getNameOfGroupWithParentName(group);
+        groupList.addMenuElement(id,name);
+      }
     }
     return groupList;
   }
