@@ -1,19 +1,22 @@
 package com.idega.user.presentation;
-
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
-
+import javax.ejb.RemoveException;
 import javax.swing.event.ChangeListener;
-
-
+import com.idega.block.entity.business.EntityToPresentationObjectConverter;
+import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.core.data.Address;
 import com.idega.core.data.Email;
 import com.idega.core.data.Phone;
+import com.idega.data.GenericEntity;
+import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
@@ -31,6 +34,7 @@ import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
@@ -40,7 +44,6 @@ import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWColor;
 import com.idega.util.ListUtil;
-
 /**
  * Title:        User
  * Description:
@@ -49,498 +52,649 @@ import com.idega.util.ListUtil;
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>
  * @version 1.0
  */
-
 public class BasicUserOverview extends Page implements IWBrowserView, StatefullPresentation {
-
-  private static final String PARAMETER_DELETE_USER =  "delete_ic_user";
-  private static final String ALWAYS_LIST_ALL_USERS =  "iwme_list_all";
-    
-  private String _controlTarget = null;
-  private IWPresentationEvent _controlEvent = null;
-  private IWResourceBundle iwrb = null ;
-  private IWBundle iwb = null;
-
-  private BasicUserOverviewPS _presentationState = null;
-  private BasicUserOverViewToolbar toolbar = null;
-
-  public BasicUserOverview(IWContext iwc) throws Exception {
-    //this.empty();
-    //this.add(this.getUsers(iwc));
-  }
-  public BasicUserOverview(){
-    super();
-  }
-
-
-  public void setControlEventModel(IWPresentationEvent model){
-    _controlEvent = model;
-    if( toolbar == null ) toolbar = new BasicUserOverViewToolbar();
-    toolbar.setControlEventModel(model);
-  }
-
-  public void setControlTarget(String controlTarget){
-    _controlTarget = controlTarget;
-    if( toolbar == null ) toolbar = new BasicUserOverViewToolbar();
-    toolbar.setControlTarget(controlTarget);
-  }
-
-
-  public Table getUsers(IWContext iwc) throws Exception{
-    this.empty();
-	  iwb = this.getBundle(iwc);
-    iwrb = this.getResourceBundle(iwc);
-    
-    boolean listAll = (iwb.getProperty(ALWAYS_LIST_ALL_USERS)!=null);//temporary solutions
-    
-
-    if( toolbar == null ) toolbar = new BasicUserOverViewToolbar();
-    
-    BasicUserOverviewPS ps = (BasicUserOverviewPS)this.getPresentationState(iwc);
-    Group selectedGroup = ps.getSelectedGroup();
-    IBDomain selectedDomain = ps.getSelectedDomain();
-
-    Collection users = null;
-    int userCount = 0;
-    if(selectedGroup  != null){
-      toolbar.setSelectedGroup(selectedGroup);
-      users = this.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
-      if(users == null) {
-      	userCount = 0;
-      }
-      else userCount = users.size();
-
-    } else if(selectedDomain != null){
-//      System.out.println("[BasicUserOverview]: selectedDomain = "+selectedDomain);
-      users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
-      userCount = users.size();
-    } 
-
-    Table userTable = null;
-    Table returnTable = new Table(1,2);
-    returnTable.setCellpaddingAndCellspacing(0);
-    returnTable.setWidth(Table.HUNDRED_PERCENT);
+	private static final String PARAMETER_DELETE_USER = "delete_ic_user";
+	private static final String ALWAYS_LIST_ALL_USERS = "iwme_list_all";
+	public static final String PARAMETER_DELETE_USERS = "delete_users";
+	public static final String DELETE_USERS_KEY = "delete_selected_users";
+	private String _controlTarget = null;
+	private IWPresentationEvent _controlEvent = null;
+	private IWResourceBundle iwrb = null;
+	private IWBundle iwb = null;
+	private BasicUserOverviewPS _presentationState = null;
+	private BasicUserOverViewToolbar toolbar = null;
+	public BasicUserOverview(IWContext iwc) throws Exception {
+		//this.empty();
+		//this.add(this.getUsers(iwc));
+	}
+	public BasicUserOverview() {
+		super();
+	}
+	public void setControlEventModel(IWPresentationEvent model) {
+		_controlEvent = model;
+		if (toolbar == null)
+			toolbar = new BasicUserOverViewToolbar();
+		toolbar.setControlEventModel(model);
+	}
+	public void setControlTarget(String controlTarget) {
+		_controlTarget = controlTarget;
+		if (toolbar == null)
+			toolbar = new BasicUserOverViewToolbar();
+		toolbar.setControlTarget(controlTarget);
+	}
+	public Table getUsers(IWContext iwc) throws Exception {
+		this.empty();
+		iwb = this.getBundle(iwc);
+		iwrb = this.getResourceBundle(iwc);
+		boolean listAll = (iwb.getProperty(ALWAYS_LIST_ALL_USERS) != null); //temporary solutions
+		if (toolbar == null)
+			toolbar = new BasicUserOverViewToolbar();
+		BasicUserOverviewPS ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
+		Group selectedGroup = ps.getSelectedGroup();
+		IBDomain selectedDomain = ps.getSelectedDomain();
+		Collection users = null;
+		int userCount = 0;
+		if (selectedGroup != null) {
+			toolbar.setSelectedGroup(selectedGroup);
+			users = this.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
+			if (users == null) {
+				userCount = 0;
+			}
+			else
+				userCount = users.size();
+		}
+		else if (selectedDomain != null) {
+			System.out.println("[BasicUserOverview]: selectedDomain = " + selectedDomain);
+			users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
+			userCount = users.size();
+		}
+		Table userTable = null;
+		Table returnTable = new Table(1, 2);
+		returnTable.setCellpaddingAndCellspacing(0);
+		returnTable.setWidth(Table.HUNDRED_PERCENT);
 		returnTable.setHeight(Table.HUNDRED_PERCENT);
-    returnTable.setHeight(2,Table.HUNDRED_PERCENT);
-    returnTable.setHeight(1,22);
-
-    returnTable.add(toolbar,1,1);
-
-    /**
-     * @todo important: change back to  List adminUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
-     */
-    Collection adminUsers = null; // UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
-
-
-    if(users == null){
-      users = new Vector();
-    }
-    if(users != null){
-      if(adminUsers == null){
-        adminUsers = new Vector(0);
-      }
-
-
-
-			if( !listAll ){//temporary solutions
-				int parSize = ps.getPartitionSize();
-				int sel = ps.getSelectedPartition();
-				int firstIndex = ps.getFirstPartitionIndex();
-		
-				SubsetSelector selector = new SubsetSelector(parSize,userCount,6);
-				selector.setControlEventModel(_controlEvent);
-				selector.setControlTarget(_controlTarget);
-				IWLocation location = (IWLocation)this.getLocation().clone();
-				
-				selector.setLocation(this.getLocation());
-				selector.setSelectedSubset(sel);
-				selector.setFirstSubset(firstIndex);
-		
-				add(selector);
-		      	users = ListUtil.convertCollectionToList(users).subList( (sel*parSize), Math.min(users.size(),((sel+1)*parSize)) );
-			
+		returnTable.setHeight(2, Table.HUNDRED_PERCENT);
+		returnTable.setHeight(1, 22);
+		returnTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
+		returnTable.add(toolbar, 1, 1);
+		/**
+		 * @todo important: change back to  List adminUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
+		 */
+		Collection adminUsers = null; // UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
+		if (users == null) {
+			users = new Vector();
+		}
+		if (users != null) {
+			if (adminUsers == null) {
+				adminUsers = new Vector(0);
 			}
-			else{
-				users = ListUtil.convertCollectionToList(users);
-			}
-			
-			
+			//users = ListUtil.convertCollectionToList(users);
 			//displaying users starts starts
-			int size = users.size();
-		
-    
-    /*  EntityBrowser entityBrowser =  new EntityBrowser();
-      PresentationObject parentObject = this.getParentObject();
-      entityBrowser.setArtificialCompoundId(parentObject.getCompoundId(),iwc);
-      IWPresentationState presentationState = ((StatefullPresentation) parentObject).getPresentationState(iwc);
-      IWPresentationState presentationStateChild = entityBrowser.getPresentationState(iwc);
-      //presentationStateChild.setLocation(loc);
-      ChangeListener[] chListeners = presentationState.getChangeListener();
-      if(chListeners != null){
-        for (int i = 0; i < chListeners.length; i++) {
-          presentationStateChild.addChangeListener(chListeners[i]);
-        }
-      }
-      entityBrowser.setEntities(users);
-      entityBrowser.setDefaultNumberOfRows(((size>33)?size:33)+1);
-      String key = "com.idega.user.data.User.FIRST_NAME:" + 
-        "com.idega.user.data.User.LAST_NAME:" +
-        "com.idega.user.data.User.MIDDLE_NAME"; 
-      entityBrowser.setDefaultColumns(1, key);
-      entityBrowser.setDefaultColumns(2, "com.idega.user.data.User.FIRST_NAME");
-      entityBrowser.setDefaultColumns(3, "com.idega.user.data.User.LAST_NAME");*/
-      
-    
-    
-/////			userTable = new Table(6, ((size>33)?size:33)+1  );
-///				returnTable.add(entityBrowser,1,2);
-//        //entityBrowser.setLocation(loc);
-//      if (userTable != null)
-//        return returnTable;
-// does not go further!!!!!!!!!!!!
-/////////////////////////////////////////////////////////
-
-				userTable = new Table(6, ((size>33)?size:33)+1  );
-				returnTable.add(userTable,1,2);
-
-				
-				
-				userTable.setCellpaddingAndCellspacing(0);
-				userTable.setLineAfterColumn(1);
-				userTable.setLineAfterColumn(2);
-				userTable.setLineAfterColumn(3);
-				userTable.setLineAfterColumn(4);
-				userTable.setLineAfterColumn(5);
-				userTable.setLineColor("#DBDCDF");
-				
-				userTable.setBackgroundImage(1,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
-				userTable.setBackgroundImage(2,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
-				userTable.setBackgroundImage(3,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
-				userTable.setBackgroundImage(4,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
-				userTable.setBackgroundImage(5,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
-				userTable.setBackgroundImage(6,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
-				          
+			// int size = users.size();
+			// define entity browser
+			EntityBrowser entityBrowser = new EntityBrowser();
+			PresentationObject parentObject = this.getParentObject();
+			entityBrowser.setArtificialCompoundId(parentObject.getCompoundId(), iwc);
+			IWPresentationState presentationStateParent = ((StatefullPresentation) parentObject).getPresentationState(iwc);
+			IWPresentationState presentationStateChild = entityBrowser.getPresentationState(iwc);
+			ChangeListener[] chListeners = presentationStateParent.getChangeListener();
+			if (chListeners != null) {
+				for (int i = 0; i < chListeners.length; i++) {
+					presentationStateChild.addChangeListener(chListeners[i]);
+				}
+			}
+			// add BasisUserOverviewPs as ActionListener to the entityBrowser
+			entityBrowser.addActionListener((IWActionListener) presentationStateParent);
+			
+			
+			//		define address converter class
+			EntityToPresentationObjectConverter converterAddress = new EntityToPresentationObjectConverter() {
+				public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+						// entity is a user, try to get the corresponding address
+					User user = (User) entity;
+					Address address = null;
+					try {
+						address = BasicUserOverview.getUserBusiness(iwc).getUsersMainAddress(user);
+					}
+					catch (RemoteException ex) {
+						System.err.println("[BasicUserOverview]: Address could not be retrieved.Message was : " + ex.getMessage());
+							
+						ex.printStackTrace(System.err);
+					}
+					// now the corresponding address was found, now just use the default converter 
+					return (browser.getDefaultConverter().getPresentationObject((GenericEntity) address, path, browser, iwc));
+				}
+			};
+			
+			// define email converter class
+			EntityToPresentationObjectConverter converterEmail = new EntityToPresentationObjectConverter() {
+				public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+						// entity is a user, try to get the corresponding address
+					User user = (User) entity;
+					Email email = null;
+					try {
+						email = BasicUserOverview.getUserBusiness(iwc).getUserMail(user);
+					}
+					catch (RemoteException ex) {
+						System.err.println("[BasicUserOverview]: Email could not be retrieved.Message was :" + ex.getMessage());
+						ex.printStackTrace(System.err);
+					}
+					// now the corresponding email was found, now just use the default converter 
+					return browser.getDefaultConverter().getPresentationObject((GenericEntity) email, path, browser, iwc);
+				}
+			};
+			
+			// define phone converter class
+			EntityToPresentationObjectConverter converterPhone = new EntityToPresentationObjectConverter() {
+				public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+						// entity is a user, try to get the corresponding address
+					User user = (User) entity;
+					Phone[] phone = null;
+					try {
+						phone = BasicUserOverview.getUserBusiness(iwc).getUserPhones(user);
+					}
+					catch (RemoteException ex) {
+						System.err.println("[BasicUserOverview]: Phone could not be retrieved.Message was :" + ex.getMessage());
+						ex.printStackTrace(System.err);
+					}
+					// now the corresponding address was found, now just use the default converter 
+						int i;
+						Table table = new Table();
+						for (i = 0; i < phone.length; i++) {
+							table.add(browser.getDefaultConverter().getPresentationObject((GenericEntity) phone[i], path, browser, iwc));
+						}
+						return table;
+				}
+			};
+			// define special converter class for complete address
+			EntityToPresentationObjectConverter converterCompleteAddress = new EntityToPresentationObjectConverter() {
+				private List values;
+				public PresentationObject getPresentationObject(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+					// entity is a user, try to get the corresponding address
+					User user = (User) genericEntity;
+					Address address = null;
+					try {
+						address = BasicUserOverview.getUserBusiness(iwc).getUsersMainAddress(user);
+					}
+					catch (RemoteException ex) {
+						System.err.println("[BasicUserOverview]: Address could not be retrieved.Message was :" + ex.getMessage());
+						ex.printStackTrace(System.err);
+					}
+					StringBuffer displayValues = new StringBuffer();
+					values = path.getValues((GenericEntity) address);
+					// com.idega.core.data.Address.STREET_NUMBER plus com.idega.core.data.Address.STREET_NUMBER 
+					displayValues.append(getValue(0)).append(' ').append(getValue(1));
+					// com.idega.core.data.Address.P_O_BOX
+					String displayValue = getValue(2);
+					if (displayValue.length() != 0)
+						displayValues.append(", P.O. Box ").append(displayValue).append(", ");						
+						// com.idega.core.data.PostalCode.POSTAL_CODE_ID|POSTAL_CODE plus com.idega.core.data.Address.CITY 
+						displayValue = getValue(3);
+					if (displayValue.length() != 0)
+						displayValues.append(", ").append(getValue(3)).append(' ').append(getValue(4));
+					// com.idega.core.data.Country.IC_COUNTRY_ID|COUNTRY_NAME
+					displayValue = getValue(5);
+					if (displayValue.length() != 0)
+						displayValues.append(", ").append(displayValue);
+					return new Text(displayValues.toString());
+				}
+				private String getValue(int i) {
+					Object object = values.get(i);
+					return ((object == null) ? "" : object.toString());
+				}
+			};
+			// define link converter class
+			EntityToPresentationObjectConverter converterLink = new EntityToPresentationObjectConverter() {
+				private com.idega.core.user.data.User administrator = null;
+				private boolean loggedInUserIsAdmin;
+				public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+					User user = (User) entity;
+					if (administrator == null) {
+						try {
+							administrator = iwc.getAccessController().getAdministratorUser();
+						}
+						catch (Exception ex) {
+							System.err.println("[BasicUserOverview] access controller failed " + ex.getMessage());
+							ex.printStackTrace(System.err);
+							administrator = null;
+						}
+						loggedInUserIsAdmin = iwc.isSuperAdmin();
+					}
+					PresentationObject text = browser.getDefaultConverter().getPresentationObject(entity, path, browser, iwc);
+					Link aLink = new Link(text);
+					boolean delete = false;
+					if (!user.equals(administrator)) {
+						aLink.setWindowToOpen(UserPropertyWindow.class);
+						aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
+						delete = true;
+					}
+					else if (loggedInUserIsAdmin) {
+						aLink.setWindowToOpen(AdministratorPropertyWindow.class);
+						aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
+						delete = true;
+					}
+					return aLink;
+				}
+			};
+			// define checkbox button converter class
+			EntityToPresentationObjectConverter converterToDeleteButton = new EntityToPresentationObjectConverter() {
+				private com.idega.core.user.data.User administrator = null;
+				private boolean loggedInUserIsAdmin;
+				public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+					User user = (User) entity;
+					if (administrator == null) {
+						try {
+							administrator = iwc.getAccessController().getAdministratorUser();
+						}
+						catch (Exception ex) {
+							System.err.println("[BasicUserOverview] access controller failed " + ex.getMessage());
+							ex.printStackTrace(System.err);
+							administrator = null;
+						}
+						loggedInUserIsAdmin = iwc.isSuperAdmin();
+					}
+					if (!user.equals(administrator) || (loggedInUserIsAdmin)) {
+						CheckBox checkBox = new CheckBox(BasicUserOverview.PARAMETER_DELETE_USERS, Integer.toString(user.getID()));
+						return checkBox;
+					}
+					else
+						return new Text("");
+				}
+			};
+			// set default columns
+			String nameKey = "com.idega.user.data.User.FIRST_NAME:" + "com.idega.user.data.User.LAST_NAME:" + "com.idega.user.data.User.MIDDLE_NAME";
+			String completeAddressKey =
+				"com.idega.core.data.Address.STREET_NAME:"
+					+ "com.idega.core.data.Address.STREET_NUMBER:"
+					+ "com.idega.core.data.Address.P_O_BOX:"
+					+ "com.idega.core.data.PostalCode.POSTAL_CODE_ID|POSTAL_CODE:"
+					+ "com.idega.core.data.Address.CITY:"
+					+ "com.idega.core.data.Country.IC_COUNTRY_ID|COUNTRY_NAME";
+			String emailKey = "com.idega.core.data.Email.ADDRESS";
+			String phoneKey = "com.idega.core.data.PhoneType.IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + "com.idega.core.data.Phone.PHONE_NUMBER";
+			String pinKey = "com.idega.user.data.User.PERSONAL_ID";
+			
+			String identifier = (selectedGroup==null)? "" : selectedGroup.getName();
+			identifier += (ps.getSelectedDomain() != null) ? ps.getSelectedDomain().getPrimaryKey().toString() : "";
+			
+			entityBrowser.setEntities(identifier, users);
+			entityBrowser.setDefaultNumberOfRows(Math.min(users.size(), 30));
+			entityBrowser.setLineColor("#DBDCDF");
+			entityBrowser.setWidth(Table.HUNDRED_PERCENT);
+			entityBrowser.setLinesBetween(true);
+			
+			//fonts
+			Text column = new Text();
+			column.setBold();
+			entityBrowser.setColumnTextProxy(column);
+			
+			//		set color of rows
+			entityBrowser.setColorForEvenRows("#FFFFFF");
+			entityBrowser.setColorForOddRows(IWColor.getHexColorString(246, 246, 247));
+			//entityBrowser.setVerticalZebraColored("#FFFFFF",IWColor.getHexColorString(246, 246, 247)); why does this not work!??
+			
+			entityBrowser.setDefaultColumn(1, nameKey);
+			entityBrowser.setDefaultColumn(2, pinKey);
+			entityBrowser.setDefaultColumn(3, emailKey);
+			entityBrowser.setDefaultColumn(4, completeAddressKey);
+			entityBrowser.setDefaultColumn(5, phoneKey);
+			entityBrowser.setMandatoryColumn(1, "Delete");
+			// set special converters
+			entityBrowser.setEntityToPresentationConverter("Delete", converterToDeleteButton);
+			entityBrowser.setEntityToPresentationConverter(nameKey, converterLink);
+			entityBrowser.setEntityToPresentationConverter(completeAddressKey, converterCompleteAddress);
+			// set converter for all columns of this class
+			entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Address", converterAddress);
+			entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Email", converterEmail);
+			entityBrowser.setEntityToPresentationConverter("com.idega.core.data.Phone", converterPhone);
+			// set foreign entities
+			entityBrowser.addEntity("com.idega.core.data.Address");
+			entityBrowser.addEntity("com.idega.core.data.Email");
+			entityBrowser.addEntity("com.idega.core.data.Phone");
+			// change display
+			entityBrowser.setCellspacing(2);
+			// put browser into a form
+			Form form = new Form();
+			// switch off the inherent form of the entity browser
+			entityBrowser.setUseExternalForm(true);
+			form.add(entityBrowser);
+			IWPresentationEvent event = (entityBrowser.getPresentationEvent());
+			form.addEventModel(event, iwc);
+			// add external delete button
+			IWResourceBundle resourceBundle = getResourceBundle(iwc);
+			
+			if(users.size()>0){
+				SubmitButton deleteButton =
+					new SubmitButton(
+						resourceBundle.getLocalizedImageButton("Delete selection", "Delete selection"),
+						BasicUserOverview.DELETE_USERS_KEY,
+						BasicUserOverview.DELETE_USERS_KEY);
+				deleteButton.setSubmitConfirm("Delete selected users?");
+				form.add(deleteButton);
+			}
+			
+			
+			returnTable.add(form, 1, 2);
+			return returnTable;
+			/*
+			userTable = new Table(6, ((size>33)?size:33)+1  );
+			
+			
+			
+			if (userTable != null)
+			    
+			// does not go further!!!!!!!!!!!!
+			/////////////////////////////////////////////////////////
+			
+			  userTable      = new Table(6, ((size>33)?size:33)+1  );
+			  returnTable.add(userTable,1,2);
+			
+			  
+			  
+			  userTable.setCellpaddingAndCellspacing(0);
+			  userTable.setLineAfterColumn(1);
+			  userTable.setLineAfterColumn(2);
+			  userTable.setLineAfterColumn(3);
+			  userTable.setLineAfterColumn(4);
+			  userTable.setLineAfterColumn(5);
+			  userTable.setLineColor("#DBDCDF");
+			  
+			  userTable.setBackgroundImage(1,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
+			  userTable.setBackgroundImage(2,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
+			  userTable.setBackgroundImage(3,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
+			  userTable.setBackgroundImage(4,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
+			  userTable.setBackgroundImage(5,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
+			  userTable.setBackgroundImage(6,1,this.getBundle(iwc).getImage("glass_column_light.gif"));
+			            
 			  userTable.setHeight(1,16);
-		
-		    userTable.setWidth(1,"160");
-		    
-		//	columns start
-		
-		      Text name = new Text("&nbsp;"+iwrb.getLocalizedString("name","Name"));
-		 	  name.setFontFace(Text.FONT_FACE_VERDANA);
-		 	  name.setFontSize(Text.FONT_SIZE_7_HTML_1);
-		 	  userTable.add(name,1,1);
-		
-		
-				Text pin = new Text("&nbsp;"+iwrb.getLocalizedString("personal.id.number","Pin"));
-				pin.setFontFace(Text.FONT_FACE_VERDANA);
-				pin.setFontSize(Text.FONT_SIZE_7_HTML_1);
-				userTable.add(pin,2,1);
-				
-				Text email = new Text("&nbsp;"+iwrb.getLocalizedString("email","Email"));
-				email.setFontFace(Text.FONT_FACE_VERDANA);
-				email.setFontSize(Text.FONT_SIZE_7_HTML_1);
-				userTable.add(email,3,1);
-		  
-				Text address = new Text("&nbsp;"+iwrb.getLocalizedString("address","Address"));
-				address.setFontFace(Text.FONT_FACE_VERDANA);
-				address.setFontSize(Text.FONT_SIZE_7_HTML_1);
-				userTable.add(address,4,1);
-				
-				Text phone = new Text("&nbsp;"+iwrb.getLocalizedString("phone","Phone"));
-				phone.setFontFace(Text.FONT_FACE_VERDANA);
-				phone.setFontSize(Text.FONT_SIZE_7_HTML_1);
-				userTable.add(phone,5,1);
-						
-						
-		 	 /* Text del = new Text("&nbsp;"+iwrb.getLocalizedString("delete.user","Delete user"));
-		 	  del.setFontFace(Text.FONT_FACE_VERDANA);
-		 	  del.setFontSize(Text.FONT_SIZE_7_HTML_1);
-		 	  userTable.add(del,6,1);*/
-		
-		      userTable.setCellspacing(0);
-		      userTable.setHorizontalZebraColored("#FFFFFF",IWColor.getHexColorString(246,246,247));
-		      userTable.setWidth("100%");
-		      for (int i = 1; i <= userTable.getRows() ; i++) {
-		        userTable.setHeight(i,"20");
-		      }
-		
-		
-		      int line = 2;
-		      Iterator iter = users.iterator();
-		      while (iter.hasNext()) {
-		        User tempUser = (User)iter.next();
-		      //for (int i = 0; i < users.size(); i++) {
-		        //User tempUser = (User)users.get(i);
-		        if(tempUser != null){
-		
-		          boolean userIsSuperAdmin = iwc.getAccessController().getAdministratorUser().equals(tempUser);
-		          boolean delete = false;
-		
-		          if(!userIsSuperAdmin){
-		            Link aLink = new Link(new Text(tempUser.getName()));
-		            aLink.setWindowToOpen(UserPropertyWindow.class);
-		            aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
-		            userTable.add("&nbsp;",1,line);
-		            userTable.add(aLink,1,line);
-		            delete = true;
-		          }else if(userIsSuperAdmin && iwc.isSuperAdmin() ){
-		//            Text aText = new Text(tempUser.getName());
-		//            userTable.add(aText,2,i+1);
-		            Link aLink = new Link(new Text(tempUser.getName()));
-		            aLink.setWindowToOpen(AdministratorPropertyWindow.class);
-		            aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
-		            userTable.add("&nbsp;",1,line);
-		            userTable.add(aLink,1,line);
-		            delete = true;
-		          }
-		
-							
-							 //pin
-							 String PIN = tempUser.getPersonalID();
-							 if(PIN!=null) userTable.add("&nbsp;"+pin,2,line);
-		  
-							 //email
-							 Collection emails = tempUser.getEmails();
-							 if( emails!=null && !emails.isEmpty() ){
-								 Iterator iterator = emails.iterator();
-		  	
-								 while (iterator.hasNext()) {
-									 Email e_mail = (Email) iterator.next();
-									 userTable.add("&nbsp;"+e_mail.getEmailAddress() ,3,line);
-								 }
-		  	
-							 }
-		
-							Address userAddress = getUserBusiness(iwc).getUsersMainAddress(tempUser);
-				  
-							if( userAddress!=null ){
-									 userTable.add(userAddress.getName() ,4,line-1);
-							}
-		  
-							 //phone
-							 Collection phones = tempUser.getPhones();
-							 if( phones!=null && !phones.isEmpty() ){
-								 Iterator iterator = phones.iterator();
-		  	
-								 while (iterator.hasNext()) {
-									 Phone _phone = (Phone) iterator.next();
-									 userTable.add("&nbsp;"+_phone.getNumber() ,5,line);
-							 }
-		  	
-							 }
+			
+			  userTable.setWidth(1,"160");
+			  
+			//  columns start
+			
+			    Text name = new Text("&nbsp;"+iwrb.getLocalizedString("name","Name"));
+			  name.setFontFace(Text.FONT_FACE_VERDANA);
+			  name.setFontSize(Text.FONT_SIZE_7_HTML_1);
+			  userTable.add(name,1,1);
+			
+			
+			  Text pin = new Text("&nbsp;"+iwrb.getLocalizedString("personal.id.number","Pin"));
+			  pin.setFontFace(Text.FONT_FACE_VERDANA);
+			  pin.setFontSize(Text.FONT_SIZE_7_HTML_1);
+			  userTable.add(pin,2,1);
+			  
+			  Text email = new Text("&nbsp;"+iwrb.getLocalizedString("email","Email"));
+			  email.setFontFace(Text.FONT_FACE_VERDANA);
+			  email.setFontSize(Text.FONT_SIZE_7_HTML_1);
+			  userTable.add(email,3,1);
+			
+			  Text address = new Text("&nbsp;"+iwrb.getLocalizedString("address","Address"));
+			  address.setFontFace(Text.FONT_FACE_VERDANA);
+			  address.setFontSize(Text.FONT_SIZE_7_HTML_1);
+			  userTable.add(address,4,1);
+			  
+			  Text phone = new Text("&nbsp;"+iwrb.getLocalizedString("phone","Phone"));
+			  phone.setFontFace(Text.FONT_FACE_VERDANA);
+			  phone.setFontSize(Text.FONT_SIZE_7_HTML_1);
+			  userTable.add(phone,5,1);
+			      
+			      
+			 /* Text del = new Text("&nbsp;"+iwrb.getLocalizedString("delete.user","Delete user"));
+			  del.setFontFace(Text.FONT_FACE_VERDANA);
+			  del.setFontSize(Text.FONT_SIZE_7_HTML_1);
+			  userTable.add(del,6,1);*/
+			/*
+			      userTable.setCellspacing(0);
+			      userTable.setHorizontalZebraColored("#FFFFFF",IWColor.getHexColorString(246,246,247));
+			      userTable.setWidth("100%");
+			      for (int i = 1; i <= userTable.getRows() ; i++) {
+			        userTable.setHeight(i,"20");
+			      }
+			
+			
+			      int line = 2;
+			      Iterator iter = users.iterator();
+			      while (iter.hasNext()) {
+			        User tempUser = (User)iter.next();
+			      //for (int i = 0; i < users.size(); i++) {
+			        //User tempUser = (User)users.get(i);
+			        if(tempUser != null){
+			
+			          boolean userIsSuperAdmin = iwc.getAccessController().getAdministratorUser().equals(tempUser);
+			          boolean delete = false;
+			
+			          if(!userIsSuperAdmin){
+			            Link aLink = new Link(new Text(tempUser.getName()));
+			            aLink.setWindowToOpen(UserPropertyWindow.class);
+			            aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
+			            userTable.add("&nbsp;",1,line);
+			            userTable.add(aLink,1,line);
+			            delete = true;
+			          }else if(userIsSuperAdmin && iwc.isSuperAdmin() ){
+			//            Text aText = new Text(tempUser.getName());
+			//            userTable.add(aText,2,i+1);
+			            Link aLink = new Link(new Text(tempUser.getName()));
+			            aLink.setWindowToOpen(AdministratorPropertyWindow.class);
+			            aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getPrimaryKey().toString());
+			            userTable.add("&nbsp;",1,line);
+			            userTable.add(aLink,1,line);
+			            delete = true;
+			          }
+			
 			          
-					
-		
-				  
-		          if(delete && !adminUsers.contains(tempUser) && !userIsSuperAdmin && iwc.getAccessController().isAdmin(iwc)){
-		            Link delLink = new Link(new Text("Delete"));
-		            delLink.setWindowToOpen(ConfirmWindow.class);
-		            delLink.addParameter(BasicUserOverview.PARAMETER_DELETE_USER , tempUser.getPrimaryKey().toString());
-		            delLink.setAsImageButton(true);
-		            userTable.add("&nbsp;",6,line);
-		            userTable.add(delLink,6,line);
-		          }
-		          
-							
-							line++;
-		
-		        }
-		      }
-		      
-		      //display ends
-    }
-
-    return returnTable;
-  }
-
-
-
-
-  public void main(IWContext iwc) throws Exception {
-
-    this.empty();
-    this.add(getUsers(iwc));
-    this.getParentPage().setAllMargins(0);
-
-
-
-
-//    this.getParentPage().setBackgroundColor("#d4d0c8");
-     // this.getParentPage().setBackgroundColor(IWColor.getHexColorString(250,245,240));
-
-//    this.getParentPage().setBackgroundColor(((BasicUserOverviewPS)this.getPresentationState(iwc)).getColor());
-  }
-
-
-
-
-  public static class ConfirmWindow extends Window{
-
-    public Text question;
-    public Form myForm;
-
-    public SubmitButton confirm;
-    public CloseButton close;
-    public Table myTable = null;
-
-    public static final String PARAMETER_CONFIRM = "confirm";
-
-    public Vector parameters;
-
-    public ConfirmWindow(){
-      super("ConfirmWindow",300,130);
-      super.setBackgroundColor("#d4d0c8");
-      super.setScrollbar(false);
-      super.setAllMargins(0);
-
-      question = Text.getBreak();
-      myForm = new Form();
-      parameters = new Vector();
-      confirm = new SubmitButton(ConfirmWindow.PARAMETER_CONFIRM,"   Yes   ");
-      close = new CloseButton("   No    ");
-      // close.setOnFocus();
-      initialze();
-
-    }
-
-
-    public void lineUpElements(){
-      myTable = new Table(2,2);
-      myTable.setWidth("100%");
-      myTable.setHeight("100%");
-      myTable.setCellpadding(5);
-      myTable.setCellspacing(5);
-      //myTable.setBorder(1);
-
-
-      myTable.mergeCells(1,1,2,1);
-
-      myTable.add(question,1,1);
-
-      myTable.add(confirm,1,2);
-
-      myTable.add(close,2,2);
-
-      myTable.setAlignment(1,1,"center");
-//      myTable.setAlignment(2,1,"center");
-      myTable.setAlignment(1,2,"right");
-      myTable.setAlignment(2,2,"left");
-
-      myTable.setVerticalAlignment(1,1,"middle");
-      myTable.setVerticalAlignment(1,2,"middle");
-      myTable.setVerticalAlignment(2,2,"middle");
-
-      myTable.setHeight(2,"30%");
-
-      myForm.add(myTable);
-
-    }
-
-    public void setQuestion(Text Question){
-      question = Question;
-    }
-
-
-    /*abstract*/
-    public void initialze(){
-      this.setQuestion(new Text("Are you sure you want to delete this user?"));
-      this.maintainParameter(BasicUserOverview.PARAMETER_DELETE_USER);
-    }
-
-
-    public void maintainParameter(String parameter){
-      parameters.add(parameter);
-    }
-
-    /*abstract*/
-    public void actionPerformed(IWContext iwc)throws Exception{
-      String userDelId = iwc.getParameter(BasicUserOverview.PARAMETER_DELETE_USER);
-      if(userDelId != null){
-        getUserBusiness(iwc).deleteUser(Integer.parseInt(userDelId));
-      }
-    }
-
-
-    public void _main(IWContext iwc) throws Exception {
-      Iterator iter = parameters.iterator();
-      while (iter.hasNext()) {
-        String item = (String)iter.next();
-        myForm.maintainParameter(item);
-      }
-
-      String confirmThis = iwc.getParameter(ConfirmWindow.PARAMETER_CONFIRM);
-
-      if(confirmThis != null){
-        this.actionPerformed(iwc);
-        this.setParentToReload();
-        this.close();
-      } else{
-        this.empty();
-        if(myTable == null){
-          lineUpElements();
-        }
-        this.add(myForm);
-      }
-      super._main(iwc);
-    }
-
-    public UserBusiness getUserBusiness(IWApplicationContext iwc){
-      UserBusiness business = null;
-      if(business == null){
-        try{
-          business = (UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserBusiness.class);
-        }
-        catch(java.rmi.RemoteException rme){
-          throw new RuntimeException(rme.getMessage());
-        }
-      }
-      return business;
-    }
-
-
-  }
-
-
-  public UserBusiness getUserBusiness(IWApplicationContext iwc){
-    UserBusiness business = null;
-    if(business == null){
-      try{
-        business = (UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserBusiness.class);
-      }
-      catch(java.rmi.RemoteException rme){
-        throw new RuntimeException(rme.getMessage());
-      }
-    }
-    return business;
-  }
-
-
-
-  public IWPresentationState getPresentationState(IWUserContext iwuc){
-    if(_presentationState == null){
-      try {
-        IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-        _presentationState = (BasicUserOverviewPS)stateMachine.getStateFor(getCompoundId(),this.getPresentationStateClass());
-      }
-      catch (RemoteException re) {
-        throw new RuntimeException(re.getMessage());
-      }
-    }
-    return _presentationState;
-  }
-
-  public Class getPresentationStateClass(){
-    return BasicUserOverviewPS.class;
-  }
-
-  public String getBundleIdentifier(){
-  	return "com.idega.user";
-  }
-
-
-
-
-
-
-
+			           //pin
+			           String PIN = tempUser.getPersonalID();
+			           if(PIN!=null) userTable.add("&nbsp;"+pin,2,line);
+			  
+			           //email
+			           Collection emails = tempUser.getEmails();
+			           if( emails!=null && !emails.isEmpty() ){
+			             Iterator iterator = emails.iterator();
+			    
+			             while (iterator.hasNext()) {
+			               Email e_mail = (Email) iterator.next();
+			               userTable.add("&nbsp;"+e_mail.getEmailAddress() ,3,line);
+			             }
+			    
+			           }
+			
+			          Address userAddress = getUserBusiness(iwc).getUsersMainAddress(tempUser);
+			      
+			          if( userAddress!=null ){
+			               userTable.add(userAddress.getName() ,4,line-1);
+			          }
+			  
+			           //phone
+			           Collection phones = tempUser.getPhones();
+			           if( phones!=null && !phones.isEmpty() ){
+			             Iterator iterator = phones.iterator();
+			    
+			             while (iterator.hasNext()) {
+			               Phone _phone = (Phone) iterator.next();
+			               userTable.add("&nbsp;"+_phone.getNumber() ,5,line);
+			           }
+			    
+			           }
+			            
+			      
+			
+			      
+			          if(delete && !adminUsers.contains(tempUser) && !userIsSuperAdmin && iwc.getAccessController().isAdmin(iwc)){
+			            Link delLink = new Link(new Text("Delete"));
+			            delLink.setWindowToOpen(ConfirmWindow.class);
+			            delLink.addParameter(BasicUserOverview.PARAMETER_DELETE_USER , tempUser.getPrimaryKey().toString());
+			            delLink.setAsImageButton(true);
+			            userTable.add("&nbsp;",6,line);
+			            userTable.add(delLink,6,line);
+			          }
+			          
+			          
+			          line++;
+			
+			        }
+			      }
+			      
+			      //display ends
+			       * */
+		}
+		return returnTable;
+	}
+	public void main(IWContext iwc) throws Exception {
+		this.empty();
+		this.add(getUsers(iwc));
+		this.getParentPage().setAllMargins(0);
+		//    this.getParentPage().setBackgroundColor("#d4d0c8");
+		// this.getParentPage().setBackgroundColor(IWColor.getHexColorString(250,245,240));
+		//    this.getParentPage().setBackgroundColor(((BasicUserOverviewPS)this.getPresentationState(iwc)).getColor());
+	}
+	public static class ConfirmWindow extends Window {
+		public Text question;
+		public Form myForm;
+		public SubmitButton confirm;
+		public CloseButton close;
+		public Table myTable = null;
+		public static final String PARAMETER_CONFIRM = "confirm";
+		public Vector parameters;
+		public ConfirmWindow() {
+			super("ConfirmWindow", 300, 130);
+			super.setBackgroundColor("#d4d0c8");
+			super.setScrollbar(false);
+			super.setAllMargins(0);
+			question = Text.getBreak();
+			myForm = new Form();
+			parameters = new Vector();
+			confirm = new SubmitButton(ConfirmWindow.PARAMETER_CONFIRM, "   Yes   ");
+			close = new CloseButton("   No    ");
+			// close.setOnFocus();
+			initialze();
+		}
+		public void lineUpElements() {
+			myTable = new Table(2, 2);
+			myTable.setWidth("100%");
+			myTable.setHeight("100%");
+			myTable.setCellpadding(5);
+			myTable.setCellspacing(5);
+			//myTable.setBorder(1);
+			myTable.mergeCells(1, 1, 2, 1);
+			myTable.add(question, 1, 1);
+			myTable.add(confirm, 1, 2);
+			myTable.add(close, 2, 2);
+			myTable.setAlignment(1, 1, "center");
+			//      myTable.setAlignment(2,1,"center");
+			myTable.setAlignment(1, 2, "right");
+			myTable.setAlignment(2, 2, "left");
+			myTable.setVerticalAlignment(1, 1, "middle");
+			myTable.setVerticalAlignment(1, 2, "middle");
+			myTable.setVerticalAlignment(2, 2, "middle");
+			myTable.setHeight(2, "30%");
+			myForm.add(myTable);
+		}
+		public void setQuestion(Text Question) {
+			question = Question;
+		}
+		/*abstract*/
+		public void initialze() {
+			this.setQuestion(new Text("Are you sure you want to delete this user?"));
+			this.maintainParameter(BasicUserOverview.PARAMETER_DELETE_USER);
+		}
+		public void maintainParameter(String parameter) {
+			parameters.add(parameter);
+		}
+		/*abstract*/
+		public void actionPerformed(IWContext iwc) throws Exception {
+			String userDelId = iwc.getParameter(BasicUserOverview.PARAMETER_DELETE_USER);
+			if (userDelId != null) {
+				User currentUser = iwc.getCurrentUser();
+				//getUserBusiness(iwc).deleteUser(Integer.parseInt(userDelId), currentUser);
+			}
+		}
+		public void _main(IWContext iwc) throws Exception {
+			Iterator iter = parameters.iterator();
+			while (iter.hasNext()) {
+				String item = (String) iter.next();
+				myForm.maintainParameter(item);
+			}
+			String confirmThis = iwc.getParameter(ConfirmWindow.PARAMETER_CONFIRM);
+			if (confirmThis != null) {
+				this.actionPerformed(iwc);
+				this.setParentToReload();
+				this.close();
+			}
+			else {
+				this.empty();
+				if (myTable == null) {
+					lineUpElements();
+				}
+				this.add(myForm);
+			}
+			super._main(iwc);
+		}
+		public UserBusiness getUserBusiness(IWApplicationContext iwc) {
+			UserBusiness business = null;
+			if (business == null) {
+				try {
+					business = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				}
+				catch (java.rmi.RemoteException rme) {
+					throw new RuntimeException(rme.getMessage());
+				}
+			}
+			return business;
+		}
+	}
+	public static UserBusiness getUserBusiness(IWApplicationContext iwc) {
+		UserBusiness business = null;
+		if (business == null) {
+			try {
+				business = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+			}
+			catch (java.rmi.RemoteException rme) {
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return business;
+	}
+	public static List deleteUsers(Collection userIds, IWContext iwc) {
+		UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
+		ArrayList notDeletedUsers = new ArrayList();
+		Iterator iterator = userIds.iterator();
+		while (iterator.hasNext()) {
+			String userId;
+			if ((userId = (String) iterator.next()) != null) {
+				try {
+					User currentUser = iwc.getCurrentUser();
+					userBusiness.deleteUser(Integer.parseInt(userId)); //, currentUser);
+				}
+				catch (RemoveException e) {
+					System.err.println("[BasicUserOverview] user with id " + userId + " could not be removed" + e.getMessage());
+					e.printStackTrace(System.err);
+					notDeletedUsers.add(userId);
+				}
+				catch (RemoteException e) {
+					System.err.println("[BasicUserOverview] user with id " + userId + " could not be removed" + e.getMessage());
+					e.printStackTrace(System.err);
+					notDeletedUsers.add(userId);
+				}
+			}
+		}
+		return notDeletedUsers;
+	}
+	public IWPresentationState getPresentationState(IWUserContext iwuc) {
+		if (_presentationState == null) {
+			try {
+				IWStateMachine stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwuc, IWStateMachine.class);
+				_presentationState = (BasicUserOverviewPS) stateMachine.getStateFor(getCompoundId(), this.getPresentationStateClass());
+			}
+			catch (RemoteException re) {
+				throw new RuntimeException(re.getMessage());
+			}
+		}
+		return _presentationState;
+	}
+	public Class getPresentationStateClass() {
+		return BasicUserOverviewPS.class;
+	}
+	public String getBundleIdentifier() {
+		return "com.idega.user";
+	}
 } //Class end
