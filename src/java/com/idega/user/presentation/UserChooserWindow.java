@@ -174,20 +174,16 @@ public class UserChooserWindow extends AbstractChooserWindow {
 				++counter;
 				++row;
 				table.setHeight(row, rowHeight);
-				try {
-					user = getUserHome().findByPrimaryKey(iter.next());
-					pId = user.getPersonalID();
-					if (pId == null) {
-						pId = "-";	
-					}
-					link = getLink(getText(user.getName()), iwc);
-					link.addParameter(PARAMETER_USER_ID, user.getPrimaryKey().toString());
-					table.add(link, 1, row);
-					table.add(getText(pId), 2, row);
-				}catch(FinderException f) {
-					f.printStackTrace(System.err);	
-					table.add(getText(localize("not_fount","Not found")), 1, row);
+
+				user = (User) iter.next();
+				pId = user.getPersonalID();
+				if (pId == null) {
+					pId = "-";	
 				}
+				link = getLink(getText(user.getName()), iwc);
+				link.addParameter(PARAMETER_USER_ID, user.getPrimaryKey().toString());
+				table.add(link, 1, row);
+				table.add(getText(pId), 2, row);
 			}
 		}
 		
