@@ -9,7 +9,6 @@ import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
-import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
@@ -21,8 +20,6 @@ import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
-import com.idega.user.data.GroupDomainRelationType;
-import com.idega.user.data.GroupDomainRelationTypeHome;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.User;
 import com.idega.user.event.CreateGroupEvent;
