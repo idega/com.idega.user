@@ -81,7 +81,7 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
     iwb = getBundle(iwc);
 
     IWLocation location = (IWLocation)this.getLocation().clone();
-    location.setSubID(1);
+    location.setSubID(1);//bara eitthva? id...herma eftir instance id
     _buo.setLocation(location,iwc);
 
 

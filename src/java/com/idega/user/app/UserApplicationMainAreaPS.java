@@ -50,12 +50,14 @@ public class UserApplicationMainAreaPS extends IWPresentationStateImpl implement
       this.reset();
       this.fireStateChanged();
     }
-    else if(e instanceof SimpleSearchEvent){
+    
+    if(e instanceof SimpleSearchEvent){
       System.out.println("[UserAppMainArea]: search for "+((SimpleSearchEvent)e).getSearchString());
       System.out.println("[UserAppMainArea]: searchType =  "+((SimpleSearchEvent)e).getSearchType());
       this.fireStateChanged();
     }
-    else if(e instanceof ChangeClassEvent){
+    
+    if(e instanceof ChangeClassEvent){
       _class = ((ChangeClassEvent)e).getChangeClassName();
       System.out.println(this+"Class to change to is "+((ChangeClassEvent)e).getChangeClassName() );
       this.fireStateChanged();
