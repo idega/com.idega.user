@@ -29,7 +29,7 @@ import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
-import com.idega.user.data.GroupBMPBean;
+//import com.idega.user.data.GroupBMPBean;
 import com.idega.user.data.User;
 
 import com.idega.util.IWColor;
@@ -107,13 +107,16 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
   }
 
   private String parseRequest(IWContext iwc) {
-    String actionListenerStateId = "";
+    /*String actionListenerStateId = "";
     if (iwc.isParameterSet(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY)) {
       actionListenerStateId = iwc.getParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY);
     }
     else {
       return SHOW_ERROR_MESSAGE_ACTION;
-    }
+    }*/
+		if (!iwc.isParameterSet(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY)) {
+			return SHOW_ERROR_MESSAGE_ACTION;
+		}
     // try to get the group 
     if (iwc.isParameterSet(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY))  {
       String selectedGroupProviderStateId = iwc.getParameter(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
@@ -208,7 +211,7 @@ public class MassMovingWindow extends IWAdminWindow implements ToolbarElement {
     // define checkbox button converter class
     EntityToPresentationObjectConverter checkBoxConverter = new CheckBoxConverter(SELECTED_CHECKED_GROUPS_KEY); 
     // set default columns
-    String columnName = GroupBMPBean.getNameColumnName();
+    //String columnName = GroupBMPBean.getNameColumnName();
     String nameKey = "com.idega.user.data.Group.NAME"; //+ GroupBMPBean.getNameColumnName();
     EntityBrowser browser = new EntityBrowser();
     // keep things simple
