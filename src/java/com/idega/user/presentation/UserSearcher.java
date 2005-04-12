@@ -228,7 +228,11 @@ public class UserSearcher extends Block implements IWPageEventListener {
 			processSearch(iwc);
 		}
 		if(iwc.isParameterSet(NEW_USER)) {
-			userID = processSave(iwc);//calles the extended methode
+			String first = iwc.getParameter(SEARCH_FIRST_NAME + uniqueIdentifier);
+			String middle = iwc.getParameter(SEARCH_MIDDLE_NAME + uniqueIdentifier);
+			String last = iwc.getParameter(SEARCH_LAST_NAME + uniqueIdentifier);
+			String pid = iwc.getParameter(SEARCH_PERSONAL_ID + uniqueIdentifier);
+			userID = processSave(iwc, first, middle, last, pid);//calles the extended methode
 		}
 		if (userID != null && userID.intValue()>0) {
 			try {
@@ -255,16 +259,10 @@ public class UserSearcher extends Block implements IWPageEventListener {
 	}
 	
 	//added by ac  
-	protected Integer processSave(IWContext iwc) {
-		
+	protected Integer processSave(IWContext iwc, String firstName, String middleName, String lastName, String personalID) {
 		UserBusiness business = getUserBusiness(iwc);
-		String newUserFirstName = iwc.getParameter(NEW_USER_FIRST_NAME);
-		String newUserMiddleName = iwc.getParameter(NEW_USER_MIDDLE_NAME);
-		String newUserLastName = iwc.getParameter(NEW_USER_LAST_NAME);
-		String newUserPersonalID = iwc.getParameter(NEW_USER_PERSONAL_ID);
-		
 		try {
-			User user = business.createUser(newUserFirstName, newUserMiddleName, newUserLastName, newUserPersonalID);
+			User user = business.createUser(firstName, middleName, lastName, personalID);
 			return (Integer) user.getPrimaryKey();
 		}
 		catch(RemoteException re) {
