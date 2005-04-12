@@ -232,7 +232,14 @@ public class UserSearcher extends Block implements IWPageEventListener {
 			String middle = iwc.getParameter(SEARCH_MIDDLE_NAME + uniqueIdentifier);
 			String last = iwc.getParameter(SEARCH_LAST_NAME + uniqueIdentifier);
 			String pid = iwc.getParameter(SEARCH_PERSONAL_ID + uniqueIdentifier);
-			userID = processSave(iwc, first, middle, last, pid);//calles the extended method
+			try {
+				User user = getUserBusiness(iwc).getUser(pid);
+				userID = (Integer) user.getPrimaryKey();
+			}
+			catch(FinderException fe) {
+				userID = processSave(iwc, first, middle, last, pid);//calles the extended method
+			}
+			
 		}
 		if (userID != null && userID.intValue()>0) {
 			try {
