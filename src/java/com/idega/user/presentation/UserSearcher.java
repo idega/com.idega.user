@@ -180,7 +180,7 @@ public class UserSearcher extends Block implements IWPageEventListener {
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
 		String message = null;
-		try {
+		/*try {
 			process(iwc);
 		}
 		catch (RemoteException e) {
@@ -190,7 +190,7 @@ public class UserSearcher extends Block implements IWPageEventListener {
 		catch (FinderException e) {
 			//e.printStackTrace();
 			message = iwrb.getLocalizedString("usrch.no_user_found", "No user found");
-		}
+		}*/
 		Table T = new Table();		
 		T.add(presentateCurrentUserSearch(iwc), 1, 2);
 		if (!skipResultsForOneFound || hasManyUsers) {
@@ -232,7 +232,7 @@ public class UserSearcher extends Block implements IWPageEventListener {
 			String middle = iwc.getParameter(SEARCH_MIDDLE_NAME + uniqueIdentifier);
 			String last = iwc.getParameter(SEARCH_LAST_NAME + uniqueIdentifier);
 			String pid = iwc.getParameter(SEARCH_PERSONAL_ID + uniqueIdentifier);
-			userID = processSave(iwc, first, middle, last, pid);//calles the extended methode
+			userID = processSave(iwc, first, middle, last, pid);//calles the extended method
 		}
 		if (userID != null && userID.intValue()>0) {
 			try {
@@ -265,10 +265,10 @@ public class UserSearcher extends Block implements IWPageEventListener {
 			User user = business.createUser(firstName, middleName, lastName, personalID);
 			return (Integer) user.getPrimaryKey();
 		}
-		catch(RemoteException re) {
+		catch (RemoteException re) {
 			throw new IBORuntimeException(re);
 		}
-		catch(CreateException ce) {
+		catch (CreateException ce) {
 			System.out.print("This user could not be created!" + ce.getMessage() );
 			return null;
 		}
@@ -553,6 +553,7 @@ private Table presentateFoundUsers(IWContext iwc) {
 			}
 			
 			userLink.addParameter(getUniqueUserParameter((Integer) u.getPrimaryKey()));
+			userLink.setEventListener(UserSearcher.class);
 			addParameters(userLink);
 			T.add(userLink, colAdd + 1, row);
 			row++;
