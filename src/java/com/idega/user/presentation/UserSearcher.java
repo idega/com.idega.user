@@ -11,15 +11,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
+import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.event.IWPageEventListener;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWResourceBundle;
@@ -35,6 +35,7 @@ import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserSession;
 import com.idega.user.data.User;
 import com.idega.user.data.UserHome;
@@ -53,11 +54,16 @@ public class UserSearcher extends Block implements IWPageEventListener {
 	private static final String SEARCH_FIRST_NAME = "usrch_search_fname";
 	public static final String SEARCH_COMMITTED = "mbe_act_search";
 	public static final String SEARCH_CLEARED = "mbe_act_clear";
+	public static final String NEW_USER = "usrch_new_user";
 	public final static String STYLENAME_TEXT = "Text";
 	public final static String STYLENAME_HEADER = "Header";
 	public final static String STYLENAME_BUTTON = "Button";
 	public final static String STYLENAME_WARNING = "Warning";
 	public final static String STYLENAME_INTERFACE = "Interface";
+	protected static final String NEW_USER_FIRST_NAME = "newusr_first_name";
+	protected static final String NEW_USER_MIDDLE_NAME = "newusr_middle_name";
+	protected static final String NEW_USER_LAST_NAME = "newusr_last_name";
+	protected static final String NEW_USER_PERSONAL_ID = "newusr_personal_id";
 	private String textFontStyleName = null;
 	private String headerFontStyleName = null;
 	private String buttonStyleName = null;
@@ -125,6 +131,8 @@ public class UserSearcher extends Block implements IWPageEventListener {
 	private boolean showMultipleResetButton = false;
 	/** Flag for hiding buttons */
 	private boolean showButtons = true;
+	
+	private boolean showNewUserButton = true;
 	
 	/** Flag for forgiving ssn search */
 	private boolean useFlexiblePersonalID = true;
@@ -219,11 +227,14 @@ public class UserSearcher extends Block implements IWPageEventListener {
 		if (iwc.isParameterSet(SEARCH_COMMITTED + searchIdentifier)) {
 			processSearch(iwc);
 		}
-		
+		if(iwc.isParameterSet(NEW_USER)) {
+			userID = processSave(iwc);//calles the extended methode
+		}
 		if (userID != null && userID.intValue()>0) {
 			try {
 				UserHome home = (UserHome) IDOLookup.getHome(User.class);
 				user = home.findByPrimaryKey(userID);
+				
 				getUserSession(iwc).setUser(user);
 			}
 			catch (IDOLookupException e) {
@@ -232,6 +243,38 @@ public class UserSearcher extends Block implements IWPageEventListener {
 		}
 		digMonitors(iwc);
 		processed = true;
+	}
+	//added by ac
+	protected UserBusiness getUserBusiness(IWApplicationContext iwac) {
+		try {
+			return (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+		}
+		catch (IBOLookupException ible) {
+			throw new IBORuntimeException(ible);
+		}
+	}
+	
+	//added by ac  
+	protected Integer processSave(IWContext iwc) {
+		
+		UserBusiness business = getUserBusiness(iwc);
+		String newUserFirstName = iwc.getParameter(NEW_USER_FIRST_NAME);
+		String newUserMiddleName = iwc.getParameter(NEW_USER_MIDDLE_NAME);
+		String newUserLastName = iwc.getParameter(NEW_USER_LAST_NAME);
+		String newUserPersonalID = iwc.getParameter(NEW_USER_PERSONAL_ID);
+		
+		try {
+			User user = business.createUser(newUserFirstName, newUserMiddleName, newUserLastName, newUserPersonalID);
+			return (Integer) user.getPrimaryKey();
+		}
+		catch(RemoteException re) {
+			throw new IBORuntimeException(re);
+		}
+		catch(CreateException ce) {
+			System.out.print("This user could not be created!" + ce.getMessage() );
+			return null;
+		}
+		
 	}
 	
 	private void digMonitors(IWContext iwc){
@@ -430,6 +473,14 @@ public class UserSearcher extends Block implements IWPageEventListener {
 						searchTable.add(element, 1, row + 1);
 				}
 			}
+			
+			//new button added - ac -
+			if (showNewUserButton) {
+				SubmitButton newUserButton = new SubmitButton(NEW_USER, iwrb.getLocalizedString("new","New"));
+				newUserButton.setStyleClass(buttonStyleName);
+				searchTable.add(newUserButton, col++, row + 1);
+			}
+			
 			if (showResetButton) {
 				String clearAction = "";
 				for (Iterator iter = clearFields.iterator(); iter.hasNext();) {
