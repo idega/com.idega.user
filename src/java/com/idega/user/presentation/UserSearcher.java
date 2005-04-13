@@ -28,6 +28,7 @@ import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Break;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
@@ -242,7 +243,13 @@ public class UserSearcher extends Block implements IWPageEventListener {
 				userID = (Integer) user.getPrimaryKey();
 			}
 			catch(FinderException fe) {
-				userID = processSave(iwc, first, middle, last, pid);//calles the extended method
+				try {
+					userID = processSave(iwc, first, middle, last, pid);//calles the extended method
+				}
+				catch (CreateException ce) {
+					add(ce.getMessage());
+					add(new Break(2));
+				}
 			}
 			
 		}
@@ -271,7 +278,7 @@ public class UserSearcher extends Block implements IWPageEventListener {
 	}
 	
 	//added by ac  
-	protected Integer processSave(IWContext iwc, String firstName, String middleName, String lastName, String personalID) {
+	protected Integer processSave(IWContext iwc, String firstName, String middleName, String lastName, String personalID) throws CreateException {
 		UserBusiness business = getUserBusiness(iwc);
 		try {
 			User user = business.createUser(firstName, middleName, lastName, personalID);
@@ -280,11 +287,6 @@ public class UserSearcher extends Block implements IWPageEventListener {
 		catch (RemoteException re) {
 			throw new IBORuntimeException(re);
 		}
-		catch (CreateException ce) {
-			System.out.print("This user could not be created!" + ce.getMessage() );
-			return null;
-		}
-		
 	}
 	
 	private void digMonitors(IWContext iwc){
