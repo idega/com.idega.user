@@ -180,8 +180,8 @@ public class UserSearcher extends Block implements IWPageEventListener {
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
 		String message = null;
-		/*try {
-			process(iwc);
+		try {
+			process(iwc, false);
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
@@ -190,7 +190,7 @@ public class UserSearcher extends Block implements IWPageEventListener {
 		catch (FinderException e) {
 			//e.printStackTrace();
 			message = iwrb.getLocalizedString("usrch.no_user_found", "No user found");
-		}*/
+		}
 		Table T = new Table();		
 		T.add(presentateCurrentUserSearch(iwc), 1, 2);
 		if (!skipResultsForOneFound || hasManyUsers) {
@@ -211,12 +211,17 @@ public class UserSearcher extends Block implements IWPageEventListener {
 			add(T);
 		}
 	}
+	
+	public void process(IWContext iwc) throws FinderException, RemoteException {
+		process(iwc, false);
+	}
+	
 	/**
 	 * Main processing method, searches if search has ben committed, or looks up the user chosen
 	 * is called by main(),
 	 * @param iwc
 	 */
-	public void process(IWContext iwc) throws FinderException, RemoteException {
+	public void process(IWContext iwc, boolean save) throws FinderException, RemoteException {
 		if (processed)
 			return;
 		String searchIdentifier = constrainToUniqueSearch ? uniqueIdentifier : "";
@@ -227,7 +232,7 @@ public class UserSearcher extends Block implements IWPageEventListener {
 		if (iwc.isParameterSet(SEARCH_COMMITTED + searchIdentifier)) {
 			processSearch(iwc);
 		}
-		if(iwc.isParameterSet(NEW_USER)) {
+		if(iwc.isParameterSet(NEW_USER) && save) {
 			String first = iwc.getParameter(SEARCH_FIRST_NAME + uniqueIdentifier);
 			String middle = iwc.getParameter(SEARCH_MIDDLE_NAME + uniqueIdentifier);
 			String last = iwc.getParameter(SEARCH_LAST_NAME + uniqueIdentifier);
@@ -1085,7 +1090,7 @@ public boolean isUseFlexiblePersonalID(){
 
 	public boolean actionPerformed(IWContext iwc) throws IWException {
 		try {
-			process(iwc);
+			process(iwc, true);
 			return true;
 		}
 		catch (IDOLookupException e) {
