@@ -122,7 +122,7 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
       // reset browser
       EntityBrowser.releaseBrowser(iwc);
     }
-    searchString = iwc.isParameterSet(SEARCH_KEY) ? iwc.getParameter(SEARCH_KEY) : "";
+    searchString = iwc.isParameterSet(SEARCH_KEY) ? iwc.getParameter(SEARCH_KEY).trim() : "";
     if (searchString.length() == 0) {
       return DO_NOT_SHOW_LIST_ACTION;
     }
