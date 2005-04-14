@@ -36,7 +36,7 @@ public class UserApplicationBottomArea extends Page implements IWBrowserView {
 		table.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 		table.setCellpaddingRight(1, 1, 16);
 		
-		Text text = new Text(iwrb.getLocalizedString("bottom_message", "© 2000-2003 | idega software |ÊEngjavegi 6 | 104 Reykjavik | Iceland |ÊTel. +354 554 7557 |ÊFax +354 554 7749 |Êidega@idega.is"));
+		Text text = new Text(iwrb.getLocalizedString("bottom_message", "© 2000-2003 | idega software | Engjavegi 6 | 104 Reykjavik | Iceland | Tel. +354 554 7557 | Fax +354 554 7749 | idega@idega.is"));
 		text.setStyleClass("bottomStyleText");
 		table.add(text, 1, 1);
 		
