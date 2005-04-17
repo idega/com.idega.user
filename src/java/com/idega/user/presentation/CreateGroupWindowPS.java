@@ -238,30 +238,12 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 	}
 
 	/**
-	 * TODO move to groupbusiness
 	 * Call after create or update plugin methods
 	 * @param group
 	 * @param eventContext2
 	 */
 	protected void callAfterCreatePluginMethods(Group group, IWContext iwc) {
-		GroupBusiness groupBiz = getGroupBusiness(iwc);
-		try {
-			Collection plugins = groupBiz.getUserGroupPluginsForGroup(group);
-			Iterator iter = plugins.iterator();
-			while(iter.hasNext()){
-				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness)iter.next();
-				try {
-					pluginBiz.afterGroupCreateOrUpdate(group);
-				}
-				catch (CreateException e1) {
-					// TODO this should cancel the transaction...if there was one
-					e1.printStackTrace();
-				}
-			}
-		}
-		catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		getGroupBusiness(iwc).callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(group);
 	}
 	
 	/**

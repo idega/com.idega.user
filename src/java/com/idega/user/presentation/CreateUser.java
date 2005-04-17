@@ -1,12 +1,8 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
-import java.util.Iterator;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
@@ -28,7 +24,6 @@ import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 /**
@@ -440,33 +435,12 @@ public class CreateUser extends StyledIWAdminWindow {
 	}
 	
 	/**
-	 * TODO move to user business
 	 * Call some plugin methods
 	 * @param user
 	 * @param eventContext2
 	 */
 	protected void callAfterCreatePluginMethods(User user, IWContext iwc) {
-		GroupBusiness groupBiz = getGroupBusiness(iwc);
-		try {
-			Collection plugins = groupBiz.getUserGroupPlugins();
-			Iterator iter = plugins.iterator();
-			while(iter.hasNext()){
-				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness)iter.next();
-				try {
-					pluginBiz.afterUserCreateOrUpdate(user);
-				}
-				catch (CreateException e1) {
-					// TODO this should cancel the transaction...if there was one
-					e1.printStackTrace();
-				}
-			}
-		}
-		catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		
-		
-		
+		getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user);
 	}
 
 	public String getBundleIdentifier() {

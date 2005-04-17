@@ -12,16 +12,15 @@ import com.idega.presentation.TabbedPropertyWindow;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.User;
+import com.idega.user.util.UserGroupPluginFormCollector;
 import com.idega.util.IWColor;
 
 /**
- * Title:        User
- * Copyright:    Copyright (c) 2001
- * Company:      idega.is
- * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson</a>
- * @version 1.0
+ * Title: User Copyright: Copyright (c) 2001 Company: idega.is
+ * 
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gudmundur Saemundsson</a>,<a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
+ * @version 1.5
  */
-
 public class UserPropertyWindow extends TabbedPropertyWindow {
 
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
@@ -31,28 +30,29 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 	private int userId = -1;
 
 	public UserPropertyWindow() {
-		super(500, 600); //changed from super(410,550); - birna
+		super(500, 600); // changed from super(410,550); - birna
 		super.setResizable(true);
 		super.setScrollbar(true);
 		this.setBackgroundColor(new IWColor(207, 208, 210));
-		
 	}
-	
+
 	public void main(IWContext iwc) throws Exception {
-	    IWResourceBundle iwrb = getResourceBundle(iwc);
-	    String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
-	    if(userIdString != null) {
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+		String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
+		if (userIdString != null) {
 			int userId = Integer.parseInt(userIdString);
-		    User user = getUserBusiness(iwc).getUser(userId);
-		    addTitle(user.getName(), TITLE_STYLECLASS);
+			User user = getUserBusiness(iwc).getUser(userId);
+			addTitle(user.getName(), TITLE_STYLECLASS);
 		}
 		setTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"));
 	}
 
-//	public UserBusiness getUserBusiness(IWApplicationContext iwac) throws RemoteException {
-//		return (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, UserBusiness.class);
-//	}
-
+	// public UserBusiness getUserBusiness(IWApplicationContext iwac) throws
+	// RemoteException {
+	// return (UserBusiness)
+	// com.idega.business.IBOLookup.getServiceInstance(iwac,
+	// UserBusiness.class);
+	// }
 	/**
 	 * @see com.idega.presentation.TabbedPropertyWindow#disposeOfPanel(com.idega.presentation.IWContext)
 	 */
@@ -68,73 +68,68 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
 	}
 
-    public String getSessionAddressString() {
+	public String getSessionAddressString() {
 		return SESSION_ADDRESS;
 	}
 
 	public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
-		int count = 0;
-		//IWResourceBundle iwrb = getResourceBundle(iwc);
-		String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
-		int userId = Integer.parseInt(userIdString);
-		String groupIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
-		int groupId = -1;
-		if (groupIdString != null){
-			groupId = Integer.parseInt(groupIdString);
-		}
-		
-//add the standard tabs and then from plugins
-		UserTab userInfo = new GeneralUserInfoTab();
-		userInfo.setPanel(panel);
-		userInfo.setUserID(userId);
-		userInfo.setGroupID(groupId);
-		
-		UserTab addressInfo = new AddressInfoTab();
-		addressInfo.setPanel(panel);
-		addressInfo.setUserID(userId);
-		addressInfo.setGroupID(groupId);
-		
-		UserTab phone = new UserPhoneTab();
-		phone.setPanel(panel);
-		phone.setUserID(userId);
-		phone.setGroupID(groupId);
-		
-		UserTab group = new UserGroupList();
-		group.setPanel(panel);
-		group.setUserID(userId);
-		group.setGroupID(groupId);
-		
-		panel.addTab(userInfo, count, iwc);
-		panel.addTab(addressInfo, ++count, iwc);
-		panel.addTab(phone, ++count, iwc);
-		panel.addTab(group, ++count, iwc);
-		
-
-		
-		
-		//get the user
 		try {
+			int count = 0;
+			// IWResourceBundle iwrb = getResourceBundle(iwc);
+			String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
+			int userId = Integer.parseInt(userIdString);
+			String groupIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
+			int groupId = -1;
+			if (groupIdString != null) {
+				groupId = Integer.parseInt(groupIdString);
+			}
+			// Collects the tab info and calls usergroupplugin methods
 			User user = getUserBusiness(iwc).getUser(userId);
-			//METADATA TAB, only show if admin
-			if(iwc.isSuperAdmin()){
+			panel.setCollector(new UserGroupPluginFormCollector(user));
+			//we could also add the group if we want that to be notified of changes panel.setGroup(group);
+			
+			// add the standard tabs and then from plugins
+			UserTab userInfo = new GeneralUserInfoTab();
+			userInfo.setPanel(panel);
+			userInfo.setUserID(userId);
+			userInfo.setGroupID(groupId);
+			
+			UserTab addressInfo = new AddressInfoTab();
+			addressInfo.setPanel(panel);
+			addressInfo.setUserID(userId);
+			addressInfo.setGroupID(groupId);
+			
+			UserTab phone = new UserPhoneTab();
+			phone.setPanel(panel);
+			phone.setUserID(userId);
+			phone.setGroupID(groupId);
+			
+			UserTab group = new UserGroupList();
+			group.setPanel(panel);
+			group.setUserID(userId);
+			group.setGroupID(groupId);
+			panel.addTab(userInfo, count, iwc);
+			panel.addTab(addressInfo, ++count, iwc);
+			panel.addTab(phone, ++count, iwc);
+			panel.addTab(group, ++count, iwc);
+			
+			// METADATA TAB, only show if admin
+			if (iwc.isSuperAdmin()) {
 				GenericMetaDataTab metaDataTab = new GenericMetaDataTab(user);
 				metaDataTab.setPanel(panel);
-				panel.addTab(metaDataTab,++count,iwc);
+				panel.addTab(metaDataTab, ++count, iwc);
 			}
 			
-			
-			//get plugins
+			// get plugins for extra tabs
 			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
 			Iterator iter = plugins.iterator();
-			
 			while (iter.hasNext()) {
 				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) iter.next();
-				
 				List tabs = pluginBiz.getUserPropertiesTabs(user);
 				if (tabs != null) {
 					Iterator tab = tabs.iterator();
 					while (tab.hasNext()) {
-						UserTab el = (UserTab) tab.next();						
+						UserTab el = (UserTab) tab.next();
 						el.setPanel(panel);
 						el.setUserID(userId);
 						el.setGroupID(groupId);
@@ -143,74 +138,66 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 				}
 			}
 			
-			//don't forget the login tab
+			// don't forget the login tab
 			UserLoginTab ult = new UserLoginTab();
 			ult.setPanel(panel);
 			ult.setUserID(userId);
 			ult.setGroupID(groupId);
 			panel.addTab(ult, ++count, iwc);
-			
 		}
 		catch (RemoteException remoteEx) {
 			logError("[UserPropertyWindow] Could not look up services bean");
 			throw new RuntimeException("[UserPropertyWindow] Could not look up services beans", remoteEx);
 		}
-
-
 	}
-
 
 	/**
 	 * overrides the default behaviour to check for edit permissions
 	 */
 	protected TabbedPropertyPanel getPanelInstance(IWContext iwc) {
-        boolean useOkButton = false;
-        boolean useApplyButton = false;
-        boolean useCancelButton = true;
-        boolean isAdmin = iwc.isSuperAdmin();
-        
-        TabbedPropertyPanel panelInSession = (TabbedPropertyPanel)iwc.getSessionAttribute(getSessionAddressString());
-		if(panelInSession!=null){
+		boolean useOkButton = false;
+		boolean useApplyButton = false;
+		boolean useCancelButton = true;
+		boolean isAdmin = iwc.isSuperAdmin();
+		TabbedPropertyPanel panelInSession = (TabbedPropertyPanel) iwc.getSessionAttribute(getSessionAddressString());
+		if (panelInSession != null) {
 			useOkButton = panelInSession.isOkButtonDisabled();
 			useApplyButton = panelInSession.isApplyButtonDisabled();
 			useCancelButton = panelInSession.isCancelButtonDisabled();
 		}
-		
-		if(isAdmin) {//only super admin can edit without permission
-	        useOkButton = true;
-	        useApplyButton = true;
-	    }
-		
-//		check if we have edit permissions, otherwise disable saving
-		String groupId = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
-		if(groupId!=null && !"-1".equals(groupId) && !isAdmin) {
-		    try {
-                useOkButton = iwc.getAccessController().hasEditPermissionFor(getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(groupId)), iwc);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            
-		    useApplyButton = useOkButton;
+		if (isAdmin) {// only super admin can edit without permission
+			useOkButton = true;
+			useApplyButton = true;
 		}
-		
-		if(panelInSession!=null){
+		// check if we have edit permissions, otherwise disable saving
+		String groupId = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
+		if (groupId != null && !"-1".equals(groupId) && !isAdmin) {
+			try {
+				useOkButton = iwc.getAccessController().hasEditPermissionFor(
+						getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(groupId)), iwc);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			useApplyButton = useOkButton;
+		}
+		if (panelInSession != null) {
 			panelInSession.disableApplyButton(!useApplyButton);
 			panelInSession.disableOkButton(!useOkButton);
 			panelInSession.disableCancelButton(!useCancelButton);
 			return panelInSession;
 		}
-		else{
-			return new TabbedPropertyPanel(getSessionAddressString(),iwc,useOkButton,useCancelButton,useApplyButton);
+		else {
+			return new TabbedPropertyPanel(getSessionAddressString(), iwc, useOkButton, useCancelButton, useApplyButton);
 		}
-    }
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.idega.block.cal.presentation.CalPropertyWindow#getIdParameter()
 	 */
 	public String getIdParameter() {
 		return PARAMETERSTRING_USER_ID;
 	}
-
-
-
 }
