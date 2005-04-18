@@ -243,13 +243,15 @@ public class UserSearcher extends Block implements IWPageEventListener {
 				userID = (Integer) user.getPrimaryKey();
 			}
 			catch(FinderException fe) {
-				try {
-					userID = processSave(iwc, first, middle, last, pid);//calles the extended method
-				}
-				catch (CreateException ce) {
-					add(ce.getMessage());
-					add(new Break(2));
-				}
+					try {
+						if(first != null && last != null && pid != null && first.length() > 0 && last.length() > 0 && pid.length() > 0)
+							userID = processSave(iwc, first, middle, last, pid);//calles the extended method
+					}
+					catch (CreateException ce) {
+						add(ce.getMessage());
+						add(new Break(2));
+					}
+				
 			}
 			
 		}
@@ -486,9 +488,12 @@ public class UserSearcher extends Block implements IWPageEventListener {
 				}
 			}
 			
-			//new button added - ac -
+			//forwardButton.setSubmitConfirm(getResourceBundle().getLocalizedString("vacation.forward.popup","Are you sure you want to forward this application?"));
+			
+			//new button added - ac 
 			if (showNewUserButton) {
 				SubmitButton newUserButton = new SubmitButton(NEW_USER, iwrb.getLocalizedString("new","New"));
+				newUserButton.setSubmitConfirm(iwrb.getLocalizedString("citizensearcher.confirm.popup","Are you sure you want to save the new user?"));
 				newUserButton.setStyleClass(buttonStyleName);
 				searchTable.add(newUserButton, col++, row + 1);
 			}
