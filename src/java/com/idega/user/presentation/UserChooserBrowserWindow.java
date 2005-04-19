@@ -38,7 +38,7 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
   
   private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
   
-  private static int NUMBER_OF_ROWS = 4;
+  private static int NUMBER_OF_ROWS = 8;
   
   public static final String SEARCH_KEY = "search_key";
   public static final String SEARCH_SUBMIT_KEY = "search_submit_key";
@@ -51,7 +51,7 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
   
   public UserChooserBrowserWindow() {
     setWidth(600);
-    setHeight(300);
+    setHeight(400);
     setScrollbar(true);
     setResizable(true);
   }
