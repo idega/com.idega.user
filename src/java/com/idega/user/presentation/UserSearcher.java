@@ -61,10 +61,13 @@ public class UserSearcher extends Block implements IWPageEventListener {
 	public final static String STYLENAME_BUTTON = "Button";
 	public final static String STYLENAME_WARNING = "Warning";
 	public final static String STYLENAME_INTERFACE = "Interface";
-	protected static final String NEW_USER_FIRST_NAME = "newusr_first_name";
-	protected static final String NEW_USER_MIDDLE_NAME = "newusr_middle_name";
-	protected static final String NEW_USER_LAST_NAME = "newusr_last_name";
-	protected static final String NEW_USER_PERSONAL_ID = "newusr_personal_id";
+	public final static String BUTTON_PRESSED = "usrch_search_button_pressed";
+	public final static int SEARCH_PRESSED = 1;
+	public final static int NEW_PRESSED = 2;
+	//protected static final String NEW_USER_FIRST_NAME = "newusr_first_name";
+	//protected static final String NEW_USER_MIDDLE_NAME = "newusr_middle_name";
+	//protected static final String NEW_USER_LAST_NAME = "newusr_last_name";
+	//protected static final String NEW_USER_PERSONAL_ID = "newusr_personal_id";
 	private String textFontStyleName = null;
 	private String headerFontStyleName = null;
 	private String buttonStyleName = null;
@@ -467,11 +470,14 @@ public class UserSearcher extends Block implements IWPageEventListener {
 			clearFields.add(SEARCH_FIRST_NAME);
 		}
 		if (showButtons) {
+			HiddenInput hidden = new HiddenInput(BUTTON_PRESSED, "-1");
+			searchTable.add(hidden, col, row + 1);
 			SubmitButton search =
 				new SubmitButton(
 					iwrb.getLocalizedString(SEARCH_COMMITTED, "Search"),
 					SEARCH_COMMITTED + (constrainToUniqueSearch ? uniqueIdentifier : ""),
 					"true");
+			search.setValueOnClick(BUTTON_PRESSED, String.valueOf(SEARCH_PRESSED));
 			search.setStyleClass(buttonStyleName);
 			if (stacked) {
 				searchTable.add(search, col++, row + 1);
@@ -487,14 +493,13 @@ public class UserSearcher extends Block implements IWPageEventListener {
 						searchTable.add(element, 1, row + 1);
 				}
 			}
-			
-			//forwardButton.setSubmitConfirm(getResourceBundle().getLocalizedString("vacation.forward.popup","Are you sure you want to forward this application?"));
-			
+		
 			//new button added - ac 
 			if (showNewUserButton) {
 				SubmitButton newUserButton = new SubmitButton(NEW_USER, iwrb.getLocalizedString("new","New"));
-				newUserButton.setSubmitConfirm(iwrb.getLocalizedString("citizensearcher.confirm.popup","Are you sure you want to save the new user?"));
 				newUserButton.setStyleClass(buttonStyleName);
+				newUserButton.setValueOnClick(BUTTON_PRESSED, String.valueOf(NEW_PRESSED));
+				//newUserButton.setOnSubmitFunction("newUser", checkEmptyFieldScript());
 				searchTable.add(newUserButton, col++, row + 1);
 			}
 			
@@ -760,6 +765,44 @@ public Parameter getUniqueUserParameter(Integer userID) {
  */
 public static String getUniqueUserParameterName(String uniqueIdentifier) {
 	return PRM_USER_ID + uniqueIdentifier;
+}
+/**
+* This method checkes if the fields for first name, last name and ssn... 
+*...are filled in, but only if the new user button is clicked
+*/
+public String checkEmptyFieldScript() {
+	StringBuffer buffer = new StringBuffer();
+	buffer.append("\nfunction newUser(){\n\t");
+	buffer.append("\n\t var pressed = findObj('").append(BUTTON_PRESSED).append("').value;");
+	buffer.append("\n\t if (pressed == ").append(NEW_PRESSED).append(")  {");
+	buffer.append("\n\t\t var personalID = findObj('").append(SEARCH_PERSONAL_ID + uniqueIdentifier).append("').value;");
+	buffer.append("\n\t\t var lastName = findObj('").append(SEARCH_LAST_NAME + uniqueIdentifier).append("').value;");
+	buffer.append("\n\t\t var firstName = findObj('").append(SEARCH_FIRST_NAME + uniqueIdentifier).append("').value;");
+	
+	buffer.append("\n\n\t\t if (personalID == 0) {");
+	String message = iwrb.getLocalizedString("user_searcher.must_fill_out_personal_id", "Please fill out the personal id field");
+	buffer.append("\n\t\t\t alert('").append(message).append("');");
+	buffer.append("\n\t\t\t return false;");
+	buffer.append("\n\t\t }");
+	
+	buffer.append("\n\n\t\t if (lastName == 0) {");
+	message = iwrb.getLocalizedString("user_searcher.must_fill_out_last_name", "Please fill out the last name field");
+	buffer.append("\n\t\t\t alert('").append(message).append("');");
+	buffer.append("\n\t\t\t return false;");
+	buffer.append("\n\t\t }");
+	
+	buffer.append("\n\n\t\t if (firstName == 0) {");
+	message = iwrb.getLocalizedString("user_searcher.must_fill_out_first_name", "Please fill out the first name field");
+	buffer.append("\n\t\t\t alert('").append(message).append("');");
+	buffer.append("\n\t\t\t return false;");
+	buffer.append("\n\t\t }");
+	
+	message = iwrb.getLocalizedString("user_searcher.are_you_sure_you_want_to_save", "Are you sure you want to save the new user?");
+	buffer.append("\n\t\t return confirm('").append(message).append("');");
+	buffer.append("\n\t}");
+	buffer.append("\n\t else return true;");
+	buffer.append("\n}\n");
+	return buffer.toString();
 }
 /* (non-Javadoc)
  * @see com.idega.presentation.Block#getStyleNames()
