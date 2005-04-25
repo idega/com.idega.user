@@ -207,7 +207,7 @@ public class UserSearcher extends Block implements IWPageEventListener {
 		}
 		if (OwnFormContainer) {
 			Form form = new Form();
-			form.setEventListener(UserSearcher.class);
+			form.setEventListener(getListenerClass());
 			form.add(T);
 			add(form);
 		}
@@ -577,7 +577,7 @@ private Table presentateFoundUsers(IWContext iwc) {
 			}
 			
 			userLink.addParameter(getUniqueUserParameter((Integer) u.getPrimaryKey()));
-			userLink.setEventListener(UserSearcher.class);
+			userLink.setEventListener(getListenerClass());
 			addParameters(userLink);
 			T.add(userLink, colAdd + 1, row);
 			row++;
@@ -620,7 +620,7 @@ private void addParameters(Link link) {
 			link.addParameter((String)entry.getKey(),(String)entry.getValue());
 		}
 	}
-	link.setEventListener(UserSearcher.class);
+	link.setEventListener(getListenerClass());
 }
 
 private void addParameters(Form form) {
@@ -1153,5 +1153,9 @@ public boolean isUseFlexiblePersonalID(){
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	protected Class getListenerClass() {
+		return UserSearcher.class;
 	}
 }
