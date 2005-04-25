@@ -499,7 +499,7 @@ public class UserSearcher extends Block implements IWPageEventListener {
 				SubmitButton newUserButton = new SubmitButton(NEW_USER, iwrb.getLocalizedString("new","New"));
 				newUserButton.setStyleClass(buttonStyleName);
 				newUserButton.setValueOnClick(BUTTON_PRESSED, String.valueOf(NEW_PRESSED));
-				//newUserButton.setOnSubmitFunction("newUser", checkEmptyFieldScript());
+				newUserButton.setOnSubmitFunction("newUser", checkEmptyFieldScript());
 				searchTable.add(newUserButton, col++, row + 1);
 			}
 			
