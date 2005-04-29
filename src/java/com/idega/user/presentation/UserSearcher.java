@@ -64,10 +64,6 @@ public class UserSearcher extends Block implements IWPageEventListener {
 	public final static String BUTTON_PRESSED = "usrch_search_button_pressed";
 	public final static int SEARCH_PRESSED = 1;
 	public final static int NEW_PRESSED = 2;
-	//protected static final String NEW_USER_FIRST_NAME = "newusr_first_name";
-	//protected static final String NEW_USER_MIDDLE_NAME = "newusr_middle_name";
-	//protected static final String NEW_USER_LAST_NAME = "newusr_last_name";
-	//protected static final String NEW_USER_PERSONAL_ID = "newusr_personal_id";
 	private String textFontStyleName = null;
 	private String headerFontStyleName = null;
 	private String buttonStyleName = null;
@@ -496,9 +492,10 @@ public class UserSearcher extends Block implements IWPageEventListener {
 		
 			//new button added - ac 
 			if (showNewUserButton) {
+				
 				SubmitButton newUserButton = new SubmitButton(NEW_USER, iwrb.getLocalizedString("new","New"));
-				newUserButton.setStyleClass(buttonStyleName);
 				newUserButton.setValueOnClick(BUTTON_PRESSED, String.valueOf(NEW_PRESSED));
+				newUserButton.setStyleClass(buttonStyleName);
 				newUserButton.setOnSubmitFunction("newUser", checkEmptyFieldScript());
 				searchTable.add(newUserButton, col++, row + 1);
 			}
@@ -774,7 +771,8 @@ public String checkEmptyFieldScript() {
 	StringBuffer buffer = new StringBuffer();
 	buffer.append("\nfunction newUser(){\n\t");
 	buffer.append("\n\t var pressed = findObj('").append(BUTTON_PRESSED).append("').value;");
-	buffer.append("\n\t if (pressed == ").append(NEW_PRESSED).append(")  {");
+	buffer.append("\n\t if (pressed == findObj('").append(NEW_PRESSED).append("').value) {");
+	
 	buffer.append("\n\t\t var personalID = findObj('").append(SEARCH_PERSONAL_ID + uniqueIdentifier).append("').value;");
 	buffer.append("\n\t\t var lastName = findObj('").append(SEARCH_LAST_NAME + uniqueIdentifier).append("').value;");
 	buffer.append("\n\t\t var firstName = findObj('").append(SEARCH_FIRST_NAME + uniqueIdentifier).append("').value;");
@@ -800,8 +798,13 @@ public String checkEmptyFieldScript() {
 	message = iwrb.getLocalizedString("user_searcher.are_you_sure_you_want_to_save", "Are you sure you want to save the new user?");
 	buffer.append("\n\t\t return confirm('").append(message).append("');");
 	buffer.append("\n\t}");
-	buffer.append("\n\t else return true;");
+	
+	buffer.append("\n\t else {");
+	buffer.append("\n\t return true;");
+	buffer.append("\n\t }");
+	
 	buffer.append("\n}\n");
+	
 	return buffer.toString();
 }
 /* (non-Javadoc)
