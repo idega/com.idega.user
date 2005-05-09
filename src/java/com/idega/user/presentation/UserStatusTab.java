@@ -1,5 +1,5 @@
 /*
- * $Id: UserStatusTab.java,v 1.1 2005/03/20 11:09:09 eiki Exp $
+ * $Id: UserStatusTab.java,v 1.2 2005/05/09 12:45:41 eiki Exp $
  *
  * Copyright (C) 2000-2003 Idega Software. All Rights Reserved.
  *
@@ -121,7 +121,7 @@ public class UserStatusTab extends UserTab {
 		if (status != null) {
 			if (status.size() > 0) {
 				final IWResourceBundle iwrb = getResourceBundle(iwc);
-				_statusField.addOption(new SelectOption(" "," "));
+				_statusField.addOption(new SelectOption(" ",-1));
 				
 				
 				final Collator collator = Collator.getInstance(iwc.getLocale());
@@ -207,7 +207,7 @@ public class UserStatusTab extends UserTab {
 		try {
 			String status = (String)fieldValues.get(_statusFieldName);
 	
-			if (status != null && !status.equals(" ") && !status.equals("")) {
+			if (status != null) {
 				int user_id = this.getUserId();
 				int group_id = this.getGroupID();
 				int status_id = Integer.parseInt(status);
