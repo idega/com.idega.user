@@ -671,7 +671,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         String dateOfBirthKey = User.class.getName() + ".DATE_OF_BIRTH";
         
         entityBrowser.setEntities(getEntityBrowserIdentifier(ps), users);
-        
+        entityBrowser.setName("BasicUserOverView");
         entityBrowser.setDefaultNumberOfRows(30);
         //entityBrowser.setLineColor("#DBDCDF");
         entityBrowser.setWidth(Table.HUNDRED_PERCENT);
