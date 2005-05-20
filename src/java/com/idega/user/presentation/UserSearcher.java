@@ -763,33 +763,42 @@ public Parameter getUniqueUserParameter(Integer userID) {
 public static String getUniqueUserParameterName(String uniqueIdentifier) {
 	return PRM_USER_ID + uniqueIdentifier;
 }
+
+
+
 /**
 * This method checkes if the fields for first name, last name and ssn... 
-*...are filled in, but only if the new user button is clicked
+*...are filled in, but only if the new user button is clicked 
 */
+// - added by anna - april 2005
 public String checkEmptyFieldScript() {
 	StringBuffer buffer = new StringBuffer();
+	String message = null;
 	buffer.append("\nfunction newUser(){\n\t");
-	buffer.append("\n\t var pressed = findObj('").append(BUTTON_PRESSED).append("').value;");
-	buffer.append("\n\t if (pressed == findObj('").append(NEW_PRESSED).append("').value) {");
 	
-	buffer.append("\n\t\t var personalID = findObj('").append(SEARCH_PERSONAL_ID + uniqueIdentifier).append("').value;");
-	buffer.append("\n\t\t var lastName = findObj('").append(SEARCH_LAST_NAME + uniqueIdentifier).append("').value;");
-	buffer.append("\n\t\t var firstName = findObj('").append(SEARCH_FIRST_NAME + uniqueIdentifier).append("').value;");
+	buffer.append("\n\t var pressed = ").append("findObj('").append(BUTTON_PRESSED).append("');");
+	//buffer.append("\n\t var newPressed = findObj('").append(String.valueOf(NEW_PRESSED)).append("');");
+	buffer.append("\n\t if (pressed == ").append("findObj('").append(String.valueOf(NEW_PRESSED)).append("')) {");
+	//buffer.append("\n\t if (pressed == newPressed){");
 	
-	buffer.append("\n\n\t\t if (personalID == 0) {");
-	String message = iwrb.getLocalizedString("user_searcher.must_fill_out_personal_id", "Please fill out the personal id field");
+	buffer.append("\n\t\t var personalID = ").append("findObj('").append(SEARCH_PERSONAL_ID + uniqueIdentifier).append("');");
+	buffer.append("\n\t\t var lastName = ").append("findObj('").append(SEARCH_LAST_NAME + uniqueIdentifier).append("');");
+	buffer.append("\n\t\t var firstName = ").append("findObj('").append(SEARCH_FIRST_NAME + uniqueIdentifier).append("');");
+	
+	buffer.append("\n\n\t\t if (personalID == '') {");
+	
+	message = iwrb.getLocalizedString("user_searcher.must_fill_out_personal_id", "Please fill out the personal id field");
 	buffer.append("\n\t\t\t alert('").append(message).append("');");
 	buffer.append("\n\t\t\t return false;");
 	buffer.append("\n\t\t }");
 	
-	buffer.append("\n\n\t\t if (lastName == 0) {");
+	buffer.append("\n\n\t\t if (lastName == '') {");
 	message = iwrb.getLocalizedString("user_searcher.must_fill_out_last_name", "Please fill out the last name field");
 	buffer.append("\n\t\t\t alert('").append(message).append("');");
 	buffer.append("\n\t\t\t return false;");
 	buffer.append("\n\t\t }");
 	
-	buffer.append("\n\n\t\t if (firstName == 0) {");
+	buffer.append("\n\n\t\t if (firstName == '') {");
 	message = iwrb.getLocalizedString("user_searcher.must_fill_out_first_name", "Please fill out the first name field");
 	buffer.append("\n\t\t\t alert('").append(message).append("');");
 	buffer.append("\n\t\t\t return false;");
@@ -799,9 +808,7 @@ public String checkEmptyFieldScript() {
 	buffer.append("\n\t\t return confirm('").append(message).append("');");
 	buffer.append("\n\t}");
 	
-	buffer.append("\n\t else {");
-	buffer.append("\n\t return true;");
-	buffer.append("\n\t }");
+	buffer.append("\n\t else return true;");
 	
 	buffer.append("\n}\n");
 	
