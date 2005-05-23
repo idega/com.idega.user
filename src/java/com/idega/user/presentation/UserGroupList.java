@@ -212,24 +212,6 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		UserBusiness userBusiness = this.getUserBusiness(iwc);
 		Collection userGroups = Collections.unmodifiableCollection(userBusiness.getUserGroupsDirectlyRelated(this.getUserId()));
 
-		if (userGroups != null) {
-			System.out.println("[UserGroupList]: userGroups!=null");
-			Iterator iter = userGroups.iterator();
-			while (iter.hasNext()) {
-				Group item = (Group) iter.next();
-				if (item == null)
-					System.out.println("ITEM IS NULL!!!WHY? Temporary check. please fix this, that means you Tryggvi");
-				else {
-					Object prim = item.getPrimaryKey();
-					String groupId = prim.toString();
-					String groupName = item.getName();
-					if (groupName == null)
-						groupName = "untitled";
-					primaryGroupField.addMenuElement(groupId, groupName);
-				}
-			}
-		}
-		primaryGroupField.setSelectedElement((String) fieldValues.get(primaryGroupFieldName));
 		User user = getUser();
 		Collection directGroups = userGroups;
 		Collection topGroupNodes = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(),iwc);
@@ -253,6 +235,23 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		else {
 			iwc.removeSessionAttribute(UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED);
 		}
+		if (directGroups != null) {
+			Iterator iter = directGroups.iterator();
+			while (iter.hasNext()) {
+				Group item = (Group) iter.next();
+				if (item == null)
+					System.out.println("ITEM IS NULL!!!WHY? Temporary check. please fix this, that means you Tryggvi");
+				else {
+					Object prim = item.getPrimaryKey();
+					String groupId = prim.toString();
+					String groupName = item.getName();
+					if (groupName == null)
+						groupName = "untitled";
+					primaryGroupField.addMenuElement(groupId, groupName);
+				}
+			}
+		}
+		primaryGroupField.setSelectedElement((String) fieldValues.get(primaryGroupFieldName));
 	}
 
 	private Collection getFilteredGroups(IWContext iwc, Collection groups, User user, Collection topGroupNodes) {
