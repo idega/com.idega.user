@@ -173,8 +173,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 						
 						User currentUser = eventContext.getCurrentUser();
 						//Apply permission stuff
-						groupBusiness.applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(eventContext,
-								group, currentUser);
+						groupBusiness.applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(group, currentUser);
 						// get groupType tree and iterate through it and create
 						// default sub groups.
 						createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(group, groupBusiness,
@@ -363,12 +362,25 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 					}
 					//create group then call recursive
 					try {
-						Group newGroup = business.createGroupUnder(name, "", typeString, group);
-						copyGroupNumberFromParent(newGroup, group);
-						groupBusiness.applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(iwc,
-								newGroup, user);
-						if (!type.isLeaf()) {
-							createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(newGroup, business, iwc, user);
+						
+						List errors = canCreateSubGroupPluginCheck(group,typeString,iwc);
+						
+						if (errors.isEmpty()) {
+							Group newGroup = business.createGroupUnder(name, "", typeString, group);
+							copyGroupNumberFromParent(newGroup, group);
+							groupBusiness.applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(newGroup, user);
+							if (!type.isLeaf()) {
+								createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(newGroup, business, iwc, user);
+							}
+						}
+						else{
+							//cannot create a subgroup of that type under the parent group, some plugin does not allow it
+							System.err.println("[CreateGroupWindowPS] - Creating sub group of the type "+typeString+" was not allowed under a group "+group.getName()+" of type "+group.getGroupType()+". Reason/s :");
+							for (Iterator err = errors.iterator(); err.hasNext();) {
+								String error = (String) err.next();
+								System.err.println("[CreateGroupWindowPS] -"+error);
+								
+							}
 						}
 					}
 					catch (CreateException e) {
