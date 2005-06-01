@@ -138,6 +138,11 @@ public class Toolbar extends Page implements IWBrowserView {
 		Link tLink11 = getToolbarLink(new Text(iwrb.getLocalizedString("new.member", "New member")), CreateUser.class, null);
 		Link newUserImageLink = getToolbarLink(iconCrUser, CreateUser.class, null);
 		
+		if (selectedGroupProviderStateId != null){
+			tLink11.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
+			newUserImageLink.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, selectedGroupProviderStateId);
+		}
+
 		tLink11.setStyleClass(styledLink);
 		toolbar1.setCellpaddingLeft(toolbarColumn, 1, 12);
 		toolbar1.setCellpaddingRight(toolbarColumn, 1, 3);

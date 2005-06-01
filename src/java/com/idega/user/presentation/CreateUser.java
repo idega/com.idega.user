@@ -1,15 +1,27 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+import javax.swing.event.ChangeListener;
+
+import com.idega.business.IBOLookup;
+import com.idega.event.IWActionListener;
+import com.idega.event.IWPresentationState;
+import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
+import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -21,6 +33,7 @@ import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
+import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
@@ -91,6 +104,7 @@ public class CreateUser extends StyledIWAdminWindow {
 	private Table warningTable;
 
 	private String selectedGroupId = null;
+	private StatefullPresentationImplHandler _stateHandler = null;
 
 	public static String PARAMETERSTRING_GROUP_ID = "default_group";
 
@@ -123,6 +137,8 @@ public class CreateUser extends StyledIWAdminWindow {
 
 	public CreateUser() {
 		super();
+		_stateHandler = new StatefullPresentationImplHandler();
+		_stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
 		setHeight(300);
 		setWidth(330);
 		setScrollbar(false);
@@ -325,6 +341,9 @@ public class CreateUser extends StyledIWAdminWindow {
 		primaryGroupField.setChooseButtonImage(groupChooseImage);
 
 		selectedGroupId = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
+		if (selectedGroupId == null) {
+		    selectedGroupId = getSelectedGroupID(iwc);
+		}
 		if (selectedGroupId != null) {
 			primaryGroupField.setSelectedNode(new GroupTreeNode(this.getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(selectedGroupId))));
 			myForm.add(new HiddenInput(PARAMETERSTRING_GROUP_ID, selectedGroupId));
@@ -445,5 +464,44 @@ public class CreateUser extends StyledIWAdminWindow {
 
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
+	}
+
+	private String getSelectedGroupID(IWContext iwc) {
+		String selectedGroupProviderStateId = "";
+		String tempSelectedGroupID = null;
+		
+		if (iwc.isParameterSet(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY)) {
+			selectedGroupProviderStateId = iwc.getParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
+		}      
+		IWPresentationState state = this.getPresentationState(iwc);
+		// add action listener
+		addActionListener((IWActionListener) state);
+		IWStateMachine stateMachine;
+		// add all change listeners
+		Collection changeListeners;
+		try {
+			stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
+			changeListeners = stateMachine.getAllChangeListeners();
+			// try to get the selected group  
+			if (selectedGroupProviderStateId != null) {
+				UserApplicationMenuAreaPS groupProviderState = (UserApplicationMenuAreaPS) stateMachine.getStateFor(selectedGroupProviderStateId, UserApplicationMenuAreaPS.class);
+				Integer tempID = groupProviderState.getSelectedGroupId(); 
+				if (tempID != null) {
+				    tempSelectedGroupID = tempID.toString();
+				}
+			}
+		}
+		catch (RemoteException e) {
+			changeListeners = new ArrayList();
+		}
+		Iterator iterator = changeListeners.iterator();
+		while (iterator.hasNext())  {
+			state.addChangeListener((ChangeListener) iterator.next());
+		}
+		return tempSelectedGroupID;
+	}
+	
+	public IWPresentationState getPresentationState(IWUserContext iwuc) {
+		return _stateHandler.getPresentationState(this, iwuc);
 	}
 }
