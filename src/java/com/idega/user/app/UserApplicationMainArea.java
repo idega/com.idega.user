@@ -16,6 +16,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.presentation.ui.Window;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.block.search.presentation.SearchResultsWindow;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.presentation.BasicUserOverview;
@@ -100,7 +101,7 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 		String className = ps.getClassNameToShow();
 		Collection plugins = ps.getUserGroupPlugins();
 		if (className != null) {
-			PresentationObject obj = (PresentationObject) Class.forName(className).newInstance();
+			PresentationObject obj = (PresentationObject) RefactorClassRegistry.forName(className).newInstance();
 			add(obj);
 			ps.setClassNameToShow(null);
 		}
