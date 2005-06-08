@@ -781,9 +781,7 @@ public String checkEmptyFieldScript() {
 	buffer.append("\nfunction newUser(){\n\t");
 	
 	buffer.append("\n\t var pressed = ").append("findObj('").append(BUTTON_PRESSED).append("').value;");
-	//buffer.append("alert(pressed);");
-	//buffer.append("\n\t var newPressed = findObj('").append(String.valueOf(NEW_PRESSED)).append("').value;");
-	//buffer.append("\n\t if (pressed == ").append("findObj('").append(String.valueOf(NEW_PRESSED)).append("').value) {");
+	
 	buffer.append("\n\t if (pressed == ").append(NEW_PRESSED).append("){");
 	
 	buffer.append("\n\t\t var personalID = ").append("findObj('").append(SEARCH_PERSONAL_ID + uniqueIdentifier).append("').value;");
