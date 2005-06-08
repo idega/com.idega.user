@@ -204,6 +204,11 @@ public class UserSearcher extends Block implements IWPageEventListener {
 		if (OwnFormContainer) {
 			Form form = new Form();
 			form.setEventListener(getListenerClass());
+			if (showNewUserButton) {
+				HiddenInput input = new HiddenInput("newStuff", "-1");
+				form.add(input);
+				input.setOnSubmitFunction("newUser", checkEmptyFieldScript());
+			}
 			form.add(T);
 			add(form);
 		}
@@ -496,7 +501,6 @@ public class UserSearcher extends Block implements IWPageEventListener {
 				SubmitButton newUserButton = new SubmitButton(NEW_USER, iwrb.getLocalizedString("new","New"));
 				newUserButton.setValueOnClick(BUTTON_PRESSED, String.valueOf(NEW_PRESSED));
 				newUserButton.setStyleClass(buttonStyleName);
-				newUserButton.setOnSubmitFunction("newUser", checkEmptyFieldScript());
 				searchTable.add(newUserButton, col++, row + 1);
 			}
 			
@@ -776,18 +780,26 @@ public String checkEmptyFieldScript() {
 	String message = null;
 	buffer.append("\nfunction newUser(){\n\t");
 	
-	buffer.append("\n\t var pressed = ").append("findObj('").append(BUTTON_PRESSED).append("');");
-	//buffer.append("\n\t var newPressed = findObj('").append(String.valueOf(NEW_PRESSED)).append("');");
-	buffer.append("\n\t if (pressed == ").append("findObj('").append(String.valueOf(NEW_PRESSED)).append("')) {");
-	//buffer.append("\n\t if (pressed == newPressed){");
+	buffer.append("\n\t var pressed = ").append("findObj('").append(BUTTON_PRESSED).append("').value;");
+	//buffer.append("alert(pressed);");
+	//buffer.append("\n\t var newPressed = findObj('").append(String.valueOf(NEW_PRESSED)).append("').value;");
+	//buffer.append("\n\t if (pressed == ").append("findObj('").append(String.valueOf(NEW_PRESSED)).append("').value) {");
+	buffer.append("\n\t if (pressed == ").append(NEW_PRESSED).append("){");
 	
-	buffer.append("\n\t\t var personalID = ").append("findObj('").append(SEARCH_PERSONAL_ID + uniqueIdentifier).append("');");
-	buffer.append("\n\t\t var lastName = ").append("findObj('").append(SEARCH_LAST_NAME + uniqueIdentifier).append("');");
-	buffer.append("\n\t\t var firstName = ").append("findObj('").append(SEARCH_FIRST_NAME + uniqueIdentifier).append("');");
+	buffer.append("\n\t\t var personalID = ").append("findObj('").append(SEARCH_PERSONAL_ID + uniqueIdentifier).append("').value;");
+	buffer.append("\n\t\t var lastName = ").append("findObj('").append(SEARCH_LAST_NAME + uniqueIdentifier).append("').value;");
+	buffer.append("\n\t\t var firstName = ").append("findObj('").append(SEARCH_FIRST_NAME + uniqueIdentifier).append("').value;");
 	
 	buffer.append("\n\n\t\t if (personalID == '') {");
 	
 	message = iwrb.getLocalizedString("user_searcher.must_fill_out_personal_id", "Please fill out the personal id field");
+	buffer.append("\n\t\t\t alert('").append(message).append("');");
+	buffer.append("\n\t\t\t return false;");
+	buffer.append("\n\t\t }");
+	
+	buffer.append("\n\n\t\t if (personalID.length != 12) {");
+	
+	message = iwrb.getLocalizedString("user_searcher.invalid_personal_id", "Invalid personal ID");
 	buffer.append("\n\t\t\t alert('").append(message).append("');");
 	buffer.append("\n\t\t\t return false;");
 	buffer.append("\n\t\t }");
