@@ -77,6 +77,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     public static final String SELECTED_GROUP_KEY = "selected_group_key";
     public static final String DELETE_USERS_KEY = "delete_selected_users";
     public static final String MOVE_USERS_KEY = "move_users";
+    public static final String COPY_USERS_KEY = "copy_users";
 
     protected static final String PHONE_TYPE_PATH = PhoneType.class.getName() + ".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME";
     protected static final String USER_APPLICATION_FRONT_PAGE_ID = "USER_APPLICATION_FRONT_PAGE_ID";
@@ -253,6 +254,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     private void addMoveOrAddButton(EntityBrowser entityBrowser) {
         String confirmMoving;
         String buttonMoving;
+        String confirmCopying = "";
+        String buttonCopying = "";
         boolean addMoveOrAddButton = true;
         if (selectedGroup == null) {
         	//TODO ADD BOTH BUTTONS!
@@ -263,11 +266,19 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             addMoveOrAddButton = hasEditPermissionForRealGroup;
             confirmMoving = iwrb.getLocalizedString("buo_move_selected_users", "Move selected users");
             buttonMoving = iwrb.getLocalizedString("Move to", "Move to");
+            confirmCopying = iwrb.getLocalizedString("buo_copy_selected_users", "Copy selected users");
+            buttonCopying = iwrb.getLocalizedString("Copy to", "Copy to");
         
         }
         confirmMoving += " ?";
         
         if(addMoveOrAddButton) {
+            StyledButton styledCopyToButton = null;
+            if (selectedGroup != null) {
+                SubmitButton copyToButton = new SubmitButton(buttonCopying, BasicUserOverview.COPY_USERS_KEY, BasicUserOverview.COPY_USERS_KEY);
+                copyToButton.setSubmitConfirm(confirmCopying);
+                styledCopyToButton = new StyledButton(copyToButton);
+            }
             SubmitButton moveToButton = new SubmitButton(buttonMoving, BasicUserOverview.MOVE_USERS_KEY, BasicUserOverview.MOVE_USERS_KEY);
             moveToButton.setSubmitConfirm(confirmMoving);
             StyledButton styledMoveToButton = new StyledButton(moveToButton);
@@ -279,6 +290,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 targetGroupChooser.setSelectedNode(new GroupTreeNode(selectedGroup));
             }
             
+            if (styledCopyToButton != null) {
+                //entityBrowser.addPresentationObjectToBottom(styledCopyToButton);
+            }
             entityBrowser.addPresentationObjectToBottom(styledMoveToButton);
             entityBrowser.addPresentationObjectToBottom(targetGroupChooser);
         }
@@ -1020,6 +1034,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         String notMovedUsersMessage = getLocalizedString("the_following_users_were_not moved", "Following users were not moved", iwc);
         String success = getLocalizedString("all_users_were_moved_to the_specified_group", "All users were successfully moved.", iwc);
         String target = getLocalizedString("Target", "Target", iwc);
+        String targetMessage = null; 
         Map resultOfMovingUsers = state.getResultOfMovingUsers();
         UserBusiness userBusiness = BasicUserOverview.getUserBusiness(iwc);
         GroupBusiness groupBusiness = BasicUserOverview.getGroupBusiness(iwc);
@@ -1092,21 +1107,24 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             }
             try {
 				String targetName = biz.getNameOfGroupWithParentName(targetGroup);
-				movedUsersNumberMessage += ": " + movedUsers + "  " + target + ": " + targetName;
+				targetMessage = target + ": " + targetName;
 			}
 			catch (RemoteException e) {
 				  throw new RuntimeException(e.getMessage());
 			}
         }
-        else {
-            movedUsersNumberMessage += ": " + movedUsers;
-        }
         notMovedUsersNumberMessage += ": " + notMovedUsers;
         notMovedUsersMessage += ": ";
         
-        Text movedUsersNumberMessageText = new Text(movedUsersNumberMessage);
+        Text movedUsersNumberMessageText = new Text(movedUsersNumberMessage += ": " + movedUsers);
         movedUsersNumberMessageText.setBold(); //setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
         
+        Text targetMessageText = null;
+        if (targetMessage != null) {
+            targetMessageText = new Text(targetMessage);
+            targetMessageText.setBold(); //setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
+        }
+
         Text notMovedUsersNumberMessageText = new Text(notMovedUsersNumberMessage);
         notMovedUsersNumberMessageText.setBold(); //setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
         
@@ -1115,19 +1133,23 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         Text successText = new Text(success);
         successText.setBold();
         
-        Table table = new Table(1, 4);
-        table.add(movedUsersNumberMessageText, 1, 1);
+        Table table = new Table();
+        int row = 1;
+        if (targetMessageText != null) {
+            table.add(targetMessageText, 1, row++);
+        }
+        table.add(movedUsersNumberMessageText, 1, row++);
         if (notMovedUsers > 0) {
             EntityBrowser browser = getEntityBrowserForResult(notMovedUsersColl, completeResultOfMoving, state, iwc);
             // put print button to bottom
             browser.addPresentationObjectToBottom(new PrintButton(iwb.getImage("print.gif")));
-            table.add(notMovedUsersNumberMessageText, 1, 2);
-            table.add(notMovedUsersMessageText, 1, 3);
-            table.add(browser, 1, 4);
+            table.add(notMovedUsersNumberMessageText, 1, row++);
+            table.add(notMovedUsersMessageText, 1, row++);
+            table.add(browser, 1, row++);
         }
         else
             if (movedUsers > 0) {
-                table.add(successText, 1, 2);
+                table.add(successText, 1, row++);
             }
         return table;
     }
