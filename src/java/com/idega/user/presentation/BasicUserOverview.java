@@ -291,7 +291,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             }
             
             if (styledCopyToButton != null) {
-                //entityBrowser.addPresentationObjectToBottom(styledCopyToButton);
+                entityBrowser.addPresentationObjectToBottom(styledCopyToButton);
             }
             entityBrowser.addPresentationObjectToBottom(styledMoveToButton);
             entityBrowser.addPresentationObjectToBottom(targetGroupChooser);
@@ -970,10 +970,14 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     }
     
     public static Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, IWContext iwc) throws RemoteException {
+        return moveUsers(userIds, parentGroup, targetGroupId, iwc, false);
+    }
+
+    public static Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, IWContext iwc, boolean leaveCopyOfUserInCurrentGroup) throws RemoteException {
         UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
         //User currentUser = iwc.getCurrentUser();
         Map resultMap = new HashMap();
-        Map map = userBusiness.moveUsers(iwc,userIds, parentGroup, targetGroupId);
+        Map map = userBusiness.moveUsers(iwc,userIds, parentGroup, targetGroupId, leaveCopyOfUserInCurrentGroup);
         Integer groupId;
         if (parentGroup != null) {
             groupId = (Integer) parentGroup.getPrimaryKey();

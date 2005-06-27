@@ -157,7 +157,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 			if (e instanceof EntityBrowserEvent) {
 			    IWContext mainIwc = e.getIWContext();
 			    String[] userIds;
-			    if (mainIwc.isParameterSet(BasicUserOverview.MOVE_USERS_KEY) && mainIwc.isParameterSet(BasicUserOverview.SELECTED_USERS_KEY) && mainIwc.isParameterSet(BasicUserOverview.SELECTED_TARGET_GROUP_KEY)) {
+			    if ((mainIwc.isParameterSet(BasicUserOverview.MOVE_USERS_KEY) || mainIwc.isParameterSet(BasicUserOverview.COPY_USERS_KEY)) && mainIwc.isParameterSet(BasicUserOverview.SELECTED_USERS_KEY) && mainIwc.isParameterSet(BasicUserOverview.SELECTED_TARGET_GROUP_KEY)) {
 			        userIds = mainIwc.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
 
 			        String targetGroupNodeString = mainIwc.getParameter(BasicUserOverview.SELECTED_TARGET_GROUP_KEY);
@@ -176,6 +176,8 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 				        // move users to a group
 				        if (_selectedGroup!=null && _selectedGroup.isAlias()) {
 				            resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup.getAlias(),targetGroupId, mainIwc);
+				        } else if (mainIwc.isParameterSet(BasicUserOverview.COPY_USERS_KEY)) {
+				            resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup.getAlias(),targetGroupId, mainIwc, true);
 				        } else {
 				            resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup, targetGroupId,mainIwc);
 				        }
