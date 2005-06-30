@@ -26,6 +26,7 @@ import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.user.util.ICUserConstants;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -141,10 +142,12 @@ public class GeneralUserInfoTab extends UserTab {
 		personalIDField.setContent((String) fieldValues.get(personalIDFieldName));
 
 		IWContext iwc = IWContext.getInstance();
-		boolean showISStuff = iwc.getApplicationSettings().getProperty("temp_show_is_related_stuff")!=null;
-		if (showISStuff)
+		boolean unlockPersonalIDField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_PERSONAL_ID,iwc);
+		
+		if (!unlockPersonalIDField){
 			personalIDField.setDisabled(true);
-
+		}
+		
 		StringTokenizer created = new StringTokenizer((String) fieldValues.get(createdFieldName), " -");
 		if (created.hasMoreTokens()) {
 			createdField.setYear(created.nextToken());
