@@ -11,6 +11,7 @@ import com.idega.presentation.TabbedPropertyPanel;
 import com.idega.presentation.TabbedPropertyWindow;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
+import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.user.util.UserGroupPluginFormCollector;
 import com.idega.util.IWColor;
@@ -180,6 +181,32 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 				e.printStackTrace();
 			}
 			useApplyButton = useOkButton;
+		}
+		if (!useOkButton) {
+			String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
+			if (userIdString != null && !userIdString.equals("")) {
+				Integer selectedUserId = null;
+				try {
+				    selectedUserId = new Integer(userIdString);
+				} catch (NumberFormatException e){
+				    e.printStackTrace();
+				}
+				if (selectedUserId != null) {
+					try {
+					    User selectedUser = getUserBusiness(iwc).getUser(selectedUserId);
+					    Collection parentGroupsOfSelectedUser = selectedUser.getParentGroups();
+					    Iterator parentIter = parentGroupsOfSelectedUser.iterator(); 
+					    while (parentIter.hasNext()) {
+					        if (iwc.getAccessController().hasEditPermissionFor((Group)parentIter.next(), iwc)) {
+					            useOkButton = true;
+					            break;
+					        }
+					    }
+					} catch (RemoteException e) {
+					    e.printStackTrace();
+					}
+				}
+			}
 		}
 		if (panelInSession != null) {
 			panelInSession.disableApplyButton(!useApplyButton);
