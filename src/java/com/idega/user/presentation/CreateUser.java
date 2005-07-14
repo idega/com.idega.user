@@ -232,7 +232,14 @@ public class CreateUser extends StyledIWAdminWindow {
 				}
 				group = getGroupBusiness(iwc).getGroupByGroupID(primaryGroupId.intValue());
 				if (iwc.getAccessController().hasEditPermissionFor(group, iwc)) {
+					
+					
+					
 					newUser = getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(fullName, ssn, null, null);
+					
+					String error = getUserBusiness(iwc).isUserSuitedForGroup(newUser,group);
+					
+					if(error==null){
 					group.addGroup(newUser);
 					if (newUser.getPrimaryGroupID() < 0) {
 						newUser.setPrimaryGroupID(primaryGroupId);
@@ -252,6 +259,12 @@ public class CreateUser extends StyledIWAdminWindow {
 					setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
 					String script = "window.opener." + gotoLink.getWindowToOpenCallingScript(iwc);
 					setOnLoad(script);
+					}
+					else{
+						setAlertOnLoad(iwrb.getLocalizedString("new_user.cannot_add_user_"+error,error));
+						ssnField.setContent(ssn);
+						fullNameField.setContent(fullName);
+					}
 				}
 				else {
 					setAlertOnLoad(iwrb.getLocalizedString("new_user.no_edit_permission_for_parent_group",
