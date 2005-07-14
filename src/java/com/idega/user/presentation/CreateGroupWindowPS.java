@@ -139,6 +139,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 						// top node (as super user))
 						//don't get the group by: _parentGroup = groupBusiness.getGroupByGroupID(parentGroupId);
 						//because the id is a domain id not the group id
+						_parentGroup = null;
 						group = groupBusiness.createGroup(_groupName,_groupDescription,_groupType, _homePageID, _aliasID);
 					}
 					else if (event.getParentType() == CreateGroupEvent.TYPE_GROUP) {

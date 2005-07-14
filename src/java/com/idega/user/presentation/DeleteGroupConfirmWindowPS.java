@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import javax.ejb.EJBException;
+import javax.ejb.RemoveException;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.data.ICPermission;
@@ -42,7 +43,7 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
 				IWApplicationContext iwac = e.getIWContext().getApplicationContext();
 				GroupBusiness groupBusiness = getGroupBusiness(iwac);
 				try {
-					if (groupBusiness.isGroupRemovable(group))  {
+					if (groupBusiness.isGroupRemovable(group,parentGroup))  {
 						if (parentGroup != null){
 							parentGroup.removeGroup(group, e.getIWContext().getCurrentUser());
 						}
@@ -66,6 +67,11 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
 				}
 				catch (EJBException e1) {
 					e1.printStackTrace();
+				}
+				catch (RemoveException error) {
+					// TODO make error text visible
+					// error will come from plugins
+					error.printStackTrace();
 				}
 			}
 		}

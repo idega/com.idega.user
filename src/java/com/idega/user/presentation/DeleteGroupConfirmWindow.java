@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.ejb.RemoveException;
 import javax.swing.event.ChangeListener;
 
 import com.idega.business.IBOLookup;
@@ -97,10 +98,19 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
     form.addParameter(DeleteGroupEvent.OKAY_KEY,"w");
     // check if the group can be deleted
     Group group = getGroup(groupId);
-    boolean askForConfirmation = getGroupBusiness(iwc).isGroupRemovable(group);   
+    boolean askForConfirmation;
+	try {
+		askForConfirmation = getGroupBusiness(iwc).isGroupRemovable(group,deleteEvent.getParentGroup());
 		Table table = getContent(iwrb, group, askForConfirmation);
-    form.add(table);
-    add(form,iwc);
+	    form.add(table);
+	    add(form,iwc);
+	}
+
+	catch (RemoveException e) {
+		e.printStackTrace();
+		add(e.getMessage());
+	}   
+		
   }
 
 	private Table getContent(IWResourceBundle iwrb, Group group, boolean askForConfirmation) {

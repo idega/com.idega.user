@@ -285,7 +285,7 @@ public class CreateUser extends StyledIWAdminWindow {
 					
 					newUser.store();	
 					
-					callAfterCreatePluginMethods(newUser,iwc);
+					callAfterCreatePluginMethods(newUser,group, iwc);
 					
 					Link gotoLink = new Link();
 					gotoLink.setWindowToOpen(UserPropertyWindow.class);
@@ -458,8 +458,8 @@ public class CreateUser extends StyledIWAdminWindow {
 	 * @param user
 	 * @param eventContext2
 	 */
-	protected void callAfterCreatePluginMethods(User user, IWContext iwc) {
-		getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user);
+	protected void callAfterCreatePluginMethods(User user, Group parentGroup, IWContext iwc) {
+		getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,parentGroup);
 	}
 
 	public String getBundleIdentifier() {
