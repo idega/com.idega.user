@@ -232,36 +232,32 @@ public class CreateUser extends StyledIWAdminWindow {
 				}
 				group = getGroupBusiness(iwc).getGroupByGroupID(primaryGroupId.intValue());
 				if (iwc.getAccessController().hasEditPermissionFor(group, iwc)) {
-					
-					
-					
 					newUser = getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(fullName, ssn, null, null);
-					
-					String error = getUserBusiness(iwc).isUserSuitedForGroup(newUser,group);
-					
-					if(error==null){
-					group.addGroup(newUser);
-					if (newUser.getPrimaryGroupID() < 0) {
-						newUser.setPrimaryGroupID(primaryGroupId);
+					String error = getUserBusiness(iwc).isUserSuitedForGroup(newUser, group);
+					if (error == null) {
+						group.addGroup(newUser);
+						if (newUser.getPrimaryGroupID() < 0) {
+							newUser.setPrimaryGroupID(primaryGroupId);
+						}
+						if (ssn == null || ssn.equals("")) {
+							// added / so it won't clash with any real personal
+							// id's
+							newUser.setPersonalID("/"
+									+ Integer.toString(((Integer) newUser.getPrimaryKey()).intValue()) + "/");
+						}
+						newUser.store();
+						getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(newUser, group);
+						Link gotoLink = new Link();
+						gotoLink.setWindowToOpen(UserPropertyWindow.class);
+						gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID,
+								newUser.getPrimaryKey().toString());
+						close();
+						setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
+						String script = "window.opener." + gotoLink.getWindowToOpenCallingScript(iwc);
+						setOnLoad(script);
 					}
-					if (ssn == null || ssn.equals("")) {
-						// added / so it won't clash with any real personal id's
-						newUser.setPersonalID("/" + Integer.toString(((Integer) newUser.getPrimaryKey()).intValue())
-								+ "/");
-					}
-					newUser.store();
-					getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(newUser, group);
-					Link gotoLink = new Link();
-					gotoLink.setWindowToOpen(UserPropertyWindow.class);
-					gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID,
-							newUser.getPrimaryKey().toString());
-					close();
-					setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
-					String script = "window.opener." + gotoLink.getWindowToOpenCallingScript(iwc);
-					setOnLoad(script);
-					}
-					else{
-						setAlertOnLoad(iwrb.getLocalizedString("new_user.cannot_add_user_"+error,error));
+					else {
+						setAlertOnLoad(iwrb.getLocalizedString("new_user.cannot_add_user_" + error, error));
 						ssnField.setContent(ssn);
 						fullNameField.setContent(fullName);
 					}
