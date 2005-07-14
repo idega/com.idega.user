@@ -4,11 +4,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-
-import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.swing.event.ChangeListener;
-
+import javax.transaction.TransactionManager;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationState;
@@ -33,35 +31,32 @@ import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
+import com.idega.transaction.IdegaTransactionManager;
 import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+
 /**
- * Title:        User
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson</a>
+ * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
+ * 
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu�mundur
+ *         �g�st S�mundsson</a>
  * @version 1.0
  */
+public class CreateUser extends StyledIWAdminWindow {
 
-public class CreateUser extends StyledIWAdminWindow { 
 	private GroupBusiness groupBiz;
-
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-
 	private static final String TAB_NAME = "usr_create_tab_name";
 	private static final String DEFAULT_TAB_NAME = "Create member";
-
 	private Text fullNameText;
 	private Text userLoginText;
 	private Text passwordText;
 	private Text confirmPasswordText;
 	private Text ssnText;
-
 	private Text generateLoginText;
 	private Text generatePasswordText;
 	private Text mustChangePasswordText;
@@ -70,66 +65,50 @@ public class CreateUser extends StyledIWAdminWindow {
 	private Text disableAccountText;
 	private Text goToPropertiesText;
 	private Text primaryGroupText;
-
 	private TextInput fullNameField;
 	private TextInput userLoginField;
 	private PasswordInput passwordField;
 	private PasswordInput confirmPasswordField;
 	private TextInput ssnField;
-
-/*	private CheckBox generateLoginField;
-	private CheckBox generatePasswordField;
-	private CheckBox mustChangePasswordField;
-	private CheckBox cannotChangePasswordField;
-	private CheckBox passwordNeverExpiresField;
-	private CheckBox disableAccountField;
-	*/
+	/*
+	 * private CheckBox generateLoginField; private CheckBox
+	 * generatePasswordField; private CheckBox mustChangePasswordField; private
+	 * CheckBox cannotChangePasswordField; private CheckBox
+	 * passwordNeverExpiresField; private CheckBox disableAccountField;
+	 */
 	private HiddenInput goToPropertiesField;
-	
 	private GroupChooser primaryGroupField;
-
 	private StyledButton okButton;
 	private StyledButton continueButton;
 	private StyledButton cancelButton;
 	private StyledButton backButton;
-	
-	private Help help; 
+	private Help help;
 	private static final String HELP_TEXT_KEY = "create_user";
-
 	private Form myForm;
-	private Table mainTable; 
+	private Table mainTable;
 	private Table inputTable;
 	private Table buttonTable;
 	private Table helpTable;
 	private Table warningTable;
-
 	private String selectedGroupId = null;
 	private StatefullPresentationImplHandler _stateHandler = null;
-
 	public static String PARAMETERSTRING_GROUP_ID = "default_group";
-
 	public static String okButtonParameterValue = "ok";
 	public static String submitButtonParameterValue = "submit";
 	public static String cancelButtonParameterValue = "cancel";
 	public static String submitButtonParameterName = "submit";
-
 	public static String fullNameFieldParameterName = "fullName";
 	public static String userLoginFieldParameterName = "login";
 	public static String passwordFieldParameterName = "password";
 	public static String confirmPasswordFieldParameterName = "confirmPassword";
 	public static String ssnFieldParameterName = "ssn";
-	
 	private String ssn = null;
 	private String fullName = null;
 	private String primaryGroup = null;
-	
 	public static String goToPropertiesFieldParameterName = "gotoProperties";
 	public static String primaryGroupFieldParameterName = "primarygroup";
-
 	private UserBusiness userBiz;
-	
 	private boolean formNotComplete = false;
-	
 	private String inputTextStyle = "text";
 	private String backgroundTableStyle = "back";
 	private String mainTableStyle = "main";
@@ -148,40 +127,33 @@ public class CreateUser extends StyledIWAdminWindow {
 	protected void initializeTexts() {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-
-  		fullNameText = new Text(iwrb.getLocalizedString(fullNameFieldParameterName,"Name") + ":");
-  		fullNameText.setBold();
-		
-  		ssnText = new Text(iwrb.getLocalizedString(ssnFieldParameterName,"Personal ID (SSN)") + ":");
+		fullNameText = new Text(iwrb.getLocalizedString(fullNameFieldParameterName, "Name") + ":");
+		fullNameText.setBold();
+		ssnText = new Text(iwrb.getLocalizedString(ssnFieldParameterName, "Personal ID (SSN)") + ":");
 		ssnText.setBold();
-		
-		primaryGroupText = new Text(iwrb.getLocalizedString(primaryGroupFieldParameterName,"Primarygroup") + ":");
+		primaryGroupText = new Text(iwrb.getLocalizedString(primaryGroupFieldParameterName, "Primarygroup") + ":");
 		primaryGroupText.setBold();
 	}
 
 	protected void initializeFields(IWContext iwc) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		
 		fullNameField = new TextInput(fullNameFieldParameterName);
 		fullNameField.setLength(20);
-		//fullNameField.setWidth(Table.HUNDRED_PERCENT);
+		// fullNameField.setWidth(Table.HUNDRED_PERCENT);
 		fullNameField.setStyleClass("text");
-
 		ssnField = new TextInput(ssnFieldParameterName);
 		ssnField.setLength(20);
 		ssnField.setMaxlength(12);
 		ssnField.setStyleClass(inputTextStyle);
-
-		goToPropertiesField = new HiddenInput(goToPropertiesFieldParameterName,"TRUE");
-		
+		goToPropertiesField = new HiddenInput(goToPropertiesFieldParameterName, "TRUE");
 		primaryGroupField = new GroupChooser(primaryGroupFieldParameterName);
 		primaryGroupField.setStyleClassName(inputTextStyle);
 		primaryGroupField.setInputLength(17);
-
 		help = getHelp(HELP_TEXT_KEY);
-		
-		okButton = new StyledButton(new SubmitButton(iwrb.getLocalizedString("save", "Save"), submitButtonParameterName, okButtonParameterValue));
-		continueButton = new StyledButton(new SubmitButton(iwrb.getLocalizedString("yes", "Yes"), submitButtonParameterName, submitButtonParameterValue));
+		okButton = new StyledButton(new SubmitButton(iwrb.getLocalizedString("save", "Save"),
+				submitButtonParameterName, okButtonParameterValue));
+		continueButton = new StyledButton(new SubmitButton(iwrb.getLocalizedString("yes", "Yes"),
+				submitButtonParameterName, submitButtonParameterValue));
 		cancelButton = new StyledButton(new CloseButton(iwrb.getLocalizedString("close", "Close")));
 		backButton = new StyledButton(new BackButton(iwrb.getLocalizedString("back", "Back")));
 	}
@@ -191,243 +163,237 @@ public class CreateUser extends StyledIWAdminWindow {
 		mainTable.setCellspacing(0);
 		mainTable.setCellpadding(0);
 		mainTable.setWidth(Table.HUNDRED_PERCENT);
-		mainTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
-		mainTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
+		mainTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
+		mainTable.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_TOP);
 		mainTable.setHeight(2, 5);
-
 		inputTable = new Table();
 		inputTable.setStyleClass(mainTableStyle);
 		inputTable.setWidth(Table.HUNDRED_PERCENT);
 		inputTable.setCellpadding(0);
-		inputTable.setCellspacing(12);		
-		inputTable.add(fullNameText,1,1);
+		inputTable.setCellspacing(12);
+		inputTable.add(fullNameText, 1, 1);
 		inputTable.add(Text.getBreak(), 1, 1);
-		inputTable.add(fullNameField,1,1);
-		inputTable.add(ssnText,1,2);
+		inputTable.add(fullNameField, 1, 1);
+		inputTable.add(ssnText, 1, 2);
 		inputTable.add(Text.getBreak(), 1, 2);
-		inputTable.add(ssnField,1,2);
+		inputTable.add(ssnField, 1, 2);
 		inputTable.add(primaryGroupText, 1, 3);
 		inputTable.add(Text.getBreak(), 1, 3);
 		inputTable.add(primaryGroupField, 1, 3);
 		inputTable.setHeight(4, 5);
-	
 		buttonTable = new Table();
 		buttonTable.setCellpadding(0);
 		buttonTable.setCellspacing(0);
 		buttonTable.setWidth(2, "5");
 		buttonTable.add(okButton, 1, 1);
-		buttonTable.add(cancelButton, 3, 1);			
-		
+		buttonTable.add(cancelButton, 3, 1);
 		helpTable = new Table();
 		helpTable.setCellpadding(0);
 		helpTable.setCellspacing(0);
-		helpTable.add(help,1,1);
-		
+		helpTable.add(help, 1, 1);
 		Table bottomTable = new Table();
 		bottomTable.setCellpadding(0);
 		bottomTable.setCellspacing(5);
 		bottomTable.setWidth(Table.HUNDRED_PERCENT);
 		bottomTable.setStyleClass(mainTableStyle);
-		bottomTable.add(helpTable,1,1);
-		bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
-		bottomTable.add(buttonTable,2,1);
-
-		mainTable.add(inputTable, 1,1);
-		mainTable.add(bottomTable,1,3);
-		
+		bottomTable.add(helpTable, 1, 1);
+		bottomTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+		bottomTable.add(buttonTable, 2, 1);
+		mainTable.add(inputTable, 1, 1);
+		mainTable.add(bottomTable, 1, 3);
 		myForm.add(mainTable);
 	}
 
 	public void commitCreation(IWContext iwc) {
-		
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-
 		User newUser = null;
 		Group group = null;
-								
 		Integer primaryGroupId = null;
-			
-		try {			
-			if (primaryGroup != null && !primaryGroup.equals("")) {
-				
+		if (primaryGroup != null && !primaryGroup.equals("")) {
+			TransactionManager transaction = IdegaTransactionManager.getInstance();
+			try {
+				// START A TRANSACTION!
+				transaction.begin();
 				primaryGroupId = new Integer(primaryGroup);
-				
-				if((ssn != null || !ssn.equals("")) && (fullName == null || fullName.equals(""))) {
-					try { 
+				if ((ssn != null || !ssn.equals("")) && (fullName == null || fullName.equals(""))) {
+					try {
 						newUser = getUserBusiness(iwc).getUser(ssn);
 						fullName = newUser.getName();
 					}
 					catch (Exception e) {
 						newUser = null;
 					}
-					
-					if(newUser != null) {
+					if (newUser != null) {
 						fullName = newUser.getName();
 					}
 					else {
-						fullName = ssn; 
+						fullName = ssn;
 					}
 				}
-								
 				group = getGroupBusiness(iwc).getGroupByGroupID(primaryGroupId.intValue());
-				
-				if(iwc.getAccessController().hasEditPermissionFor(group, iwc)){
-					newUser = getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(fullName,ssn,null,null);	
+				if (iwc.getAccessController().hasEditPermissionFor(group, iwc)) {
+					newUser = getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(fullName, ssn, null, null);
 					group.addGroup(newUser);
-					if(newUser.getPrimaryGroupID()<0){
+					if (newUser.getPrimaryGroupID() < 0) {
 						newUser.setPrimaryGroupID(primaryGroupId);
 					}
-					
-					if(ssn == null || ssn.equals("")) {
-						//added / so it won't clash with any real personal id's
-						newUser.setPersonalID("/"+Integer.toString(((Integer)newUser.getPrimaryKey()).intValue())+"/");				
+					if (ssn == null || ssn.equals("")) {
+						// added / so it won't clash with any real personal id's
+						newUser.setPersonalID("/" + Integer.toString(((Integer) newUser.getPrimaryKey()).intValue())
+								+ "/");
 					}
-					
-					newUser.store();	
-					
-					callAfterCreatePluginMethods(newUser,group, iwc);
-					
+					newUser.store();
+					getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(newUser, group);
 					Link gotoLink = new Link();
 					gotoLink.setWindowToOpen(UserPropertyWindow.class);
-					gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, newUser.getPrimaryKey().toString());
+					gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID,
+							newUser.getPrimaryKey().toString());
 					close();
 					setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
 					String script = "window.opener." + gotoLink.getWindowToOpenCallingScript(iwc);
-					setOnLoad(script);			
+					setOnLoad(script);
 				}
-				else{
-					setAlertOnLoad(iwrb.getLocalizedString("new_user.no_edit_permission_for_parent_group","You cannot add the user to this group because you do not have edit permission to it."));
+				else {
+					setAlertOnLoad(iwrb.getLocalizedString("new_user.no_edit_permission_for_parent_group",
+							"You cannot add the user to this group because you do not have edit permission to it."));
 					ssnField.setContent(ssn);
 					fullNameField.setContent(fullName);
 				}
-			}
-			else {
-				setAlertOnLoad(iwrb.getLocalizedString("new_user.group_required","Group must be selected"));
+				transaction.commit();
+			}// try ends
+			catch (Exception e) {
+				e.printStackTrace();
+				try {
+					transaction.rollback();
+				}
+				catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				setAlertOnLoad(iwrb.getLocalizedString(
+						"new_user.transaction_rollback",
+						"User could not be created because of the error: "
+								+ e.getMessage()
+								+ " please try again or contact the system administrator if you think it is a server error."));
 				ssnField.setContent(ssn);
 				fullNameField.setContent(fullName);
+				// add the parent group also?
 			}
-				
-			
-			
-			}//try ends
-			catch (RemoteException e) {
-				e.printStackTrace();
-			}
-			catch (CreateException e) {
-				e.printStackTrace();
-			}
-			catch (FinderException e) {
-				e.printStackTrace();
-			}
+		}
+		else {
+			setAlertOnLoad(iwrb.getLocalizedString("new_user.group_required", "Group must be selected"));
+			ssnField.setContent(ssn);
+			fullNameField.setContent(fullName);
+		}
 	}
-	
+
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		IWBundle iwb = getBundle(iwc);
-	  	
 		setName(iwrb.getLocalizedString(TAB_NAME, DEFAULT_TAB_NAME));
 		addTitle(iwrb.getLocalizedString("create_new_user", "Create a new User"), TITLE_STYLECLASS);
 		super.setTitle(iwrb.getLocalizedString("create_new_user", "Create a new User"));
-
 		myForm = new Form();
-		add(myForm,iwc);
+		add(myForm, iwc);
 		initializeTexts();
 		initializeFields(iwc);
 		lineUpElements(iwc);
-						
-		//added to set a new image for the groupChooser
+		// added to set a new image for the groupChooser
 		Image groupChooseImage = iwb.getImage("magnify.gif");
 		primaryGroupField.setChooseButtonImage(groupChooseImage);
-
 		selectedGroupId = iwc.getParameter(PARAMETERSTRING_GROUP_ID);
 		if (selectedGroupId == null) {
-		    selectedGroupId = getSelectedGroupID(iwc);
+			selectedGroupId = getSelectedGroupID(iwc);
 		}
 		if (selectedGroupId != null) {
-			primaryGroupField.setSelectedNode(new GroupTreeNode(this.getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(selectedGroupId))));
+			primaryGroupField.setSelectedNode(new GroupTreeNode(this.getGroupBusiness(iwc).getGroupByGroupID(
+					Integer.parseInt(selectedGroupId))));
 			myForm.add(new HiddenInput(PARAMETERSTRING_GROUP_ID, selectedGroupId));
 		}
-		
 		String submit = iwc.getParameter("submit");
 		ssn = iwc.getParameter(ssnFieldParameterName);
 		fullName = iwc.getParameter(fullNameFieldParameterName);
 		primaryGroup = iwc.getParameter(primaryGroupFieldParameterName);
-		
-		if(primaryGroup == null || primaryGroup.equals("")){
+		if (primaryGroup == null || primaryGroup.equals("")) {
 			primaryGroup = "";
 		}
-		else{
-			primaryGroup = primaryGroup.substring(primaryGroup.lastIndexOf("_")+1);
+		else {
+			primaryGroup = primaryGroup.substring(primaryGroup.lastIndexOf("_") + 1);
 		}
-
-		if(ssn == null || ssn.equals("") || fullName == null || fullName.equals("")){ 
-			formNotComplete = true;			
+		if (ssn == null || ssn.equals("") || fullName == null || fullName.equals("")) {
+			formNotComplete = true;
 		}
-					
-			if(submit != null) {
-				//is addressed if the okButton is pressed and the user has:
-				//1. not entered anything in the form,
-				//2. entered only the name
-				//3. entered only the social security number
-				if (submit.equals("ok") && formNotComplete) {
-					//is addressed if both name and social security number are empty
-					if((ssn == null || ssn.equals("")) && (fullName == null || fullName.equals(""))){
-						setAlertOnLoad(iwrb.getLocalizedString("new_user.ssn_or_fullName_required","Personal ID or name is required"));
+		if (submit != null) {
+			// is addressed if the okButton is pressed and the user has:
+			// 1. not entered anything in the form,
+			// 2. entered only the name
+			// 3. entered only the social security number
+			if (submit.equals("ok") && formNotComplete) {
+				// is addressed if both name and social security number are
+				// empty
+				if ((ssn == null || ssn.equals("")) && (fullName == null || fullName.equals(""))) {
+					setAlertOnLoad(iwrb.getLocalizedString("new_user.ssn_or_fullName_required",
+							"Personal ID or name is required"));
+				}
+				else if (ssn == null || ssn.equals("") && (fullName != null || !fullName.equals(""))) {
+					// is addressed if only the name is entered
+					inputTable.add(iwrb.getLocalizedString("new_user.ssn_warning",
+							"You have selected to create a user with no Personal ID, do you want to continue?"), 1, 4);
+					fullNameField.setContent(fullName);
+					formNotComplete = false;
+					buttonTable.remove(okButton);
+					buttonTable.add(continueButton, 1, 1);
+					if (primaryGroup != null || !primaryGroup.equals("")) {
+						Integer primaryGroupId = new Integer(primaryGroup);
+						primaryGroupField.setSelectedGroup(primaryGroup, getGroupBusiness(iwc).getGroupByGroupID(
+								primaryGroupId.intValue()).getName());
 					}
-					else if(ssn == null || ssn.equals("") && (fullName != null || !fullName.equals(""))) {
-//						is addressed if only the name is entered
-						inputTable.add(iwrb.getLocalizedString("new_user.ssn_warning","You have selected to create a user with no Personal ID, do you want to continue?"),1,4);
+				}
+				// is addressed if the only the social security number is
+				// entered
+				else if ((ssn != null || !ssn.equals("")) && (fullName == null || fullName.equals(""))) {
+					try {
+						// todo fill in the name field if found by ssn
+						User user = getUserBusiness(iwc).getUser(ssn);
+						fullName = user.getName();
 						fullNameField.setContent(fullName);
-						formNotComplete = false;
-						buttonTable.remove(okButton);
-						buttonTable.add(continueButton,1,1);
-						if(primaryGroup != null || !primaryGroup.equals("")) {
-							Integer primaryGroupId = new Integer(primaryGroup);
-							primaryGroupField.setSelectedGroup(primaryGroup,getGroupBusiness(iwc).getGroupByGroupID(primaryGroupId.intValue()).getName());
-						}
-													
+						fullNameField.setDisabled(true);
+						inputTable.add(
+								iwrb.getLocalizedString("new_user.user_found",
+										"You are adding a user that exists in the database to the selected group, do you want to continue?"),
+								1, 4);
 					}
-					//is addressed if the only the social security number is entered
-					else if((ssn != null || !ssn.equals("")) && (fullName == null || fullName.equals(""))) {
-						try {
-							//todo fill in the name field if found by ssn
-							User user = getUserBusiness(iwc).getUser(ssn);
-							fullName = user.getName();
-							fullNameField.setContent(fullName);
-							fullNameField.setDisabled(true);
-							inputTable.add(iwrb.getLocalizedString("new_user.user_found","You are adding a user that exists in the database to the selected group, do you want to continue?"),1,4);
-						}
-						catch (FinderException e) {
-							//
-							inputTable.add(iwrb.getLocalizedString("new_user.fullName_warning","You have selected to create a user with no name, do you want to continue?"),1,4);
-						}
-						
-						ssnField.setContent(ssn);
-						formNotComplete = false;
-						buttonTable.remove(okButton);
-						buttonTable.add(continueButton,1,1);
-						if(primaryGroup != null || !primaryGroup.equals("")) {
-							Integer primaryGroupId = new Integer(primaryGroup);
-							primaryGroupField.setSelectedGroup(primaryGroup,getGroupBusiness(iwc).getGroupByGroupID(primaryGroupId.intValue()).getName());	
-								
-						}				
-					}		
-				}
-				//is addressed if both name and social security number are entered
-				else if (submit.equals("ok") && !formNotComplete) {
-					commitCreation(iwc);		
-				}
-				//is addressed if the user submits entering only ssn or name
-				//then name is set = ssn or ssn set = the primary key of the user (see commitCreation(iwc))
-				else if (submit.equals("submit")) {
-					commitCreation(iwc);
-				}	
-				else if (submit.equals("cancel")) {
-					close();
+					catch (FinderException e) {
+						//
+						inputTable.add(iwrb.getLocalizedString("new_user.fullName_warning",
+								"You have selected to create a user with no name, do you want to continue?"), 1, 4);
+					}
+					ssnField.setContent(ssn);
+					formNotComplete = false;
+					buttonTable.remove(okButton);
+					buttonTable.add(continueButton, 1, 1);
+					if (primaryGroup != null || !primaryGroup.equals("")) {
+						Integer primaryGroupId = new Integer(primaryGroup);
+						primaryGroupField.setSelectedGroup(primaryGroup, getGroupBusiness(iwc).getGroupByGroupID(
+								primaryGroupId.intValue()).getName());
+					}
 				}
 			}
-		}		
+			// is addressed if both name and social security number are entered
+			else if (submit.equals("ok") && !formNotComplete) {
+				commitCreation(iwc);
+			}
+			// is addressed if the user submits entering only ssn or name
+			// then name is set = ssn or ssn set = the primary key of the user
+			// (see commitCreation(iwc))
+			else if (submit.equals("submit")) {
+				commitCreation(iwc);
+			}
+			else if (submit.equals("cancel")) {
+				close();
+			}
+		}
+	}
 
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
 		if (userBiz == null) {
@@ -440,7 +406,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		}
 		return userBiz;
 	}
-	
+
 	public GroupBusiness getGroupBusiness(IWApplicationContext iwc) {
 		if (groupBiz == null) {
 			try {
@@ -452,15 +418,6 @@ public class CreateUser extends StyledIWAdminWindow {
 		}
 		return groupBiz;
 	}
-	
-	/**
-	 * Call some plugin methods
-	 * @param user
-	 * @param eventContext2
-	 */
-	protected void callAfterCreatePluginMethods(User user, Group parentGroup, IWContext iwc) {
-		getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,parentGroup);
-	}
 
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
@@ -469,10 +426,9 @@ public class CreateUser extends StyledIWAdminWindow {
 	private String getSelectedGroupID(IWContext iwc) {
 		String selectedGroupProviderStateId = "";
 		String tempSelectedGroupID = null;
-		
 		if (iwc.isParameterSet(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY)) {
 			selectedGroupProviderStateId = iwc.getParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
-		}      
+		}
 		IWPresentationState state = this.getPresentationState(iwc);
 		// add action listener
 		addActionListener((IWActionListener) state);
@@ -482,12 +438,13 @@ public class CreateUser extends StyledIWAdminWindow {
 		try {
 			stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
 			changeListeners = stateMachine.getAllChangeListeners();
-			// try to get the selected group  
+			// try to get the selected group
 			if (selectedGroupProviderStateId != null) {
-				UserApplicationMenuAreaPS groupProviderState = (UserApplicationMenuAreaPS) stateMachine.getStateFor(selectedGroupProviderStateId, UserApplicationMenuAreaPS.class);
-				Integer tempID = groupProviderState.getSelectedGroupId(); 
+				UserApplicationMenuAreaPS groupProviderState = (UserApplicationMenuAreaPS) stateMachine.getStateFor(
+						selectedGroupProviderStateId, UserApplicationMenuAreaPS.class);
+				Integer tempID = groupProviderState.getSelectedGroupId();
 				if (tempID != null) {
-				    tempSelectedGroupID = tempID.toString();
+					tempSelectedGroupID = tempID.toString();
 				}
 			}
 		}
@@ -495,12 +452,12 @@ public class CreateUser extends StyledIWAdminWindow {
 			changeListeners = new ArrayList();
 		}
 		Iterator iterator = changeListeners.iterator();
-		while (iterator.hasNext())  {
+		while (iterator.hasNext()) {
 			state.addChangeListener((ChangeListener) iterator.next());
 		}
 		return tempSelectedGroupID;
 	}
-	
+
 	public IWPresentationState getPresentationState(IWUserContext iwuc) {
 		return _stateHandler.getPresentationState(this, iwuc);
 	}
