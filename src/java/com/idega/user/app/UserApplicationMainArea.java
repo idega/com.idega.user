@@ -109,7 +109,6 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 			add(search);
 		}
 		else if (plugins != null && !plugins.isEmpty()) {
-			System.out.println("Plugins are not null");
 			Iterator iter = plugins.iterator();
 			boolean buoHasBeenAdded = false;
 			while (iter.hasNext()) {
