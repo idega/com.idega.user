@@ -233,19 +233,21 @@ public class CreateUser extends StyledIWAdminWindow {
 				group = getGroupBusiness(iwc).getGroupByGroupID(primaryGroupId.intValue());
 				if (iwc.getAccessController().hasEditPermissionFor(group, iwc)) {
 					newUser = getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(fullName, ssn, null, null);
+					if (ssn == null || ssn.equals("")) {
+						// added / so it won't clash with any real personal
+						// id's
+						newUser.setPersonalID("/"
+								+ Integer.toString(((Integer) newUser.getPrimaryKey()).intValue()) + "/");
+					}
+										
 					String error = getUserBusiness(iwc).isUserSuitedForGroup(newUser, group);
 					if (error == null) {
 						group.addGroup(newUser);
 						if (newUser.getPrimaryGroupID() < 0) {
 							newUser.setPrimaryGroupID(primaryGroupId);
 						}
-						if (ssn == null || ssn.equals("")) {
-							// added / so it won't clash with any real personal
-							// id's
-							newUser.setPersonalID("/"
-									+ Integer.toString(((Integer) newUser.getPrimaryKey()).intValue()) + "/");
-						}
 						newUser.store();
+						
 						getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(newUser, group);
 						Link gotoLink = new Link();
 						gotoLink.setWindowToOpen(UserPropertyWindow.class);
