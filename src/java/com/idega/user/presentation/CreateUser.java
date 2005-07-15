@@ -278,11 +278,13 @@ public class CreateUser extends StyledIWAdminWindow {
 				catch (Exception e1) {
 					e1.printStackTrace();
 				}
+				String msg = e.getMessage();
+				
 				setAlertOnLoad(iwrb.getLocalizedString(
-						"new_user.transaction_rollback",
-						"User could not be created because of the error: "
-								+ e.getMessage()
-								+ " please try again or contact the system administrator if you think it is a server error."));
+						"new_user.transaction_rollback_"+msg,
+						"User could not be created/added because of the error: "
+								+ msg
+								+ " Please try again or contact the system administrator if you think it is a server error."));
 				ssnField.setContent(ssn);
 				fullNameField.setContent(fullName);
 				// add the parent group also?
