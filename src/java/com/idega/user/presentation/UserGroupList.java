@@ -14,6 +14,7 @@ import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.IFrame;
@@ -38,7 +39,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
 	private static final String HELP_TEXT_KEY = "user_group_list";
 
-//	private Link addLink;
+	private Link addLink;
 
 	private IFrame memberofFrame;
 
@@ -65,8 +66,12 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	}
 
 	public void initFieldContents() {
-//		addLink.setWindowToOpen(UserGroupSetter.class);
-//		addLink.addParameter(UserGroupList.PARAMETER_USER_ID, this.getUserId());
+	    IWContext iwc = IWContext.getInstance();
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+		if (iwc.isSuperAdmin()) {
+		    addLink.setWindowToOpen(UserGroupSetter.class);
+			addLink.addParameter(UserGroupList.PARAMETER_USER_ID, this.getUserId());
+		}
 		try {
 			UserBusiness userBusiness = this.getUserBusiness(this.getEventIWContext());
 			Collection userGroups = userBusiness.getUserGroupsDirectlyRelated(this.getUserId());
@@ -112,10 +117,12 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
 		primaryGroupField = new DropdownMenu(primaryGroupFieldName);
 		primaryGroupField.keepStatusOnAction();
-//		IWContext iwc = IWContext.getInstance();
-//		IWResourceBundle iwrb = getResourceBundle(iwc);
-//		addLink = new Link("  " + iwrb.getLocalizedString("addRemove", "Add/Remove") + "  ");
-//		addLink.setStyleClass("styledLink");
+		IWContext iwc = IWContext.getInstance();
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+		if (iwc.isSuperAdmin()) {
+			addLink = new Link("  " + iwrb.getLocalizedString("addRemove", "Add/Remove") + "  ");
+			addLink.setStyleClass("styledLink");
+		}
 	}
 
 	public void actionPerformed(IWLinkEvent e) {
@@ -176,9 +183,9 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		table.add(memberof, 1, 2);
 		table.add(Text.getBreak(), 1, 2);
 		table.add(memberofFrame, 1, 2);
-
-//		table.add(addLink, 1, 3);
-		
+		if (addLink != null) {
+		    table.add(addLink, 1, 3);
+		}
 		add(table, 1, 1);
 	}
 

@@ -102,10 +102,12 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		fillGroupTypeMenu(iwc, iwrb);
-		addLink.setWindowToOpen(GroupGroupSetter.class);
-		addLink.setStyleClass(linkStyle);
-		addLink.addParameter(PARAMETER_GROUP_ID, getGroupId());
-		addLink.addParameter(PARENT_GROUP_ID, getSelectedParentGroupId());
+		if (iwc.isSuperAdmin()) {
+		    addLink.setWindowToOpen(GroupGroupSetter.class);
+			addLink.setStyleClass(linkStyle);
+			addLink.addParameter(PARAMETER_GROUP_ID, getGroupId());
+			addLink.addParameter(PARENT_GROUP_ID, getSelectedParentGroupId());
+		}
 		try {
 			Group group = (Group) (((GroupHome) com.idega.data.IDOLookup.getHome(Group.class)).findByPrimaryKey(new Integer(
 					getGroupId())));
@@ -180,8 +182,10 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		//
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		String addRemove = "  " + iwrb.getLocalizedString("gen_addremove", "Add/Remove") + "  ";
-		addLink = new Link(addRemove);
+		if (iwc.isSuperAdmin()) {
+			String addRemove = "  " + iwrb.getLocalizedString("gen_addremove", "Add/Remove") + "  ";
+			addLink = new Link(addRemove);
+		}
 		shortNameField = new TextInput(shortNameFieldName);
 		shortNameField.setLength(26);
 		abbrField = new TextInput(abbrFieldName);
@@ -293,7 +297,9 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		table.add(Text.getBreak(), 1, 6);
 		table.add(memberofFrame, 1, 6);
 		table.add(Text.getBreak(), 1, 6);
-		table.add(addLink, 1, 6);
+		if (addLink != null) {
+		    table.add(addLink, 1, 6);
+		}
 		add(table, 1, 1);
 	}
 
