@@ -71,6 +71,7 @@ LS\u00CD_access=LS\u00CD_access
 Mobile_phone=
 Move\ to=
 Only\ leagues\ can\ add\ groups\ under\ this\ type=Only leagues can add groups under this type
+PINEdit=PINEdit
 Please\ remove\ the\ children\ first.=
 R\u00E9ttindastj\u00F3ri=R\u00E9ttindastj\u00F3ri
 SKY_access=SKY_access
@@ -210,11 +211,7 @@ delete_selected_users=Delete selected users
 disableAccount=
 edit.group=
 email=
-<<<<<<< Localizable.strings
 esk81=esk81
-=======
-employees=employees
->>>>>>> 1.21
 export=
 fast_search=
 fax=fax
@@ -347,6 +344,7 @@ neverExpires=
 new.group=
 new.member=
 new_group.group_name_required=Group name must be selected
+new_user.cannot_add_user_F\u00E6\u00F0ingardagsetning\ er\ ekki\ til\ sta\u00F0ar=F\u00E6\u00F0ingardagsetning er ekki til sta\u00F0ar
 new_user.fullName_warning=
 new_user.group_required=
 new_user.no_edit_permission_for_parent_group=You cannot add the user to this group because you do not have edit permission to it.
@@ -442,13 +440,11 @@ user_already_member_of_the_target_group=
 user_application.title=User Application
 user_contact_search.name=Kontakter
 user_more_than_one_suitable_group_was_found_prefix=More than one suitable groups were found. The system could not decide where to put the user. The possible groups are\:
+user_new_in_ledger_=user_new_in_ledger_
 user_property_window=
 user_report_report_builder=
-<<<<<<< Localizable.strings
-=======
 user_source_and_target_are_the_same=Source group and target group are the same
 user_status_bar.no_group_selected=No group selected
->>>>>>> 1.21
 user_suitable_group_could_not_be_found=
 usergroupsetter.close=
 usergroupsetter.in=
