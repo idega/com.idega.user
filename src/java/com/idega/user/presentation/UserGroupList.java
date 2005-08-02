@@ -67,7 +67,6 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
 	public void initFieldContents() {
 	    IWContext iwc = IWContext.getInstance();
-		IWResourceBundle iwrb = getResourceBundle(iwc);
 		if (iwc.isSuperAdmin()) {
 		    addLink.setWindowToOpen(UserGroupSetter.class);
 			addLink.addParameter(UserGroupList.PARAMETER_USER_ID, this.getUserId());
