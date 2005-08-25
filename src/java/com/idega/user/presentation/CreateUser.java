@@ -145,6 +145,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		ssnField.setLength(20);
 		ssnField.setMaxlength(12);
 		ssnField.setStyleClass(inputTextStyle);
+		ssnField.setAsPersonalID(iwc.getCurrentLocale(),iwrb.getLocalizedString("new_user.not_valid_ssn","The SSN that was entered is not valid"));
 		goToPropertiesField = new HiddenInput(goToPropertiesFieldParameterName, "TRUE");
 		primaryGroupField = new GroupChooser(primaryGroupFieldParameterName);
 		primaryGroupField.setStyleClassName(inputTextStyle);
