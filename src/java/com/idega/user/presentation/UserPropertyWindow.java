@@ -29,6 +29,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 	public static final String PARAMETERSTRING_USER_ID = "ic_user_id";
 	public static final String SESSION_ADDRESS = "ic_user_property_window";
 	private int userId = -1;
+	private int groupId = -1;
 
 	public UserPropertyWindow() {
 		super(500, 600); // changed from super(410,550); - birna
@@ -73,17 +74,33 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		return SESSION_ADDRESS;
 	}
 
+	/**
+	 * <p>
+	 * Initializes the userId and groupId variables. 
+	 * This is by default called from initializePanel()
+	 * </p>
+	 * @param iwc
+	 */
+	protected void initializeUserAndGroup(IWContext iwc){
+		String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
+		int userId = Integer.parseInt(userIdString);
+		String groupIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
+		int groupId = -1;
+		if (groupIdString != null) {
+			groupId = Integer.parseInt(groupIdString);
+		}
+		setUserId(userId);
+		setGroupId(groupId);
+	}
+	
 	public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
 		try {
 			int count = 0;
 			// IWResourceBundle iwrb = getResourceBundle(iwc);
-			String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
-			int userId = Integer.parseInt(userIdString);
-			String groupIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
-			int groupId = -1;
-			if (groupIdString != null) {
-				groupId = Integer.parseInt(groupIdString);
-			}
+			initializeUserAndGroup(iwc);
+			int userId = getUserId();
+			int groupId = getGroupId();
+			
 			// Collects the tab info and calls usergroupplugin methods
 			User user = getUserBusiness(iwc).getUser(userId);
 			panel.setCollector(new UserGroupPluginFormCollector(user));
@@ -226,5 +243,37 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 	 */
 	public String getIdParameter() {
 		return PARAMETERSTRING_USER_ID;
+	}
+
+	
+	/**
+	 * @return Returns the groupId.
+	 */
+	public int getGroupId() {
+		return groupId;
+	}
+
+	
+	/**
+	 * @param groupId The groupId to set.
+	 */
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+
+	
+	/**
+	 * @return Returns the userId.
+	 */
+	public int getUserId() {
+		return userId;
+	}
+
+	
+	/**
+	 * @param userId The userId to set.
+	 */
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 }
