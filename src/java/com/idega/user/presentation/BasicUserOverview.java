@@ -191,8 +191,21 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     		LinkToUserStats linkToUserStats = (LinkToUserStats)ImplementorRepository.getInstance().newInstanceOrNull(LinkToUserStats.class, this.getClass());
     		if (linkToUserStats != null) {
     		    linkToUserStats.setSelectedGroup(selectedGroup);
+    		    linkToUserStats.setInvocationFileName("Invocation-UserStats.xml");
+    		    linkToUserStats.setLayoutFileName("Layout-UserStats.xml");
+    		    linkToUserStats.setLocalizableKeyName("userstatswindow.userstats");
     		    Link link = linkToUserStats.getLink();
     		    link.setImage(iwb.getImage("search.gif"));
+        		entityBrowser.addPresentationObjectToBottom(link);
+    		}
+    		LinkToUserStats linkToGroupStats = (LinkToUserStats)ImplementorRepository.getInstance().newInstanceOrNull(LinkToUserStats.class, this.getClass());
+    		if (linkToGroupStats != null) {
+    		    linkToGroupStats.setSelectedGroup(selectedGroup);
+    		    linkToGroupStats.setInvocationFileName("Invocation-GroupStats.xml");
+    		    linkToGroupStats.setLayoutFileName("Layout-GroupStats.xml");
+    		    linkToGroupStats.setLocalizableKeyName("userstatswindow.groupstats");
+    		    Link link = linkToGroupStats.getLink();
+    		    link.setImage(iwb.getImage("searchGroups.gif"));
         		entityBrowser.addPresentationObjectToBottom(link);
     		}
             // put browser into a form

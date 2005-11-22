@@ -15,5 +15,8 @@ public interface LinkToUserStats extends ImplementorPlaceholder {
     Link getLink();
     
     void setSelectedGroup(Group selectedGroup);
+    public void setInvocationFileName(String invocationFileName);
+    public void setLayoutFileName(String layoutFileName);
+    public void setLocalizableKeyName(String localizableKeyName);  
     
 }
