@@ -92,7 +92,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			// try to get the selected group  
 			if (selectedGroupProviderStateId != null) {
 				UserApplicationMenuAreaPS groupProviderState = (UserApplicationMenuAreaPS) stateMachine.getStateFor(selectedGroupProviderStateId, UserApplicationMenuAreaPS.class);
-				Integer selectedGroupId = (Integer) groupProviderState.getSelectedGroupId();
+				Integer selectedGroupId = groupProviderState.getSelectedGroupId();
 				selectedGroup = getGroup(selectedGroupId); 
 			}
 		}

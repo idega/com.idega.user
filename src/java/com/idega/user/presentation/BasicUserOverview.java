@@ -26,7 +26,6 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.data.EntityRepresentation;
-import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
@@ -431,7 +430,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 }
                 // now the corresponding address was found, now just use the
                 // default converter
-                return (browser.getDefaultConverter().getPresentationObject((GenericEntity) address, path, browser, iwc));
+                return (browser.getDefaultConverter().getPresentationObject(address, path, browser, iwc));
             }
         };
         
@@ -454,7 +453,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 }
                 // now the corresponding email was found, now just use the
                 // default converter
-                return browser.getDefaultConverter().getPresentationObject((GenericEntity) email, path, browser, iwc);
+                return browser.getDefaultConverter().getPresentationObject(email, path, browser, iwc);
             }
         };
         
@@ -1212,7 +1211,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 }
                 // now the corresponding address was found, now just use the
                 // default converter
-                return (browser.getDefaultConverter().getPresentationObject((GenericEntity) address, path, browser, iwc));
+                return (browser.getDefaultConverter().getPresentationObject(address, path, browser, iwc));
             }
         };
         
@@ -1235,7 +1234,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 }
                 // now the corresponding email was found, now just use the
                 // default converter
-                return browser.getDefaultConverter().getPresentationObject((GenericEntity) email, path, browser, iwc);
+                return browser.getDefaultConverter().getPresentationObject(email, path, browser, iwc);
             }
         };
         
@@ -1261,7 +1260,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 int i;
                 Table table = new Table();
                 for (i = 0; i < phone.length; i++) {
-                    table.add(browser.getDefaultConverter().getPresentationObject((GenericEntity) phone[i], path, browser, iwc));
+                    table.add(browser.getDefaultConverter().getPresentationObject(phone[i], path, browser, iwc));
                 }
                 return table;
             }

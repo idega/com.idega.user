@@ -7,6 +7,7 @@ import com.idega.core.builder.business.BuilderService;
 import com.idega.core.data.ICTreeNode;
 import com.idega.core.ldap.util.IWLDAPConstants;
 import com.idega.core.ldap.util.IWLDAPUtil;
+import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
@@ -109,7 +110,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 			addLink.addParameter(PARENT_GROUP_ID, getSelectedParentGroupId());
 		}
 		try {
-			Group group = (Group) (((GroupHome) com.idega.data.IDOLookup.getHome(Group.class)).findByPrimaryKey(new Integer(
+			Group group = (((GroupHome) IDOLookup.getHome(Group.class)).findByPrimaryKey(new Integer(
 					getGroupId())));
 			fieldValues.put(nameFieldName, (group.getName() != null) ? group.getName() : "");
 			fieldValues.put(descriptionFieldName, (group.getDescription() != null) ? group.getDescription() : "");
@@ -138,29 +139,22 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		if (page != null) {
 			int pageId = page.intValue();
 			IWApplicationContext iwc = getIWApplicationContext();
-			//Map tree = PageTreeNode.getTree(iwc);
-			//if (tree != null) {
 			BuilderService bservice;
 			try {
 				bservice = getBuilderService(iwc);
-				ICTreeNode node = (ICTreeNode) bservice.getPageTree(pageId);
+				ICTreeNode node = bservice.getPageTree(pageId);
 				if (node != null)
 					homepageField.setSelectedPage(node.getNodeID(), node.getNodeName());
 			}
 			catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//}
 		}
 		shortNameField.setContent((String) fieldValues.get(shortNameFieldName));
 		abbrField.setContent((String) fieldValues.get(abbrFieldName));
 		
 		uuidField.setContent((String) fieldValues.get(uuidFieldName));
 		rdnField.setContent((String) fieldValues.get(rdnFieldName));
-		//String type = (String) fieldValues.get(grouptypeFieldName);
-		//grouptypeField.setSelectedElement(type);
-		//grouptypeField.setText( type);
 	}
 
 	public void initializeFields() {

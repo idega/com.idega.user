@@ -232,7 +232,7 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
     if(presentationState == null){
       try {
         IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-        presentationState = (DeleteGroupConfirmWindowPS)stateMachine.getStateFor(getCompoundId(),DeleteGroupConfirmWindowPS.class);
+        presentationState = stateMachine.getStateFor(getCompoundId(),DeleteGroupConfirmWindowPS.class);
       }
       catch (RemoteException re) {
         throw new RuntimeException(re.getMessage());
