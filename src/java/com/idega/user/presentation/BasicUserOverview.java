@@ -62,6 +62,7 @@ import com.idega.user.data.Group;
 import com.idega.user.data.Status;
 import com.idega.user.data.User;
 import com.idega.util.IWColor;
+import com.idega.util.IWTimestamp;
 import com.idega.util.text.TextSoap;
 /**
  * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
@@ -973,7 +974,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                     userBusiness.removeUserFromGroup(Integer.parseInt(userId), parentGroup, currentUser);
                 }
                 catch (RemoveException e) {
-                    System.err.println("[BasicUserOverview] user with id " + userId + " could not be removed" + e.getMessage());
+                    System.err.println("[BasicUserOverview] "+IWTimestamp.RightNow()+" user with id " + userId + " could not be removed" + e.getMessage());
                     e.printStackTrace(System.err);
                     notRemovedUsers.add(userId);
                 }
