@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,8 +9,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
+import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.builder.data.ICDomain;
+import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
@@ -83,9 +88,22 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
         this.empty();
         iwb = getBundle(iwc);
         iwrb = getResourceBundle(iwc);
-        boolean showISStuff = iwc.getApplicationSettings().getProperty("temp_show_is_related_stuff") != null;
-        //boolean showCashierTab = iwc.getApplicationSettings().getProperty("temp_show_isi_cashier_tab") != null;
-        
+        boolean showISStuff = false;
+        try {
+        	ICApplicationBindingBusiness applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwc, ICApplicationBindingBusiness.class);
+        	String showStuff =applicationBindingBusiness.get("temp_show_is_related_stuff");
+        	// original condition, everything is true if not null
+        	showISStuff = (showStuff != null);
+        }
+        catch (IBOLookupException ex) {
+        	throw new IBORuntimeException(ex);
+        }
+        catch (IOException ex) {
+        	getLogger().warning("[StyledBasicUserOverViewToolbar] Could not look up parameter temp_show_is_related_stuff");
+        	showISStuff = false;
+        }
+       //boolean showCashierTab = iwc.getApplicationSettings().getProperty("temp_show_isi_cashier_tab") != null;
+    
         Table toolbar1 = new Table();
         toolbar1.setCellpadding(0);
         toolbar1.setCellspacing(0);
