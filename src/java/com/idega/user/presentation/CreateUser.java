@@ -260,7 +260,7 @@ public class CreateUser extends StyledIWAdminWindow {
 						setOnLoad(script);
 					}
 					else {
-						setAlertOnLoad(iwrb.getLocalizedString("new_user.cannot_add_user_" + error, error));
+						setAlertOnLoad(error);
 						ssnField.setContent(ssn);
 						fullNameField.setContent(fullName);
 					}
@@ -283,11 +283,15 @@ public class CreateUser extends StyledIWAdminWindow {
 				}
 				String msg = e.getMessage();
 				
-				setAlertOnLoad(iwrb.getLocalizedString(
-						"new_user.transaction_rollback_"+msg,
-						"User could not be created/added because of the error: "
-								+ msg
-								+ " Please try again or contact the system administrator if you think it is a server error."));
+				String errorMessage = iwrb.getLocalizedString(
+						"new_user.transaction_rollback",
+						"User could not be created/added because of the error: ")
+						+ msg
+						+ iwrb.getLocalizedString("new_user.try_again"," Please try again or contact the system administrator if you think it is a server error.");
+				
+				
+				setAlertOnLoad(errorMessage);
+				
 				ssnField.setContent(ssn);
 				fullNameField.setContent(fullName);
 				// add the parent group also?

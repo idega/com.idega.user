@@ -297,10 +297,10 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 							}
 							String msg = e.getMessage();
 							String errorMessage = iwrb.getLocalizedString(
-									"new_user.transaction_rollback_"+msg,
-									"User could not be created/added because of the error: "
-											+ msg
-											+ " Please try again or contact the system administrator if you think it is a server error.");
+									"new_user.transaction_rollback",
+									"User could not be created/added because of the error: ")
+									+ msg
+									+ iwrb.getLocalizedString("new_user.try_again"," Please try again or contact the system administrator if you think it is a server error.");
 							failedInserts.add(new FailedRegisterUser(user, errorMessage));
 							errorFree = false;
 						}
