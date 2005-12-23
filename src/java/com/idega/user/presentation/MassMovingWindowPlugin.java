@@ -1,13 +1,8 @@
 package com.idega.user.presentation;
 
-import java.io.IOException;
 import java.util.Map;
-import java.util.logging.Logger;
-import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
-import com.idega.business.IBORuntimeException;
-import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -61,19 +56,10 @@ public class MassMovingWindowPlugin implements ToolbarElement {
 	 * @see com.idega.user.app.ToolbarElement#isValid(com.idega.presentation.IWContext)
 	 */
 	public boolean isValid(IWContext iwc) {
-        try {
-        	ICApplicationBindingBusiness applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwc, ICApplicationBindingBusiness.class);
-        	String showStuff =applicationBindingBusiness.get("temp_show_is_related_stuff");
-        	// original condition, everything is true if not null
-        	return (showStuff != null);
-        }
-        catch (IBOLookupException ex) {
-        	throw new IBORuntimeException(ex);
-        }
-        catch (IOException ex) {
-        	Logger.getLogger(MassMovingWindowPlugin.class.getName()).warning("[MassMovingWindowPlugin] Could not look up parameter temp_show_is_related_stuff");
-        	return false;
-        }
+		IWMainApplicationSettings settings = iwc.getApplicationSettings();
+       	String showStuff = settings.getProperty("temp_show_is_related_stuff");
+       	// original condition, everything is true if not null
+       	return (showStuff != null);
 	}
 
 	/* (non-Javadoc)
