@@ -135,7 +135,7 @@
             </value>
             <type>map</type>
           </key>
-            <key>
+          <key>
             <name>com.idega.user.plugin.UserStatusPluginBusiness</name>
             <value>
               <map>
@@ -209,3 +209,4 @@
     </key>
   </map>
 </pxml>
+
