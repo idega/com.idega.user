@@ -187,5 +187,25 @@
       <type>java.lang.String</type>
       <value>300000</value>
     </key>
+    <key>
+      <name>remove_duplicated_emails</name>
+      <type>java.lang.String</type>
+      <value>false</value>
+    </key>
+    <key>
+      <name>remove_duplicated_phones</name>
+      <type>java.lang.String</type>
+      <value>false</value>
+    </key>
+    <key>
+      <name>remove_duplicated_group_relations</name>
+      <type>java.lang.String</type>
+      <value>false</value>
+    </key>
+    <key>
+      <name>remove_duplicated_aliases</name>
+      <type>java.lang.String</type>
+      <value>false</value>
+    </key>
   </map>
 </pxml>
