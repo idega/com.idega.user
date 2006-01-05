@@ -253,6 +253,7 @@ new_group.group_name_required=Ver\u00F0ur a\u00F0 velja nafn h\u00F3ps
 new_user.fullName_warning=Ertu viss um a\u00F0 \u00FE\u00FA viljir stofna f\u00E9laga \u00E1n nafns? Ef a\u00F0 kennitalan finnst \u00ED grunninum \u00FE\u00E1 er h\u00FAn notu\u00F0 til a\u00F0 n\u00E1 \u00ED meiri uppl\u00FDsingar.
 new_user.group_required=\u00DEa\u00F0 \u00FEarf a\u00F0 velja h\u00F3p
 new_user.no_edit_permission_for_parent_group=\u00DE\u00FA getur ekki b\u00E6tt notandanum \u00ED \u00FEennan h\u00F3p \u00FEv\u00ED \u00FE\u00FA hefur ekki r\u00E9ttidi a hann.
+new_user.not_valid_ssn=Kennitalan sem slegin var inn er \u00F3l\u00F6gleg, \u00FE.e. ekki samkv\u00E6mt st\u00F6\u00F0lum
 new_user.ssn_or_fullName_required=Kennitala e\u00F0a nafn ver\u00F0a a\u00F0 vera \u00FAtfyllt
 new_user.ssn_warning=Ertu viss um a\u00F0 \u00FE\u00FA viljir stofna notanda \u00E1n kennit\u00F6lu?
 new_user.user_found=Kennitalan fannst \u00ED \u00FEj\u00F3\u00F0skr\u00E1 og vi\u00F0komandi ver\u00F0ur b\u00E6tt \u00ED valda h\u00F3pinn. Viltu halda \u00E1fram?
