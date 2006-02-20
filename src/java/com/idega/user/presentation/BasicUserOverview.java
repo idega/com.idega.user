@@ -90,7 +90,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     private StyledBasicUserOverViewToolbar toolbar = null;
     private com.idega.core.user.data.User administratorUser = null; //TODO convert to new USER SYSTEM
     
-    private boolean isCurrentUserSuperAdmin = false;
+    boolean isCurrentUserSuperAdmin = false;
     protected BasicUserOverviewPS ps;
     Group selectedGroup;
     protected ICDomain selectedDomain;
@@ -100,7 +100,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     private Page parentPage;
     private String styleSrc = "";
     private String styledLink = "styledLinkGeneral";
-    private String styledLinkUnderline = "styledLinkUnderline";
+    String styledLinkUnderline = "styledLinkUnderline";
     private String styleTable = "borderAll";
     private String topTableStyle = "topTable";
     private String middleTableStyle = "middleTable";
@@ -894,7 +894,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     /**
      * @param iwc
      */
-    private com.idega.core.user.data.User getSuperAdmin(IWContext iwc) {
+    com.idega.core.user.data.User getSuperAdmin(IWContext iwc) {
         if (administratorUser == null) {
             try {
                 administratorUser = iwc.getAccessController().getAdministratorUser();

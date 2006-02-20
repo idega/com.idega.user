@@ -74,14 +74,14 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 	private StatefullPresentationImplHandler stateHandler = null;
 	private GroupBusiness groupBiz = null;
-	private GroupComparator groupComparator = null;
+	GroupComparator groupComparator = null;
 
 	private boolean saveChanges = false;
 
 	protected int width = 750;
 	protected int height = 600;
 
-	private String selectedGroupId = null;
+	String selectedGroupId = null;
 
 	private IWResourceBundle iwrb = null;
 	private Group selectedGroup;

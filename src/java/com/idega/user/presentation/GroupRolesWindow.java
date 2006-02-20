@@ -69,7 +69,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
     private Integer integerSelectedGroupId = null;
     
     private List permissionType;
-    private IWResourceBundle iwrb = null;
+    IWResourceBundle iwrb = null;
     private UserBusiness userBiz = null;
     
     private String mainStyleClass = "main";

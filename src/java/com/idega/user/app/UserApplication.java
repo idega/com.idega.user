@@ -40,14 +40,14 @@ public class UserApplication extends IWBrowser {
   private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
   
   //userBusiness to access the stylesheet (which is a bundle property)
-	private UserBusiness userBusiness = null;
+	UserBusiness userBusiness = null;
   
 	/**
 		 * added 7/10/03 for stylesheet writeout
 		 */
-		private Page parentPage;
-		private String styleSrc = "";
-		private String bannerTableStyle = "banner";
+		Page parentPage;
+		String styleSrc = "";
+		String bannerTableStyle = "banner";
 
   public UserApplication() {
     initializePresentation();
