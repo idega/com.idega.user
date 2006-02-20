@@ -158,7 +158,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		browser.setEntities("roles_masters", groups);
 		browser.setDefaultNumberOfRows(groups.size());
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
-		browser.setWidth(browser.HUNDRED_PERCENT);
+		browser.setWidth(Table.HUNDRED_PERCENT);
 
 		//	fonts
 		Text columnText = new Text();

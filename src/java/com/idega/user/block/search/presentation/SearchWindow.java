@@ -121,21 +121,21 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		
 		//names params
 		//first name
-		TextInput firstName = new TextInput(searchEvent.SEARCH_FIELD_FIRST_NAME);
+		TextInput firstName = new TextInput(UserSearchEvent.SEARCH_FIELD_FIRST_NAME);
 		Text firstNameText = new Text(iwrb.getLocalizedString("user.search.window.user_first_name", "First name"));
 		tab.add(firstNameText, column, row);
 		tab.add(Text.getBreak(), column, row);
 		tab.add(firstName, column++, row);
 
 		//middle name
-		TextInput middleName = new TextInput(searchEvent.SEARCH_FIELD_MIDDLE_NAME);
+		TextInput middleName = new TextInput(UserSearchEvent.SEARCH_FIELD_MIDDLE_NAME);
 		Text middleNameText = new Text(iwrb.getLocalizedString("user.search.window.user_middle_name", "Middle name"));
 		tab.add(middleNameText, column, row);
 		tab.add(Text.getBreak(), column, row);
 		tab.add(middleName, column++, row);
 		
 		//middle name
-		TextInput lastName = new TextInput(searchEvent.SEARCH_FIELD_LAST_NAME);
+		TextInput lastName = new TextInput(UserSearchEvent.SEARCH_FIELD_LAST_NAME);
 		Text lastNameText = new Text(iwrb.getLocalizedString("user.search.window.user_last_name", "Last name"));
 		tab.add(lastNameText, column, row);
 		tab.add(Text.getBreak(), column, row);
@@ -177,7 +177,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		
 //	personal id
 		column = 3;
-		TextInput ssn = new TextInput(searchEvent.SEARCH_FIELD_PERSONAL_ID);
+		TextInput ssn = new TextInput(UserSearchEvent.SEARCH_FIELD_PERSONAL_ID);
 		Text ssnText = new Text(iwrb.getLocalizedString("user.search.window.personal_id", "SSN"));
 		tab.add(ssnText, column, row);
 		tab.add(Text.getBreak(), column, row);
@@ -185,7 +185,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 			
 			
 //	streetname search
-		TextInput address = new TextInput(searchEvent.SEARCH_FIELD_ADDRESS);
+		TextInput address = new TextInput(UserSearchEvent.SEARCH_FIELD_ADDRESS);
 		Text addressText = new Text(iwrb.getLocalizedString("user.search.window.address", "Address"));
 		tab.add(addressText, column, row);
 		tab.add(Text.getBreak(), column, row);
@@ -205,11 +205,11 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 	
 	
 		//age
-		TextInput ageFloor = new TextInput(searchEvent.SEARCH_FIELD_AGE_FLOOR,"0");
+		TextInput ageFloor = new TextInput(UserSearchEvent.SEARCH_FIELD_AGE_FLOOR,"0");
 		ageFloor.setLength(3);
 		ageFloor.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 	
-		TextInput ageCeil = new TextInput(searchEvent.SEARCH_FIELD_AGE_CEILING,"120");
+		TextInput ageCeil = new TextInput(UserSearchEvent.SEARCH_FIELD_AGE_CEILING,"120");
 		ageCeil.setLength(3);
 		ageCeil.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 

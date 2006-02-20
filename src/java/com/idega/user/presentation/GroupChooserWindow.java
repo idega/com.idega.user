@@ -133,7 +133,7 @@ public class GroupChooserWindow extends StyledAbstractChooserWindow {
 			viewer.setToUseOnClick();
 			//sets the hidden input and textinput of the choosing page
 
-			viewer.setOnClick(SELECT_FUNCTION_NAME+"("+viewer.ONCLICK_DEFAULT_NODE_NAME_PARAMETER_NAME+","+viewer.ONCLICK_DEFAULT_NODE_ID_PARAMETER_NAME+");");
+			viewer.setOnClick(SELECT_FUNCTION_NAME+"("+GroupTreeView.ONCLICK_DEFAULT_NODE_NAME_PARAMETER_NAME+","+GroupTreeView.ONCLICK_DEFAULT_NODE_ID_PARAMETER_NAME+");");
 			//
 			//    viewer.setNodeActionParameter(com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER);
 			//

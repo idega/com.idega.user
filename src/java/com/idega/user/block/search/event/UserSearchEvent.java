@@ -72,17 +72,17 @@ public class UserSearchEvent extends IWPresentationEvent
 			{
 				searchType = Integer.parseInt(type);
 				
-				if(searchType == this.SEARCHTYPE_SIMPLE){// simple search
+				if(searchType == UserSearchEvent.SEARCHTYPE_SIMPLE){// simple search
 					searchString = iwc.getParameter(SEARCH_FIELD_SIMPLE_SEARCH_STRING);
 					return iwc.isParameterSet(SEARCH_FIELD_SIMPLE_SEARCH_STRING);
 					
 				}
-				else if( searchType == this.SEARCHTYPE_ADVANCED ){// advanced search
+				else if( searchType == UserSearchEvent.SEARCHTYPE_ADVANCED ){// advanced search
 					
 					firstName = iwc.getParameter(SEARCH_FIELD_FIRST_NAME);
 					middleName = iwc.getParameter(SEARCH_FIELD_MIDDLE_NAME);
 					lastName = iwc.getParameter(SEARCH_FIELD_LAST_NAME);
-					groups = iwc.getParameterValues(this.SEARCH_FIELD_GROUPS);
+					groups = iwc.getParameterValues(UserSearchEvent.SEARCH_FIELD_GROUPS);
 					genderId = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_GENDER_ID));
 					personalId = iwc.getParameter(SEARCH_FIELD_PERSONAL_ID);
 					address = iwc.getParameter(SEARCH_FIELD_ADDRESS);

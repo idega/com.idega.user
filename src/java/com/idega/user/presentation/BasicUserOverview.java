@@ -133,15 +133,15 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         try {
             if (selectedGroup != null) {
                 if (aliasGroup != null) {
-                    users = this.getUserBusiness(iwc).getUsersInGroup(aliasGroup);
+                    users = BasicUserOverview.getUserBusiness(iwc).getUsersInGroup(aliasGroup);
                 }
                 else {
-                    users = this.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
+                    users = BasicUserOverview.getUserBusiness(iwc).getUsersInGroup(selectedGroup);
                 }
             }
             else
                 if (selectedDomain != null) {
-                    users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
+                    users = BasicUserOverview.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
                 }
         }
         catch (RemoteException e) {

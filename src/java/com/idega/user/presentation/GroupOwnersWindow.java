@@ -222,7 +222,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 		browser.setEntities("gpow_" + selectedGroupId, activePermission);
 		browser.setDefaultNumberOfRows(activePermission.size());
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
-		browser.setWidth(browser.HUNDRED_PERCENT);
+		browser.setWidth(Table.HUNDRED_PERCENT);
 
 		//	fonts
 		Text columnText = new Text();

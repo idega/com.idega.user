@@ -271,7 +271,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		//browser.setDefaultNumberOfRows(entityCollection.size() );
 		browser.setDefaultNumberOfRows(18);
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
-		browser.setWidth(browser.HUNDRED_PERCENT);
+		browser.setWidth(Table.HUNDRED_PERCENT);
 		int scrollableHeight = (height > 250) ? height -250 : 20;
 		int scrollableWidth =(width > 60) ? width -60 : 20;
 		browser.setScrollableWithHeightAndWidth(scrollableHeight, scrollableWidth);
@@ -1074,7 +1074,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	}
 
 	protected Map getPermissionMapFromSession(IWContext iwc, String permissionKey, boolean emptyMap) {
-		Map map = (Map) iwc.getSessionAttribute(this.SESSION_PARAM_PERMISSIONS_BEFORE_SAVE + permissionKey);
+		Map map = (Map) iwc.getSessionAttribute(GroupPermissionWindow.SESSION_PARAM_PERMISSIONS_BEFORE_SAVE + permissionKey);
 
 		if (map == null || emptyMap) {
 			map = new HashMap();

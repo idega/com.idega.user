@@ -384,30 +384,30 @@ public class AddressInfoTab extends UserTab {
 	public boolean collect(IWContext iwc) {
 
 		if (iwc != null) {
-			String street = iwc.getParameter(this.streetFieldName);
-			String city = iwc.getParameter(this.cityFieldName);
-			String province = iwc.getParameter(this.provinceFieldName);
-			String postal = iwc.getParameter(this.postalCodeFieldName);
-			String country = iwc.getParameter(this.countryFieldName);
-			String poBox = iwc.getParameter(this.poBoxFieldName);
+			String street = iwc.getParameter(AddressInfoTab.streetFieldName);
+			String city = iwc.getParameter(AddressInfoTab.cityFieldName);
+			String province = iwc.getParameter(AddressInfoTab.provinceFieldName);
+			String postal = iwc.getParameter(AddressInfoTab.postalCodeFieldName);
+			String country = iwc.getParameter(AddressInfoTab.countryFieldName);
+			String poBox = iwc.getParameter(AddressInfoTab.poBoxFieldName);
 
 			if (street != null) {
-				fieldValues.put(this.streetFieldName, street);
+				fieldValues.put(AddressInfoTab.streetFieldName, street);
 			}
 			if (city != null) {
-				fieldValues.put(this.cityFieldName, city);
+				fieldValues.put(AddressInfoTab.cityFieldName, city);
 			}
 			if (province != null) {
-				fieldValues.put(this.provinceFieldName, province);
+				fieldValues.put(AddressInfoTab.provinceFieldName, province);
 			}
 			if (postal != null) {
-				fieldValues.put(this.postalCodeFieldName, postal);
+				fieldValues.put(AddressInfoTab.postalCodeFieldName, postal);
 			}
 			if (country != null) {
-				fieldValues.put(this.countryFieldName, country);
+				fieldValues.put(AddressInfoTab.countryFieldName, country);
 			}
 			if (poBox != null) {
-				fieldValues.put(this.poBoxFieldName, poBox);
+				fieldValues.put(AddressInfoTab.poBoxFieldName, poBox);
 			}
       // second address
       street = iwc.getParameter(secondStreetFieldName);

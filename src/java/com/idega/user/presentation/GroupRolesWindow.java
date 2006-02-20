@@ -141,7 +141,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         browser.setEntities("grw_" + selectedGroupId, permissionsForBrowser);
         browser.setDefaultNumberOfRows(permissionsForBrowser.size());
         browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
-        browser.setWidth(browser.HUNDRED_PERCENT);
+        browser.setWidth(Table.HUNDRED_PERCENT);
         
         //	fonts
         Text columnText = new Text();
@@ -333,7 +333,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
             Iterator allIter = allRoles.iterator();
             while (allIter.hasNext()) {
                 ICRole role = (ICRole) allIter.next();
-                if(!role.getRoleKey().equals(access.PERMISSION_KEY_ROLE_MASTER)){
+                if(!role.getRoleKey().equals(AccessController.PERMISSION_KEY_ROLE_MASTER)){
                     roles.add(role);
                 }
             }
@@ -677,7 +677,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
     }
     
     protected Map getPermissionMapFromSession(IWContext iwc, String permissionKey, boolean emptyMap) {
-        Map map = (Map) iwc.getSessionAttribute(this.SESSION_PARAM_ROLES_BEFORE_SAVE + permissionKey);
+        Map map = (Map) iwc.getSessionAttribute(GroupRolesWindow.SESSION_PARAM_ROLES_BEFORE_SAVE + permissionKey);
         
         if (map == null || emptyMap) {
             map = new HashMap();

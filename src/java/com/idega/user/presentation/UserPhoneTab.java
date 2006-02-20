@@ -107,15 +107,15 @@ public class UserPhoneTab extends UserTab {
 	public void initializeFieldNames() {}
 
 	public void initializeFieldValues() {
-		fieldValues.put(this.homePhoneFieldName, "");
-		fieldValues.put(this.workPhoneFieldName, "");
-		fieldValues.put(this.mobilePhoneFieldName, "");
-		fieldValues.put(this.faxPhoneFieldName, "");
-		fieldValues.put(this.homePhoneMenuName, "");
-		fieldValues.put(this.workPhoneMenuName, "");
-		fieldValues.put(this.mobilePhoneMenuName, "");
-		fieldValues.put(this.faxPhoneMenuName, "");
-		fieldValues.put(this.emailFieldName, "");
+		fieldValues.put(UserPhoneTab.homePhoneFieldName, "");
+		fieldValues.put(UserPhoneTab.workPhoneFieldName, "");
+		fieldValues.put(UserPhoneTab.mobilePhoneFieldName, "");
+		fieldValues.put(UserPhoneTab.faxPhoneFieldName, "");
+		fieldValues.put(UserPhoneTab.homePhoneMenuName, "");
+		fieldValues.put(UserPhoneTab.workPhoneMenuName, "");
+		fieldValues.put(UserPhoneTab.mobilePhoneMenuName, "");
+		fieldValues.put(UserPhoneTab.faxPhoneMenuName, "");
+		fieldValues.put(UserPhoneTab.emailFieldName, "");
 		fieldValues.put(jobFieldName, "");
 		fieldValues.put(workPlaceFieldName, "");
 
@@ -123,11 +123,11 @@ public class UserPhoneTab extends UserTab {
 	}
 
 	public void updateFieldsDisplayStatus() {
-		homePhoneField.setContent((String) fieldValues.get(this.homePhoneFieldName));
-		workPhoneField.setContent((String) fieldValues.get(this.workPhoneFieldName));
-		mobilePhoneField.setContent((String) fieldValues.get(this.mobilePhoneFieldName));
-		faxPhoneField.setContent((String) fieldValues.get(this.faxPhoneFieldName));
-		emailField.setContent((String) fieldValues.get(this.emailFieldName));
+		homePhoneField.setContent((String) fieldValues.get(UserPhoneTab.homePhoneFieldName));
+		workPhoneField.setContent((String) fieldValues.get(UserPhoneTab.workPhoneFieldName));
+		mobilePhoneField.setContent((String) fieldValues.get(UserPhoneTab.mobilePhoneFieldName));
+		faxPhoneField.setContent((String) fieldValues.get(UserPhoneTab.faxPhoneFieldName));
+		emailField.setContent((String) fieldValues.get(UserPhoneTab.emailFieldName));
 		jobField.setContent((String) fieldValues.get(jobFieldName));
 		workPlaceField.setContent((String) fieldValues.get(workPlaceFieldName));
 	}
@@ -285,44 +285,44 @@ public class UserPhoneTab extends UserTab {
 	public boolean collect(IWContext iwc) {
 		if (iwc != null) {
 
-			String homePhone = iwc.getParameter(this.homePhoneFieldName);
-			String workPhone = iwc.getParameter(this.workPhoneFieldName);
-			String mobilePhone = iwc.getParameter(this.mobilePhoneFieldName);
-			String faxPhone = iwc.getParameter(this.faxPhoneFieldName);
-			String homePhoneType = iwc.getParameter(this.homePhoneMenuName);
-			String workPhoneType = iwc.getParameter(this.workPhoneMenuName);
-			String mobilePhoneType = iwc.getParameter(this.mobilePhoneMenuName);
-			String faxPhoneType = iwc.getParameter(this.faxPhoneMenuName);
-			String email = iwc.getParameter(this.emailFieldName);
+			String homePhone = iwc.getParameter(UserPhoneTab.homePhoneFieldName);
+			String workPhone = iwc.getParameter(UserPhoneTab.workPhoneFieldName);
+			String mobilePhone = iwc.getParameter(UserPhoneTab.mobilePhoneFieldName);
+			String faxPhone = iwc.getParameter(UserPhoneTab.faxPhoneFieldName);
+			String homePhoneType = iwc.getParameter(UserPhoneTab.homePhoneMenuName);
+			String workPhoneType = iwc.getParameter(UserPhoneTab.workPhoneMenuName);
+			String mobilePhoneType = iwc.getParameter(UserPhoneTab.mobilePhoneMenuName);
+			String faxPhoneType = iwc.getParameter(UserPhoneTab.faxPhoneMenuName);
+			String email = iwc.getParameter(UserPhoneTab.emailFieldName);
 			String job = iwc.getParameter(jobFieldName);
 			String workPlace = iwc.getParameter(workPlaceFieldName);
 
 			if (homePhone != null) {
-				fieldValues.put(this.homePhoneFieldName, homePhone);
+				fieldValues.put(UserPhoneTab.homePhoneFieldName, homePhone);
 			}
 			if (workPhone != null) {
-				fieldValues.put(this.workPhoneFieldName, workPhone);
+				fieldValues.put(UserPhoneTab.workPhoneFieldName, workPhone);
 			}
 			if (mobilePhone != null) {
-				fieldValues.put(this.mobilePhoneFieldName, mobilePhone);
+				fieldValues.put(UserPhoneTab.mobilePhoneFieldName, mobilePhone);
 			}
 			if (faxPhone != null) {
-				fieldValues.put(this.faxPhoneFieldName, faxPhone);
+				fieldValues.put(UserPhoneTab.faxPhoneFieldName, faxPhone);
 			}
 			if (homePhoneType != null) {
-				fieldValues.put(this.homePhoneMenuName, homePhoneType);
+				fieldValues.put(UserPhoneTab.homePhoneMenuName, homePhoneType);
 			}
 			if (workPhoneType != null) {
-				fieldValues.put(this.workPhoneMenuName, workPhoneType);
+				fieldValues.put(UserPhoneTab.workPhoneMenuName, workPhoneType);
 			}
 			if (mobilePhoneType != null) {
-				fieldValues.put(this.mobilePhoneMenuName, mobilePhoneType);
+				fieldValues.put(UserPhoneTab.mobilePhoneMenuName, mobilePhoneType);
 			}
 			if (faxPhoneType != null) {
-				fieldValues.put(this.faxPhoneMenuName, faxPhoneType);
+				fieldValues.put(UserPhoneTab.faxPhoneMenuName, faxPhoneType);
 			}
 			if (email != null) {
-				fieldValues.put(this.emailFieldName, email);
+				fieldValues.put(UserPhoneTab.emailFieldName, email);
 			}
 			if (job != null)
 				fieldValues.put(jobFieldName, job);
@@ -339,8 +339,8 @@ public class UserPhoneTab extends UserTab {
 	public boolean store(IWContext iwc) {
 		try {
 			if (getUserId() > -1) {
-				String[] phoneString = { (String) fieldValues.get(this.homePhoneFieldName), (String) fieldValues.get(this.workPhoneFieldName),
-						(String) fieldValues.get(this.mobilePhoneFieldName), (String) fieldValues.get(this.faxPhoneFieldName) };
+				String[] phoneString = { (String) fieldValues.get(UserPhoneTab.homePhoneFieldName), (String) fieldValues.get(UserPhoneTab.workPhoneFieldName),
+						(String) fieldValues.get(UserPhoneTab.mobilePhoneFieldName), (String) fieldValues.get(UserPhoneTab.faxPhoneFieldName) };
 				int[] phoneTypes = { PhoneType.HOME_PHONE_ID, PhoneType.WORK_PHONE_ID, PhoneType.MOBILE_PHONE_ID, PhoneType.FAX_NUMBER_ID };
 				for (int a = 0; a < phoneString.length; a++) {
 					if (phoneString[a] != null) {
@@ -349,9 +349,9 @@ public class UserPhoneTab extends UserTab {
 						super.getUserBusiness(iwc).updateUserPhone(getUserId(), phoneTypes[a], phoneString[a]);
 					}
 				}
-				if ((String) fieldValues.get(this.emailFieldName) != null && ((String) fieldValues.get(this.emailFieldName)).length() > 0)
+				if ((String) fieldValues.get(UserPhoneTab.emailFieldName) != null && ((String) fieldValues.get(UserPhoneTab.emailFieldName)).length() > 0)
 					//business.updateUserMail(getUserId(),(String)fieldValues.get(this.emailFieldName));
-					super.getUserBusiness(iwc).updateUserMail(getUserId(), (String) fieldValues.get(this.emailFieldName));
+					super.getUserBusiness(iwc).updateUserMail(getUserId(), (String) fieldValues.get(UserPhoneTab.emailFieldName));
 				String job = (String) fieldValues.get(jobFieldName);
 				if (job != null)
 					getUserBusiness(iwc).updateUserJob(getUserId(), job);
@@ -379,24 +379,24 @@ public class UserPhoneTab extends UserTab {
 			String job = userBusiness.getUserJob(user);
 			String workPlace = userBusiness.getUserWorkPlace(user);
 
-			fieldValues.put(this.homePhoneMenuName, Integer.toString(PhoneType.HOME_PHONE_ID));
-			fieldValues.put(this.workPhoneMenuName, Integer.toString(PhoneType.WORK_PHONE_ID));
-			fieldValues.put(this.mobilePhoneMenuName, Integer.toString(PhoneType.MOBILE_PHONE_ID));
-			fieldValues.put(this.faxPhoneMenuName, Integer.toString(PhoneType.FAX_NUMBER_ID));
+			fieldValues.put(UserPhoneTab.homePhoneMenuName, Integer.toString(PhoneType.HOME_PHONE_ID));
+			fieldValues.put(UserPhoneTab.workPhoneMenuName, Integer.toString(PhoneType.WORK_PHONE_ID));
+			fieldValues.put(UserPhoneTab.mobilePhoneMenuName, Integer.toString(PhoneType.MOBILE_PHONE_ID));
+			fieldValues.put(UserPhoneTab.faxPhoneMenuName, Integer.toString(PhoneType.FAX_NUMBER_ID));
 			for (int a = 0; a < phones.length; a++) {
 				Phone phone = phones[a];
 				if (phone.getPhoneTypeId() == PhoneType.HOME_PHONE_ID) {
-					fieldValues.put(this.homePhoneFieldName, (phone.getNumber() != null) ? phone.getNumber() : "");
+					fieldValues.put(UserPhoneTab.homePhoneFieldName, (phone.getNumber() != null) ? phone.getNumber() : "");
 				} else if (phone.getPhoneTypeId() == PhoneType.WORK_PHONE_ID) {
-					fieldValues.put(this.workPhoneFieldName, (phone.getNumber() != null) ? phone.getNumber() : "");
+					fieldValues.put(UserPhoneTab.workPhoneFieldName, (phone.getNumber() != null) ? phone.getNumber() : "");
 				} else if (phone.getPhoneTypeId() == PhoneType.MOBILE_PHONE_ID) {
-					fieldValues.put(this.mobilePhoneFieldName, (phone.getNumber() != null) ? phone.getNumber() : "");
+					fieldValues.put(UserPhoneTab.mobilePhoneFieldName, (phone.getNumber() != null) ? phone.getNumber() : "");
 				} else if (phone.getPhoneTypeId() == PhoneType.FAX_NUMBER_ID) {
-					fieldValues.put(this.faxPhoneFieldName, (phone.getNumber() != null) ? phone.getNumber() : "");
+					fieldValues.put(UserPhoneTab.faxPhoneFieldName, (phone.getNumber() != null) ? phone.getNumber() : "");
 				}
 			}
 			if (mail != null) {
-				fieldValues.put(this.emailFieldName, (mail.getEmailAddress() != null) ? mail.getEmailAddress() : "");
+				fieldValues.put(UserPhoneTab.emailFieldName, (mail.getEmailAddress() != null) ? mail.getEmailAddress() : "");
 			}
 
 			fieldValues.put(jobFieldName, (job == null) ? "" : job);

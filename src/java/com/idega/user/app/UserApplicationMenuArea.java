@@ -63,7 +63,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
   }
 
   public String getBundleIdentifier(){
-    return this.IW_BUNDLE_IDENTIFIER;
+    return UserApplicationMenuArea.IW_BUNDLE_IDENTIFIER;
   }
 
 
