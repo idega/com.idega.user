@@ -271,6 +271,7 @@ public class GroupTreeView extends IWTreeControl {
 						//              }
 					}
 				}
+				break;
 			case 2 :
 				Link l = this.getLinkPrototypeClone(node.getNodeName());
 				l.setOnClick("setLinkToBold(this)");
