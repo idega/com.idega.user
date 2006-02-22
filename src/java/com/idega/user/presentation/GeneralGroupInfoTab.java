@@ -75,7 +75,6 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private String uuidFieldName;
 	private String rdnFieldName;
 
-	private IWResourceBundle _iwrb = null;
 	private Link addLink;
 
 	private IFrame memberofFrame;
@@ -86,8 +85,6 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	public static final String SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED = UserGroupList.SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED;//"ic_group_ic_group_not_direct_GGIT";
 
 	protected Text memberof;
-
-	private String underTableStyle = "main";
 
 	private String linkStyle = "styledLinkGeneral";
 
@@ -390,18 +387,6 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 			ob = getGroupBusiness(iwc).getParentGroupsInDirect(getGroupId());
 			iwc.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED, ob);
 		}
-		
-//		String rdn = getGroupBusiness(iwc).getParentGroupsInDirect(getGroupId());
-//		if (ob != null) {
-//			iwc.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED, ob);
-//		}
-//		else {
-//			iwc.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
-//		}
-		
-		
-		
-		_iwrb = getResourceBundle(iwc);
 	}
 
 	private void fillGroupTypeMenu(IWContext iwc, IWResourceBundle iwrb) {

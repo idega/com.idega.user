@@ -22,9 +22,6 @@ public class UserApplicationLoginArea extends Page  implements IWBrowserView{
 	
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 	private Login login = null;
-	private IWPresentationEvent _contolEvent = null;
-	private String _controlTarget = null;
-	
 	public UserApplicationLoginArea() {
 		this.setAllMargins(0);
 	}
@@ -67,12 +64,8 @@ public class UserApplicationLoginArea extends Page  implements IWBrowserView{
 		return IW_BUNDLE_IDENTIFIER;
 	}
 	public void setControlEventModel(IWPresentationEvent model){
-//		System.out.print("UserApplicationControlArea: setControlEventModel(IWPresentationEvent model)");
-		_contolEvent = model;
 	}
 	public void setControlTarget(String controlTarget){
-//		System.out.print("UserApplicationControlArea: setControlTarget(String controlTarget)");
-		_controlTarget = controlTarget;
 	}
 
 }

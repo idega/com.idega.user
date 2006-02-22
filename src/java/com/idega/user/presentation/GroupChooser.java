@@ -18,7 +18,6 @@ import com.idega.user.business.GroupTreeNode;
  */
 
 public class GroupChooser extends AbstractChooser {
-  private String style;
   private Image chooserButtonImage = null;
   private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 private boolean submitForm;

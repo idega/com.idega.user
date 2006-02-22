@@ -82,8 +82,6 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     protected static final String PHONE_TYPE_PATH = PhoneType.class.getName() + ".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME";
     protected static final String USER_APPLICATION_FRONT_PAGE_ID = "USER_APPLICATION_FRONT_PAGE_ID";
     
-    private String _controlTarget = null;
-    private IWPresentationEvent _controlEvent = null;
     protected IWResourceBundle iwrb = null;
     private IWBundle iwb = null;
     protected BasicUserOverviewPS _presentationState = null;
@@ -97,9 +95,6 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     private Group aliasGroup;
     protected AccessController accessController;
     
-    private Page parentPage;
-    private String styleSrc = "";
-    private String styledLink = "styledLinkGeneral";
     String styledLinkUnderline = "styledLinkUnderline";
     private String styleTable = "borderAll";
     private String topTableStyle = "topTable";
@@ -115,14 +110,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     }
     
     public void setControlEventModel(IWPresentationEvent model) {
-        _controlEvent = model;
         if (toolbar == null)
             toolbar = getToolbar();
         toolbar.setControlEventModel(model);
     }
     
     public void setControlTarget(String controlTarget) {
-        _controlTarget = controlTarget;
         if (toolbar == null)
             toolbar = getToolbar();
         toolbar.setControlTarget(controlTarget);

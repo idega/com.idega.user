@@ -40,13 +40,7 @@ import com.idega.user.presentation.BasicUserOverview;
  */
 public class UserApplicationMainArea extends Window implements IWBrowserView, StatefullPresentation {
 
-	private IWBundle iwb;
-
 	private StatefullPresentationImplHandler _stateHandler = null;
-
-	private String _controlTarget = null;
-
-	private IWPresentationEvent _contolEvent = null;
 
 	private String styleScript = "DefaultStyle.css";
 
@@ -68,13 +62,11 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 	}
 
 	public void setControlEventModel(IWPresentationEvent model) {
-		_contolEvent = model;
 		_buo.setControlEventModel(model);
 		search.setControlEventModel(model);
 	}
 
 	public void setControlTarget(String controlTarget) {
-		_controlTarget = controlTarget;
 		_buo.setControlTarget(controlTarget);
 		search.setControlTarget(controlTarget);
 	}
@@ -131,7 +123,6 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 	public void initializeInMain(IWContext iwc) {
 //		System.out.println("in initializeInMain getClassToShow:"
 //				+ ((UserApplicationMainAreaPS) this.getPresentationState(iwc)).getClassNameToShow());
-		iwb = getBundle(iwc);
 		IWLocation location = (IWLocation) this.getLocation().clone();
 		location.setSubID(1);//bara eitthva? id...herma eftir instance id
 		_buo.setLocation(location, iwc);

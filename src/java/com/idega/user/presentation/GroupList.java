@@ -39,7 +39,6 @@ import java.util.Iterator;
 
 public class GroupList extends Page {
 
-	private Collection groups = null;
 	private GroupBusiness groupBiz = null;
 	private GroupComparator groupComparator = null;
 

@@ -13,7 +13,6 @@ import com.idega.user.data.User;
  */
 public class UserChooser extends AbstractChooser {
 
-	private int _userId = -1;
 	private Collection userPks;
 	private boolean useUserPks = false;
 

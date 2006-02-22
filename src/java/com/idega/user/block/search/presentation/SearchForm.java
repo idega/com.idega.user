@@ -8,7 +8,6 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
@@ -29,10 +28,8 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 	//	private SubmitButton _groupSearch;
 	//	private SubmitButton _userSearch;
 	private SubmitButton searchButton;
-	private DropdownMenu searchTypeDropDown;
 	public final static String STYLE = "font-family:arial; font-size:7pt; color:#000000; text-align: justify; border: 1 solid #000000;";
 	public final static String STYLE_2 = "font-family:arial; font-size:7pt; color:#000000; text-align: justify;";
-	private String _controlTarget = null;
 	private IWPresentationEvent _controlEvent = null;
 	private String textValue = null;
 	
@@ -97,7 +94,6 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 		_controlEvent = model;
 	}
 	public void setControlTarget(String controlTarget) {
-		_controlTarget = controlTarget;
 	}
 	public void setStyle(PresentationObject obj) {
 		if (obj instanceof Text) {

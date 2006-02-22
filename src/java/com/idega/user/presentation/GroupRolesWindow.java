@@ -53,7 +53,6 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
     private static final String PARAM_SAVING = "grw_save";
     private static final String PARAM_NEW_ROLE = "grw_new_role_key";
     private static final String RECURSE_PERMISSIONS_TO_CHILDREN_KEY = "grw_recurse_ch_of_gr";
-    private static final String CHANGE_ROLE_KEY = "grw_ch_gr_role_status";
     private static final String SESSION_PARAM_ROLES_BEFORE_SAVE = "grw_roles_b_s";
     
     private static final String HELP_TEXT_KEY = "group_roles_window";
@@ -68,7 +67,6 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
     private String selectedGroupId = null;
     private Integer integerSelectedGroupId = null;
     
-    private List permissionType;
     IWResourceBundle iwrb = null;
     private UserBusiness userBiz = null;
     
@@ -156,9 +154,6 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         String nameKey = "Role";
         
         EntityToPresentationObjectConverter converterLink = new EntityToPresentationObjectConverter() {
-            private com.idega.core.user.data.User administrator = null;
-            private boolean loggedInUserIsAdmin;
-            
             public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
@@ -188,9 +183,6 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         
 //      define checkbox button converter class
         EntityToPresentationObjectConverter permissionTypeConverter = new EntityToPresentationObjectConverter() {
-            
-            private com.idega.core.user.data.User administrator = null;
-            private boolean loggedInUserIsAdmin;
             
             //called when going between subsets
             public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {

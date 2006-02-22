@@ -6,7 +6,6 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
-import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 
 /**
@@ -37,9 +36,6 @@ public class UserImageTab extends UserTab {
   private String removeImageFieldName;
   private Text removeImageText;
   
-	private UserBusiness biz;
-
-
 	private User user = null;
 	private int systemImageId = -1;
 
@@ -176,22 +172,6 @@ public class UserImageTab extends UserTab {
 		catch (Exception e) {
 			System.err.println(
 				"UserImageTab error initFieldContents, userId : " + getUserId());
-		}
-
-	}
-
-	private void setSelectedImageId() {
-		try {
-			String image = (String)fieldValues.get(this.imageFieldName);
-			if ((image != null)
-				&& (!image.equals("-1"))
-				&& (!image.equals(""))
-				&& (!image.equals("0"))) {
-				systemImageId = Integer.parseInt(image);
-			}
-		}
-		catch (Exception ex) {
-			ex.printStackTrace(System.err);
 		}
 
 	}

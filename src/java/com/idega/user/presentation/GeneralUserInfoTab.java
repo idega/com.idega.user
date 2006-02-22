@@ -604,22 +604,6 @@ public class GeneralUserInfoTab extends UserTab {
 		return false;
 	}
 	
-	//END REMOVE
-	private void setSelectedImageId() {
-		try {
-			String image = (String)fieldValues.get(this.imageFieldName);
-			if ((image != null)
-				&& (!image.equals("-1"))
-				&& (!image.equals(""))
-				&& (!image.equals("0"))) {
-				systemImageId = Integer.parseInt(image);
-			}
-		}
-		catch (Exception ex) {
-			ex.printStackTrace(System.err);
-		}
-
-	}
 	private int getSelectedImageId(User user) {
 			try {
 				int tempImageId = user.getSystemImageID();

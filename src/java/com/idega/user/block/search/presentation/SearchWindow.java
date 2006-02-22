@@ -56,8 +56,6 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
   
 	private UserSearchEvent searchEvent;
   private String userApplicationMainAreaPSId = null; 
-  private Group selectedGroup = null;
-  
   private String mainTableStyle = "main";
 
 

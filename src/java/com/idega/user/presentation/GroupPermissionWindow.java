@@ -293,9 +293,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		// define groupname converter
 		EntityToPresentationObjectConverter contextValueConverter = new EntityToPresentationObjectConverter() {
 
-			private com.idega.core.user.data.User administrator = null;
-			private boolean loggedInUserIsAdmin;
-
 			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
 				return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
 			}
@@ -351,9 +348,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 		// define checkbox button converter class
 		EntityToPresentationObjectConverter permissionTypeConverter = new EntityToPresentationObjectConverter() {
-
-			private com.idega.core.user.data.User administrator = null;
-			private boolean loggedInUserIsAdmin;
 
 			//called when going between subsets
 			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
@@ -442,9 +436,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		
 		CheckBoxConverter recurseCheckBoxConverter = new CheckBoxConverter(RECURSE_PERMISSIONS_TO_CHILDREN_KEY) {
 
-			private com.idega.core.user.data.User administrator = null;
-
-		
 			public PresentationObject getPresentationObject(Object permissions, EntityPath path, EntityBrowser browser, IWContext iwc) {
 
 			    String checkBoxKey = path.getShortKey(); 

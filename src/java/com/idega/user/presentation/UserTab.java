@@ -32,7 +32,6 @@ public abstract class UserTab extends Table implements Collectable {
 	protected GroupBusiness groupBusiness = null;
 	//protected UserBusiness business;
 	protected Map fieldValues;
-	private boolean _isInitialized = false;
 	private TabbedPropertyPanel panel;
 	
 	public UserTab() {

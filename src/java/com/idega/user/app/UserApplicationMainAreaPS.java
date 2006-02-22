@@ -42,10 +42,6 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
   private Collection _plugins = null;
   public boolean search = false;
   
-  private String styledLinkClass = "styledLinkGeneral";
-
-  
-
   public UserApplicationMainAreaPS() {
 
   }

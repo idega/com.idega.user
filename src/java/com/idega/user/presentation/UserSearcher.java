@@ -11,8 +11,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
@@ -20,7 +22,6 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.event.IWPageEventListener;
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
@@ -102,8 +103,6 @@ public class UserSearcher extends Block implements IWPageEventListener {
 	private String bundleIdentifer = null;
 	/** The  static bundle identifier used in this package */
 	private static String BUNDLE_IDENTIFIER = "is.idega.idegaweb.member";
-	/** The Bundle */
-	private IWBundle iwb;
 	/** The resource bundle */
 	private IWResourceBundle iwrb;
 	/** flag for process method */
@@ -177,7 +176,6 @@ public class UserSearcher extends Block implements IWPageEventListener {
 	public void main(IWContext iwc) throws Exception {
 		//debugParameters(iwc);
 		initStyleNames();
-		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
 		String message = null;
 		try {

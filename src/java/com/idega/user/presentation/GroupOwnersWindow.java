@@ -62,7 +62,6 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 
 	private String selectedGroupId = null;
 
-	private List permissionType;
 	private IWResourceBundle iwrb = null;
 	private UserBusiness userBiz = null;
 
@@ -290,8 +289,6 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 		//
 		CheckBoxConverter recurseCheckBoxConverter = new CheckBoxConverter(RECURSE_PERMISSIONS_TO_CHILDREN_KEY) {
 
-			private com.idega.core.user.data.User administrator = null;
-
 			public PresentationObject getPresentationObject(Object permission, EntityPath path, EntityBrowser browser, IWContext iwc) {
 				ICPermission perm = (ICPermission) permission;
 
@@ -311,8 +308,6 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 
 		//
 		CheckBoxConverter deleteCheckBoxConverter = new CheckBoxConverter(DELETE_PERMISSIONS_KEY) {
-
-			private com.idega.core.user.data.User administrator = null;
 
 			public PresentationObject getPresentationObject(Object permission, EntityPath path, EntityBrowser browser, IWContext iwc) {
 				ICPermission perm = (ICPermission) permission;

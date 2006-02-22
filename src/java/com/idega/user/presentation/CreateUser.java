@@ -4,9 +4,11 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
 import javax.ejb.FinderException;
 import javax.swing.event.ChangeListener;
 import javax.transaction.TransactionManager;
+
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationState;
@@ -23,11 +25,9 @@ import com.idega.presentation.StatefullPresentationImplHandler;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.BackButton;
 import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
-import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
@@ -53,22 +53,9 @@ public class CreateUser extends StyledIWAdminWindow {
 	private static final String TAB_NAME = "usr_create_tab_name";
 	private static final String DEFAULT_TAB_NAME = "Create member";
 	private Text fullNameText;
-	private Text userLoginText;
-	private Text passwordText;
-	private Text confirmPasswordText;
 	private Text ssnText;
-	private Text generateLoginText;
-	private Text generatePasswordText;
-	private Text mustChangePasswordText;
-	private Text cannotChangePasswordText;
-	private Text passwordNeverExpiresText;
-	private Text disableAccountText;
-	private Text goToPropertiesText;
 	private Text primaryGroupText;
 	private TextInput fullNameField;
-	private TextInput userLoginField;
-	private PasswordInput passwordField;
-	private PasswordInput confirmPasswordField;
 	private TextInput ssnField;
 	/*
 	 * private CheckBox generateLoginField; private CheckBox
@@ -76,12 +63,10 @@ public class CreateUser extends StyledIWAdminWindow {
 	 * CheckBox cannotChangePasswordField; private CheckBox
 	 * passwordNeverExpiresField; private CheckBox disableAccountField;
 	 */
-	private HiddenInput goToPropertiesField;
 	private GroupChooser primaryGroupField;
 	private StyledButton okButton;
 	private StyledButton continueButton;
 	private StyledButton cancelButton;
-	private StyledButton backButton;
 	private Help help;
 	private static final String HELP_TEXT_KEY = "create_user";
 	private Form myForm;
@@ -89,7 +74,6 @@ public class CreateUser extends StyledIWAdminWindow {
 	private Table inputTable;
 	private Table buttonTable;
 	private Table helpTable;
-	private Table warningTable;
 	private String selectedGroupId = null;
 	private StatefullPresentationImplHandler _stateHandler = null;
 	public static String PARAMETERSTRING_GROUP_ID = "default_group";
@@ -110,10 +94,7 @@ public class CreateUser extends StyledIWAdminWindow {
 	private UserBusiness userBiz;
 	private boolean formNotComplete = false;
 	private String inputTextStyle = "text";
-	private String backgroundTableStyle = "back";
 	private String mainTableStyle = "main";
-	private String bannerTableStyle = "banner";
-
 	public CreateUser() {
 		super();
 		_stateHandler = new StatefullPresentationImplHandler();
@@ -146,7 +127,6 @@ public class CreateUser extends StyledIWAdminWindow {
 		ssnField.setMaxlength(12);
 		ssnField.setStyleClass(inputTextStyle);
 		ssnField.setAsPersonalID(iwc.getCurrentLocale(),iwrb.getLocalizedString("new_user.not_valid_ssn","The SSN that was entered is not valid"));
-		goToPropertiesField = new HiddenInput(goToPropertiesFieldParameterName, "TRUE");
 		primaryGroupField = new GroupChooser(primaryGroupFieldParameterName);
 		primaryGroupField.setStyleClassName(inputTextStyle);
 		primaryGroupField.setInputLength(17);
@@ -156,7 +136,6 @@ public class CreateUser extends StyledIWAdminWindow {
 		continueButton = new StyledButton(new SubmitButton(iwrb.getLocalizedString("yes", "Yes"),
 				submitButtonParameterName, submitButtonParameterValue));
 		cancelButton = new StyledButton(new CloseButton(iwrb.getLocalizedString("close", "Close")));
-		backButton = new StyledButton(new BackButton(iwrb.getLocalizedString("back", "Back")));
 	}
 
 	public void lineUpElements(IWContext iwc) {

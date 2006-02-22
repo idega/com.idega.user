@@ -10,8 +10,6 @@ import com.idega.user.data.User;
 
   public class UserList extends Page {
 
-    private Collection groups = null;
-
     public UserList(){
       super();
     }

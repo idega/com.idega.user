@@ -60,8 +60,6 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 
 	protected int height = 520;
 
-	private List permissionType;
-
 	private IWResourceBundle iwrb = null;
 
 	private UserBusiness userBiz = null;
@@ -229,8 +227,6 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		//converter ends
 
 		CheckBoxConverter deleteCheckBoxConverter = new CheckBoxConverter(DELETE_PERMISSIONS_KEY) {
-
-			private com.idega.core.user.data.User administrator = null;
 
 			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
 				Group group = (Group) entity;

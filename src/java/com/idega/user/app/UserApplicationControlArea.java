@@ -67,8 +67,6 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	// "font-family:Arial,Helvetica,sans-serif;font-size:11px;color:#FF8008;text-decoration:none;";
 	private final static String LINK_HOVER_STYLE = "font-family: verdana,helvetica,arial,sans-serif;font-size:9px;text-decoration:none;";
 
-	private final static String LOGIN_STYLE = "font-family: verdana,helvetica,arial,sans-serif;font-size:10px;font-weight:bold;";
-
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
 	private IWBundle iwb;
@@ -76,10 +74,6 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	private IWResourceBundle iwrb;
 
 	private StatefullPresentationImplHandler _stateHandler = null;
-
-	private String _controlTarget = null;
-
-	private IWPresentationEvent _contolEvent = null;
 
 	private String styleScript = "DefaultStyle.css";
 
@@ -95,17 +89,10 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	}
 
 	public void setControlEventModel(IWPresentationEvent model) {
-		//    System.out.print("UserApplicationControlArea:
-		// setControlEventModel(IWPresentationEvent model)");
-		_contolEvent = model;
-
 		groupTree.setControlEventModel(model);
 	}
 
 	public void setControlTarget(String controlTarget) {
-		//    System.out.print("UserApplicationControlArea: setControlTarget(String
-		// controlTarget)");
-		_controlTarget = controlTarget;
 		groupTree.setControlTarget(controlTarget);
 	}
 

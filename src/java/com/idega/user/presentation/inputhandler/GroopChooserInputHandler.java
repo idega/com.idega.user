@@ -20,7 +20,6 @@ import com.idega.user.presentation.GroupChooser;
  */
 public class GroopChooserInputHandler extends GroupChooser implements InputHandler {
 
-    private boolean isInitialized = false;
     protected GroupBusiness groupBiz = null;
     protected UserBusiness userBiz = null;
 

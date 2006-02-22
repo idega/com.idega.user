@@ -21,7 +21,6 @@ import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
-import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
@@ -294,17 +293,6 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 		GroupBusiness business = null;
 		try {
 			business = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
-		}
-		catch (IBOLookupException e) {
-			e.printStackTrace();
-		}
-		return business;
-	}
-
-	private UserBusiness getUserBusiness(IWContext iwc) {
-		UserBusiness business = null;
-		try {
-			business = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		}
 		catch (IBOLookupException e) {
 			e.printStackTrace();

@@ -42,7 +42,6 @@ public class GroupTreeView extends IWTreeControl {
 	Link _linkPrototype = null;
 	String _linkStyle = null;
 	boolean _usesOnClick = false;
-	private boolean _nowrap = true;
 	private Layer _nowrapLayer = null;
 
 	public static final String ONCLICK_FUNCTION_NAME = "treenodeselect";
@@ -367,10 +366,6 @@ public class GroupTreeView extends IWTreeControl {
 		return _nowrapLayer;
 	}
 
-	private Link getLinkPrototypeClone() {
-		return (Link) getLinkPrototype().clone();
-	}
-
 	private Link getLinkPrototypeClone(String text) {
 		Link l = (Link) getLinkPrototype().clone();
 		l.setText(text);
@@ -387,26 +382,6 @@ public class GroupTreeView extends IWTreeControl {
 		//     else {
 		//      System.out.println("GROUPTREEVIEW: controlTarget == null");
 		//    }
-		return l;
-	}
-
-	private Layer getNoWrapLayerClone() {
-		Layer l = (Layer) getNoWrapLayer().clone();
-		return l;
-	}
-
-	private Layer getNoWrapLayerClone(PresentationObject obj) {
-		Layer l = getNoWrapLayerClone();
-		l.add(obj);
-		return l;
-	}
-
-	private Link getLinkPrototypeClone(Image image) {
-		Link l = (Link) getLinkPrototype().clone();
-		l.setImage(image);
-		if (this.getControlEventModel() != null) {
-			l.addEventModel(this.getControlEventModel());
-		}
 		return l;
 	}
 

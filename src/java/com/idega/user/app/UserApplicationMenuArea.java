@@ -11,80 +11,75 @@ import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
 
 /**
- * <p>Title: idegaWeb</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: idega Software</p>
+ * <p>
+ * Title: idegaWeb
+ * </p>
+ * <p>
+ * Description:
+ * </p>
+ * <p>
+ * Copyright: Copyright (c) 2002
+ * </p>
+ * <p>
+ * Company: idega Software
+ * </p>
+ * 
  * @author <a href="gummi@idega.is">Gu�mundur �g�st S�mundsson</a>
  * @version 1.0
  */
 
 public class UserApplicationMenuArea extends Page implements IWBrowserView, StatefullPresentation {
 
-  private IWBundle iwb;
-  private StatefullPresentationImplHandler _stateHandler = null;
-  private String _controlTarget = null;
-  private IWPresentationEvent _controlEvent = null;
-  private Toolbar toolbar = new Toolbar();
-  private static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
+	private StatefullPresentationImplHandler _stateHandler = null;
+	private Toolbar toolbar = new Toolbar();
+	private static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 	private String userApplicationMainAreaStateId = null;
 	private String styleScript = "DefaultStyle.css";
 
+	public UserApplicationMenuArea() {
+		_stateHandler = new StatefullPresentationImplHandler();
+		_stateHandler.setPresentationStateClass(UserApplicationMenuAreaPS.class);
+		this.setAllMargins(0);
+	}
 
+	public void setControlEventModel(IWPresentationEvent model) {
+		toolbar.setControlEventModel(model);
+	}
 
-  public UserApplicationMenuArea() {
-    _stateHandler = new StatefullPresentationImplHandler();
-    _stateHandler.setPresentationStateClass(UserApplicationMenuAreaPS.class);
-	this.setAllMargins(0);
-  }
+	public void setControlTarget(String controlTarget) {
+		toolbar.setControlTarget(controlTarget);
+	}
 
-  public void setControlEventModel(IWPresentationEvent model){
-//    System.out.print("UserApplicationMenuArea: setControlEventModel(IWPresentationEvent model)");
-    _controlEvent = model;
-    toolbar.setControlEventModel(model);
-  }
+	public Class getPresentationStateClass() {
+		return _stateHandler.getPresentationStateClass();
+	}
 
-  public void setControlTarget(String controlTarget){
-//    System.out.print("UserApplicationMenuArea: setControlTarget(String controlTarget)");
-    _controlTarget = controlTarget;
-    toolbar.setControlTarget(controlTarget);
-  }
+	public IWPresentationState getPresentationState(IWUserContext iwuc) {
+		return _stateHandler.getPresentationState(this, iwuc);
+	}
 
-  public Class getPresentationStateClass(){
-    return _stateHandler.getPresentationStateClass();
-  }
+	public StatefullPresentationImplHandler getStateHandler() {
+		return _stateHandler;
+	}
 
-  public IWPresentationState getPresentationState(IWUserContext iwuc){
-    return _stateHandler.getPresentationState(this,iwuc);
-  }
+	public String getBundleIdentifier() {
+		return UserApplicationMenuArea.IW_BUNDLE_IDENTIFIER;
+	}
 
-  public StatefullPresentationImplHandler getStateHandler(){
-    return _stateHandler;
-  }
+	/*
+	 * public void empty(){ toolbarTable.empty(); }
+	 */
 
-  public String getBundleIdentifier(){
-    return UserApplicationMenuArea.IW_BUNDLE_IDENTIFIER;
-  }
-
-
- /* public void empty(){
-    toolbarTable.empty();
-  }*/
-
-
-  public void initializeInMain(IWContext iwc){
-    this.empty();
-    iwb = getBundle(iwc);
- //commented out 8/10/03 for isi styles - birna
-  //  this.setBackgroundColor(IWColor.getHexColorString(212,208,200));
-   // getParentPage().setBackgroundColor(IWColor.getHexColorString(212,208,200));
-    String id = getPresentationState(iwc).getCompoundId();
-    toolbar.setSelectedGroupProviderStateId(id);
-    toolbar.setUserApplicationMainAreaStateId(userApplicationMainAreaStateId);
-    super.add(toolbar);
-  }
-  
-  
+	public void initializeInMain(IWContext iwc) {
+		this.empty();
+		// commented out 8/10/03 for isi styles - birna
+		// this.setBackgroundColor(IWColor.getHexColorString(212,208,200));
+		// getParentPage().setBackgroundColor(IWColor.getHexColorString(212,208,200));
+		String id = getPresentationState(iwc).getCompoundId();
+		toolbar.setSelectedGroupProviderStateId(id);
+		toolbar.setUserApplicationMainAreaStateId(userApplicationMainAreaStateId);
+		super.add(toolbar);
+	}
 
 	/**
 	 * @param string
@@ -93,7 +88,9 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
 		userApplicationMainAreaStateId = string;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
 	 */
 	public void main(IWContext iwc) throws Exception {
@@ -102,7 +99,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
 		Page parentPage = this.getParentPage();
 		String styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
 		parentPage.addStyleSheetURL(styleSrc);
-	
+
 	}
 
 }

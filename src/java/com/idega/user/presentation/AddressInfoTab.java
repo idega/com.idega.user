@@ -41,8 +41,6 @@ public class AddressInfoTab extends UserTab {
 	private static final String TAB_NAME = "addr_info_tab_name";
 	private static final String DEFAULT_TAB_NAME = "Address";
 	
-	private String USE_COMMUNES_BUNDLE_PROPERTY_NAME = "USE_COMMUNES";
-
 	private TextInput streetField;
 	private TextInput cityField;
 	private TextInput provinceField;
