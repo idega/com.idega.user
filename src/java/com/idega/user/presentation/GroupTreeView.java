@@ -187,7 +187,7 @@ public class GroupTreeView extends IWTreeControl {
 							}
 							else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
 							    Link l = this.getLinkPrototypeClone(node.getNodeName());
-							    l.setOnClick("setLinkToBold(findObj('group_id_"+node.getNodeID()+"'))");
+							    //l.setOnClick("setLinkToBold(findObj('group_id_"+node.getNodeID()+"'))");
 							    l.addEventModel(grSelect);
 							    l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[0]));
 							    return l;
@@ -225,7 +225,7 @@ public class GroupTreeView extends IWTreeControl {
 							}
 							else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
 							    Link l = this.getLinkPrototypeClone(node.getNodeName());
-							    l.setOnClick("setLinkToBold(findObj('group_id_"+node.getNodeID()+"'))");
+							    //l.setOnClick("setLinkToBold(findObj('group_id_"+node.getNodeID()+"'))");
 							    l.addEventModel(grSelect);
 							    l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[1]));
 							    return l;
@@ -273,7 +273,7 @@ public class GroupTreeView extends IWTreeControl {
 				break;
 			case 2 :
 				Link l = this.getLinkPrototypeClone(node.getNodeName());
-				l.setOnClick("setLinkToBold(this)");
+				//l.setOnClick("setLinkToBold(this)");
         l.setID("group_id_"+node.getNodeID());
         // set selection bold
         if (selectedDomainId > 0 || selectedGroupId > 0) {
