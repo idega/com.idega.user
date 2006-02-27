@@ -70,7 +70,7 @@ public class UserLoginTab extends UserTab {
 
 	public void initFieldContents() {
 		try {
-			LoginTable lTable = LoginDBHandler.getUserLogin(getUserId());
+			LoginTable lTable = LoginDBHandler.getDefaultUserLogin(getUserId());
 			LoginInfo lInfo = null;
 			if (lTable != null) {
 				lInfo = LoginDBHandler.getLoginInfo(lTable);
@@ -160,7 +160,7 @@ public class UserLoginTab extends UserTab {
 		try {
 			if (((passw != null && !passw.equals("")) && ((confirmedpassw != null && !confirmedpassw.equals(""))))) {
 				if (login != null && !login.equals("")) {
-					LoginTable userLoginTable = LoginDBHandler.getUserLogin(this.getUserId());
+					LoginTable userLoginTable = LoginDBHandler.getDefaultUserLogin(this.getUserId());
 					String oldLogin = null;
 					if (userLoginTable != null) {
 						oldLogin = userLoginTable.getUserLogin();
@@ -201,7 +201,7 @@ public class UserLoginTab extends UserTab {
 		else {
 			errorMessageTable.empty();
 			try {
-				LoginTable loginTable = LoginDBHandler.getUserLogin(this.getUserId());
+				LoginTable loginTable = LoginDBHandler.getDefaultUserLogin(this.getUserId());
 				if (loginTable != null) {
 					if (updateLoginTable) {
 						LoginDBHandler.updateLogin(this.getUserId(), login, passw);
@@ -283,7 +283,7 @@ public class UserLoginTab extends UserTab {
 			String accountDisabled = iwc.getParameter(UserLoginTab._PARAM_DISABLE_ACCOUNT);
 			if (((passw != null && !passw.equals("")) || ((confirmedpassw != null && !confirmedpassw.equals(""))))) {
 				if (login != null && !login.equals("")) {
-					LoginTable userLoginTable = LoginDBHandler.getUserLogin(this.getUserId());
+					LoginTable userLoginTable = LoginDBHandler.getDefaultUserLogin(this.getUserId());
 					String oldLogin = null;
 					if (userLoginTable != null) {
 						oldLogin = userLoginTable.getUserLogin();
