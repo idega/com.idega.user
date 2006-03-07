@@ -148,7 +148,7 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
 		close.setOnClick("window.close(); return false;");
 		cancel.setOnClick("window.close(); return false;");
 		// first submit, then close window
-		ok.setOnClick("document.delete_form.submit(); window.close();");
+		ok.setOnClick("document.getElementById('delete_form').submit(); window.close();");
 		
 		Table mainTable = new Table();
 		mainTable.setWidth(280);
