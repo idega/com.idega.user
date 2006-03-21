@@ -5,8 +5,10 @@ import com.idega.builder.presentation.IBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.data.ICTreeNode;
-import com.idega.core.ldap.util.IWLDAPConstants;
-import com.idega.core.ldap.util.IWLDAPUtil;
+import com.idega.core.ldap.IWLDAPConstants;
+import com.idega.core.ldap.LDAPInterface;
+import com.idega.core.ldap.LDAPInterfaceException;
+import com.idega.core.ldap.LDAPInterfaceFactory;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
@@ -118,7 +120,13 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 			fieldValues.put(uuidFieldName, (group.getUniqueId() != null) ? group.getUniqueId() : "");
 			String rdn = group.getMetaData(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING);
 			if(rdn==null){
-				rdn = IWLDAPUtil.getInstance().getGeneratedRDNFromGroup(group);
+				try{
+					LDAPInterface ldap = LDAPInterfaceFactory.getInstance(iwc);
+					if(ldap!=null){
+						rdn = ldap.getGeneratedRDNFromGroup(group);
+					}
+				}
+				catch(LDAPInterfaceException rne){}
 			}
 			fieldValues.put(rdnFieldName, (rdn != null) ? rdn : "");
 			
