@@ -58,7 +58,7 @@ public class UserApplication extends IWBrowser {
     this.setHeight(750);
 
     IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
-    if(iwma.getProductInfo().isMajorVersionEqualOrHigherThan(3)){
+    if(iwma.getProductInfo().isMajorPlatformVersionEqualOrHigherThan(3)){
     		//Not add the top for new versions
         this.addToTop(new Top());
         this.setSpanPixels(POS_TOP,0); 
