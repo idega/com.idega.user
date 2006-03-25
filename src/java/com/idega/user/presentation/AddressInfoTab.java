@@ -74,8 +74,8 @@ public class AddressInfoTab extends UserTab {
   private static final String secondPostalCodeFieldName = 
     "UMsecond" + PostalCodeDropdownMenu.IW_POSTAL_CODE_MENU_PARAM_NAME;
   private static final String secondCountryFieldName = "UMsecondCountry";
-  private static final String secondCommuneFieldName = "UMsecondPoBox";
-  private static final String secondPoBoxFieldName = "UMsecondCommune";
+  private static final String secondCommuneFieldName = "UMsecondCommune";
+  private static final String secondPoBoxFieldName = "UMsecondPoBox";
   
 	private static final String HELP_TEXT_KEY = "address_info_tab";
 
@@ -88,7 +88,6 @@ public class AddressInfoTab extends UserTab {
 	private Text communeText;
   
   private Text coAddressText;
-  boolean useCommune = false;
   
 	private User user = null; 
 	private com.idega.core.user.data.User adminUser = null; 
@@ -115,6 +114,7 @@ public class AddressInfoTab extends UserTab {
 		String province = (String)fieldValues.get(provinceFieldName);
 		String postalId = (String)fieldValues.get(postalCodeFieldName);
 		String countryId = (String)fieldValues.get(countryFieldName);
+		String communeId = (String)fieldValues.get(communeFieldName);
 		String poBox = (String)fieldValues.get(poBoxFieldName);
 
 		if (street != null)
@@ -135,6 +135,8 @@ public class AddressInfoTab extends UserTab {
 		    countryField.setSelectedCountry(country);
 		    postalCodeField.setCountry(country);
 		}
+		if (communeId != null && !communeId.equals(""))
+			communeField.setSelectedElement(Integer.parseInt(communeId));
 		if (poBox != null)
 			poBoxField.setContent(poBox); 
 		////////////////////     
@@ -144,6 +146,7 @@ public class AddressInfoTab extends UserTab {
     province = (String)fieldValues.get(secondProvinceFieldName);
     postalId = (String)fieldValues.get(secondPostalCodeFieldName);
     countryId = (String)fieldValues.get(secondCountryFieldName);
+    communeId = (String)fieldValues.get(secondCommuneFieldName);
     poBox = (String)fieldValues.get(secondPoBoxFieldName);
 
     if (street != null)
@@ -164,6 +167,8 @@ public class AddressInfoTab extends UserTab {
 	    secondCountryField.setSelectedCountry(country);
 	    secondPostalCodeField.setCountry(country);
     }
+    if (communeId != null && !communeId.equals(""))
+		secondCommuneField.setSelectedElement(Integer.parseInt(communeId));
     if (poBox != null)
       secondPoBoxField.setContent(poBox);
 	}
@@ -192,6 +197,7 @@ public class AddressInfoTab extends UserTab {
 		try {
 			communeField = new DropdownMenu(communeFieldName);
 			su.getSelectorFromIDOEntities(communeField, getCommuneBusiness(iwc).getCommunes(), "getCommuneName");
+			communeField.setDisabled(true);
 		}catch (RemoteException e) {}
 		
 		countryField = new CountryDropdownMenu(countryFieldName);
@@ -317,12 +323,10 @@ public class AddressInfoTab extends UserTab {
     table.add(postalCodeField, 1, row);
 
     int column = 2;
-		if (useCommune) {
 			table.add(this.communeText, column, row);
 			table.add(Text.getBreak(), column, row);
-			table.add(this.communeField, column, row);
+			table.add(this.communeField, column, row++);
 			column = 1;
-		}
 
 		table.add(this.countryText, column, row);
 		table.add(Text.getBreak(), column, row);
@@ -365,12 +369,10 @@ public class AddressInfoTab extends UserTab {
 		}
 		
     column = 2;
-    if (useCommune) {
 	    	table.add(communeText, column, row);
 	  		table.add(Text.getBreak(), column, row);
-	    	table.add(secondCommuneField, column, row);
+	    	table.add(secondCommuneField, column, row++);
 	    	column = 1;
-    }
     
     table.add(this.countryText, column, row);
 		table.add(Text.getBreak(), column, row);
@@ -389,6 +391,7 @@ public class AddressInfoTab extends UserTab {
 			String province = iwc.getParameter(this.provinceFieldName);
 			String postal = iwc.getParameter(this.postalCodeFieldName);
 			String country = iwc.getParameter(this.countryFieldName);
+			String commune = iwc.getParameter(this.communeFieldName);
 			String poBox = iwc.getParameter(this.poBoxFieldName);
 
 			if (street != null) {
@@ -406,6 +409,9 @@ public class AddressInfoTab extends UserTab {
 			if (country != null) {
 				fieldValues.put(this.countryFieldName, country);
 			}
+			if (commune != null) {
+				fieldValues.put(this.communeFieldName, commune);
+			}
 			if (poBox != null) {
 				fieldValues.put(this.poBoxFieldName, poBox);
 			}
@@ -415,6 +421,7 @@ public class AddressInfoTab extends UserTab {
       province = iwc.getParameter(secondProvinceFieldName);
       postal = iwc.getParameter(secondPostalCodeFieldName);
       country = iwc.getParameter(secondCountryFieldName);
+      commune = iwc.getParameter(secondCommuneFieldName);
       poBox = iwc.getParameter(secondPoBoxFieldName);
 
       if (street != null) {
@@ -432,6 +439,9 @@ public class AddressInfoTab extends UserTab {
       if (country != null) {
         fieldValues.put(secondCountryFieldName, country);
       }
+      if (commune != null) {
+          fieldValues.put(secondCommuneFieldName, commune);
+        }
       if (poBox != null) {
         fieldValues.put(secondPoBoxFieldName, poBox);
       }
@@ -553,6 +563,7 @@ public class AddressInfoTab extends UserTab {
 					countryId = country.getPrimaryKey().toString();
 				String city = addr.getCity();
 				String province = addr.getProvince();
+				int communeId = addr.getCommuneID();
 				String poBox = addr.getPOBox();
 
 				if (street != null)
@@ -565,6 +576,8 @@ public class AddressInfoTab extends UserTab {
 					fieldValues.put(postalCodeFieldName, String.valueOf(code));
 				if (countryId != null)
 					fieldValues.put(countryFieldName, countryId);
+				if (communeId != -1)
+					fieldValues.put(communeFieldName, String.valueOf(communeId));
 				if (poBox != null)
 					fieldValues.put(poBoxFieldName, poBox);
 			}
@@ -586,6 +599,7 @@ public class AddressInfoTab extends UserTab {
           countryId = country.getPrimaryKey().toString();
         String city = addr.getCity();
         String province = addr.getProvince();
+		int communeId = addr.getCommuneID();
         String poBox = addr.getPOBox();
 
         if (street != null)
@@ -598,6 +612,8 @@ public class AddressInfoTab extends UserTab {
           fieldValues.put(secondPostalCodeFieldName, String.valueOf(code));
         if (countryId != null)
           fieldValues.put(secondCountryFieldName, countryId);
+        if (communeId != -1)
+			fieldValues.put(secondCommuneFieldName, String.valueOf(communeId));
         if (poBox != null)
           fieldValues.put(secondPoBoxFieldName, poBox);
       }
