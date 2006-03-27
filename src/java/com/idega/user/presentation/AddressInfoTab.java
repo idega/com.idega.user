@@ -196,6 +196,7 @@ public class AddressInfoTab extends UserTab {
 		SelectorUtility su = new SelectorUtility();
 		try {
 			communeField = new DropdownMenu(communeFieldName);
+			communeField.addMenuElement(-1,"");
 			su.getSelectorFromIDOEntities(communeField, getCommuneBusiness(iwc).getCommunes(), "getCommuneName");
 			communeField.setDisabled(true);
 		}catch (RemoteException e) {}
@@ -229,6 +230,7 @@ public class AddressInfoTab extends UserTab {
 
 		try {
 			secondCommuneField = new DropdownMenu(secondCommuneFieldName);
+			secondCommuneField.addMenuElement(-1,"");
 			su.getSelectorFromIDOEntities(secondCommuneField, getCommuneBusiness(iwc).getCommunes(), "getCommuneName");
 		}catch (RemoteException e) {}
 
