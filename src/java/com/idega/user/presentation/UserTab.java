@@ -128,6 +128,12 @@ public abstract class UserTab extends Table implements Collectable {
 		return userId;
 	}
 	
+	public void setUserIDAndGroupID(int userID, int groupID) {
+		userId = userID;
+		selectedGroupId = groupID;
+		initFieldContents();
+	}
+
 	//cannot store it because some tabs might update it via the userid and not
 	// by this bean
 	protected User getUser() {
