@@ -109,23 +109,19 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			// add the standard tabs and then from plugins
 			UserTab userInfo = new GeneralUserInfoTab();
 			userInfo.setPanel(panel);
-			userInfo.setUserID(userId);
-			userInfo.setGroupID(groupId);
+			userInfo.setUserIDAndGroupID(userId, groupId);
 			
 			UserTab addressInfo = new AddressInfoTab();
 			addressInfo.setPanel(panel);
-			addressInfo.setUserID(userId);
-			addressInfo.setGroupID(groupId);
+			addressInfo.setUserIDAndGroupID(userId, groupId);
 			
 			UserTab phone = new UserPhoneTab();
 			phone.setPanel(panel);
-			phone.setUserID(userId);
-			phone.setGroupID(groupId);
+			phone.setUserIDAndGroupID(userId, groupId);
 			
 			UserTab group = new UserGroupList();
 			group.setPanel(panel);
-			group.setUserID(userId);
-			group.setGroupID(groupId);
+			group.setUserIDAndGroupID(userId, groupId);
 			panel.addTab(userInfo, count, iwc);
 			panel.addTab(addressInfo, ++count, iwc);
 			panel.addTab(phone, ++count, iwc);
@@ -149,8 +145,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 					while (tab.hasNext()) {
 						UserTab el = (UserTab) tab.next();
 						el.setPanel(panel);
-						el.setUserID(userId);
-						el.setGroupID(groupId);
+						el.setUserIDAndGroupID(userId, groupId);
 						panel.addTab(el, ++count, iwc);
 					}
 				}
@@ -159,8 +154,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			// don't forget the login tab
 			UserLoginTab ult = new UserLoginTab();
 			ult.setPanel(panel);
-			ult.setUserID(userId);
-			ult.setGroupID(groupId);
+			ult.setUserIDAndGroupID(userId, groupId);
 			panel.addTab(ult, ++count, iwc);
 		}
 		catch (RemoteException remoteEx) {
