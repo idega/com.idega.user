@@ -2,7 +2,8 @@
 /*birna*/
 
 body{
-	background-color: #ffffff;
+	/*background-color: #ffffff;*/
+	background-color: #F2F2F2;
 	font-size: 60%;
 	margin-top: 0px;
 	margin-right: 0px;
@@ -109,11 +110,18 @@ h1{
 	background: #ffffff url(menu_tile.gif) repeat-x;
 }
 .banner{
-	background: #0e2456;
+	
+	/*background: #0e2456;
 	background-image: url(idegaweb.gif);
 	background-repeat: no-repeat;
 	height: 25px;
+	*/
+	background: #38485C;
+	background-image: url(images/eplatform.gif);
+	background-repeat: no-repeat;
+	height: 31px;
 }
+
 .back{
 	background-color: #f5f5f5;
 	border: 1px solid #cccccc;
