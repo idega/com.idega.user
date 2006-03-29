@@ -6,7 +6,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.event.ChangeListener;
+
 import com.idega.builder.presentation.StyledIBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
@@ -37,8 +39,8 @@ import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
+import com.idega.user.data.GroupTypeConstants;
 import com.idega.user.event.CreateGroupEvent;
-import com.idega.user.util.ICUserConstants;
 
 /**
  *
@@ -298,8 +300,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 		if(groupTypes.contains(typeBefore)){
 			menu.setSelectedElement(typeBefore);
 		}
-		else if(groupTypes.contains(ICUserConstants.GROUP_TYPE_GENERAL)){
-			menu.setSelectedElement(ICUserConstants.GROUP_TYPE_GENERAL);
+		else if(groupTypes.contains(GroupTypeConstants.GROUP_TYPE_GENERAL)){
+			menu.setSelectedElement(GroupTypeConstants.GROUP_TYPE_GENERAL);
 		}
 		return menu;
 	}

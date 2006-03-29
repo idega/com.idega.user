@@ -209,7 +209,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 					}
 					else if (loggedInUserIsAdmin) {
 						aLink.setWindowToOpen(AdministratorPropertyWindow.class);
-						aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, group.getPrimaryKey().toString());
+						aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, group.getPrimaryKey().toString());
 					}
 
 				}

@@ -599,7 +599,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 else
                     if (isUserSuperAdmin && isCurrentUserSuperAdmin) {
                         aLink.setWindowToOpen(AdministratorPropertyWindow.class);
-                        aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
+                        aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
                     }
                 return aLink;
                 //}

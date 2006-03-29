@@ -1,10 +1,11 @@
 package com.idega.user.presentation;
 
 import java.sql.SQLException;
+
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneType;
-import com.idega.core.contact.data.PhoneTypeBMPBean;
+import com.idega.data.GenericEntity;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
@@ -137,7 +138,7 @@ public class UserPhoneTab extends UserTab {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		try {
-			phoneTypes = (PhoneType[]) PhoneTypeBMPBean.getStaticInstance(PhoneType.class).findAll();
+			phoneTypes = (PhoneType[]) GenericEntity.getStaticInstance(PhoneType.class).findAll();
 		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}

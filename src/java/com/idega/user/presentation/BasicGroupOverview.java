@@ -2,6 +2,8 @@ package com.idega.user.presentation;
 
 import com.idega.user.data.*;
 import java.util.*;
+
+import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import java.rmi.RemoteException;
 import com.idega.business.IBOLookup;
@@ -53,7 +55,7 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
 
   public Table getGroups(IWContext iwc) throws Exception{
     String[] types = new String[1];
-    types[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    types[0] = ((UserGroupRepresentative)GenericEntity.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
 //        types[0] = ((GroupBusiness)IBOLookup.getServiceInstance(iwc,GroupBusiness.class)).getGroupType(User.class);
     GroupHome home = (GroupHome)IDOLookup.getHome(Group.class);
     Collection groups = home.findAllGroups(types,false);

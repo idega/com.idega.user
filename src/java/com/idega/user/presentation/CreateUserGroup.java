@@ -3,6 +3,8 @@ package com.idega.user.presentation;
 import java.util.Vector;
 
 import com.idega.core.accesscontrol.data.PermissionGroup;
+import com.idega.core.data.GenericGroupBMPBean;
+import com.idega.data.GenericEntity;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
@@ -152,10 +154,10 @@ public class CreateUserGroup extends Window {
 			frameTable.add(propertyTable, 1, 2);
 		}
 		else if (size == 1) {
-			frameTable.add(new HiddenInput(((Group) com.idega.user.data.GroupBMPBean.getStaticInstance((Class) groupType.get(0))).getGroupTypeValue()));
+			frameTable.add(new HiddenInput(((Group) GenericEntity.getStaticInstance((Class) groupType.get(0))).getGroupTypeValue()));
 		}
 		else {
-			frameTable.add(new HiddenInput(groupTypeFieldParameterName, com.idega.user.data.GroupBMPBean.getStaticInstance().getGroupTypeValue()));
+			frameTable.add(new HiddenInput(groupTypeFieldParameterName, GenericGroupBMPBean.getStaticInstance().getGroupTypeValue()));
 		}
 		// Property end
 
