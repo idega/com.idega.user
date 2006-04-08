@@ -99,7 +99,7 @@ public class DeleteGroupEvent extends IWPresentationEvent {
 	 * @param groupId The groupId to set
 	 */
 	public void setGroupId(Integer primaryKey) {
-    this.addParameter(GROUP_ID, primaryKey.toString());;
+    this.addParameter(GROUP_ID, primaryKey.toString());
 	}
 
 	/**
