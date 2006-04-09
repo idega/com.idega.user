@@ -62,8 +62,9 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 	}
 	
 	private Collection doSimpleSearch(String searchString) {
-		if (searchString == null || searchString.length() <2)
+		if (searchString == null || searchString.length() <2) {
 			return null;
+		}
 		try {
 			searchString = TextSoap.removeWhiteSpaceFromBeginningAndEndOfString(searchString);
 			UserHome userHome = (UserHome) IDOLookup.getHome(User.class);

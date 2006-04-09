@@ -1,5 +1,5 @@
 /*
- * $Id: GroupNameUserContactSearch.java,v 1.1 2005/01/19 23:32:53 eiki Exp $
+ * $Id: GroupNameUserContactSearch.java,v 1.2 2006/04/09 11:40:41 laddi Exp $
  * Created on Jan 19, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -29,13 +29,13 @@ import com.idega.user.data.Group;
 
 /**
  * 
- *  Last modified: $Date: 2005/01/19 23:32:53 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/04/09 11:40:41 $ by $Author: laddi $
  * 
  * This class implements the Searchplugin interface and can therefore be used in a Search block (com.idega.core.search).<br>
  * It searches for groups by their name and returns contact information for the users in the groups that it finds<br>
  * To use it simply register this class as a iw.searchplugin component in a bundle.
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class GroupNameUserContactSearch extends UserContactSearch implements SearchPlugin{
 
@@ -53,7 +53,7 @@ public class GroupNameUserContactSearch extends UserContactSearch implements Sea
 	 * @see com.idega.core.search.business.SearchPlugin#getSearchName()
 	 */
 	public String getSearchName() {
-		IWBundle bundle = iwma.getBundle(IW_BUNDLE_IDENTIFIER);
+		IWBundle bundle = this.iwma.getBundle(IW_BUNDLE_IDENTIFIER);
 		return bundle.getResourceBundle(IWContext.getInstance()).getLocalizedString(SEARCH_NAME_LOCALIZABLE_KEY,"Contacts by group name");
 	}
 
@@ -61,7 +61,7 @@ public class GroupNameUserContactSearch extends UserContactSearch implements Sea
 	 * @see com.idega.core.search.business.SearchPlugin#getSearchDescription()
 	 */
 	public String getSearchDescription() {
-		IWBundle bundle = iwma.getBundle(IW_BUNDLE_IDENTIFIER);
+		IWBundle bundle = this.iwma.getBundle(IW_BUNDLE_IDENTIFIER);
 		return bundle.getResourceBundle(IWContext.getInstance()).getLocalizedString(SEARCH_DESCRIPTION_LOCALIZABLE_KEY,"Searches for user contact information by group name");
 	}
 	

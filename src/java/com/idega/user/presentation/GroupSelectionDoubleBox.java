@@ -40,7 +40,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 */
 	public GroupSelectionDoubleBox(String parameterName) {
 		super(parameterName);
-		selectedGroupsParameter = parameterName;
+		this.selectedGroupsParameter = parameterName;
 				
 	}
 
@@ -52,7 +52,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 */
 	public GroupSelectionDoubleBox(String parameterName,String headerOfLeftBox,String headerOfRightBox) {
 		super(parameterName, headerOfLeftBox, headerOfRightBox);
-		selectedGroupsParameter = parameterName;
+		this.selectedGroupsParameter = parameterName;
 	}
 
 	/**
@@ -71,30 +71,30 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 		super.main(iwc);
 		getRightBox().selectAllOnSubmit();
 		
-		if( rootGroup!=null ){
-			setAvailableGroups( com.idega.util.ListUtil.convertCollectionToList(getGroupBusiness(iwc).getChildGroupsRecursive(rootGroup)) );
+		if( this.rootGroup!=null ){
+			setAvailableGroups( com.idega.util.ListUtil.convertCollectionToList(getGroupBusiness(iwc).getChildGroupsRecursive(this.rootGroup)) );
 		}
-		else if( namedAvailableGroups!=null ){
-			Iterator iter = namedAvailableGroups.keySet().iterator();
+		else if( this.namedAvailableGroups!=null ){
+			Iterator iter = this.namedAvailableGroups.keySet().iterator();
 			
 			while (iter.hasNext()) {
 				String key = (String) iter.next();
 				
-				Group group = (Group)  namedAvailableGroups.get(key) ;
+				Group group = (Group)  this.namedAvailableGroups.get(key) ;
 				this.addToAvailableBox( ((Integer)group.getPrimaryKey()).toString() , key );
 			}
 		
 		}
-		else if( (availableGroups != null) &&  !availableGroups.isEmpty() ){
-			Iterator iter = availableGroups.iterator();
+		else if( (this.availableGroups != null) &&  !this.availableGroups.isEmpty() ){
+			Iterator iter = this.availableGroups.iterator();
 			while (iter.hasNext()) {
 				Group group = (Group) iter.next();
 				this.addToAvailableBox( ((Integer)group.getPrimaryKey()).toString() , group.getName() );
 			}
 		}
 		
-		if( (selectedGroups != null) &&  !selectedGroups.isEmpty() ){
-			Iterator iter = selectedGroups.iterator();
+		if( (this.selectedGroups != null) &&  !this.selectedGroups.isEmpty() ){
+			Iterator iter = this.selectedGroups.iterator();
 			while (iter.hasNext()) {
 				Group group = (Group) iter.next();
 				this.addToSelectedBox( ((Integer)group.getPrimaryKey()).toString() , group.getName() );
@@ -108,7 +108,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 * @return List
 	 */
 	public List getAvailableGroups() {
-		return availableGroups;
+		return this.availableGroups;
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 * @return List
 	 */
 	public List getSelectedGroups() {
-		return selectedGroups;
+		return this.selectedGroups;
 	}
 
 	/**
@@ -142,7 +142,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 * @return String
 	 */
 	public String getSelectedGroupsParameter() {
-		return (selectedGroupsParameter==null) ? selectedGroupsParameterDefaultValue : selectedGroupsParameter;
+		return (this.selectedGroupsParameter==null) ? selectedGroupsParameterDefaultValue : this.selectedGroupsParameter;
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 * @return Group
 	 */
 	public Group getRootGroup() {
-		return rootGroup;
+		return this.rootGroup;
 	} 
 
 	/**
@@ -176,8 +176,10 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 	 * @param group The group to add
 	 */
 	public void setAddToAvailableGroups(Group group) {
-		if( availableGroups==null ) availableGroups = new ArrayList();
-		availableGroups.add(group);
+		if( this.availableGroups==null ) {
+			this.availableGroups = new ArrayList();
+		}
+		this.availableGroups.add(group);
 		
 	}
 	
@@ -192,8 +194,10 @@ public class GroupSelectionDoubleBox extends SelectionDoubleBox {
 		 * Had to add this method because the former one doesn't work as multivalued.
 		 * FIX!!!
 		 */
-		if( namedAvailableGroups==null ) namedAvailableGroups = new HashMap();
-		namedAvailableGroups.put(name, group);
+		if( this.namedAvailableGroups==null ) {
+			this.namedAvailableGroups = new HashMap();
+		}
+		this.namedAvailableGroups.put(name, group);
 	
 		
 	}

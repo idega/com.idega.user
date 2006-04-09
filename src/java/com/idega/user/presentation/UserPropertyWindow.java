@@ -244,7 +244,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 	 * @return Returns the groupId.
 	 */
 	public int getGroupId() {
-		return groupId;
+		return this.groupId;
 	}
 
 	
@@ -260,7 +260,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 	 * @return Returns the userId.
 	 */
 	public int getUserId() {
-		return userId;
+		return this.userId;
 	}
 
 	

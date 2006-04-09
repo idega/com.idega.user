@@ -61,7 +61,7 @@ public class UserStatusSelectionBoxInputHandler extends SelectionBox implements 
 					String name = status.getStatusKey();
 					if(name!=null) {
 						addMenuElement(name, iwrb.getLocalizedString(name,name));
-						_allUserStatuses.add(name);
+						this._allUserStatuses.add(name);
 					}
 				}
 			}
@@ -89,7 +89,7 @@ public class UserStatusSelectionBoxInputHandler extends SelectionBox implements 
 				userStatuses.add(values[i]);
 			}
 		} else {
-			userStatuses = _allUserStatuses;
+			userStatuses = this._allUserStatuses;
 		}
 
 		return userStatuses;

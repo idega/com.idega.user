@@ -67,15 +67,15 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 	}
 
 	public void initializeInMain(IWContext iwc) {    
-		userApplicationMainAreaPSId = iwc.getParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY);
+		this.userApplicationMainAreaPSId = iwc.getParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY);
 		
 		// add action listener
 		IWStateMachine stateMachine;
    
 		try {
 			stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
-			if (userApplicationMainAreaPSId != null) {
-				addActionListener( (IWActionListener)stateMachine.getStateFor(userApplicationMainAreaPSId, UserApplicationMainAreaPS.class));
+			if (this.userApplicationMainAreaPSId != null) {
+				addActionListener( (IWActionListener)stateMachine.getStateFor(this.userApplicationMainAreaPSId, UserApplicationMainAreaPS.class));
 			}
 		}
 		catch (RemoteException e) {
@@ -88,15 +88,15 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 	public void main(IWContext iwc) throws Exception {
 		//this.debugParameters(iwc);
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		searchEvent = new UserSearchEvent();
-		searchEvent.setSource(this);
+		this.searchEvent = new UserSearchEvent();
+		this.searchEvent.setSource(this);
 					
 		setTitle(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"));
 		addTitle(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"), TITLE_STYLECLASS);
 		setName(iwrb.getLocalizedString("advanced_searchwindow.title", "Advanced search"));
 		
 		Form form = new Form();
-		form.addEventModel(searchEvent, iwc);
+		form.addEventModel(this.searchEvent, iwc);
 		add(form,iwc);
 
 		Table mainTable = new Table(1, 3);
@@ -108,7 +108,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		
 		Table tab = new Table(3, 6);
 		tab.setColumns(3);
-		tab.setStyleClass(mainTableStyle);
+		tab.setStyleClass(this.mainTableStyle);
 		tab.setWidth(Table.HUNDRED_PERCENT);
 		tab.setBorder(0);
 		tab.setColumnVerticalAlignment(1, Table.VERTICAL_ALIGN_TOP);
@@ -245,7 +245,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		bottomTable.setCellpadding(0);
 		bottomTable.setCellspacing(5);
 		bottomTable.setWidth(Table.HUNDRED_PERCENT);
-		bottomTable.setStyleClass(mainTableStyle);
+		bottomTable.setStyleClass(this.mainTableStyle);
 		bottomTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 		bottomTable.add(help,1,1);
 
@@ -297,27 +297,27 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 	}
 	
 	public GroupBusiness getGroupBusiness(IWContext iwc) {
-		if(groupBiz==null){	
+		if(this.groupBiz==null){	
 			try {
-				groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
+				this.groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
 			}	
 		}	
-		return groupBiz;
+		return this.groupBiz;
 	}
 	
 	public UserBusiness getUserBusiness(IWContext iwc) {
-		if(userBiz==null){	
+		if(this.userBiz==null){	
 			try {
-				userBiz = (UserBusiness) IBOLookup.getServiceInstance(iwc,UserBusiness.class);
+				this.userBiz = (UserBusiness) IBOLookup.getServiceInstance(iwc,UserBusiness.class);
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
 			}	
 		}	
-		return userBiz;
+		return this.userBiz;
 	}
 
 	/* (non-Javadoc)

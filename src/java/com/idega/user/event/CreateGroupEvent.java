@@ -38,43 +38,43 @@ public class CreateGroupEvent extends IWPresentationEvent {
 	private String _groupCancel = null;
 
 	public String getName() {
-		return _groupName;
+		return this._groupName;
 	}
 
 	public String getDescription() {
-		return _groupDescription;
+		return this._groupDescription;
 	}
 
 	public String getGroupType() {
-		return _groupType;
+		return this._groupType;
 	}
 
 	public int getParentID() {
-		return _groupParentID;
+		return this._groupParentID;
 	}
 	
 	public int getAliasID() {
-		if (_groupAliasID != null && _groupAliasID.length() > 0) {
-			return Integer.parseInt(_groupAliasID);
+		if (this._groupAliasID != null && this._groupAliasID.length() > 0) {
+			return Integer.parseInt(this._groupAliasID);
 		}
 		return -1;
 	}
 	
 	public int getParentType() {
-		return _groupParentType;
+		return this._groupParentType;
 	}
 
 	public boolean doCommit() {
-		return _groupCommit != null;
+		return this._groupCommit != null;
 	}
 
 	public boolean doCancel() {
-		return _groupCancel != null;
+		return this._groupCancel != null;
 	}
 
 	public int getHomePageID() {
-		if (_groupHomePage != null && _groupHomePage.length() > 0) {
-			return Integer.parseInt(_groupHomePage);
+		if (this._groupHomePage != null && this._groupHomePage.length() > 0) {
+			return Integer.parseInt(this._groupHomePage);
 		}
 		return -1;
 	}
@@ -118,16 +118,16 @@ public class CreateGroupEvent extends IWPresentationEvent {
 	}
 
 	public boolean initializeEvent(IWContext iwc) {
-		_groupName = iwc.getParameter(getIONameForName());
-		_groupDescription = iwc.getParameter(getIONameForDescription());
-		_groupType = iwc.getParameter(getIONameForGroupType());
-		_groupHomePage = iwc.getParameter(getIONameForHomePage());
+		this._groupName = iwc.getParameter(getIONameForName());
+		this._groupDescription = iwc.getParameter(getIONameForDescription());
+		this._groupType = iwc.getParameter(getIONameForGroupType());
+		this._groupHomePage = iwc.getParameter(getIONameForHomePage());
 		String groupParentTypeAndID = iwc.getParameter(getIONameForParentID());
 		String aliasID = iwc.getParameter(getIONameForAliasID());
 		if (aliasID != null && !aliasID.equals("")) {
 			try {
 				int index = aliasID.indexOf("_");
-				_groupAliasID = aliasID.substring(index+1);	
+				this._groupAliasID = aliasID.substring(index+1);	
 			}
 			catch(Exception e) {
 				e.printStackTrace();
@@ -138,8 +138,8 @@ public class CreateGroupEvent extends IWPresentationEvent {
 
 			try {
 				int indexOf = groupParentTypeAndID.indexOf("_");
-				_groupParentType = Integer.parseInt(groupParentTypeAndID.substring(0, indexOf));
-				_groupParentID = Integer.parseInt(groupParentTypeAndID.substring(indexOf + 1));
+				this._groupParentType = Integer.parseInt(groupParentTypeAndID.substring(0, indexOf));
+				this._groupParentID = Integer.parseInt(groupParentTypeAndID.substring(indexOf + 1));
 			}
 			catch (Exception ex) {
 				System.err.println("[" + this +"]: > ");
@@ -148,21 +148,21 @@ public class CreateGroupEvent extends IWPresentationEvent {
 			}
 		}
 		else {
-			_groupCommit = null; 
-			_groupCancel = null; 
+			this._groupCommit = null; 
+			this._groupCancel = null; 
 			return false;
 		}
 
 
-		_groupCommit = iwc.getParameter(getIONameForCommit());
-		_groupCancel = iwc.getParameter(getIONameForCancel());
+		this._groupCommit = iwc.getParameter(getIONameForCommit());
+		this._groupCancel = iwc.getParameter(getIONameForCancel());
 
-		if (_groupCommit == null) {
-			_groupCommit = iwc.getParameter(getIONameForCommit() + ".x");
+		if (this._groupCommit == null) {
+			this._groupCommit = iwc.getParameter(getIONameForCommit() + ".x");
 		}
 
-		if (_groupCancel == null) {
-			_groupCancel = iwc.getParameter(getIONameForCancel() + ".x");
+		if (this._groupCancel == null) {
+			this._groupCancel = iwc.getParameter(getIONameForCancel() + ".x");
 		}
 
 		return true;

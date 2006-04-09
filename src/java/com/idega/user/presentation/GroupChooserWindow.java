@@ -67,7 +67,7 @@ public class GroupChooserWindow extends StyledAbstractChooserWindow {
 		setName(iwrb.getLocalizedString("select_group","Select group"));
 		setStyles();
 		Table table = new Table(1,2);
-		table.setStyleClass(mainStyleClass);
+		table.setStyleClass(this.mainStyleClass);
 		table.setCellpaddingAndCellspacing(0);
 		
 		
@@ -162,7 +162,9 @@ public class GroupChooserWindow extends StyledAbstractChooserWindow {
 			}
 			
 		}
-		else script = super.getPerformAfterSelectScriptString(iwc);
+		else {
+			script = super.getPerformAfterSelectScriptString(iwc);
+		}
 		
 		return script;
 	}
@@ -181,15 +183,15 @@ public class GroupChooserWindow extends StyledAbstractChooserWindow {
 	
 	
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
-		if (userBiz == null) {
+		if (this.userBiz == null) {
 			try {
-				userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				this.userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return userBiz;
+		return this.userBiz;
 	}
 	
 	public Collection convertGroupCollectionToGroupNodeCollection(Collection col, IWApplicationContext iwac){

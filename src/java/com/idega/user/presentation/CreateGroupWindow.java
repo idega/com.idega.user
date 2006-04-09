@@ -68,8 +68,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	private CreateGroupWindowPS _ps;
 
 	public CreateGroupWindow() {
-		_stateHandler = new StatefullPresentationImplHandler();
-		_stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
+		this._stateHandler = new StatefullPresentationImplHandler();
+		this._stateHandler.setPresentationStateClass(CreateGroupWindowPS.class);
 		setWidth(400);
 		setHeight(370);
 		setResizable(true);
@@ -80,7 +80,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	
 	public void initializeInMain(IWContext iwc) {
 		if (iwc.isParameterSet(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY)) {
-			selectedGroupProviderStateId = iwc.getParameter(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
+			this.selectedGroupProviderStateId = iwc.getParameter(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
 		}      
 		IWPresentationState state = this.getPresentationState(iwc);
 		// add action listener
@@ -92,10 +92,10 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
 			changeListeners = stateMachine.getAllChangeListeners();
 			// try to get the selected group  
-			if (selectedGroupProviderStateId != null) {
-				UserApplicationMenuAreaPS groupProviderState = (UserApplicationMenuAreaPS) stateMachine.getStateFor(selectedGroupProviderStateId, UserApplicationMenuAreaPS.class);
+			if (this.selectedGroupProviderStateId != null) {
+				UserApplicationMenuAreaPS groupProviderState = (UserApplicationMenuAreaPS) stateMachine.getStateFor(this.selectedGroupProviderStateId, UserApplicationMenuAreaPS.class);
 				Integer selectedGroupId = groupProviderState.getSelectedGroupId();
-				selectedGroup = getGroup(selectedGroupId); 
+				this.selectedGroup = getGroup(selectedGroupId); 
 			}
 		}
 		catch (RemoteException e) {
@@ -109,25 +109,25 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	}
 	
 	public void main(IWContext iwc) throws Exception {
-		_ps = (CreateGroupWindowPS) this.getPresentationState(iwc);
+		this._ps = (CreateGroupWindowPS) this.getPresentationState(iwc);
 		
-		if (_ps.doClose()) {
+		if (this._ps.doClose()) {
 			close();
-			_ps.doneClosing();
+			this._ps.doneClosing();
 		}
 		else {
-			_createEvent = new CreateGroupEvent();
+			this._createEvent = new CreateGroupEvent();
 			//_createEvent.setSource(this.getLocation());
-			_createEvent.setSource(this);
-			Group parentFromPS = _ps.getParentGroup();
-			if( (selectedGroup==null) || (parentFromPS!=null && !selectedGroup.equals(parentFromPS)) ){
-				selectedGroup = parentFromPS;
+			this._createEvent.setSource(this);
+			Group parentFromPS = this._ps.getParentGroup();
+			if( (this.selectedGroup==null) || (parentFromPS!=null && !this.selectedGroup.equals(parentFromPS)) ){
+				this.selectedGroup = parentFromPS;
 			}
 			
 			IWResourceBundle iwrb = getResourceBundle(iwc);
 			
 			Form form = new Form();
-			form.addEventModel(_createEvent, iwc);
+			form.addEventModel(this._createEvent, iwc);
 			
 			setTitle(iwrb.getLocalizedString("create_new_group", "Create a new Group"));
 			addTitle(iwrb.getLocalizedString("create_new_group", "Create a new Group"), TITLE_STYLECLASS);
@@ -139,7 +139,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			mainTable.setCellspacing(0);
 			mainTable.setHeight(2, 5);
 			Table tab = new Table(2, 5); //changed from Table(2,8) - birna
-			tab.setStyleClass(mainTableStyle);
+			tab.setStyleClass(this.mainTableStyle);
 			tab.setWidth(Table.HUNDRED_PERCENT);
 			tab.setWidth(1, "50%");
 			tab.setWidth(2, "50%");
@@ -147,8 +147,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			tab.setCellspacing(12);
 			tab.setCellpadding(0);
 			
-			TextInput inputName = new TextInput(_createEvent.getIONameForName());
-			String name = _ps.getGroupName();
+			TextInput inputName = new TextInput(this._createEvent.getIONameForName());
+			String name = this._ps.getGroupName();
 			if(name!=null){
 				inputName.setValue(name);
 			}
@@ -165,11 +165,11 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			tab.add(Text.getBreak(), 1, 1);
 			tab.add(inputName, 1, 1); //changed from (inputName, 2,1) - birna
 			
-			TextArea descriptionTextArea = new TextArea(_createEvent.getIONameForDescription());
+			TextArea descriptionTextArea = new TextArea(this._createEvent.getIONameForDescription());
 			descriptionTextArea.setHeight("200"); //changed from (4)
 			descriptionTextArea.setWidth(Table.HUNDRED_PERCENT);
 			descriptionTextArea.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-			String desc = _ps.getGroupDescription();
+			String desc = this._ps.getGroupDescription();
 			if(desc!=null){
 				descriptionTextArea.setValue(desc);
 			}
@@ -181,7 +181,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			tab.setVerticalAlignment(2,1,Table.VERTICAL_ALIGN_TOP);
 			tab.add(descriptionTextArea, 2, 1); 
 			
-			GroupChooser groupChooser = getGroupChooser(_createEvent.getIONameForParentID(), true, iwc);
+			GroupChooser groupChooser = getGroupChooser(this._createEvent.getIONameForParentID(), true, iwc);
 			groupChooser.setStyleClassName("text");
 			groupChooser.setInputLength(17);
 			groupChooser.setToSubmitParentFormOnChange();
@@ -192,11 +192,11 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			tab.add(Text.getBreak(), 1, 2);
 			tab.add(groupChooser, 1, 2); //changed from (groupChooser, 2,3) - birna
 			
-			StyledIBPageChooser pageChooser = new StyledIBPageChooser(_createEvent.getIONameForHomePage(), IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+			StyledIBPageChooser pageChooser = new StyledIBPageChooser(this._createEvent.getIONameForHomePage(), IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 			pageChooser.setStyleClassName("text");
 			pageChooser.setInputLength(17);
-			if(_ps.getHomePageID()>0){
-				pageChooser.setSelectedPage(_ps.getHomePage());
+			if(this._ps.getHomePageID()>0){
+				pageChooser.setSelectedPage(this._ps.getHomePage());
 			}
 			Text pageText = new Text(iwrb.getLocalizedString("home_page", "Select homepage") + ":");
 
@@ -212,16 +212,16 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			tab.add(Text.getBreak(), 1, 4);
 			tab.add(mnu, 1, 4); //changed from (mnu,2,5) - birna
 			
-			GroupChooser aliasGroupChooser = getGroupChooser(_createEvent.getIONameForAliasID(), false, iwc);
+			GroupChooser aliasGroupChooser = getGroupChooser(this._createEvent.getIONameForAliasID(), false, iwc);
 			aliasGroupChooser.setStyleClassName("text");
 			aliasGroupChooser.setInputLength(17);
-			if(_ps.getAliasID()>0){
-				aliasGroupChooser.setSelectedNode(new GroupTreeNode(getGroup(new Integer(_ps.getAliasID()))));
+			if(this._ps.getAliasID()>0){
+				aliasGroupChooser.setSelectedNode(new GroupTreeNode(getGroup(new Integer(this._ps.getAliasID()))));
 			}
 			
 			String filter = NO_GROUP_SELECTED;
-			if (selectedGroup != null)  {
-				filter = selectedGroup.getPrimaryKey().toString();
+			if (this.selectedGroup != null)  {
+				filter = this.selectedGroup.getPrimaryKey().toString();
 			}
 			aliasGroupChooser.setFilter(filter);
 			Text aliasText = new Text(iwrb.getLocalizedString("alias_group", "Alias for group") + ":");
@@ -230,8 +230,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			tab.add(Text.getBreak(), 1, 5);
 			tab.add(aliasGroupChooser, 1, 5); //changed from (aliasGroupcChooser,2,3) - birna
 
-			StyledButton button = new StyledButton(new SubmitButton(_createEvent.getIONameForCommit(), iwrb.getLocalizedString("save", "Save")));
-			SubmitButton closeButton = new SubmitButton(_createEvent.getIONameForCancel(), iwrb.getLocalizedString("close", "Close"));
+			StyledButton button = new StyledButton(new SubmitButton(this._createEvent.getIONameForCommit(), iwrb.getLocalizedString("save", "Save")));
+			SubmitButton closeButton = new SubmitButton(this._createEvent.getIONameForCancel(), iwrb.getLocalizedString("close", "Close"));
 			closeButton.setOnClick("window.close();return false;");
 			StyledButton close = new StyledButton(closeButton);
 
@@ -247,7 +247,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			bottomTable.setCellpadding(0);
 			bottomTable.setCellspacing(5);
 			bottomTable.setWidth(Table.HUNDRED_PERCENT);
-			bottomTable.setStyleClass(mainTableStyle);
+			bottomTable.setStyleClass(this.mainTableStyle);
 			bottomTable.add(help, 1, 1);
 			bottomTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 			bottomTable.add(buttonTable, 2, 1);
@@ -259,8 +259,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			form.add(mainTable);
 			
 			//if the last creation failed
-			if(_ps.hasFailedToCreateGroup()){
-				List errorMessages = _ps.getFailedToCreateGroupErrorMessages();
+			if(this._ps.hasFailedToCreateGroup()){
+				List errorMessages = this._ps.getFailedToCreateGroupErrorMessages();
 				if(errorMessages!=null && !errorMessages.isEmpty()){
 					StringBuffer allReasons = new StringBuffer();
 					allReasons.append(iwrb.getLocalizedString("cannot.create.group.because.of.following.reasons","Cannot create the group because of the following reasons: "));
@@ -279,13 +279,13 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 				}
 			}
 			
-			_ps.reset();
+			this._ps.reset();
 			
 		}
 	}
 	
 	private DropdownMenu getGroupTypeMenu(IWResourceBundle iwrb, IWContext iwc)  {
-		DropdownMenu menu = new DropdownMenu(_createEvent.getIONameForGroupType());
+		DropdownMenu menu = new DropdownMenu(this._createEvent.getIONameForGroupType());
 		// fill collection of grouptypes stored as strings
 		// used for drop down menu group type
 		// used for alias group 
@@ -296,7 +296,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			menu.addMenuElement(value, iwrb.getLocalizedString(value, value));
 		}
 		
-		String typeBefore = _ps.getGroupType();
+		String typeBefore = this._ps.getGroupType();
 		if(groupTypes.contains(typeBefore)){
 			menu.setSelectedElement(typeBefore);
 		}
@@ -319,8 +319,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 		chooser.setChooseButtonImage(chooserImage);
 		
 		try {
-			if ( selectedGroup != null && preselectSelectedGroup )  {
-				chooser.setSelectedNode(new GroupTreeNode(selectedGroup));
+			if ( this.selectedGroup != null && preselectSelectedGroup )  {
+				chooser.setSelectedNode(new GroupTreeNode(this.selectedGroup));
 			}
 		}
 		catch (Exception e) {
@@ -335,15 +335,15 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	}
 	
 	public Class getPresentationStateClass() {
-		return _stateHandler.getPresentationStateClass();
+		return this._stateHandler.getPresentationStateClass();
 	}
 	
 	public IWPresentationState getPresentationState(IWUserContext iwuc) {
-		return _stateHandler.getPresentationState(this, iwuc);
+		return this._stateHandler.getPresentationState(this, iwuc);
 	}
 	
 	public StatefullPresentationImplHandler getStateHandler() {
-		return _stateHandler;
+		return this._stateHandler;
 	}
 	
 	public Image getButtonImage(IWContext iwc) {
@@ -393,7 +393,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 		try {
 			groupBusiness =(GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			
-			Iterator iterator = groupBusiness.getAllAllowedGroupTypesForChildren(selectedGroup, iwc).iterator();
+			Iterator iterator = groupBusiness.getAllAllowedGroupTypesForChildren(this.selectedGroup, iwc).iterator();
 			while (iterator.hasNext())  {
 				GroupType item = (GroupType) iterator.next();
 				String value = item.getType();

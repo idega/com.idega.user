@@ -28,7 +28,7 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
     super();
     this.setName("idegaWeb User");
     //add(UserModule.UserModulePage.class);
-    justConstructed = true;
+    this.justConstructed = true;
     super.setResizable(false);
     super.setScrollbar(false);
     super.setWidth(555);
@@ -37,9 +37,9 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
 
   public void main(IWContext iwc) throws Exception {
     super.main(iwc);
-    if(justConstructed){
+    if(this.justConstructed){
       add(new UserModule.UserModulePage());
-      justConstructed = false;
+      this.justConstructed = false;
     }
   }
 

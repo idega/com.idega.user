@@ -37,29 +37,29 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
 	private String styleScript = "DefaultStyle.css";
 
 	public UserApplicationMenuArea() {
-		_stateHandler = new StatefullPresentationImplHandler();
-		_stateHandler.setPresentationStateClass(UserApplicationMenuAreaPS.class);
+		this._stateHandler = new StatefullPresentationImplHandler();
+		this._stateHandler.setPresentationStateClass(UserApplicationMenuAreaPS.class);
 		this.setAllMargins(0);
 	}
 
 	public void setControlEventModel(IWPresentationEvent model) {
-		toolbar.setControlEventModel(model);
+		this.toolbar.setControlEventModel(model);
 	}
 
 	public void setControlTarget(String controlTarget) {
-		toolbar.setControlTarget(controlTarget);
+		this.toolbar.setControlTarget(controlTarget);
 	}
 
 	public Class getPresentationStateClass() {
-		return _stateHandler.getPresentationStateClass();
+		return this._stateHandler.getPresentationStateClass();
 	}
 
 	public IWPresentationState getPresentationState(IWUserContext iwuc) {
-		return _stateHandler.getPresentationState(this, iwuc);
+		return this._stateHandler.getPresentationState(this, iwuc);
 	}
 
 	public StatefullPresentationImplHandler getStateHandler() {
-		return _stateHandler;
+		return this._stateHandler;
 	}
 
 	public String getBundleIdentifier() {
@@ -76,16 +76,16 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
 		// this.setBackgroundColor(IWColor.getHexColorString(212,208,200));
 		// getParentPage().setBackgroundColor(IWColor.getHexColorString(212,208,200));
 		String id = getPresentationState(iwc).getCompoundId();
-		toolbar.setSelectedGroupProviderStateId(id);
-		toolbar.setUserApplicationMainAreaStateId(userApplicationMainAreaStateId);
-		super.add(toolbar);
+		this.toolbar.setSelectedGroupProviderStateId(id);
+		this.toolbar.setUserApplicationMainAreaStateId(this.userApplicationMainAreaStateId);
+		super.add(this.toolbar);
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setUserApplicationMainAreaStateId(String string) {
-		userApplicationMainAreaStateId = string;
+		this.userApplicationMainAreaStateId = string;
 	}
 
 	/*
@@ -97,7 +97,7 @@ public class UserApplicationMenuArea extends Page implements IWBrowserView, Stat
 		super.main(iwc);
 		IWBundle iwb = getBundle(iwc);
 		Page parentPage = this.getParentPage();
-		String styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
+		String styleSrc = iwb.getVirtualPathWithFileNameString(this.styleScript);
 		parentPage.addStyleSheetURL(styleSrc);
 
 	}

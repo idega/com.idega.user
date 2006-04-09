@@ -36,22 +36,22 @@ public class PartitionSelectEvent extends IWPresentationEvent {
   }
 
   public int getSelectedPartition(){
-    return selectedPartition;
+    return this.selectedPartition;
   }
 
   public int getPartitionSize(){
-    return partitionSize;
+    return this.partitionSize;
   }
 
   public int getFirstPartitionIndex(){
-    return firstPartition;
+    return this.firstPartition;
   }
 
 
   public boolean initializeEvent(IWContext iwc) {
     try {
-      partitionSize = Integer.parseInt(iwc.getParameter(PARTITION_SIZE));
-      System.out.println("PartionSelectionEvent: partsize = "+partitionSize);
+      this.partitionSize = Integer.parseInt(iwc.getParameter(PARTITION_SIZE));
+      System.out.println("PartionSelectionEvent: partsize = "+this.partitionSize);
     }
     catch (NumberFormatException ex) {
       System.err.println(ex.getMessage());
@@ -59,7 +59,7 @@ public class PartitionSelectEvent extends IWPresentationEvent {
     }
 
     try {
-      selectedPartition = Integer.parseInt(iwc.getParameter(SELECTED_PARTITION));
+      this.selectedPartition = Integer.parseInt(iwc.getParameter(SELECTED_PARTITION));
     }
     catch (NumberFormatException ex) {
       System.err.println(ex.getMessage());
@@ -67,11 +67,11 @@ public class PartitionSelectEvent extends IWPresentationEvent {
     }
 
     try {
-      firstPartition = Integer.parseInt(iwc.getParameter(FIRST_PARTITION));
+      this.firstPartition = Integer.parseInt(iwc.getParameter(FIRST_PARTITION));
     }
     catch (NumberFormatException ex) {
 //      System.err.println(ex.getMessage());
-      firstPartition = 0;
+      this.firstPartition = 0;
     }
 
     return true;

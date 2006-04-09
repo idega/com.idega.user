@@ -103,12 +103,12 @@ public class MassMovingWindow extends StyledIWAdminWindow {
       try {
         // try to get the selected group  
         IWStateMachine stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
-        groupProviderState = (UserApplicationMenuAreaPS) stateMachine.getStateFor(selectedGroupProviderStateId, UserApplicationMenuAreaPS.class);
-        Integer selectedGroupId =  groupProviderState.getSelectedGroupId();
+        this.groupProviderState = (UserApplicationMenuAreaPS) stateMachine.getStateFor(selectedGroupProviderStateId, UserApplicationMenuAreaPS.class);
+        Integer selectedGroupId =  this.groupProviderState.getSelectedGroupId();
         if (selectedGroupId == null)  {
           return SHOW_ERROR_MESSAGE_ACTION;
         }
-        group = groupBusiness.getGroupByGroupID(selectedGroupId.intValue());
+        this.group = groupBusiness.getGroupByGroupID(selectedGroupId.intValue());
         // try to get the action listener
         //TODO thomas change this in the way that actually the userApplicationMainAreaPs is used
         //actionListener = (UserApplicationMainAreaPS) stateMachine.getStateFor(actionListenerStateId, UserApplicationMainAreaPS.class);
@@ -116,7 +116,7 @@ public class MassMovingWindow extends StyledIWAdminWindow {
         //String code2 = IWMainApplication.getEncryptedClassName(UserApplicationMainAreaPS.class);
         //String string = IWMainApplication.getHashCodedClassName("6893");
         code = ":" + code;
-        actionListener = (BasicUserOverviewPS) stateMachine.getStateFor( code , BasicUserOverviewPS.class);
+        this.actionListener = (BasicUserOverviewPS) stateMachine.getStateFor( code , BasicUserOverviewPS.class);
       }
       catch (RemoteException ex)  {
         throw new RuntimeException(ex.getMessage());
@@ -125,9 +125,9 @@ public class MassMovingWindow extends StyledIWAdminWindow {
         throw new RuntimeException(ex.getMessage());
       }
       // type of group correct?
-      parentGroupType = group.getGroupType();
-      if (GROUP_TYPE_CLUB.equals(parentGroupType) ||
-          GROUP_TYPE_CLUB_DIVISION.equals(parentGroupType))  {
+      this.parentGroupType = this.group.getGroupType();
+      if (GROUP_TYPE_CLUB.equals(this.parentGroupType) ||
+          GROUP_TYPE_CLUB_DIVISION.equals(this.parentGroupType))  {
         return SHOW_CHILDREN_OF_GROUP_ACTION;
       }
     }
@@ -144,7 +144,7 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     form.addParameter(MOVE_SELECTED_GROUPS,"w");
     form.setName("mass_form");
     form.addEventModel(event, iwc);
-    form.addParameter(PRM_PARENT_GROUP_TYPE,parentGroupType);
+    form.addParameter(PRM_PARENT_GROUP_TYPE,this.parentGroupType);
     // define headline
     String headlineString = iwrb.getLocalizedString("mm_choose_desired_divisions_or_groups_to_age_and_gender_sort", "Choose the desired divisions or groups to age and gender sort");
     Text headline = new Text(headlineString);
@@ -180,7 +180,7 @@ public class MassMovingWindow extends StyledIWAdminWindow {
 		mainTable.setCellspacing(0);
     
 		Table table = new Table(1,3);
-    table.setStyleClass(mainTableStyle);
+    table.setStyleClass(this.mainTableStyle);
     table.setWidth(Table.HUNDRED_PERCENT);
     table.setHeight(160);
     table.setCellpadding(0);
@@ -191,7 +191,7 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     table.add(browser,1,2);
     
     Table buttons = new Table();
-    buttons.setStyleClass(mainTableStyle);
+    buttons.setStyleClass(this.mainTableStyle);
     buttons.setCellpadding(0);
 		buttons.setCellspacing(5);
 		buttons.setWidth(Table.HUNDRED_PERCENT);
@@ -212,7 +212,7 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     form.add(mainTable);
     add(form,iwc);
     // add action listener
-    addActionListener(actionListener);
+    addActionListener(this.actionListener);
   }
     
   private void showErrorContent(IWResourceBundle iwrb, IWContext iwc) {
@@ -229,7 +229,7 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     table.setWidth(Table.HUNDRED_PERCENT);
     table.setCellspacing(0);
     table.setCellpadding(5);
-    table.setStyleClass(mainTableStyle);
+    table.setStyleClass(this.mainTableStyle);
     table.add(error,1,1);
     table.add(closeButton,1,2);   
     
@@ -242,13 +242,13 @@ public class MassMovingWindow extends StyledIWAdminWindow {
   private Collection getChildrenOfGroup(IWContext iwc) {
     Collection coll = null;
     try {
-       coll = getGroupBusiness(iwc).getChildGroups(group);
+       coll = getGroupBusiness(iwc).getChildGroups(this.group);
     }
     catch (Exception ex)  {
       throw new RuntimeException(ex.getMessage());
     }
     // if the group is a club show only children that are divisions
-    String groupType = group.getGroupType();
+    String groupType = this.group.getGroupType();
     if (GROUP_TYPE_CLUB.equals(groupType))  {
       Collection result = new ArrayList();
       Iterator iterator = coll.iterator();
@@ -283,7 +283,7 @@ public class MassMovingWindow extends StyledIWAdminWindow {
     EntityBrowser browser = EntityBrowser.getInstanceUsingExternalForm();
     browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
     // set number of rows
-    browser.setDefaultNumberOfRows(NUMBER_OF_ROWS);
+    browser.setDefaultNumberOfRows(this.NUMBER_OF_ROWS);
     browser.setEntities(EVENT_NAME, entities);
     browser.setWidth(Table.HUNDRED_PERCENT);
     // fonts

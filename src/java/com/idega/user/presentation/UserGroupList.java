@@ -68,8 +68,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	public void initFieldContents() {
 	    IWContext iwc = IWContext.getInstance();
 		if (iwc.isSuperAdmin()) {
-		    addLink.setWindowToOpen(UserGroupSetter.class);
-			addLink.addParameter(UserGroupList.PARAMETER_USER_ID, this.getUserId());
+		    this.addLink.setWindowToOpen(UserGroupSetter.class);
+			this.addLink.addParameter(UserGroupList.PARAMETER_USER_ID, this.getUserId());
 		}
 		try {
 			UserBusiness userBusiness = this.getUserBusiness(this.getEventIWContext());
@@ -78,15 +78,17 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 				Iterator iter = userGroups.iterator();
 				while (iter.hasNext()) {
 					Group item = (Group) iter.next();
-					if (item == null)
+					if (item == null) {
 						System.out.println("ITEM IS NULL!!!WHY? Temporary check. please fix this, that means you Tryggvi");
+					}
 					else {
 						Object prim = item.getPrimaryKey();
 						String groupId = prim.toString();
 						String groupName = item.getName();
-						if (groupName == null)
+						if (groupName == null) {
 							groupName = "untitled";
-						primaryGroupField.addMenuElement(groupId, groupName);
+						}
+						this.primaryGroupField.addMenuElement(groupId, groupName);
 					}
 				}
 			}
@@ -94,7 +96,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 			// ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(this.getUserId());
 			User user = getUser();
 			int prgroupid = user.getPrimaryGroupID();
-			fieldValues.put(primaryGroupFieldName, (prgroupid != -1) ? Integer.toString(prgroupid) : "");
+			this.fieldValues.put(this.primaryGroupFieldName, (prgroupid != -1) ? Integer.toString(prgroupid) : "");
 		}
 		catch (Exception ex) {
 			add(new ExceptionWrapper(ex, this));
@@ -104,23 +106,23 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	}
 
 	public void updateFieldsDisplayStatus() {
-		primaryGroupField.setSelectedElement((String) fieldValues.get(primaryGroupFieldName));
+		this.primaryGroupField.setSelectedElement((String) this.fieldValues.get(this.primaryGroupFieldName));
 	}
 
 	public void initializeFields() {
-		memberofFrame = new IFrame("ic_user_memberof_ic_group", GroupList.class);
-		memberofFrame.setHeight(280);
-		memberofFrame.setWidth(Table.HUNDRED_PERCENT);
-		memberofFrame.setScrolling(IFrame.SCROLLING_YES);
-		memberofFrame.setStyleAttribute("border", "1px #bbbbbb solid;");
+		this.memberofFrame = new IFrame("ic_user_memberof_ic_group", GroupList.class);
+		this.memberofFrame.setHeight(280);
+		this.memberofFrame.setWidth(Table.HUNDRED_PERCENT);
+		this.memberofFrame.setScrolling(IFrame.SCROLLING_YES);
+		this.memberofFrame.setStyleAttribute("border", "1px #bbbbbb solid;");
 
-		primaryGroupField = new DropdownMenu(primaryGroupFieldName);
-		primaryGroupField.keepStatusOnAction();
+		this.primaryGroupField = new DropdownMenu(this.primaryGroupFieldName);
+		this.primaryGroupField.keepStatusOnAction();
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		if (iwc.isSuperAdmin()) {
-			addLink = new Link("  " + iwrb.getLocalizedString("addRemove", "Add/Remove") + "  ");
-			addLink.setStyleClass("styledLink");
+			this.addLink = new Link("  " + iwrb.getLocalizedString("addRemove", "Add/Remove") + "  ");
+			this.addLink.setStyleClass("styledLink");
 		}
 	}
 
@@ -132,11 +134,11 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		memberof = new Text(iwrb.getLocalizedString("usr_grp_memberof","Member of") + ":");
-		memberof.setBold();
+		this.memberof = new Text(iwrb.getLocalizedString("usr_grp_memberof","Member of") + ":");
+		this.memberof.setBold();
 
-		primaryGroupText = new Text(iwrb.getLocalizedString(primaryGroupFieldName,"Primarygroup") + ":");
-		primaryGroupText.setBold();
+		this.primaryGroupText = new Text(iwrb.getLocalizedString(this.primaryGroupFieldName,"Primarygroup") + ":");
+		this.primaryGroupText.setBold();
 	}
 
 	public boolean store(IWContext iwc) {
@@ -179,19 +181,19 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		prTable.add(this.primaryGroupField, 3, 1);
 		table.add(prTable, 1, 1);
 
-		table.add(memberof, 1, 2);
+		table.add(this.memberof, 1, 2);
 		table.add(Text.getBreak(), 1, 2);
-		table.add(memberofFrame, 1, 2);
-		if (addLink != null) {
-		    table.add(addLink, 1, 3);
+		table.add(this.memberofFrame, 1, 2);
+		if (this.addLink != null) {
+		    table.add(this.addLink, 1, 3);
 		}
 		add(table, 1, 1);
 	}
 
 	public boolean collect(IWContext iwc) {
-		String prgroup = iwc.getParameter(primaryGroupFieldName);
+		String prgroup = iwc.getParameter(this.primaryGroupFieldName);
 		if (prgroup != null) {
-			fieldValues.put(primaryGroupFieldName, prgroup);
+			this.fieldValues.put(this.primaryGroupFieldName, prgroup);
 		}
 		return true;
 	}
@@ -201,7 +203,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	}
 
 	public void initializeFieldValues() {
-		fieldValues.put(this.primaryGroupFieldName, "");
+		this.fieldValues.put(this.primaryGroupFieldName, "");
 		this.updateFieldsDisplayStatus();
 	}
 
@@ -213,8 +215,8 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 	public void main(IWContext iwc) throws Exception {
 		getPanel().addHelpButton(getHelpButton());	
 
-		primaryGroupField.removeElements();
-		primaryGroupField.addSeparator();
+		this.primaryGroupField.removeElements();
+		this.primaryGroupField.addSeparator();
 		UserBusiness userBusiness = this.getUserBusiness(iwc);
 		Collection userGroups = Collections.unmodifiableCollection(userBusiness.getUserGroupsDirectlyRelated(this.getUserId()));
 
@@ -245,19 +247,21 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 			Iterator iter = directGroups.iterator();
 			while (iter.hasNext()) {
 				Group item = (Group) iter.next();
-				if (item == null)
+				if (item == null) {
 					System.out.println("ITEM IS NULL!!!WHY? Temporary check. please fix this, that means you Tryggvi");
+				}
 				else {
 					Object prim = item.getPrimaryKey();
 					String groupId = prim.toString();
 					String groupName = item.getName();
-					if (groupName == null)
+					if (groupName == null) {
 						groupName = "untitled";
-					primaryGroupField.addMenuElement(groupId, groupName);
+					}
+					this.primaryGroupField.addMenuElement(groupId, groupName);
 				}
 			}
 		}
-		primaryGroupField.setSelectedElement((String) fieldValues.get(primaryGroupFieldName));
+		this.primaryGroupField.setSelectedElement((String) this.fieldValues.get(this.primaryGroupFieldName));
 	}
 
 	private Collection getFilteredGroups(IWContext iwc, Collection groups, User user, Collection topGroupNodes) {

@@ -62,10 +62,10 @@ public class GroupList extends Page {
 		if (notDirect != null) {
 			allGroups.addAll(notDirect);
 		}
-		groupComparator = new GroupComparator(iwc);
-		groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));		
-		groupComparator.setSortByParents(true);
-		Collections.sort(allGroups, groupComparator); 
+		this.groupComparator = new GroupComparator(iwc);
+		this.groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));		
+		this.groupComparator.setSortByParents(true);
+		Collections.sort(allGroups, this.groupComparator); 
 		Table table = null;
 		try {
 			Iterator iter = null;
@@ -81,14 +81,15 @@ public class GroupList extends Page {
 						Group group = null;
 					    Integer groupID = (Integer)((Group) item).getPrimaryKey();
 					    String key = groupID.toString();
-					    if (groupComparator.getApplicationCachedGroups()!=null) {
-							if (groupComparator.getApplicationCachedGroups().containsKey(key))
-							    cachedGroup = (CachedGroup)groupComparator.getApplicationCachedGroups().get(key);
+					    if (this.groupComparator.getApplicationCachedGroups()!=null) {
+							if (this.groupComparator.getApplicationCachedGroups().containsKey(key)) {
+								cachedGroup = (CachedGroup)this.groupComparator.getApplicationCachedGroups().get(key);
+							}
 							else
 							{	
 							    group = getGroupBusiness(iwc).getGroupByGroupID(groupID.intValue());
 							    cachedGroup = new CachedGroup(group);
-							    groupComparator.getApplicationCachedGroups().put(key, cachedGroup);
+							    this.groupComparator.getApplicationCachedGroups().put(key, cachedGroup);
 							}
 						}
 						else {
@@ -96,7 +97,7 @@ public class GroupList extends Page {
 						    cachedGroup = new CachedGroup(group);
 						}
 						
-						String name = groupComparator.getIndentedGroupName(cachedGroup);
+						String name = this.groupComparator.getIndentedGroupName(cachedGroup);
 						Text text = new Text(name);
 						if (direct.contains(item)) {
 						    text.setBold();
@@ -131,15 +132,15 @@ public class GroupList extends Page {
 	}
 	
 	public GroupBusiness getGroupBusiness(IWContext iwc) {
-		if (groupBiz == null) {
+		if (this.groupBiz == null) {
 			try {
-				groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				this.groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
 			}
 		}
-		return groupBiz;
+		return this.groupBiz;
 	}
 
 }

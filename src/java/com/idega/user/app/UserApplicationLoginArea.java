@@ -38,8 +38,8 @@ public class UserApplicationLoginArea extends Page  implements IWBrowserView{
 		Image logoutImage = iwb.getImage("logout.gif");
 		Image lockImage = iwb.getImage("las.gif");
 		
-		login = new Login();
-		login.setLogoutButton(logoutImage);
+		this.login = new Login();
+		this.login.setLogoutButton(logoutImage);
   	
 		Table loginTable = new Table(2,1);
 		loginTable.setCellspacing(0);
@@ -50,9 +50,10 @@ public class UserApplicationLoginArea extends Page  implements IWBrowserView{
 		loginTable.setAlignment(2,1,"center");
 		loginTable.setVerticalAlignment(1,1,"middle");
 		loginTable.setVerticalAlignment(2,1,"middle");
-		if(iwc.isLoggedOn())
+		if(iwc.isLoggedOn()) {
 			loginTable.add(lockImage,1,1);
-		loginTable.add(login,2,1);
+		}
+		loginTable.add(this.login,2,1);
   	
   	
 		return loginTable;

@@ -68,23 +68,23 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 	}
 
 	public void main(IWContext iwc) throws Exception {
-		iwrb = getResourceBundle(iwc);
+		this.iwrb = getResourceBundle(iwc);
 		super.main(iwc);
 		setTitle("Mass Registering Window");
-		addTitle(iwrb.getLocalizedString("mass_registering_window", "Mass Registering Window"), TITLE_STYLECLASS);
+		addTitle(this.iwrb.getLocalizedString("mass_registering_window", "Mass Registering Window"), TITLE_STYLECLASS);
 		init(iwc);
-		if (group != null) {
-			String action = iwc.getParameter(ACTION);
+		if (this.group != null) {
+			String action = iwc.getParameter(this.ACTION);
 			if (action == null) {
 				addForm(iwc, false);
 			}
-			else if (action.equals(ACTION_CANCEL)) {
+			else if (action.equals(this.ACTION_CANCEL)) {
 				close();
 			}
-			else if (action.equals(ACTION_NEXT)) {
+			else if (action.equals(this.ACTION_NEXT)) {
 				addForm(iwc, true);
 			}
-			else if (action.equals(ACTION_SAVE)) {
+			else if (action.equals(this.ACTION_SAVE)) {
 				if (handleInsert(iwc)) {
 					addForm(iwc, false);
 				}
@@ -108,23 +108,23 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 		Table table = new Table();
 		table.setCellpadding(2);
 		table.setCellspacing(0);
-		table.setStyleClass(mainTableStyle);
+		table.setStyleClass(this.mainTableStyle);
 		table.setWidth(Table.HUNDRED_PERCENT);
 		// table.setHeight(560);
 		table.setBorder(0);
 		boolean foundUser = false;
 		int row = 1;
 		if (verifyForm) {
-			table.add(formatText(iwrb.getLocalizedString("save", "Save")), 1, row);
-			table.add(formatText(iwrb.getLocalizedString("user.user_name", "User name")), 3, row);
+			table.add(formatText(this.iwrb.getLocalizedString("save", "Save")), 1, row);
+			table.add(formatText(this.iwrb.getLocalizedString("user.user_name", "User name")), 3, row);
 		}
 		else {
-			table.add(formatText(iwrb.getLocalizedString("row", "Row")), 1, row);
-			table.add(formatText(iwrb.getLocalizedString("personal.id.number", "Personal ID number")), 3, row);
+			table.add(formatText(this.iwrb.getLocalizedString("row", "Row")), 1, row);
+			table.add(formatText(this.iwrb.getLocalizedString("personal.id.number", "Personal ID number")), 3, row);
 		}
 		table.setWidth(2, "10");
 		table.setWidth(4, "10");
-		table.add(formatText(iwrb.getLocalizedString("user.status", "Status")), 5, row);
+		table.add(formatText(this.iwrb.getLocalizedString("user.status", "Status")), 5, row);
 		TextInput pid = new TextInput();
 		UserStatusDropdown status = new UserStatusDropdown("noname");
 		CheckBox check;
@@ -132,37 +132,37 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 		String sStat;
 		User user;
 		Status stat;
-		for (int i = 1; i <= numberOfRows; i++) {
+		for (int i = 1; i <= this.numberOfRows; i++) {
 			/** Listing valid PersonalIDs */
 			if (verifyForm) {
-				sPid = iwc.getParameter(PARAMETER_PID + "_" + i);
-				sStat = iwc.getParameter(PARAMETER_STATUS + "_" + i);
+				sPid = iwc.getParameter(this.PARAMETER_PID + "_" + i);
+				sStat = iwc.getParameter(this.PARAMETER_STATUS + "_" + i);
 				if (sPid != null && !sPid.equals("")) {
 					try {
 						++row;
-						user = uHome.findByPersonalID(sPid);
+						user = this.uHome.findByPersonalID(sPid);
 						if (UserStatusDropdown.NO_STATUS_KEY.equals(sStat)) {
 							stat = null;
 						}
 						else {
-							stat = sHome.findByPrimaryKey(new Integer(sStat));
+							stat = this.sHome.findByPrimaryKey(new Integer(sStat));
 						}
-						check = new CheckBox(PARAMETER_SAVE + "_" + i);
+						check = new CheckBox(this.PARAMETER_SAVE + "_" + i);
 						check.setStyleAttribute(STYLE_2);
 						check.setChecked(true);
 						table.add(check, 1, row);
 						table.add(formatText(user.getName()), 3, row);
 						if (stat != null) {
-							table.add(formatText(iwrb.getLocalizedString(stat.getStatusKey(), stat.getStatusKey())), 5,
+							table.add(formatText(this.iwrb.getLocalizedString(stat.getStatusKey(), stat.getStatusKey())), 5,
 									row);
 						}
-						form.maintainParameter(PARAMETER_PID + "_" + i);
-						form.maintainParameter(PARAMETER_STATUS + "_" + i);
+						form.maintainParameter(this.PARAMETER_PID + "_" + i);
+						form.maintainParameter(this.PARAMETER_STATUS + "_" + i);
 						foundUser = true;
 					}
 					catch (FinderException e) {
 						// e.printStackTrace(System.err);
-						table.add(formatText(iwrb.getLocalizedString("user.user_not_found", "User not found") + " ("
+						table.add(formatText(this.iwrb.getLocalizedString("user.user_not_found", "User not found") + " ("
 								+ sPid + ")"), 3, row);
 					}
 				}
@@ -170,10 +170,10 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 			/** Creating and adding inputs to form */
 			else {
 				++row;
-				status = new UserStatusDropdown(PARAMETER_STATUS + "_" + i);
+				status = new UserStatusDropdown(this.PARAMETER_STATUS + "_" + i);
 				status.setStyleAttribute(STYLE_2);
-				pid = new TextInput(PARAMETER_PID + "_" + i);
-				pid.setAsIcelandicSSNumber(iwrb.getLocalizedString("user.pid_incorrect_in_row",
+				pid = new TextInput(this.PARAMETER_PID + "_" + i);
+				pid.setAsIcelandicSSNumber(this.iwrb.getLocalizedString("user.pid_incorrect_in_row",
 						"Personal ID not correct for user in row")
 						+ " " + i);
 				pid.setStyleAttribute(STYLE_2);
@@ -190,23 +190,23 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 		bottomTable.setCellspacing(5);
 		bottomTable.setWidth(Table.HUNDRED_PERCENT);
 		bottomTable.setHeight(39);
-		bottomTable.setStyleClass(mainTableStyle);
+		bottomTable.setStyleClass(this.mainTableStyle);
 		bottomTable.add(help, 1, 1);
 		bottomTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
-		bottomTable.add(new SubmitButton(iwrb.getLocalizedImageButton("cancel", "Cancel"), ACTION, ACTION_CANCEL), 2, 1);
+		bottomTable.add(new SubmitButton(this.iwrb.getLocalizedImageButton("cancel", "Cancel"), this.ACTION, this.ACTION_CANCEL), 2, 1);
 		bottomTable.add(Text.getNonBrakingSpace(), 2, 1);
 		table.setAlignment(5, row, Table.HORIZONTAL_ALIGN_RIGHT);
 		table.setRowVerticalAlignment(row, Table.VERTICAL_ALIGN_TOP);
 		if (verifyForm) {
 			table.mergeCells(1, row, 2, row);
-			bottomTable.add(new BackButton(iwrb.getLocalizedImageButton("back", "Back")), 1, 1);
+			bottomTable.add(new BackButton(this.iwrb.getLocalizedImageButton("back", "Back")), 1, 1);
 			if (foundUser) {
-				bottomTable.add(new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), ACTION, ACTION_SAVE), 2,
+				bottomTable.add(new SubmitButton(this.iwrb.getLocalizedImageButton("save", "Save"), this.ACTION, this.ACTION_SAVE), 2,
 						1);
 			}
 		}
 		else {
-			bottomTable.add(new SubmitButton(iwrb.getLocalizedImageButton("next", "Next"), ACTION, ACTION_NEXT), 2, 1);
+			bottomTable.add(new SubmitButton(this.iwrb.getLocalizedImageButton("next", "Next"), this.ACTION, this.ACTION_NEXT), 2, 1);
 		}
 		// add close button
 		mainTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
@@ -227,9 +227,9 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 		table.setBorder(0);
 		int row = 1;
 		table.add(
-				formatText(iwrb.getLocalizedString("save_failed_for_users", "Save failed for the following user/s:")),
+				formatText(this.iwrb.getLocalizedString("save_failed_for_users", "Save failed for the following user/s:")),
 				1, row);
-		Iterator iter = failedInserts.iterator();
+		Iterator iter = this.failedInserts.iterator();
 		FailedRegisterUser user;
 		while (iter.hasNext()) {
 			++row;
@@ -239,7 +239,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 		}
 		++row;
 		table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_RIGHT);
-		table.add(new SubmitButton(iwrb.getLocalizedImageButton("back", "Back")), 1, row);
+		table.add(new SubmitButton(this.iwrb.getLocalizedImageButton("back", "Back")), 1, row);
 		form.add(table);
 		add(form, iwc);
 	}
@@ -250,41 +250,41 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 		User user;
 		Status stat;
 		UserStatusBusiness usb = (UserStatusBusiness) IBOLookup.getServiceInstance(iwc, UserStatusBusiness.class);
-		failedInserts = new Vector();
+		this.failedInserts = new Vector();
 		boolean errorFree = true;
 		UserBusiness userBuis = getUserBusiness(iwc);
-		for (int i = 1; i <= numberOfRows; i++) {
-			if (iwc.isParameterSet(PARAMETER_SAVE + "_" + i)) {
+		for (int i = 1; i <= this.numberOfRows; i++) {
+			if (iwc.isParameterSet(this.PARAMETER_SAVE + "_" + i)) {
 				try {
-					sPid = iwc.getParameter(PARAMETER_PID + "_" + i);
-					sStat = iwc.getParameter(PARAMETER_STATUS + "_" + i);
-					user = uHome.findByPersonalID(sPid);
+					sPid = iwc.getParameter(this.PARAMETER_PID + "_" + i);
+					sStat = iwc.getParameter(this.PARAMETER_STATUS + "_" + i);
+					user = this.uHome.findByPersonalID(sPid);
 					if (UserStatusDropdown.NO_STATUS_KEY.equals(sStat)) {
 						stat = null;
 					}
 					else {
-						stat = sHome.findByPrimaryKey(new Integer(sStat));
+						stat = this.sHome.findByPrimaryKey(new Integer(sStat));
 					}
-					String failedMsg = userBuis.isUserSuitedForGroup(user, group);
+					String failedMsg = userBuis.isUserSuitedForGroup(user, this.group);
 					if (failedMsg == null) {
 						TransactionManager transaction = IdegaTransactionManager.getInstance();
 						try {
 							// START A TRANSACTION!
 							transaction.begin();
-							group.addGroup(user);
+							this.group.addGroup(user);
 							if (stat != null
 									&& (!usb.setUserGroupStatus(user.getID(),
-											((Integer) group.getPrimaryKey()).intValue(),
+											((Integer) this.group.getPrimaryKey()).intValue(),
 											((Integer) stat.getPrimaryKey()).intValue(), iwc.getCurrentUserId()))) {
-								failedInserts.add(new FailedRegisterUser(user, ""));
+								this.failedInserts.add(new FailedRegisterUser(user, ""));
 								errorFree = false;
 							}
 							if (user.getPrimaryGroup() == null) {
-								user.setPrimaryGroup(group);
+								user.setPrimaryGroup(this.group);
 								user.store();
 							}
 							
-							getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,group);
+							getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,this.group);
 							transaction.commit();
 						}// try ends
 						catch (Exception e) {
@@ -296,17 +296,17 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 								e1.printStackTrace();
 							}
 							String msg = e.getMessage();
-							String errorMessage = iwrb.getLocalizedString(
+							String errorMessage = this.iwrb.getLocalizedString(
 									"new_user.transaction_rollback",
 									"User could not be created/added because of the error: ")
 									+ msg
-									+ iwrb.getLocalizedString("new_user.try_again"," Please try again or contact the system administrator if you think it is a server error.");
-							failedInserts.add(new FailedRegisterUser(user, errorMessage));
+									+ this.iwrb.getLocalizedString("new_user.try_again"," Please try again or contact the system administrator if you think it is a server error.");
+							this.failedInserts.add(new FailedRegisterUser(user, errorMessage));
 							errorFree = false;
 						}
 					}
 					else {
-						failedInserts.add(new FailedRegisterUser(user, failedMsg));
+						this.failedInserts.add(new FailedRegisterUser(user, failedMsg));
 						errorFree = false;
 					}
 				}
@@ -322,10 +322,10 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 		String sGroupId = iwc.getParameter(PARAMETER_GROUP_ID);
 		if (sGroupId != null) {
 			try {
-				uHome = (UserHome) IDOLookup.getHome(User.class);
-				sHome = (StatusHome) IDOLookup.getHome(Status.class);
+				this.uHome = (UserHome) IDOLookup.getHome(User.class);
+				this.sHome = (StatusHome) IDOLookup.getHome(Status.class);
 				GroupHome gHome = (GroupHome) IDOLookup.getHome(Group.class);
-				group = gHome.findByPrimaryKey(new Integer(sGroupId));
+				this.group = gHome.findByPrimaryKey(new Integer(sGroupId));
 			}
 			catch (IDOLookupException e) {
 				e.printStackTrace(System.err);
@@ -337,7 +337,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 				e.printStackTrace(System.err);
 			}
 		}
-		iwrb = getResourceBundle(iwc);
+		this.iwrb = getResourceBundle(iwc);
 	}
 
 	private class FailedRegisterUser {

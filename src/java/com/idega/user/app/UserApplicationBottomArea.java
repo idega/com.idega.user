@@ -25,7 +25,7 @@ public class UserApplicationBottomArea extends Page implements IWBrowserView {
 		IWBundle iwb = getBundle(iwc);
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		Page parentPage = this.getParentPage();
-		String styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
+		String styleSrc = iwb.getVirtualPathWithFileNameString(this.styleScript);
 		parentPage.addStyleSheetURL(styleSrc);
 		setAllMargins(0);
 

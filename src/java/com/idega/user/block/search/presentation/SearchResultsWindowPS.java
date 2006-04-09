@@ -25,11 +25,11 @@ public class SearchResultsWindowPS extends BasicUserOverviewPS {
 	
 	
 	public String getSearchString(){
-			return searchString;
+			return this.searchString;
 	}
 
 	public int getSearchType(){
-			return searchType;
+			return this.searchType;
 	}
 	
 	/* 
@@ -38,13 +38,13 @@ public class SearchResultsWindowPS extends BasicUserOverviewPS {
 	public void actionPerformed(IWPresentationEvent e) throws IWException {
 		
 		if( e instanceof UserSearchEvent){
-			lastUserSearchEvent = (UserSearchEvent) e;
+			this.lastUserSearchEvent = (UserSearchEvent) e;
 			
-			searchString = ((UserSearchEvent)e).getSearchString();
-			searchType = ((UserSearchEvent)e).getSearchType();
+			this.searchString = ((UserSearchEvent)e).getSearchString();
+			this.searchType = ((UserSearchEvent)e).getSearchType();
 			this._selectedDomain = null;
 			this._selectedGroup = null;
-			showSearchResult = true;
+			this.showSearchResult = true;
 			
 			this.fireStateChanged();	
 			
@@ -58,15 +58,15 @@ public class SearchResultsWindowPS extends BasicUserOverviewPS {
 	 */
 	public void reset() {
 		super.reset();
-		searchString =null;
-		searchType=-1;	
+		this.searchString =null;
+		this.searchType=-1;	
 	}
 
 	/**
 	 * @return the last event caught
 	 */
 	public UserSearchEvent getLastUserSearchEvent() {
-		return lastUserSearchEvent;
+		return this.lastUserSearchEvent;
 	}
 
 }

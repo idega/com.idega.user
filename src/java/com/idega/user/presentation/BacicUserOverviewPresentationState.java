@@ -19,7 +19,7 @@ public class BacicUserOverviewPresentationState extends IWPresentationStateImpl 
 
   String color1 = "00FF00";
   String color2 = "FF0000";
-  String color = color1;
+  String color = this.color1;
 
   public BacicUserOverviewPresentationState() {
 
@@ -27,7 +27,7 @@ public class BacicUserOverviewPresentationState extends IWPresentationStateImpl 
 
 
   public String getColor(){
-    return color;
+    return this.color;
   }
 
 
@@ -35,10 +35,10 @@ public class BacicUserOverviewPresentationState extends IWPresentationStateImpl 
   public void actionPerformed(IWPresentationEvent e)throws IWException{
 //    System.out.println("!!!!ÍJHHAAAAAAAAA!!!!!!!!!!!!!!");
 
-    if(color == color1){
-      color = color2;
+    if(this.color == this.color1){
+      this.color = this.color2;
     } else {
-      color = color1;
+      this.color = this.color1;
     }
 
 //    Page pg = e.getPage();

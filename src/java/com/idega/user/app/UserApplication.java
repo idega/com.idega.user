@@ -162,16 +162,16 @@ public class UserApplication extends IWBrowser {
     }
 
     public IWPresentationState getPresentationState(IWUserContext iwuc){
-      if(_presentationState == null){
+      if(this._presentationState == null){
         try {
           IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-          _presentationState = (IWControlFramePresentationState)stateMachine.getStateFor(getCompoundId(),this.getPresentationStateClass());
+          this._presentationState = (IWControlFramePresentationState)stateMachine.getStateFor(getCompoundId(),this.getPresentationStateClass());
         }
         catch (RemoteException re) {
           throw new RuntimeException(re.getMessage());
         }
       }
-      return _presentationState;
+      return this._presentationState;
     }
 
     public Class getPresentationStateClass(){
@@ -194,20 +194,20 @@ public class UserApplication extends IWBrowser {
         state.clearOnLoad();
       }
 
-      if(!initialized){
+      if(!this.initialized){
         Table headerTable = new Table(1,1);
         //added for isi styles 7/10/03 - birna
-				headerTable.setStyleClass(bannerTableStyle);
+				headerTable.setStyleClass(UserApplication.this.bannerTableStyle);
         headerTable.setCellpadding(0);
         headerTable.setCellspacing(0);
         headerTable.setWidth("100%");
         headerTable.setHeight("100%");
  
 		//setting the styleSheet 
-		userBusiness = getUserBusiness(iwc); 
-		styleSrc = userBusiness.getUserApplicationStyleSheetURL();
-		parentPage = getParentPage();
-		parentPage.addStyleSheetURL(styleSrc);
+		UserApplication.this.userBusiness = getUserBusiness(iwc); 
+		UserApplication.this.styleSrc = UserApplication.this.userBusiness.getUserApplicationStyleSheetURL();
+		UserApplication.this.parentPage = getParentPage();
+		UserApplication.this.parentPage.addStyleSheetURL(UserApplication.this.styleSrc);
 
         /** @todo setja inn mynd i header**/
 //        headerTable.add(this.getBundle(iwc).getImage("/top.gif","idegaWeb Member"),1,1);
@@ -233,7 +233,7 @@ public class UserApplication extends IWBrowser {
         headerTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
 
         add(headerTable);
-        initialized = true;
+        this.initialized = true;
       }
     }
 
@@ -276,14 +276,14 @@ public class UserApplication extends IWBrowser {
 //
 //  }
 	protected UserBusiness getUserBusiness(IWApplicationContext iwc) {
-			if (userBusiness == null) {
+			if (this.userBusiness == null) {
 				try {
-					userBusiness = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+					this.userBusiness = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 				}
 				catch (java.rmi.RemoteException rme) {
 					throw new RuntimeException(rme.getMessage());
 				}
 			}
-			return userBusiness;
+			return this.userBusiness;
 		}
 }
