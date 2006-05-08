@@ -1,5 +1,5 @@
 /*
- * $Id: UserContactSearch.java,v 1.10 2006/04/09 11:40:41 laddi Exp $ Created on
+ * $Id: UserContactSearch.java,v 1.11 2006/05/08 13:51:44 laddi Exp $ Created on
  * Jan 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -33,7 +33,7 @@ import com.idega.util.ListUtil;
 
 /**
  * 
- * Last modified: $Date: 2006/04/09 11:40:41 $ by $Author: laddi $ This class
+ * Last modified: $Date: 2006/05/08 13:51:44 $ by $Author: laddi $ This class
  * implements the Searchplugin interface and can therefore be used in a Search
  * block (com.idega.core.search). <br>
  * It searches lots of user related info like name, personalid,email etc. and
@@ -42,13 +42,13 @@ import com.idega.util.ListUtil;
  * bundle.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class UserContactSearch implements SearchPlugin {
 
-	public static final String SEARCH_NAME_LOCALIZABLE_KEY = "user_contact_search.name";
+	private static final String SEARCH_NAME_LOCALIZABLE_KEY = "user_contact_search.name";
 
-	public static final String SEARCH_DESCRIPTION_LOCALIZABLE_KEY = "user_contact_search.description";
+	private static final String SEARCH_DESCRIPTION_LOCALIZABLE_KEY = "user_contact_search.description";
 
 	public static final String SEARCH_TYPE = "user";
 
