@@ -354,6 +354,8 @@ new_user.cannot_add_user_F\u00E6\u00F0ingardagsetning\ er\ ekki\ til\ sta\u00F0a
 new_user.cannot_add_user_F\u00E9lagi\ er\ ekki\ af\ r\u00E9ttu\ kyni\ fyrir\ h\u00F3pinn=F\u00E9lagi er ekki af r\u00E9ttu kyni fyrir h\u00F3pinn
 new_user.cannot_add_user_F\u00E9lagi\ er\ of\ gamall=F\u00E9lagi er of gamall
 new_user.cannot_add_user_F\u00E9lagi\ of\ ungur=F\u00E9lagi of ungur
+new_user.cannot_add_user_The\ player\ is\ registered\ to\ another\ club\ at\ the\ moment\ please\ contact\ that\ club\ and\ have\ him\ removed\ or\ contact\ the\ league\ and\ ask\ for\ a\ club\ member\ exchange=The player is registered to another club at the moment please contact that club and have him removed or contact the league and ask for a club member exchange
+new_user.cannot_add_user_The\ player\ is\ registered\ to\ another\ club\ you\ need\ to\ contact\ the\ league\ and\ apply\ for\ a\ club\ member\ exchange=The player is registered to another club you need to contact the league and apply for a club member exchange
 new_user.cannot_add_user_\u00D3\u00FEekkt\ kyn=\u00D3\u00FEekkt kyn
 new_user.fullName_warning=
 new_user.group_required=
