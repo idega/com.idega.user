@@ -131,8 +131,8 @@ h1{
 }
 .banner{
 	/*background: #ffffff url(banner_tile.gif) repeat;*/
-	background: #9db400;
-	background-image: url(top.gif);
+	background: #335782;
+	background-image: url(felix_header.gif);
 	background-repeat: no-repeat;
 	height: 50px;
 }
