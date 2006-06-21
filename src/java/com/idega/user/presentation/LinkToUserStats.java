@@ -10,6 +10,7 @@ import com.idega.repository.data.ImplementorPlaceholder;
  * @author Sigtryggur
  */
 public interface LinkToUserStats extends ImplementorPlaceholder {
-
+    
     Link getLink();
+    
 }
