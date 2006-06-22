@@ -52,7 +52,6 @@ import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.PrintButton;
 import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
@@ -182,13 +181,6 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         if (users != null && !users.isEmpty()) {
             
             EntityBrowser entityBrowser = getEntityBrowser(users, iwc);
-            // put print button to bottom
-    		LinkToUserStats linkToUserStats = (LinkToUserStats)ImplementorRepository.getInstance().newInstanceOrNull(LinkToUserStats.class, this.getClass());
-    		if (linkToUserStats != null) {
-    		    Link link = linkToUserStats.getLink();
-    		    link.setImage(this.iwb.getImage("search.gif"));
-        		entityBrowser.addPresentationObjectToBottom(link);
-    		}
             // put browser into a form
             Form form = new Form();
             form.add(entityBrowser);
