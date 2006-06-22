@@ -5,6 +5,12 @@
   </properties>
   <body>
 
+	<release version="3.1.1" date="2005-06-22">
+      <action dev="tryggvil" type="update">
+      	Bufgix version. Removing method from LinkToUserStats.
+      </action>       
+    </release>
+
 	<release version="3.1.0" date="2005-06-16">
       <action dev="tryggvil" type="update">
       	Declaration of version for including in ePlatform release 3.1
