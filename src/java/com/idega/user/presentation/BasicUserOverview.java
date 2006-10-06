@@ -192,7 +192,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     		LinkToUserStats linkToUserStats = (LinkToUserStats)ImplementorRepository.getInstance().newInstanceOrNull(LinkToUserStats.class, this.getClass());
     		if (linkToUserStats != null) {
     		    Link link = linkToUserStats.getLink();
-    		    link.setImage(iwb.getImage("search.gif"));
+    		    link.setImage(iwb.getImage("print.gif"));
         		entityBrowser.addPresentationObjectToBottom(link);
     		}
             // put browser into a form
