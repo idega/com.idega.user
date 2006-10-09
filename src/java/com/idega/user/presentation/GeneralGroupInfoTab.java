@@ -22,6 +22,7 @@ import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
+import com.idega.user.data.GroupTypeBMPBean;
 import com.idega.util.Disposable;
 
 /**
@@ -53,6 +54,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private TextInput abbrField;
 	//universally unique id
 	private TextInput uuidField;
+	private Link linkToAliasedGroup;
 	//generated distinguised name, ldap attribute (ou) that we find out by asking for recursively parents of this group
 	private TextInput rdnField;
 	
@@ -63,6 +65,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private Text shortNameText;
 	private Text abbrText;
 	private Text uuidText;
+	private Text linkToAliasedGroupText;
 	private Text rdnText;
 	
 	private String nameFieldName;
@@ -118,6 +121,16 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 			fieldValues.put(shortNameFieldName, (group.getShortName() != null) ? group.getShortName() : "");
 			fieldValues.put(abbrFieldName, (group.getAbbrevation() != null) ? group.getAbbrevation() : "");
 			fieldValues.put(uuidFieldName, (group.getUniqueId() != null) ? group.getUniqueId() : "");
+			if (group.getGroupType().equals(GroupTypeBMPBean.TYPE_ALIAS)) {
+				Group alias = group.getAlias();
+				linkToAliasedGroup.setText(alias.getName());
+				//linkToAliasedGroup.setStyleClass(linkStyle);
+				linkToAliasedGroup.setWindowToOpen(GroupPropertyWindow.class);
+				linkToAliasedGroup.addParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, alias.getPrimaryKey().toString());
+				linkToAliasedGroupText.setText(iwrb.getLocalizedString("gen_openaliasedgroup", "Open aliased group")+": ");
+				
+			}
+			
 			String rdn = group.getMetaData(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING);
 			if(rdn==null){
 				rdn = IWLDAPUtil.getInstance().getGeneratedRDNFromGroup(group);
@@ -194,7 +207,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		uuidField = new TextInput(uuidFieldName);
 		uuidField.setLength(36);
 		uuidField.setMaxlength(36);
-		
+		linkToAliasedGroup = new Link("");
 		rdnField = new TextInput(rdnFieldName);
 		rdnField.setLength(72);
 	}
@@ -218,6 +231,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		abbrText.setBold();
 		uuidText = new Text(iwrb.getLocalizedString("gen_uuid", "Unique id"));
 		uuidText.setBold();
+		linkToAliasedGroupText = new Text("");
+		linkToAliasedGroupText.setBold();
 		rdnText = new Text(iwrb.getLocalizedString("gen_rdn", "RDN"));
 		rdnText.setBold();
 	}
@@ -274,6 +289,9 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		table.add(grouptypeText, 1, 3);
 		table.add(Text.getBreak(), 1, 3);
 		table.add(grouptypeField, 1, 3);
+		table.add(linkToAliasedGroupText, 2, 3);
+		table.add(Text.getBreak(), 2, 3);
+		table.add(linkToAliasedGroup, 2, 3);
 		
 		
 		if(IWContext.getInstance().isSuperAdmin()){
