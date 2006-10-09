@@ -273,13 +273,9 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 		while (groupIter.hasNext()) {
 			Group group = (Group) groupIter.next();
 			boolean ok = false;
-			try {
-				ok = userBusiness.isGroupUnderUsersTopGroupNode(iwc, group, currentUser,topGroupNodes);
-			}
-			catch (RemoteException e) {
-				System.out.println("Could not check if group was descendant of a users top group, group not shown");
-				e.printStackTrace();
-			}
+
+			ok = iwc.getAccessController().hasViewPermissionFor(group, iwc);
+
 			if (ok) {
 				result.add(group);
 			}
