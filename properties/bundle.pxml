@@ -207,6 +207,11 @@
       <type>java.lang.String</type>
       <value>false</value>
     </key>
+    <key>
+      <name>display_description_column_in_grouppropertywindow</name>
+      <type>java.lang.String</type>
+      <value>true</value>
+    </key>
   </map>
 </pxml>
 
