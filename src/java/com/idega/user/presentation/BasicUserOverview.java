@@ -741,8 +741,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         entityBrowser.setOptionColumn(1,middleNameKey);
         entityBrowser.setOptionColumn(2,lastNameKey);
         entityBrowser.setOptionColumn(3,displayNameKey);
-        entityBrowser.setOptionColumn(4,descriptionKey);
-        entityBrowser.setOptionColumn(5,statusKey);
+        entityBrowser.setOptionColumn(4,statusKey);
+		IWBundle iwb = getBundle(IWContext.getInstance());
+		String displayDescription = iwb.getProperty("display_description_column_in_grouppropertywindow","true");
+		if (IWContext.getInstance().isSuperAdmin() || displayDescription.equalsIgnoreCase("true")) {
+			entityBrowser.setOptionColumn(5,descriptionKey);
+		}
         // change display
         entityBrowser.setCellspacing(2);
         

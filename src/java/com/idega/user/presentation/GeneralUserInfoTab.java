@@ -300,10 +300,14 @@ public class GeneralUserInfoTab extends UserTab {
 		table.add(Text.getBreak(), 1, 5);
 		table.add(createdField, 1, 5);//changed from ...,2,2) - birna
 
-		table.mergeCells(1, 6, 2, 6);
-		table.add(descriptionText, 1, 6);
-		table.add(Text.getBreak(), 1, 6);
-		table.add(descriptionField, 1, 6);//changed from ...,1,2)
+		IWBundle iwb = getBundle(IWContext.getInstance());
+		String displayDescription = iwb.getProperty("display_description_column_in_grouppropertywindow","true");
+		if (IWContext.getInstance().isSuperAdmin() || displayDescription.equalsIgnoreCase("true")) {
+			table.mergeCells(1, 6, 2, 6);
+			table.add(descriptionText, 1, 6);
+			table.add(Text.getBreak(), 1, 6);
+			table.add(descriptionField, 1, 6);//changed from ...,1,2)
+		}
 
 		table.mergeCells(3,1,3,6);
 		table.setVerticalAlignment(3, 1, Table.VERTICAL_ALIGN_TOP);
