@@ -1,10 +1,10 @@
 package com.idega.user.presentation;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+
 import com.idega.event.IWLinkEvent;
 import com.idega.event.IWLinkListener;
 import com.idega.idegaweb.IWBundle;
