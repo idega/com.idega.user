@@ -432,8 +432,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 // entity is a user, try to get the corresponding address
                 User user = (User) entity;
                 Email email = null;
+                String emailString = "";
                 try {
                     email = BasicUserOverview.getUserBusiness(iwc).getUserMail(user);
+                    if (email != null && email.getEmailAddress() != null && !email.getEmailAddress().equals("")) {
+                    	emailString = email.getEmailAddressMailtoFormatted();
+                    }
                 }
                 catch (RemoteException ex) {
                     System.err.println("[BasicUserOverview]: Email could not be retrieved.Message was :" + ex.getMessage());
@@ -441,7 +445,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 }
                 // now the corresponding email was found, now just use the
                 // default converter
-                return browser.getDefaultConverter().getPresentationObject((GenericEntity) email, path, browser, iwc);
+                //return browser.getDefaultConverter().getPresentationObject((GenericEntity) email, path, browser, iwc);
+                return new Text(emailString);
             }
         };
         
@@ -1217,8 +1222,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 // entity is a user, try to get the corresponding address
                 User user = (User) entity;
                 Email email = null;
+                String emailString = "";
                 try {
                     email = BasicUserOverview.getUserBusiness(iwc).getUserMail(user);
+                    if (email != null && email.getEmailAddress() != null && !email.getEmailAddress().equals("")) {
+                    	emailString = email.getEmailAddressMailtoFormatted();
+                    }
                 }
                 catch (RemoteException ex) {
                     System.err.println("[BasicUserOverview]: Email could not be retrieved.Message was :" + ex.getMessage());
@@ -1226,7 +1235,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 }
                 // now the corresponding email was found, now just use the
                 // default converter
-                return browser.getDefaultConverter().getPresentationObject((GenericEntity) email, path, browser, iwc);
+                //return browser.getDefaultConverter().getPresentationObject((GenericEntity) email, path, browser, iwc);
+                return new Text(emailString);
             }
         };
         
@@ -1252,11 +1262,41 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 int i;
                 Table table = new Table();
                 for (i = 0; i < phone.length; i++) {
-                    table.add(browser.getDefaultConverter().getPresentationObject((GenericEntity) phone[i], path, browser, iwc));
+                    table.add(getPresentationObjectForPhone(phone[i], path, browser, iwc));
                 }
                 return table;
             }
+            
+            private PresentationObject getPresentationObjectForPhone(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc)  {
+                StringBuffer displayValues = new StringBuffer();
+                List list = path.getValues((EntityRepresentation) genericEntity);
+                Iterator valueIterator = list.iterator();
+                EntityPath currentPath = path;
+                while (valueIterator.hasNext()) {
+					Object object = valueIterator.next();
+                	// if there is no entry the object is null
+                	if (object == null) {
+                		object = "";
+                	}
+                	else {
+                    	// get localized string for phone type
+                    	String shortKey = currentPath.getShortKeySection();
+                    	currentPath = path.getNextEntityPath();
+                    	String phoneType = object.toString();
+                    	if (PHONE_TYPE_PATH.equals(shortKey)) {
+                    		object = getBundle(iwc).getResourceBundle(iwc).getLocalizedString(phoneType, phoneType);
+                    	}
+                	}
+                	displayValues.append(object.toString());
+                	// append white space
+                	displayValues.append(' ');  
+                }
+                Text text = new Text();
+                text.setText(displayValues.toString());               
+                return text;
+              }
         };
+        
         // define special converter class for complete address
         EntityToPresentationObjectConverter converterCompleteAddress = new EntityToPresentationObjectConverter() {
             private List values;
@@ -1284,7 +1324,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 // com.idega.core.data.Address.P_O_BOX
                 String displayValue = getValue(2);
                 if (displayValue.length() != 0)
-                    displayValues.append(", P.O. Box ").append(displayValue).append(", ");
+                    displayValues.append(", P.O. Box ").append(displayValue);
                 // com.idega.core.data.PostalCode.POSTAL_CODE_ID|POSTAL_CODE
                 // plus com.idega.core.data.Address.CITY
                 displayValue = getValue(3);
@@ -1292,8 +1332,21 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                     displayValues.append(", ").append(getValue(3)).append(' ').append(getValue(4));
                 // com.idega.core.data.Country.IC_COUNTRY_ID|COUNTRY_NAME
                 displayValue = getValue(5);
-                if (displayValue.length() != 0)
+                if (displayValue.length() != 0){
+                    Country country = null;
+        			try {
+        				country = getCountryHome().findByCountryName(displayValue);
+        			} catch (Exception e) {
+        			    e.printStackTrace();
+        			}
+                    Locale currentLocale = iwc.getCurrentLocale();
+        			Locale locale = new Locale(currentLocale.getLanguage(), country.getIsoAbbreviation());
+                    String localizedCountryName = locale.getDisplayCountry(currentLocale);
+                    if (localizedCountryName != null && !localizedCountryName.equals("")) {
+                        displayValue = localizedCountryName;
+                    }
                     displayValues.append(", ").append(displayValue);
+                }
                 return new Text(displayValues.toString());
             }
             private String getValue(int i) {
