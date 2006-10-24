@@ -1,5 +1,5 @@
 /*
- * $Id: UserContactSearch.java,v 1.11 2006/05/08 13:51:44 laddi Exp $ Created on
+ * $Id: UserContactSearch.java,v 1.12 2006/10/24 15:12:12 gimmi Exp $ Created on
  * Jan 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -22,18 +22,20 @@ import com.idega.core.location.data.Address;
 import com.idega.core.search.business.Search;
 import com.idega.core.search.business.SearchPlugin;
 import com.idega.core.search.business.SearchQuery;
+import com.idega.core.search.business.SearchResult;
 import com.idega.core.search.data.BasicSearch;
 import com.idega.core.search.data.BasicSearchResult;
 import com.idega.core.search.data.SimpleSearchQuery;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 import com.idega.util.ListUtil;
 
 /**
  * 
- * Last modified: $Date: 2006/05/08 13:51:44 $ by $Author: laddi $ This class
+ * Last modified: $Date: 2006/10/24 15:12:12 $ by $Author: gimmi $ This class
  * implements the Searchplugin interface and can therefore be used in a Search
  * block (com.idega.core.search). <br>
  * It searches lots of user related info like name, personalid,email etc. and
@@ -42,7 +44,7 @@ import com.idega.util.ListUtil;
  * bundle.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class UserContactSearch implements SearchPlugin {
 
@@ -264,5 +266,9 @@ public class UserContactSearch implements SearchPlugin {
 		IWBundle bundle = this.iwma.getBundle(IW_BUNDLE_IDENTIFIER);
 		return bundle.getResourceBundle(IWContext.getInstance()).getLocalizedString(SEARCH_DESCRIPTION_LOCALIZABLE_KEY,
 				"Searches for user contact information");
+	}
+
+	public Collection getExtraRowElements(SearchResult result, IWResourceBundle iwrb) {
+		return null;
 	}
 }
