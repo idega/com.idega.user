@@ -46,6 +46,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.text.LinkContainer;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.Form;
@@ -661,6 +662,66 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         	
         	
         };
+
+        EntityToPresentationObjectConverter converterCustodianInfo = new EntityToPresentationObjectConverter() {
+            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+              return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
+          }
+          
+          public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+              // entity is a user, try to get the corresponding address
+              User user = (User) entity;
+              Collection custodians = null;
+              LinkContainer linkContainer = new LinkContainer();
+              
+
+              try {
+            	  LinkToFamilyLogic linkToFamilyLogic = (LinkToFamilyLogic)ImplementorRepository.getInstance().newInstanceOrNull(LinkToFamilyLogic.class, this.getClass());
+            	  if (linkToFamilyLogic != null) {
+            		  custodians = linkToFamilyLogic.getCustodiansFor(user, iwc);
+            	  }
+            	  if (custodians != null) {
+	            	  Iterator custIt = custodians.iterator();
+		              while (custIt.hasNext()) {
+		            	  User custodian = (User)custIt.next();
+		            	  Link link = new Link(custodian.getName());
+		                  //added to match new style links
+		                  link.setStyleClass(styledLinkUnderline);
+		                  boolean isUserSuperAdmin = user.getPrimaryKey().equals(getSuperAdmin(iwc).getPrimaryKey());
+		                  
+		                  if ( !isUserSuperAdmin) {
+		                      link.setWindowToOpen(UserPropertyWindow.class);
+		                      link.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, custodian.getPrimaryKey().toString());
+		                      
+		                      if (selectedGroup != null) {
+		                          link.addParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID, selectedGroup.getPrimaryKey().toString());
+		                      }
+		                      
+		                  }
+		                  else {
+		                      if (isUserSuperAdmin && isCurrentUserSuperAdmin) {
+		                          link.setWindowToOpen(AdministratorPropertyWindow.class);
+		                          link.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, custodian.getPrimaryKey().toString());
+		                      }
+		                  }
+		                  linkContainer.add(link);
+		                  if (custIt.hasNext()) {
+		                	  linkContainer.add(", ");
+		                  }
+		              }
+            	  }
+              }
+              //catch (RemoteException ex) {
+              //    System.err.println("[BasicUserOverview]: Custodians could not be retrieved.Message was :" + ex.getMessage());
+              //    ex.printStackTrace(System.err);
+              //}
+              catch(Exception ex) {
+              		ex.printStackTrace(System.err);
+              }
+              return linkContainer; 
+          }
+        };
+          
         // set default columns
         String nameKey = User.class.getName() + ".FIRST_NAME:" + User.class.getName() + ".MIDDLE_NAME:" + User.class.getName() + ".LAST_NAME";
         String completeAddressKey =
@@ -685,6 +746,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         String lastNameKey = User.class.getName() + ".LAST_NAME";
         String displayNameKey = User.class.getName() + ".DISPLAY_NAME";
         String descriptionKey = User.class.getName() + ".DESCRIPTION";
+        String custodianKey = User.class.getName() + ".FAMILY_ID";
         String statusKey = Status.class.getName() + ".STATUS_KEY";
         
         String dateOfBirthKey = User.class.getName() + ".DATE_OF_BIRTH";
@@ -730,6 +792,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         entityBrowser.setEntityToPresentationConverter(nameKey, converterLink);
         entityBrowser.setEntityToPresentationConverter(completeAddressKey, converterCompleteAddress);
         entityBrowser.setEntityToPresentationConverter(dateOfBirthKey, new DateConverter());
+        entityBrowser.setEntityToPresentationConverter(custodianKey, converterCustodianInfo);
         // set converter for all columns of this class
         entityBrowser.setEntityToPresentationConverter(Address.class.getName(), converterAddress);
         entityBrowser.setEntityToPresentationConverter(Email.class.getName(), converterEmail);
@@ -747,10 +810,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         entityBrowser.setOptionColumn(2,lastNameKey);
         entityBrowser.setOptionColumn(3,displayNameKey);
         entityBrowser.setOptionColumn(4,statusKey);
+		entityBrowser.setOptionColumn(5,custodianKey);
 		IWBundle iwb = getBundle(IWContext.getInstance());
 		String displayDescription = iwb.getProperty("display_description_column_in_grouppropertywindow","true");
 		if (IWContext.getInstance().isSuperAdmin() || displayDescription.equalsIgnoreCase("true")) {
-			entityBrowser.setOptionColumn(5,descriptionKey);
+			entityBrowser.setOptionColumn(6,descriptionKey);
 		}
         // change display
         entityBrowser.setCellspacing(2);
