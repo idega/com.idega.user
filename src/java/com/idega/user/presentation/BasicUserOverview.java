@@ -237,7 +237,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         //add delete option
         if (hasDeletePermissionForRealGroup) {
             String confirmDeleting = iwrb.getLocalizedString("buo_delete_selected_users", "Delete selected users");
-            confirmDeleting += " ?";
+            confirmDeleting += "?";
             SubmitButton deleteButton =
                 new SubmitButton(
                         iwrb.getLocalizedString("Delete selection", "Delete selection"),
@@ -271,7 +271,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             buttonCopying = iwrb.getLocalizedString("Copy to", "Copy to");
         
         }
-        confirmMoving += " ?";
+        confirmMoving += "?";
         
         if(addMoveOrAddButton) {
             StyledButton styledCopyToButton = null;
