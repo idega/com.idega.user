@@ -78,7 +78,7 @@ public class UserApplicationMenuAreaPS extends IWControlFramePresentationState i
       }
     }    
 
-    IWActionListener[] listners =  (IWActionListener[])this._listenerList.getListeners(IWActionListener.class);
+    IWActionListener[] listners = this._listenerList.getListeners(IWActionListener.class);
     for (int i = 0; i < listners.length; i++) {
       listners[i].actionPerformed(e);
     }
