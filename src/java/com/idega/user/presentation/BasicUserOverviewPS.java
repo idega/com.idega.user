@@ -11,6 +11,7 @@ import javax.ejb.FinderException;
 import javax.swing.event.ChangeEvent;
 import com.idega.block.entity.event.EntityBrowserEvent;
 import com.idega.core.builder.data.ICDomain;
+import com.idega.core.contact.data.Email;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.event.IWActionListener;
@@ -24,6 +25,7 @@ import com.idega.user.block.search.event.UserSearchEvent;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
+import com.idega.user.data.User;
 import com.idega.user.event.SelectDomainEvent;
 import com.idega.user.event.SelectGroupEvent;
 
@@ -110,6 +112,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
         try {
 			if (e instanceof ResetPresentationEvent) {
 			    this.reset();
+			    clearSendMail(e.getIWContext());
 			    this.fireStateChanged();
 			    
 			}
@@ -117,6 +120,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 			if (e instanceof UserSearchEvent) {
 			    _selectedGroup = null;
 			    resultOfMovingUsers = null;
+			    clearSendMail(e.getIWContext());
 			} 
 			
 
@@ -127,6 +131,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 			    parentDomainOfSelection = ((SelectGroupEvent) e).getParentDomainOfSelection();
 			    resultOfMovingUsers = null;
 			    showSearchResult = false;
+			    clearSendMail(e.getIWContext());
 			    this.fireStateChanged();
 			}
 
@@ -135,9 +140,43 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 			    _selectedGroup = null;
 			    resultOfMovingUsers = null;
 			    showSearchResult = false;
+			    clearSendMail(e.getIWContext());
 			    this.fireStateChanged();
 			}
 
+			if (e instanceof EntityBrowserEvent) {
+			    IWContext mainIwc = e.getIWContext();
+			    String[] userIds;
+			    if (mainIwc.isParameterSet(BasicUserOverview.EMAIL_USERS_KEY) && mainIwc.isParameterSet(BasicUserOverview.SELECTED_USERS_KEY)) {
+			    	
+			    	
+			    	userIds = mainIwc.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
+			        // email users (if something has been chosen)
+			        String toAddresses = "";
+		        	for (int i=0; i < userIds.length; i++) {
+		        		String userID = userIds[i];
+		        		try {
+		        			User user = getGroupBusiness(mainIwc).getUserByID(Integer.parseInt(userID));
+		        			Collection emails = user.getEmails();
+		        			if (emails != null && !emails.isEmpty()) {
+		        				if (!toAddresses.equals("")) {
+				        			toAddresses = toAddresses + ",";
+				        		}
+		        				toAddresses = toAddresses + ((Email) emails.iterator().next()).getEmailAddress();
+		        			}
+		        		}
+		        		catch (Exception ex) {
+		        			ex.printStackTrace();
+		        		}
+		        	}
+		        	mainIwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_TO_ADDRESS, toAddresses);
+		        	mainIwc.setSessionAttribute(BasicUserOverview.OPEN_SEND_MAIL_WINDOW, "true");
+		        	
+			    } else {
+			    	clearSendMail(mainIwc);
+			    }
+			}
+			
 			if (e instanceof EntityBrowserEvent) {
 			    IWContext mainIwc = e.getIWContext();
 			    String[] userIds;
@@ -229,6 +268,11 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 			e1.printStackTrace();
 		}
     }
+
+	private void clearSendMail(IWContext iwc) {
+		iwc.setSessionAttribute(BasicUserOverview.OPEN_SEND_MAIL_WINDOW, null);
+		iwc.setSessionAttribute("MAILTO","");
+	}
 
     /**
      * Returns the parentDomainOfSelection.
