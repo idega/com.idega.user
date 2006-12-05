@@ -378,6 +378,7 @@ next=
 no.view.permission=
 noResultsWereFound=
 no_edit_permission_for_target_group=You do not have edit permission for the target group
+no_emails_defined_for_selected_recipients=No emails defined for selected recipients
 number_of_not_moved_users=
 number_of_sucessfully_moved_users=
 office/committee=office/committee
