@@ -521,9 +521,9 @@ public class GeneralUserInfoTab extends UserTab {
 			if(club!=null){
 				memberNumber = getClubMemberNumberForUser(user,club);
 			}
-			else System.out.print("CLUB GROUP IS NULL");
+			//else System.out.print("CLUB GROUP IS NULL");
 		}
-		else System.out.print("SELECTED GROUP IS NULL");
+		//else System.out.print("SELECTED GROUP IS NULL");
 		
 		return memberNumber;
 	}
