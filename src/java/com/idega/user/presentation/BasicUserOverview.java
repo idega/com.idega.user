@@ -77,6 +77,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     public static final String SELECTED_USERS_KEY = "selected_users";
     public static final String SELECTED_TARGET_GROUP_KEY = "selected_target_group";
     public static final String SELECTED_GROUP_KEY = "selected_group_key";
+    public static final String EMAIL_USERS_KEY = "email_users";
+    public static final String OPEN_SEND_MAIL_WINDOW = "open_send_mail_window";
     public static final String DELETE_USERS_KEY = "delete_selected_users";
     public static final String MOVE_USERS_KEY = "move_users";
     public static final String COPY_USERS_KEY = "copy_users";
@@ -202,6 +204,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             IWPresentationEvent event = (entityBrowser.getPresentationEvent());
             form.addEventModel(event, iwc);
             
+//          add email option
+            addEmailButton(entityBrowser, iwc);
+
 //          add delete option
             addDeleteButton(entityBrowser);
             
@@ -232,6 +237,33 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         
     }
     
+    private void addEmailButton(EntityBrowser entityBrowser, IWContext iwc) {
+        //add emailing option
+        if (hasEditPermissionForRealGroup && selectedGroup != null) {
+            SubmitButton emailButton =
+                new SubmitButton(
+                        iwrb.getLocalizedString("Email selection", "Email selection"),
+                        BasicUserOverview.EMAIL_USERS_KEY,
+                        BasicUserOverview.EMAIL_USERS_KEY);
+            StyledButton styledEmailButton = new StyledButton(emailButton);
+            entityBrowser.addPresentationObjectToBottom(styledEmailButton);
+            User currentUser = iwc.getCurrentUser();
+            String fromAddress = null;
+            Collection emails =currentUser.getEmails();
+            if (emails != null && !emails.isEmpty()) {
+            	Email email = (Email) emails.iterator().next();
+            	if (email != null && email.getEmailAddress()!= "") {
+            		fromAddress = currentUser.getName() + " <" + email.getEmailAddress() + ">";
+            	}
+            }
+            if (fromAddress == null) {
+        		fromAddress = currentUser.getName() +" <>";
+        	}
+            iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_MAIL_SERVER,iwc.getApplicationSettings().getProperty("IW_MEMBER_MAIL_SERVER_ADDRESS"));
+            iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_FROM_ADDRESS, fromAddress);
+            iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_SUBJECT, iwrb.getLocalizedString("to_members_in_group","To members in group:")+" "+selectedGroup.getName());
+        }
+    }
     
     private void addDeleteButton(EntityBrowser entityBrowser) {
         //add delete option
@@ -864,6 +896,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             addGreetingPage(iwc);	
         }
         
+        String openSendMailWindow = (String)iwc.getSessionAttribute(OPEN_SEND_MAIL_WINDOW);
+		if (openSendMailWindow != null && openSendMailWindow.equalsIgnoreCase("true")) {
+			Link l = new Link();
+			l.setWindowToOpen(BasicUserOverviewEmailSenderWindow.class);
+			this.getParentPage().setOnLoad(l.getWindowToOpenCallingScript(iwc));
+	    }
         
     }
     
