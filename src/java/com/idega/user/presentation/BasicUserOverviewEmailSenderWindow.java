@@ -1,5 +1,5 @@
 /*
- * $Id: BasicUserOverviewEmailSenderWindow.java,v 1.1.2.1 2006/12/05 13:55:35 idegaweb Exp $
+ * $Id: BasicUserOverviewEmailSenderWindow.java,v 1.1.2.2 2006/12/05 16:52:17 idegaweb Exp $
  * Created on Nov 28, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -64,7 +64,7 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 	private Form form;
 	
 	public BasicUserOverviewEmailSenderWindow() {
-		setHeight(500);
+		setHeight(520);
 		setWidth(500);
 		setScrollbar(false);
 	}
@@ -166,7 +166,7 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 	    
 	    Table inputTable = new Table();
 		inputTable.setWidth(Table.HUNDRED_PERCENT);
-		inputTable.setCellspacing(12);
+		inputTable.setCellspacing(5);
 		inputTable.setCellpadding(0);
 		inputTable.setStyleClass(MAIN_STYLECLASS);
 		if (iwc.getParameter(PARAM_SEND) == null) {
