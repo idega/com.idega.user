@@ -83,8 +83,8 @@ h1{
 }
 .banner{
 	/*background: #ffffff url(banner_tile.gif) repeat;*/
-	background: #ff3399;
-	background-image: url(pink.gif);
+	background: #335782;
+	background-image: url(felix_header.gif);
 	background-repeat: no-repeat;
 	height: 50px;
 }
@@ -190,12 +190,6 @@ select {
 	font-family: Verdana, Arial, Helvetica, sans-serif; 
     font-size: 10px; 
 } 
-
-
-
-
-
-
 
 
 
