@@ -45,6 +45,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.text.LinkContainer;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.Form;
@@ -52,13 +53,16 @@ import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.PrintButton;
 import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserInfoColumnsBusiness;
 import com.idega.user.business.UserStatusBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.Status;
 import com.idega.user.data.User;
+import com.idega.user.data.UserInfoColumns;
 import com.idega.util.IWColor;
 import com.idega.util.IWTimestamp;
 import com.idega.util.text.TextSoap;
@@ -74,12 +78,15 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     public static final String SELECTED_USERS_KEY = "selected_users";
     public static final String SELECTED_TARGET_GROUP_KEY = "selected_target_group";
     public static final String SELECTED_GROUP_KEY = "selected_group_key";
+    public static final String EMAIL_USERS_KEY = "email_users";
+    public static final String OPEN_SEND_MAIL_WINDOW = "open_send_mail_window";
     public static final String DELETE_USERS_KEY = "delete_selected_users";
     public static final String MOVE_USERS_KEY = "move_users";
     public static final String COPY_USERS_KEY = "copy_users";
 
     protected static final String PHONE_TYPE_PATH = PhoneType.class.getName() + ".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME";
     protected static final String USER_APPLICATION_FRONT_PAGE_ID = "USER_APPLICATION_FRONT_PAGE_ID";
+    protected static final String PROP_SYSTEM_SMTP_MAILSERVER = "messagebox_smtp_mailserver";
     
     protected IWResourceBundle iwrb = null;
     private IWBundle iwb = null;
@@ -87,14 +94,14 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     private StyledBasicUserOverViewToolbar toolbar = null;
     private com.idega.core.user.data.User administratorUser = null; //TODO convert to new USER SYSTEM
     
-    boolean isCurrentUserSuperAdmin = false;
+    private boolean isCurrentUserSuperAdmin = false;
     protected BasicUserOverviewPS ps;
     Group selectedGroup;
     protected ICDomain selectedDomain;
     private Group aliasGroup;
     protected AccessController accessController;
     
-    String styledLinkUnderline = "styledLinkUnderline";
+    private String styledLinkUnderline = "styledLinkUnderline";
     private String styleTable = "borderAll";
     private String topTableStyle = "topTable";
     private String middleTableStyle = "middleTable";
@@ -127,15 +134,15 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         try {
             if (this.selectedGroup != null) {
                 if (this.aliasGroup != null) {
-                    users = BasicUserOverview.getUserBusiness(iwc).getUsersInGroup(this.aliasGroup);
+                    users = this.getUserBusiness(iwc).getUsersInGroup(this.aliasGroup);
                 }
                 else {
-                    users = BasicUserOverview.getUserBusiness(iwc).getUsersInGroup(this.selectedGroup);
+                    users = this.getUserBusiness(iwc).getUsersInGroup(this.selectedGroup);
                 }
             }
             else
                 if (this.selectedDomain != null) {
-                    users = BasicUserOverview.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
+                    users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
                 }
         }
         catch (RemoteException e) {
@@ -187,6 +194,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             IWPresentationEvent event = (entityBrowser.getPresentationEvent());
             form.addEventModel(event, iwc);
             
+//          add email option
+            addEmailButton(entityBrowser, iwc);
+
 //          add delete option
             addDeleteButton(entityBrowser);
             
@@ -217,6 +227,33 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         
     }
     
+    private void addEmailButton(EntityBrowser entityBrowser, IWContext iwc) {
+        //add emailing option
+        if (this.hasEditPermissionForRealGroup && this.selectedGroup != null) {
+            SubmitButton emailButton =
+                new SubmitButton(
+                        this.iwrb.getLocalizedString("Email selection", "Email selection"),
+                        BasicUserOverview.EMAIL_USERS_KEY,
+                        BasicUserOverview.EMAIL_USERS_KEY);
+            StyledButton styledEmailButton = new StyledButton(emailButton);
+            entityBrowser.addPresentationObjectToBottom(styledEmailButton);
+            User currentUser = iwc.getCurrentUser();
+            String fromAddress = null;
+            Collection emails =currentUser.getEmails();
+            if (emails != null && !emails.isEmpty()) {
+            	Email email = (Email) emails.iterator().next();
+            	if (email != null && email.getEmailAddress()!= "") {
+            		fromAddress = currentUser.getName() + " <" + email.getEmailAddress() + ">";
+            	}
+            }
+            if (fromAddress == null) {
+        		fromAddress = currentUser.getName() +" <>";
+        	}
+            iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_MAIL_SERVER,iwc.getApplicationSettings().getProperty(PROP_SYSTEM_SMTP_MAILSERVER));
+            iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_FROM_ADDRESS, fromAddress);
+            iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_SUBJECT, this.iwrb.getLocalizedString("to_members_in_group","To members in group:")+" "+this.selectedGroup.getName());
+        }
+    }
     
     private void addDeleteButton(EntityBrowser entityBrowser) {
         //add delete option
@@ -418,8 +455,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 // entity is a user, try to get the corresponding address
                 User user = (User) entity;
                 Email email = null;
+                String emailString = "";
                 try {
                     email = BasicUserOverview.getUserBusiness(iwc).getUserMail(user);
+                    if (email != null && email.getEmailAddress() != null && !email.getEmailAddress().equals("")) {
+                    	emailString = email.getEmailAddressMailtoFormatted();
+                }
                 }
                 catch (RemoteException ex) {
                     System.err.println("[BasicUserOverview]: Email could not be retrieved.Message was :" + ex.getMessage());
@@ -427,7 +468,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 }
                 // now the corresponding email was found, now just use the
                 // default converter
-                return browser.getDefaultConverter().getPresentationObject(email, path, browser, iwc);
+                //return browser.getDefaultConverter().getPresentationObject((GenericEntity) email, path, browser, iwc);
+                return new Text(emailString);
             }
         };
         
@@ -646,6 +688,147 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         	
         	
         };
+
+        EntityToPresentationObjectConverter converterCustodianInfo = new EntityToPresentationObjectConverter() {
+            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+              return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
+          }
+          
+          public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+              // entity is a user, try to get the corresponding address
+              User user = (User) entity;
+              Collection custodians = null;
+              LinkContainer linkContainer = new LinkContainer();
+              
+
+              try {
+            	  LinkToFamilyLogic linkToFamilyLogic = (LinkToFamilyLogic)ImplementorRepository.getInstance().newInstanceOrNull(LinkToFamilyLogic.class, this.getClass());
+            	  if (linkToFamilyLogic != null) {
+            		  custodians = linkToFamilyLogic.getCustodiansFor(user, iwc);
+            	  }
+            	  if (custodians != null) {
+	            	  Iterator custIt = custodians.iterator();
+		              while (custIt.hasNext()) {
+		            	  User custodian = (User)custIt.next();
+		            	  Link link = new Link(custodian.getName());
+		                  //added to match new style links
+		                  link.setStyleClass(BasicUserOverview.this.styledLinkUnderline);
+		                  boolean isUserSuperAdmin = user.getPrimaryKey().equals(getSuperAdmin(iwc).getPrimaryKey());
+		                  
+		                  if ( !isUserSuperAdmin) {
+		                      link.setWindowToOpen(UserPropertyWindow.class);
+		                      link.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, custodian.getPrimaryKey().toString());
+		                      
+		                      if (BasicUserOverview.this.selectedGroup != null) {
+		                          link.addParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID, BasicUserOverview.this.selectedGroup.getPrimaryKey().toString());
+		                      }
+		                      
+		                  }
+		                  else {
+		                      if (isUserSuperAdmin && BasicUserOverview.this.isCurrentUserSuperAdmin) {
+		                          link.setWindowToOpen(AdministratorPropertyWindow.class);
+		                          link.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, custodian.getPrimaryKey().toString());
+		                      }
+		                  }
+		                  linkContainer.add(link);
+		                  if (custIt.hasNext()) {
+		                	  linkContainer.add(", ");
+		                  }
+		              }
+            	  }
+              }
+              //catch (RemoteException ex) {
+              //    System.err.println("[BasicUserOverview]: Custodians could not be retrieved.Message was :" + ex.getMessage());
+              //    ex.printStackTrace(System.err);
+              //}
+              catch(Exception ex) {
+              		ex.printStackTrace(System.err);
+              }
+              return linkContainer; 
+          }
+        };
+        
+        EntityToPresentationObjectConverter converterUserInfoColumn1 = new EntityToPresentationObjectConverter() {
+            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+              return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
+          }
+          
+          public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+              // entity is a user, try to get the corresponding address
+              User user = (User) entity;
+              UserInfoColumns infoColumns = null;
+              try {
+  	            if (BasicUserOverview.this.ps.getSelectedGroup() != null) {
+  	            	infoColumns = getUserInfoColumnsBusiness(iwc).getUserInfo(Integer.parseInt(user.getPrimaryKey().toString()),Integer.parseInt(BasicUserOverview.this.ps.getSelectedGroup().getPrimaryKey().toString()));
+              	}
+              }
+              catch (RemoteException ex) {
+                  System.err.println("[BasicUserOverview]: Status could not be retrieved.Message was :" + ex.getMessage());
+                  ex.printStackTrace(System.err);
+              }
+              //Text text = new Text(iwrb.getLocalizedString(browser.getDefaultConverter().getPresentationObject((GenericEntity) status, path, browser, iwc).toString(),browser.getDefaultConverter().getPresentationObject((GenericEntity) status, path, browser, iwc).toString()));
+              Text text = null;
+              if (infoColumns!= null) {
+				text = new Text(infoColumns.getUserInfo1());
+			}
+              return text; 
+          }
+        };
+
+        EntityToPresentationObjectConverter converterUserInfoColumn2 = new EntityToPresentationObjectConverter() {
+            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+              return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
+          }
+          
+          public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+              // entity is a user, try to get the corresponding address
+              User user = (User) entity;
+              UserInfoColumns infoColumns = null;
+              try {
+  	            if (BasicUserOverview.this.ps.getSelectedGroup() != null) {
+  	            	infoColumns = getUserInfoColumnsBusiness(iwc).getUserInfo(Integer.parseInt(user.getPrimaryKey().toString()),Integer.parseInt(BasicUserOverview.this.ps.getSelectedGroup().getPrimaryKey().toString()));
+              	}
+              }
+              catch (RemoteException ex) {
+                  System.err.println("[BasicUserOverview]: Status could not be retrieved.Message was :" + ex.getMessage());
+                  ex.printStackTrace(System.err);
+              }
+              //Text text = new Text(iwrb.getLocalizedString(browser.getDefaultConverter().getPresentationObject((GenericEntity) status, path, browser, iwc).toString(),browser.getDefaultConverter().getPresentationObject((GenericEntity) status, path, browser, iwc).toString()));
+              Text text = null;
+              if (infoColumns!= null) {
+				text = new Text(infoColumns.getUserInfo2());
+			}
+              return text; 
+          }
+        };
+        
+        EntityToPresentationObjectConverter converterUserInfoColumn3 = new EntityToPresentationObjectConverter() {
+            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+              return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
+          }
+
+          public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+              // entity is a user, try to get the corresponding address
+              User user = (User) entity;
+              UserInfoColumns infoColumns = null;
+              try {
+  	            if (BasicUserOverview.this.ps.getSelectedGroup() != null) {
+  	            	infoColumns = getUserInfoColumnsBusiness(iwc).getUserInfo(Integer.parseInt(user.getPrimaryKey().toString()),Integer.parseInt(BasicUserOverview.this.ps.getSelectedGroup().getPrimaryKey().toString()));
+              	}
+              }
+              catch (RemoteException ex) {
+                  System.err.println("[BasicUserOverview]: Status could not be retrieved.Message was :" + ex.getMessage());
+                  ex.printStackTrace(System.err);
+              }
+              //Text text = new Text(iwrb.getLocalizedString(browser.getDefaultConverter().getPresentationObject((GenericEntity) status, path, browser, iwc).toString(),browser.getDefaultConverter().getPresentationObject((GenericEntity) status, path, browser, iwc).toString()));
+              Text text = null;
+              if (infoColumns!= null) {
+				text = new Text(infoColumns.getUserInfo3());
+			}
+              return text; 
+          }
+        };
+
         // set default columns
         String nameKey = User.class.getName() + ".FIRST_NAME:" + User.class.getName() + ".MIDDLE_NAME:" + User.class.getName() + ".LAST_NAME";
         String completeAddressKey =
@@ -670,7 +853,11 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         String lastNameKey = User.class.getName() + ".LAST_NAME";
         String displayNameKey = User.class.getName() + ".DISPLAY_NAME";
         String descriptionKey = User.class.getName() + ".DESCRIPTION";
+        String custodianKey = User.class.getName() + ".FAMILY_ID";
         String statusKey = Status.class.getName() + ".STATUS_KEY";
+        String userInfo1Key = UserInfoColumns.class.getName() + ".USER_INFO_1";
+        String userInfo2Key = UserInfoColumns.class.getName() + ".USER_INFO_2";
+        String userInfo3Key = UserInfoColumns.class.getName() + ".USER_INFO_3";
         
         String dateOfBirthKey = User.class.getName() + ".DATE_OF_BIRTH";
         
@@ -715,6 +902,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         entityBrowser.setEntityToPresentationConverter(nameKey, converterLink);
         entityBrowser.setEntityToPresentationConverter(completeAddressKey, converterCompleteAddress);
         entityBrowser.setEntityToPresentationConverter(dateOfBirthKey, new DateConverter());
+        entityBrowser.setEntityToPresentationConverter(custodianKey, converterCustodianInfo);
+        entityBrowser.setEntityToPresentationConverter(userInfo1Key, converterUserInfoColumn1);
+        entityBrowser.setEntityToPresentationConverter(userInfo2Key, converterUserInfoColumn2);
+        entityBrowser.setEntityToPresentationConverter(userInfo3Key, converterUserInfoColumn3);
         // set converter for all columns of this class
         entityBrowser.setEntityToPresentationConverter(Address.class.getName(), converterAddress);
         entityBrowser.setEntityToPresentationConverter(Email.class.getName(), converterEmail);
@@ -725,6 +916,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         entityBrowser.addEntity(Email.class.getName());
         entityBrowser.addEntity(Phone.class.getName());
         entityBrowser.addEntity(Status.class.getName());
+        entityBrowser.addEntity(UserInfoColumns.class.getName());
         
         //set the option columns
         entityBrowser.setOptionColumn(0,firstNameKey);
@@ -732,10 +924,14 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         entityBrowser.setOptionColumn(2,lastNameKey);
         entityBrowser.setOptionColumn(3,displayNameKey);
         entityBrowser.setOptionColumn(4,statusKey);
+		entityBrowser.setOptionColumn(5,custodianKey);
+		entityBrowser.setOptionColumn(6,userInfo1Key);
+		entityBrowser.setOptionColumn(7,userInfo2Key);
+		entityBrowser.setOptionColumn(8,userInfo3Key);
 		IWBundle iwb = getBundle(IWContext.getInstance());
 		String displayDescription = iwb.getProperty("display_description_column_in_grouppropertywindow","true");
 		if (IWContext.getInstance().isSuperAdmin() || displayDescription.equalsIgnoreCase("true")) {
-			entityBrowser.setOptionColumn(5,descriptionKey);
+			entityBrowser.setOptionColumn(9,descriptionKey);
 		}
         // change display
         entityBrowser.setCellspacing(2);
@@ -785,6 +981,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             addGreetingPage(iwc);	
         }
         
+        String openSendMailWindow = (String)iwc.getSessionAttribute(OPEN_SEND_MAIL_WINDOW);
+		if (openSendMailWindow != null && openSendMailWindow.equalsIgnoreCase("true")) {
+			Link l = new Link();
+			l.setWindowToOpen(BasicUserOverviewEmailSenderWindow.class);
+			this.getParentPage().setOnLoad(l.getWindowToOpenCallingScript(iwc));
+	    }
         
     }
     
@@ -875,7 +1077,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     /**
      * @param iwc
      */
-    com.idega.core.user.data.User getSuperAdmin(IWContext iwc) {
+    private com.idega.core.user.data.User getSuperAdmin(IWContext iwc) {
         if (this.administratorUser == null) {
             try {
                 this.administratorUser = iwc.getAccessController().getAdministratorUser();
@@ -942,6 +1144,19 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	  		return business;
 	  	}
     
+	  	public UserInfoColumnsBusiness getUserInfoColumnsBusiness(IWApplicationContext iwc){
+	  		UserInfoColumnsBusiness business = null;
+	  		if(business == null){
+	  			try{
+	  				business = (UserInfoColumnsBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserInfoColumnsBusiness.class);
+	  			}
+	  			catch(java.rmi.RemoteException rme){
+	  				throw new RuntimeException(rme.getMessage());
+	  			}
+	  		}
+	  		return business;
+	  	}
+
     public static List removeUsers(Collection userIds, Group parentGroup, IWContext iwc) throws RemoteException {
         UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
         ArrayList notRemovedUsers = new ArrayList();
@@ -1207,8 +1422,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 // entity is a user, try to get the corresponding address
                 User user = (User) entity;
                 Email email = null;
+                String emailString = "";
                 try {
                     email = BasicUserOverview.getUserBusiness(iwc).getUserMail(user);
+                    if (email != null && email.getEmailAddress() != null && !email.getEmailAddress().equals("")) {
+                    	emailString = email.getEmailAddressMailtoFormatted();
+                }
                 }
                 catch (RemoteException ex) {
                     System.err.println("[BasicUserOverview]: Email could not be retrieved.Message was :" + ex.getMessage());
@@ -1216,7 +1435,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 }
                 // now the corresponding email was found, now just use the
                 // default converter
-                return browser.getDefaultConverter().getPresentationObject(email, path, browser, iwc);
+                //return browser.getDefaultConverter().getPresentationObject((GenericEntity) email, path, browser, iwc);
+                return new Text(emailString);
             }
         };
         
@@ -1242,10 +1462,39 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 int i;
                 Table table = new Table();
                 for (i = 0; i < phone.length; i++) {
-                    table.add(browser.getDefaultConverter().getPresentationObject(phone[i], path, browser, iwc));
+                    table.add(getPresentationObjectForPhone(phone[i], path, browser, iwc));
                 }
                 return table;
             }
+            
+            private PresentationObject getPresentationObjectForPhone(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc)  {
+                StringBuffer displayValues = new StringBuffer();
+                List list = path.getValues((EntityRepresentation) genericEntity);
+                Iterator valueIterator = list.iterator();
+                EntityPath currentPath = path;
+                while (valueIterator.hasNext()) {
+					Object object = valueIterator.next();
+                	// if there is no entry the object is null
+                	if (object == null) {
+                		object = "";
+                	}
+                	else {
+                    	// get localized string for phone type
+                    	String shortKey = currentPath.getShortKeySection();
+                    	currentPath = path.getNextEntityPath();
+                    	String phoneType = object.toString();
+                    	if (PHONE_TYPE_PATH.equals(shortKey)) {
+                    		object = getBundle(iwc).getResourceBundle(iwc).getLocalizedString(phoneType, phoneType);
+                    	}
+                	}
+                	displayValues.append(object.toString());
+                	// append white space
+                	displayValues.append(' ');  
+                }
+                Text text = new Text();
+                text.setText(displayValues.toString());               
+                return text;
+              }
         };
         // define special converter class for complete address
         EntityToPresentationObjectConverter converterCompleteAddress = new EntityToPresentationObjectConverter() {
@@ -1274,7 +1523,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 // com.idega.core.data.Address.P_O_BOX
                 String displayValue = getValue(2);
                 if (displayValue.length() != 0) {
-									displayValues.append(", P.O. Box ").append(displayValue).append(", ");
+					displayValues.append(", P.O. Box ").append(displayValue);
 								}
                 // com.idega.core.data.PostalCode.POSTAL_CODE_ID|POSTAL_CODE
                 // plus com.idega.core.data.Address.CITY
@@ -1285,6 +1534,18 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 // com.idega.core.data.Country.IC_COUNTRY_ID|COUNTRY_NAME
                 displayValue = getValue(5);
                 if (displayValue.length() != 0) {
+                    Country country = null;
+        			try {
+        				country = getCountryHome().findByCountryName(displayValue);
+        			} catch (Exception e) {
+        			    e.printStackTrace();
+        			}
+                    Locale currentLocale = iwc.getCurrentLocale();
+        			Locale locale = new Locale(currentLocale.getLanguage(), country.getIsoAbbreviation());
+                    String localizedCountryName = locale.getDisplayCountry(currentLocale);
+                    if (localizedCountryName != null && !localizedCountryName.equals("")) {
+                        displayValue = localizedCountryName;
+                    }
 									displayValues.append(", ").append(displayValue);
 								}
                 return new Text(displayValues.toString());
