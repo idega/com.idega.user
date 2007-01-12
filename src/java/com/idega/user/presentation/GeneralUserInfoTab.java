@@ -93,101 +93,101 @@ public class GeneralUserInfoTab extends UserTab {
 	}
 	
 	public void initializeFieldNames() {
-		idFieldName = "usr_info_UMid";
-		fullNameFieldName = "usr_info_UMflname";
-		displayNameFieldName = "usr_info_UMdname";
-		descriptionFieldName = "usr_info_UMdesc";
-		dateOfBirthFieldName = "usr_info_UMdateofbirth";
-		genderFieldName = "usr_info_UMgender";
-		personalIDFieldName = "usr_info_UMpersonalID";
-		createdFieldName = "usr_info_UMcreated";
-		imageFieldName = "usr_imag_userSystemImageId";
-		removeImageFieldName = "image_removeImageFieldName";
+		this.idFieldName = "usr_info_UMid";
+		this.fullNameFieldName = "usr_info_UMflname";
+		this.displayNameFieldName = "usr_info_UMdname";
+		this.descriptionFieldName = "usr_info_UMdesc";
+		this.dateOfBirthFieldName = "usr_info_UMdateofbirth";
+		this.genderFieldName = "usr_info_UMgender";
+		this.personalIDFieldName = "usr_info_UMpersonalID";
+		this.createdFieldName = "usr_info_UMcreated";
+		this.imageFieldName = "usr_imag_userSystemImageId";
+		this.removeImageFieldName = "image_removeImageFieldName";
 	}
 
 	public void initializeFieldValues() {
-		fieldValues.put(idFieldName, "");
-		fieldValues.put(fullNameFieldName, "");
-		fieldValues.put(displayNameFieldName, "");
-		fieldValues.put(descriptionFieldName, "");
-		fieldValues.put(dateOfBirthFieldName, "");
-		fieldValues.put(genderFieldName, "");
-		fieldValues.put(personalIDFieldName, "");
-		fieldValues.put(createdFieldName, "");
-		systemImageId = -1;
-		fieldValues.put(removeImageFieldName, new Boolean(false));
+		this.fieldValues.put(this.idFieldName, "");
+		this.fieldValues.put(this.fullNameFieldName, "");
+		this.fieldValues.put(this.displayNameFieldName, "");
+		this.fieldValues.put(this.descriptionFieldName, "");
+		this.fieldValues.put(this.dateOfBirthFieldName, "");
+		this.fieldValues.put(this.genderFieldName, "");
+		this.fieldValues.put(this.personalIDFieldName, "");
+		this.fieldValues.put(this.createdFieldName, "");
+		this.systemImageId = -1;
+		this.fieldValues.put(this.removeImageFieldName, new Boolean(false));
 
 		updateFieldsDisplayStatus();
 	}
 
 	public void updateFieldsDisplayStatus() {
 		
-		idField.setContent((String) fieldValues.get(idFieldName));		
-		fullNameField.setContent((String) fieldValues.get(fullNameFieldName));
-		displayNameField.setContent((String) fieldValues.get(displayNameFieldName));
-		descriptionField.setContent((String) fieldValues.get(descriptionFieldName));
-		StringTokenizer date = new StringTokenizer((String) fieldValues.get(dateOfBirthFieldName), " -");
+		this.idField.setContent((String) this.fieldValues.get(this.idFieldName));		
+		this.fullNameField.setContent((String) this.fieldValues.get(this.fullNameFieldName));
+		this.displayNameField.setContent((String) this.fieldValues.get(this.displayNameFieldName));
+		this.descriptionField.setContent((String) this.fieldValues.get(this.descriptionFieldName));
+		StringTokenizer date = new StringTokenizer((String) this.fieldValues.get(this.dateOfBirthFieldName), " -");
 
 		if (date.hasMoreTokens()) {
-			dateOfBirthField.setYear(date.nextToken());
+			this.dateOfBirthField.setYear(date.nextToken());
 		}
 		if (date.hasMoreTokens()) {
-			dateOfBirthField.setMonth(date.nextToken());
+			this.dateOfBirthField.setMonth(date.nextToken());
 		}
 		if (date.hasMoreTokens()) {
-			dateOfBirthField.setDay(date.nextToken());
+			this.dateOfBirthField.setDay(date.nextToken());
 		}
 
-		genderField.setSelectedElement((String) fieldValues.get(genderFieldName));
-		personalIDField.setContent((String) fieldValues.get(personalIDFieldName));
+		this.genderField.setSelectedElement((String) this.fieldValues.get(this.genderFieldName));
+		this.personalIDField.setContent((String) this.fieldValues.get(this.personalIDFieldName));
 
 		IWContext iwc = IWContext.getInstance();
 		boolean unlockPersonalIDField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_PERSONAL_ID,iwc);
 		
 		if (!unlockPersonalIDField){
-			personalIDField.setDisabled(true);
+			this.personalIDField.setDisabled(true);
 		}
 		
-		StringTokenizer created = new StringTokenizer((String) fieldValues.get(createdFieldName), " -");
+		StringTokenizer created = new StringTokenizer((String) this.fieldValues.get(this.createdFieldName), " -");
 		if (created.hasMoreTokens()) {
-			createdField.setYear(created.nextToken());
+			this.createdField.setYear(created.nextToken());
 		}
 		if (created.hasMoreTokens()) {
-			createdField.setMonth(created.nextToken());
+			this.createdField.setMonth(created.nextToken());
 		}
 		if (created.hasMoreTokens()) {
-			createdField.setDay(created.nextToken());
+			this.createdField.setDay(created.nextToken());
 		}
 		
-		imageField.setImageId(systemImageId);
-		removeImageField.setChecked(((Boolean)fieldValues.get(removeImageFieldName)).booleanValue());
+		this.imageField.setImageId(this.systemImageId);
+		this.removeImageField.setChecked(((Boolean)this.fieldValues.get(this.removeImageFieldName)).booleanValue());
 	}
 
 	public void initializeFields() {
-		idField = new TextInput(idFieldName);
-		idField.setLength(20);//changed from 12 - birna
+		this.idField = new TextInput(this.idFieldName);
+		this.idField.setLength(20);//changed from 12 - birna
 		
-		fullNameField = new TextInput(fullNameFieldName);
-		fullNameField.setLength(20);
+		this.fullNameField = new TextInput(this.fullNameFieldName);
+		this.fullNameField.setLength(20);
 
-		displayNameField = new TextInput(displayNameFieldName);
-		displayNameField.setLength(20);//changed from 12 - birna
-		displayNameField.setMaxlength(20);
+		this.displayNameField = new TextInput(this.displayNameFieldName);
+		this.displayNameField.setLength(20);//changed from 12 - birna
+		this.displayNameField.setMaxlength(20);
 
-		descriptionField = new TextArea(descriptionFieldName);
-		descriptionField.setHeight(7);//changed from (5) - birna
-		descriptionField.setWidth(42); //changed from (42)
-		descriptionField.setWrap(true);
+		this.descriptionField = new TextArea(this.descriptionFieldName);
+		this.descriptionField.setHeight(7);//changed from (5) - birna
+		this.descriptionField.setWidth(42); //changed from (42)
+		this.descriptionField.setWrap(true);
 
-		dateOfBirthField = new DateInput(dateOfBirthFieldName);
+		this.dateOfBirthField = new DateInput(this.dateOfBirthFieldName);
 		IWTimestamp time = IWTimestamp.RightNow();
-		dateOfBirthField.setYearRange(time.getYear(), time.getYear() - 100);
+		this.dateOfBirthField.setYearRange(time.getYear(), time.getYear() - 100);
 
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		genderField = new DropdownMenu(genderFieldName);
-		genderField.addMenuElement("", iwrb.getLocalizedString(genderFieldName,"Gender"));
+		this.genderField = new DropdownMenu(this.genderFieldName);
+		this.genderField.addMenuElement("", iwrb.getLocalizedString(this.genderFieldName,"Gender"));
 
 		Collection genders = null;
 		try {
@@ -202,51 +202,51 @@ public class GeneralUserInfoTab extends UserTab {
 		while (iter.hasNext()) {
 			Gender item = (Gender) iter.next();
 			try {
-				genderField.addMenuElement(((Integer) item.getPrimaryKey()).intValue(), iwrb.getLocalizedString(item.getName(),item.getName()));
+				this.genderField.addMenuElement(((Integer) item.getPrimaryKey()).intValue(), iwrb.getLocalizedString(item.getName(),item.getName()));
 			}
 			catch (Exception ex) {
 			}
 		}
 
-		personalIDField = new TextInput(personalIDFieldName);
-		personalIDField.setLength(20); //changed from 12 - birna
+		this.personalIDField = new TextInput(this.personalIDFieldName);
+		this.personalIDField.setLength(20); //changed from 12 - birna
 		
-		createdField = new DateInput(createdFieldName);
-		createdField.setYearRange(time.getYear(), time.getYear() - 50);
+		this.createdField = new DateInput(this.createdFieldName);
+		this.createdField.setYearRange(time.getYear(), time.getYear() - 50);
 		
-		imageField = new ImageInserter(imageFieldName + getUserId());
-		imageField.setWidth(String.valueOf(107));
-		imageField.setMaxImageWidth(107);
-		imageField.setHasUseBox(false);
+		this.imageField = new ImageInserter(this.imageFieldName + getUserId());
+		this.imageField.setWidth(String.valueOf(107));
+		this.imageField.setMaxImageWidth(107);
+		this.imageField.setHasUseBox(false);
 		
-		removeImageField = new CheckBox(removeImageFieldName);
-		removeImageField.setWidth("10");
-		removeImageField.setHeight("10");
+		this.removeImageField = new CheckBox(this.removeImageFieldName);
+		this.removeImageField.setWidth("10");
+		this.removeImageField.setHeight("10");
 	}
 
 	public void initializeTexts() {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		idText = new Text(iwrb.getLocalizedString(idFieldName,"ID") + ":");
-		idText.setBold();
-		fullNameText = new Text(iwrb.getLocalizedString(fullNameFieldName,"Name") + ":");
-		fullNameText.setBold();
-		displayNameText = new Text(iwrb.getLocalizedString(displayNameFieldName,"Display name") + ":");
-		displayNameText.setBold();
-		descriptionText = new Text(iwrb.getLocalizedString(descriptionFieldName,"Description") + ":");
-		descriptionText.setBold();
-		dateOfBirthText = new Text(iwrb.getLocalizedString(dateOfBirthFieldName,"Date of birth") + ":");
-		dateOfBirthText.setBold();
-		genderText = new Text(iwrb.getLocalizedString(genderFieldName,"Gender") + ":");
-		genderText.setBold();
-		personalIDText = new Text(iwrb.getLocalizedString(personalIDFieldName,"Personal ID") + ":");
-		personalIDText.setBold();
-		createdText = new Text(iwrb.getLocalizedString(createdFieldName,"Created") + ":");
-		createdText.setBold();
-		imageText = new Text(iwrb.getLocalizedString(imageFieldName, "Image") + ":");
-		imageText.setBold();
-		removeImageText = new Text(iwrb.getLocalizedString(removeImageFieldName, "do not show an image"));
+		this.idText = new Text(iwrb.getLocalizedString(this.idFieldName,"ID") + ":");
+		this.idText.setBold();
+		this.fullNameText = new Text(iwrb.getLocalizedString(this.fullNameFieldName,"Name") + ":");
+		this.fullNameText.setBold();
+		this.displayNameText = new Text(iwrb.getLocalizedString(this.displayNameFieldName,"Display name") + ":");
+		this.displayNameText.setBold();
+		this.descriptionText = new Text(iwrb.getLocalizedString(this.descriptionFieldName,"Description") + ":");
+		this.descriptionText.setBold();
+		this.dateOfBirthText = new Text(iwrb.getLocalizedString(this.dateOfBirthFieldName,"Date of birth") + ":");
+		this.dateOfBirthText.setBold();
+		this.genderText = new Text(iwrb.getLocalizedString(this.genderFieldName,"Gender") + ":");
+		this.genderText.setBold();
+		this.personalIDText = new Text(iwrb.getLocalizedString(this.personalIDFieldName,"Personal ID") + ":");
+		this.personalIDText.setBold();
+		this.createdText = new Text(iwrb.getLocalizedString(this.createdFieldName,"Created") + ":");
+		this.createdText.setBold();
+		this.imageText = new Text(iwrb.getLocalizedString(this.imageFieldName, "Image") + ":");
+		this.imageText.setBold();
+		this.removeImageText = new Text(iwrb.getLocalizedString(this.removeImageFieldName, "do not show an image"));
 	}
 	
 	public Help getHelpButton() {
@@ -270,54 +270,54 @@ public class GeneralUserInfoTab extends UserTab {
 		table.setCellspacing(0);
 		table.setBorder(0);
 
-		table.add(fullNameText,1,1);//(idText, 1, 1);
+		table.add(this.fullNameText,1,1);//(idText, 1, 1);
 		table.add(Text.getBreak(), 1, 1);
-		table.add(fullNameField,1,1);//(idField, 2, 1);
+		table.add(this.fullNameField,1,1);//(idField, 2, 1);
 		
-		table.add(personalIDText,2,1);//(personalIDText, 1, 2);
+		table.add(this.personalIDText,2,1);//(personalIDText, 1, 2);
 		table.add(Text.getBreak(), 2, 1);
-		table.add(personalIDField,2,1);//(personalIDField, 2, 2);
+		table.add(this.personalIDField,2,1);//(personalIDField, 2, 2);
 		
-		table.add(idText,1,2);//(fullNameText, 1, 3);
+		table.add(this.idText,1,2);//(fullNameText, 1, 3);
 		table.add(Text.getBreak(), 1, 2);
-		table.add(idField,1,2);//(fullNameField, 2, 3);
+		table.add(this.idField,1,2);//(fullNameField, 2, 3);
 		
-		table.add(displayNameText,2,2);//(displayNameText, 1, 4);
+		table.add(this.displayNameText,2,2);//(displayNameText, 1, 4);
 		table.add(Text.getBreak(), 2, 2);
-		table.add(displayNameField, 2, 2);
+		table.add(this.displayNameField, 2, 2);
 		
-		table.add(genderText, 1,3);
+		table.add(this.genderText, 1,3);
 		table.add(Text.getBreak(), 1, 3);
-		table.add(genderField,1,3);//(genderField, 2, 5);
+		table.add(this.genderField,1,3);//(genderField, 2, 5);
 		
 		table.mergeCells(1, 4, 2, 4);
-		table.add(dateOfBirthText, 1, 4);
+		table.add(this.dateOfBirthText, 1, 4);
 		table.add(Text.getBreak(), 1, 4);
-		table.add(dateOfBirthField, 1, 4);//changed from ...,2,1) - birna
+		table.add(this.dateOfBirthField, 1, 4);//changed from ...,2,1) - birna
 
 		table.mergeCells(1, 5, 2, 5);
-		table.add(createdText, 1, 5);
+		table.add(this.createdText, 1, 5);
 		table.add(Text.getBreak(), 1, 5);
-		table.add(createdField, 1, 5);//changed from ...,2,2) - birna
+		table.add(this.createdField, 1, 5);//changed from ...,2,2) - birna
 
 		IWBundle iwb = getBundle(IWContext.getInstance());
 		String displayDescription = iwb.getProperty("display_description_column_in_grouppropertywindow","true");
 		if (IWContext.getInstance().isSuperAdmin() || displayDescription.equalsIgnoreCase("true")) {
 			table.mergeCells(1, 6, 2, 6);
-			table.add(descriptionText, 1, 6);
+			table.add(this.descriptionText, 1, 6);
 			table.add(Text.getBreak(), 1, 6);
-			table.add(descriptionField, 1, 6);//changed from ...,1,2)
+			table.add(this.descriptionField, 1, 6);//changed from ...,1,2)
 		}
 
 		table.mergeCells(3,1,3,6);
 		table.setVerticalAlignment(3, 1, Table.VERTICAL_ALIGN_TOP);
-		table.add(imageText,3,1);
+		table.add(this.imageText,3,1);
 		table.add(Text.getBreak(), 3, 1);
-		table.add(imageField,3,1);
+		table.add(this.imageField,3,1);
 		
-		table.add(removeImageField,3,1);
+		table.add(this.removeImageField,3,1);
 		//table.add(Text.getNonBrakingSpace(),3,1);
-		table.add(removeImageText,3,1);
+		table.add(this.removeImageText,3,1);
 		add(table, 1, 1);
 	}
 	
@@ -327,44 +327,44 @@ public class GeneralUserInfoTab extends UserTab {
 
 	public boolean collect(IWContext iwc) {
 		if (iwc != null) {
-			String name = iwc.getParameter(fullNameFieldName);
-			String ID = iwc.getParameter(idFieldName);
-			String dname = iwc.getParameter(displayNameFieldName);
-			String desc = iwc.getParameter(descriptionFieldName);
-			String dateofbirth = iwc.getParameter(dateOfBirthFieldName);
-			String gender = iwc.getParameter(genderFieldName);
-			String personalID = iwc.getParameter(personalIDFieldName);
-			String created = iwc.getParameter(createdFieldName);
-			String imageID = iwc.getParameter(imageFieldName + this.getUserId());
+			String name = iwc.getParameter(this.fullNameFieldName);
+			String ID = iwc.getParameter(this.idFieldName);
+			String dname = iwc.getParameter(this.displayNameFieldName);
+			String desc = iwc.getParameter(this.descriptionFieldName);
+			String dateofbirth = iwc.getParameter(this.dateOfBirthFieldName);
+			String gender = iwc.getParameter(this.genderFieldName);
+			String personalID = iwc.getParameter(this.personalIDFieldName);
+			String created = iwc.getParameter(this.createdFieldName);
+			String imageID = iwc.getParameter(this.imageFieldName + this.getUserId());
 
 			if(ID!=null){
-				fieldValues.put(idFieldName, ID);
+				this.fieldValues.put(this.idFieldName, ID);
 			}
 			if (name != null) {
-				fieldValues.put(fullNameFieldName, name);
+				this.fieldValues.put(this.fullNameFieldName, name);
 			}	
 			if (dname != null) {
-				fieldValues.put(displayNameFieldName, dname);
+				this.fieldValues.put(this.displayNameFieldName, dname);
 			}
 			if (desc != null) {
-				fieldValues.put(descriptionFieldName, desc);
+				this.fieldValues.put(this.descriptionFieldName, desc);
 			}
 			if (dateofbirth != null) {
-				fieldValues.put(dateOfBirthFieldName, dateofbirth);
+				this.fieldValues.put(this.dateOfBirthFieldName, dateofbirth);
 			}
 			if (gender != null) {
-				fieldValues.put(genderFieldName, gender);
+				this.fieldValues.put(this.genderFieldName, gender);
 			}
 			if (personalID != null) {
-				fieldValues.put(personalIDFieldName, personalID);
+				this.fieldValues.put(this.personalIDFieldName, personalID);
 			}
 			if (created != null) {
-				fieldValues.put(createdFieldName, created);
+				this.fieldValues.put(this.createdFieldName, created);
 			}
 			if (imageID != null) {
-				fieldValues.put(imageFieldName, imageID);
+				this.fieldValues.put(this.imageFieldName, imageID);
 			}
-			fieldValues.put(removeImageFieldName, new Boolean(iwc.isParameterSet(removeImageFieldName)));
+			this.fieldValues.put(this.removeImageFieldName, new Boolean(iwc.isParameterSet(this.removeImageFieldName)));
 
 			updateFieldsDisplayStatus();
 
@@ -380,18 +380,20 @@ public class GeneralUserInfoTab extends UserTab {
 				if(getGroupID()>0){//temp remove with other IWMember stuff
 					Group club = getClubForGroup(getGroup());
 					if(club!=null){				
-						boolean success = setClubMemberNumberForUser((String)fieldValues.get(idFieldName),getUser(),club);
+						boolean success = setClubMemberNumberForUser((String)this.fieldValues.get(this.idFieldName),getUser(),club);
 						if(!success){//number already taken
-							idField.setStyleAttribute("color:#FF0000"); 
+							this.idField.setStyleAttribute("color:#FF0000"); 
 						}
-						else idField.setStyleAttribute("color:#000000"); 
+						else {
+							this.idField.setStyleAttribute("color:#000000");
+						} 
 					}
 				}
 				
 				
 				IWTimestamp dateOfBirthTS = null;
-				String st = (String) fieldValues.get(dateOfBirthFieldName);
-				Integer gen = (fieldValues.get(genderFieldName).equals("")) ? null : new Integer((String) fieldValues.get(genderFieldName));
+				String st = (String) this.fieldValues.get(this.dateOfBirthFieldName);
+				Integer gen = (this.fieldValues.get(this.genderFieldName).equals("")) ? null : new Integer((String) this.fieldValues.get(this.genderFieldName));
 				if (st != null && !st.equals("")) {
 					try {
 						dateOfBirthTS = new IWTimestamp(st);
@@ -402,7 +404,7 @@ public class GeneralUserInfoTab extends UserTab {
 				}
 
 				IWTimestamp createdTS = null;
-				String createdString = (String) fieldValues.get(createdFieldName);
+				String createdString = (String) this.fieldValues.get(this.createdFieldName);
 				if (createdString != null & !createdString.equals("")) {
 					try {
 						createdTS = new IWTimestamp(createdString);
@@ -417,41 +419,43 @@ public class GeneralUserInfoTab extends UserTab {
 					null,
 					null,
 					null,
-					(String) fieldValues.get(displayNameFieldName),
-					(String) fieldValues.get(descriptionFieldName),
+					(String) this.fieldValues.get(this.displayNameFieldName),
+					(String) this.fieldValues.get(this.descriptionFieldName),
 					gen,
-					(String) fieldValues.get(personalIDFieldName),
+					(String) this.fieldValues.get(this.personalIDFieldName),
 					dateOfBirthTS,
 					null,
-				    (String) fieldValues.get(fullNameFieldName)
+				    (String) this.fieldValues.get(this.fullNameFieldName)
 					);
-				if (createdTS != null)
+				if (createdTS != null) {
 					getUser().setCreated(createdTS.getTimestamp());
+				}
 			}
 			if (getUserId() > -1) {
 	
-				String image = (String)fieldValues.get(imageFieldName);
+				String image = (String)this.fieldValues.get(this.imageFieldName);
 	
 				if ((image != null) && (!image.equals("-1")) && (!image.equals(""))) {
-					if (user == null)
-						user = getUser();
+					if (this.user == null) {
+						this.user = getUser();
+					}
 					int tempId;
-					if (((Boolean) fieldValues.get(removeImageFieldName)).booleanValue())  {
-						user.setSystemImageID(null);
+					if (((Boolean) this.fieldValues.get(this.removeImageFieldName)).booleanValue())  {
+						this.user.setSystemImageID(null);
 						// set variables to default values
-						systemImageId = -1;
-						fieldValues.put(imageFieldName, "-1");
-						user.store();
+						this.systemImageId = -1;
+						this.fieldValues.put(this.imageFieldName, "-1");
+						this.user.store();
 						updateFieldsDisplayStatus();
 					}
-					else if ((tempId = Integer.parseInt(image)) != systemImageId) {
-						systemImageId = tempId;
-						user.setSystemImageID(systemImageId);
-						user.store();
+					else if ((tempId = Integer.parseInt(image)) != this.systemImageId) {
+						this.systemImageId = tempId;
+						this.user.setSystemImageID(this.systemImageId);
+						this.user.store();
 						updateFieldsDisplayStatus();
 					}
 	
-					iwc.removeSessionAttribute(imageFieldName + getUserId());
+					iwc.removeSessionAttribute(this.imageFieldName + getUserId());
 	
 				}
 	
@@ -472,26 +476,26 @@ public class GeneralUserInfoTab extends UserTab {
 			String memberNumber =null;
 			try {
 				memberNumber = getMemberNumber(getUser());
-				imageField.setImSessionImageName(imageFieldName + getUserId());
-				systemImageId = getSelectedImageId(user);
+				this.imageField.setImSessionImageName(this.imageFieldName + getUserId());
+				this.systemImageId = getSelectedImageId(user);
 				
-				if (systemImageId != -1) {
-					fieldValues.put(this.imageFieldName, Integer.toString(systemImageId));
+				if (this.systemImageId != -1) {
+					this.fieldValues.put(this.imageFieldName, Integer.toString(this.systemImageId));
 				}
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
 			}
 
-			fieldValues.put(idFieldName, (memberNumber != null) ? memberNumber : "");
-			fieldValues.put(fullNameFieldName, (user.getName() != null) ? user.getName() : "");
-			fieldValues.put(displayNameFieldName, (user.getDisplayName() != null) ? user.getDisplayName() : "");
-			fieldValues.put(descriptionFieldName, (user.getDescription() != null) ? user.getDescription() : "");
-			fieldValues.put(dateOfBirthFieldName, (user.getDateOfBirth() != null) ? new IWTimestamp(user.getDateOfBirth()).toSQLDateString() : "");
-			fieldValues.put(genderFieldName, (user.getGenderID() != -1) ? Integer.toString(user.getGenderID()) : "");
-			fieldValues.put(personalIDFieldName, (user.getPersonalID() != null) ? user.getPersonalID() : "");
-			fieldValues.put(createdFieldName, (user.getCreated() != null) ? new IWTimestamp(user.getCreated()).toSQLDateString() : "");
-			fieldValues.put(removeImageFieldName, new Boolean(false));
+			this.fieldValues.put(this.idFieldName, (memberNumber != null) ? memberNumber : "");
+			this.fieldValues.put(this.fullNameFieldName, (user.getName() != null) ? user.getName() : "");
+			this.fieldValues.put(this.displayNameFieldName, (user.getDisplayName() != null) ? user.getDisplayName() : "");
+			this.fieldValues.put(this.descriptionFieldName, (user.getDescription() != null) ? user.getDescription() : "");
+			this.fieldValues.put(this.dateOfBirthFieldName, (user.getDateOfBirth() != null) ? new IWTimestamp(user.getDateOfBirth()).toSQLDateString() : "");
+			this.fieldValues.put(this.genderFieldName, (user.getGenderID() != -1) ? Integer.toString(user.getGenderID()) : "");
+			this.fieldValues.put(this.personalIDFieldName, (user.getPersonalID() != null) ? user.getPersonalID() : "");
+			this.fieldValues.put(this.createdFieldName, (user.getCreated() != null) ? new IWTimestamp(user.getCreated()).toSQLDateString() : "");
+			this.fieldValues.put(this.removeImageFieldName, new Boolean(false));
 			updateFieldsDisplayStatus();
 
 		}
@@ -585,7 +589,9 @@ public class GeneralUserInfoTab extends UserTab {
 					break;//only one user should have this number
 				}
 			}
-			else setNumber = true;
+			else {
+				setNumber = true;
+			}
 		}
 		catch (EJBException e) {
 			e.printStackTrace();
@@ -610,12 +616,12 @@ public class GeneralUserInfoTab extends UserTab {
 	//END REMOVE
 	private void setSelectedImageId() {
 		try {
-			String image = (String)fieldValues.get(this.imageFieldName);
+			String image = (String)this.fieldValues.get(this.imageFieldName);
 			if ((image != null)
 				&& (!image.equals("-1"))
 				&& (!image.equals(""))
 				&& (!image.equals("0"))) {
-				systemImageId = Integer.parseInt(image);
+				this.systemImageId = Integer.parseInt(image);
 			}
 		}
 		catch (Exception ex) {
@@ -626,14 +632,15 @@ public class GeneralUserInfoTab extends UserTab {
 	private int getSelectedImageId(User user) {
 			try {
 				int tempImageId = user.getSystemImageID();
-				if ((systemImageId == -1) && (tempImageId != -1))
-					systemImageId = tempImageId;
+				if ((this.systemImageId == -1) && (tempImageId != -1)) {
+					this.systemImageId = tempImageId;
+				}
 			}
 			catch (Exception ex) {
 				ex.printStackTrace(System.err);
 			}
 
-			return systemImageId;
+			return this.systemImageId;
 		}
 
 } // Class GeneralUserInfoTab

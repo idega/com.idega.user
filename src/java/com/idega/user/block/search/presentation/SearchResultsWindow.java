@@ -34,7 +34,7 @@ public class SearchResultsWindow extends BasicUserOverview {
 	 * @see com.idega.user.presentation.BasicUserOverview#getEntries(com.idega.presentation.IWContext)
 	 */
 	protected Collection getEntries(IWContext iwc) {
-		SearchResultsWindowPS sPs = (SearchResultsWindowPS)ps;
+		SearchResultsWindowPS sPs = (SearchResultsWindowPS)this.ps;
 		 try {
 		 	SearchEngine engine = getSearchEngine(iwc);
 			return engine.getResult( sPs.getLastUserSearchEvent() );
@@ -47,7 +47,7 @@ public class SearchResultsWindow extends BasicUserOverview {
 	
 	protected String getEntityBrowserIdentifier(){
 		String identifier = "search-";
-		SearchResultsWindowPS sPs = (SearchResultsWindowPS)ps;
+		SearchResultsWindowPS sPs = (SearchResultsWindowPS)this.ps;
 		if(sPs!=null){
 			identifier+= sPs.getSearchString();
 		}	
@@ -56,7 +56,7 @@ public class SearchResultsWindow extends BasicUserOverview {
 	}
 	
 	protected PresentationObject getEmptyListPresentationObject() {
-		Text text = new Text(iwrb.getLocalizedString("searchresultswindow.search_had_no_match", "The search did not return any results"));
+		Text text = new Text(this.iwrb.getLocalizedString("searchresultswindow.search_had_no_match", "The search did not return any results"));
 		
 		return text;
 	}
@@ -84,14 +84,14 @@ public class SearchResultsWindow extends BasicUserOverview {
 	 */
 	protected StyledBasicUserOverViewToolbar getToolbar() {
 		StyledBasicUserOverViewToolbar toolbar = super.getToolbar();
-		SearchResultsWindowPS sPs = (SearchResultsWindowPS)ps;
-		if(sPs!=null && iwrb!=null){
+		SearchResultsWindowPS sPs = (SearchResultsWindowPS)this.ps;
+		if(sPs!=null && this.iwrb!=null){
 			String search = sPs.getSearchString();
 			if(search!=null ) {
-				toolbar.setTitle(iwrb.getLocalizedString("searchresultswindow.search:","Search : ")+search+ Text.getNonBrakingSpace(2));
+				toolbar.setTitle(this.iwrb.getLocalizedString("searchresultswindow.search:","Search : ")+search+ Text.getNonBrakingSpace(2));
 			}
 			else{
-				toolbar.setTitle(iwrb.getLocalizedString("searchresultswindow.advanced_search:","Advanced search")+Text.getNonBrakingSpace(2));	
+				toolbar.setTitle(this.iwrb.getLocalizedString("searchresultswindow.advanced_search:","Advanced search")+Text.getNonBrakingSpace(2));	
 			}
 		}
 		

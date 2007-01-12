@@ -38,7 +38,7 @@ public abstract class UserGroupTab extends Table implements Collectable {
     this.setCellspacing(0);
 	this.setWidth(Table.HUNDRED_PERCENT); //changed from 370
     this.setStyleClass("main");
-    fieldValues = new HashMap();
+    this.fieldValues = new HashMap();
     init();
 
   }
@@ -79,7 +79,7 @@ public abstract class UserGroupTab extends Table implements Collectable {
 	}
 	
 	public TabbedPropertyPanel getPanel() {
-		return panel;
+		return this.panel;
 	}
 
   /** Sets group id and id of the selected parent group.
@@ -93,16 +93,16 @@ public abstract class UserGroupTab extends Table implements Collectable {
   }
 
   public void setGroupId(int id){
-    groupId = id;
+    this.groupId = id;
     initFieldContents();
   }
 
   public int getGroupId(){
-    return groupId;
+    return this.groupId;
   }
   
   public int getSelectedParentGroupId() {
-    return selectedParentGroupId;
+    return this.selectedParentGroupId;
   }
 
   public UserBusiness getUserBusiness(IWApplicationContext iwc){

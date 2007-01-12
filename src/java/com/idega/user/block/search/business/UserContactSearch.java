@@ -1,5 +1,5 @@
 /*
- * $Id: UserContactSearch.java,v 1.9 2005/04/09 21:46:41 eiki Exp $ Created on
+ * $Id: UserContactSearch.java,v 1.9.2.1 2007/01/12 19:32:48 idegaweb Exp $ Created on
  * Jan 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -33,7 +33,7 @@ import com.idega.util.ListUtil;
 
 /**
  * 
- * Last modified: $Date: 2005/04/09 21:46:41 $ by $Author: eiki $ This class
+ * Last modified: $Date: 2007/01/12 19:32:48 $ by $Author: idegaweb $ This class
  * implements the Searchplugin interface and can therefore be used in a Search
  * block (com.idega.core.search). <br>
  * It searches lots of user related info like name, personalid,email etc. and
@@ -42,7 +42,7 @@ import com.idega.util.ListUtil;
  * bundle.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.9.2.1 $
  */
 public class UserContactSearch implements SearchPlugin {
 
@@ -224,7 +224,7 @@ public class UserContactSearch implements SearchPlugin {
 
 	protected Collection getUsers(SearchQuery searchQuery) {
 		try {
-			SearchEngine userSearch = (SearchEngine) IBOLookup.getServiceInstance(iwma.getIWApplicationContext(),
+			SearchEngine userSearch = (SearchEngine) IBOLookup.getServiceInstance(this.iwma.getIWApplicationContext(),
 					SearchEngine.class);
 			String query = ((SimpleSearchQuery) searchQuery).getSimpleSearchQuery();
 			if(query!=null){
@@ -250,7 +250,7 @@ public class UserContactSearch implements SearchPlugin {
 	 * @see com.idega.core.search.business.SearchPlugin#getSearchName()
 	 */
 	public String getSearchName() {
-		IWBundle bundle = iwma.getBundle(IW_BUNDLE_IDENTIFIER);
+		IWBundle bundle = this.iwma.getBundle(IW_BUNDLE_IDENTIFIER);
 		return bundle.getResourceBundle(IWContext.getInstance()).getLocalizedString(SEARCH_NAME_LOCALIZABLE_KEY,
 				"Contacts");
 	}
@@ -261,7 +261,7 @@ public class UserContactSearch implements SearchPlugin {
 	 * @see com.idega.core.search.business.SearchPlugin#getSearchDescription()
 	 */
 	public String getSearchDescription() {
-		IWBundle bundle = iwma.getBundle(IW_BUNDLE_IDENTIFIER);
+		IWBundle bundle = this.iwma.getBundle(IW_BUNDLE_IDENTIFIER);
 		return bundle.getResourceBundle(IWContext.getInstance()).getLocalizedString(SEARCH_DESCRIPTION_LOCALIZABLE_KEY,
 				"Searches for user contact information");
 	}

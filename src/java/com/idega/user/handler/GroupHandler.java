@@ -1,5 +1,5 @@
 /*
- * $Id: GroupHandler.java,v 1.4 2004/09/07 11:42:07 sigtryggur Exp $
+ * $Id: GroupHandler.java,v 1.4.2.1 2007/01/12 19:33:02 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -46,8 +46,9 @@ public class GroupHandler implements ICPropertyHandler {
       if (value != null && !value.equals("")) {
       	Group group = getGroupHome().findByPrimaryKey(new Integer(value));
 		 		GroupTreeNode node = new GroupTreeNode(group,iwc.getApplicationContext());
-			  if (node != null)
-			    chooser.setSelectedNode(node);
+			  if (node != null) {
+				chooser.setSelectedNode(node);
+			}
       }
     }
     catch(NumberFormatException e) {

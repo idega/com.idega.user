@@ -20,7 +20,7 @@ import com.idega.user.presentation.MassMovingWindow;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -36,9 +36,9 @@ public class UserApplicationMenuAreaPS extends IWControlFramePresentationState i
   }
 
   public void addIWActionListener(IWActionListener l){
-    listenerList.add(IWActionListener.class, l);
+    this.listenerList.add(IWActionListener.class, l);
 
-    Object[] list = _listenerList.getListenerList();
+    Object[] list = this._listenerList.getListenerList();
 
     boolean hasBeenAdded = false;
     // Is l on the list?
@@ -49,7 +49,7 @@ public class UserApplicationMenuAreaPS extends IWControlFramePresentationState i
         }
     }
     if(!hasBeenAdded){
-      _listenerList.add(IWActionListener.class,l);
+      this._listenerList.add(IWActionListener.class,l);
     }
   }
 
@@ -78,7 +78,7 @@ public class UserApplicationMenuAreaPS extends IWControlFramePresentationState i
       }
     }    
 
-    IWActionListener[] listners =  (IWActionListener[])_listenerList.getListeners(IWActionListener.class);
+    IWActionListener[] listners =  (IWActionListener[])this._listenerList.getListeners(IWActionListener.class);
     for (int i = 0; i < listners.length; i++) {
       listners[i].actionPerformed(e);
     }
@@ -86,7 +86,7 @@ public class UserApplicationMenuAreaPS extends IWControlFramePresentationState i
   }
   
   public Integer getSelectedGroupId() {
-    return selectedGroupId;
+    return this.selectedGroupId;
   }
 
   public void stateChanged(ChangeEvent e) {
@@ -94,12 +94,13 @@ public class UserApplicationMenuAreaPS extends IWControlFramePresentationState i
     if (object instanceof BasicUserOverviewPS) {
       BasicUserOverviewPS state = (BasicUserOverviewPS) object;
       Group group = state.getSelectedGroup();
-      if (group != null)
-        selectedGroupId = (Integer) group.getPrimaryKey();
+      if (group != null) {
+		this.selectedGroupId = (Integer) group.getPrimaryKey();
+	}
     }
     else if (object instanceof DeleteGroupConfirmWindowPS)  {
       // the former selected group does not exist any longer!
-      selectedGroupId = null;
+      this.selectedGroupId = null;
     }
       
   }

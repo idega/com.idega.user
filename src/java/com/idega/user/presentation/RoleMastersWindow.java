@@ -74,8 +74,8 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 	public RoleMastersWindow() {
 		super();
 
-		setWidth(width);
-		setHeight(height);
+		setWidth(this.width);
+		setHeight(this.height);
 		setScrollbar(true);
 		setResizable(true);
 
@@ -112,11 +112,11 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 	}
 
 	public void main(IWContext iwc) throws Exception {
-		iwrb = this.getResourceBundle(iwc);
+		this.iwrb = this.getResourceBundle(iwc);
 
 		parseAction(iwc);
 
-		if (saveChanges) {
+		if (this.saveChanges) {
 
 			AccessController access = iwc.getAccessController();
 
@@ -158,7 +158,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		browser.setEntities("roles_masters", groups);
 		browser.setDefaultNumberOfRows(groups.size());
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
-		browser.setWidth(browser.HUNDRED_PERCENT);
+		browser.setWidth(Table.HUNDRED_PERCENT);
 
 		//	fonts
 		Text columnText = new Text();
@@ -187,16 +187,16 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 
 				Group group = (Group) entity;
 
-				if (administrator == null) {
+				if (this.administrator == null) {
 					try {
-						administrator = iwc.getAccessController().getAdministratorUser();
+						this.administrator = iwc.getAccessController().getAdministratorUser();
 					}
 					catch (Exception ex) {
 						System.err.println("[BasicUserOverview] access controller failed " + ex.getMessage());
 						ex.printStackTrace(System.err);
-						administrator = null;
+						this.administrator = null;
 					}
-					loggedInUserIsAdmin = iwc.isSuperAdmin();
+					this.loggedInUserIsAdmin = iwc.isSuperAdmin();
 				}
 
 				Link aLink = null;
@@ -205,13 +205,13 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 					user = getUserBusiness(iwc).getUser((Integer) group.getPrimaryKey());
 
 					aLink = new Link(user.getName());
-					if (!group.equals(administrator)) {
+					if (!group.equals(this.administrator)) {
 						aLink.setWindowToOpen(UserPropertyWindow.class);
 						aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, group.getPrimaryKey().toString());
 					}
-					else if (loggedInUserIsAdmin) {
+					else if (this.loggedInUserIsAdmin) {
 						aLink.setWindowToOpen(AdministratorPropertyWindow.class);
-						aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, group.getPrimaryKey().toString());
+						aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, group.getPrimaryKey().toString());
 					}
 
 				}
@@ -224,7 +224,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 			}
 		};
 
-		browser.setMandatoryColumnWithConverter(column++, iwrb.getLocalizedString(nameKey,"User Name"), converterLink);
+		browser.setMandatoryColumnWithConverter(column++, this.iwrb.getLocalizedString(nameKey,"User Name"), converterLink);
 
 		//converter ends
 
@@ -247,8 +247,8 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		browser.setMandatoryColumnWithConverter(column++, DELETE_PERMISSIONS_KEY, deleteCheckBoxConverter);
 
 		//converter ends
-		setName(iwrb.getLocalizedString("role_master_title", "Role Master"));
-		addTitle(iwrb.getLocalizedString("role_master_title", "Role Master"), TITLE_STYLECLASS);
+		setName(this.iwrb.getLocalizedString("role_master_title", "Role Master"));
+		addTitle(this.iwrb.getLocalizedString("role_master_title", "Role Master"), TITLE_STYLECLASS);
 
 		Form form = getRoleMastersForm(browser);
 		form.add(new HiddenInput(PARAM_SAVING, "TRUE"));//cannot use this if we
@@ -264,11 +264,11 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 
 		Help help = getHelp(HELP_TEXT_KEY);
 
-		SubmitButton saveButton = new SubmitButton(iwrb.getLocalizedString("save", "Save"));
-		saveButton.setSubmitConfirm(iwrb.getLocalizedString("change.selected.permissions?", "Change selected permissions?"));
+		SubmitButton saveButton = new SubmitButton(this.iwrb.getLocalizedString("save", "Save"));
+		saveButton.setSubmitConfirm(this.iwrb.getLocalizedString("change.selected.permissions?", "Change selected permissions?"));
 		StyledButton save = new StyledButton(saveButton);
 		
-		CloseButton closeButton = new CloseButton(iwrb.getLocalizedString("close", "Close"));
+		CloseButton closeButton = new CloseButton(this.iwrb.getLocalizedString("close", "Close"));
 		StyledButton close = new StyledButton(closeButton);
 
 		Table mainTable = new Table(1, 3);
@@ -280,10 +280,10 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		table.setRowHeight(1, "20");
 		table.setCellpadding(12);
 		table.setCellspacing(0);
-		table.setStyleClass(mainTableStyle);
+		table.setStyleClass(this.mainTableStyle);
 		table.mergeCells(1, 2, 2, 2);
 
-		table.add(new Text(iwrb.getLocalizedString("roleMastersWindow.active_role_masters", "Active role masters"), true, false, false), 1, 1);
+		table.add(new Text(this.iwrb.getLocalizedString("roleMastersWindow.active_role_masters", "Active role masters"), true, false, false), 1, 1);
 
 		table.add(browser, 1, 2);
 		UserChooserBrowser userChooser = new UserChooserBrowser(PARAM_USER_CHOOSER_USER_ID);
@@ -302,7 +302,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		bottomTable.setCellpadding(0);
 		bottomTable.setCellspacing(5);
 		bottomTable.setWidth(Table.HUNDRED_PERCENT);
-		bottomTable.setStyleClass(mainTableStyle);
+		bottomTable.setStyleClass(this.mainTableStyle);
 		bottomTable.add(help, 1, 1);
 		bottomTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 		bottomTable.add(buttonTable, 2, 1);
@@ -324,7 +324,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 	}
 
 	private void parseAction(IWContext iwc) throws RemoteException {
-		saveChanges = iwc.isParameterSet(PARAM_SAVING);
+		this.saveChanges = iwc.isParameterSet(PARAM_SAVING);
 	}
 
 	public String getBundleIdentifier() {
@@ -337,10 +337,10 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 	}
 
 	public GroupBusiness getGroupBusiness(IWContext iwc) {
-		if (groupBiz == null) {
+		if (this.groupBiz == null) {
 
 			try {
-				groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				this.groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
@@ -348,7 +348,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 
 		}
 
-		return groupBiz;
+		return this.groupBiz;
 	}
 
 	/**
@@ -359,15 +359,15 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 	}
 
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
-		if (userBiz == null) {
+		if (this.userBiz == null) {
 			try {
-				userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				this.userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return userBiz;
+		return this.userBiz;
 	}
 
 }

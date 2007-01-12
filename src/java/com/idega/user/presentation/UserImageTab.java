@@ -58,30 +58,30 @@ public class UserImageTab extends UserTab {
 	}
 
 	public void initializeFieldNames() {
-		imageFieldName = "usr_imag_userSystemImageId";
-    removeImageFieldName = "image_removeImageFieldName";
+		this.imageFieldName = "usr_imag_userSystemImageId";
+    this.removeImageFieldName = "image_removeImageFieldName";
 	}
 
 	public void initializeFields() {
-		imageField = new ImageInserter(imageFieldName + getUserId());
-		imageField.setHasUseBox(false);
-    removeImageField = new CheckBox(removeImageFieldName);
+		this.imageField = new ImageInserter(this.imageFieldName + getUserId());
+		this.imageField.setHasUseBox(false);
+    this.removeImageField = new CheckBox(this.removeImageFieldName);
 	}
 
 	public void initializeTexts() {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		imageText = getTextObject();
-		imageText.setText(iwrb.getLocalizedString(imageFieldName, "Image") + ":");
+		this.imageText = getTextObject();
+		this.imageText.setText(iwrb.getLocalizedString(this.imageFieldName, "Image") + ":");
     
-    removeImageText = getTextObject();
-    removeImageText.setText(iwrb.getLocalizedString(removeImageFieldName, "do not show an image"));
+    this.removeImageText = getTextObject();
+    this.removeImageText.setText(iwrb.getLocalizedString(this.removeImageFieldName, "do not show an image"));
 	}
 
 	public void initializeFieldValues() {
-		systemImageId = -1;
-    fieldValues.put(removeImageFieldName, new Boolean(false));
+		this.systemImageId = -1;
+    this.fieldValues.put(this.removeImageFieldName, new Boolean(false));
 	}
 
 	public void lineUpFields() {
@@ -92,26 +92,26 @@ public class UserImageTab extends UserTab {
 		imageTable.setCellpadding(0);
 		imageTable.setCellspacing(0);
 
-		imageTable.add(imageText, 1, 1);
+		imageTable.add(this.imageText, 1, 1);
 		imageTable.add(this.imageField, 1, 2);
-    imageTable.add(removeImageField, 1, 3);
+    imageTable.add(this.removeImageField, 1, 3);
     imageTable.add(Text.getNonBrakingSpace(),1,3);
-    imageTable.add(removeImageText,1,3);
+    imageTable.add(this.removeImageText,1,3);
 		this.add(imageTable, 1, 1);
 	}
 
 	public void updateFieldsDisplayStatus() {
-		imageField.setImageId(systemImageId);
-    removeImageField.setChecked(((Boolean)fieldValues.get(removeImageFieldName)).booleanValue());
+		this.imageField.setImageId(this.systemImageId);
+    this.removeImageField.setChecked(((Boolean)this.fieldValues.get(this.removeImageFieldName)).booleanValue());
 	}
 
 	public boolean collect(IWContext iwc) {
-		String imageID = iwc.getParameter(imageFieldName + this.getUserId());
+		String imageID = iwc.getParameter(this.imageFieldName + this.getUserId());
 		if (imageID != null) {
-			fieldValues.put(imageFieldName, imageID);
+			this.fieldValues.put(this.imageFieldName, imageID);
 		}
     
-    fieldValues.put(removeImageFieldName, new Boolean(iwc.isParameterSet(removeImageFieldName)));
+    this.fieldValues.put(this.removeImageFieldName, new Boolean(iwc.isParameterSet(this.removeImageFieldName)));
 
 		return true;
 	}
@@ -120,28 +120,29 @@ public class UserImageTab extends UserTab {
 		try {
 			if (getUserId() > -1) {
 
-				String image = (String)fieldValues.get(imageFieldName);
+				String image = (String)this.fieldValues.get(this.imageFieldName);
 
 				if ((image != null) && (!image.equals("-1")) && (!image.equals(""))) {
-          if (user == null)
-						user = getUser();
+          if (this.user == null) {
+			this.user = getUser();
+		}
           int tempId;
-          if (((Boolean) fieldValues.get(removeImageFieldName)).booleanValue())  {
-            user.setSystemImageID(null);
+          if (((Boolean) this.fieldValues.get(this.removeImageFieldName)).booleanValue())  {
+            this.user.setSystemImageID(null);
             // set variables to default values
-            systemImageId = -1;
-            fieldValues.put(imageFieldName, "-1");
-            user.store();
+            this.systemImageId = -1;
+            this.fieldValues.put(this.imageFieldName, "-1");
+            this.user.store();
             updateFieldsDisplayStatus();
           }
-          else if ((tempId = Integer.parseInt(image)) != systemImageId) {
-						systemImageId = tempId;
-						user.setSystemImageID(systemImageId);
-						user.store();
+          else if ((tempId = Integer.parseInt(image)) != this.systemImageId) {
+						this.systemImageId = tempId;
+						this.user.setSystemImageID(this.systemImageId);
+						this.user.store();
 						updateFieldsDisplayStatus();
 					}
 
-					iwc.removeSessionAttribute(imageFieldName + getUserId());
+					iwc.removeSessionAttribute(this.imageFieldName + getUserId());
 
 				}
 
@@ -158,18 +159,19 @@ public class UserImageTab extends UserTab {
 
 		try {
 
-			imageField.setImSessionImageName(imageFieldName + getUserId());
+			this.imageField.setImSessionImageName(this.imageFieldName + getUserId());
 
-			if (user == null)
-				user = getUser();
+			if (this.user == null) {
+				this.user = getUser();
+			}
 
-			systemImageId = getSelectedImageId(user);
+			this.systemImageId = getSelectedImageId(this.user);
 
-			if (systemImageId != -1) {
-				fieldValues.put(this.imageFieldName, Integer.toString(systemImageId));
+			if (this.systemImageId != -1) {
+				this.fieldValues.put(this.imageFieldName, Integer.toString(this.systemImageId));
 			}
       
-      fieldValues.put(removeImageFieldName, new Boolean(false));
+      this.fieldValues.put(this.removeImageFieldName, new Boolean(false));
     
 			this.updateFieldsDisplayStatus();
 		}
@@ -182,12 +184,12 @@ public class UserImageTab extends UserTab {
 
 	private void setSelectedImageId() {
 		try {
-			String image = (String)fieldValues.get(this.imageFieldName);
+			String image = (String)this.fieldValues.get(this.imageFieldName);
 			if ((image != null)
 				&& (!image.equals("-1"))
 				&& (!image.equals(""))
 				&& (!image.equals("0"))) {
-				systemImageId = Integer.parseInt(image);
+				this.systemImageId = Integer.parseInt(image);
 			}
 		}
 		catch (Exception ex) {
@@ -199,14 +201,15 @@ public class UserImageTab extends UserTab {
 	private int getSelectedImageId(User user) {
 		try {
 			int tempImageId = user.getSystemImageID();
-			if ((systemImageId == -1) && (tempImageId != -1))
-				systemImageId = tempImageId;
+			if ((this.systemImageId == -1) && (tempImageId != -1)) {
+				this.systemImageId = tempImageId;
+			}
 		}
 		catch (Exception ex) {
 			ex.printStackTrace(System.err);
 		}
 
-		return systemImageId;
+		return this.systemImageId;
 	}
 	
 	public String getBundleIdentifier() {

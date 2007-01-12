@@ -37,9 +37,9 @@ public abstract class UserTab extends Table implements Collectable {
 	
 	public UserTab() {
 		super();
-		errorStrings = new ArrayList();
+		this.errorStrings = new ArrayList();
 		//business = new UserBusiness();
-		fieldValues = new HashMap();
+		this.fieldValues = new HashMap();
 		init();
 		this.setStyleClass("main"); //added for isi styles - birna
 		this.setCellpadding(0);
@@ -95,42 +95,42 @@ public abstract class UserTab extends Table implements Collectable {
 	}
 	
 	public TabbedPropertyPanel getPanel() {
-		return panel;
+		return this.panel;
 	}
 	
 	private void initProxyText() {
-		proxyText = new Text("");
-		proxyText.setFontSize(fontSize);
+		this.proxyText = new Text("");
+		this.proxyText.setFontSize(this.fontSize);
 	}
 	
 	public Text getTextObject() {
-		if (proxyText == null) {
+		if (this.proxyText == null) {
 			initProxyText();
 		}
-		return (Text) proxyText.clone();
+		return (Text) this.proxyText.clone();
 	}
 	
 	public void setGroupID(int id) {
-		selectedGroupId = id;
+		this.selectedGroupId = id;
 		initFieldContents();
 	}
 	
 	public int getGroupID() {
-		return selectedGroupId;
+		return this.selectedGroupId;
 	}
 	
 	public void setUserID(int id) {
-		userId = id;
+		this.userId = id;
 		initFieldContents();
 	}
 	
 	public int getUserId() {
-		return userId;
+		return this.userId;
 	}
 	
 	public void setUserIDAndGroupID(int userID, int groupID) {
-		userId = userID;
-		selectedGroupId = groupID;
+		this.userId = userID;
+		this.selectedGroupId = groupID;
 		initFieldContents();
 	}
 
@@ -138,12 +138,14 @@ public abstract class UserTab extends Table implements Collectable {
 	// by this bean
 	protected User getUser() {
 		try {
-			if (getUserId() < 1)
+			if (getUserId() < 1) {
 				return null;
-			else
+			}
+			else {
 				return this.getUserBusiness(
 					this.getIWApplicationContext()).getUser(
 					getUserId());
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -152,12 +154,14 @@ public abstract class UserTab extends Table implements Collectable {
 	
 	protected Group getGroup() {
 		try {
-			if (getGroupID() < 1)
+			if (getGroupID() < 1) {
 				return null;
-			else
+			}
+			else {
 				return this.getGroupBusiness(
 					this.getIWApplicationContext()).getGroupByGroupID(
 					getGroupID());
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (FinderException e) {
@@ -167,28 +171,28 @@ public abstract class UserTab extends Table implements Collectable {
 	}
 	
 	public void addErrorMessage(String message) {
-		errorStrings.add(message);
+		this.errorStrings.add(message);
 	}
 	
 	public String[] clearErrorMessages() {
-		String[] st = new String[errorStrings.size()];
-		Iterator iter = errorStrings.iterator();
+		String[] st = new String[this.errorStrings.size()];
+		Iterator iter = this.errorStrings.iterator();
 		int index = 0;
 		while (iter.hasNext()) {
 			st[index++] = (String) iter.next();
 		}
-		errorStrings.clear();
+		this.errorStrings.clear();
 		return st;
 	}
 	
 	public boolean someErrors() {
-		return (0 < errorStrings.size());
+		return (0 < this.errorStrings.size());
 	}
 	
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
-		if (business == null) {
+		if (this.business == null) {
 			try {
-				business =
+				this.business =
 					(
 						UserBusiness) com
 							.idega
@@ -201,13 +205,13 @@ public abstract class UserTab extends Table implements Collectable {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return business;
+		return this.business;
 	}
 	
 	public GroupBusiness getGroupBusiness(IWApplicationContext iwc) {
-		if (groupBusiness == null) {
+		if (this.groupBusiness == null) {
 			try {
-				groupBusiness =
+				this.groupBusiness =
 					(
 						GroupBusiness) com
 							.idega
@@ -220,6 +224,6 @@ public abstract class UserTab extends Table implements Collectable {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return groupBusiness;
+		return this.groupBusiness;
 	}
 } // Class GeneralUserInfoTab

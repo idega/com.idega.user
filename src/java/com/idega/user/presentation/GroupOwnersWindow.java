@@ -77,8 +77,8 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 	public GroupOwnersWindow() {
 		super();
 
-		setWidth(width);
-		setHeight(height);
+		setWidth(this.width);
+		setHeight(this.height);
 		setScrollbar(true);
 		setResizable(true);
 
@@ -112,14 +112,14 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 	}
 
 	public void main(IWContext iwc) throws Exception {
-		iwrb = this.getResourceBundle(iwc);
-		addTitle(iwrb.getLocalizedString("gpow.group_owners_window", "Group Owners Window"), TITLE_STYLECLASS);
+		this.iwrb = this.getResourceBundle(iwc);
+		addTitle(this.iwrb.getLocalizedString("gpow.group_owners_window", "Group Owners Window"), TITLE_STYLECLASS);
 
 
 
 		parseAction(iwc);
 
-		if (saveChanges) {
+		if (this.saveChanges) {
 
 			AccessController access = iwc.getAccessController();
 
@@ -134,7 +134,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 						Iterator ownersToDeleteIter = deleteOwnersIds.iterator();
 						while (ownersToDeleteIter.hasNext()) {
 							Integer userGroupId = (Integer) ownersToDeleteIter.next();
-							access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, userGroupId.toString(), selectedGroupId, permissionTypeOwner, Boolean.FALSE);
+							access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, userGroupId.toString(), this.selectedGroupId, this.permissionTypeOwner, Boolean.FALSE);
 						}
 					}
 				}
@@ -154,7 +154,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 							//add
 							if (deleteOwnersIds.contains(userGroupId)) {
 								//delete recursively
-								Group parent = selectedGroup;
+								Group parent = this.selectedGroup;
 								Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(parent);
 								if (children != null && !children.isEmpty()) {
 									Iterator childIter = children.iterator();
@@ -162,14 +162,14 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 										Group childGroup = (Group) childIter.next();
 										//only if current user owns the group
 										if (iwc.isSuperAdmin() || access.isOwner(childGroup, iwc)) {
-											access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, userGroupId.toString(), childGroup.getPrimaryKey().toString(), permissionTypeOwner, Boolean.FALSE);
+											access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, userGroupId.toString(), childGroup.getPrimaryKey().toString(), this.permissionTypeOwner, Boolean.FALSE);
 										}
 									}
 								}
 							}
 							else {
 								//add owner recursively
-								Group parent = selectedGroup;
+								Group parent = this.selectedGroup;
 								Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(parent);
 								if (children != null && !children.isEmpty()) {
 									Iterator childIter = children.iterator();
@@ -177,7 +177,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 										Group childGroup = (Group) childIter.next();
 										//only if current user owns the group
 										if (iwc.isSuperAdmin() || access.isOwner(childGroup, iwc)) {
-											access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, userGroupId.toString(), childGroup.getPrimaryKey().toString(), permissionTypeOwner, Boolean.TRUE);
+											access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, userGroupId.toString(), childGroup.getPrimaryKey().toString(), this.permissionTypeOwner, Boolean.TRUE);
 										}
 									}
 								}
@@ -192,7 +192,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 				String chosenUserId = iwc.getParameter(PARAM_USER_CHOOSER_USER_ID);
 
 				if (chosenUserId != null && !chosenUserId.equals("")) {
-					access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, chosenUserId, selectedGroupId, permissionTypeOwner, Boolean.TRUE);
+					access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, chosenUserId, this.selectedGroupId, this.permissionTypeOwner, Boolean.TRUE);
 				}
 
 			}
@@ -204,7 +204,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 
 //get the data
 		Collection activePermission = new Vector();
-		Collection permissions = AccessControl.getAllOwnerGroupPermissionsReverseForGroup(selectedGroup);
+		Collection permissions = AccessControl.getAllOwnerGroupPermissionsReverseForGroup(this.selectedGroup);
 		
 		//we only want active ones
 		Iterator permissionsIter = permissions.iterator();
@@ -219,10 +219,10 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 		
 
 		EntityBrowser browser = EntityBrowser.getInstanceUsingEventSystemAndExternalForm();
-		browser.setEntities("gpow_" + selectedGroupId, activePermission);
+		browser.setEntities("gpow_" + this.selectedGroupId, activePermission);
 		browser.setDefaultNumberOfRows(activePermission.size());
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
-		browser.setWidth(browser.HUNDRED_PERCENT);
+		browser.setWidth(Table.HUNDRED_PERCENT);
 
 		//	fonts
 		Text columnText = new Text();
@@ -234,7 +234,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 		browser.setColorForOddRows(IWColor.getHexColorString(246, 246, 247));
 
 		int column = 1;
-		String nameKey = iwrb.getLocalizedString("gpow.user_name", "User name");
+		String nameKey = this.iwrb.getLocalizedString("gpow.user_name", "User name");
 
 		//	define link converter class
 		EntityToPresentationObjectConverter converterLink = new EntityToPresentationObjectConverter() {
@@ -253,26 +253,26 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 				try {
 					user = getUserBusiness(iwc).getUser(permission.getGroupID());
 
-					if (administrator == null) {
+					if (this.administrator == null) {
 						try {
-							administrator = iwc.getAccessController().getAdministratorUser();
+							this.administrator = iwc.getAccessController().getAdministratorUser();
 						}
 						catch (Exception ex) {
 							System.err.println("[BasicUserOverview] access controller failed " + ex.getMessage());
 							ex.printStackTrace(System.err);
-							administrator = null;
+							this.administrator = null;
 						}
-						loggedInUserIsAdmin = iwc.isSuperAdmin();
+						this.loggedInUserIsAdmin = iwc.isSuperAdmin();
 					}
 					
 					Link aLink = new Link(user.getName());
-					if (!user.getPrimaryKey().equals(administrator.getPrimaryKey())) {
+					if (!user.getPrimaryKey().equals(this.administrator.getPrimaryKey())) {
 						aLink.setWindowToOpen(UserPropertyWindow.class);
 						aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
 					}
-					else if (loggedInUserIsAdmin) {
+					else if (this.loggedInUserIsAdmin) {
 						aLink.setWindowToOpen(AdministratorPropertyWindow.class);
-						aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
+						aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
 					}
 
 					return aLink;
@@ -331,7 +331,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 		//converter ends
 
 		Form form = getGroupPermissionForm(browser);
-		form.add(new HiddenInput(PARAM_SELECTED_GROUP_ID, selectedGroupId));
+		form.add(new HiddenInput(PARAM_SELECTED_GROUP_ID, this.selectedGroupId));
 		form.add(new HiddenInput(PARAM_SAVING, "TRUE"));//cannot use this if we put in a navigator in the entitybrowser, change submit button to same value
 		add(form, iwc);
 
@@ -346,19 +346,19 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 
 		Help help = getHelp(HELP_TEXT_KEY);
 
-		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"));
-		save.setSubmitConfirm(iwrb.getLocalizedString("change.selected.permissions?", "Change selected permissions?"));
+		SubmitButton save = new SubmitButton(this.iwrb.getLocalizedImageButton("save", "Save"));
+		save.setSubmitConfirm(this.iwrb.getLocalizedString("change.selected.permissions?", "Change selected permissions?"));
 
-		CloseButton close = new CloseButton(iwrb.getLocalizedImageButton("close", "Close"));
+		CloseButton close = new CloseButton(this.iwrb.getLocalizedImageButton("close", "Close"));
 
 		Table table = new Table(2, 3);
 		table.setRowHeight(1,"20");
-		table.setStyleClass(mainStyleClass);
+		table.setStyleClass(this.mainStyleClass);
 		table.mergeCells(1, 2, 2, 2);
 
 		table.add(
 			new Text(
-				iwrb.getLocalizedString("groupownerswindow.setting_permission_for_group", "Setting owners for ") + selectedGroup.getName(),
+				this.iwrb.getLocalizedString("groupownerswindow.setting_permission_for_group", "Setting owners for ") + this.selectedGroup.getName(),
 				true,
 				false,
 				false),
@@ -389,11 +389,11 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 	}
 
 	private void parseAction(IWContext iwc) throws RemoteException {
-		selectedGroupId = iwc.getParameter(GroupOwnersWindow.PARAM_SELECTED_GROUP_ID);
-		saveChanges = iwc.isParameterSet(PARAM_SAVING);
+		this.selectedGroupId = iwc.getParameter(GroupOwnersWindow.PARAM_SELECTED_GROUP_ID);
+		this.saveChanges = iwc.isParameterSet(PARAM_SAVING);
 
 		try {
-			selectedGroup = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(selectedGroupId));
+			this.selectedGroup = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(this.selectedGroupId));
 		}
 		catch (NumberFormatException e) {
 			e.printStackTrace();
@@ -414,10 +414,10 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 	}
 
 	public GroupBusiness getGroupBusiness(IWContext iwc) {
-		if (groupBiz == null) {
+		if (this.groupBiz == null) {
 
 			try {
-				groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				this.groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
@@ -425,7 +425,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 
 		}
 
-		return groupBiz;
+		return this.groupBiz;
 	}
 
 	/**
@@ -436,15 +436,15 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 	}
 
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
-		if (userBiz == null) {
+		if (this.userBiz == null) {
 			try {
-				userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				this.userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return userBiz;
+		return this.userBiz;
 	}
 
 }

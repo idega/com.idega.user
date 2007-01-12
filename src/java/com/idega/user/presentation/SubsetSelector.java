@@ -12,7 +12,7 @@ import com.idega.presentation.text.Link;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -33,26 +33,26 @@ public class SubsetSelector extends PresentationObjectContainer implements IWBro
 
     public SubsetSelector(int subsetSize, int size, int maxShowedPartitions)
     {
-		_maxShowedPartitions = maxShowedPartitions;
-		_size = size;
-		_maxPartitions= size/subsetSize + ((size%subsetSize > 0)?1:0);
-		_subsetSize = subsetSize;
+		this._maxShowedPartitions = maxShowedPartitions;
+		this._size = size;
+		this._maxPartitions= size/subsetSize + ((size%subsetSize > 0)?1:0);
+		this._subsetSize = subsetSize;
     }
 
 	public void setFirstSubset(int index){
-	    _firstPartition = index;
+	    this._firstPartition = index;
 	}
 
 	public void setSelectedSubset(int index){
-	    _selectedSubset = index;
+	    this._selectedSubset = index;
 	}
 
 	public void setControlEventModel(IWPresentationEvent model){
-	    _contolEvent = model;
+	    this._contolEvent = model;
 	}
 
 	public void setControlTarget(String controlTarget){
-	    _controlTarget = controlTarget;
+	    this._controlTarget = controlTarget;
 	}
 
 
@@ -63,10 +63,10 @@ public class SubsetSelector extends PresentationObjectContainer implements IWBro
                 partitionSelection.setBackgroundColor(new IWColor(230,230,230).getHexColorString());
 
 
-		if (_size > _subsetSize){
-			for( int i = _firstPartition; ((i < _maxPartitions)&&((i-_firstPartition) < _maxShowedPartitions)); i++)
+		if (this._size > this._subsetSize){
+			for( int i = this._firstPartition; ((i < this._maxPartitions)&&((i-this._firstPartition) < this._maxShowedPartitions)); i++)
 			{
-				if(_firstPartition == i && _firstPartition != 0)
+				if(this._firstPartition == i && this._firstPartition != 0)
 				{
 					Link begin = new Link();
 
@@ -74,23 +74,23 @@ public class SubsetSelector extends PresentationObjectContainer implements IWBro
 					PartitionSelectEvent event = new PartitionSelectEvent();
 					//event.setSource(this.getLocation());
           event.setSource(this);
-					int newFirstPartition = Math.max(0,_firstPartition-_maxShowedPartitions);
+					int newFirstPartition = Math.max(0,this._firstPartition-this._maxShowedPartitions);
 					event.setFirstPartitionIndex(newFirstPartition);
-					event.setPartitionSize(_subsetSize);
-					int newSelectedPartition = newFirstPartition+_maxShowedPartitions-1;
+					event.setPartitionSize(this._subsetSize);
+					int newSelectedPartition = newFirstPartition+this._maxShowedPartitions-1;
 					event.setSelectedPartition(newSelectedPartition);
 					begin.addEventModel(event);
-					if (_controlTarget != null)
+					if (this._controlTarget != null)
 					{
-						begin.setTarget(_controlTarget);
+						begin.setTarget(this._controlTarget);
 					}
-					if (_contolEvent != null)
+					if (this._contolEvent != null)
 					{
-						begin.addEventModel(_contolEvent);
+						begin.addEventModel(this._contolEvent);
 					}
 
 
-					begin.addEventModel(_contolEvent);
+					begin.addEventModel(this._contolEvent);
 
 					partitionSelection.add(begin);
 
@@ -98,50 +98,50 @@ public class SubsetSelector extends PresentationObjectContainer implements IWBro
 				}
 
 				Link l = new Link();
-				if(i != _firstPartition){
+				if(i != this._firstPartition){
 					partitionSelection.add(spacer);
 				}
-				l.setText(((i*_subsetSize)+1)+"-"+(((i+1)*_subsetSize)));
+				l.setText(((i*this._subsetSize)+1)+"-"+(((i+1)*this._subsetSize)));
 				PartitionSelectEvent event = new PartitionSelectEvent();
 				event.setSource(this.getLocation());
-				event.setPartitionSize(_subsetSize);
-				event.setFirstPartitionIndex(_firstPartition);
+				event.setPartitionSize(this._subsetSize);
+				event.setFirstPartitionIndex(this._firstPartition);
 				event.setSelectedPartition(i);
 				l.addEventModel(event);
-				if (_controlTarget != null)
+				if (this._controlTarget != null)
 				{
-					l.setTarget(_controlTarget);
+					l.setTarget(this._controlTarget);
 				}
-				if (_contolEvent != null)
+				if (this._contolEvent != null)
 				{
-					l.addEventModel(_contolEvent);
+					l.addEventModel(this._contolEvent);
 				}
-				if(i == _selectedSubset)
+				if(i == this._selectedSubset)
 				{
 					l.setBold();
 				}
 				partitionSelection.add(l);
 
 
-				if(((i == _maxPartitions-1)||((i-_firstPartition) == _maxShowedPartitions-1)) && _maxPartitions > (i+1))
+				if(((i == this._maxPartitions-1)||((i-this._firstPartition) == this._maxShowedPartitions-1)) && this._maxPartitions > (i+1))
 				{
 					partitionSelection.add(spacer);
 					Link end = new Link();
 					end.setText(">");
 					PartitionSelectEvent event2 = new PartitionSelectEvent();
 					event2.setSource(this.getLocation());
-					int newFirstPartition = Math.min(_maxPartitions-_maxShowedPartitions,_firstPartition+_maxShowedPartitions);
+					int newFirstPartition = Math.min(this._maxPartitions-this._maxShowedPartitions,this._firstPartition+this._maxShowedPartitions);
 					event2.setFirstPartitionIndex(newFirstPartition);
-					event2.setPartitionSize(_subsetSize);
+					event2.setPartitionSize(this._subsetSize);
 					event2.setSelectedPartition(newFirstPartition);
 					end.addEventModel(event2);
-					if (_controlTarget != null)
+					if (this._controlTarget != null)
 					{
-						end.setTarget(_controlTarget);
+						end.setTarget(this._controlTarget);
 					}
-					if (_contolEvent != null)
+					if (this._contolEvent != null)
 					{
-						end.addEventModel(_contolEvent);
+						end.addEventModel(this._contolEvent);
 					}
 					partitionSelection.add(end);
 				}

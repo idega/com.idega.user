@@ -2,6 +2,7 @@ package com.idega.user.presentation;
 
 import com.idega.user.data.*;
 import java.util.*;
+import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import java.rmi.RemoteException;
 import com.idega.business.IBOLookup;
@@ -23,7 +24,7 @@ import com.idega.presentation.ui.Window;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -41,19 +42,19 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
   }
 
   public void setControlEventModel(IWPresentationEvent model){
-    _contolEvent = model;
+    this._contolEvent = model;
 //    _contolEvent = (IWPresentationEvent)model.clone();
 //    _contolEvent.setSource(this.getLocation());
   }
 
 
   public void setControlTarget(String controlTarget){
-    _controlTarget = controlTarget;
+    this._controlTarget = controlTarget;
   }
 
   public Table getGroups(IWContext iwc) throws Exception{
     String[] types = new String[1];
-    types[0] = ((UserGroupRepresentative)com.idega.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    types[0] = ((UserGroupRepresentative)GenericEntity.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
 //        types[0] = ((GroupBusiness)IBOLookup.getServiceInstance(iwc,GroupBusiness.class)).getGroupType(User.class);
     GroupHome home = (GroupHome)IDOLookup.getHome(Group.class);
     Collection groups = home.findAllGroups(types,false);
@@ -112,14 +113,14 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
   public void main(IWContext iwc) throws Exception {
     this.empty();
     this.add(this.getGroups(iwc));
-    if(_controlTarget != null ){
+    if(this._controlTarget != null ){
       Link link = new Link("rugl");
       //link.setURL("/",true,true);
-      if(_contolEvent != null){
-        link.addEventModel(_contolEvent);
+      if(this._contolEvent != null){
+        link.addEventModel(this._contolEvent);
       }
-      link.addParameter("rugl",counter++);
-      link.setTarget(_controlTarget);
+      link.addParameter("rugl",this.counter++);
+      link.setTarget(this._controlTarget);
       this.add(link);
 
 //      this.addBreak();
@@ -140,16 +141,16 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
 
 
   public IWPresentationState getPresentationState(IWUserContext iwuc){
-    if(_presentationState == null){
+    if(this._presentationState == null){
       try {
         IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-        _presentationState = (BasicUserOverviewPS)stateMachine.getStateFor(getCompoundId(),this.getPresentationStateClass());
+        this._presentationState = (BasicUserOverviewPS)stateMachine.getStateFor(getCompoundId(),this.getPresentationStateClass());
       }
       catch (RemoteException re) {
         throw new RuntimeException(re.getMessage());
       }
     }
-    return _presentationState;
+    return this._presentationState;
   }
 
   public Class getPresentationStateClass(){
@@ -176,11 +177,11 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
       super.setScrollbar(false);
       super.setAllMargins(0);
 
-      question = Text.getBreak();
-      myForm = new Form();
-      parameters = new Vector();
-      confirm = new SubmitButton(ConfirmWindowBGO.PARAMETER_CONFIRM,"   Yes   ");
-      close = new CloseButton("   No    ");
+      this.question = Text.getBreak();
+      this.myForm = new Form();
+      this.parameters = new Vector();
+      this.confirm = new SubmitButton(ConfirmWindowBGO.PARAMETER_CONFIRM,"   Yes   ");
+      this.close = new CloseButton("   No    ");
       // close.setOnFocus();
       initialze();
 
@@ -188,39 +189,39 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
 
 
     public void lineUpElements(){
-      myTable = new Table(2,2);
-      myTable.setWidth("100%");
-      myTable.setHeight("100%");
-      myTable.setCellpadding(5);
-      myTable.setCellspacing(5);
+      this.myTable = new Table(2,2);
+      this.myTable.setWidth("100%");
+      this.myTable.setHeight("100%");
+      this.myTable.setCellpadding(5);
+      this.myTable.setCellspacing(5);
       //myTable.setBorder(1);
 
 
-      myTable.mergeCells(1,1,2,1);
+      this.myTable.mergeCells(1,1,2,1);
 
-      myTable.add(question,1,1);
+      this.myTable.add(this.question,1,1);
 
-      myTable.add(confirm,1,2);
+      this.myTable.add(this.confirm,1,2);
 
-      myTable.add(close,2,2);
+      this.myTable.add(this.close,2,2);
 
-      myTable.setAlignment(1,1,"center");
+      this.myTable.setAlignment(1,1,"center");
 //      myTable.setAlignment(2,1,"center");
-      myTable.setAlignment(1,2,"right");
-      myTable.setAlignment(2,2,"left");
+      this.myTable.setAlignment(1,2,"right");
+      this.myTable.setAlignment(2,2,"left");
 
-      myTable.setVerticalAlignment(1,1,"middle");
-      myTable.setVerticalAlignment(1,2,"middle");
-      myTable.setVerticalAlignment(2,2,"middle");
+      this.myTable.setVerticalAlignment(1,1,"middle");
+      this.myTable.setVerticalAlignment(1,2,"middle");
+      this.myTable.setVerticalAlignment(2,2,"middle");
 
-      myTable.setHeight(2,"30%");
+      this.myTable.setHeight(2,"30%");
 
-      myForm.add(myTable);
+      this.myForm.add(this.myTable);
 
     }
 
     public void setQuestion(Text Question){
-      question = Question;
+      this.question = Question;
     }
 
 
@@ -232,7 +233,7 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
 
 
     public void maintainParameter(String parameter){
-      parameters.add(parameter);
+      this.parameters.add(parameter);
     }
 
     /*abstract*/
@@ -246,10 +247,10 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
 
 
     public void _main(IWContext iwc) throws Exception {
-      Iterator iter = parameters.iterator();
+      Iterator iter = this.parameters.iterator();
       while (iter.hasNext()) {
         String item = (String)iter.next();
-        myForm.maintainParameter(item);
+        this.myForm.maintainParameter(item);
       }
 
       String confirmThis = iwc.getParameter(ConfirmWindowBGO.PARAMETER_CONFIRM);
@@ -260,10 +261,10 @@ public class BasicGroupOverview extends Page implements IWBrowserView, Statefull
         this.close();
       } else{
         this.empty();
-        if(myTable == null){
+        if(this.myTable == null){
           lineUpElements();
         }
-        this.add(myForm);
+        this.add(this.myForm);
       }
       super._main(iwc);
     }

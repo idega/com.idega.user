@@ -90,35 +90,35 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
 	public UserApplicationControlArea() {
 		this.setAllMargins(0);
-		_stateHandler = new StatefullPresentationImplHandler();
-		_stateHandler.setPresentationStateClass(UserApplicationControlAreaPS.class);
+		this._stateHandler = new StatefullPresentationImplHandler();
+		this._stateHandler.setPresentationStateClass(UserApplicationControlAreaPS.class);
 	}
 
 	public void setControlEventModel(IWPresentationEvent model) {
 		//    System.out.print("UserApplicationControlArea:
 		// setControlEventModel(IWPresentationEvent model)");
-		_contolEvent = model;
+		this._contolEvent = model;
 
-		groupTree.setControlEventModel(model);
+		this.groupTree.setControlEventModel(model);
 	}
 
 	public void setControlTarget(String controlTarget) {
 		//    System.out.print("UserApplicationControlArea: setControlTarget(String
 		// controlTarget)");
-		_controlTarget = controlTarget;
-		groupTree.setControlTarget(controlTarget);
+		this._controlTarget = controlTarget;
+		this.groupTree.setControlTarget(controlTarget);
 	}
 
 	public Class getPresentationStateClass() {
-		return _stateHandler.getPresentationStateClass();
+		return this._stateHandler.getPresentationStateClass();
 	}
 
 	public IWPresentationState getPresentationState(IWUserContext iwuc) {
-		return _stateHandler.getPresentationState(this, iwuc);
+		return this._stateHandler.getPresentationState(this, iwuc);
 	}
 
 	public StatefullPresentationImplHandler getStateHandler() {
-		return _stateHandler;
+		return this._stateHandler;
 	}
 
 	public String getBundleIdentifier() {
@@ -127,13 +127,13 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
 	public void initializeInMain(IWContext iwc) {
 
-		iwb = getBundle(iwc);
-		iwrb = getResourceBundle(iwc);
+		this.iwb = getBundle(iwc);
+		this.iwrb = getResourceBundle(iwc);
 
 		IWLocation location = (IWLocation) this.getLocation().clone();
 		location.setSubID(1);
-		groupTree.setLocation(location, iwc);
-		groupTree.setArtificialCompoundId(getCompoundId(), iwc);
+		this.groupTree.setLocation(location, iwc);
+		this.groupTree.setArtificialCompoundId(getCompoundId(), iwc);
 
 		//    IWPresentationState gtState = groupTree.getPresentationState(iwc);
 		//    if(gtState instanceof IWActionListener){
@@ -166,7 +166,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		//    EventListenerList list = this.getEventListenerList(iwc);
 		//this.setIWUserContext(iwc);
 
-		IWPresentationState gtState = groupTree.getPresentationState(iwc);
+		IWPresentationState gtState = this.groupTree.getPresentationState(iwc);
 		if (gtState instanceof IWActionListener) {
 			((UserApplicationControlAreaPS) this.getPresentationState(iwc)).addIWActionListener((IWActionListener) gtState);
 		}
@@ -192,19 +192,19 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		ICDomain domain = state.getSelectedDomain();
 		if (group != null) {
 			int groupId = ((Integer) group.getPrimaryKey()).intValue();
-			groupTree.setSelectedGroupId(groupId);
+			this.groupTree.setSelectedGroupId(groupId);
 		}
 		// use else if because both variables could be not null but only one
 		// should be selected within the tree
 		else if (domain != null) {
 			int domainId = ((Integer) domain.getPrimaryKey()).intValue();
-			groupTree.setSelectedGroupId(domainId);
+			this.groupTree.setSelectedGroupId(domainId);
 		}
-		groupTree.setToShowSuperRootNode(true);
-		groupTree.setDefaultOpenLevel(1);
-		groupTree.setSuperRootNodeName(iwrb.getLocalizedString("tree.super.node.name", "My groups"));
-		Image icon = iwb.getImage("super_root_icon.gif");
-		groupTree.setSuperRootNodeIcon(icon);
+		this.groupTree.setToShowSuperRootNode(true);
+		this.groupTree.setDefaultOpenLevel(1);
+		this.groupTree.setSuperRootNodeName(this.iwrb.getLocalizedString("tree.super.node.name", "My groups"));
+		Image icon = this.iwb.getImage("super_root_icon.gif");
+		this.groupTree.setSuperRootNodeIcon(icon);
 		Collection topGroupNodes = null;
 		try {
 			topGroupNodes = getUserBusiness(iwc).getStoredTopGroupNodes(iwc.getCurrentUser());
@@ -213,9 +213,9 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 			e.printStackTrace();
 		}
 		if(topGroupNodes != null && topGroupNodes.size() > 0) {
-			Image refreshIcon = iwb.getImage("refresh.gif");
+			Image refreshIcon = this.iwb.getImage("refresh.gif");
 			Link refreshLink = new Link(refreshIcon);
-			groupTree.setRefreshLink(refreshLink);
+			this.groupTree.setRefreshLink(refreshLink);
 		}
 		
 		ChangeListener[] chListeners = this.getPresentationState(iwc).getChangeListener();
@@ -260,7 +260,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		
 		Table treeTable = new Table(1, 1);
 		treeTable.setCellpadding(4);
-		treeTable.add(groupTree, 1, 1);
+		treeTable.add(this.groupTree, 1, 1);
 		treeTable.setWidth(Table.HUNDRED_PERCENT);
 		treeTable.setHeight(Table.HUNDRED_PERCENT);
 		treeTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
@@ -294,8 +294,9 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		welcomeMessageTable.setAlignment(2, 1, "left");
 		welcomeMessageTable.setVerticalAlignment(1, 1, "middle");
 		welcomeMessageTable.setVerticalAlignment(2, 1, "middle");
-		if (iwc.isLoggedOn())
+		if (iwc.isLoggedOn()) {
 			welcomeMessageTable.add(lockImage, 1, 1);
+		}
 		welcomeMessageTable.add(welcomeMessage, 2, 1);
 		welcomeMessageTable.add(Text.BREAK, 2, 1);
 		welcomeMessageTable.add(date, 2, 1);
@@ -308,7 +309,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
 		IWBundle iwb = getBundle(iwc);
 		Page parentPage = this.getParentPage();
-		String styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
+		String styleSrc = iwb.getVirtualPathWithFileNameString(this.styleScript);
 		parentPage.addStyleSheetURL(styleSrc);
 
 		Table table = new Table(1, 2);
@@ -328,13 +329,13 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
 		if (iwc.isSuperAdmin()) {
 			GroupTreeNode node = new GroupTreeNode(iwc.getDomain(), iwc.getApplicationContext());
-			groupTree.setRootNode(node);
+			this.groupTree.setRootNode(node);
 		}
 		else {
 			UserBusiness biz = getUserBusiness(iwc);
 			Collection groups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
 			Collection groupNodes = convertGroupCollectionToGroupNodeCollection(groups, iwc.getApplicationContext());
-			groupTree.setFirstLevelNodes(groupNodes.iterator());
+			this.groupTree.setFirstLevelNodes(groupNodes.iterator());
 
 		}
 
@@ -361,15 +362,15 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	}
 
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
-		if (userBiz == null) {
+		if (this.userBiz == null) {
 			try {
-				userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				this.userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return userBiz;
+		return this.userBiz;
 	}
 
 	public Collection convertGroupCollectionToGroupNodeCollection(Collection col, IWApplicationContext iwac) {

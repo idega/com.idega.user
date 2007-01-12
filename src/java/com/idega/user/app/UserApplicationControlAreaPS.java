@@ -13,7 +13,7 @@ import com.idega.presentation.event.ResetPresentationEvent;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -29,9 +29,9 @@ public class UserApplicationControlAreaPS extends IWPresentationStateImpl implem
   }
 
   public void addIWActionListener(IWActionListener l){
-    listenerList.add(IWActionListener.class, l);
+    this.listenerList.add(IWActionListener.class, l);
 
-    Object[] list = _listenerList.getListenerList();
+    Object[] list = this._listenerList.getListenerList();
 
     boolean hasBeenAdded = false;
     // Is l on the list?
@@ -42,7 +42,7 @@ public class UserApplicationControlAreaPS extends IWPresentationStateImpl implem
         }
     }
     if(!hasBeenAdded){
-      _listenerList.add(IWActionListener.class,l);
+      this._listenerList.add(IWActionListener.class,l);
     }
   }
 
@@ -62,7 +62,7 @@ public class UserApplicationControlAreaPS extends IWPresentationStateImpl implem
       this.fireStateChanged();
     }
 
-    IWActionListener[] listners =  (IWActionListener[])_listenerList.getListeners(IWActionListener.class);
+    IWActionListener[] listners =  (IWActionListener[])this._listenerList.getListeners(IWActionListener.class);
     for (int i = 0; i < listners.length; i++) {
       listners[i].actionPerformed(e);
     }

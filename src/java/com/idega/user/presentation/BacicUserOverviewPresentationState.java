@@ -10,7 +10,7 @@ import com.idega.idegaweb.IWException;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -19,7 +19,7 @@ public class BacicUserOverviewPresentationState extends IWPresentationStateImpl 
 
   String color1 = "00FF00";
   String color2 = "FF0000";
-  String color = color1;
+  String color = this.color1;
 
   public BacicUserOverviewPresentationState() {
 
@@ -27,18 +27,18 @@ public class BacicUserOverviewPresentationState extends IWPresentationStateImpl 
 
 
   public String getColor(){
-    return color;
+    return this.color;
   }
 
 
 
   public void actionPerformed(IWPresentationEvent e)throws IWException{
-//    System.out.println("!!!!ÍJHHAAAAAAAAA!!!!!!!!!!!!!!");
+//    System.out.println("!!!!ï¿½JHHAAAAAAAAA!!!!!!!!!!!!!!");
 
-    if(color == color1){
-      color = color2;
+    if(this.color == this.color1){
+      this.color = this.color2;
     } else {
-      color = color1;
+      this.color = this.color1;
     }
 
 //    Page pg = e.getPage();

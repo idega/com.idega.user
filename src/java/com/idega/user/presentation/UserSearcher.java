@@ -163,37 +163,42 @@ public class UserSearcher extends Block implements IWPageEventListener {
 	}
 
 	private void initStyleNames() {
-		if (textFontStyleName == null)
-			textFontStyleName = getStyleName(STYLENAME_TEXT);
-		if (headerFontStyleName == null)
-			headerFontStyleName = getStyleName(STYLENAME_HEADER);
-		if (buttonStyleName == null)
-			buttonStyleName = getStyleName(STYLENAME_BUTTON);
-		if (warningStyleName == null)
-			warningStyleName = getStyleName(STYLENAME_WARNING);
-		if (interfaceStyleName == null)
-			interfaceStyleName = getStyleName(STYLENAME_INTERFACE);
+		if (this.textFontStyleName == null) {
+			this.textFontStyleName = getStyleName(STYLENAME_TEXT);
+		}
+		if (this.headerFontStyleName == null) {
+			this.headerFontStyleName = getStyleName(STYLENAME_HEADER);
+		}
+		if (this.buttonStyleName == null) {
+			this.buttonStyleName = getStyleName(STYLENAME_BUTTON);
+		}
+		if (this.warningStyleName == null) {
+			this.warningStyleName = getStyleName(STYLENAME_WARNING);
+		}
+		if (this.interfaceStyleName == null) {
+			this.interfaceStyleName = getStyleName(STYLENAME_INTERFACE);
+		}
 	}
 	public void main(IWContext iwc) throws Exception {
 		//debugParameters(iwc);
 		initStyleNames();
-		iwb = getBundle(iwc);
-		iwrb = getResourceBundle(iwc);
+		this.iwb = getBundle(iwc);
+		this.iwrb = getResourceBundle(iwc);
 		String message = null;
 		try {
 			process(iwc, false);
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
-			message = iwrb.getLocalizedString("usrch.service_available", "Search service not available");
+			message = this.iwrb.getLocalizedString("usrch.service_available", "Search service not available");
 		}
 		catch (FinderException e) {
 			//e.printStackTrace();
-			message = iwrb.getLocalizedString("usrch.no_user_found", "No user found");
+			message = this.iwrb.getLocalizedString("usrch.no_user_found", "No user found");
 		}
 		Table T = new Table();		
 		T.add(presentateCurrentUserSearch(iwc), 1, 2);
-		if (!skipResultsForOneFound || hasManyUsers) {
+		if (!this.skipResultsForOneFound || this.hasManyUsers) {
 			T.add(presentateFoundUsers(iwc), 1, 3);
 		}
 		if (message != null) {
@@ -201,10 +206,10 @@ public class UserSearcher extends Block implements IWPageEventListener {
 			tMessage.setStyleAttribute("color:red");
 			T.add(tMessage, 1, 1);
 		}
-		if (OwnFormContainer) {
+		if (this.OwnFormContainer) {
 			Form form = new Form();
 			form.setEventListener(getListenerClass());
-			if (showNewUserButton) {
+			if (this.showNewUserButton) {
 				HiddenInput input = new HiddenInput("newStuff", "-1");
 				form.add(input);
 				input.setOnSubmitFunction("newUser", checkEmptyFieldScript());
@@ -227,29 +232,31 @@ public class UserSearcher extends Block implements IWPageEventListener {
 	 * @param iwc
 	 */
 	public void process(IWContext iwc, boolean save) throws FinderException, RemoteException {
-		if (processed)
+		if (this.processed) {
 			return;
-		String searchIdentifier = constrainToUniqueSearch ? uniqueIdentifier : "";
+		}
+		String searchIdentifier = this.constrainToUniqueSearch ? this.uniqueIdentifier : "";
 		
-		if (iwc.isParameterSet(PRM_USER_ID + uniqueIdentifier)) {
-			userID = Integer.valueOf((iwc.getParameter(PRM_USER_ID + uniqueIdentifier)).trim());
+		if (iwc.isParameterSet(PRM_USER_ID + this.uniqueIdentifier)) {
+			this.userID = Integer.valueOf((iwc.getParameter(PRM_USER_ID + this.uniqueIdentifier)).trim());
 		}
 		if (iwc.isParameterSet(SEARCH_COMMITTED + searchIdentifier)) {
 			processSearch(iwc);
 		}
 		if(iwc.isParameterSet(NEW_USER) && save) {
-			String first = iwc.getParameter(SEARCH_FIRST_NAME + uniqueIdentifier);
-			String middle = iwc.getParameter(SEARCH_MIDDLE_NAME + uniqueIdentifier);
-			String last = iwc.getParameter(SEARCH_LAST_NAME + uniqueIdentifier);
-			String pid = iwc.getParameter(SEARCH_PERSONAL_ID + uniqueIdentifier);
+			String first = iwc.getParameter(SEARCH_FIRST_NAME + this.uniqueIdentifier);
+			String middle = iwc.getParameter(SEARCH_MIDDLE_NAME + this.uniqueIdentifier);
+			String last = iwc.getParameter(SEARCH_LAST_NAME + this.uniqueIdentifier);
+			String pid = iwc.getParameter(SEARCH_PERSONAL_ID + this.uniqueIdentifier);
 			try {
 				User user = getUserBusiness(iwc).getUser(pid);
-				userID = (Integer) user.getPrimaryKey();
+				this.userID = (Integer) user.getPrimaryKey();
 			}
 			catch(FinderException fe) {
 					try {
-						if(first != null && last != null && pid != null && first.length() > 0 && last.length() > 0 && pid.length() > 0)
-							userID = processSave(iwc, first, middle, last, pid);//calles the extended method
+						if(first != null && last != null && pid != null && first.length() > 0 && last.length() > 0 && pid.length() > 0) {
+							this.userID = processSave(iwc, first, middle, last, pid);//calles the extended method
+						}
 					}
 					catch (CreateException ce) {
 						add(ce.getMessage());
@@ -259,19 +266,19 @@ public class UserSearcher extends Block implements IWPageEventListener {
 			}
 			
 		}
-		if (userID != null && userID.intValue()>0) {
+		if (this.userID != null && this.userID.intValue()>0) {
 			try {
 				UserHome home = (UserHome) IDOLookup.getHome(User.class);
-				user = home.findByPrimaryKey(userID);
+				this.user = home.findByPrimaryKey(this.userID);
 				
-				getUserSession(iwc).setUser(user);
+				getUserSession(iwc).setUser(this.user);
 			}
 			catch (IDOLookupException e) {
 				throw new FinderException(e.getMessage());
 			}
 		}
 		digMonitors(iwc);
-		processed = true;
+		this.processed = true;
 	}
 	//added by ac
 	protected UserBusiness getUserBusiness(IWApplicationContext iwac) {
@@ -297,29 +304,29 @@ public class UserSearcher extends Block implements IWPageEventListener {
 	
 	private void digMonitors(IWContext iwc){
 		
-		if(monitoredSearchIdentifiers!=null && !monitoredSearchIdentifiers.isEmpty()){
-			monitorMap = new Hashtable();
-			for (Iterator iter = monitoredSearchIdentifiers.iterator(); iter.hasNext();) {
+		if(this.monitoredSearchIdentifiers!=null && !this.monitoredSearchIdentifiers.isEmpty()){
+			this.monitorMap = new Hashtable();
+			for (Iterator iter = this.monitoredSearchIdentifiers.iterator(); iter.hasNext();) {
 				String identifier = (String) iter.next();
 				boolean addSearchPrm = false;
 				if(iwc.isParameterSet(SEARCH_FIRST_NAME+identifier)){
-					monitorMap.put(SEARCH_FIRST_NAME+identifier,iwc.getParameter(SEARCH_FIRST_NAME+identifier));
+					this.monitorMap.put(SEARCH_FIRST_NAME+identifier,iwc.getParameter(SEARCH_FIRST_NAME+identifier));
 					addSearchPrm = true;
 				}
 				if(iwc.isParameterSet(SEARCH_MIDDLE_NAME+identifier)){
-					monitorMap.put(SEARCH_MIDDLE_NAME+identifier,iwc.getParameter(SEARCH_MIDDLE_NAME+identifier));
+					this.monitorMap.put(SEARCH_MIDDLE_NAME+identifier,iwc.getParameter(SEARCH_MIDDLE_NAME+identifier));
 					addSearchPrm = true;
 				}
 				if(iwc.isParameterSet(SEARCH_LAST_NAME+identifier)){
-					monitorMap.put(SEARCH_LAST_NAME+identifier,iwc.getParameter(SEARCH_LAST_NAME+identifier));
+					this.monitorMap.put(SEARCH_LAST_NAME+identifier,iwc.getParameter(SEARCH_LAST_NAME+identifier));
 					addSearchPrm = true;
 				}
 				if(iwc.isParameterSet(SEARCH_PERSONAL_ID+identifier)){
-					monitorMap.put(SEARCH_PERSONAL_ID+identifier,iwc.getParameter(SEARCH_PERSONAL_ID+identifier));
+					this.monitorMap.put(SEARCH_PERSONAL_ID+identifier,iwc.getParameter(SEARCH_PERSONAL_ID+identifier));
 					addSearchPrm = true;
 				}
 				if(addSearchPrm){
-					monitorMap.put(SEARCH_COMMITTED + (constrainToUniqueSearch ? identifier : ""),"true");	
+					this.monitorMap.put(SEARCH_COMMITTED + (this.constrainToUniqueSearch ? identifier : ""),"true");	
 				
 				}
 				
@@ -334,18 +341,21 @@ public class UserSearcher extends Block implements IWPageEventListener {
 	
 	private void processSearch(IWContext iwc) throws IDOLookupException, FinderException, RemoteException {
 		UserHome home = (UserHome) IDOLookup.getHome(User.class);
-		String first = iwc.getParameter(SEARCH_FIRST_NAME + uniqueIdentifier);
-		String middle = iwc.getParameter(SEARCH_MIDDLE_NAME + uniqueIdentifier);
-		String last = iwc.getParameter(SEARCH_LAST_NAME + uniqueIdentifier);
-		String pid = iwc.getParameter(SEARCH_PERSONAL_ID + uniqueIdentifier);
+		String first = iwc.getParameter(SEARCH_FIRST_NAME + this.uniqueIdentifier);
+		String middle = iwc.getParameter(SEARCH_MIDDLE_NAME + this.uniqueIdentifier);
+		String last = iwc.getParameter(SEARCH_LAST_NAME + this.uniqueIdentifier);
+		String pid = iwc.getParameter(SEARCH_PERSONAL_ID + this.uniqueIdentifier);
 		
-		if (firstLetterCaseInsensitive) {
-			if (first != null)
+		if (this.firstLetterCaseInsensitive) {
+			if (first != null) {
 				first = TextSoap.capitalize(first);
-			if (middle != null)
+			}
+			if (middle != null) {
 				middle = TextSoap.capitalize(middle);
-			if (last != null)
+			}
+			if (last != null) {
 				last = TextSoap.capitalize(last);
+			}
 		}
 		// dont allow empty search
 		if ((pid != null && pid.length() > 0)
@@ -353,15 +363,15 @@ public class UserSearcher extends Block implements IWPageEventListener {
 			|| (middle != null && middle.length() > 0)
 			|| (last != null && last.length() > 0)){
 			// forgiving search criteria
-			if(useFlexiblePersonalID){
+			if(this.useFlexiblePersonalID){
 				StringBuffer sb = new StringBuffer();
 				for (int i=0; i<pid.length(); i++) {
 					char ch = pid.charAt(i);
 					if (Character.isDigit(ch)){
 						sb.append(ch);
 					}
-					else if(legalNonDigitPIDLetters!=null){
-						if(legalNonDigitPIDLetters.indexOf(ch)>=0){
+					else if(this.legalNonDigitPIDLetters!=null){
+						if(this.legalNonDigitPIDLetters.indexOf(ch)>=0){
 							// non digit letters turned to uppercase
 							sb.append(Character.toUpperCase(ch));
 						}
@@ -370,19 +380,19 @@ public class UserSearcher extends Block implements IWPageEventListener {
 				//sb.insert(0,"%");
 				pid = sb.toString();
 			}
-			usersFound =home.findUsersByConditions(first, middle, last, pid, null, null, -1, -1, -1, -1, null, null, true, false);
+			this.usersFound =home.findUsersByConditions(first, middle, last, pid, null, null, -1, -1, -1, -1, null, null, true, false);
 		}
 		else{
-			user = null;
+			this.user = null;
 		}
 		//System.out.println("users found " + usersFound.size());
-		if (user == null && usersFound != null) {
+		if (this.user == null && this.usersFound != null) {
 			// if some users found
-			if (!usersFound.isEmpty()) {
-				hasManyUsers = usersFound.size() > 1;
-				if (!hasManyUsers) {
-					user = (User) usersFound.iterator().next();
-					getUserSession(iwc).setUser(user);
+			if (!this.usersFound.isEmpty()) {
+				this.hasManyUsers = this.usersFound.size() > 1;
+				if (!this.hasManyUsers) {
+					this.user = (User) this.usersFound.iterator().next();
+					getUserSession(iwc).setUser(this.user);
 				}
 			}
 			// if no user found
@@ -401,126 +411,137 @@ public class UserSearcher extends Block implements IWPageEventListener {
 		int col = 1;
 		Vector clearFields = new Vector();
 				
-		if (showPersonalIDInSearch) {
-			Text tPersonalID = new Text(iwrb.getLocalizedString(SEARCH_PERSONAL_ID, "Personal ID"));
-			tPersonalID.setStyleClass(headerFontStyleName);
-			tPersonalID.setStyleAttribute(headerFontStyle);			
+		if (this.showPersonalIDInSearch) {
+			Text tPersonalID = new Text(this.iwrb.getLocalizedString(SEARCH_PERSONAL_ID, "Personal ID"));
+			tPersonalID.setStyleClass(this.headerFontStyleName);
+			tPersonalID.setStyleAttribute(this.headerFontStyle);			
 			searchTable.add(tPersonalID, col, row);
-			TextInput input = new TextInput(SEARCH_PERSONAL_ID + uniqueIdentifier);
-			input.setStyleClass(interfaceStyleName);
-			input.setLength(personalIDLength);
-			if (user != null && user.getPersonalID() != null) {
-				input.setContent(user.getPersonalID());
+			TextInput input = new TextInput(SEARCH_PERSONAL_ID + this.uniqueIdentifier);
+			input.setStyleClass(this.interfaceStyleName);
+			input.setLength(this.personalIDLength);
+			if (this.user != null && this.user.getPersonalID() != null) {
+				input.setContent(this.user.getPersonalID());
 			}
-			if (stacked)
+			if (this.stacked) {
 				searchTable.add(input, col++, row + 1);
-			else
+			}
+			else {
 				searchTable.add(input, ++col, row);
+			}
 			clearFields.add(SEARCH_PERSONAL_ID);
 		}
-		if (showLastNameInSearch) {
-			Text tLastName = new Text(iwrb.getLocalizedString(SEARCH_LAST_NAME, "Last name"));
-			tLastName.setStyleClass(headerFontStyleName);
-			tLastName.setStyleAttribute(headerFontStyle);			
+		if (this.showLastNameInSearch) {
+			Text tLastName = new Text(this.iwrb.getLocalizedString(SEARCH_LAST_NAME, "Last name"));
+			tLastName.setStyleClass(this.headerFontStyleName);
+			tLastName.setStyleAttribute(this.headerFontStyle);			
 			searchTable.add(tLastName, col, row);
-			TextInput input = new TextInput(SEARCH_LAST_NAME + uniqueIdentifier);
-			input.setStyleClass(interfaceStyleName);
-			input.setLength(lastNameLength);
-			if (user != null && user.getLastName() != null) {
-				input.setContent(user.getLastName());
+			TextInput input = new TextInput(SEARCH_LAST_NAME + this.uniqueIdentifier);
+			input.setStyleClass(this.interfaceStyleName);
+			input.setLength(this.lastNameLength);
+			if (this.user != null && this.user.getLastName() != null) {
+				input.setContent(this.user.getLastName());
 			}
-			if (stacked)
+			if (this.stacked) {
 				searchTable.add(input, col++, row + 1);
-			else
+			}
+			else {
 				searchTable.add(input, ++col, row);
+			}
 			clearFields.add(SEARCH_LAST_NAME);
 		}
-		if (showMiddleNameInSearch) {
-			Text tMiddleName = new Text(iwrb.getLocalizedString(SEARCH_MIDDLE_NAME, "Middle name"));
-			tMiddleName.setStyleClass(headerFontStyleName);
-			tMiddleName.setStyleAttribute(headerFontStyle);
+		if (this.showMiddleNameInSearch) {
+			Text tMiddleName = new Text(this.iwrb.getLocalizedString(SEARCH_MIDDLE_NAME, "Middle name"));
+			tMiddleName.setStyleClass(this.headerFontStyleName);
+			tMiddleName.setStyleAttribute(this.headerFontStyle);
 			
 			searchTable.add(tMiddleName, col, row);
-			TextInput input = new TextInput(SEARCH_MIDDLE_NAME + uniqueIdentifier);
-			input.setStyleClass(interfaceStyleName);
-			input.setLength(middleNameLength);
-			if (user != null && user.getMiddleName() != null) {
-				input.setContent(user.getMiddleName());
+			TextInput input = new TextInput(SEARCH_MIDDLE_NAME + this.uniqueIdentifier);
+			input.setStyleClass(this.interfaceStyleName);
+			input.setLength(this.middleNameLength);
+			if (this.user != null && this.user.getMiddleName() != null) {
+				input.setContent(this.user.getMiddleName());
 			}
-			if (stacked)
+			if (this.stacked) {
 				searchTable.add(input, col++, row + 1);
-			else
+			}
+			else {
 				searchTable.add(input, ++col, row);
+			}
 			clearFields.add(SEARCH_MIDDLE_NAME);
 		}
-		if (showFirstNameInSearch) {
-			Text tFirstName = new Text(iwrb.getLocalizedString(SEARCH_FIRST_NAME, "First name"));
-			tFirstName.setStyleClass(headerFontStyleName);
-			tFirstName.setStyleAttribute(headerFontStyle);
+		if (this.showFirstNameInSearch) {
+			Text tFirstName = new Text(this.iwrb.getLocalizedString(SEARCH_FIRST_NAME, "First name"));
+			tFirstName.setStyleClass(this.headerFontStyleName);
+			tFirstName.setStyleAttribute(this.headerFontStyle);
 			searchTable.add(tFirstName, col, row);
-			TextInput input = new TextInput(SEARCH_FIRST_NAME + uniqueIdentifier);
-			input.setStyleClass(interfaceStyleName);
-			input.setLength(firstNameLength);
-			if (user != null) {
-				input.setContent(user.getFirstName());
+			TextInput input = new TextInput(SEARCH_FIRST_NAME + this.uniqueIdentifier);
+			input.setStyleClass(this.interfaceStyleName);
+			input.setLength(this.firstNameLength);
+			if (this.user != null) {
+				input.setContent(this.user.getFirstName());
 			}
-			if (stacked)
+			if (this.stacked) {
 				searchTable.add(input, col++, row + 1);
-			else
+			}
+			else {
 				searchTable.add(input, ++col, row);
+			}
 			clearFields.add(SEARCH_FIRST_NAME);
 		}
-		if (showButtons) {
+		if (this.showButtons) {
 			HiddenInput hidden = new HiddenInput(BUTTON_PRESSED, "-1");
 			searchTable.add(hidden, col, row + 1);
 			SubmitButton search =
 				new SubmitButton(
-					iwrb.getLocalizedString(SEARCH_COMMITTED, "Search"),
-					SEARCH_COMMITTED + (constrainToUniqueSearch ? uniqueIdentifier : ""),
+					this.iwrb.getLocalizedString(SEARCH_COMMITTED, "Search"),
+					SEARCH_COMMITTED + (this.constrainToUniqueSearch ? this.uniqueIdentifier : ""),
 					"true");
 			search.setValueOnClick(BUTTON_PRESSED, String.valueOf(SEARCH_PRESSED));
-			search.setStyleClass(buttonStyleName);
-			if (stacked) {
+			search.setStyleClass(this.buttonStyleName);
+			if (this.stacked) {
 				searchTable.add(search, col++, row + 1);
 			}
-			else
+			else {
 				searchTable.add(search, 1, row + 1);
-			if (addedButtons != null && !addedButtons.isEmpty()) {
-				for (Iterator iter = addedButtons.iterator(); iter.hasNext();) {
+			}
+			if (this.addedButtons != null && !this.addedButtons.isEmpty()) {
+				for (Iterator iter = this.addedButtons.iterator(); iter.hasNext();) {
 					PresentationObject element = (PresentationObject) iter.next();
-					if (stacked)
+					if (this.stacked) {
 						searchTable.add(element, col++, row + 1);
-					else
+					}
+					else {
 						searchTable.add(element, 1, row + 1);
+					}
 				}
 			}
 		
 			//new button added - ac 
-			if (showNewUserButton) {
+			if (this.showNewUserButton) {
 				
-				SubmitButton newUserButton = new SubmitButton(NEW_USER, iwrb.getLocalizedString("new","New"));
+				SubmitButton newUserButton = new SubmitButton(NEW_USER, this.iwrb.getLocalizedString("new","New"));
 				newUserButton.setValueOnClick(BUTTON_PRESSED, String.valueOf(NEW_PRESSED));
-				newUserButton.setStyleClass(buttonStyleName);
+				newUserButton.setStyleClass(this.buttonStyleName);
 				searchTable.add(newUserButton, col++, row + 1);
 			}
 			
-			if (showResetButton) {
+			if (this.showResetButton) {
 				String clearAction = "";
 				for (Iterator iter = clearFields.iterator(); iter.hasNext();) {
 					String field = (String) iter.next();
-					clearAction += getClearActionPart(field, uniqueIdentifier,"''");
+					clearAction += getClearActionPart(field, this.uniqueIdentifier,"''");
 				}
-				clearAction +=getClearActionObjectTest(PRM_USER_ID,uniqueIdentifier);
-				clearAction += getClearActionPart(PRM_USER_ID,uniqueIdentifier,"-1");
-				SubmitButton reset = new SubmitButton(SEARCH_CLEARED, iwrb.getLocalizedString("clear", "Clear"));
-				reset.setStyleClass(buttonStyleName);
+				clearAction +=getClearActionObjectTest(PRM_USER_ID,this.uniqueIdentifier);
+				clearAction += getClearActionPart(PRM_USER_ID,this.uniqueIdentifier,"-1");
+				SubmitButton reset = new SubmitButton(SEARCH_CLEARED, this.iwrb.getLocalizedString("clear", "Clear"));
+				reset.setStyleClass(this.buttonStyleName);
 				reset.setOnClick(clearAction + "return false;");
 				searchTable.add(reset, col++, row + 1);
 			}
-			if (showMultipleResetButton) {
-				addClearButtonIdentifiers(uniqueIdentifier);
+			if (this.showMultipleResetButton) {
+				addClearButtonIdentifiers(this.uniqueIdentifier);
 				String otherClearActions = "";
-				for (Iterator iter = otherClearIdentifiers.iterator(); iter.hasNext();) {
+				for (Iterator iter = this.otherClearIdentifiers.iterator(); iter.hasNext();) {
 					String identifier = (String) iter.next();
 					for (Iterator iter2 = clearFields.iterator(); iter2.hasNext();) {
 						String field = (String) iter2.next();
@@ -530,8 +551,8 @@ public class UserSearcher extends Block implements IWPageEventListener {
 					otherClearActions +=getClearActionPart(PRM_USER_ID,identifier,"-1");
 				}
 			
-			SubmitButton resetmultiple = new SubmitButton(SEARCH_CLEARED, iwrb.getLocalizedString("clear_all", "Clear All"));
-			resetmultiple.setStyleClass(buttonStyleName);
+			SubmitButton resetmultiple = new SubmitButton(SEARCH_CLEARED, this.iwrb.getLocalizedString("clear_all", "Clear All"));
+			resetmultiple.setStyleClass(this.buttonStyleName);
 			resetmultiple.setOnClick(otherClearActions + "return false;");
 			searchTable.add(resetmultiple, col++, row + 1);
 		}
@@ -551,8 +572,8 @@ private String getClearActionObjectTest(String field,String identifier){
 	*/
 private Table presentateFoundUsers(IWContext iwc) {
 	Table T = new Table();
-	if (usersFound != null && !usersFound.isEmpty()) {
-		Iterator iter = usersFound.iterator();
+	if (this.usersFound != null && !this.usersFound.isEmpty()) {
+		Iterator iter = this.usersFound.iterator();
 		T.setCellspacing(4);
 		Link userLink;
 		int row = 1;
@@ -560,8 +581,8 @@ private Table presentateFoundUsers(IWContext iwc) {
 		int colAdd = 1;
 
 
-		HiddenInput userPk = new HiddenInput(getUniqueUserParameterName(uniqueIdentifier));
-		if (setToFormSubmit) {
+		HiddenInput userPk = new HiddenInput(getUniqueUserParameterName(this.uniqueIdentifier));
+		if (this.setToFormSubmit) {
 			getParentForm().add(userPk);
 			addParameters(getParentForm());				
 		}
@@ -572,7 +593,7 @@ private Table presentateFoundUsers(IWContext iwc) {
 			userLink = new Link(u.getName());
 			
 			//Added by Roar 29.10.03
-			if (setToFormSubmit){
+			if (this.setToFormSubmit){
 				userLink.setToFormSubmit(getParentForm());	
 				userLink.setOnClick("findObj('"+ userPk.getID() +"').value='"+ u.getPrimaryKey() +"';");
 			}
@@ -582,41 +603,42 @@ private Table presentateFoundUsers(IWContext iwc) {
 			addParameters(userLink);
 			T.add(userLink, colAdd + 1, row);
 			row++;
-			if (row == maxFoundUserRows) {
+			if (row == this.maxFoundUserRows) {
 				col++;
 				colAdd += 2;
 				row = 1;
 			}
-			if (col == maxFoundUserCols) {
+			if (col == this.maxFoundUserCols) {
 				break;
 			}
 		}
-		if (showOverFlowMessage && iter.hasNext()) {
+		if (this.showOverFlowMessage && iter.hasNext()) {
 			int lastRow = T.getRows() + 1;
-			T.mergeCells(1, lastRow, maxFoundUserCols, lastRow);
+			T.mergeCells(1, lastRow, this.maxFoundUserCols, lastRow);
 			Text tOverflowMessage =
 				new Text(
-					iwrb.getLocalizedString(
+					this.iwrb.getLocalizedString(
 						"usrch_overflow_message",
 						"There are more hits in your search than shown, you have to narrow down your searchcriteria"));
-			tOverflowMessage.setStyleClass(warningStyleName);
+			tOverflowMessage.setStyleClass(this.warningStyleName);
 			T.add(tOverflowMessage, 1, lastRow);
 		}
 	}
 	return T;
 }
 public void addClearButtonIdentifiers(String identifier) {
-	if (otherClearIdentifiers == null)
-		otherClearIdentifiers = new Vector();
-	otherClearIdentifiers.add(identifier);
+	if (this.otherClearIdentifiers == null) {
+		this.otherClearIdentifiers = new Vector();
+	}
+	this.otherClearIdentifiers.add(identifier);
 }
 private void addParameters(Link link) {
-	for (Iterator iter = maintainedParameters.iterator(); iter.hasNext();) {
+	for (Iterator iter = this.maintainedParameters.iterator(); iter.hasNext();) {
 		Parameter element = (Parameter) iter.next();
 		link.addParameter(element);
 	}
-	if(monitorMap!=null){
-		for (Iterator iter = monitorMap.entrySet().iterator(); iter.hasNext();) {
+	if(this.monitorMap!=null){
+		for (Iterator iter = this.monitorMap.entrySet().iterator(); iter.hasNext();) {
 			Map.Entry entry = (Map.Entry) iter.next();
 			link.addParameter((String)entry.getKey(),(String)entry.getValue());
 		}
@@ -625,12 +647,12 @@ private void addParameters(Link link) {
 }
 
 private void addParameters(Form form) {
-	for (Iterator iter = maintainedParameters.iterator(); iter.hasNext();) {
+	for (Iterator iter = this.maintainedParameters.iterator(); iter.hasNext();) {
 		Parameter element = (Parameter) iter.next();
 		form.addParameter(element.getName(), element.getValueAsString());
 	}
-	if(monitorMap!=null){
-		for (Iterator iter = monitorMap.entrySet().iterator(); iter.hasNext();) {
+	if(this.monitorMap!=null){
+		for (Iterator iter = this.monitorMap.entrySet().iterator(); iter.hasNext();) {
 			Map.Entry entry = (Map.Entry) iter.next();
 			form.addParameter((String)entry.getKey(),(String)entry.getValue());
 		}
@@ -643,77 +665,77 @@ private void addParameters(Form form) {
  * @param b
  */
 public void setShowFirstNameInSearch(boolean b) {
-	showFirstNameInSearch = b;
+	this.showFirstNameInSearch = b;
 }
 /**
  * Flags the last name in the user search
  * @param b
  */
 public void setShowLastNameInSearch(boolean b) {
-	showLastNameInSearch = b;
+	this.showLastNameInSearch = b;
 }
 /**
  * Flags the middle name in the user search
  * @param b
  */
 public void setShowMiddleNameInSearch(boolean b) {
-	showMiddleNameInSearch = b;
+	this.showMiddleNameInSearch = b;
 }
 /**
  * Flags the personal id in the user search
  * @param b
  */
 public void setShowPersonalIDInSearch(boolean b) {
-	showPersonalIDInSearch = b;
+	this.showPersonalIDInSearch = b;
 }
 /**
  * Flag telling if  the search found more than one user
  * @return
  */
 public boolean isHasManyUsers() {
-	return hasManyUsers;
+	return this.hasManyUsers;
 }
 /**
  * Gets the number of maximum allowed result columns 
  * @return
  */
 public int getMaxFoundUserCols() {
-	return maxFoundUserCols;
+	return this.maxFoundUserCols;
 }
 /**
  * Gets the number of maximum allowed result rows
  * @return
  */
 public int getMaxFoundUserRows() {
-	return maxFoundUserRows;
+	return this.maxFoundUserRows;
 }
 /**
  * Gets the selected user
  * @return User
  */
 public User getUser() {
-	return user;
+	return this.user;
 }
 /**
  * Gets the collection of users found by searc
  * @return
  */
 public Collection getUsersFound() {
-	return usersFound;
+	return this.usersFound;
 }
 /**
  * Set the maximum number of columns showing search results
  * @param cols
  */
 public void setMaxFoundUserCols(int cols) {
-	maxFoundUserCols = cols;
+	this.maxFoundUserCols = cols;
 }
 /**
  * Sets the maximum number of rows showing search results
  * @param i
  */
 public void setMaxFoundUserRows(int rows) {
-	maxFoundUserRows = rows;
+	this.maxFoundUserRows = rows;
 }
 /**
  * Manually set the found user
@@ -727,21 +749,22 @@ public void setUser(User user) {
  * @param collection
  */
 public void setUsersFound(Collection collection) {
-	usersFound = collection;
+	this.usersFound = collection;
 }
 /**
  * Add maintainedparameters
  * @param parameter
  */
 public void maintainParameter(Parameter parameter) {
-	maintainedParameters.add(parameter);
+	this.maintainedParameters.add(parameter);
 }
 /* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#getBundleIdentifier()
 	 */
 public String getBundleIdentifier() {
-	if (bundleIdentifer != null)
-		return bundleIdentifer;
+	if (this.bundleIdentifer != null) {
+		return this.bundleIdentifer;
+	}
 	return BUNDLE_IDENTIFIER;
 }
 /**
@@ -749,7 +772,7 @@ public String getBundleIdentifier() {
  * @param string
  */
 public void setBundleIdentifer(String string) {
-	bundleIdentifer = string;
+	this.bundleIdentifer = string;
 }
 /**
  * Gets the unique user id parameter  to be used for chosen user
@@ -757,7 +780,7 @@ public void setBundleIdentifer(String string) {
  * @return Parameter
  */
 public Parameter getUniqueUserParameter(Integer userID) {
-	return new Parameter(getUniqueUserParameterName(uniqueIdentifier), userID.toString());
+	return new Parameter(getUniqueUserParameterName(this.uniqueIdentifier), userID.toString());
 }
 /**
  * Gets the unique user id parameter name to be used for chosen user
@@ -784,37 +807,37 @@ public String checkEmptyFieldScript() {
 	
 	buffer.append("\n\t if (pressed == ").append(NEW_PRESSED).append("){");
 	
-	buffer.append("\n\t\t var personalID = ").append("findObj('").append(SEARCH_PERSONAL_ID + uniqueIdentifier).append("').value;");
-	buffer.append("\n\t\t var lastName = ").append("findObj('").append(SEARCH_LAST_NAME + uniqueIdentifier).append("').value;");
-	buffer.append("\n\t\t var firstName = ").append("findObj('").append(SEARCH_FIRST_NAME + uniqueIdentifier).append("').value;");
+	buffer.append("\n\t\t var personalID = ").append("findObj('").append(SEARCH_PERSONAL_ID + this.uniqueIdentifier).append("').value;");
+	buffer.append("\n\t\t var lastName = ").append("findObj('").append(SEARCH_LAST_NAME + this.uniqueIdentifier).append("').value;");
+	buffer.append("\n\t\t var firstName = ").append("findObj('").append(SEARCH_FIRST_NAME + this.uniqueIdentifier).append("').value;");
 	
 	buffer.append("\n\n\t\t if (personalID == '') {");
 	
-	message = iwrb.getLocalizedString("user_searcher.must_fill_out_personal_id", "Please fill out the personal id field");
+	message = this.iwrb.getLocalizedString("user_searcher.must_fill_out_personal_id", "Please fill out the personal id field");
 	buffer.append("\n\t\t\t alert('").append(message).append("');");
 	buffer.append("\n\t\t\t return false;");
 	buffer.append("\n\t\t }");
 	
 	buffer.append("\n\n\t\t if (personalID.length != 12) {");
 	
-	message = iwrb.getLocalizedString("user_searcher.invalid_personal_id", "Invalid personal ID");
+	message = this.iwrb.getLocalizedString("user_searcher.invalid_personal_id", "Invalid personal ID");
 	buffer.append("\n\t\t\t alert('").append(message).append("');");
 	buffer.append("\n\t\t\t return false;");
 	buffer.append("\n\t\t }");
 	
 	buffer.append("\n\n\t\t if (lastName == '') {");
-	message = iwrb.getLocalizedString("user_searcher.must_fill_out_last_name", "Please fill out the last name field");
+	message = this.iwrb.getLocalizedString("user_searcher.must_fill_out_last_name", "Please fill out the last name field");
 	buffer.append("\n\t\t\t alert('").append(message).append("');");
 	buffer.append("\n\t\t\t return false;");
 	buffer.append("\n\t\t }");
 	
 	buffer.append("\n\n\t\t if (firstName == '') {");
-	message = iwrb.getLocalizedString("user_searcher.must_fill_out_first_name", "Please fill out the first name field");
+	message = this.iwrb.getLocalizedString("user_searcher.must_fill_out_first_name", "Please fill out the first name field");
 	buffer.append("\n\t\t\t alert('").append(message).append("');");
 	buffer.append("\n\t\t\t return false;");
 	buffer.append("\n\t\t }");
 	
-	message = iwrb.getLocalizedString("user_searcher.are_you_sure_you_want_to_save", "Are you sure you want to save the new user?");
+	message = this.iwrb.getLocalizedString("user_searcher.are_you_sure_you_want_to_save", "Are you sure you want to save the new user?");
 	buffer.append("\n\t\t return confirm('").append(message).append("');");
 	buffer.append("\n\t}");
 	
@@ -829,11 +852,11 @@ public String checkEmptyFieldScript() {
  */
 public Map getStyleNames() {
 	HashMap map = new HashMap();
-	map.put(STYLENAME_HEADER, headerFontStyle);
-	map.put(STYLENAME_TEXT, textFontStyle);
-	map.put(STYLENAME_BUTTON, buttonStyle);
-	map.put(STYLENAME_WARNING, warningFontStyle);
-	map.put(STYLENAME_INTERFACE, interfaceStyle);
+	map.put(STYLENAME_HEADER, this.headerFontStyle);
+	map.put(STYLENAME_TEXT, this.textFontStyle);
+	map.put(STYLENAME_BUTTON, this.buttonStyle);
+	map.put(STYLENAME_WARNING, this.warningFontStyle);
+	map.put(STYLENAME_INTERFACE, this.interfaceStyle);
 	return map;
 }
 /**
@@ -841,268 +864,269 @@ public Map getStyleNames() {
  * @return
  */
 public int getFirstNameLength() {
-	return firstNameLength;
+	return this.firstNameLength;
 }
 /**
  * Gets the heading font style
  * @return font style
  */
 public String getHeaderFontStyle() {
-	return headerFontStyle;
+	return this.headerFontStyle;
 }
 /**
  * Gets the inputlength of the last name input
  * @return length
  */
 public int getLastNameLength() {
-	return lastNameLength;
+	return this.lastNameLength;
 }
 /**
  * Gets the input length of the middle name input
  * @return length
  */
 public int getMiddleNameLength() {
-	return middleNameLength;
+	return this.middleNameLength;
 }
 /**
  * Gets the inputlength of the personal id input
  * @return length
  */
 public int getPersonalIDLength() {
-	return personalIDLength;
+	return this.personalIDLength;
 }
 /**
  * Gets flag for first name input appearance
  * @return flag
  */
 public boolean isShowFirstNameInSearch() {
-	return showFirstNameInSearch;
+	return this.showFirstNameInSearch;
 }
 /**
  * Gets flag for last name input appearance
  * @return flag
  */
 public boolean isShowLastNameInSearch() {
-	return showLastNameInSearch;
+	return this.showLastNameInSearch;
 }
 /**
  * Gets flag for middle name input appearance
  * @return flag
  */
 public boolean isShowMiddleNameInSearch() {
-	return showMiddleNameInSearch;
+	return this.showMiddleNameInSearch;
 }
 /**
  * Gets flag for personal ID appearance
  * @return flag
  */
 public boolean isShowPersonalIDInSearch() {
-	return showPersonalIDInSearch;
+	return this.showPersonalIDInSearch;
 }
 /**
  * Gets status of stacked flag
  * @return flag <code>boolean</code>
  */
 public boolean isStacked() {
-	return stacked;
+	return this.stacked;
 }
 /**
  * Gets the normal text font style
  * @return font style
  */
 public String getTextFontStyle() {
-	return textFontStyle;
+	return this.textFontStyle;
 }
 /**
  * Sets the length of the first name input
  * @param length
  */
 public void setFirstNameLength(int length) {
-	firstNameLength = length;
+	this.firstNameLength = length;
 }
 /**
  * Sets the heading font style
  * @param style
  */
 public void setHeaderFontStyle(String style) {
-	headerFontStyle = style;
+	this.headerFontStyle = style;
 }
 /**
  * Sets the length of the last name input
  * @param length
  */
 public void setLastNameLength(int length) {
-	lastNameLength = length;
+	this.lastNameLength = length;
 }
 /**
  * Sets the length of the middle name input
  * @param length
  */
 public void setMiddleNameLength(int length) {
-	middleNameLength = length;
+	this.middleNameLength = length;
 }
 /**
  * Sets the  length of the personalID input
  * @param length
  */
 public void setPersonalIDLength(int length) {
-	personalIDLength = length;
+	this.personalIDLength = length;
 }
 /**
  * Flags if searcher should be presented with stacked headers and inputs
  * @param flag
  */
 public void setStacked(boolean flag) {
-	stacked = flag;
+	this.stacked = flag;
 }
 /**
  * Set normal text font style
  * @param style
  */
 public void setTextFontStyle(String style) {
-	textFontStyle = style;
+	this.textFontStyle = style;
 }
 /**
  * Returns the status of the flag , concerning the searcher own form
  * @return flag status
  */
 public boolean isOwnFormContainer() {
-	return OwnFormContainer;
+	return this.OwnFormContainer;
 }
 /**
  * Flags if the searcher should provide its own form
  * @param flag
  */
 public void setOwnFormContainer(boolean flag) {
-	OwnFormContainer = flag;
+	this.OwnFormContainer = flag;
 }
 /**
  * Gets the unique identifier for this searcher instance
  * @return unique identifier
  */
 public String getUniqueIdentifier() {
-	return uniqueIdentifier;
+	return this.uniqueIdentifier;
 }
 /**
  * Sets a unique identifier, convenient when using many instances on same page
  * @param identifier
  */
 public void setUniqueIdentifier(String identifier) {
-	uniqueIdentifier = identifier;
+	this.uniqueIdentifier = identifier;
 }
 /**
  * @return
  */
 public String getButtonStyle() {
-	return buttonStyle;
+	return this.buttonStyle;
 }
 /**
  * @return
  */
 public String getButtonStyleName() {
-	return buttonStyleName;
+	return this.buttonStyleName;
 }
 /**
  * @return
  */
 public String getHeaderFontStyleName() {
-	return headerFontStyleName;
+	return this.headerFontStyleName;
 }
 /**
  * Gets the button style
  * @return style
  */
 public String getTextFontStyleName() {
-	return textFontStyleName;
+	return this.textFontStyleName;
 }
 /**
  * Sets the button style
  * @param string
  */
 public void setButtonStyle(String string) {
-	buttonStyle = string;
+	this.buttonStyle = string;
 }
 /**
  * Sets the button style name to use
  * @param string
  */
 public void setButtonStyleName(String string) {
-	buttonStyleName = string;
+	this.buttonStyleName = string;
 }
 /**
  * Sets the header font style name to use
  * @param string
  */
 public void setHeaderFontStyleName(String string) {
-	headerFontStyleName = string;
+	this.headerFontStyleName = string;
 }
 /**
  * Sets the normal font style name to use
  * @param string
  */
 public void setTextFontStyleName(String string) {
-	textFontStyleName = string;
+	this.textFontStyleName = string;
 }
 /**
  * Flag status, skips result list if only one user found
  * @return
  */
 public boolean isSkipResultsForOneFound() {
-	return skipResultsForOneFound;
+	return this.skipResultsForOneFound;
 }
 /**
  * Sets flag for skipping result list if only one user found
  * @param 
  */
 public void setSkipResultsForOneFound(boolean flag) {
-	skipResultsForOneFound = flag;
+	this.skipResultsForOneFound = flag;
 }
 /**
  * @return
  */
 public boolean isShowResetButton() {
-	return showResetButton;
+	return this.showResetButton;
 }
 /**
  * @param b
  */
 public void setShowResetButton(boolean b) {
-	showResetButton = b;
+	this.showResetButton = b;
 }
 /**
  * @return
  */
 public boolean isShowOverFlowMessage() {
-	return showOverFlowMessage;
+	return this.showOverFlowMessage;
 }
 /**
  * @param b
  */
 public void setShowOverFlowMessage(boolean b) {
-	showOverFlowMessage = b;
+	this.showOverFlowMessage = b;
 }
 public void addButtonObject(PresentationObject obj) {
-	if (addedButtons == null)
-		addedButtons = new Vector();
-	addedButtons.add(obj);
+	if (this.addedButtons == null) {
+		this.addedButtons = new Vector();
+	}
+	this.addedButtons.add(obj);
 }
 /**
  * @return
  */
 public boolean isShowButtons() {
-	return showButtons;
+	return this.showButtons;
 }
 /**
  * @param b
  */
 public void setShowButtons(boolean b) {
-	showButtons = b;
+	this.showButtons = b;
 }
 /**
  * @return
  */
 public boolean isConstrainToUniqueSearch() {
-	return constrainToUniqueSearch;
+	return this.constrainToUniqueSearch;
 }
 /**
  * @param constrainToUniqueSearch
@@ -1114,7 +1138,7 @@ public void setConstrainToUniqueSearch(boolean constrainToUniqueSearch) {
  * @return
  */
 public boolean isShowMultipleResetButton() {
-	return showMultipleResetButton;
+	return this.showMultipleResetButton;
 }
 /**
  * @param showMultipleResetButton
@@ -1124,31 +1148,32 @@ public void setShowMultipleResetButton(boolean showMultipleResetButton) {
 }
 
 public void addMonitoredSearchIdentifier(String identifier){
-	if(monitoredSearchIdentifiers==null)
-		monitoredSearchIdentifiers = new Vector();
-	monitoredSearchIdentifiers.add(identifier);
+	if(this.monitoredSearchIdentifiers==null) {
+		this.monitoredSearchIdentifiers = new Vector();
+	}
+	this.monitoredSearchIdentifiers.add(identifier);
 }
 
 public void setToFormSubmit(boolean b){
-	setToFormSubmit = b;
+	this.setToFormSubmit = b;
 }
 
 public boolean getToFormSubmit(){
-	return setToFormSubmit;
+	return this.setToFormSubmit;
 }
 
 public void setUseFlexiblePersonalID(boolean flag){
-	useFlexiblePersonalID = flag;
+	this.useFlexiblePersonalID = flag;
 }
 
 public boolean isUseFlexiblePersonalID(){
-	return useFlexiblePersonalID;
+	return this.useFlexiblePersonalID;
 }
 	/**
 	 * @return Returns the legalNonDigitPIDLetters.
 	 */
 	public String getLegalNonDigitPIDLetters() {
-		return legalNonDigitPIDLetters;
+		return this.legalNonDigitPIDLetters;
 	}
 
 	/**

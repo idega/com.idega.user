@@ -84,8 +84,8 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
     public GroupRolesWindow() {
         super();
         
-        setWidth(width);
-        setHeight(height);
+        setWidth(this.width);
+        setHeight(this.height);
         setScrollbar(true);
         setResizable(true);
         
@@ -119,18 +119,18 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
     }
     
     public void main(IWContext iwc) throws Exception {
-        iwrb = this.getResourceBundle(iwc);
-        access = iwc.getAccessController();
-        addTitle(iwrb.getLocalizedString("grouproleswindow.title", "Group Roles Window"), TITLE_STYLECLASS);
+        this.iwrb = this.getResourceBundle(iwc);
+        this.access = iwc.getAccessController();
+        addTitle(this.iwrb.getLocalizedString("grouproleswindow.title", "Group Roles Window"), TITLE_STYLECLASS);
 
         parseAction(iwc);
         
-        if (saveChanges) {
-            saveChanges(iwc, access);
+        if (this.saveChanges) {
+            saveChanges(iwc, this.access);
         }
         
         //get the data
-        Collection rolesForTheSelectedGroup = access.getAllRolesWithRolePermissionsForGroup(selectedGroup);
+        Collection rolesForTheSelectedGroup = this.access.getAllRolesWithRolePermissionsForGroup(this.selectedGroup);
         //setCurrentGroupsRolesInSession(iwc, rolesForTheSelectedGroup);
         
         Collection permissionsForBrowser = orderAndGroupPermissionsByPermissionString(rolesForTheSelectedGroup);
@@ -138,10 +138,10 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         
         //setup the data viewer
         EntityBrowser browser = EntityBrowser.getInstanceUsingEventSystemAndExternalForm();
-        browser.setEntities("grw_" + selectedGroupId, permissionsForBrowser);
+        browser.setEntities("grw_" + this.selectedGroupId, permissionsForBrowser);
         browser.setDefaultNumberOfRows(permissionsForBrowser.size());
         browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
-        browser.setWidth(browser.HUNDRED_PERCENT);
+        browser.setWidth(Table.HUNDRED_PERCENT);
         
         //	fonts
         Text columnText = new Text();
@@ -179,7 +179,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
                 }
                 
                 
-                return new Text(iwrb.getLocalizedString(roleName,roleName));
+                return new Text(GroupRolesWindow.this.iwrb.getLocalizedString(roleName,roleName));
                 
             }
         };
@@ -241,7 +241,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
             }
         };
         
-        Iterator iterator = permissionTypes.iterator();
+        Iterator iterator = this.permissionTypes.iterator();
         
         //add the view,edit,delete,create
         while (iterator.hasNext()) {
@@ -318,7 +318,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         //converter ends
         
         Form form = getGroupPermissionForm(browser);
-        form.add(new HiddenInput(PARAM_SELECTED_GROUP_ID, selectedGroupId));
+        form.add(new HiddenInput(PARAM_SELECTED_GROUP_ID, this.selectedGroupId));
         form.add(new HiddenInput(PARAM_SAVING, "TRUE"));
         //cannot use this if we put in a navigator in the entitybrowser, change submit button to same value
         add(form, iwc);
@@ -333,7 +333,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
             Iterator allIter = allRoles.iterator();
             while (allIter.hasNext()) {
                 ICRole role = (ICRole) allIter.next();
-                if(!role.getRoleKey().equals(access.PERMISSION_KEY_ROLE_MASTER)){
+                if(!role.getRoleKey().equals(AccessController.PERMISSION_KEY_ROLE_MASTER)){
                     roles.add(role);
                 }
             }
@@ -352,7 +352,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         try {
             
 //          iterate for each permission key, view, edit etc.
-            Iterator iterator = permissionTypes.iterator();
+            Iterator iterator = this.permissionTypes.iterator();
             
             while (iterator.hasNext()) {
                 //permission key, view, edit etc.
@@ -370,11 +370,11 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
                         String roleKey = roles[i];
                         //                  
                         //adding
-                        access.addRoleToGroup(roleKey, permissionKey, integerSelectedGroupId , iwc);
+                        access.addRoleToGroup(roleKey, permissionKey, this.integerSelectedGroupId , iwc);
                         //todo add for children
 //                      do we add the same to this groups children
                         if (rolesToRecurseToChildren != null && rolesToRecurseToChildren.contains(roleKey)) { //recurse to children
-                            Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(selectedGroup);
+                            Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(this.selectedGroup);
                             if (children != null && !children.isEmpty()) {
                                 Iterator childIter = children.iterator();
                                 while (childIter.hasNext()) {
@@ -397,12 +397,12 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
                         ICPermission permission = (ICPermission) entries.next();
                         String roleKey = permission.getPermissionString();
                         
-                        access.removeRoleFromGroup(roleKey, permissionKey, integerSelectedGroupId , iwc);
+                        access.removeRoleFromGroup(roleKey, permissionKey, this.integerSelectedGroupId , iwc);
                         
                         //todo remove for children
                         //removeInheritedPermissionFromChildGroups(iwc, key, permission);
                         if (rolesToRecurseToChildren != null && rolesToRecurseToChildren.contains(roleKey)) { //recurse to children
-                            Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(selectedGroup);
+                            Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(this.selectedGroup);
                             if (children != null && !children.isEmpty()) {
                                 Iterator childIter = children.iterator();
                                 while (childIter.hasNext()) {
@@ -533,10 +533,10 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         
         Help help = getHelp(HELP_TEXT_KEY);
         
-        SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"));
-        save.setSubmitConfirm(iwrb.getLocalizedString("change.selected.permissions?", "Change selected permissions?"));
+        SubmitButton save = new SubmitButton(this.iwrb.getLocalizedImageButton("save", "Save"));
+        save.setSubmitConfirm(this.iwrb.getLocalizedString("change.selected.permissions?", "Change selected permissions?"));
         
-        CloseButton close = new CloseButton(iwrb.getLocalizedImageButton("close", "Close"));
+        CloseButton close = new CloseButton(this.iwrb.getLocalizedImageButton("close", "Close"));
         
         Table mainTable = new Table();
 	    		mainTable.setWidth(600);
@@ -546,12 +546,12 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
 	        
         Table table = new Table(2, 3);
         table.setRowHeight(1, "20");
-        table.setStyleClass(mainStyleClass);
+        table.setStyleClass(this.mainStyleClass);
         table.mergeCells(1, 2, 2, 2);
         
         table.add(
                 new Text(
-                        iwrb.getLocalizedString("groupownerswindow.setting_roles_for_group", "Setting roles for ") + selectedGroup.getName(),
+                        this.iwrb.getLocalizedString("groupownerswindow.setting_roles_for_group", "Setting roles for ") + this.selectedGroup.getName(),
                         true,
                         false,
                         false),
@@ -560,7 +560,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         
         table.add(browser, 1, 2);
         table.addBreak(1, 2);
-        table.add(new Text(iwrb.getLocalizedString("groupownerswindow.new_role", "New role key : "), true, false, false), 1, 2);
+        table.add(new Text(this.iwrb.getLocalizedString("groupownerswindow.new_role", "New role key : "), true, false, false), 1, 2);
         table.add(new TextInput(PARAM_NEW_ROLE), 1, 2);
         
         Table bottomTable = new Table();
@@ -568,7 +568,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
 	    		bottomTable.setCellspacing(5);
 	    		bottomTable.setWidth(Table.HUNDRED_PERCENT);
 	    		bottomTable.setHeight(39);
-	    		bottomTable.setStyleClass(mainStyleClass);
+	    		bottomTable.setStyleClass(this.mainStyleClass);
 	    		bottomTable.add(help,1,1);
 	    		bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
 	    		bottomTable.add(save, 2, 1);
@@ -591,12 +591,12 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
     }
     
     private void parseAction(IWContext iwc) throws RemoteException {
-        selectedGroupId = iwc.getParameter(GroupRolesWindow.PARAM_SELECTED_GROUP_ID);
-        saveChanges = iwc.isParameterSet(PARAM_SAVING);
-        integerSelectedGroupId = new Integer(selectedGroupId);
-        permissionTypes = getAllPermissionTypes();
+        this.selectedGroupId = iwc.getParameter(GroupRolesWindow.PARAM_SELECTED_GROUP_ID);
+        this.saveChanges = iwc.isParameterSet(PARAM_SAVING);
+        this.integerSelectedGroupId = new Integer(this.selectedGroupId);
+        this.permissionTypes = getAllPermissionTypes();
         try {
-            selectedGroup = getGroupBusiness(iwc).getGroupByGroupID(integerSelectedGroupId.intValue());
+            this.selectedGroup = getGroupBusiness(iwc).getGroupByGroupID(this.integerSelectedGroupId.intValue());
         }
         catch (NumberFormatException e) {
             e.printStackTrace();
@@ -617,10 +617,10 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
     }
     
     public GroupBusiness getGroupBusiness(IWContext iwc) {
-        if (groupBiz == null) {
+        if (this.groupBiz == null) {
             
             try {
-                groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+                this.groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
             }
             catch (RemoteException e) {
                 e.printStackTrace();
@@ -628,7 +628,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
             
         }
         
-        return groupBiz;
+        return this.groupBiz;
     }
     
     /**
@@ -639,15 +639,15 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
     }
     
     public UserBusiness getUserBusiness(IWApplicationContext iwc) {
-        if (userBiz == null) {
+        if (this.userBiz == null) {
             try {
-                userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+                this.userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
             }
             catch (java.rmi.RemoteException rme) {
                 throw new RuntimeException(rme.getMessage());
             }
         }
-        return userBiz;
+        return this.userBiz;
     }
     
     ////////////////////
@@ -661,23 +661,23 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
      */
     protected List getAllPermissionTypes() {
         
-        if(permissionTypes == null ) {
-            permissionTypes = new ArrayList();
+        if(this.permissionTypes == null ) {
+            this.permissionTypes = new ArrayList();
             
-            permissionTypes.add(0, "view");
-            permissionTypes.add(1, "edit");
-            permissionTypes.add(2, "create");
-            permissionTypes.add(3, "delete");
+            this.permissionTypes.add(0, "view");
+            this.permissionTypes.add(1, "edit");
+            this.permissionTypes.add(2, "create");
+            this.permissionTypes.add(3, "delete");
             //	permissionTypes.add(4, "permit");//the permission to give others permissions
-            permissionTypes.add(4,"role_permission");//is active flag
+            this.permissionTypes.add(4,"role_permission");//is active flag
         }
         
-        return permissionTypes;
+        return this.permissionTypes;
         
     }
     
     protected Map getPermissionMapFromSession(IWContext iwc, String permissionKey, boolean emptyMap) {
-        Map map = (Map) iwc.getSessionAttribute(this.SESSION_PARAM_ROLES_BEFORE_SAVE + permissionKey);
+        Map map = (Map) iwc.getSessionAttribute(GroupRolesWindow.SESSION_PARAM_ROLES_BEFORE_SAVE + permissionKey);
         
         if (map == null || emptyMap) {
             map = new HashMap();
@@ -702,7 +702,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
         //order the permissions by the groupId and create a List for each one.
         Map map = new HashMap();
         List finalCollection = new ArrayList();
-        Collection allRoles = getAllRolesWithoutRoleMasterRole(access);
+        Collection allRoles = getAllRolesWithoutRoleMasterRole(this.access);
         
         
         //this is needed to get the roles the group does not have to display

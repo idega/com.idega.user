@@ -60,7 +60,7 @@ public class GroupTreeView extends IWTreeControl {
 
 	public GroupTreeView() {
 		super();
-		folderAndFileIcons = new Image[3][3];
+		this.folderAndFileIcons = new Image[3][3];
 		this.setColumns(2);
 		this.setTreeColumnWidth(1, "16");
 		setWrap(false);
@@ -78,14 +78,14 @@ public class GroupTreeView extends IWTreeControl {
 
 	protected void updateIconDimensions() {
 		super.updateIconDimensions();
-		for (int j = 0; j < folderAndFileIcons.length; j++) {
-			for (int i = 0; i < folderAndFileIcons[j].length; i++) {
-				Image tmp = folderAndFileIcons[j][i];
+		for (int j = 0; j < this.folderAndFileIcons.length; j++) {
+			for (int i = 0; i < this.folderAndFileIcons[j].length; i++) {
+				Image tmp = this.folderAndFileIcons[j][i];
 				if (tmp != null) {
 					//tmp.setWidth(iconWidth);
-					tmp.setHeight(iconHeight);
+					tmp.setHeight(this.iconHeight);
 					//tmp.setAlignment("top");
-					folderAndFileIcons[j][i] = tmp;
+					this.folderAndFileIcons[j][i] = tmp;
 				}
 			}
 		}
@@ -94,11 +94,11 @@ public class GroupTreeView extends IWTreeControl {
 	public void initIcons(IWContext iwc) {
 		super.initIcons(iwc);
 
-		bundle = getBundle(iwc);
-		for (int j = 0; j < classTypeIcons.length; j++) {
-			for (int i = 0; i < folderAndFileIcons.length; i++) {
-				if (folderAndFileIcons[j][i] == null) {
-					folderAndFileIcons[j][i] = bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[j] + folderAndFileIconNames[i]);
+		this.bundle = getBundle(iwc);
+		for (int j = 0; j < this.classTypeIcons.length; j++) {
+			for (int i = 0; i < this.folderAndFileIcons.length; i++) {
+				if (this.folderAndFileIcons[j][i] == null) {
+					this.folderAndFileIcons[j][i] = this.bundle.getImage(TREEVIEW_PREFIX + getUI() + this.classTypeIcons[j] + this.folderAndFileIconNames[i]);
 				}
 			}
 		}
@@ -119,8 +119,9 @@ public class GroupTreeView extends IWTreeControl {
 	public PresentationObject getObjectToAddToColumn(int colIndex, GroupTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
 		//System.out.println("adding into column "+ colIndex + " for node " + node);
 		String image = "treeviewer";
-		if (node.getGroupType() != null)
+		if (node.getGroupType() != null) {
 			image = node.getGroupType();
+		}
 		
 	    SelectDomainEvent dmSelect = new SelectDomainEvent();
         SelectGroupEvent grSelect = new SelectGroupEvent();
@@ -144,11 +145,11 @@ public class GroupTreeView extends IWTreeControl {
 
 		switch (colIndex) {
 			case 1 :
-				if(!isModelSet) {
+				if(!this.isModelSet) {
 					if(getRefreshLink() != null) {
 						if(this.getControlEventModel() != null) {
 							getRefreshLink().addEventModel(this.getControlEventModel());
-							isModelSet = true;
+							this.isModelSet = true;
 						}
 						if(this.getControlTarget() != null) {
 							getRefreshLink().setTarget(this.getControlTarget());
@@ -168,10 +169,10 @@ public class GroupTreeView extends IWTreeControl {
 								l.setTarget(this.getControlTarget());
 							}
 							if (node.getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
-								l.setImage(folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN]);
+								l.setImage(this.folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN]);
 							}
 							else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
-								l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image + fileIconNames[0]));
+								l.setImage(this.bundle.getImage(TREEVIEW_PREFIX + getUI() + this.classTypeIcons[1] + image + this.fileIconNames[0]));
 							}
 							//              else if(node instanceof User){
 							//                l.setImage(folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN]);
@@ -184,13 +185,13 @@ public class GroupTreeView extends IWTreeControl {
 						}
 						else {
 							if (node.getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
-								return folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];
+								return this.folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];
 							}
 							else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
 							    Link l = this.getLinkPrototypeClone(node.getNodeName());
 							    l.setOnClick("setLinkToBold(findObj('group_id_"+node.getNodeID()+"'))");
 							    l.addEventModel(grSelect);
-							    l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[0]));
+							    l.setImage(this.bundle.getImage(TREEVIEW_PREFIX + getUI() + this.classTypeIcons[1] + image +  this.fileIconNames[0]));
 							    return l;
 							}
 							//              else if(node instanceof User){
@@ -209,10 +210,10 @@ public class GroupTreeView extends IWTreeControl {
 								l.setTarget(this.getControlTarget());
 							}
 							if (node.getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
-								l.setImage(folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED]);
+								l.setImage(this.folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED]);
 							}
 							else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
-								l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[1]));
+								l.setImage(this.bundle.getImage(TREEVIEW_PREFIX + getUI() + this.classTypeIcons[1] + image +  this.fileIconNames[1]));
 							}
 							//              else if(node instanceof User){
 							//                l.setImage(folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED]);
@@ -222,13 +223,13 @@ public class GroupTreeView extends IWTreeControl {
 						}
 						else {
 							if (node.getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
-								return folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED];
+								return this.folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED];
 							}
 							else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
 							    Link l = this.getLinkPrototypeClone(node.getNodeName());
 							    l.setOnClick("setLinkToBold(findObj('group_id_"+node.getNodeID()+"'))");
 							    l.addEventModel(grSelect);
-							    l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[1]));
+							    l.setImage(this.bundle.getImage(TREEVIEW_PREFIX + getUI() + this.classTypeIcons[1] + image +  this.fileIconNames[1]));
 							    return l;
 							}
 							//              else if(node instanceof User){
@@ -248,10 +249,10 @@ public class GroupTreeView extends IWTreeControl {
 							l.setTarget(this.getControlTarget());
 						}
 						if (node.getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
-							l.setImage(folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FILE]);
+							l.setImage(this.folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FILE]);
 						}
 						else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
-							l.setImage(bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[2]));
+							l.setImage(this.bundle.getImage(TREEVIEW_PREFIX + getUI() + this.classTypeIcons[1] + image +  this.fileIconNames[2]));
 						}
 						//              else if(node instanceof User){
 						//                l.setImage(folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FILE]);
@@ -261,10 +262,10 @@ public class GroupTreeView extends IWTreeControl {
 					}
 					else {
 						if (node.getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
-							return folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FILE];
+							return this.folderAndFileIcons[0][FOLDERANDFILE_ICONINDEX_FILE];
 						}
 						else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
-							return bundle.getImage(TREEVIEW_PREFIX + getUI() + classTypeIcons[1] + image +  fileIconNames[2]);
+							return this.bundle.getImage(TREEVIEW_PREFIX + getUI() + this.classTypeIcons[1] + image +  this.fileIconNames[2]);
 						}
 						//              else if(node instanceof User){
 						//                return folderAndFileIcons[2][FOLDERANDFILE_ICONINDEX_FILE];
@@ -276,11 +277,11 @@ public class GroupTreeView extends IWTreeControl {
 				l.setOnClick("setLinkToBold(this)");
         l.setID("group_id_"+node.getNodeID());
         // set selection bold
-        if (selectedDomainId > 0 || selectedGroupId > 0) {
+        if (this.selectedDomainId > 0 || this.selectedGroupId > 0) {
           int nodeType = node.getNodeType();
           int nodeId = node.getNodeID();
-          if (  ((nodeType == GroupTreeNode.TYPE_DOMAIN) && (nodeId == selectedDomainId)) ||
-                ((nodeType == GroupTreeNode.TYPE_GROUP) && (nodeId == selectedGroupId)) ) {
+          if (  ((nodeType == GroupTreeNode.TYPE_DOMAIN) && (nodeId == this.selectedDomainId)) ||
+                ((nodeType == GroupTreeNode.TYPE_GROUP) && (nodeId == this.selectedGroupId)) ) {
             String script = "hugo=document.getElementById('"+node.getNodeID()+"'); setLinkToBold(hugo);";
             getParentPage().setOnLoad(script);
           }
@@ -292,7 +293,7 @@ public class GroupTreeView extends IWTreeControl {
 		    l.addEventModel(grSelect);
 		}
 
-				if (_usesOnClick) {
+				if (this._usesOnClick) {
 					String nodeName = node.getNodeName();
 					l.setURL("#");
 					l.setOnClick(ONCLICK_FUNCTION_NAME + "('" + nodeName + "','" + node.getNodeType() + "_" + node.getNodeID() + "')");
@@ -319,51 +320,51 @@ public class GroupTreeView extends IWTreeControl {
 	}
 
 	public void setNodeActionParameter(String prm) {
-		nodeActionPrm = prm;
+		this.nodeActionPrm = prm;
 	}
 
 	public void setTarget(String target) {
-		nodeNameTarget = target;
+		this.nodeNameTarget = target;
 	}
 
 	public void setTreeStyle(String style) {
-		_linkStyle = style;
+		this._linkStyle = style;
 	}
 
 	public void setLinkPrototype(Link link) {
-		_linkPrototype = link;
+		this._linkPrototype = link;
 	}
 
 	private Link getLinkPrototype() {
-		if (_linkPrototype == null) {
-			_linkPrototype = new Link();
+		if (this._linkPrototype == null) {
+			this._linkPrototype = new Link();
 		}
 
-		if (nodeNameTarget != null) {
-			_linkPrototype.setTarget(nodeNameTarget);
+		if (this.nodeNameTarget != null) {
+			this._linkPrototype.setTarget(this.nodeNameTarget);
 		}
 
 		if (this.getControlTarget() != null) {
-			_linkPrototype.setTarget(this.getControlTarget());
+			this._linkPrototype.setTarget(this.getControlTarget());
 		}
 
-		if (_linkStyle != null) {
-			_linkPrototype.setFontStyle(_linkStyle);
+		if (this._linkStyle != null) {
+			this._linkPrototype.setFontStyle(this._linkStyle);
 		}
 
 		/*
 		    if ( _linkStyle != null )
 		      _linkPrototype.setFontStyle(_linkStyle);
 		*/
-		return _linkPrototype;
+		return this._linkPrototype;
 	}
 
 	public Layer getNoWrapLayer() {
-		if (_nowrapLayer == null) {
-			_nowrapLayer = new Layer();
-			_nowrapLayer.setNoWrap();
+		if (this._nowrapLayer == null) {
+			this._nowrapLayer = new Layer();
+			this._nowrapLayer.setNoWrap();
 		}
-		return _nowrapLayer;
+		return this._nowrapLayer;
 	}
 
 	private Link getLinkPrototypeClone() {
@@ -414,7 +415,7 @@ public class GroupTreeView extends IWTreeControl {
 	}
 
 	public void setToUseOnClick(String NodeNameParameterName, String NodeIDParameterName) {
-		_usesOnClick = true;
+		this._usesOnClick = true;
 		getAssociatedScript().addFunction(ONCLICK_FUNCTION_NAME, "function " + ONCLICK_FUNCTION_NAME + "(" + NodeNameParameterName + "," + NodeIDParameterName + "){ }");
 
 	}
@@ -425,21 +426,21 @@ public class GroupTreeView extends IWTreeControl {
 
 	public void setControlTarget(String controlTarget) {
 		super.setControlTarget(controlTarget);
-		nodeNameTarget = null;
+		this.nodeNameTarget = null;
 	}
 
   /**
    * @param i
    */
   public void setSelectedDomainId(int i) {
-    selectedDomainId = i;
+    this.selectedDomainId = i;
   }
 
   /**
    * @param i
    */
   public void setSelectedGroupId(int i) {
-    selectedGroupId = i;
+    this.selectedGroupId = i;
   }
 
 }

@@ -54,8 +54,8 @@ import com.idega.util.IWColor;
     public UserGroupSetter(){
       super("add user to groups");
       this.setAllMargins(0);
-			this.setWidth(width);
-			this.setHeight(height);
+			this.setWidth(this.width);
+			this.setHeight(this.height);
       this.setBackgroundColor(new IWColor(207,208,210));
     }
 
@@ -80,7 +80,7 @@ import com.idega.util.IWColor;
         UserBusiness userBusiness = getUserBusiness(iwc);
 
         Table frameTable = new Table(3,3);
-        frameTable.setStyleClass(mainStyleClass);
+        frameTable.setStyleClass(this.mainStyleClass);
         frameTable.setWidth(490);
         frameTable.setHeight(320);
 				frameTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
@@ -95,7 +95,7 @@ import com.idega.util.IWColor;
         //frameTable.setBorder(1);
 
 
-        SelectionDoubleBox sdb = new SelectionDoubleBox(FIELDNAME_SELECTION_DOUBLE_BOX,iwrb.getLocalizedString("usergroupsetter.not_in","Not in"),iwrb.getLocalizedString("usergroupsetter.in","In"));
+        SelectionDoubleBox sdb = new SelectionDoubleBox(FIELDNAME_SELECTION_DOUBLE_BOX,this.iwrb.getLocalizedString("usergroupsetter.not_in","Not in"),this.iwrb.getLocalizedString("usergroupsetter.in","In"));
 
         SelectionBox left = sdb.getLeftBox();
         left.setHeight(15);
@@ -141,8 +141,9 @@ import com.idega.util.IWColor;
 	          Group parentGroup = (Group) topGroupsIterator.next();
 	          allGroups.add(parentGroup);
 	          Collection coll = groupBusiness.getChildGroupsRecursive(parentGroup);
-	          if (coll != null)
-	            allGroups.addAll(coll);
+	          if (coll != null) {
+				allGroups.addAll(coll);
+			}
 	        }        
 	                
 	        if(allGroups != null){
@@ -159,9 +160,9 @@ import com.idega.util.IWColor;
         frameTable.setAlignment(2,2,"center");
         System.out.println("UserId: "+userId);
         frameTable.add(sdb,2,2);
-				SubmitButton save = new SubmitButton(iwrb.getLocalizedString("save","save"),"save","true");
+				SubmitButton save = new SubmitButton(this.iwrb.getLocalizedString("save","save"),"save","true");
         save.setAsImageButton(true);
-				CloseButton close = new CloseButton(iwrb.getLocalizedString("close","close"));
+				CloseButton close = new CloseButton(this.iwrb.getLocalizedString("close","close"));
 				close.setAsImageButton(true);
 				frameTable.add(help,1,3);
 				frameTable.add(save,2,3);
@@ -178,10 +179,10 @@ import com.idega.util.IWColor;
     }
 
     public void main(IWContext iwc) throws Exception{    	
-			iwrb = getResourceBundle(iwc);
+			this.iwrb = getResourceBundle(iwc);
 			
-			setTitle(iwrb.getLocalizedString("usergroupsetter.title","Add a user to a group"));
-			setName(iwrb.getLocalizedString("usergroupsetter.title","Add a user to a group"));
+			setTitle(this.iwrb.getLocalizedString("usergroupsetter.title","Add a user to a group"));
+			setName(this.iwrb.getLocalizedString("usergroupsetter.title","Add a user to a group"));
 			
       UserBusiness userBusiness = getUserBusiness(iwc);
       String save = iwc.getParameter("save");

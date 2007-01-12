@@ -28,8 +28,8 @@ public class UserChooser extends AbstractChooser {
   }
 
   public void main(IWContext iwc){
-  	if (useUserPks) {
-	  	iwc.setSessionAttribute(UserChooserWindow.AVAILABLE_USER_PKS_SESSION_PARAMETER, userPks);
+  	if (this.useUserPks) {
+	  	iwc.setSessionAttribute(UserChooserWindow.AVAILABLE_USER_PKS_SESSION_PARAMETER, this.userPks);
 	  	iwc.setSessionAttribute(UserChooserWindow.USING_AVAILABLE_USER_PKS_SESSION_PARAMETER, "true");
   	}else {
   		iwc.removeSessionAttribute(UserChooserWindow.AVAILABLE_USER_PKS_SESSION_PARAMETER);

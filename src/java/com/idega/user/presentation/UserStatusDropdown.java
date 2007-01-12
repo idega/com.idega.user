@@ -45,10 +45,10 @@ public class UserStatusDropdown extends DropdownMenu{
 
 	public void init(IWContext iwc) {
 		try {
-			iwrb = getResourceBundle(iwc);
+			this.iwrb = getResourceBundle(iwc);
 
 			StatusHome sHome = (StatusHome) IDOLookup.getHome(Status.class);
-			statuses = sHome.findAll();
+			this.statuses = sHome.findAll();
 		} catch (IDOLookupException e) {
 			e.printStackTrace(System.err);
 		} catch (FinderException e) {
@@ -59,10 +59,10 @@ public class UserStatusDropdown extends DropdownMenu{
 	public void main(IWContext iwc) throws Exception{
 		init(iwc);
 		
-		if (statuses != null) {
+		if (this.statuses != null) {
       // first add the default value
       addMenuElement(NO_STATUS_KEY, NO_STATUS_VALUE);
-      SortedMap stringPrimaryKeyMap = getSortedStatuses(statuses, iwc);
+      SortedMap stringPrimaryKeyMap = getSortedStatuses(this.statuses, iwc);
 			Iterator iter = stringPrimaryKeyMap.entrySet().iterator();
 			while (iter.hasNext()) {
 				Map.Entry entry = (Map.Entry) iter.next();
@@ -89,7 +89,7 @@ public class UserStatusDropdown extends DropdownMenu{
       status = (Status) iterator.next();
       String primaryKey = status.getPrimaryKey().toString();
       String key = status.getStatusKey();
-      String string = iwrb.getLocalizedString(key, key);
+      String string = this.iwrb.getLocalizedString(key, key);
       // use the localized string as key because the map is ordered by the keys not by the values
       stringPrimaryKeyMap.put(string, primaryKey);
     }

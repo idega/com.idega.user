@@ -30,11 +30,11 @@ public class ChangeClassEvent extends IWPresentationEvent {
   }
 
   public String getChangeClassName(){
-    return _className;
+    return this._className;
   }
 
   private void setChangeClassName(String theClass){
-    _className = theClass;
+    this._className = theClass;
   }
 
 

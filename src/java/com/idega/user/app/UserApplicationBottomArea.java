@@ -25,7 +25,7 @@ public class UserApplicationBottomArea extends Page implements IWBrowserView {
 		IWBundle iwb = getBundle(iwc);
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		Page parentPage = this.getParentPage();
-		String styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
+		String styleSrc = iwb.getVirtualPathWithFileNameString(this.styleScript);
 		parentPage.addStyleSheetURL(styleSrc);
 		setAllMargins(0);
 
@@ -36,7 +36,7 @@ public class UserApplicationBottomArea extends Page implements IWBrowserView {
 		table.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 		table.setCellpaddingRight(1, 1, 16);
 		
-		Text text = new Text(iwrb.getLocalizedString("bottom_message", "© 2000-2003 | idega software | Engjavegi 6 | 104 Reykjavik | Iceland | Tel. +354 554 7557 | Fax +354 554 7749 | idega@idega.is"));
+		Text text = new Text(iwrb.getLocalizedString("bottom_message", "ï¿½ 2000-2003 | idega software | Engjavegi 6 | 104 Reykjavik | Iceland | Tel. +354 554 7557 | Fax +354 554 7749 | idega@idega.is"));
 		text.setStyleClass("bottomStyleText");
 		table.add(text, 1, 1);
 		

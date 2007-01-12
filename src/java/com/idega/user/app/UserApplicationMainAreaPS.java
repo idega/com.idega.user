@@ -51,9 +51,9 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
   }
 
   public void addIWActionListener(IWActionListener l){
-    listenerList.add(IWActionListener.class, l);
+    this.listenerList.add(IWActionListener.class, l);
 
-    Object[] list = _listenerList.getListenerList();
+    Object[] list = this._listenerList.getListenerList();
 
     boolean hasBeenAdded = false;
     // Is l on the list?
@@ -64,7 +64,7 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
         }
     }
     if(!hasBeenAdded){
-      _listenerList.add(IWActionListener.class,l);
+      this._listenerList.add(IWActionListener.class,l);
     }
   }
 
@@ -80,11 +80,11 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
     if(e instanceof SelectGroupEvent){
     	try{
     		//System.out.println("Select group event! getting plugins");
-	    	_selectedGroup = ((SelectGroupEvent)e).getSelectedGroup();
-	    	String groupType = _selectedGroup.getGroupType();
+	    	this._selectedGroup = ((SelectGroupEvent)e).getSelectedGroup();
+	    	String groupType = this._selectedGroup.getGroupType();
 	    	//System.out.println("Selected group type = "+groupType);
 	    	
-	    	_plugins = getGroupBusiness( e.getIWContext()).getUserGroupPluginsForGroupType(groupType);
+	    	this._plugins = getGroupBusiness( e.getIWContext()).getUserGroupPluginsForGroupType(groupType);
 	    		    	
 		this.search = false;
       	this.fireStateChanged();
@@ -103,37 +103,37 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
     }
     
     if(e instanceof ChangeClassEvent){
-      _class = ((ChangeClassEvent)e).getChangeClassName();
+      this._class = ((ChangeClassEvent)e).getChangeClassName();
       System.out.println(this+"Class to change to is "+((ChangeClassEvent)e).getChangeClassName() );
 			this.search = false;
       this.fireStateChanged();
     }
 
-    IWActionListener[] listners =  (IWActionListener[])_listenerList.getListeners(IWActionListener.class);
+    IWActionListener[] listners =  (IWActionListener[])this._listenerList.getListeners(IWActionListener.class);
     for (int i = 0; i < listners.length; i++) {
       listners[i].actionPerformed(e);
     }
     
     
-		if( search ){
-			_class= null;
-			_selectedGroup = null;
-			_plugins = null;
+		if( this.search ){
+			this._class= null;
+			this._selectedGroup = null;
+			this._plugins = null;
 		}
 
   }
 
   public String getClassNameToShow(){
-    return _class;
+    return this._class;
   }
  
 
   public void setClassNameToShow(String className){
-    _class = className;
+    this._class = className;
   }
 
   public Group getSelectedGroup(){
-    return _selectedGroup;
+    return this._selectedGroup;
   }
   
   public boolean isSearch(){
@@ -142,7 +142,7 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
   
     
   public Collection getUserGroupPlugins(){
-    return _plugins;
+    return this._plugins;
   }
   
   public GroupBusiness getGroupBusiness(IWApplicationContext iwc){
@@ -195,10 +195,12 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
       String groupPropertyString = GroupPropertyWindow.SESSION_ADDRESS;
       boolean groupProperty = (attribute.indexOf(groupPropertyString) > -1);
       boolean userProperty = (attribute.indexOf(userPropertyString) > -1);
-      if (groupProperty || userProperty) 
-        setOnLoad("parent.frames['iwb_main'].location.reload()");
-      if (groupProperty)
-        setOnLoad("parent.frames['iwb_main_left'].location.reload()"); 
+      if (groupProperty || userProperty) {
+		setOnLoad("parent.frames['iwb_main'].location.reload()");
+	}
+      if (groupProperty) {
+		setOnLoad("parent.frames['iwb_main_left'].location.reload()");
+	} 
     }
   }
 

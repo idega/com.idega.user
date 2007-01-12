@@ -1,5 +1,5 @@
 /*
- * $Id: UserStatusTab.java,v 1.2 2005/05/09 12:45:41 eiki Exp $
+ * $Id: UserStatusTab.java,v 1.2.2.1 2007/01/12 19:31:51 idegaweb Exp $
  *
  * Copyright (C) 2000-2003 Idega Software. All Rights Reserved.
  *
@@ -69,16 +69,16 @@ public class UserStatusTab extends UserTab {
 	 * @see com.idega.user.presentation.UserTab#initializeFieldNames()
 	 */
 	public void initializeFieldNames() {
-		_groupFieldName = "usr_grp_status";
-		_statusFieldName = "usr_stat_status";
+		this._groupFieldName = "usr_grp_status";
+		this._statusFieldName = "usr_stat_status";
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.user.presentation.UserTab#initializeFieldValues()
 	 */
 	public void initializeFieldValues() {
-		fieldValues = new Hashtable();
-		fieldValues.put(_statusFieldName, "");
+		this.fieldValues = new Hashtable();
+		this.fieldValues.put(this._statusFieldName, "");
 	}
 
 	/* (non-Javadoc)
@@ -88,23 +88,23 @@ public class UserStatusTab extends UserTab {
 		if (getGroupID() > 0) {
 			Group selectedGroup = getGroup();
 			if (selectedGroup != null) {
-				_groupField.setText(selectedGroup.getName());
+				this._groupField.setText(selectedGroup.getName());
 			}
 		}
 		else {
 			IWContext iwc = IWContext.getInstance();
 			IWResourceBundle iwrb = getResourceBundle(iwc);
-			_groupField.setText(iwrb.getLocalizedString("user_status_bar.no_group_selected","No group selected"));
+			this._groupField.setText(iwrb.getLocalizedString("user_status_bar.no_group_selected","No group selected"));
 		}
-		_statusField.setSelectedOption((String) fieldValues.get(_statusFieldName));
+		this._statusField.setSelectedOption((String) this.fieldValues.get(this._statusFieldName));
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.user.presentation.UserTab#initializeFields()
 	 */
 	public void initializeFields() {
-		_groupField = new Text(); //see initFieldContents
-		_statusField = new SelectDropdown(_statusFieldName);
+		this._groupField = new Text(); //see initFieldContents
+		this._statusField = new SelectDropdown(this._statusFieldName);
 
 		IWContext iwc = IWContext.getInstance();
 		List status = null;
@@ -121,7 +121,7 @@ public class UserStatusTab extends UserTab {
 		if (status != null) {
 			if (status.size() > 0) {
 				final IWResourceBundle iwrb = getResourceBundle(iwc);
-				_statusField.addOption(new SelectOption(" ",-1));
+				this._statusField.addOption(new SelectOption(" ",-1));
 				
 				
 				final Collator collator = Collator.getInstance(iwc.getLocale());
@@ -137,7 +137,7 @@ public class UserStatusTab extends UserTab {
 					String n = s.getStatusKey();
 					if (n != null) {
 						String l = iwrb.getLocalizedString("usr_stat_" + n, n);
-						_statusField.addOption(new SelectOption(l, ((Integer) s.getPrimaryKey()).intValue()));
+						this._statusField.addOption(new SelectOption(l, ((Integer) s.getPrimaryKey()).intValue()));
 					}
 				}
 			}
@@ -151,11 +151,11 @@ public class UserStatusTab extends UserTab {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
-		_groupText = new Text(iwrb.getLocalizedString(_groupFieldName, "Group"));
-		_groupText.setBold();
+		this._groupText = new Text(iwrb.getLocalizedString(this._groupFieldName, "Group"));
+		this._groupText.setBold();
 		
-		_statusText = new Text(iwrb.getLocalizedString(_statusFieldName, "Status"));
-		_statusText.setBold();
+		this._statusText = new Text(iwrb.getLocalizedString(this._statusFieldName, "Status"));
+		this._statusText.setBold();
 	}
 
 	/* (non-Javadoc)
@@ -167,10 +167,10 @@ public class UserStatusTab extends UserTab {
 		Table t = new Table(2, 4);
 		t.setCellpadding(5);
 		t.setCellspacing(0);
-		t.add(_groupText, 1, 1);
-		t.add(_groupField, 2, 1);
-		t.add(_statusText, 1, 2);
-		t.add(_statusField, 2, 2);
+		t.add(this._groupText, 1, 1);
+		t.add(this._groupField, 2, 1);
+		t.add(this._statusText, 1, 2);
+		t.add(this._statusField, 2, 2);
 		add(t);
 	}
 
@@ -185,13 +185,13 @@ public class UserStatusTab extends UserTab {
 	 */
 	public boolean collect(IWContext iwc) {
 		if (iwc != null) {
-			String status = iwc.getParameter(_statusFieldName);
+			String status = iwc.getParameter(this._statusFieldName);
 
 			if (status != null) {
-				fieldValues.put(_statusFieldName, status);
+				this.fieldValues.put(this._statusFieldName, status);
 			}
 			else {
-				fieldValues.put(_statusFieldName, " ");
+				this.fieldValues.put(this._statusFieldName, " ");
 			}
 
 			updateFieldsDisplayStatus();
@@ -205,7 +205,7 @@ public class UserStatusTab extends UserTab {
 	 */
 	public boolean store(IWContext iwc) {
 		try {
-			String status = (String)fieldValues.get(_statusFieldName);
+			String status = (String)this.fieldValues.get(this._statusFieldName);
 	
 			if (status != null) {
 				int user_id = this.getUserId();
@@ -227,7 +227,7 @@ public class UserStatusTab extends UserTab {
 	 */
 	public void initFieldContents() {
 		IWContext iwc = IWContext.getInstance();
-		fieldValues = new Hashtable();
+		this.fieldValues = new Hashtable();
 		
 		int status_id = -1;
 		try {
@@ -239,10 +239,12 @@ public class UserStatusTab extends UserTab {
 			status_id = -1;
 		}
 		
-		if (status_id > 0)
-			fieldValues.put(_statusFieldName, Integer.toString(status_id));
-		else
-			fieldValues.put(_statusFieldName, "");
+		if (status_id > 0) {
+			this.fieldValues.put(this._statusFieldName, Integer.toString(status_id));
+		}
+		else {
+			this.fieldValues.put(this._statusFieldName, "");
+		}
 
 		updateFieldsDisplayStatus();
 	}

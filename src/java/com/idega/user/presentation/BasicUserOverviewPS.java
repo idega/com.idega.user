@@ -43,7 +43,7 @@ import com.idega.user.event.SelectGroupEvent;
  * Company: idega Software
  * </p>
  * 
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson </a>
  * @version 1.0
  */
 
@@ -74,30 +74,30 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
     }
 
     public Map getResultOfMovingUsers() {
-        return resultOfMovingUsers;
+        return this.resultOfMovingUsers;
     }
 
     public boolean showSearchResult() {
-        return showSearchResult;
+        return this.showSearchResult;
     }
 
     public int getTargetGroupId() {
-        return targetGroupId;
+        return this.targetGroupId;
     }
 
     public Group getSelectedGroup() {
-        return _selectedGroup;
+        return this._selectedGroup;
     }
 
     public ICDomain getSelectedDomain() {
-        return _selectedDomain;
+        return this._selectedDomain;
     }
 
     public void reset() {
         super.reset();
-        _selectedGroup = null;
-        _selectedDomain = null;
-        resultOfMovingUsers = null;
+        this._selectedGroup = null;
+        this._selectedDomain = null;
+        this.resultOfMovingUsers = null;
 
     }
 
@@ -118,28 +118,28 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 			}
 			
 			if (e instanceof UserSearchEvent) {
-			    _selectedGroup = null;
-			    resultOfMovingUsers = null;
+			    this._selectedGroup = null;
+			    this.resultOfMovingUsers = null;
 			    clearSendMail(e.getIWContext());
 			} 
 			
 
 			if (e instanceof SelectGroupEvent) {
-			    _selectedGroup = ((SelectGroupEvent) e).getSelectedGroup();
-			    _selectedDomain = null;
-			    parentGroupOfSelection = ((SelectGroupEvent) e).getParentGroupOfSelection();
-			    parentDomainOfSelection = ((SelectGroupEvent) e).getParentDomainOfSelection();
-			    resultOfMovingUsers = null;
-			    showSearchResult = false;
+			    this._selectedGroup = ((SelectGroupEvent) e).getSelectedGroup();
+			    this._selectedDomain = null;
+			    this.parentGroupOfSelection = ((SelectGroupEvent) e).getParentGroupOfSelection();
+			    this.parentDomainOfSelection = ((SelectGroupEvent) e).getParentDomainOfSelection();
+			    this.resultOfMovingUsers = null;
+			    this.showSearchResult = false;
 			    clearSendMail(e.getIWContext());
 			    this.fireStateChanged();
 			}
 
 			if (e instanceof SelectDomainEvent) {
-			    _selectedDomain = ((SelectDomainEvent) e).getSelectedDomain();
-			    _selectedGroup = null;
-			    resultOfMovingUsers = null;
-			    showSearchResult = false;
+			    this._selectedDomain = ((SelectDomainEvent) e).getSelectedDomain();
+			    this._selectedGroup = null;
+			    this.resultOfMovingUsers = null;
+			    this.showSearchResult = false;
 			    clearSendMail(e.getIWContext());
 			    this.fireStateChanged();
 			}
@@ -184,10 +184,10 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 			        userIds = mainIwc.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
 			        // delete users (if something has been chosen)
 
-			        if (_selectedGroup.isAlias()) {
-			            BasicUserOverview.removeUsers(Arrays.asList(userIds),_selectedGroup.getAlias(), mainIwc);
+			        if (this._selectedGroup.isAlias()) {
+			            BasicUserOverview.removeUsers(Arrays.asList(userIds),this._selectedGroup.getAlias(), mainIwc);
 			        } else {
-			            BasicUserOverview.removeUsers(Arrays.asList(userIds),_selectedGroup, mainIwc);
+			            BasicUserOverview.removeUsers(Arrays.asList(userIds),this._selectedGroup, mainIwc);
 			        }
 
 			    }
@@ -204,21 +204,21 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 			        targetGroupNodeString = targetGroupNodeString.substring(Math.max(targetGroupNodeString.indexOf("_") + 1, 0),targetGroupNodeString.length());
 			        int targetGroupId = Integer.parseInt(targetGroupNodeString);
 			        
-			        business = getGroupBusiness(mainIwc);
+			        this.business = getGroupBusiness(mainIwc);
 			        
 			        try {
 			        	 //move to the real group not the alias!
-						Group target = business.getGroupByGroupID(targetGroupId);
+						Group target = this.business.getGroupByGroupID(targetGroupId);
 						if(target.isAlias()){
 							targetGroupId = target.getAliasID();
 						}
 				        // move users to a group
-				        if (_selectedGroup!=null && _selectedGroup.isAlias()) {
-				            resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup.getAlias(),targetGroupId, mainIwc);
+				        if (this._selectedGroup!=null && this._selectedGroup.isAlias()) {
+				            this.resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), this._selectedGroup.getAlias(),targetGroupId, mainIwc);
 				        } else if (mainIwc.isParameterSet(BasicUserOverview.COPY_USERS_KEY)) {
-				            resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup.getAlias(),targetGroupId, mainIwc, true);
+				            this.resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), this._selectedGroup.getAlias(),targetGroupId, mainIwc, true);
 				        } else {
-				            resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), _selectedGroup, targetGroupId,mainIwc);
+				            this.resultOfMovingUsers = BasicUserOverview.moveUsers(Arrays.asList(userIds), this._selectedGroup, targetGroupId,mainIwc);
 				        }
 				       
 				        this.targetGroupId = targetGroupId;
@@ -244,12 +244,12 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 						
 						// move users
 						if(parentGroupType.equals(MassMovingWindow.GROUP_TYPE_CLUB_DIVISION)){
-							resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(groupCollection,groupTypes, mainIwc);
+							this.resultOfMovingUsers = BasicUserOverview.moveContentOfGroups(groupCollection,groupTypes, mainIwc);
 						} else {
-							resultOfMovingUsers = new HashMap();
+							this.resultOfMovingUsers = new HashMap();
 							for (Iterator iter = groupCollection.iterator(); iter.hasNext();) {
 								Group divGroups = (Group) iter.next();
-								resultOfMovingUsers.putAll(BasicUserOverview.moveContentOfGroups(Collections.singleton(divGroups),groupTypes, mainIwc));
+								this.resultOfMovingUsers.putAll(BasicUserOverview.moveContentOfGroups(Collections.singleton(divGroups),groupTypes, mainIwc));
 							}
 							
 						}
@@ -258,7 +258,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 					} catch (FinderException e1) {
 						e1.printStackTrace();
 					}
-			        targetGroupId = -1;
+			        this.targetGroupId = -1;
 			        fireStateChanged();
 			    }
 			}
@@ -280,7 +280,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
      * @return IBDomain
      */
     public ICDomain getParentDomainOfSelection() {
-        return parentDomainOfSelection;
+        return this.parentDomainOfSelection;
     }
 
     /**
@@ -289,7 +289,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
      * @return Group
      */
     public Group getParentGroupOfSelection() {
-        return parentGroupOfSelection;
+        return this.parentGroupOfSelection;
     }
 
     public void stateChanged(ChangeEvent e) {
@@ -297,20 +297,20 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
         if (object instanceof DeleteGroupConfirmWindowPS) {
             // selected group was successfully(!) removed
             // set selected group to null
-            _selectedGroup = null;
+            this._selectedGroup = null;
         }
     }
     
     public GroupBusiness getGroupBusiness(IWApplicationContext iwc) {
-        if (business == null) {
+        if (this.business == null) {
             try {
-                business = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+                this.business = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
             }
             catch (java.rmi.RemoteException rme) {
                 throw new RuntimeException(rme.getMessage());
             }
         }
-        return business;
+        return this.business;
     }
 
 }

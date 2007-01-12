@@ -72,92 +72,92 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 	}
 
 	public void reset() {
-		_groupName = null;
-		_groupDescription = null;
-		_groupType = null;
-		_aliasID = -1;
-		_homePageID = -1;
-		_close = false;
-		failedToCreateGroup = false;
-		_parentGroup = null;
-		groupId = null;
-		_errorMessages = null;
-		eventContext = null;
+		this._groupName = null;
+		this._groupDescription = null;
+		this._groupType = null;
+		this._aliasID = -1;
+		this._homePageID = -1;
+		this._close = false;
+		this.failedToCreateGroup = false;
+		this._parentGroup = null;
+		this.groupId = null;
+		this._errorMessages = null;
+		this.eventContext = null;
 	}
 
 	public String getGroupName() {
-		return _groupName;
+		return this._groupName;
 	}
 
 	public String getGroupDescription() {
-		return _groupDescription;
+		return this._groupDescription;
 	}
 
 	public String getGroupType() {
-		return _groupType;
+		return this._groupType;
 	}
 
 	public Integer getGroupId() {
-		return groupId;
+		return this.groupId;
 	}
 
 	public IWContext getEventContext() {
-		return eventContext;
+		return this.eventContext;
 	}
 
 	public boolean doClose() {
-		return _close;
+		return this._close;
 	}
 
 	public void doneClosing() {
-		_close = false;
+		this._close = false;
 	}
 
 	public void actionPerformed(IWPresentationEvent e) throws IWException {
-		iwrb = e.getIWContext().getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(
+		this.iwrb = e.getIWContext().getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(
 				e.getIWContext());
 		if (e instanceof CreateGroupEvent) {
 			CreateGroupEvent event = (CreateGroupEvent) e;
 			//create group, subgroups and give permissions
 			//TODO check permission for the alias id, check the allowed child group types
 			//make a getErrorMessageLocalizedKey()  method
-			eventContext = event.getIWContext();
+			this.eventContext = event.getIWContext();
 			
 			if (event.doCommit()) {
 				try {
-					groupBusiness = getGroupBusiness(eventContext);
+					this.groupBusiness = getGroupBusiness(this.eventContext);
 					Group group = null;
 					int parentGroupId = event.getParentID();
-					_groupName = event.getName().trim();//no leading or trailing white spaces thank you
-					_groupDescription = event.getDescription();
-					_groupType = event.getGroupType();
-					_aliasID = event.getAliasID();
-					_homePageID = event.getHomePageID();
+					this._groupName = event.getName().trim();//no leading or trailing white spaces thank you
+					this._groupDescription = event.getDescription();
+					this._groupType = event.getGroupType();
+					this._aliasID = event.getAliasID();
+					this._homePageID = event.getHomePageID();
 					
 					if (event.getParentType() == CreateGroupEvent.TYPE_DOMAIN) {
 						// create the group under the default Domain (it's a
 						// top node (as super user))
 						//don't get the group by: _parentGroup = groupBusiness.getGroupByGroupID(parentGroupId);
 						//because the id is a domain id not the group id
-						_parentGroup = null;
-						group = groupBusiness.createGroup(_groupName,_groupDescription,_groupType, _homePageID, _aliasID);
+						this._parentGroup = null;
+						group = this.groupBusiness.createGroup(this._groupName,this._groupDescription,this._groupType, this._homePageID, this._aliasID);
 					}
 					else if (event.getParentType() == CreateGroupEvent.TYPE_GROUP) {
-						_parentGroup = groupBusiness.getGroupByGroupID(parentGroupId);
+						this._parentGroup = this.groupBusiness.getGroupByGroupID(parentGroupId);
 						// create under the supplied parent group
 						//if (false) {
 						
-						List errors = canCreateSubGroupPluginCheck(_parentGroup,_groupType,eventContext);
+						List errors = canCreateSubGroupPluginCheck(this._parentGroup,this._groupType,this.eventContext);
 						
-						if (errors.isEmpty() && eventContext.getAccessController().hasEditPermissionFor(_parentGroup, eventContext)) {
-							group = groupBusiness.createGroupUnder(_groupName, _groupDescription,
-									_groupType, _homePageID, _aliasID, _parentGroup);
-							copyGroupNumberFromParent(group, _parentGroup);
+						if (errors.isEmpty() && this.eventContext.getAccessController().hasEditPermissionFor(this._parentGroup, this.eventContext)) {
+							group = this.groupBusiness.createGroupUnder(this._groupName, this._groupDescription,
+									this._groupType, this._homePageID, this._aliasID, this._parentGroup);
+							copyGroupNumberFromParent(group, this._parentGroup);
 						}
 						else {
 							//todo set error message key
-							failedToCreateGroup = true;
-							_errorMessages = errors;
+							this.failedToCreateGroup = true;
+							this._errorMessages = errors;
 						}
 						/////////////
 					}
@@ -170,17 +170,17 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 						// store group id and context, so change listners are
 						// able
 						// to open windows (e.g. the group property window)
-						groupId = (Integer) group.getPrimaryKey();
+						this.groupId = (Integer) group.getPrimaryKey();
 						
-						User currentUser = eventContext.getCurrentUser();
+						User currentUser = this.eventContext.getCurrentUser();
 						//Apply permission stuff
-						groupBusiness.applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(group, currentUser);
+						this.groupBusiness.applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(group, currentUser);
 						// get groupType tree and iterate through it and create
 						// default sub groups.
-						createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(group, groupBusiness,
-								eventContext, currentUser);
+						createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(group, this.groupBusiness,
+								this.eventContext, currentUser);
 						
-						callAfterCreatePluginMethods(group,eventContext);
+						callAfterCreatePluginMethods(group,this.eventContext);
 						
 						
 						//TODO fix this what is it doing? some caching stuff?
@@ -199,28 +199,28 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 				}
 				this.fireStateChanged();
 				//forget everything
-				if(!failedToCreateGroup){
+				if(!this.failedToCreateGroup){
 					reset();
 				}
 			}
 			else if (event.doCancel()) {
 				this.reset();
-				_close = true;
+				this._close = true;
 				this.fireStateChanged();
 			}
 			else {
 				//unknown behaviour OR the parent group changed
 				try {
-					groupBusiness = getGroupBusiness(eventContext);
-					_groupName = event.getName().trim();
-					_groupDescription = event.getDescription();
-					_groupType = event.getGroupType();
-					_aliasID = event.getAliasID();
-					_homePageID = event.getHomePageID();
+					this.groupBusiness = getGroupBusiness(this.eventContext);
+					this._groupName = event.getName().trim();
+					this._groupDescription = event.getDescription();
+					this._groupType = event.getGroupType();
+					this._aliasID = event.getAliasID();
+					this._homePageID = event.getHomePageID();
 					if(event.getParentID()!=-1 && event.getParentType()==CreateGroupEvent.TYPE_GROUP ){
-						Group newParentGroup = groupBusiness.getGroupByGroupID(event.getParentID());
-						if((_parentGroup==null) || (newParentGroup!=null && !_parentGroup.equals(newParentGroup)) ){
-							_parentGroup = newParentGroup;
+						Group newParentGroup = this.groupBusiness.getGroupByGroupID(event.getParentID());
+						if((this._parentGroup==null) || (newParentGroup!=null && !this._parentGroup.equals(newParentGroup)) ){
+							this._parentGroup = newParentGroup;
 							//_groupType = null;
 							fireStateChanged();
 						}
@@ -344,8 +344,9 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 					String typeString = gType.getType();
 					String typeLocalizingKey = "auto.create.name." + typeString;
 					String defaultValue = gType.getDescription();
-					if ((defaultValue == null) || ("".equals(defaultValue)))
+					if ((defaultValue == null) || ("".equals(defaultValue))) {
 						defaultValue = typeString;
+					}
 					//to avoid circular reference with beginning type
 					//if( this.getGroupType().equals(typeString) ) continue;
 					// rather add all types to a map to check
@@ -354,7 +355,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 							typeLocalizingKey = typeLocalizingKey + " " + i;
 							defaultValue = defaultValue + " " + i;
 						}
-						name = iwrb.getLocalizedString(typeLocalizingKey, defaultValue);
+						name = this.iwrb.getLocalizedString(typeLocalizingKey, defaultValue);
 					}
 					else {
 						if (nrOfGroupsToCreate > 1) {
@@ -369,7 +370,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 						if (errors.isEmpty()) {
 							Group newGroup = business.createGroupUnder(name, "", typeString, group);
 							copyGroupNumberFromParent(newGroup, group);
-							groupBusiness.applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(newGroup, user);
+							this.groupBusiness.applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(newGroup, user);
 							if (!type.isLeaf()) {
 								createDefaultSubGroupsFromGroupTypeTreeAndApplyPermissions(newGroup, business, iwc, user);
 							}
@@ -397,31 +398,31 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 	 * @return Returns the failedToCreateGroup.
 	 */
 	public boolean hasFailedToCreateGroup() {
-		return failedToCreateGroup;
+		return this.failedToCreateGroup;
 	}
 	/**
 	 * @return Returns the _parentGroup.
 	 */
 	public Group getParentGroup() {
-		return _parentGroup;
+		return this._parentGroup;
 	}
 	/**
 	 * @return Returns the _aliasID.
 	 */
 	public int getAliasID() {
-		return _aliasID;
+		return this._aliasID;
 	}
 	/**
 	 * @return Returns the _homePageID.
 	 */
 	public int getHomePageID() {
-		return _homePageID;
+		return this._homePageID;
 	}
 	/**
 	 * @param pageID The _homePageID to set.
 	 */
 	public void setHomePageID(int pageID) {
-		_homePageID = pageID;
+		this._homePageID = pageID;
 	}
 
 	/**
@@ -430,11 +431,11 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 	public ICPage getHomePage() {
 		ICPage homePage = null;
 		//we could optimise by returning a cached object
-		if(_homePageID>0 ){
+		if(this._homePageID>0 ){
 			ICPageHome home;
 			try {
 				home = (ICPageHome) IDOLookup.getHome(ICPage.class);
-				homePage = home.findByPrimaryKey(_homePageID);
+				homePage = home.findByPrimaryKey(this._homePageID);
 			}
 			catch (IDOLookupException e) {
 				e.printStackTrace();
@@ -451,6 +452,6 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 	 * @return
 	 */
 	public List getFailedToCreateGroupErrorMessages() {
-		return _errorMessages;
+		return this._errorMessages;
 	}
 }

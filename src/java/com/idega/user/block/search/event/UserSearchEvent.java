@@ -53,11 +53,11 @@ public class UserSearchEvent extends IWPresentationEvent
   }
 
 	public String getSearchString(){
-	    return searchString;
+	    return this.searchString;
 	}
 
 	public int getSearchType(){
-	    return searchType;
+	    return this.searchType;
 	}
 
 
@@ -70,35 +70,37 @@ public class UserSearchEvent extends IWPresentationEvent
 	
 			try
 			{
-				searchType = Integer.parseInt(type);
+				this.searchType = Integer.parseInt(type);
 				
-				if(searchType == this.SEARCHTYPE_SIMPLE){// simple search
-					searchString = iwc.getParameter(SEARCH_FIELD_SIMPLE_SEARCH_STRING);
+				if(this.searchType == UserSearchEvent.SEARCHTYPE_SIMPLE){// simple search
+					this.searchString = iwc.getParameter(SEARCH_FIELD_SIMPLE_SEARCH_STRING);
 					return iwc.isParameterSet(SEARCH_FIELD_SIMPLE_SEARCH_STRING);
 					
 				}
-				else if( searchType == this.SEARCHTYPE_ADVANCED ){// advanced search
+				else if( this.searchType == UserSearchEvent.SEARCHTYPE_ADVANCED ){// advanced search
 					
-					firstName = iwc.getParameter(SEARCH_FIELD_FIRST_NAME);
-					middleName = iwc.getParameter(SEARCH_FIELD_MIDDLE_NAME);
-					lastName = iwc.getParameter(SEARCH_FIELD_LAST_NAME);
-					groups = iwc.getParameterValues(this.SEARCH_FIELD_GROUPS);
-					genderId = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_GENDER_ID));
-					personalId = iwc.getParameter(SEARCH_FIELD_PERSONAL_ID);
-					address = iwc.getParameter(SEARCH_FIELD_ADDRESS);
+					this.firstName = iwc.getParameter(SEARCH_FIELD_FIRST_NAME);
+					this.middleName = iwc.getParameter(SEARCH_FIELD_MIDDLE_NAME);
+					this.lastName = iwc.getParameter(SEARCH_FIELD_LAST_NAME);
+					this.groups = iwc.getParameterValues(UserSearchEvent.SEARCH_FIELD_GROUPS);
+					this.genderId = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_GENDER_ID));
+					this.personalId = iwc.getParameter(SEARCH_FIELD_PERSONAL_ID);
+					this.address = iwc.getParameter(SEARCH_FIELD_ADDRESS);
 					
 					if( iwc.isParameterSet(SEARCH_FIELD_AGE_FLOOR)){
-						ageFloor = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_AGE_FLOOR));
+						this.ageFloor = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_AGE_FLOOR));
 					}
 					if( iwc.isParameterSet(SEARCH_FIELD_AGE_CEILING)){
-						ageCeil = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_AGE_CEILING));
+						this.ageCeil = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_AGE_CEILING));
 					}	
 					if( iwc.isParameterSet(SEARCH_FIELD_STATUS_ID)){
-						statusId = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_STATUS_ID));
+						this.statusId = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_STATUS_ID));
 					}
 					
 				}
-				else return false;//NO TYPE
+				else {
+					return false;//NO TYPE
+				}
 				
 				
 				
@@ -116,154 +118,154 @@ public class UserSearchEvent extends IWPresentationEvent
 	 * @return
 	 */
 	public int getAgeCeil() {
-		return ageCeil;
+		return this.ageCeil;
 	}
 
 	/**
 	 * @return
 	 */
 	public int getAgeFloor() {
-		return ageFloor;
+		return this.ageFloor;
 	}
 
 	/**
 	 * @return
 	 */
 	public int getGenderId() {
-		return genderId;
+		return this.genderId;
 	}
 
 	/**
 	 * @return
 	 */
 	public String[] getGroups() {
-		return groups;
+		return this.groups;
 	}
 
 	/**
 	 * @return
 	 */
 	public int getStatusId() {
-		return statusId;
+		return this.statusId;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setAgeCeil(int i) {
-		ageCeil = i;
+		this.ageCeil = i;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setAgeFloor(int i) {
-		ageFloor = i;
+		this.ageFloor = i;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setGenderId(int i) {
-		genderId = i;
+		this.genderId = i;
 	}
 
 	/**
 	 * @param strings
 	 */
 	public void setGroups(String[] strings) {
-		groups = strings;
+		this.groups = strings;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setSearchString(String string) {
-		searchString = string;
+		this.searchString = string;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setSearchType(int i) {
-		searchType = i;
+		this.searchType = i;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setStatusId(int i) {
-		statusId = i;
+		this.statusId = i;
 	}
 
 	/**
 	 * @return
 	 */
 	public String getAddress() {
-		return address;
+		return this.address;
 	}
 
 	/**
 	 * @return
 	 */
 	public String getPersonalId() {
-		return personalId;
+		return this.personalId;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setAddress(String string) {
-		address = string;
+		this.address = string;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setPersonalId(String string) {
-		personalId = string;
+		this.personalId = string;
 	}
 
 	/**
 	 * @return
 	 */
 	public String getFirstName() {
-		return firstName;
+		return this.firstName;
 	}
 
 	/**
 	 * @return
 	 */
 	public String getLastName() {
-		return lastName;
+		return this.lastName;
 	}
 
 	/**
 	 * @return
 	 */
 	public String getMiddleName() {
-		return middleName;
+		return this.middleName;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setFirstName(String string) {
-		firstName = string;
+		this.firstName = string;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setLastName(String string) {
-		lastName = string;
+		this.lastName = string;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setMiddleName(String string) {
-		middleName = string;
+		this.middleName = string;
 	}
 
 }

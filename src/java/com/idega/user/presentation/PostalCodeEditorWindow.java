@@ -54,7 +54,7 @@ public class PostalCodeEditorWindow extends StyledIWAdminWindow{
 
 	
 	public void main(IWContext iwc) throws Exception {
-		iwrb = getResourceBundle(iwc);
+		this.iwrb = getResourceBundle(iwc);
 	
 		if(iwc.isParameterSet(PARAM_SAVE)){
 			String postalCode = iwc.getParameter(PARAM_POSTAL_CODE);
@@ -62,26 +62,26 @@ public class PostalCodeEditorWindow extends StyledIWAdminWindow{
 			String countryID = iwc.getParameter(PARAM_COUNTRY_ID);
 			
 			
-			addressBiz = getAddressBusiness(iwc);
+			this.addressBiz = getAddressBusiness(iwc);
 			try {
-				addressBiz.getPostalCodeAndCreateIfDoesNotExist(postalCode,area,addressBiz.getCountryHome().findByPrimaryKey(new Integer(countryID)));
+				this.addressBiz.getPostalCodeAndCreateIfDoesNotExist(postalCode,area,this.addressBiz.getCountryHome().findByPrimaryKey(new Integer(countryID)));
 				close();
 			}
 			catch (NumberFormatException e) {
 				e.printStackTrace();
-				add(iwrb.getLocalizedString("postalcodeeditorwindow.error_message","The postal code was not saved because of an error, please notify your system administrator"));
+				add(this.iwrb.getLocalizedString("postalcodeeditorwindow.error_message","The postal code was not saved because of an error, please notify your system administrator"));
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
-				add(iwrb.getLocalizedString("postalcodeeditorwindow.error_message","The postal code was not saved because of an error, please notify your system administrator"));
+				add(this.iwrb.getLocalizedString("postalcodeeditorwindow.error_message","The postal code was not saved because of an error, please notify your system administrator"));
 			}
 			catch (CreateException e) {
 				e.printStackTrace();
-				add(iwrb.getLocalizedString("postalcodeeditorwindow.error_message","The postal code was not saved because of an error, please notify your system administrator"));
+				add(this.iwrb.getLocalizedString("postalcodeeditorwindow.error_message","The postal code was not saved because of an error, please notify your system administrator"));
 			}
 			catch (FinderException e) {
 				e.printStackTrace();
-				add(iwrb.getLocalizedString("postalcodeeditorwindow.error_message","The postal code was not saved because of an error, please notify your system administrator"));
+				add(this.iwrb.getLocalizedString("postalcodeeditorwindow.error_message","The postal code was not saved because of an error, please notify your system administrator"));
 			}
 			
 
@@ -89,15 +89,15 @@ public class PostalCodeEditorWindow extends StyledIWAdminWindow{
 		else{
 			Form form = new Form();
 	
-			setTitle(iwrb.getLocalizedString("postalcodeeditorwindow.title", "Postal codes"));
-			addTitle(iwrb.getLocalizedString("postalcodeeditorwindow.title", "Postal codes"), TITLE_STYLECLASS);
-			setName(iwrb.getLocalizedString("postalcodeeditorwindow.title", "Postal codes"));
+			setTitle(this.iwrb.getLocalizedString("postalcodeeditorwindow.title", "Postal codes"));
+			addTitle(this.iwrb.getLocalizedString("postalcodeeditorwindow.title", "Postal codes"), TITLE_STYLECLASS);
+			setName(this.iwrb.getLocalizedString("postalcodeeditorwindow.title", "Postal codes"));
 	
 			add(form,iwc);
 			Table tab = new Table(2,5);
 			form.add(tab);
 			
-			tab.setStyleClass(mainStyleClass);
+			tab.setStyleClass(this.mainStyleClass);
 			tab.setColumnVerticalAlignment(1, Table.VERTICAL_ALIGN_TOP);
 			tab.setColumnVerticalAlignment(2, Table.VERTICAL_ALIGN_TOP);
 	
@@ -108,18 +108,18 @@ public class PostalCodeEditorWindow extends StyledIWAdminWindow{
 			
 			
 			Text codeText = new Text();
-			codeText.setText(iwrb.getLocalizedString("postalcodeeditorwindow.postal_code", "Code"));
+			codeText.setText(this.iwrb.getLocalizedString("postalcodeeditorwindow.postal_code", "Code"));
 			codeText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 					
 			TextInput codeInput = new TextInput(PARAM_POSTAL_CODE);
 			codeInput.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-			codeInput.setAsNotEmpty(iwrb.getLocalizedString("postalcodeeditorwindow.confirm_message", "You must fill in all the fields first."));
+			codeInput.setAsNotEmpty(this.iwrb.getLocalizedString("postalcodeeditorwindow.confirm_message", "You must fill in all the fields first."));
 			
 			tab.add(codeText, 1, 1);
 			tab.add(codeInput, 1, 2);
 			
 			Text countryText = new Text();
-			countryText.setText(iwrb.getLocalizedString("postalcodeeditorwindow.country", "Country"));
+			countryText.setText(this.iwrb.getLocalizedString("postalcodeeditorwindow.country", "Country"));
 			countryText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 				
 			CountryDropdownMenu countryMenu = new CountryDropdownMenu(PARAM_COUNTRY_ID);
@@ -129,19 +129,19 @@ public class PostalCodeEditorWindow extends StyledIWAdminWindow{
 			tab.add(countryMenu, 2, 2);
 			
 			Text areaText = new Text();
-			areaText.setText(iwrb.getLocalizedString("postalcodeeditorwindow.area", "Area"));
+			areaText.setText(this.iwrb.getLocalizedString("postalcodeeditorwindow.area", "Area"));
 			areaText.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 				
 			TextInput areaInput = new TextInput(PARAM_AREA);
 			areaInput.setStyleAttribute(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
-			areaInput.setAsNotEmpty(iwrb.getLocalizedString("postalcodeeditorwindow.confirm_message", "You must fill in all the fields first."));
+			areaInput.setAsNotEmpty(this.iwrb.getLocalizedString("postalcodeeditorwindow.confirm_message", "You must fill in all the fields first."));
 	
 			tab.add(areaText, 1, 3);
 			tab.add(areaInput, 1, 4);
 			
 			//buttons
-			SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("postalcodeeditorwindow.save","save"), PARAM_SAVE,"true");
-	   	CloseButton close = new CloseButton(iwrb.getLocalizedImageButton("postalcodeeditorwindow.close", "close") );
+			SubmitButton save = new SubmitButton(this.iwrb.getLocalizedImageButton("postalcodeeditorwindow.save","save"), PARAM_SAVE,"true");
+	   	CloseButton close = new CloseButton(this.iwrb.getLocalizedImageButton("postalcodeeditorwindow.close", "close") );
 	    
 	    tab.setAlignment(2,5,"right");
 			tab.add(close, 2, 5);
@@ -157,15 +157,15 @@ public class PostalCodeEditorWindow extends StyledIWAdminWindow{
 	}
 
 	public AddressBusiness getAddressBusiness(IWContext iwc) {
-		if(addressBiz==null){	
+		if(this.addressBiz==null){	
 			try {
-				addressBiz = (AddressBusiness) IBOLookup.getServiceInstance(iwc,AddressBusiness.class);
+				this.addressBiz = (AddressBusiness) IBOLookup.getServiceInstance(iwc,AddressBusiness.class);
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
 			}	
 		}	
-		return addressBiz;
+		return this.addressBiz;
 	}
   
 }

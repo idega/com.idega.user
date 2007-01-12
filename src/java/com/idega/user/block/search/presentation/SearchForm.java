@@ -45,12 +45,12 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 	}
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
-		iwb = getBundle(iwc);
-		iwrb = getResourceBundle(iwc);
+		this.iwb = getBundle(iwc);
+		this.iwrb = getResourceBundle(iwc);
 		
-		searchInput = new TextInput(UserSearchEvent.SEARCH_FIELD_SIMPLE_SEARCH_STRING);
-		setStyle(searchInput);
-		searchButton = new SubmitButton(iwrb.getLocalizedString("searchform","Search"));
+		this.searchInput = new TextInput(UserSearchEvent.SEARCH_FIELD_SIMPLE_SEARCH_STRING);
+		setStyle(this.searchInput);
+		this.searchButton = new SubmitButton(this.iwrb.getLocalizedString("searchform","Search"));
 		//setStyle(searchButton);
 		
 		HiddenInput type = new HiddenInput(UserSearchEvent.SEARCH_FIELD_SEARCH_TYPE, Integer.toString(UserSearchEvent.SEARCHTYPE_SIMPLE));
@@ -69,20 +69,20 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 		table.setCellpadding(0);
 		table.setCellspacing(1);
 		
-		table.add(searchInput, 2, 1);
-		table.add(searchButton, 3, 1);
+		table.add(this.searchInput, 2, 1);
+		table.add(this.searchButton, 3, 1);
 		//table.add(searchTypeDropDown, 1, 1);
 		
 		 // get the source from the controlEvent (this is a hack that this works with newer core versions)
-		String sourceParameterValue = (_controlEvent == null) ? "" : _controlEvent.getSourceParameterValue();
+		String sourceParameterValue = (this._controlEvent == null) ? "" : this._controlEvent.getSourceParameterValue();
 		event.setSource(sourceParameterValue);
 		form.addEventModel(event, iwc);
 		form.add(table);
-		searchButton.setButtonImage(iwb.getImage("search.gif"));
+		this.searchButton.setButtonImage(this.iwb.getImage("search.gif"));
 		
-		if(textValue != null) {
-			searchInput.setContent(textValue);
-			searchInput.setOnFocus("if(this.value==\'" + iwrb.getLocalizedString("insert_search_string","Insert a search string") + "\')this.value=\'\' ");
+		if(this.textValue != null) {
+			this.searchInput.setContent(this.textValue);
+			this.searchInput.setOnFocus("if(this.value==\'" + this.iwrb.getLocalizedString("insert_search_string","Insert a search string") + "\')this.value=\'\' ");
 		}
 // do not set the controlEvent (this is a hack that this works with newer core versions)
 //		if (_controlTarget != null) {
@@ -94,10 +94,10 @@ public class SearchForm extends PresentationObjectContainer implements IWBrowser
 		this.add(form);
 	}
 	public void setControlEventModel(IWPresentationEvent model) {
-		_controlEvent = model;
+		this._controlEvent = model;
 	}
 	public void setControlTarget(String controlTarget) {
-		_controlTarget = controlTarget;
+		this._controlTarget = controlTarget;
 	}
 	public void setStyle(PresentationObject obj) {
 		if (obj instanceof Text) {

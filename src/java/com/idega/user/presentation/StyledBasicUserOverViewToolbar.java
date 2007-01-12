@@ -60,7 +60,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
      * @return IBDomain
      */
     public ICDomain getDomain() {
-        return parentDomain;
+        return this.parentDomain;
     }
     
     /**
@@ -68,7 +68,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
      * @return Group
      */
     public Group getParentGroup() {
-        return parentGroup;
+        return this.parentGroup;
     }
     
     /**
@@ -76,32 +76,32 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
      * @return Group
      */
     public Group getSelectedGroup() {
-        return selectedGroup;
+        return this.selectedGroup;
     }
     
     public void main(final IWContext iwc) throws Exception {
         this.empty();
-        iwb = getBundle(iwc);
-        iwrb = getResourceBundle(iwc);
+        this.iwb = getBundle(iwc);
+        this.iwrb = getResourceBundle(iwc);
         boolean showISStuff = iwc.getApplicationSettings().getProperty("temp_show_is_related_stuff") != null;
         
         Table toolbar1 = new Table();
         toolbar1.setCellpadding(0);
         toolbar1.setCellspacing(0);
         
-        if (title != null) {
-            Text text = new Text(title);
+        if (this.title != null) {
+            Text text = new Text(this.title);
             text.setFontFace(Text.FONT_FACE_VERDANA);
             text.setFontSize(Text.FONT_SIZE_7_HTML_1);
             text.setBold();
             
-            toolbar1.add(title, 10, 1);
+            toolbar1.add(this.title, 10, 1);
         }
         
-        if (selectedGroup != null) {
+        if (this.selectedGroup != null) {
             
-            if(selectedGroup.isAlias()){
-                aliasGroup = selectedGroup.getAlias();
+            if(this.selectedGroup.isAlias()){
+                this.aliasGroup = this.selectedGroup.getAlias();
             }
             
             setAccessPermissions(iwc);
@@ -109,21 +109,21 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
             //TODO EIki check alias stuff
             //can a user create a group under an alias?
             
-            if (hasCreatePermissionForRealGroup) {
+            if (this.hasCreatePermissionForRealGroup) {
                 
                 Table button = new Table(1, 1);
-                button.setStyleClass(styleButton);
+                button.setStyleClass(this.styleButton);
                 button.setAlignment(1,1,"center");
                 button.setCellpadding(1);
-                Text text = new Text(iwrb.getLocalizedString("new.member", "New member"));
+                Text text = new Text(this.iwrb.getLocalizedString("new.member", "New member"));
                 Link tLink11 = new Link(text);
-                tLink11.setStyleClass(styledLinkClass);
+                tLink11.setStyleClass(this.styledLinkClass);
                 tLink11.setWindowToOpen(CreateUser.class);
-                if (aliasGroup!=null){
-                    tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, aliasGroup.getPrimaryKey().toString());
+                if (this.aliasGroup!=null){
+                    tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, this.aliasGroup.getPrimaryKey().toString());
                 }
                 else{
-                    tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, selectedGroup.getPrimaryKey().toString());
+                    tLink11.setParameter(CreateUser.PARAMETERSTRING_GROUP_ID, this.selectedGroup.getPrimaryKey().toString());
                 }
                 
                 button.add(tLink11, 1, 1);
@@ -136,16 +136,18 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
             
             //edit or view group
             Table editGroup = new Table(1, 1);
-            editGroup.setStyleClass(styleButton);
+            editGroup.setStyleClass(this.styleButton);
             editGroup.setAlignment(1,1,"center");
             editGroup.setCellpadding(1);
-            Text editText = new Text(iwrb.getLocalizedString("edit.group", "Edit group"));
+            Text editText = new Text(this.iwrb.getLocalizedString("edit.group", "Edit group"));
             Link editLink = new Link(editText);
-            editLink.setStyleClass(styledLinkClass);
-            if (selectedGroup != null)
-                editLink.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) selectedGroup.getPrimaryKey()).toString());
-            if (parentGroup != null)
-                editLink.setParameter(GroupPropertyWindow.PARENT_GROUP_ID_KEY, ((Integer) parentGroup.getPrimaryKey()).toString());
+            editLink.setStyleClass(this.styledLinkClass);
+            if (this.selectedGroup != null) {
+				editLink.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, ((Integer) this.selectedGroup.getPrimaryKey()).toString());
+			}
+            if (this.parentGroup != null) {
+				editLink.setParameter(GroupPropertyWindow.PARENT_GROUP_ID_KEY, ((Integer) this.parentGroup.getPrimaryKey()).toString());
+			}
             
             editLink.setWindowToOpen(GroupPropertyWindow.class);
             editGroup.add(editLink, 1, 1);
@@ -154,16 +156,16 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 
             //permission	
             //TODO Eiki open up seperate windows for the alias group and the permissions
-            if( isRoleMaster ){
+            if( this.isRoleMaster ){
                 Table button4 = new Table(1, 1);
-                button4.setStyleClass(styleButton);
+                button4.setStyleClass(this.styleButton);
                 button4.setAlignment(1,1,"center");
                 button4.setCellpadding(1);
-                Text text3 = new Text(iwrb.getLocalizedString("roles", "Roles"));
+                Text text3 = new Text(this.iwrb.getLocalizedString("roles", "Roles"));
                 Link tLink12 = new Link(text3);
-                tLink12.setStyleClass(styledLinkClass);
+                tLink12.setStyleClass(this.styledLinkClass);
                 SelectGroupEvent selectGroup = new SelectGroupEvent();
-                selectGroup.setGroupToSelect(selectedGroup.getNodeID());
+                selectGroup.setGroupToSelect(this.selectedGroup.getNodeID());
                 
                 button4.add(tLink12, 1, 1);
                 selectGroup.setSource(this);
@@ -176,16 +178,16 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
             }
             
             
-            if ( hasOwnerPermissionForRealGroup || hasPermitPermissionForRealGroup) {
+            if ( this.hasOwnerPermissionForRealGroup || this.hasPermitPermissionForRealGroup) {
                 Table button4 = new Table(1, 1);
-                button4.setStyleClass(styleButton);
+                button4.setStyleClass(this.styleButton);
                 button4.setAlignment(1,1,"center");
                 button4.setCellpadding(1);
-                Text text3 = new Text(iwrb.getLocalizedString("permissions", "Permissions"));
+                Text text3 = new Text(this.iwrb.getLocalizedString("permissions", "Permissions"));
                 Link tLink12 = new Link(text3);
-                tLink12.setStyleClass(styledLinkClass);
+                tLink12.setStyleClass(this.styledLinkClass);
                 SelectGroupEvent selectGroup = new SelectGroupEvent();
-                selectGroup.setGroupToSelect(selectedGroup.getNodeID());
+                selectGroup.setGroupToSelect(this.selectedGroup.getNodeID());
                 
                 button4.add(tLink12, 1, 1);
                 selectGroup.setSource(this);
@@ -197,43 +199,46 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 toolbar1.setAlignment(5,1,"center");
             }
             
-            if( hasOwnerPermissionForRealGroup) {
+            if( this.hasOwnerPermissionForRealGroup) {
                 // delete button
                 
                 Table button5 = new Table(1, 1);
-                button5.setStyleClass(styleButton);
+                button5.setStyleClass(this.styleButton);
                 button5.setAlignment(1,1,"center");
                 button5.setCellpadding(1);
-                Text text5 = new Text(iwrb.getLocalizedString("Delete.group", "Delete group"));
+                Text text5 = new Text(this.iwrb.getLocalizedString("Delete.group", "Delete group"));
                 Link tLink5 = new Link(text5);
-                tLink5.setStyleClass(styledLinkClass);
+                tLink5.setStyleClass(this.styledLinkClass);
                 tLink5.setWindowToOpen(DeleteGroupConfirmWindow.class);
-                if (selectedGroup != null)
-                    tLink5.addParameter(DeleteGroupConfirmWindow.GROUP_ID_KEY, ((Integer) selectedGroup.getPrimaryKey()).toString());
-                if (parentGroup != null)
-                    tLink5.addParameter(DeleteGroupConfirmWindow.PARENT_GROUP_ID_KEY, ((Integer) parentGroup.getPrimaryKey()).toString());
-                if (parentDomain != null)
-                    tLink5.addParameter(DeleteGroupConfirmWindow.PARENT_DOMAIN_ID_KEY, ((Integer) parentDomain.getPrimaryKey()).toString());
+                if (this.selectedGroup != null) {
+					tLink5.addParameter(DeleteGroupConfirmWindow.GROUP_ID_KEY, ((Integer) this.selectedGroup.getPrimaryKey()).toString());
+				}
+                if (this.parentGroup != null) {
+					tLink5.addParameter(DeleteGroupConfirmWindow.PARENT_GROUP_ID_KEY, ((Integer) this.parentGroup.getPrimaryKey()).toString());
+				}
+                if (this.parentDomain != null) {
+					tLink5.addParameter(DeleteGroupConfirmWindow.PARENT_DOMAIN_ID_KEY, ((Integer) this.parentDomain.getPrimaryKey()).toString());
+				}
                 button5.add(tLink5, 1, 1);
                 toolbar1.add(button5, 6, 1);
                 toolbar1.setAlignment(6,1,"center");
             }            
        
-            if (hasEditPermissionForRealGroup && selectedGroup != null) {
+            if (this.hasEditPermissionForRealGroup && this.selectedGroup != null) {
                 //mass registering button
                 if (showISStuff) {
                     Table button3 = new Table(1, 1);
-                    button3.setStyleClass(styleButton);
+                    button3.setStyleClass(this.styleButton);
                     button3.setAlignment(1,1,"center");
                     button3.setCellpadding(1);
-                    Text text3 = new Text(iwrb.getLocalizedString("massregistering", "Bulk registering"));
+                    Text text3 = new Text(this.iwrb.getLocalizedString("massregistering", "Bulk registering"));
                     Link tLink14 = new Link(text3);
-                    tLink14.setStyleClass(styledLinkClass);
-                    if(aliasGroup==null){
-                        tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, selectedGroup.getPrimaryKey().toString());
+                    tLink14.setStyleClass(this.styledLinkClass);
+                    if(this.aliasGroup==null){
+                        tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, this.selectedGroup.getPrimaryKey().toString());
                     }
                     else{
-                        tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, aliasGroup.getPrimaryKey().toString());
+                        tLink14.setParameter(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID, this.aliasGroup.getPrimaryKey().toString());
                     }
                     
                     tLink14.setWindowToOpen(MassRegisteringWindow.class);
@@ -249,7 +254,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 ///
 
         		List  toolbarElements = new ArrayList();
-        		Group realGroup = (aliasGroup == null) ? selectedGroup : aliasGroup;
+        		Group realGroup = (this.aliasGroup == null) ? this.selectedGroup : this.aliasGroup;
             	String selectedGroupID = realGroup.getPrimaryKey().toString();
         		Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForGroup(realGroup);
         		Iterator iter = plugins.iterator();
@@ -295,13 +300,13 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
         				// note: not all plugins are using that parameter
         				parameterMap.put(GroupPropertyWindow.PARAMETERSTRING_GROUP_ID,selectedGroupID );        				
                         Table toolButton = new Table(1, 1);
-                        toolButton.setStyleClass(styleButton);
+                        toolButton.setStyleClass(this.styleButton);
                         toolButton.setAlignment(1,1,"center");
                         toolButton.setCellpadding(1);
                         String toolName = toolbarElement.getName(iwc);
                         Text toolText = new Text(toolName);
                         Link toolLink = new Link(toolText);
-                        toolLink.setStyleClass(styledLinkClass);
+                        toolLink.setStyleClass(this.styledLinkClass);
                         toolLink.setParameter(parameterMap);
                         toolLink.setWindowToOpen(toolPresentationClass);
                         toolButton.add(toolLink, 1,1);
@@ -364,55 +369,55 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
     private void setAccessPermissions(IWContext iwc) throws Exception {
         //access control stuff
         AccessController accessController = iwc.getAccessController();
-        isCurrentUserSuperAdmin = iwc.isSuperAdmin();
+        this.isCurrentUserSuperAdmin = iwc.isSuperAdmin();
         
       //  hasViewPermissionForRealGroup = isCurrentUserSuperAdmin;
-        hasEditPermissionForRealGroup = isCurrentUserSuperAdmin;
+        this.hasEditPermissionForRealGroup = this.isCurrentUserSuperAdmin;
         //hasDeletePermissionForRealGroup = isCurrentUserSuperAdmin;
-        hasOwnerPermissionForRealGroup = isCurrentUserSuperAdmin;
-        hasCreatePermissionForRealGroup = isCurrentUserSuperAdmin;
-        hasPermitPermissionForRealGroup = isCurrentUserSuperAdmin;
+        this.hasOwnerPermissionForRealGroup = this.isCurrentUserSuperAdmin;
+        this.hasCreatePermissionForRealGroup = this.isCurrentUserSuperAdmin;
+        this.hasPermitPermissionForRealGroup = this.isCurrentUserSuperAdmin;
         
-        isRoleMaster = isCurrentUserSuperAdmin;
+        this.isRoleMaster = this.isCurrentUserSuperAdmin;
         
-        if (!isCurrentUserSuperAdmin){
+        if (!this.isCurrentUserSuperAdmin){
             
-            isRoleMaster = accessController.isRoleMaster(iwc);
+            this.isRoleMaster = accessController.isRoleMaster(iwc);
             
-            if(aliasGroup!=null){//thats the real group
-                hasOwnerPermissionForRealGroup = accessController.isOwner(aliasGroup, iwc); 
-                if(!hasOwnerPermissionForRealGroup) {
+            if(this.aliasGroup!=null){//thats the real group
+                this.hasOwnerPermissionForRealGroup = accessController.isOwner(this.aliasGroup, iwc); 
+                if(!this.hasOwnerPermissionForRealGroup) {
           //          hasViewPermissionForRealGroup = accessController.hasViewPermissionFor(aliasGroup, iwc);
-                    hasEditPermissionForRealGroup = accessController.hasEditPermissionFor(aliasGroup, iwc);
+                    this.hasEditPermissionForRealGroup = accessController.hasEditPermissionFor(this.aliasGroup, iwc);
             //        hasDeletePermissionForRealGroup = accessController.hasDeletePermissionFor(aliasGroup, iwc);
-                    hasCreatePermissionForRealGroup = accessController.hasCreatePermissionFor(aliasGroup, iwc);
-                    hasPermitPermissionForRealGroup = accessController.hasPermitPermissionFor(aliasGroup, iwc);
+                    this.hasCreatePermissionForRealGroup = accessController.hasCreatePermissionFor(this.aliasGroup, iwc);
+                    this.hasPermitPermissionForRealGroup = accessController.hasPermitPermissionFor(this.aliasGroup, iwc);
                 }
                 else {
                     //the user is the owner so he can do anything
               //      hasViewPermissionForRealGroup = true;
-                    hasEditPermissionForRealGroup = true;
+                    this.hasEditPermissionForRealGroup = true;
                 //    hasDeletePermissionForRealGroup = true;
-                    hasCreatePermissionForRealGroup = true;
-                    hasPermitPermissionForRealGroup = true;
+                    this.hasCreatePermissionForRealGroup = true;
+                    this.hasPermitPermissionForRealGroup = true;
                 }
             }
-            else if(selectedGroup!=null){//the third case: selectedGroup == null happens when doing a search for example
-                hasOwnerPermissionForRealGroup = accessController.isOwner(selectedGroup, iwc); 
-                if(!hasOwnerPermissionForRealGroup) {
+            else if(this.selectedGroup!=null){//the third case: selectedGroup == null happens when doing a search for example
+                this.hasOwnerPermissionForRealGroup = accessController.isOwner(this.selectedGroup, iwc); 
+                if(!this.hasOwnerPermissionForRealGroup) {
                   //  hasViewPermissionForRealGroup = accessController.hasViewPermissionFor(selectedGroup, iwc);
-                    hasEditPermissionForRealGroup = accessController.hasEditPermissionFor(selectedGroup, iwc);
+                    this.hasEditPermissionForRealGroup = accessController.hasEditPermissionFor(this.selectedGroup, iwc);
                    // hasDeletePermissionForRealGroup = accessController.hasDeletePermissionFor(selectedGroup, iwc);
-                    hasCreatePermissionForRealGroup = accessController.hasCreatePermissionFor(selectedGroup, iwc);
-                    hasPermitPermissionForRealGroup = accessController.hasPermitPermissionFor(selectedGroup, iwc);
+                    this.hasCreatePermissionForRealGroup = accessController.hasCreatePermissionFor(this.selectedGroup, iwc);
+                    this.hasPermitPermissionForRealGroup = accessController.hasPermitPermissionFor(this.selectedGroup, iwc);
                 }
                 else {
                     //the user is the owner so he can do anything
                   //  hasViewPermissionForRealGroup = true;
-                    hasEditPermissionForRealGroup = true;
+                    this.hasEditPermissionForRealGroup = true;
                   //  hasDeletePermissionForRealGroup = true;
-                    hasCreatePermissionForRealGroup = true;
-                    hasPermitPermissionForRealGroup = true;
+                    this.hasCreatePermissionForRealGroup = true;
+                    this.hasPermitPermissionForRealGroup = true;
                 }
             }
             

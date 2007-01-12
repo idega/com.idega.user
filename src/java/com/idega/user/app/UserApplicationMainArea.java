@@ -63,39 +63,39 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 
 	public UserApplicationMainArea() {
 		this.setAllMargins(0);
-		_stateHandler = new StatefullPresentationImplHandler();
+		this._stateHandler = new StatefullPresentationImplHandler();
 		getStateHandler().setPresentationStateClass(UserApplicationMainAreaPS.class);
 	}
 
 	public void setControlEventModel(IWPresentationEvent model) {
-		_contolEvent = model;
-		_buo.setControlEventModel(model);
-		search.setControlEventModel(model);
+		this._contolEvent = model;
+		this._buo.setControlEventModel(model);
+		this.search.setControlEventModel(model);
 	}
 
 	public void setControlTarget(String controlTarget) {
-		_controlTarget = controlTarget;
-		_buo.setControlTarget(controlTarget);
-		search.setControlTarget(controlTarget);
+		this._controlTarget = controlTarget;
+		this._buo.setControlTarget(controlTarget);
+		this.search.setControlTarget(controlTarget);
 	}
 
 	public Class getPresentationStateClass() {
-		return _stateHandler.getPresentationStateClass();
+		return this._stateHandler.getPresentationStateClass();
 	}
 
 	public IWPresentationState getPresentationState(IWUserContext iwuc) {
-		return _stateHandler.getPresentationState(this, iwuc);
+		return this._stateHandler.getPresentationState(this, iwuc);
 	}
 
 	public StatefullPresentationImplHandler getStateHandler() {
-		return _stateHandler;
+		return this._stateHandler;
 	}
 
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
 		IWBundle iwb = getBundle(iwc);
 		Page parentPage = this.getParentPage();
-		String styleSrc = iwb.getVirtualPathWithFileNameString(styleScript);
+		String styleSrc = iwb.getVirtualPathWithFileNameString(this.styleScript);
 		parentPage.addStyleSheetURL(styleSrc);
 		UserApplicationMainAreaPS ps = (UserApplicationMainAreaPS) this.getPresentationState(iwc);
 		String className = ps.getClassNameToShow();
@@ -106,7 +106,7 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 			ps.setClassNameToShow(null);
 		}
 		else if (ps.isSearch()) {
-			add(search);
+			add(this.search);
 		}
 		else if (plugins != null && !plugins.isEmpty()) {
 			Iterator iter = plugins.iterator();
@@ -115,7 +115,7 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 				UserGroupPlugInBusiness biz = (UserGroupPlugInBusiness) iter.next();
 				PresentationObject obj = biz.instanciateViewer(ps.getSelectedGroup());
 				if (obj == null && !buoHasBeenAdded) {
-					add(_buo);
+					add(this._buo);
 					buoHasBeenAdded = true;
 				}
 				else {
@@ -124,26 +124,26 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 			}
 		}
 		else {
-			this.add(_buo);
+			this.add(this._buo);
 		}
 	}
 
 	public void initializeInMain(IWContext iwc) {
 //		System.out.println("in initializeInMain getClassToShow:"
 //				+ ((UserApplicationMainAreaPS) this.getPresentationState(iwc)).getClassNameToShow());
-		iwb = getBundle(iwc);
+		this.iwb = getBundle(iwc);
 		IWLocation location = (IWLocation) this.getLocation().clone();
 		location.setSubID(1);//bara eitthva? id...herma eftir instance id
-		_buo.setLocation(location, iwc);
-		_buo.setArtificialCompoundId(getCompoundId(), iwc);
-		search.setLocation(location, iwc);
-		search.setArtificialCompoundId(getCompoundId(), iwc);
+		this._buo.setLocation(location, iwc);
+		this._buo.setArtificialCompoundId(getCompoundId(), iwc);
+		this.search.setLocation(location, iwc);
+		this.search.setArtificialCompoundId(getCompoundId(), iwc);
 		//this.setIWUserContext(iwc);
-		IWPresentationState buoState = _buo.getPresentationState(iwc);
+		IWPresentationState buoState = this._buo.getPresentationState(iwc);
 		if (buoState instanceof IWActionListener) {
 			((UserApplicationMainAreaPS) this.getPresentationState(iwc)).addIWActionListener((IWActionListener) buoState);
 		}
-		IWPresentationState searchState = search.getPresentationState(iwc);
+		IWPresentationState searchState = this.search.getPresentationState(iwc);
 		if (searchState instanceof IWActionListener) {
 			((UserApplicationMainAreaPS) this.getPresentationState(iwc)).addIWActionListener((IWActionListener) searchState);
 		}

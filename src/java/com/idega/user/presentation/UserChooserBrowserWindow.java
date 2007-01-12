@@ -93,7 +93,7 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
         message = resourceBundle.getLocalizedString("uc_no_results_were_found", "Sorry, no results were found");
       }
       else {
-        message = resourceBundle.getLocalizedString("uc_results_for", "Results for") + ": " + searchString;
+        message = resourceBundle.getLocalizedString("uc_results_for", "Results for") + ": " + this.searchString;
         EntityBrowser browser = getBrowser(entities, iwc);
         inputTable.add(browser,1,3);
         inputTable.setCellpaddingTop(1, 3, 0);
@@ -122,8 +122,8 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
       // reset browser
       EntityBrowser.releaseBrowser(iwc);
     }
-    searchString = iwc.isParameterSet(SEARCH_KEY) ? iwc.getParameter(SEARCH_KEY).trim() : "";
-    if (searchString.length() == 0) {
+    this.searchString = iwc.isParameterSet(SEARCH_KEY) ? iwc.getParameter(SEARCH_KEY).trim() : "";
+    if (this.searchString.length() == 0) {
       return DO_NOT_SHOW_LIST_ACTION;
     }
     else  {
@@ -166,7 +166,7 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
     EntityBrowser browser = EntityBrowser.getInstanceUsingExternalForm();
     browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
     browser.setDefaultNumberOfRows(NUMBER_OF_ROWS);
-    browser.setEntities("chooser_window_" + searchString, entities);
+    browser.setEntities("chooser_window_" + this.searchString, entities);
 
     browser.setWidth(Table.HUNDRED_PERCENT);
       
@@ -186,16 +186,17 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
     browser.setEntityToPresentationConverter("Choose", converterToChooseButton);
     // set mandatory parameters
     browser.addMandatoryParameters(getHiddenParameters(iwc));
-    browser.addMandatoryParameter(SEARCH_KEY, searchString);
+    browser.addMandatoryParameter(SEARCH_KEY, this.searchString);
     return browser;
   }
     
   private Collection getEntities()  {
-    if (searchString == null)
-      return new ArrayList();
+    if (this.searchString == null) {
+		return new ArrayList();
+	}
     try {
       UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
-      String modifiedSearch = getModifiedSearchString(searchString);
+      String modifiedSearch = getModifiedSearchString(this.searchString);
       Collection entities = userHome.findUsersBySearchCondition(modifiedSearch, false);
       return entities;
     }
@@ -219,7 +220,7 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
     
     StyledButton searchButton = new StyledButton(new SubmitButton(iwrb.getLocalizedString("search", "Search"), SEARCH_SUBMIT_KEY, SEARCH_SUBMIT_KEY));
     TextInput searchInput = new TextInput(SEARCH_KEY);
-    searchInput.setContent(searchString);
+    searchInput.setContent(this.searchString);
     table.add(searchInput, 1, 1);
     table.add(searchButton, 3, 1);
     

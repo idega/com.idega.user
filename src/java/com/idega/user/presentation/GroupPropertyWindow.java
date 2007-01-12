@@ -31,8 +31,8 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 	public GroupPropertyWindow() {
 		super();
 		// setBackgroundColor(new IWColor(207, 208, 210));
-		setWidth(width);
-		setHeight(height);
+		setWidth(this.width);
+		setHeight(this.height);
 		setResizable(true);
 	}
 

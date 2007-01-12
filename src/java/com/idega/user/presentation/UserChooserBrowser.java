@@ -33,13 +33,13 @@ public class UserChooserBrowser extends AbstractChooser {
   public void main(IWContext iwc){
     empty();
     IWBundle iwb = null;
-    if(isUserBundle) {
+    if(this.isUserBundle) {
     		iwb = iwc.getIWMainApplication().getBundle("com.idega.user");
     }
     else{
     		iwb = iwc.getIWMainApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
     }
-    setChooseButtonImage(iwb.getImage(imgName,getResourceBundle(iwc).getLocalizedString("user_chooser.choose","Choose")));
+    setChooseButtonImage(iwb.getImage(this.imgName,getResourceBundle(iwc).getLocalizedString("user_chooser.choose","Choose")));
   }
 
   public Class getChooserWindowClass() {

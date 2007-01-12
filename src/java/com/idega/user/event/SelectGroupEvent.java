@@ -12,7 +12,7 @@ import com.idega.event.*;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -45,9 +45,9 @@ public class SelectGroupEvent extends IWPresentationEvent {
   }
   
   public Group getParentGroupOfSelection(){
-    if(parentGroupOfSelection != null){
+    if(this.parentGroupOfSelection != null){
       try {
-        return (Group)IDOLookup.findByPrimaryKey(Group.class, parentGroupOfSelection);
+        return (Group)IDOLookup.findByPrimaryKey(Group.class, this.parentGroupOfSelection);
       }
       catch (Exception ex) {
         ex.printStackTrace();
@@ -59,9 +59,9 @@ public class SelectGroupEvent extends IWPresentationEvent {
   }
   
   public ICDomain getParentDomainOfSelection(){
-    if(parentDomainOfSelection != null){
+    if(this.parentDomainOfSelection != null){
       try {
-        return (ICDomain)IDOLookup.findByPrimaryKey(ICDomain.class, parentDomainOfSelection);
+        return (ICDomain)IDOLookup.findByPrimaryKey(ICDomain.class, this.parentDomainOfSelection);
       }
       catch (Exception ex) {
         ex.printStackTrace();
@@ -74,9 +74,9 @@ public class SelectGroupEvent extends IWPresentationEvent {
    
 
   public Group getSelectedGroup(){
-    if(_selectedGroup != null){
+    if(this._selectedGroup != null){
       try {
-        return (Group)IDOLookup.findByPrimaryKey(Group.class,_selectedGroup);
+        return (Group)IDOLookup.findByPrimaryKey(Group.class,this._selectedGroup);
       }
       catch (Exception ex) {
         ex.printStackTrace();
@@ -89,13 +89,15 @@ public class SelectGroupEvent extends IWPresentationEvent {
 
   public boolean initializeEvent(IWContext iwc) {
     
-    if (iwc.isParameterSet(PRM_PARENT_GROUP_ID))
-      parentGroupOfSelection = new Integer(iwc.getParameter(PRM_PARENT_GROUP_ID));
-    if (iwc.isParameterSet(PRM_PARENT_DOMAIN_ID))
-      parentDomainOfSelection = new Integer(iwc.getParameter(PRM_PARENT_DOMAIN_ID));
+    if (iwc.isParameterSet(PRM_PARENT_GROUP_ID)) {
+		this.parentGroupOfSelection = new Integer(iwc.getParameter(PRM_PARENT_GROUP_ID));
+	}
+    if (iwc.isParameterSet(PRM_PARENT_DOMAIN_ID)) {
+		this.parentDomainOfSelection = new Integer(iwc.getParameter(PRM_PARENT_DOMAIN_ID));
+	}
 
     try {
-      _selectedGroup = new Integer(iwc.getParameter(PRM_GROUP_ID));
+      this._selectedGroup = new Integer(iwc.getParameter(PRM_GROUP_ID));
       return true;
     }
     catch (NullPointerException ex) {

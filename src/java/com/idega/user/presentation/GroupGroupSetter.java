@@ -41,8 +41,8 @@ import com.idega.user.data.User;
     public GroupGroupSetter(){
       super("add groups to groups");
       this.setAllMargins(0);
-      this.setWidth(width);
-      this.setHeight(height);
+      this.setWidth(this.width);
+      this.setHeight(this.height);
       this.setResizable(true);
 //      this.setBackgroundColor(new IWColor(207,208,210));
     }
@@ -55,7 +55,7 @@ import com.idega.user.data.User;
       Table frameTable = new Table(3,3);
       frameTable.setWidth(490);
       frameTable.setHeight(320);
-      frameTable.setStyleClass(mainStyleClass);
+      frameTable.setStyleClass(this.mainStyleClass);
 			frameTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
 			frameTable.setVerticalAlignment(1,2,Table.VERTICAL_ALIGN_TOP);
 			frameTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
@@ -68,7 +68,7 @@ import com.idega.user.data.User;
       //frameTable.setBorder(1);
 
 
-      SelectionDoubleBox sdb = new SelectionDoubleBox(GroupGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX,iwrb.getLocalizedString("groupgroupsetter.not_in","Not in"),iwrb.getLocalizedString("groupgroupsetter.in","In"));
+      SelectionDoubleBox sdb = new SelectionDoubleBox(GroupGroupSetter.FIELDNAME_SELECTION_DOUBLE_BOX,this.iwrb.getLocalizedString("groupgroupsetter.not_in","Not in"),this.iwrb.getLocalizedString("groupgroupsetter.in","In"));
 
       SelectionBox left = sdb.getLeftBox();
       left.setHeight(15);
@@ -123,8 +123,9 @@ import com.idega.user.data.User;
 	        Group parentGroup = (Group) topGroupsIterator.next();
 	        allGroups.add(parentGroup);
 	        Collection coll = groupBusiness.getChildGroupsRecursive(parentGroup);
-	        if (coll != null)
-	          allGroups.addAll(coll);
+	        if (coll != null) {
+				allGroups.addAll(coll);
+			}
 	      }
 	      
 	      if(allGroups != null){
@@ -132,9 +133,10 @@ import com.idega.user.data.User;
 	        while (iter.hasNext()) {
 	          Group item = (Group) iter.next();
 	          // filter
-	          if (map.containsKey(group.getGroupType()))
-	              // can not add a text
+	          if (map.containsKey(group.getGroupType())) {
+				// can not add a text
 	            left.addElement(item.getPrimaryKey().toString(), groupBusiness.getNameOfGroupWithParentName(item));
+			}
 	        }
 	      }
 			}
@@ -148,9 +150,9 @@ import com.idega.user.data.User;
       //frameTable.add("GroupId: "+groupId,2,1);
 			System.out.println("GroupId: "+groupId);
       frameTable.add(sdb,2,2);
-      SubmitButton save = new SubmitButton(iwrb.getLocalizedString("groupgroupsetter.save","save"),"save","true");
+      SubmitButton save = new SubmitButton(this.iwrb.getLocalizedString("groupgroupsetter.save","save"),"save","true");
       save.setAsImageButton(true);
-			CloseButton close = new CloseButton(iwrb.getLocalizedString("groupgroupsetter.close","close"));
+			CloseButton close = new CloseButton(this.iwrb.getLocalizedString("groupgroupsetter.close","close"));
 			close.setAsImageButton(true);
 			frameTable.add(help,1,3);
 			frameTable.add(save,2,3);
@@ -163,10 +165,10 @@ import com.idega.user.data.User;
 
     public void main(IWContext iwc) throws Exception {
     	
-    	iwrb = getResourceBundle(iwc);
+    	this.iwrb = getResourceBundle(iwc);
     	
-    	setTitle(iwrb.getLocalizedString("groupgroupsetter.title","Add a group to a group"));
-			setName(iwrb.getLocalizedString("groupgroupsetter.title","Add a group to a group"));
+    	setTitle(this.iwrb.getLocalizedString("groupgroupsetter.title","Add a group to a group"));
+			setName(this.iwrb.getLocalizedString("groupgroupsetter.title","Add a group to a group"));
 
       String save = iwc.getParameter("save");
       if(save != null){

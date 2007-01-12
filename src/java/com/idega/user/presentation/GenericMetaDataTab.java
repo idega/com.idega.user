@@ -65,7 +65,7 @@ public class GenericMetaDataTab extends UserTab {
 				String key = (String) iter.next();
 				//get the type and add different inputs, see productcatalogue
 				String value = getMetaData(key);
-				InterfaceObject input = (InterfaceObject)metaDataInputsMap.get(key);
+				InterfaceObject input = (InterfaceObject)this.metaDataInputsMap.get(key);
 				if(value!=null){
 					input.setContent(value);
 				}
@@ -89,13 +89,13 @@ public class GenericMetaDataTab extends UserTab {
 				}else{
 					input = new TextInput(key);
 				}
-				metaDataInputsMap.put(key,input);
+				this.metaDataInputsMap.put(key,input);
 			}	
 		}
 	}
 
 	protected Map getMetaDataMap() {
-		Map metaDataMap = ((MetaDataCapable)entity).getMetaDataAttributes();
+		Map metaDataMap = ((MetaDataCapable)this.entity).getMetaDataAttributes();
 		return metaDataMap;
 	}
 
@@ -111,7 +111,7 @@ public class GenericMetaDataTab extends UserTab {
 				//bold text
 				Text title = new Text(iwrb.getLocalizedString(key,key),true,false,false);
 				//title.setFontStyle("font-size:8px");
-				metaDataInputTitlesMap.put(key,title);
+				this.metaDataInputTitlesMap.put(key,title);
 			}	
 		}
 	}
@@ -150,13 +150,13 @@ public class GenericMetaDataTab extends UserTab {
 		
 		this.add(table, 1, 1);
 		
-		if(!metaDataInputsMap.isEmpty()){
+		if(!this.metaDataInputsMap.isEmpty()){
 			int row = 2;
-			Iterator iter = metaDataInputsMap.keySet().iterator();
+			Iterator iter = this.metaDataInputsMap.keySet().iterator();
 			while(iter.hasNext()){
 				String key = (String) iter.next();
-				table.add((PresentationObject)metaDataInputTitlesMap.get(key), 1, row);
-				table.add((PresentationObject)metaDataInputsMap.get(key), 2, row);
+				table.add((PresentationObject)this.metaDataInputTitlesMap.get(key), 1, row);
+				table.add((PresentationObject)this.metaDataInputsMap.get(key), 2, row);
 				table.setRowVerticalAlignment(row,Table.VERTICAL_ALIGN_TOP);
 				row++;
 			}
@@ -192,16 +192,16 @@ public class GenericMetaDataTab extends UserTab {
 	}
 
 	protected void setMetaData(String key, String value) {
-		((MetaDataCapable)entity).setMetaData(key, value);
+		((MetaDataCapable)this.entity).setMetaData(key, value);
 	}
 
 	protected String getMetaData(String key) {
-		return ((MetaDataCapable)entity).getMetaData(key);
+		return ((MetaDataCapable)this.entity).getMetaData(key);
 	}
 	
 	public boolean store(IWContext iwc) {
 		
-		entity.store();
+		this.entity.store();
 		
 		return true;
 	}

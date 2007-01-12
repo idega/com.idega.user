@@ -229,16 +229,16 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
    * @see com.idega.presentation.StatefullPresentation#getPresentationState(com.idega.idegaweb.IWUserContext)
    */   
   public IWPresentationState getPresentationState(IWUserContext iwuc){
-    if(presentationState == null){
+    if(this.presentationState == null){
       try {
         IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-        presentationState = (DeleteGroupConfirmWindowPS)stateMachine.getStateFor(getCompoundId(),DeleteGroupConfirmWindowPS.class);
+        this.presentationState = stateMachine.getStateFor(getCompoundId(),DeleteGroupConfirmWindowPS.class);
       }
       catch (RemoteException re) {
         throw new RuntimeException(re.getMessage());
       }
     }
-    return presentationState;
+    return this.presentationState;
   }
  
   private Group getGroup(Integer groupId){

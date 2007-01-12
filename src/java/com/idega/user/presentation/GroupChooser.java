@@ -44,7 +44,7 @@ private boolean submitForm;
 
   public void main(IWContext iwc){
     empty();
-    if(chooserButtonImage == null) {
+    if(this.chooserButtonImage == null) {
 			IWBundle iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER); //BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
 			setChooseButtonImage(iwb.getImage("magnifyingglass.gif","Choose"));
     }
@@ -76,7 +76,7 @@ private boolean submitForm;
 	 * @see com.idega.presentation.ui.AbstractChooser#addParametersToForm(com.idega.presentation.ui.Form)
 	 */
 	protected void addParametersToForm(Form form) {
-		if(submitForm){
+		if(this.submitForm){
 			form.addParameter(GroupChooserWindow.SUBMIT_PARENT_FORM_AFTER_CHANGE, "true");
 		}
 	}
@@ -84,12 +84,12 @@ private boolean submitForm;
 	 * @see com.idega.presentation.ui.AbstractChooser#addParametersToLink(com.idega.presentation.text.Link)
 	 */
 	protected void addParametersToLink(Link link) {
-		if(submitForm){
+		if(this.submitForm){
 			link.addParameter(GroupChooserWindow.SUBMIT_PARENT_FORM_AFTER_CHANGE, "true");
 		}
 	}
 	
 	public void setToSubmitParentFormOnChange(){
-		submitForm = true;
+		this.submitForm = true;
 	}
 }

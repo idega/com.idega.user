@@ -13,7 +13,7 @@ import com.idega.util.text.TextSoap;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
@@ -62,8 +62,9 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 	}
 	
 	private Collection doSimpleSearch(String searchString) {
-		if (searchString == null || searchString.length() <2)
+		if (searchString == null || searchString.length() <2) {
 			return null;
+		}
 		try {
 			searchString = TextSoap.removeWhiteSpaceFromBeginningAndEndOfString(searchString);
 			UserHome userHome = (UserHome) IDOLookup.getHome(User.class);

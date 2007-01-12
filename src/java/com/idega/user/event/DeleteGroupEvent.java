@@ -32,28 +32,31 @@ public class DeleteGroupEvent extends IWPresentationEvent {
    * @see com.idega.event.IWPresentationEvent#initializeEvent(com.idega.presentation.IWContext)
    */
   public boolean initializeEvent(IWContext iwc) {
-    okay = iwc.isParameterSet(OKAY_KEY);
+    this.okay = iwc.isParameterSet(OKAY_KEY);
     
-    if (iwc.isParameterSet(GROUP_ID))
-      groupId = new Integer(iwc.getParameter(GROUP_ID));
+    if (iwc.isParameterSet(GROUP_ID)) {
+		this.groupId = new Integer(iwc.getParameter(GROUP_ID));
+	}
       
-    if (iwc.isParameterSet(PARENT_GROUP_ID))
-      parentGroupId = new Integer(iwc.getParameter(PARENT_GROUP_ID));
+    if (iwc.isParameterSet(PARENT_GROUP_ID)) {
+		this.parentGroupId = new Integer(iwc.getParameter(PARENT_GROUP_ID));
+	}
       
-    if (iwc.isParameterSet(PARENT_DOMAIN_ID))
-      parentDomainId = new Integer(iwc.getParameter(PARENT_DOMAIN_ID));  
+    if (iwc.isParameterSet(PARENT_DOMAIN_ID)) {
+		this.parentDomainId = new Integer(iwc.getParameter(PARENT_DOMAIN_ID));
+	}  
     return true;
   }
 
 
   public boolean isDeletingConfirmed()  {
-    return okay;
+    return this.okay;
   }
 
   public Group getGroup(){
-    if(groupId != null && (! new Integer(-1).equals(groupId))) {
+    if(this.groupId != null && (! new Integer(-1).equals(this.groupId))) {
       try {
-        return (Group)IDOLookup.findByPrimaryKey(Group.class, groupId);
+        return (Group)IDOLookup.findByPrimaryKey(Group.class, this.groupId);
       }
       catch (Exception ex) {
         ex.printStackTrace();
@@ -66,9 +69,9 @@ public class DeleteGroupEvent extends IWPresentationEvent {
   
 
   public Group getParentGroup(){
-    if(parentGroupId != null && (! new Integer(-1).equals(parentGroupId))) {
+    if(this.parentGroupId != null && (! new Integer(-1).equals(this.parentGroupId))) {
       try {
-        return (Group)IDOLookup.findByPrimaryKey(Group.class, parentGroupId);
+        return (Group)IDOLookup.findByPrimaryKey(Group.class, this.parentGroupId);
       }
       catch (Exception ex) {
         ex.printStackTrace();
@@ -80,9 +83,9 @@ public class DeleteGroupEvent extends IWPresentationEvent {
   }    
 
   public ICDomain getParentDomain(){
-    if(parentDomainId != null && (! new Integer(-1).equals(parentDomainId))) {
+    if(this.parentDomainId != null && (! new Integer(-1).equals(this.parentDomainId))) {
       try {
-        return (ICDomain)IDOLookup.findByPrimaryKey(ICDomain.class, parentDomainId);
+        return (ICDomain)IDOLookup.findByPrimaryKey(ICDomain.class, this.parentDomainId);
       }
       catch (Exception ex) {
         ex.printStackTrace();

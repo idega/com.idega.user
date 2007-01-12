@@ -64,7 +64,7 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 					String name = groupType.getType();
 					if(name!=null) {
 						addMenuElement(name, iwrb.getLocalizedString(name,name));
-						_allGroupTypes.add(name);
+						this._allGroupTypes.add(name);
 					}
 				}
 			}
@@ -100,7 +100,7 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 				groupTypes.add(values[i]);
 			}
 		} else {
-			groupTypes = _allGroupTypes;
+			groupTypes = this._allGroupTypes;
 		}
 
 		return groupTypes;

@@ -56,26 +56,26 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 		this.getLocation().setApplicationClass(this.getClass());
 		this.getLocation().isInPopUpWindow(true);
 	}
-//œr private ’ protected
+//ï¿½r private ï¿½ protected
 	protected void init(IWContext iwc) {
-		form = new Form();
-		searchString = iwc.getParameter(PARAMETER_SEARCH);
-		iwrb = iwc.getIWMainApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
-		showAll = iwc.isParameterSet(PARAMETER_VIEW_ALL);
+		this.form = new Form();
+		this.searchString = iwc.getParameter(this.PARAMETER_SEARCH);
+		this.iwrb = iwc.getIWMainApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+		this.showAll = iwc.isParameterSet(this.PARAMETER_VIEW_ALL);
 
-		if (iwc.isParameterSet(PARAMETER_CURRENT_PAGE)) {
-			currentPage = Integer.parseInt(iwc.getParameter(PARAMETER_CURRENT_PAGE));
+		if (iwc.isParameterSet(this.PARAMETER_CURRENT_PAGE)) {
+			this.currentPage = Integer.parseInt(iwc.getParameter(this.PARAMETER_CURRENT_PAGE));
 		}
 		//int start = currentPage * USERS_PER_PAGE;
 
 		try {
 			String useUserPks = (String) iwc.getSessionAttribute(USING_AVAILABLE_USER_PKS_SESSION_PARAMETER);
 			if (useUserPks != null) {
-				usingUserPks = true;
+				this.usingUserPks = true;
 			}
 			Collection availableUserPks = (Collection) iwc.getSessionAttribute(AVAILABLE_USER_PKS_SESSION_PARAMETER);
 			String[] userIds = null;
-			if (usingUserPks && availableUserPks != null) {
+			if (this.usingUserPks && availableUserPks != null) {
 				userIds = new String[availableUserPks.size()];
 				Iterator iter = availableUserPks.iterator();
 				int counter = 0;
@@ -84,21 +84,21 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 					userIds[counter++] = i.toString();
 				}
 			}
-			if (usingUserPks && searchString == null) {
-				showAll = true;
+			if (this.usingUserPks && this.searchString == null) {
+				this.showAll = true;
 			}
 
 			UserHome uHome = (UserHome) IDOLookup.getHome(User.class);
-			if (showAll) {
-				if (usingUserPks && userIds != null) {
-					users = uHome.findUsers(userIds);
+			if (this.showAll) {
+				if (this.usingUserPks && userIds != null) {
+					this.users = uHome.findUsers(userIds);
 				}
 				else {
-					users = uHome.findAllUsersOrderedByFirstName();
+					this.users = uHome.findAllUsersOrderedByFirstName();
 				}
 			}
-			else if (searchString != null) {
-				users = uHome.findUsersBySearchCondition(searchString, userIds, false);
+			else if (this.searchString != null) {
+				this.users = uHome.findUsersBySearchCondition(this.searchString, userIds, false);
 			}
 		}
 		catch (Exception e) {
@@ -110,7 +110,7 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 	 * @see com.idega.presentation.ui.AbstractChooserWindow#displaySelection(com.idega.presentation.IWContext)
 	 */
 	public void displaySelection(IWContext iwc) {
-		String uId = iwc.getParameter(PARAMETER_USER_ID);
+		String uId = iwc.getParameter(this.PARAMETER_USER_ID);
 		if (uId != null) {
 			try {
 				User user = getUserHome().findByPrimaryKey(new Integer(uId));
@@ -126,15 +126,15 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 
 			init(iwc);
 
-			addTitle(iwrb.getLocalizedString("select_a_user", "Select a user"), TITLE_STYLECLASS);
+			addTitle(this.iwrb.getLocalizedString("select_a_user", "Select a user"), TITLE_STYLECLASS);
 
-			form.maintainParameter(SCRIPT_PREFIX_PARAMETER);
-			form.maintainParameter(SCRIPT_SUFFIX_PARAMETER);
-			form.maintainParameter(DISPLAYSTRING_PARAMETER_NAME);
-			form.maintainParameter(VALUE_PARAMETER_NAME);
+			this.form.maintainParameter(SCRIPT_PREFIX_PARAMETER);
+			this.form.maintainParameter(SCRIPT_SUFFIX_PARAMETER);
+			this.form.maintainParameter(DISPLAYSTRING_PARAMETER_NAME);
+			this.form.maintainParameter(VALUE_PARAMETER_NAME);
 
 			Table mainTable = new Table(1, 4);
-			mainTable.setStyleClass(mainTableStyle);
+			mainTable.setStyleClass(this.mainTableStyle);
 			mainTable.setWidth(Table.HUNDRED_PERCENT);
 			mainTable.setBorder(0);
 
@@ -146,14 +146,14 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 			catch (RemoteException r) {
 				throw new RuntimeException(r.getMessage());
 			}
-			form.add(mainTable);
-			add(form, iwc);
+			this.form.add(mainTable);
+			add(this.form, iwc);
 		}
 
 	}
 
 	public Table getListTable(IWContext iwc) throws RemoteException {
-		Table table = new Table(2, USERS_PER_PAGE + 1);
+		Table table = new Table(2, this.USERS_PER_PAGE + 1);
 		table.setCellspacing(0);
 		table.setCellpadding(2);
 		table.setWidth(Table.HUNDRED_PERCENT);
@@ -167,10 +167,10 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 		table.setRowColor(row, IWConstants.DEFAULT_DARK_INTERFACE_COLOR);
 		table.setHeight(row, rowHeight);
 
-		if (users != null) {
+		if (this.users != null) {
 			/** Calculating page....starts */
-			int start = currentPage * USERS_PER_PAGE;
-			Iterator iter = users.iterator();
+			int start = this.currentPage * this.USERS_PER_PAGE;
+			Iterator iter = this.users.iterator();
 			for (int i = 0; i < start; i++) {
 				if (iter.hasNext()) {
 					iter.next();
@@ -182,7 +182,7 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 			User user;
 			Link link;
 			String pId;
-			while (iter.hasNext() && counter < USERS_PER_PAGE) {
+			while (iter.hasNext() && counter < this.USERS_PER_PAGE) {
 				++counter;
 				++row;
 				table.setHeight(row, rowHeight);
@@ -193,7 +193,7 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 					pId = "-";
 				}
 				link = getLink(getText(user.getName()), iwc);
-				link.addParameter(PARAMETER_USER_ID, user.getPrimaryKey().toString());
+				link.addParameter(this.PARAMETER_USER_ID, user.getPrimaryKey().toString());
 				table.add(link, 1, row);
 				table.add(getText(pId), 2, row);
 			}
@@ -205,11 +205,11 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 	public Table getNavigationTable(IWContext iwc) {
 
 		int usersSize = 0;
-		if (users != null) {
-			usersSize = users.size();
+		if (this.users != null) {
+			usersSize = this.users.size();
 		}
 
-		int maxPage = (int) Math.ceil(usersSize / USERS_PER_PAGE);
+		int maxPage = (int) Math.ceil(usersSize / this.USERS_PER_PAGE);
 
 		Table navigationTable = new Table(3, 1);
 		navigationTable.setCellpadding(2);
@@ -224,13 +224,13 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 
 		Text prev = getSmallText(localize("previous", "Previous"));
 		Text next = getSmallText(localize("next", "Next"));
-		Text info = getSmallText(localize("page", "Page") + " " + (currentPage + 1) + " " + localize("of", "of") + " " + (maxPage + 1));
-		if (currentPage > 0) {
+		Text info = getSmallText(localize("page", "Page") + " " + (this.currentPage + 1) + " " + localize("of", "of") + " " + (maxPage + 1));
+		if (this.currentPage > 0) {
 			Link lPrev = getLink(getSmallText(localize("previous", "Previous")), iwc);
-			lPrev.addParameter(PARAMETER_CURRENT_PAGE, Integer.toString(currentPage - 1));
-			lPrev.addParameter(PARAMETER_SEARCH, iwc.getParameter(PARAMETER_SEARCH));
-			if (showAll) {
-				lPrev.addParameter(PARAMETER_VIEW_ALL, "true");
+			lPrev.addParameter(this.PARAMETER_CURRENT_PAGE, Integer.toString(this.currentPage - 1));
+			lPrev.addParameter(this.PARAMETER_SEARCH, iwc.getParameter(this.PARAMETER_SEARCH));
+			if (this.showAll) {
+				lPrev.addParameter(this.PARAMETER_VIEW_ALL, "true");
 			}
 			navigationTable.add(lPrev, 1, 1);
 		}
@@ -239,12 +239,12 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 		}
 		navigationTable.add(info, 2, 1);
 
-		if (currentPage < maxPage) {
+		if (this.currentPage < maxPage) {
 			Link lNext = getLink(getSmallText(localize("next", "Next")), iwc);
-			lNext.addParameter(PARAMETER_CURRENT_PAGE, Integer.toString(currentPage + 1));
-			lNext.addParameter(PARAMETER_SEARCH, iwc.getParameter(PARAMETER_SEARCH));
-			if (showAll) {
-				lNext.addParameter(PARAMETER_VIEW_ALL, "true");
+			lNext.addParameter(this.PARAMETER_CURRENT_PAGE, Integer.toString(this.currentPage + 1));
+			lNext.addParameter(this.PARAMETER_SEARCH, iwc.getParameter(this.PARAMETER_SEARCH));
+			if (this.showAll) {
+				lNext.addParameter(this.PARAMETER_VIEW_ALL, "true");
 			}
 			navigationTable.add(lNext, 3, 1);
 		}
@@ -259,10 +259,10 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 		headerTable.setCellpaddingAndCellspacing(0);
 		int column = 1;
 
-		TextInput tiSearchString = new TextInput(PARAMETER_SEARCH);
-		SubmitButton sSearch = new SubmitButton(iwrb.getLocalizedImageButton("search", "Search"));
+		TextInput tiSearchString = new TextInput(this.PARAMETER_SEARCH);
+		SubmitButton sSearch = new SubmitButton(this.iwrb.getLocalizedImageButton("search", "Search"));
 
-		headerTable.add(getText(iwrb.getLocalizedString("search", "Search") + ":"), column++, 1);
+		headerTable.add(getText(this.iwrb.getLocalizedString("search", "Search") + ":"), column++, 1);
 		headerTable.setCellpaddingLeft(column, 1, 6);
 		headerTable.add(tiSearchString, column++, 1);
 		headerTable.setCellpaddingLeft(column, 1, 6);
@@ -299,7 +299,7 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 	}
 
 	private String localize(String key, String nullValue) {
-		return iwrb.getLocalizedString(key, nullValue);
+		return this.iwrb.getLocalizedString(key, nullValue);
 	}
 
 	private UserHome getUserHome() throws RemoteException {

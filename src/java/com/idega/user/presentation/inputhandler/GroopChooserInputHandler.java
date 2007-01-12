@@ -79,22 +79,23 @@ public class GroopChooserInputHandler extends GroupChooser implements InputHandl
 
 	public Object getResultingObject(String[] value, IWContext iwc)	throws Exception {
 	    String groupID = null;
-		if (value != null && value.length == 1)
+		if (value != null && value.length == 1) {
 			groupID = value[0];
+		}
 		return groupID;
 	}
 	
 	private GroupBusiness getGroupBusiness() throws RemoteException {
-		if (groupBiz == null) {
-			groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), GroupBusiness.class);
+		if (this.groupBiz == null) {
+			this.groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), GroupBusiness.class);
 		}	
-		return groupBiz;
+		return this.groupBiz;
 	}
 
 	private UserBusiness getUserBusiness() throws RemoteException {
-		if (userBiz == null) {
-			userBiz = (UserBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), UserBusiness.class);
+		if (this.userBiz == null) {
+			this.userBiz = (UserBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), UserBusiness.class);
 		}	
-		return userBiz;
+		return this.userBiz;
 	}
 }

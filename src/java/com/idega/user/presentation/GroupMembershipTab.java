@@ -11,7 +11,7 @@ import com.idega.presentation.ui.IFrame;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -43,17 +43,17 @@ public class GroupMembershipTab extends UserGroupTab {
     /**@todo: implement this com.idega.user.presentation.UserTab abstract method*/
   }
   public void initializeFields() {
-    groupMembersFrame = new IFrame("ic_group_group_members",GroupList.class);
-    groupMembersFrame.setHeight(140);
-    groupMembersFrame.setWidth(Table.HUNDRED_PERCENT);
-    groupMembersFrame.setScrolling(IFrame.SCROLLING_YES);
-    groupMembersFrame.setStyleAttribute("border", "1px #b2b2b2 solid");
+    this.groupMembersFrame = new IFrame("ic_group_group_members",GroupList.class);
+    this.groupMembersFrame.setHeight(140);
+    this.groupMembersFrame.setWidth(Table.HUNDRED_PERCENT);
+    this.groupMembersFrame.setScrolling(IFrame.SCROLLING_YES);
+    this.groupMembersFrame.setStyleAttribute("border", "1px #b2b2b2 solid");
 
-    userMembersFrame = new IFrame("ic_user_group_members",UserList.class);
-    userMembersFrame.setHeight(140);
-    userMembersFrame.setWidth(Table.HUNDRED_PERCENT);
-    userMembersFrame.setScrolling(IFrame.SCROLLING_YES);
-    userMembersFrame.setStyleAttribute("border", "1px #b2b2b2 solid");
+    this.userMembersFrame = new IFrame("ic_user_group_members",UserList.class);
+    this.userMembersFrame.setHeight(140);
+    this.userMembersFrame.setWidth(Table.HUNDRED_PERCENT);
+    this.userMembersFrame.setScrolling(IFrame.SCROLLING_YES);
+    this.userMembersFrame.setStyleAttribute("border", "1px #b2b2b2 solid");
 
     //addLink = new Link("  Add  ");
 
@@ -62,11 +62,11 @@ public class GroupMembershipTab extends UserGroupTab {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
-		groupMembers = new Text(iwrb.getLocalizedString("group.groups", "Groups"));
-		groupMembers.setBold();
+		this.groupMembers = new Text(iwrb.getLocalizedString("group.groups", "Groups"));
+		this.groupMembers.setBold();
 		
-    userMembers = new Text(iwrb.getLocalizedString("group.users", "Users"));
-		userMembers.setBold();
+    this.userMembers = new Text(iwrb.getLocalizedString("group.users", "Users"));
+		this.userMembers.setBold();
   }
   public boolean store(IWContext iwc) {
     return true;
@@ -76,13 +76,13 @@ public class GroupMembershipTab extends UserGroupTab {
     setCellpadding(5);
     setCellspacing(0);
 
-    this.add(groupMembers,1,1);
+    this.add(this.groupMembers,1,1);
     this.add(Text.getBreak(), 1, 1);
-    this.add(groupMembersFrame,1,1);
+    this.add(this.groupMembersFrame,1,1);
 
-    this.add(userMembers,1,2);
+    this.add(this.userMembers,1,2);
     this.add(Text.getBreak(), 1, 2);
-    this.add(userMembersFrame,1,2);
+    this.add(this.userMembersFrame,1,2);
   }
   public boolean collect(IWContext iwc) {
     return true;

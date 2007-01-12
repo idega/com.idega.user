@@ -16,7 +16,7 @@ import com.idega.presentation.ui.IFrame;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega
- * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -28,7 +28,7 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
     super();
     this.setName("idegaWeb User");
     //add(UserModule.UserModulePage.class);
-    justConstructed = true;
+    this.justConstructed = true;
     super.setResizable(false);
     super.setScrollbar(false);
     super.setWidth(555);
@@ -37,9 +37,9 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
 
   public void main(IWContext iwc) throws Exception {
     super.main(iwc);
-    if(justConstructed){
+    if(this.justConstructed){
       add(new UserModule.UserModulePage());
-      justConstructed = false;
+      this.justConstructed = false;
     }
   }
 

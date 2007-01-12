@@ -11,7 +11,7 @@ import com.idega.presentation.IWContext;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -33,9 +33,9 @@ public class SelectDomainEvent extends IWPresentationEvent {
 
 
   public ICDomain getSelectedDomain(){
-    if(_selectedDomain != null){
+    if(this._selectedDomain != null){
       try {
-        return (ICDomain)IDOLookup.findByPrimaryKey(ICDomain.class,_selectedDomain);
+        return (ICDomain)IDOLookup.findByPrimaryKey(ICDomain.class,this._selectedDomain);
       }
       catch (Exception ex) {
         ex.printStackTrace();
@@ -49,7 +49,7 @@ public class SelectDomainEvent extends IWPresentationEvent {
   public boolean initializeEvent(IWContext iwc) {
 
     try {
-      _selectedDomain = new Integer(iwc.getParameter(PRM_DOMAIN_ID));
+      this._selectedDomain = new Integer(iwc.getParameter(PRM_DOMAIN_ID));
       return true;
     }
     catch (NullPointerException ex) {
