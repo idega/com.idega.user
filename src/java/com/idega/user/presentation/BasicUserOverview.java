@@ -94,14 +94,14 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     private StyledBasicUserOverViewToolbar toolbar = null;
     private com.idega.core.user.data.User administratorUser = null; //TODO convert to new USER SYSTEM
     
-    private boolean isCurrentUserSuperAdmin = false;
+    boolean isCurrentUserSuperAdmin = false;
     protected BasicUserOverviewPS ps;
     Group selectedGroup;
     protected ICDomain selectedDomain;
     private Group aliasGroup;
     protected AccessController accessController;
     
-    private String styledLinkUnderline = "styledLinkUnderline";
+    String styledLinkUnderline = "styledLinkUnderline";
     private String styleTable = "borderAll";
     private String topTableStyle = "topTable";
     private String middleTableStyle = "middleTable";
@@ -134,15 +134,15 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         try {
             if (this.selectedGroup != null) {
                 if (this.aliasGroup != null) {
-                    users = this.getUserBusiness(iwc).getUsersInGroup(this.aliasGroup);
+                    users = getUserBusiness(iwc).getUsersInGroup(this.aliasGroup);
                 }
                 else {
-                    users = this.getUserBusiness(iwc).getUsersInGroup(this.selectedGroup);
+                    users = getUserBusiness(iwc).getUsersInGroup(this.selectedGroup);
                 }
             }
             else
                 if (this.selectedDomain != null) {
-                    users = this.getUserBusiness(iwc).getAllUsersOrderedByFirstName();
+                    users = getUserBusiness(iwc).getAllUsersOrderedByFirstName();
                 }
         }
         catch (RemoteException e) {
@@ -748,7 +748,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		                  else {
 		                      if (isUserSuperAdmin && BasicUserOverview.this.isCurrentUserSuperAdmin) {
 		                          link.setWindowToOpen(AdministratorPropertyWindow.class);
-		                          link.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, custodian.getPrimaryKey().toString());
+		                          link.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, custodian.getPrimaryKey().toString());
 		                      }
 		                  }
 		                  linkContainer.add(link);
@@ -1095,10 +1095,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
     }
     
-    /**
-     * @param iwc
-     */
-    private com.idega.core.user.data.User getSuperAdmin(IWContext iwc) {
+    com.idega.core.user.data.User getSuperAdmin(IWContext iwc) {
         if (this.administratorUser == null) {
             try {
                 this.administratorUser = iwc.getAccessController().getAdministratorUser();
