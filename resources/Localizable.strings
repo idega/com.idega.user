@@ -446,6 +446,7 @@ select_group=Veldu h\u00F3p
 select_type=
 send=Send
 settings=
+shirt_sizes_per_run=shirt_sizes_per_run
 ssn=
 studies=studies
 study_end=study_end
