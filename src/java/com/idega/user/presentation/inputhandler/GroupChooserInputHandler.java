@@ -18,17 +18,17 @@ import com.idega.user.presentation.GroupChooser;
 /**
  * @author Sigtryggur
  */
-public class GroopChooserInputHandler extends GroupChooser implements InputHandler {
+public class GroupChooserInputHandler extends GroupChooser implements InputHandler {
 
     protected GroupBusiness groupBiz = null;
     protected UserBusiness userBiz = null;
 
 
-    public GroopChooserInputHandler() {
+    public GroupChooserInputHandler() {
 		super();
 	}
 	
-	public GroopChooserInputHandler(String name) {
+	public GroupChooserInputHandler(String name) {
 		super(name);
 	}
     public Object convertSingleResultingObjectToType(Object value, String className) {
