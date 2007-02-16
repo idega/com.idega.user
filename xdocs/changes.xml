@@ -5,6 +5,13 @@
   </properties>
   <body>
 
+    <release version="3.1.4" date="2007-02-16">
+      <action dev="eiki" type="update">
+      		Change the UserLoginTab in com.idega.user to fix a security hole along with Login and user classes in core.
+			Now only the user himself, admin or the first person or the persons group that changes the users password for the first time can change it again. 
+      </action>       
+    </release>
+    
     <release version="3.1.3" date="2007-01-26">
       <action dev="sigtryggur" type="update">
       	Added new email sending function to BasicUserOverview
