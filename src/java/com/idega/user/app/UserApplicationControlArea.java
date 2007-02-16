@@ -5,7 +5,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
 import javax.swing.event.ChangeListener;
+
 import com.idega.block.login.presentation.WelcomeMessage;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICDomain;
@@ -162,11 +164,12 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 			getParentPage().setStyleDefinition("A", LINK_STYLE);
 			getParentPage().setStyleDefinition("A:hover", LINK_HOVER_STYLE);
 
+		//TODO add bold stuff with a Behaviour and style class
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("function setLinkToBold(input) {").append("\n\t");
 			buffer.append("if (boldLink != null)").append("\n\t\t");
 			buffer.append("boldLink.style.fontWeight='normal';").append("\n\t");
-			buffer.append("input.style.fontWeight='bold';").append("\n\t");
+			buffer.append("if(input) input.style.fontWeight='bold';").append("\n\t");
 			buffer.append("boldLink = input;").append("\n}");
 
 			Script script = getParentPage().getAssociatedScript();
@@ -190,6 +193,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		this.groupTree.setToShowSuperRootNode(true);
 		this.groupTree.setDefaultOpenLevel(1);
 		this.groupTree.setSuperRootNodeName(this.iwrb.getLocalizedString("tree.super.node.name", "My groups"));
+		
 		Image icon = this.iwb.getImage("super_root_icon.gif");
 		this.groupTree.setSuperRootNodeIcon(icon);
 		Collection topGroupNodes = null;
