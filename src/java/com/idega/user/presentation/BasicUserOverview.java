@@ -7,9 +7,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.swing.event.ChangeListener;
+
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
@@ -964,8 +966,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         this.empty();
         this.iwb = this.getBundle(iwc);
         this.iwrb = this.getResourceBundle(iwc);
-        
-        this.getParentPage().setAllMargins(0);
+        Page parentPage = this.getParentPage();
+        parentPage.setAllMargins(0);
         
         this.accessController = iwc.getAccessController();
         this.ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
@@ -1006,8 +1008,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		if (openSendMailWindow != null && openSendMailWindow.equalsIgnoreCase("true")) {
 			Link l = new Link();
 			l.setWindowToOpen(BasicUserOverviewEmailSenderWindow.class);
-			this.getParentPage().setOnLoad(l.getWindowToOpenCallingScript(iwc));
-	    }
+			parentPage.setOnLoad(l.getWindowToOpenCallingScript(iwc));
+			//parentPage.getAssociatedScript().addFunction("", l.getWindowToOpenCallingScript(iwc));
+		}
         
     }
     
