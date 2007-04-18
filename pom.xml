@@ -3,12 +3,12 @@
   <parent>
   	<groupId>com.idega.block.platform</groupId>
   	<artifactId>com.idega.block.base</artifactId>
-  	<version>3.5.0</version>
+  	<version>4.0-SNAPSHOT</version>
   </parent>
   <groupId>com.idega.block.platform</groupId>
   <artifactId>com.idega.user</artifactId>
   <packaging>jar</packaging>
-  <version>3.5.0</version>
+  <version>4.0-SNAPSHOT</version>
   <name>idegaWeb User</name>
   <description>User Application</description>
   <developers>
@@ -46,31 +46,31 @@
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.core</artifactId>
-      <version>3.5.0</version>
+      <version>4.0-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.builder</artifactId>
-      <version>3.5.0</version>
+      <version>4.0-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.block.login</artifactId>
-      <version>3.5.0</version>
+      <version>4.0-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.block.entity</artifactId>
-      <version>3.5.0</version>
+      <version>4.0-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.block.media</artifactId>
-      <version>3.5.0</version>
+      <version>4.0-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
   </dependencies>
