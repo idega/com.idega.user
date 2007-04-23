@@ -87,7 +87,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     public static final String COPY_USERS_KEY = "copy_users";
 
     protected static final String PHONE_TYPE_PATH = PhoneType.class.getName() + ".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME";
-    protected static final String USER_APPLICATION_FRONT_PAGE_ID = "USER_APPLICATION_FRONT_PAGE_ID";
+    protected static final String USER_APP_START_PAGE = "USER_APP_START_PAGE";
     protected static final String PROP_SYSTEM_SMTP_MAILSERVER = "messagebox_smtp_mailserver";
     
     protected IWResourceBundle iwrb = null;
@@ -951,8 +951,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		entityBrowser.setOptionColumn(6,userInfo1Key);
 		entityBrowser.setOptionColumn(7,userInfo2Key);
 		entityBrowser.setOptionColumn(8,userInfo3Key);
-		IWBundle iwb = getBundle(IWContext.getInstance());
-		String displayDescription = iwb.getProperty("display_description_column_in_grouppropertywindow","true");
+		String displayDescription = iwc.getApplicationSettings().getProperty("USER_APP_DISPLAY_DESCRIPTION","true");
 		if (IWContext.getInstance().isSuperAdmin() || displayDescription.equalsIgnoreCase("true")) {
 			entityBrowser.setOptionColumn(9,descriptionKey);
 		}
@@ -1033,12 +1032,18 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         				layer.setOverflow("auto");
                 frameTable.add(layer, 1, 2);
         				
-        String frontPageId = getBundle(iwc).getProperty(USER_APPLICATION_FRONT_PAGE_ID);
-        if(frontPageId!=null && !"-1".equals(frontPageId)) {
+        String frontPageIdOrURI = iwc.getApplicationSettings().getProperty(USER_APP_START_PAGE,"-1");
+        if(!"-1".equals(frontPageIdOrURI)) {
             IFrame frontPage = new IFrame();
+            //TODO Felix move to Style class
             frontPage.setHeight("98%");
             frontPage.setWidth("98%");
-            frontPage.setIBPage(Integer.parseInt(frontPageId));
+            try{
+            	frontPage.setIBPage(Integer.parseInt(frontPageIdOrURI));
+            }
+            catch(NumberFormatException e){
+                frontPage.setSrc(frontPageIdOrURI);
+            }
             frontPage.setScrolling(IFrame.SCROLLING_NO);
             frontPage.setBorder(0);
             layer.add(frontPage);
