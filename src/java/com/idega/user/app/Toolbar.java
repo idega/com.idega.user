@@ -103,7 +103,6 @@ public class Toolbar extends Page implements IWBrowserView {
 		this.empty();
 		this.iwb = getBundle(iwc);
 		this.iwrb = getResourceBundle(iwc);
-		boolean useDropdown = this.iwb.getBooleanProperty("use_dropdown_in_toolbar", false);
 		
 		Table controlTable = new Table(1, 3);
 		controlTable.setCellpadding(0);
@@ -258,7 +257,7 @@ public class Toolbar extends Page implements IWBrowserView {
 						parameterMap.put(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, this.selectedGroupProviderStateId );
 					}
 					String toolName = toolbarElement.getName(iwc);
-					if (useDropdown && (! toolbarElement.isButton(iwc))) { 
+					if (! toolbarElement.isButton(iwc)) { 
 						SelectOption toolOption = new SelectOption(toolName, "1");
 						toolOption.setWindowToOpenOnSelect(toolPresentationClass, parameterMap);
 						menu.addOption(toolOption);
@@ -286,12 +285,13 @@ public class Toolbar extends Page implements IWBrowserView {
 				toolbarTable.setCellpaddingRight(2, 1, 3);
 				toolbarTable.add(dottedImage, 2, 1);
 				
-				if (useDropdown) {
+				if(!menu.isEmpty()){
 					Form form = new Form();
 					menu.addMenuElementFirst("", "");
 					form.add(menu);
 	
-					int handbookFileID = Integer.parseInt(this.iwb.getProperty("handbook_file_id", "-1"));
+					//TODO only used for now in FELIX! Refactor to a plugin
+					int handbookFileID = Integer.parseInt(iwc.getApplicationSettings().getProperty("USER_APP_HANDBOOK_FILE", "-1"));
 					if (handbookFileID != -1) {
 						SelectOption option = new SelectOption(this.iwrb.getLocalizedString("toolbar.handbook", "Handbook"));
 						option.setFileToOpenOnSelect(handbookFileID);
@@ -308,6 +308,7 @@ public class Toolbar extends Page implements IWBrowserView {
 					toolbar2.setCellpaddingLeft(toolbarColumn, 1, 7);
 					toolbar2.add(form, toolbarColumn++, 1);
 				}
+			
 			}
 		}
 		
