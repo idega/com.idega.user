@@ -7,13 +7,13 @@
   </classpathentry>
   <classpathentry kind="src" path="/com.idega.core">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.login-3.1.0.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.login-3.1.3.jar">
   </classpathentry>
-  <classpathentry kind="src" path="/com.idega.builder">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.builder-3.1.3.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.entity-3.1.0.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.media-3.1.0.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.media-3.1.1.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jdom/jars/jdom-1.0.jar">
   </classpathentry>
@@ -41,7 +41,7 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jta/jars/jta-spec1_0_1.jar">
   </classpathentry>
-  <classpathentry kind="src" path="/com.idega.block.web2.0">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.web2.0-3.1.4.jar">
   </classpathentry>
   <classpathentry kind="output" path="target/classes">
   </classpathentry>
