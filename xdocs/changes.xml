@@ -5,6 +5,12 @@
   </properties>
   <body>
 
+    <release version="3.1.5" date="2007-04-23">
+      <action dev="eiki" type="update">
+      		Merged changes made in v.2.0 to v3.1, added Felix icelandic locale variant and changed bundle properties to application properties.
+      </action>       
+    </release>
+    
     <release version="3.1.4" date="2007-02-16">
       <action dev="eiki" type="update">
       		Change the UserLoginTab in com.idega.user to fix a security hole along with Login and user classes in core.
