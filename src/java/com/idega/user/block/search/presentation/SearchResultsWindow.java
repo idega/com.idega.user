@@ -24,6 +24,8 @@ import com.idega.user.presentation.StyledBasicUserOverViewToolbar;
 
 public class SearchResultsWindow extends BasicUserOverview {
   
+  private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
+
   public SearchResultsWindow() {
   }
   
