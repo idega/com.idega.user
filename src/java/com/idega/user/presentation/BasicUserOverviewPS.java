@@ -43,7 +43,7 @@ import com.idega.user.event.SelectGroupEvent;
  * Company: idega Software
  * </p>
  * 
- * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson </a>
+ * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>
  * @version 1.0
  */
 

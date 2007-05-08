@@ -5,7 +5,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
 import javax.swing.event.ChangeListener;
+
 import com.idega.block.login.presentation.WelcomeMessage;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICDomain;
@@ -189,7 +191,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 			this.groupTree.setSelectedGroupId(domainId);
 		}
 		this.groupTree.setToShowSuperRootNode(true);
-		this.groupTree.setDefaultOpenLevel(1);
+		this.groupTree.setDefaultOpenLevel(2);
 		this.groupTree.setSuperRootNodeName(this.iwrb.getLocalizedString("tree.super.node.name", "My groups"));
 		
 		Image icon = this.iwb.getImage("super_root_icon.gif");

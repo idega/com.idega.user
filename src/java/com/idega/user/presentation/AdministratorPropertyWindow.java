@@ -1,5 +1,5 @@
 /*
- * $Id: AdministratorPropertyWindow.java,v 1.8 2006/05/08 13:51:44 laddi Exp $
+ * $Id: AdministratorPropertyWindow.java,v 1.9 2007/05/08 16:35:49 eiki Exp $
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -16,19 +16,21 @@ import com.idega.presentation.TabbedPropertyPanel;
  * This is a special implementation of the Usser property window that is only opened
  * for the Super Administrator user.
  * </p>
- * Last modified: $Date: 2006/05/08 13:51:44 $ by $Author: laddi $
+ * Last modified: $Date: 2007/05/08 16:35:49 $ by $Author: eiki $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class AdministratorPropertyWindow extends UserPropertyWindow {
 
+	public final String SESSION_ADDRESS = "ic_admin_property_window";
+	
 	public AdministratorPropertyWindow() {
 		super();
 	}
 
 	public String getSessionAddressString() {
-		return "ic_admin_property_window";
+		return this.SESSION_ADDRESS;
 	}
 
 	/**

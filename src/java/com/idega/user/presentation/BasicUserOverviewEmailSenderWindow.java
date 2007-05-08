@@ -1,5 +1,5 @@
 /*
- * $Id: BasicUserOverviewEmailSenderWindow.java,v 1.2 2007/01/12 21:55:06 idegaweb Exp $
+ * $Id: BasicUserOverviewEmailSenderWindow.java,v 1.3 2007/05/08 16:35:49 eiki Exp $
  * Created on Nov 28, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.

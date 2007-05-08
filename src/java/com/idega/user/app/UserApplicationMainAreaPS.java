@@ -105,7 +105,7 @@ public class UserApplicationMainAreaPS extends IWControlFramePresentationState i
       this.fireStateChanged();
     }
 
-    IWActionListener[] listners = this._listenerList.getListeners(IWActionListener.class);
+    IWActionListener[] listners =  (IWActionListener[])this._listenerList.getListeners(IWActionListener.class);
     for (int i = 0; i < listners.length; i++) {
       listners[i].actionPerformed(e);
     }
