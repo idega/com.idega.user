@@ -364,7 +364,6 @@
 						iconfile = JSTreeObj.iconFolder + menuItems[no].getAttribute('pagetype') +'.png';
 					else
 						iconfile = JSTreeObj.iconFolder + this.folderImage;
-console.log('iconfile '+iconfile);				 						
 				}
 
 				var templatefile = null;		 
@@ -388,7 +387,6 @@ console.log('iconfile '+iconfile);
 				}
 						
 				var aTag = menuItems[no].getElementsByTagName('A')[0];
-//console.log('a tag');				
 			
 				if(aTag.id)
 					numericId = aTag.id.replace(/[^0-9]/g,'');
@@ -406,7 +404,6 @@ console.log('iconfile '+iconfile);
 				input.id = menuItems[no].id + 'input';
 	
 //				if(!noDrag)
-//console.log(aTag.onmousedown);
 
 				aTag.onclick = JSTreeObj.copyDragableNode;
 
@@ -431,7 +428,6 @@ console.log('iconfile '+iconfile);
 					folderImg.src = this.imageFolder + this.folderImage;					
 //					folderImg.src = this.imageFolder + this.iconFolder;					
 				}
-console.log('folderImg.src '+folderImg.src );				 
 				if(iconfile)
 					folderImg.src = iconfile;
 				menuItems[no].insertBefore(folderImg,input);				
