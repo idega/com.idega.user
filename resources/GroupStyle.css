@@ -1,0 +1,42 @@
+.hidden_table{
+/*	
+	visibility: hidden
+*/	
+	display: none
+}
+
+.tree_drag_drop {
+	list-style-type: none;
+}
+
+.tree_drag_drop ul{
+	list-style-type: none;
+		padding-left: 15px;
+}
+
+.connection_table_row{
+	margin-right: 10px;
+	margin-top: 10px;
+	margin-left: 10px;
+	width: 200px;
+}
+
+.connection_table_row input{
+	float: right;
+	margin-right: 0px;
+	margin-top: -15px;
+	margin-left: 0px;
+	width: 100px;
+}
+
+.connection_table_button{
+	margin-top: 10px;
+	margin-left: 10px;	
+}
+
+.connection_table{
+/*	display: none*/
+}
+
+
+
