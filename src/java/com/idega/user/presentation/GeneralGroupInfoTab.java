@@ -23,6 +23,7 @@ import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupTypeBMPBean;
@@ -450,7 +451,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		IWBundle iwb = getBundle(iwc);
 		Help help = new Help();
 		Image helpImage = iwb.getImage("help.gif");
-		help.setHelpTextBundle(UserConstants.HELP_BUNDLE_IDENTFIER);
+		help.setHelpTextBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;

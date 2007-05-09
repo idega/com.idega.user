@@ -22,6 +22,7 @@ import com.idega.presentation.ui.DateInput;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
+import com.idega.user.business.UserConstants;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
@@ -254,7 +255,7 @@ public class GeneralUserInfoTab extends UserTab {
 		IWBundle iwb = getBundle(iwc);
 		Help help = new Help();
 		Image helpImage = iwb.getImage("help.gif");
-		help.setHelpTextBundle( UserConstants.HELP_BUNDLE_IDENTFIER);
+		help.setHelpTextBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;

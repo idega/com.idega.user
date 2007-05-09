@@ -29,6 +29,7 @@ private boolean submitForm;
   public GroupChooser(String chooserName) {
     this();
     setChooserParameter(chooserName);
+    setAddSaveButton(false);
   }
 
   public GroupChooser(String chooserName,String style) {
@@ -43,16 +44,18 @@ private boolean submitForm;
 
   public void main(IWContext iwc){
     empty();
-    if(this.chooserButtonImage == null) {
-			IWBundle iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER); //BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
-			setChooseButtonImage(iwb.getImage("magnifyingglass.gif","Choose"));
+    if (this.chooserButtonImage == null) {
+		IWBundle iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+		setChooseButtonImage(iwb.getImage("magnifyingglass.gif","Choose"));
     }
     	
   }
 
   public Class getChooserWindowClass() {
-    return GroupChooserWindow.class;
+	  return GroupChooserBlock.class;
+    //return GroupChooserWindow.class;
   }
+  
 //  public void setChooseButtonImage(Image image) {
 //  	chooserButtonImage = image;
 //  }
@@ -61,15 +64,13 @@ private boolean submitForm;
       super.setChooserValue(groupNode.getNodeName(),groupNode.getNodeType()+"_"+groupNode.getNodeID());
   }
   
-	public void setSelectedGroup(String userId, String userName) {
-		super.setChooserValue(userName,userId);
-	}
+  public void setSelectedGroup(String userId, String userName) {
+	  super.setChooserValue(userName,userId);
+  }
+  
   public String getBundleIdentifier(){
     return IW_BUNDLE_IDENTIFIER;
   }
-  
-
-  
 
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.ui.AbstractChooser#addParametersToForm(com.idega.presentation.ui.Form)

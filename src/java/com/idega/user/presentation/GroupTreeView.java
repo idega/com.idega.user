@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.browser.presentation.IWTreeControl;
@@ -56,6 +57,9 @@ public class GroupTreeView extends IWTreeControl {
 	private IWBundle bundle;
 	
 	private boolean isModelSet = false;
+	
+	private boolean addIdAttribute = false;
+	private boolean addGroupNameAttribute = false;
 
 	public GroupTreeView() {
 		super();
@@ -273,28 +277,28 @@ public class GroupTreeView extends IWTreeControl {
 				}
 				break;
 			case 2 :
-				Link l = this.getLinkPrototypeClone(node.getNodeName());
+				String nodeName = node.getNodeName();
+				Link l = this.getLinkPrototypeClone(nodeName);
 				//l.setOnClick("setLinkToBold(this)");
-        l.setID("group_id_"+node.getNodeID());
-        // set selection bold
-        if (this.selectedDomainId > 0 || this.selectedGroupId > 0) {
-          int nodeType = node.getNodeType();
-          int nodeId = node.getNodeID();
-          if (  ((nodeType == GroupTreeNode.TYPE_DOMAIN) && (nodeId == this.selectedDomainId)) ||
-                ((nodeType == GroupTreeNode.TYPE_GROUP) && (nodeId == this.selectedGroupId)) ) {
-            String script = "hugo=document.getElementById('"+node.getNodeID()+"'); setLinkToBold(hugo);";
-            getParentPage().setOnLoad(script);
-          }
-        }
+				l.setID("group_id_"+node.getNodeID());
+				// set selection bold
+				if (this.selectedDomainId > 0 || this.selectedGroupId > 0) {
+					int nodeType = node.getNodeType();
+					int nodeId = node.getNodeID();
+					if (((nodeType == GroupTreeNode.TYPE_DOMAIN) && (nodeId == this.selectedDomainId)) ||
+							((nodeType == GroupTreeNode.TYPE_GROUP) && (nodeId == this.selectedGroupId)) ) {
+						String script = "hugo=document.getElementById('"+node.getNodeID()+"'); setLinkToBold(hugo);";
+						getParentPage().setOnLoad(script);
+					}
+				}
 
-		if (node.getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
-		    l.addEventModel(dmSelect);
-		} else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
-		    l.addEventModel(grSelect);
-		}
+				if (node.getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
+					l.addEventModel(dmSelect);
+				} else if (node.getNodeType() == GroupTreeNode.TYPE_GROUP) {
+					l.addEventModel(grSelect);
+				}
 
 				if (this._usesOnClick) {
-					String nodeName = node.getNodeName();
 					l.setURL("#");
 					l.setOnClick(ONCLICK_FUNCTION_NAME + "('" + nodeName + "','" + node.getNodeType() + "_" + node.getNodeID() + "')");
 				}
@@ -305,6 +309,14 @@ public class GroupTreeView extends IWTreeControl {
 				/*if(_nowrap){
 				  return getNoWrapLayerClone(l);
 				} else {*/
+				
+				if (isAddGroupNameAttribute()) {
+					l.setMarkupAttribute(ICBuilderConstants.GROUP_NAME_ATTRIBUTE, nodeName);
+				}
+				if (isAddIdAttribute()) {
+					l.setMarkupAttribute(ICBuilderConstants.GROUP_ID_ATTRIBUTE, node.getNodeID());
+				}
+				
 				return l;
 				//}
 		}
@@ -418,5 +430,21 @@ public class GroupTreeView extends IWTreeControl {
   public void setSelectedGroupId(int i) {
     this.selectedGroupId = i;
   }
+
+  	public boolean isAddGroupNameAttribute() {
+  		return addGroupNameAttribute;
+  	}
+
+	public void setAddGroupNameAttribute(boolean addGroupNameAttribute) {
+		this.addGroupNameAttribute = addGroupNameAttribute;
+	}
+	
+	public boolean isAddIdAttribute() {
+		return addIdAttribute;
+	}
+	
+	public void setAddIdAttribute(boolean addIdAttribute) {
+		this.addIdAttribute = addIdAttribute;
+	}
 
 }

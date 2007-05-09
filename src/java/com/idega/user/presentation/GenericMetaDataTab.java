@@ -15,6 +15,7 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.InterfaceObject;
 import com.idega.presentation.ui.TextInput;
+import com.idega.user.business.UserConstants;
 
 /**
  * A generic tab for displaying and editing metadata for any entity bean.<br>
@@ -121,7 +122,7 @@ public class GenericMetaDataTab extends UserTab {
 		IWBundle iwb = getBundle(iwc);
 		Help help = new Help();
 		Image helpImage = iwb.getImage("help.gif");
-		help.setHelpTextBundle(UserConstants.HELP_BUNDLE_IDENTFIER);
+		help.setHelpTextBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;
