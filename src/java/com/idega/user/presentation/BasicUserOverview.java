@@ -65,6 +65,7 @@ import com.idega.user.data.Group;
 import com.idega.user.data.Status;
 import com.idega.user.data.User;
 import com.idega.user.data.UserInfoColumns;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWColor;
 import com.idega.util.IWTimestamp;
 import com.idega.util.text.TextSoap;
@@ -87,8 +88,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     public static final String COPY_USERS_KEY = "copy_users";
 
     protected static final String PHONE_TYPE_PATH = PhoneType.class.getName() + ".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME";
+    protected static final String USER_APPLICATION_FRONT_PAGE_ID = "USER_APPLICATION_FRONT_PAGE_ID";
     protected static final String USER_APP_START_PAGE = "USER_APP_START_PAGE";
-    protected static final String PROP_SYSTEM_SMTP_MAILSERVER = "messagebox_smtp_mailserver";
     
     protected IWResourceBundle iwrb = null;
     private IWBundle iwb = null;
@@ -272,7 +273,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             if (fromAddress == null) {
         		fromAddress = currentUser.getName() +" <>";
         	}
-            iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_MAIL_SERVER,iwc.getApplicationSettings().getProperty(PROP_SYSTEM_SMTP_MAILSERVER));
+            iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_MAIL_SERVER,iwc.getApplicationSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER));
             iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_FROM_ADDRESS, fromAddress);
             iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_SUBJECT, this.iwrb.getLocalizedString("to_members_in_group","To members in group:")+" "+this.selectedGroup.getName());
         }
