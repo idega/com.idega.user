@@ -37,6 +37,7 @@ import com.idega.user.app.ToolbarElement;
 import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
+import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.GroupTypeConstants;
@@ -52,7 +53,6 @@ import com.idega.user.event.CreateGroupEvent;
  * @version 1.0 
  */
 public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullPresentation, ToolbarElement { //changed from extends IWAdminWindow
-	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 	
 	public static final String SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY = "selected_group_pp_id_key";
 	public static final String NO_GROUP_SELECTED = "no_group_selected";
@@ -195,6 +195,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			StyledIBPageChooser pageChooser = new StyledIBPageChooser(this._createEvent.getIONameForHomePage(), IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 			pageChooser.setStyleClassName("text");
 			pageChooser.setInputLength(17);
+			pageChooser.setHiddenInputAttribute(this._createEvent.getIONameForHomePage());
 			if(this._ps.getHomePageID()>0){
 				pageChooser.setSelectedPage(this._ps.getHomePage());
 			}
@@ -317,6 +318,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 		GroupChooser chooser = new GroupChooser(name);
 		chooser.setInputStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 		chooser.setChooseButtonImage(chooserImage);
+		chooser.setHiddenInputAttribute(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
 		
 		try {
 			if ( this.selectedGroup != null && preselectSelectedGroup )  {
@@ -331,7 +333,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	}
 	
 	public String getBundleIdentifier() {
-		return IW_BUNDLE_IDENTIFIER;
+		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
 	
 	public Class getPresentationStateClass() {

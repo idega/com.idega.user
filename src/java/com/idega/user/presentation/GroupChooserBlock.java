@@ -3,27 +3,34 @@ package com.idega.user.presentation;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.util.AbstractChooserBlock;
 import com.idega.user.helpers.UserHelper;
 
-public class GroupChooserBlock extends Block {
+public class GroupChooserBlock extends AbstractChooserBlock {
 	
-	private static final String CONTAINER_ID = "chooser_presentation_object";
-	
-	public void main(IWContext iwc) {
-		Layer container = new Layer();
-		container.setId(CONTAINER_ID);
-		this.add(container);
-		
-		container.add(getGroupTree(iwc));
+	public GroupChooserBlock() {
+		super();
 	}
 	
-	private PresentationObject getGroupTree(IWContext iwc) {
+	public GroupChooserBlock(String idAttribute, String valueAttribute, String hiddenInputAttribute) {
+		super(idAttribute, valueAttribute, hiddenInputAttribute);
+	}
+	
+	public void main(IWContext iwc) {
+		super.main(iwc);
+		
+		Layer container = getMainContaier();
+		this.add(container);
+		
+		container.add(getGroupTree(iwc, container.getId()));
+	}
+	
+	private PresentationObject getGroupTree(IWContext iwc, String id) {
 		Layer container = new Layer();
 		
 		IWResourceBundle iwrb = this.getResourceBundle(iwc);
@@ -42,20 +49,19 @@ public class GroupChooserBlock extends Block {
 		
 		Link link = new Link();
 		link = new Link();
-		link.setURL(new StringBuffer("#").append(CONTAINER_ID).toString());
+		link.setURL(new StringBuffer("#").append(id).toString());
 		link.setNoTextObject(true);
 		//viewer.setLinkOpenClosePrototype(link);
 		
 		StringBuffer action = new StringBuffer();
 		//	Action to remove old value
-		action.append("removeAdvancedProperty('").append(ICBuilderConstants.GROUP_ID_ATTRIBUTE).append("');");
+		action.append(getRemoveSelectedPropertyAction());
 		
 		//	Action to add new Value
-		action.append("chooseObjectWithHidden(this, '").append(ICBuilderConstants.GROUP_ID_ATTRIBUTE);
-		action.append("', '").append(ICBuilderConstants.GROUP_NAME_ATTRIBUTE).append("', '").append(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY).append("');");
+		action.append(getChooserObjectAction(false));
 		
 		// Action to set view
-		action.append("setChooserView(this, '").append(ICBuilderConstants.GROUP_NAME_ATTRIBUTE).append("');");
+		action.append(getChooserViewAction());
 		
 		link.setOnClick(action.toString());
 		viewer.setLinkPrototype(link);
@@ -63,6 +69,18 @@ public class GroupChooserBlock extends Block {
 		container.add(viewer);
 		
 		return container;
+	}
+	
+	public boolean getChooserAttributes() {
+		//	Setting default values
+		if (getIdAttribute() == null) {
+			setIdAttribute(ICBuilderConstants.GROUP_ID_ATTRIBUTE);
+		}
+		if (getValueAttribute() == null) {
+			setValueAttribute(ICBuilderConstants.GROUP_NAME_ATTRIBUTE);
+		}
+		
+		return true;
 	}
 
 }

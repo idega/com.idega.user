@@ -7,6 +7,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.AbstractChooser;
 import com.idega.presentation.ui.Form;
 import com.idega.user.business.GroupTreeNode;
+import com.idega.user.business.UserConstants;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -19,8 +20,7 @@ import com.idega.user.business.GroupTreeNode;
 
 public class GroupChooser extends AbstractChooser {
   private Image chooserButtonImage = null;
-  private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-private boolean submitForm;
+  private boolean submitForm;
   
   public GroupChooser() {
   	addForm(false);
@@ -45,7 +45,7 @@ private boolean submitForm;
   public void main(IWContext iwc){
     empty();
     if (this.chooserButtonImage == null) {
-		IWBundle iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+		IWBundle iwb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
 		setChooseButtonImage(iwb.getImage("magnifyingglass.gif","Choose"));
     }
     	
@@ -53,12 +53,7 @@ private boolean submitForm;
 
   public Class getChooserWindowClass() {
 	  return GroupChooserBlock.class;
-    //return GroupChooserWindow.class;
   }
-  
-//  public void setChooseButtonImage(Image image) {
-//  	chooserButtonImage = image;
-//  }
 
   public void setSelectedNode(GroupTreeNode groupNode) {
       super.setChooserValue(groupNode.getNodeName(),groupNode.getNodeType()+"_"+groupNode.getNodeID());
@@ -69,7 +64,7 @@ private boolean submitForm;
   }
   
   public String getBundleIdentifier(){
-    return IW_BUNDLE_IDENTIFIER;
+    return UserConstants.IW_BUNDLE_IDENTIFIER;
   }
 
 	/* (non-Javadoc)
