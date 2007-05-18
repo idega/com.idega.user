@@ -185,6 +185,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			groupChooser.setStyleClassName("text");
 			groupChooser.setInputLength(17);
 			groupChooser.setToSubmitParentFormOnChange();
+			groupChooser.setHiddenInputAttribute(this._createEvent.getIONameForParentID());
+			groupChooser.setAddSaveButton(false);
 			
 			Text createUnderText = new Text(iwrb.getLocalizedString("parent_group", "Create group under") + ":");
 			
@@ -196,6 +198,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			pageChooser.setStyleClassName("text");
 			pageChooser.setInputLength(17);
 			pageChooser.setHiddenInputAttribute(this._createEvent.getIONameForHomePage());
+			pageChooser.setAddSaveButton(false);
 			if(this._ps.getHomePageID()>0){
 				pageChooser.setSelectedPage(this._ps.getHomePage());
 			}
@@ -216,6 +219,8 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			GroupChooser aliasGroupChooser = getGroupChooser(this._createEvent.getIONameForAliasID(), false, iwc);
 			aliasGroupChooser.setStyleClassName("text");
 			aliasGroupChooser.setInputLength(17);
+			aliasGroupChooser.setAddSaveButton(false);
+			aliasGroupChooser.setHiddenInputAttribute(this._createEvent.getIONameForAliasID());
 			if(this._ps.getAliasID()>0){
 				aliasGroupChooser.setSelectedNode(new GroupTreeNode(getGroup(new Integer(this._ps.getAliasID()))));
 			}
@@ -318,7 +323,6 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 		GroupChooser chooser = new GroupChooser(name);
 		chooser.setInputStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 		chooser.setChooseButtonImage(chooserImage);
-		chooser.setHiddenInputAttribute(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY);
 		
 		try {
 			if ( this.selectedGroup != null && preselectSelectedGroup )  {
