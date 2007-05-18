@@ -29,7 +29,6 @@ public class GroupChooser extends AbstractChooser {
   public GroupChooser(String chooserName) {
     this();
     setChooserParameter(chooserName);
-    setAddSaveButton(false);
   }
 
   public GroupChooser(String chooserName,String style) {
