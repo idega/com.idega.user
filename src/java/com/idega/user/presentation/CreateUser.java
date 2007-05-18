@@ -130,6 +130,8 @@ public class CreateUser extends StyledIWAdminWindow {
 		this.primaryGroupField = new GroupChooser(primaryGroupFieldParameterName);
 		this.primaryGroupField.setStyleClassName(this.inputTextStyle);
 		this.primaryGroupField.setInputLength(17);
+		this.primaryGroupField.setAddSaveButton(false);
+		this.primaryGroupField.setHiddenInputAttribute(primaryGroupFieldParameterName);
 		this.help = getHelp(HELP_TEXT_KEY);
 		this.okButton = new StyledButton(new SubmitButton(iwrb.getLocalizedString("save", "Save"),
 				submitButtonParameterName, okButtonParameterValue));
