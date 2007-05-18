@@ -21,6 +21,7 @@ import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserConstants;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
@@ -52,8 +53,6 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 	private String _groupType = null;
 
 	private IWResourceBundle iwrb;
-
-	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
 	private GroupBusiness groupBusiness;
 
@@ -113,7 +112,7 @@ public class CreateGroupWindowPS extends IWPresentationStateImpl implements IWAc
 	}
 
 	public void actionPerformed(IWPresentationEvent e) throws IWException {
-		this.iwrb = e.getIWContext().getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(
+		this.iwrb = e.getIWContext().getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(
 				e.getIWContext());
 		if (e instanceof CreateGroupEvent) {
 			CreateGroupEvent event = (CreateGroupEvent) e;
