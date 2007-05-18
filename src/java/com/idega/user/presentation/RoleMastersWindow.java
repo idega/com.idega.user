@@ -16,6 +16,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
@@ -111,6 +112,13 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 
 	public void main(IWContext iwc) throws Exception {
 		this.iwrb = this.getResourceBundle(iwc);
+		
+		Page parent = getParentPage();
+		if (parent != null) {
+			parent.addJavascriptURL("/dwr/engine.js");
+			parent.addJavascriptURL("/dwr/interface/UserSearchEngine.js");
+			parent.addJavascriptURL(getBundle(iwc).getVirtualPathWithFileNameString("javascript/UserSearchHelper.js"));
+		}
 
 		parseAction(iwc);
 
@@ -153,6 +161,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 																						  // really
 
 		EntityBrowser browser = EntityBrowser.getInstanceUsingEventSystemAndExternalForm();
+//		browser.setLeadingEntity(Group.class);
 		browser.setEntities("roles_masters", groups);
 		browser.setDefaultNumberOfRows(groups.size());
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
@@ -248,10 +257,10 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 
 		Form form = getRoleMastersForm(browser);
 		form.add(new HiddenInput(PARAM_SAVING, "TRUE"));//cannot use this if we
-														// put in a navigator in
-														// the entitybrowser,
-														// change submit button
-														// to same value
+														//put in a navigator in
+														//the entitybrowser,
+														//change submit button
+														//to same value
 		add(form, iwc);
 
 	}
@@ -285,6 +294,8 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		UserChooserBrowser userChooser = new UserChooserBrowser(PARAM_USER_CHOOSER_USER_ID);
 		userChooser.setUserBundle(true);
 		userChooser.setImageName("magnifyingglass.gif");
+		userChooser.setAddSaveButton(false);
+		userChooser.setHiddenInputAttribute(PARAM_USER_CHOOSER_USER_ID);
 		table.add(userChooser, 1, 2);
 
 		Table buttonTable = new Table();
