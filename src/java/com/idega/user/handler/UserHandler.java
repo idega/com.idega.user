@@ -27,7 +27,7 @@ public class UserHandler implements ICPropertyHandler{
   /**
    *
    */
-  public PresentationObject getHandlerObject(String name, String value, IWContext iwc) {
+  public PresentationObject getHandlerObject(String name, String value, IWContext iwc, boolean oldGenerationHandler) {
     UserChooser chooser = new UserChooser(name);
     chooser.setSelected(value);
     return(chooser);

@@ -29,7 +29,7 @@ public class GroupChooserInputHandler extends GroupChooser implements InputHandl
 	}
 	
 	public GroupChooserInputHandler(String name) {
-		super(name);
+		super(name, true);
 	}
     public Object convertSingleResultingObjectToType(Object value, String className) {
 		return value;
