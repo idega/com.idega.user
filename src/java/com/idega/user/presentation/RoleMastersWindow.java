@@ -113,12 +113,12 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 	public void main(IWContext iwc) throws Exception {
 		this.iwrb = this.getResourceBundle(iwc);
 		
-		Page parent = getParentPage();
+		/*Page parent = getParentPage();
 		if (parent != null) {
 			parent.addJavascriptURL("/dwr/engine.js");
 			parent.addJavascriptURL("/dwr/interface/UserSearchEngine.js");
 			parent.addJavascriptURL(getBundle(iwc).getVirtualPathWithFileNameString("javascript/UserSearchHelper.js"));
-		}
+		}*/
 
 		parseAction(iwc);
 
@@ -294,8 +294,8 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		UserChooserBrowser userChooser = new UserChooserBrowser(PARAM_USER_CHOOSER_USER_ID);
 		userChooser.setUserBundle(true);
 		userChooser.setImageName("magnifyingglass.gif");
-		userChooser.setAddSaveButton(false);
-		userChooser.setHiddenInputAttribute(PARAM_USER_CHOOSER_USER_ID);
+//		userChooser.setAddSaveButton(false);
+//		userChooser.setHiddenInputAttribute(PARAM_USER_CHOOSER_USER_ID);
 		table.add(userChooser, 1, 2);
 
 		Table buttonTable = new Table();

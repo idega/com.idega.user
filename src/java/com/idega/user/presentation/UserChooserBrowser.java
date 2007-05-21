@@ -21,31 +21,38 @@ public class UserChooserBrowser extends AbstractChooser {
 	private String imgName = "magnifyingglass.gif";
 	private boolean isUserBundle = false;
 	
-  public UserChooserBrowser(String chooserName) {
+	public UserChooserBrowser(String chooserName) {
+		this(chooserName, true);
+	}
+	
+  public UserChooserBrowser(String chooserName, boolean useOldLogic) {
+	  super(useOldLogic);
     addForm(false);
     setChooserParameter(chooserName);
   }
 
-  public UserChooserBrowser(String chooserName,String style) {
-    this(chooserName);
+  public UserChooserBrowser(String chooserName, String style, boolean useOldLogic) {
+    this(chooserName, useOldLogic);
     setInputStyle(style);
   }
 
   public void main(IWContext iwc){
     empty();
     IWBundle iwb = null;
-    if(this.isUserBundle) {
-    		iwb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
+    if (this.isUserBundle) {
+    	iwb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
     }
-    else{
-    		iwb = iwc.getIWMainApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
+    else {
+    	iwb = iwc.getIWMainApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
     }
     setChooseButtonImage(iwb.getImage(this.imgName,getResourceBundle(iwc).getLocalizedString("user_chooser.choose","Choose")));
   }
 
   public Class getChooserWindowClass() {
+	  if (isUseOldLogic()) {
+		  return UserChooserBrowserWindow.class;
+	  }
 	  return UserChooserBrowserBlock.class;
-    //return UserChooserBrowserWindow.class;
   }
 
 	public void setSelectedUser(String userId, String userName) {

@@ -194,7 +194,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 			tab.add(Text.getBreak(), 1, 2);
 			tab.add(groupChooser, 1, 2); //changed from (groupChooser, 2,3) - birna
 			
-			StyledIBPageChooser pageChooser = new StyledIBPageChooser(this._createEvent.getIONameForHomePage(), IWConstants.BUILDER_FONT_STYLE_INTERFACE);
+			StyledIBPageChooser pageChooser = new StyledIBPageChooser(this._createEvent.getIONameForHomePage(), IWConstants.BUILDER_FONT_STYLE_INTERFACE, false);
 			pageChooser.setStyleClassName("text");
 			pageChooser.setInputLength(17);
 			pageChooser.setHiddenInputAttribute(this._createEvent.getIONameForHomePage());
@@ -320,7 +320,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	private GroupChooser getGroupChooser(String name, boolean preselectSelectedGroup, IWContext iwc) {
 		IWBundle iwb = getBundle(iwc);
 		Image chooserImage = iwb.getImage("magnify.gif");
-		GroupChooser chooser = new GroupChooser(name);
+		GroupChooser chooser = new GroupChooser(name, false);
 		chooser.setInputStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 		chooser.setChooseButtonImage(chooserImage);
 		

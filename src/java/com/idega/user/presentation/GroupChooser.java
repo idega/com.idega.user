@@ -23,20 +23,25 @@ public class GroupChooser extends AbstractChooser {
   private boolean submitForm;
   
   public GroupChooser() {
-  	addForm(false);
+  	this(false);
   }
-
-  public GroupChooser(String chooserName) {
-    this();
+  
+  public GroupChooser(boolean useOldLogic) {
+	  super(useOldLogic);
+	  addForm(false);
+  }
+  
+  public GroupChooser(String chooserName, boolean useOldLogic) {
+    this(useOldLogic);
     setChooserParameter(chooserName);
   }
 
-  public GroupChooser(String chooserName,String style) {
-    this(chooserName);
+  public GroupChooser(String chooserName, String style) {
+    this(chooserName, true);
     setInputStyle(style);
   }
   public GroupChooser(String chooserName, String style, Image chooserButtonImage) {
-  	this(chooserName);
+  	this(chooserName, true);
   	setInputStyle(style);
   	setChooseButtonImage(chooserButtonImage);
   }
@@ -51,6 +56,9 @@ public class GroupChooser extends AbstractChooser {
   }
 
   public Class getChooserWindowClass() {
+	  if (isUseOldLogic()) {
+		  return GroupChooserWindow.class;
+	  }
 	  return GroupChooserBlock.class;
   }
 

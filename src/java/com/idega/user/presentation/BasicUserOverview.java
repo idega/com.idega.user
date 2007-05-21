@@ -331,7 +331,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             StyledButton styledMoveToButton = new StyledButton(moveToButton);
             
        
-            GroupChooser targetGroupChooser = new GroupChooser(SELECTED_TARGET_GROUP_KEY);
+            GroupChooser targetGroupChooser = new GroupChooser(SELECTED_TARGET_GROUP_KEY, true);
             targetGroupChooser.setInputStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
             if (this.selectedGroup != null) {
                 targetGroupChooser.setSelectedNode(new GroupTreeNode(this.selectedGroup));

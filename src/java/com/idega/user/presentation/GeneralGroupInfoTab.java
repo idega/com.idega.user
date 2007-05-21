@@ -182,7 +182,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		this.descriptionField.setHeight(5);
 		this.descriptionField.setWidth(Table.HUNDRED_PERCENT);
 		this.descriptionField.setWrap(true);
-		this.homepageField = new IBPageChooser(this.homepageFieldName);
+		this.homepageField = new IBPageChooser(this.homepageFieldName, true);
 		//grouptypeField = new DropdownMenu(grouptypeFieldName);
 		this.grouptypeField = new Text();
 		this.grouptypeField.setBold(false);
