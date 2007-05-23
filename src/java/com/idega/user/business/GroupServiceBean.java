@@ -13,9 +13,11 @@ import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.IWContext;
+import com.idega.user.bean.GroupPropertiesBean;
+import com.idega.user.bean.GroupsManagerBean;
 import com.idega.user.data.User;
-import com.idega.user.presentation.GroupInfoChooser;
 import com.idega.util.CoreUtil;
+import com.idega.webface.WFUtil;
 
 public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	
@@ -75,7 +77,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		}
 		
 		String engineScript = new StringBuffer(server).append("/dwr/engine.js").toString();
-		String interfaceScript = new StringBuffer(server).append(GroupInfoChooser.GROUP_SERVICE_DWR_INTERFACE_SCRIPT).toString();
+		String interfaceScript = new StringBuffer(server).append(UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT).toString();
 		
 		return (existsFileOnRemoteServer(engineScript) && existsFileOnRemoteServer(interfaceScript));
 	}
@@ -166,6 +168,19 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			}
 		}
 		return loginHome;
+	}
+	
+	public GroupPropertiesBean getPropertiesBean(String instanceId) {
+		if (instanceId == null) {
+			return null;
+		}
+		Object o = WFUtil.getBeanInstance(UserConstants.GROUPS_MANAGER_BEAN_ID);
+		if (!(o instanceof GroupsManagerBean)) {
+			return null;
+		}
+		GroupsManagerBean bean = (GroupsManagerBean) o;
+		
+		return bean.getProperties(instanceId);
 	}
 
 }

@@ -11,7 +11,7 @@
 
 	function setNodes(nodes, id){
 		closeLoadingMessage();
-		
+
 		var rootUl = document.createElement('ul');		
 		rootUl = addTreeElements(nodes, rootUl);
 		rootUl.setAttribute('class', 'tree_drag_drop');
@@ -28,10 +28,14 @@
 		treeObj.expandAll();
 	}
 	
-	function addTreeElements(nodes, rootUl){
-		for(var i = 0; i < nodes.length; i++){
+	function addTreeElements(nodes, rootUl) {
+		if (nodes == null) {
+			return;
+		}
+		
+		for (var i = 0; i < nodes.length; i++) {
 			var liElement = document.createElement('li');
-			liElement.setAttribute('id',nodes[i].uniqueId);
+			liElement.setAttribute('id', nodes[i].uniqueId);
 			var link = document.createElement('a');
 			link.setAttribute('href', '#');
 			var text=document.createTextNode(nodes[i].name);
@@ -46,28 +50,6 @@
 			rootUl.appendChild(liElement);
 		}
 		return rootUl;
-	}
-	
-	function setTreeContainerId(id){
-		TREE_CONTAINER_ID = id;
-	}
-	
-	function loadTree(id){
-		setTreeContainerId(id);
-		GroupService.getTopGroupNodes({
-			callback: function(nodes) {
-				setNodes(nodes, id);
-			}
-		});		
-	}
-
-	function getPathToImageFolder(){
-		ThemesEngine.getPathToImageFolder(setFolderPath);	
-	}
-	
-	function setFolderPath(path){
-		imageFolder = path;
-		iconFolder = path + 'pageIcons/';
 	}
 
 	function GroupTree()

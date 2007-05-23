@@ -1,39 +1,44 @@
 package com.idega.user.business;
 
-import java.util.Collection;
+import java.util.List;
 
 public class GroupNode {
-	String name = null;
-	String uniqueId = null;
-	boolean hasChildren = false;
-	Collection children = null;
 	
-	public GroupNode() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+	private String name = null;
+	private String uniqueId = null;
+	private boolean hasChildren = false;
+	private List<GroupNode> children = null;
+	
+
 	public boolean isHasChildren() {
 		return hasChildren;
 	}
+	
 	public void setHasChildren(boolean hasChildren) {
 		this.hasChildren = hasChildren;
 	}
+	
 	public String getName() {
 		return name;
 	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	public String getUniqueId() {
 		return uniqueId;
 	}
+	
 	public void setUniqueId(String uniqueId) {
 		this.uniqueId = uniqueId;
 	}
-	public Collection getChildren() {
+	
+	public List<GroupNode> getChildren() {
 		return this.children;
 	}
-	public void setChildren(Collection children) {
+	
+	public void setChildren(List<GroupNode> children) {
 		this.children = children;
 	}
 	

@@ -10,6 +10,6 @@
 			<name>component_type</name>
 			<type>java.lang.String</type>
 			<value>iw.block</value>
-		</key>
+		</key>					
 	</map>
 </pxml>

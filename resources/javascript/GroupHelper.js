@@ -1,6 +1,10 @@
 var SERVER_START = 'http://';
 var DEFAULT_DWR_PATH = '/dwr';
 
+var SERVER = null;
+var LOGIN = null;
+var PASSWORD = null;
+
 function registerGroupInfoChooserActions(){
 	$$('input.groupInfoChooserRadioStyle').each(
 		function(element) {
@@ -82,6 +86,9 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 					alert(logInErrorMessage + ' ' + server);
 					return false;
 				}
+				SERVER = server;
+				LOGIN = login;
+				PASSWORD = password;
 				setNodes(groups, id);
 			}
 		});
@@ -95,6 +102,9 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 }
 
 function loadLocalTree(id) {
+	SERVER = null;
+	LOGIN = null;
+	PASSWORD = null;
 	prepareDwr(DEFAULT_DWR_PATH);
 	
 	GroupService.getTopGroupNodes({
@@ -113,6 +123,18 @@ function prepareDwr(path) {
 	dwr.engine._defaultPath = path;
 	GroupService._path = path;
 	DWREngine.setMethod(DWREngine.ScriptTag);
+}
+
+function getServer() {
+	return SERVER;
+}
+
+function getLogin() {
+	return LOGIN;
+}
+
+function getPassword() {
+	return PASSWORD;
 }
 
 function empty(result){}

@@ -10,5 +10,18 @@
 		<create creator="ibo" javascript="GroupService" scope="application">
 			<param name="class" value="com.idega.user.business.GroupService" />
 		</create>
+		<convert converter="bean" match="com.idega.user.business.GroupNode" />
+		<convert converter="bean" match="com.idega.user.bean.GroupPropertiesBean" />
+		
 	</allow>
+	<signatures>
+		<![CDATA[
+			import java.util.List;
+			com.idega.user.business.GroupNode;
+
+			GroupService.getTopGroupNodes();
+			GroupService.getRemoteGroups(String, String);
+			GroupService.getPropertiesBean(String);
+  		]]>
+	</signatures>
 </dwr>

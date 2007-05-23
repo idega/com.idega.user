@@ -162,19 +162,6 @@
             <type>map</type>
           </key>
           <key>
-            <name>com.idega.user.presentation.GroupInfoChooser</name>
-            <value>
-              <map>
-                <key>
-                  <name>component_property_file</name>
-                  <type>java.lang.String</type>
-                  <value>com.idega.user.presentation.GroupInfoChooser.pxml</value>
-                </key>
-              </map>
-            </value>
-            <type>map</type>
-          </key>
-          <key>
             <name>com.idega.user.presentation.GroupInfoViewer</name>
             <value>
               <map>
@@ -195,6 +182,19 @@
                   <name>component_property_file</name>
                   <type>java.lang.String</type>
                   <value>com.idega.user.presentation.GroupUsersViewer.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
+            <name>com.idega.user.presentation.GroupTreeViewer</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.user.presentation.GroupTreeViewer.pxml</value>
                 </key>
               </map>
             </value>

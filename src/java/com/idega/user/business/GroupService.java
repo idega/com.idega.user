@@ -4,13 +4,13 @@ import java.util.Collection;
 import java.util.List;
 
 import com.idega.business.IBOService;
-import java.rmi.RemoteException;
+import com.idega.user.bean.GroupPropertiesBean;
 
 public interface GroupService extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getTopGroupNodes
 	 */
-	public Collection getTopGroupNodes() throws RemoteException;
+	public Collection getTopGroupNodes();
 	
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getRemoteGroups
@@ -21,4 +21,9 @@ public interface GroupService extends IBOService {
 	 * @see com.idega.user.business.GroupServiceBean#canUseRemoteServer
 	 */
 	public boolean canUseRemoteServer(String server);
+	
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#getPropertiesBean
+	 */
+	public GroupPropertiesBean getPropertiesBean(String instanceId);
 }

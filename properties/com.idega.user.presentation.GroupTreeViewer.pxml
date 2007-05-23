@@ -4,12 +4,12 @@
 		<key>
 			<name>component_name</name>
 			<type>java.lang.String</type>
-			<value>GroupInfoChooser</value>
+			<value>GroupTreeViewer</value>
 		</key>
 		<key>
 			<name>component_type</name>
 			<type>java.lang.String</type>
 			<value>iw.block</value>
-		</key>
+		</key>					
 	</map>
 </pxml>
