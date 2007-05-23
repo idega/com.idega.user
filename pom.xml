@@ -78,5 +78,10 @@
       <version>4.0-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
+    <dependency>
+      <groupId>com.idega.block.platform</groupId>
+      <artifactId>com.idega.webface</artifactId>
+      <version>4.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 </project>
