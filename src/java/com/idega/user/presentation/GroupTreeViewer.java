@@ -27,15 +27,7 @@ public class GroupTreeViewer extends Block {
 	}
 	
 	private void addJavaScript(IWContext iwc) {
-		Page parent = getParentPage();
-		if (parent == null) {
-			return;
-		}
-		
 		IWBundle iwb = getBundle(iwc);
-		if (iwb == null) {
-			return;
-		}
 		
 		AddResource resourceAdder = AddResourceFactory.getInstance(iwc);
 		
@@ -55,6 +47,7 @@ public class GroupTreeViewer extends Block {
 		scriptString.append("<script type=\"text/javascript\" > \n")
 		.append("\t").append(action).append(" \n")
 		.append("</script> \n");
+		 
 		add(scriptString.toString());
 	}
 	
