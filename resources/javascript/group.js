@@ -68,7 +68,7 @@ function getRemoteGroups(serverId, loginId, passwordId, id, messages) {
 	});
 }
 
-function canUseRemoteCallback(result, server, login, password, id, message, logInErrorMessage) {
+function canUseRemoteCallback(result, server, login, password, id, severErrorMessage, logInErrorMessage) {
 	if (result) {
 		//	Can use remote server, preparing DWR
 		prepareDwr(server + DEFAULT_DWR_PATH);
@@ -89,7 +89,7 @@ function canUseRemoteCallback(result, server, login, password, id, message, logI
 	else {
 		//	Cannot use remote server
 		closeLoadingMessage();
-		alert(message + ' ' + server);
+		alert(severErrorMessage + ' ' + server);
 		return false;
 	}
 }

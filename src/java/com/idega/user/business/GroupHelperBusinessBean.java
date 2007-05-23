@@ -44,6 +44,9 @@ public class GroupHelperBusinessBean {
 		System.out.println("Request made by: " + user);
 		
 		userBusiness = getUserBusiness(iwc);
+		if (userBusiness == null) {
+			return fake;
+		}
 		
 		Collection allGroups = null;
 		try {
