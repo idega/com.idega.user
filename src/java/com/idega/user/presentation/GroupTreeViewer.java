@@ -49,9 +49,13 @@ public class GroupTreeViewer extends Block {
 
 		
 		//	Actions to be performed on page loaded event
-		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {loadLocalTree('");
-		action.append(groupsTreeContainerId).append("')});");
-		parent.addJavaScriptAfterJavaScriptURLs("user_groups_tree", action.toString());
+		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {loadLocalTree('");action.append(groupsTreeContainerId).append("')});");
+		
+		StringBuffer scriptString = new StringBuffer();
+		scriptString.append("<script type=\"text/javascript\" > \n")
+		.append("\t").append(action).append(" \n")
+		.append("</script> \n");
+		add(scriptString.toString());
 	}
 	
 	public String getGroupsTreeContainerId() {
