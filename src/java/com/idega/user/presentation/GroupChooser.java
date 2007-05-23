@@ -19,6 +19,7 @@ import com.idega.user.business.UserConstants;
  */
 
 public class GroupChooser extends AbstractChooser {
+	
   private Image chooserButtonImage = null;
   private boolean submitForm;
   
@@ -29,6 +30,10 @@ public class GroupChooser extends AbstractChooser {
   public GroupChooser(boolean useOldLogic) {
 	  super(useOldLogic);
 	  addForm(false);
+  }
+  
+  public GroupChooser(String chooserName) {
+	  this(chooserName, true);
   }
   
   public GroupChooser(String chooserName, boolean useOldLogic) {

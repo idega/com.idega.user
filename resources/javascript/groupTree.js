@@ -6,16 +6,21 @@
 	var globalDivId = null;
 	var saveOnDrop = false;
 	var movingNode = false;
-	var divId = '';
+	var TREE_CONTAINER_ID = '';
 		
 
-	function setNodes(nodes){
+	function setNodes(nodes, id){
+		closeLoadingMessage();
+		
 		var rootUl = document.createElement('ul');		
 		rootUl = addTreeElements(nodes, rootUl);
 		rootUl.setAttribute('class', 'tree_drag_drop');
 		rootUl.setAttribute('id','tree');
-		var divElement = document.getElementById(divId);
-		divElement.appendChild(rootUl);
+		var container = document.getElementById(id);
+		if (container != null) {
+			removeChildren(container);
+			container.appendChild(rootUl);
+		}
 		
 		treeObj = new GroupTree();
 		treeObj.setTreeId('tree');
@@ -43,13 +48,17 @@
 		return rootUl;
 	}
 	
-	function setDivId(div){
-		divId = div;
+	function setTreeContainerId(id){
+		TREE_CONTAINER_ID = id;
 	}
 	
-	function loadTree(){
-
-		GroupService.getTopGroupNodes(setNodes);		
+	function loadTree(id){
+		setTreeContainerId(id);
+		GroupService.getTopGroupNodes({
+			callback: function(nodes) {
+				setNodes(nodes, id);
+			}
+		});		
 	}
 
 	function getPathToImageFolder(){

@@ -1,77 +1,95 @@
 package com.idega.user.business;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
+import com.idega.user.data.User;
+import com.idega.util.CoreUtil;
 
-public class GroupHelperBusinessBean{
-//extends IBOServiceBean  {
-	private UserBusiness userBusiness = null;
-	private GroupBusiness groupBusiness = null;
+public class GroupHelperBusinessBean {
 	
-	public Collection getTopGroupNodes(){
-		IWContext iwc = IWContext.getInstance();
+	private UserBusiness userBusiness = null;
+	
+	public List<GroupNode> getTopGroupNodes(){
+		List<GroupNode> fake = new ArrayList<GroupNode>();
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return fake;
+		}
+		
+		User currentUser = null;
+		try {
+			currentUser = iwc.getCurrentUser();
+		} catch(Exception e) {
+			return fake;
+		}
+		
+		return getTopGroupNodes(currentUser, iwc);
+	}
+	
+	public List<GroupNode> getTopGroupNodes(User user, IWContext iwc) {
+		List<GroupNode> fake = new ArrayList<GroupNode>();
+		
+		if (user == null || iwc == null) {
+			return fake;
+		}
+		System.out.println("Request made by: " + user);
+		
 		userBusiness = getUserBusiness(iwc);
-		groupBusiness = getGroupBusiness(iwc);
 		
 		Collection allGroups = null;
 		try {
-			allGroups = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
+			allGroups = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwc);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return fake;
 		}
 		
-		Collection groupNodes = convertGroupCollectionToGroupNodeCollection(allGroups,iwc.getApplicationContext());
-		
-		return groupNodes;
+		return convertGroupCollectionToGroupNodeCollection(allGroups, iwc.getApplicationContext());
 	}
 	
-	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
-		if (this.userBusiness == null) {
+	private synchronized UserBusiness getUserBusiness(IWApplicationContext iwc) {
+		if (userBusiness == null) {
 			try {
-				this.userBusiness = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
-			catch (java.rmi.RemoteException rme) {
-				throw new RuntimeException(rme.getMessage());
+			catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
-		return this.userBusiness;
-	}	
-	
-	public GroupBusiness getGroupBusiness(IWApplicationContext iwc) {
-		if (this.groupBusiness == null) {
-			try {
-				groupBusiness =(GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
-			}
-			// Remote and FinderException
-			catch (Exception ex)  {
-				throw new RuntimeException(ex.getMessage());
-			}		
-		}
-		return this.groupBusiness;
+		return userBusiness;
 	}
-	public Collection convertGroupCollectionToGroupNodeCollection(Collection col, IWApplicationContext iwac){
-		List <GroupNode>list = new Vector<GroupNode>();
+	
+	private List<GroupNode> convertGroupCollectionToGroupNodeCollection(Collection nodes, IWApplicationContext iwac){
+		List <GroupNode> list = new ArrayList<GroupNode>();
+		if (nodes == null || iwac == null) {
+			return list;
+		}
 		
-		Iterator iter = col.iterator();
-		while (iter.hasNext()) {
-			Group group = (Group) iter.next();
-			GroupNode groupNode = new GroupNode(); 
-			groupNode.setUniqueId(group.getId());
-			groupNode.setName(group.getName());
-			if (group.getChildCount() != 0){
-				groupNode.setChildren(convertGroupCollectionToGroupNodeCollection(group.getChildren(), iwac));
-				groupNode.setHasChildren(true);
+		Object o = null;
+		Group group = null;
+		GroupNode groupNode = null;
+		for (Iterator it = nodes.iterator(); it.hasNext();) {
+			o = it.next();
+			if (o instanceof Group) {
+				group = (Group) o;
+				groupNode = new GroupNode(); 
+				groupNode.setUniqueId(group.getId());
+				groupNode.setName(group.getName());
+				if (group.getChildCount() > 0) {
+					groupNode.setChildren(convertGroupCollectionToGroupNodeCollection(group.getChildren(), iwac));
+					groupNode.setHasChildren(true);
+				}
+				list.add(groupNode);
 			}
-			list.add(groupNode);
 		}
 
 		return list;
