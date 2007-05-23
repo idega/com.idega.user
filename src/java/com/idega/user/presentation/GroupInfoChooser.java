@@ -1,16 +1,15 @@
 package com.idega.user.presentation;
 
-import java.rmi.RemoteException;
+import org.apache.myfaces.renderkit.html.util.AddResource;
+import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.block.web2.business.Web2Business;
 import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
-import com.idega.presentation.Page;
 import com.idega.presentation.Table;
 import com.idega.presentation.TableCell2;
 import com.idega.presentation.TableRow;
@@ -27,9 +26,9 @@ import com.idega.user.business.UserConstants;
 /**
  * 
  * @author <a href="justinas@idega.com">Justinas Rakita</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  *
- * Last modified: $Date: 2007/05/23 08:04:31 $ by $Author: valdas $
+ * Last modified: $Date: 2007/05/23 17:03:24 $ by $Author: eiki $
  *
  */
 public class GroupInfoChooser extends Block {
@@ -46,7 +45,7 @@ public class GroupInfoChooser extends Block {
 	
 	public static final String GROUP_SERVICE_DWR_INTERFACE_SCRIPT = "/dwr/interface/GroupService.js";
 	
-	public void main(IWContext iwc) {
+	public void main(IWContext iwc) throws Exception {
 		Layer main = new Layer();
 		
 		Layer treeContainer = new Layer();
@@ -59,46 +58,37 @@ public class GroupInfoChooser extends Block {
 		add(main);
 	}
 	
-	private void addJavaScript(IWContext iwc) {
-		Page parent = getParentPage();
-		if (parent == null) {
-			return;
-		}
-		
-		IWBundle bundle = getBundle(iwc);
-		if (bundle == null) {
-			return;
-		}
+	private void addJavaScript(IWContext iwc) throws Exception {
+		Web2Business web2Bean = (Web2Business) IBOLookup.getServiceInstance(iwc, Web2Business.class);
+		AddResource resourceAdder = AddResourceFactory.getInstance(iwc);
+		IWBundle iwb = getBundle(iwc);
 		
 		//	"Helpers"
-		String resourcesPath = bundle.getResourcesPath();
-		parent.addJavascriptURL(new StringBuffer(resourcesPath).append("/javascript/groupTree.js").toString());
-		parent.addJavascriptURL(new StringBuffer(resourcesPath).append("/javascript/group.js").toString());
+//		add a javascript to the header :)
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("/javascript/groupTree.js"));
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("/javascript/group.js"));
+		
 		
 		//	DWR
-		parent.addJavascriptURL(GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
-		parent.addJavascriptURL("/dwr/engine.js");
-		
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,"/dwr/engine.js");
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+			
+	
 		//	MooTools
-		Web2Business web2Bean = null;
-		try {
-			web2Bean = (Web2Business) IBOLookup.getServiceInstance(iwc, Web2Business.class);
-		} catch (IBOLookupException e) {
-			e.printStackTrace();
-		}
-		if (web2Bean != null) {
-			try {
-				parent.addJavascriptURL(web2Bean.getBundleURIToMootoolsLib());
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-		}
-		
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,web2Bean.getBundleURIToMootoolsLib());
+	
 		//	Actions to be performed on page loaded event
+				
 		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {loadLocalTree('");
 		action.append(GROUPS_TREE_CONTAINER_ID).append("')});");
-		parent.addJavaScriptAfterJavaScriptURLs("user_groups_tree", action.toString());
-		parent.addJavaScriptAfterJavaScriptURLs("group_info_chooser_action","registerEvent(window,'load',registerGroupInfoChooserActions);");
+		
+		StringBuffer scriptString = new StringBuffer();
+		scriptString.append("<script type=\"text/javascript\" > \n")
+		.append("\t").append(action).append(" \n")
+		.append("\tregisterEvent(window,'load',registerGroupInfoChooserActions); \n")
+		.append("</script> \n");
+		add(scriptString.toString());
+		
 	}
 	
 	public void addGroupInfoChooser(IWContext iwc, Layer main) {
