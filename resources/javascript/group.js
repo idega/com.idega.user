@@ -112,7 +112,7 @@ function prepareDwr(path) {
 	//	Preparing DWR
 	dwr.engine._defaultPath = path;
 	GroupService._path = path;
-	//DWREngine.setMethod(DWREngine.ScriptTag);
+	DWREngine.setMethod(DWREngine.ScriptTag);
 }
 
 function empty(result){}
