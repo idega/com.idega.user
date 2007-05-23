@@ -26,9 +26,9 @@ import com.idega.user.business.UserConstants;
 /**
  * 
  * @author <a href="justinas@idega.com">Justinas Rakita</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  *
- * Last modified: $Date: 2007/05/23 17:03:24 $ by $Author: eiki $
+ * Last modified: $Date: 2007/05/23 17:19:24 $ by $Author: eiki $
  *
  */
 public class GroupInfoChooser extends Block {
@@ -65,8 +65,8 @@ public class GroupInfoChooser extends Block {
 		
 		//	"Helpers"
 //		add a javascript to the header :)
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("/javascript/groupTree.js"));
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("/javascript/group.js"));
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
+		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/group.js"));
 		
 		
 		//	DWR
