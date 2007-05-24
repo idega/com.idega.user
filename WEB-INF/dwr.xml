@@ -19,7 +19,6 @@
 			import java.util.List;
 			com.idega.user.business.GroupNode;
 
-			GroupService.getTopGroupNodes();
 			GroupService.getRemoteGroups(String, String);
 			GroupService.getPropertiesBean(String);
   		]]>

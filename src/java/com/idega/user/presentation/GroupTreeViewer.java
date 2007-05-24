@@ -7,7 +7,6 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
-import com.idega.presentation.Page;
 import com.idega.user.business.UserConstants;
 
 public class GroupTreeViewer extends Block {
@@ -41,7 +40,8 @@ public class GroupTreeViewer extends Block {
 
 		
 		//	Actions to be performed on page loaded event
-		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {loadLocalTree('");action.append(groupsTreeContainerId).append("')});");
+		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {loadLocalTree('");
+		action.append(groupsTreeContainerId).append("')});");
 		
 		StringBuffer scriptString = new StringBuffer();
 		scriptString.append("<script type=\"text/javascript\" > \n")

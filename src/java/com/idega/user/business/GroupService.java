@@ -1,6 +1,5 @@
 package com.idega.user.business;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.idega.business.IBOService;
@@ -10,7 +9,7 @@ public interface GroupService extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getTopGroupNodes
 	 */
-	public Collection getTopGroupNodes();
+	public List<GroupNode> getTopGroupNodes();
 	
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getRemoteGroups

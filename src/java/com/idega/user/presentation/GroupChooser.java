@@ -33,20 +33,22 @@ public class GroupChooser extends AbstractChooser {
   }
   
   public GroupChooser(String chooserName) {
-	  this(chooserName, true);
+	  this(chooserName, true, null, null);
   }
   
-  public GroupChooser(String chooserName, boolean useOldLogic) {
+  public GroupChooser(String chooserName, boolean useOldLogic, String instanceId, String method) {
     this(useOldLogic);
+    setInstanceId(instanceId);
+    setMethod(method);
     setChooserParameter(chooserName);
   }
 
   public GroupChooser(String chooserName, String style) {
-    this(chooserName, true);
+    this(chooserName, true, null, null);
     setInputStyle(style);
   }
   public GroupChooser(String chooserName, String style, Image chooserButtonImage) {
-  	this(chooserName, true);
+  	this(chooserName, true, null, null);
   	setInputStyle(style);
   	setChooseButtonImage(chooserButtonImage);
   }

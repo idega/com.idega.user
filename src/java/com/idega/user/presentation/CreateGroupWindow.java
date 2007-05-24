@@ -320,7 +320,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	private GroupChooser getGroupChooser(String name, boolean preselectSelectedGroup, IWContext iwc) {
 		IWBundle iwb = getBundle(iwc);
 		Image chooserImage = iwb.getImage("magnify.gif");
-		GroupChooser chooser = new GroupChooser(name, false);
+		GroupChooser chooser = new GroupChooser(name, false, null, null);
 		chooser.setInputStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 		chooser.setChooseButtonImage(chooserImage);
 		

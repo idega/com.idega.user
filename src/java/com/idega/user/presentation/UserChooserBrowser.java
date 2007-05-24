@@ -49,10 +49,7 @@ public class UserChooserBrowser extends AbstractChooser {
   }
 
   public Class getChooserWindowClass() {
-	  if (isUseOldLogic()) {
-		  return UserChooserBrowserWindow.class;
-	  }
-	  return UserChooserBrowserBlock.class;
+	  return UserChooserBrowserWindow.class;
   }
 
 	public void setSelectedUser(String userId, String userName) {

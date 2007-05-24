@@ -7,7 +7,6 @@ import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.util.AbstractChooserBlock;
-import com.idega.user.helpers.UserHelper;
 
 public class UserChooserBrowserBlock extends AbstractChooserBlock {
 
@@ -23,9 +22,6 @@ public class UserChooserBrowserBlock extends AbstractChooserBlock {
 		Layer resultsContainer = new Layer();
 		resultsContainer.setId(RESULTS_CONTAINER_ID);
 		container.add(resultsContainer);
-		
-		UserHelper h = new UserHelper();
-		container.add(h.getUserBrowser(h.getUserEntities("bla"), "bla", iwc, 8));
 		
 		add(container);
 	}

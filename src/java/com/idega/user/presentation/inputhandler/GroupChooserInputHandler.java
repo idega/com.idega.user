@@ -29,8 +29,9 @@ public class GroupChooserInputHandler extends GroupChooser implements InputHandl
 	}
 	
 	public GroupChooserInputHandler(String name) {
-		super(name, true);
+		super(name, true, null, null);
 	}
+	
     public Object convertSingleResultingObjectToType(Object value, String className) {
 		return value;
     }

@@ -1,5 +1,5 @@
 /*
- * $Id: GroupHandler.java,v 1.6 2007/05/21 09:56:21 valdas Exp $
+ * $Id: GroupHandler.java,v 1.7 2007/05/24 11:31:03 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -40,8 +40,8 @@ public class GroupHandler implements ICPropertyHandler {
   /**
    *
    */
-  public PresentationObject getHandlerObject(String name, String value, IWContext iwc, boolean oldGenerationHandler) {
-    GroupChooser chooser = new GroupChooser(name, oldGenerationHandler);
+  public PresentationObject getHandlerObject(String name, String value, IWContext iwc, boolean oldGenerationHandler, String instanceId, String method) {
+    GroupChooser chooser = new GroupChooser(name, oldGenerationHandler, instanceId, method);
     try {
       if (value != null && !value.equals("")) {
       	Group group = getGroupHome().findByPrimaryKey(new Integer(value));
