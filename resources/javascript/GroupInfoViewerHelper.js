@@ -3,33 +3,98 @@ function getSelectedGroups(instanceId, containerId, message) {
 		return;
 	}
 
-	//showLoadingMessage(message);
+	showLoadingMessage(message);
 
 	//	To be sure we'll call to 'local' server
-	dwr.engine._defaultPath = '/dwr';
-	GroupService._path = '/dwr';
+	prepareDwr(GroupService, getDefaultDwrPath());
 	
-	//GroupService.getTopGroupNodes(callbackNodes);
-	
-	/*GroupService.getPropertiesBean(instanceId, {
+	/*GroupService.getGroupPropertiesBean(instanceId, {
 		callback: function(properties) {
-			getPropertiesCallback(properties, containerId);
+			getGroupPropertiesCallback(properties, containerId);
 		}
 	});*/
+	getGroupPropertiesCallback(new GroupPropertiesBean(), containerId);	//	For testing
 }
 
-function callbackNodes(result) {
-	if (result == null) {
-		alert('returned null');
-		return;
-	}
-	setNodes(result, 'selected_group_info_container');
+function GroupPropertiesBean() {
+	this.server = 'http://172.16.0.138:8080';
+	this.login = 'Administrator';
+	this.password = 'idega';
+	this.uniqueIds = new Array();
+	this.uniqueIds.push('987654321');
+	this.uniqueIds.push('dfjikdjgiofdgjnmxcsuandyusndfvyn');
+	this.uniqueIds.push('123456789');
+	
+	this.showName = true;
+	this.showHomePage = true;
+	this.showDescription = true;
+	this.showExtraInfo = true;
+	this.showShortName = true;
+	this.showPhone = true;
+	this.showFax = true;
+	this.showEmails = true;
+	this.showAddress = true;
+	this.showEmptyFields = false;
 }
 
-function getPropertiesCallback(properties, containerId) {
-	closeLoadingMessage();
+function getGroupPropertiesCallback(properties, containerId) {
 	if (properties == null) {
-		return;
+		closeLoadingMessage();
+		return false;
 	}
 	
+	GroupService.canUseRemoteServer(properties.server, {
+		callback: function(result) {
+			canUseRemoteServerForGroupCallback(result, properties, containerId);
+		}
+	});
+	//canUseRemoteServerForGroupCallback(true, properties, containerId);	//	For testing
+}
+
+function canUseRemoteServerForGroupCallback(result, properties, containerId) {
+	if (!result) {
+		closeLoadingMessage();
+		return false;
+	}
+	
+	//	Preparing DWR for remote call
+	prepareDwr(GroupService, properties.server + getDefaultDwrPath());
+	
+	//	Calling method to get info about groups on remote server
+	GroupService.getGroupsInfo(properties, {
+		callback: function(groupsInfo) {
+		 	getGroupsInfoCallback(groupsInfo, properties, containerId);
+		}
+	});
+}
+
+function getGroupsInfoCallback(groupsInfo, properties, containerId) {
+	if (groupsInfo == null || containerId == null) {
+		closeLoadingMessage();
+		return false;
+	}
+	//Received info about Groups from 'remote' server
+	//Now rendering object in 'local' server
+	prepareDwr(GroupService, getDefaultDwrPath());
+	
+	GroupService.getGroupInfoPresentationObject(groupsInfo, properties, {
+		callback: function(presentationObject) {
+			getGroupInfoPresentationObjectCallback(presentationObject, containerId);
+		}
+	});
+}
+
+function getGroupInfoPresentationObjectCallback(presentationObject, containerId) {
+	closeLoadingMessage();
+	if (presentationObject == null || containerId == null) {
+		return false;
+	}
+	
+	var container = document.getElementById(containerId);
+	if (container == null) {
+		return false;
+	}
+	removeChildren(container);
+	
+	insertNodesToContainer(presentationObject, container);
 }

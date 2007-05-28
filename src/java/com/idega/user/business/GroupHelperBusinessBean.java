@@ -41,7 +41,6 @@ public class GroupHelperBusinessBean {
 		if (user == null || iwc == null) {
 			return fake;
 		}
-		System.out.println("Request made by: " + user);
 		
 		userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {

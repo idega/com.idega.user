@@ -33,7 +33,7 @@ function manageConnectionType(useLocal, id) {
 	connection.style.display = displayValue;
 }
 
-function getRemoteGroups(serverId, loginId, passwordId, id, messages) {
+function getGroupsTree(serverId, loginId, passwordId, id, messages) {
 	var serverInput = $(serverId);
 	var loginInput = $(loginId);
 	var passwordInput = $(passwordId);
@@ -75,10 +75,10 @@ function getRemoteGroups(serverId, loginId, passwordId, id, messages) {
 function canUseRemoteCallback(result, server, login, password, id, severErrorMessage, logInErrorMessage) {
 	if (result) {
 		//	Can use remote server, preparing DWR
-		prepareDwr(server + DEFAULT_DWR_PATH);
+		prepareDwr(GroupService, server + DEFAULT_DWR_PATH);
 	
 		//	Getting info from remote server
-		GroupService.getRemoteGroups(login, password, {
+		GroupService.getGroupsTree(login, password, {
 			callback: function(groups) {
 				if (groups == null) {
 					//	Login failed
@@ -105,7 +105,7 @@ function loadLocalTree(id) {
 	SERVER = null;
 	LOGIN = null;
 	PASSWORD = null;
-	prepareDwr(DEFAULT_DWR_PATH);
+	prepareDwr(GroupService, DEFAULT_DWR_PATH);
 	
 	GroupService.getTopGroupNodes({
 		callback: function(groups) {
@@ -118,11 +118,15 @@ function loadLocalTree(id) {
 	});
 }
 
-function prepareDwr(path) {
+function prepareDwr(interfaceClass, path) {
 	//	Preparing DWR
 	dwr.engine._defaultPath = path;
-	GroupService._path = path;
+	interfaceClass._path = path;
 	DWREngine.setMethod(DWREngine.ScriptTag);
+}
+
+function getDefaultDwrPath() {
+	return DEFAULT_DWR_PATH;
 }
 
 function getServer() {

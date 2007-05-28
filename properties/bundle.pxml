@@ -162,39 +162,39 @@
             <type>map</type>
           </key>
           <key>
-            <name>com.idega.user.presentation.GroupInfoViewer</name>
+            <name>com.idega.user.presentation.group.GroupInfoViewer</name>
             <value>
               <map>
                 <key>
                   <name>component_property_file</name>
                   <type>java.lang.String</type>
-                  <value>com.idega.user.presentation.GroupInfoViewer.pxml</value>
+                  <value>com.idega.user.presentation.group.GroupInfoViewer.pxml</value>
                 </key>
               </map>
             </value>
             <type>map</type>
           </key>
           <key>
-            <name>com.idega.user.presentation.GroupUsersViewer</name>
+            <name>com.idega.user.presentation.group.GroupUsersViewer</name>
             <value>
               <map>
                 <key>
                   <name>component_property_file</name>
                   <type>java.lang.String</type>
-                  <value>com.idega.user.presentation.GroupUsersViewer.pxml</value>
+                  <value>com.idega.user.presentation.group.GroupUsersViewer.pxml</value>
                 </key>
               </map>
             </value>
             <type>map</type>
           </key>
           <key>
-            <name>com.idega.user.presentation.GroupTreeViewer</name>
+            <name>com.idega.user.presentation.group.GroupTreeViewer</name>
             <value>
               <map>
                 <key>
                   <name>component_property_file</name>
                   <type>java.lang.String</type>
-                  <value>com.idega.user.presentation.GroupTreeViewer.pxml</value>
+                  <value>com.idega.user.presentation.group.GroupTreeViewer.pxml</value>
                 </key>
               </map>
             </value>
