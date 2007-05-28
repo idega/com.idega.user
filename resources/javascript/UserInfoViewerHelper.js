@@ -17,7 +17,7 @@ function getSelectedUsers(instanceId, containerId, message) {
 }
 
 function UserPropertiesBean() {
-	this.server = 'http://172.16.0.138:8080';
+	this.server = 'http://formbuilder.idega.is';
 	this.login = 'Administrator';
 	this.password = 'idega';
 	

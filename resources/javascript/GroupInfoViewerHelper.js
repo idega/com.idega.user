@@ -17,7 +17,7 @@ function getSelectedGroups(instanceId, containerId, message) {
 }
 
 function GroupPropertiesBean() {
-	this.server = 'http://172.16.0.138:8080';
+	this.server = 'http://formbuilder.idega.is';
 	this.login = 'Administrator';
 	this.password = 'idega';
 	this.uniqueIds = new Array();
@@ -48,7 +48,6 @@ function getGroupPropertiesCallback(properties, containerId) {
 			canUseRemoteServerForGroupCallback(result, properties, containerId);
 		}
 	});
-	//canUseRemoteServerForGroupCallback(true, properties, containerId);	//	For testing
 }
 
 function canUseRemoteServerForGroupCallback(result, properties, containerId) {
