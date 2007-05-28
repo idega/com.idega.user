@@ -7,6 +7,7 @@ import com.idega.bean.GroupMembersDataBean;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.ListItem;
@@ -28,11 +29,17 @@ public class GroupUsersViewerBlock extends Block {
 	private boolean showSchool = true;
 	private boolean showArea = true;
 	private boolean showBeganWork = true;
+	private boolean showImage = true;
 	
 	private List<GroupMembersDataBean> membersData = null;
 	
 	private String styleClass = "groupsMembersInfoList";
 	private boolean showLabels = false;
+	
+	private String imageWidth = "100";
+	private String imageHeight = "150";
+	
+	private String server = null;
 	
 	public void main(IWContext iwc) {
 		if (membersData == null) {
@@ -50,17 +57,17 @@ public class GroupUsersViewerBlock extends Block {
 		GroupMemberDataBean userData = null;
 		
 		Lists groups = new Lists();
-		ListItem groupUsers = null;
+		//ListItem groupUsers = null;*/
 		
-		Lists users = null;
-		ListItem user = null;
+		/*Lists users = null;
+		ListItem user = null;*/
 		
 		List<GroupMemberDataBean> usersData = null;
 		for (int i = 0; i < membersData.size(); i++) {
 			groupsData = membersData.get(i);
 			usersData = groupsData.getMembersInfo();
 			
-			groupUsers = new ListItem();
+			ListItem groupUsers = new ListItem();
 			
 			if (showGroupName) {
 				String groupName = getEmptyIfValueIsNull(groupsData.getGroupName());
@@ -73,11 +80,36 @@ public class GroupUsersViewerBlock extends Block {
 			
 			//	Rendering users info
 			if (usersData != null) {
-				users = new Lists();
+				Lists users = new Lists();
 				for (int j = 0; j < usersData.size(); j++) {
-					userData = usersData.get(i);
+					userData = usersData.get(j);
 					
-					user = new ListItem();
+					ListItem user = new ListItem();
+					
+					//	Image
+					if (showImage) {
+						//System.out.println("User's " + user.getName() + " image: " + userData.getImageUrl());
+						if (userData.getImageUrl() != null) {
+							Layer imageContainer = new Layer();
+							Image userImage = new Image(new StringBuffer(getServer()).append(userData.getImageUrl()).toString());
+							if (imageWidth != null) {
+								userImage.setWidth(imageWidth);
+							}
+							if (imageHeight != null) {
+								userImage.setHeight(imageHeight);
+							}
+							imageContainer.add(userImage);
+							user.add(imageContainer);
+						}
+					}
+					
+					//	Name
+					Layer nameContainer = new Layer();
+					if (showLabels) {
+						nameContainer.add(new Text(iwrb.getLocalizedString("user_name", "Name: ")));
+					}
+					nameContainer.add(userData.getName());
+					users.add(nameContainer);
 					
 					//	Title
 					if (showTitle) {
@@ -323,9 +355,8 @@ public class GroupUsersViewerBlock extends Block {
 		
 		Layer emails = new Layer();
 		
-		Link email = null;
 		for (int i = 0; i < addresses.size(); i++) {
-			email = new Link(addresses.get(i));
+			Link email = new Link(addresses.get(i));
 			email.setURL(new StringBuffer("mailto:").append(addresses.get(i)).toString());
 			email.setSessionId(false);
 			emails.add(email);
@@ -336,4 +367,40 @@ public class GroupUsersViewerBlock extends Block {
 		
 		return emails;
 	}
+
+	public boolean isShowImage() {
+		return showImage;
+	}
+
+	public void setShowImage(boolean showImage) {
+		this.showImage = showImage;
+	}
+
+	public String getImageHeight() {
+		return imageHeight;
+	}
+
+	public void setImageHeight(String imageHeight) {
+		this.imageHeight = imageHeight;
+	}
+
+	public String getImageWidth() {
+		return imageWidth;
+	}
+
+	public void setImageWidth(String imageWidth) {
+		this.imageWidth = imageWidth;
+	}
+
+	public String getServer() {
+		return server;
+	}
+
+	public void setServer(String server) {
+		if (server.endsWith("/")) {
+			server = server.substring(0, server.lastIndexOf("/"));
+		}
+		this.server = server;
+	}
+	
 }

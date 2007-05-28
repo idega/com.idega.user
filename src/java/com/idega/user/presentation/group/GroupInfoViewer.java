@@ -36,6 +36,8 @@ public class GroupInfoViewer extends Block {
 	private boolean showAddress = false;
 	private boolean showEmptyFields = true;
 	
+	private String additionalInfo = null;
+	
 	public GroupInfoViewer() {
 		//setCacheable(getCacheKey());
 	}
@@ -49,6 +51,8 @@ public class GroupInfoViewer extends Block {
 	}*/
 	
 	public void main(IWContext iwc) {
+		System.out.println("Additional info");
+		
 		String instanceId = BuilderLogic.getInstance().getInstanceId(this);
 		if (instanceId == null) {
 			throw new NullPointerException("Instance of presentation object 'GroupInfoViewer' is null");
@@ -152,6 +156,14 @@ public class GroupInfoViewer extends Block {
 
 	public String getBundleIdentifier()	{
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
+	}
+
+	public String getAdditionalInfo() {
+		return additionalInfo;
+	}
+
+	public void setAdditionalInfo(String additionalInfo) {
+		this.additionalInfo = additionalInfo;
 	}
 
 }

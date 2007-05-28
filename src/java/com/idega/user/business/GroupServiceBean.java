@@ -317,6 +317,11 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		
 		usersViewer.setMembersData(membersData);
 		
+		usersViewer.setImageHeight(bean.getImageHeight());
+		usersViewer.setImageWidth(bean.getImageWidth());
+		
+		usersViewer.setServer(bean.getServer());
+		
 		return BuilderLogic.getInstance().getRenderedPresentationObject(iwc, usersViewer, false);
 	}
 	

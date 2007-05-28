@@ -36,6 +36,10 @@ public class GroupUsersViewer extends Block {
 	private boolean showSchool = true;
 	private boolean showArea = true;
 	private boolean showBeganWork = true;
+	private boolean showImage = true;
+	
+	private String imageWidth = "100";
+	private String imageHeight = "150";
 	
 	public GroupUsersViewer() {
 //		setCacheable(getCacheKey());
@@ -90,6 +94,10 @@ public class GroupUsersViewer extends Block {
 		properties.setShowSchool(showSchool);
 		properties.setShowArea(showArea);
 		properties.setShowBeganWork(showBeganWork);
+		properties.setShowImage(showImage);
+		
+		properties.setImageHeight(imageHeight);
+		properties.setImageWidth(imageWidth);
 		
 		Object[] parameters = new Object[2];
 		parameters[0] = instanceId;
@@ -139,7 +147,8 @@ public class GroupUsersViewer extends Block {
 	}
 	
 	public void setDisplayOptions(boolean showGroupName, boolean showTitle, boolean showAge, boolean showWorkPhone, boolean showHomePhone,
-			boolean showMobilePhone, boolean showEmails, boolean showEducation, boolean showSchool, boolean showArea, boolean showBeganWork) {
+			boolean showMobilePhone, boolean showEmails, boolean showEducation, boolean showSchool, boolean showArea, boolean showBeganWork,
+			boolean showImage) {
 		
 		this.showGroupName = showGroupName;
 		this.showTitle = showTitle;
@@ -152,10 +161,27 @@ public class GroupUsersViewer extends Block {
 		this.showSchool = showSchool;
 		this.showArea = showArea;
 		this.showBeganWork = showBeganWork;
+		this.showImage = showImage;
 	}
 	
 	public String getBundleIdentifier()	{
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
+	}
+
+	public String getImageHeight() {
+		return imageHeight;
+	}
+
+	public void setImageHeight(String imageHeight) {
+		this.imageHeight = imageHeight;
+	}
+
+	public String getImageWidth() {
+		return imageWidth;
+	}
+
+	public void setImageWidth(String imageWidth) {
+		this.imageWidth = imageWidth;
 	}
 	
 }
