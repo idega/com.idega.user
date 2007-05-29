@@ -5,6 +5,12 @@
   </properties>
   <body>
 
+    <release version="3.1.6" date="2007-05-29">
+      <action dev="sigtryggur" type="update">
+      		Added some icons to the treeview in the userapplication
+      </action>       
+    </release>
+    
     <release version="3.1.5" date="2007-04-23">
       <action dev="eiki" type="update">
       		Merged changes made in v.2.0 to v3.1, added Felix icelandic locale variant and changed bundle properties to application properties.
