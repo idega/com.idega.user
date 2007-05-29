@@ -57,10 +57,6 @@ public class GroupUsersViewerBlock extends Block {
 		GroupMemberDataBean userData = null;
 		
 		Lists groups = new Lists();
-		//ListItem groupUsers = null;*/
-		
-		/*Lists users = null;
-		ListItem user = null;*/
 		
 		List<GroupMemberDataBean> usersData = null;
 		for (int i = 0; i < membersData.size(); i++) {
@@ -88,7 +84,6 @@ public class GroupUsersViewerBlock extends Block {
 					
 					//	Image
 					if (showImage) {
-						//System.out.println("User's " + user.getName() + " image: " + userData.getImageUrl());
 						if (userData.getImageUrl() != null) {
 							Layer imageContainer = new Layer();
 							Image userImage = new Image(new StringBuffer(getServer()).append(userData.getImageUrl()).toString());

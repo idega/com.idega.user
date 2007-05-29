@@ -37,6 +37,7 @@ function UserPropertiesBean() {
 	this.showSchool = true;
 	this.showArea = true;
 	this.showBeganWork = true;
+	this.showImage = true;
 }
 
 function getUserPropertiesCallback(properties, containerId) {
