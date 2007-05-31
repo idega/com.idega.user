@@ -9,11 +9,11 @@
 	var TREE_CONTAINER_ID = '';
 		
 
-	function setNodes(nodes, id){
+	function setGroupsNodes(nodes, id, styleClassName, selectedGroups){
 		closeLoadingMessage();
 
 		var rootUl = document.createElement('ul');		
-		rootUl = addTreeElements(nodes, rootUl);
+		rootUl = addTreeElements(nodes, rootUl, styleClassName, selectedGroups);
 		rootUl.setAttribute('class', 'tree_drag_drop');
 		rootUl.setAttribute('id','tree');
 		var container = document.getElementById(id);
@@ -28,7 +28,7 @@
 		treeObj.expandAll();
 	}
 	
-	function addTreeElements(nodes, rootUl) {
+	function addTreeElements(nodes, rootUl, styleClassName, selectedGroups) {
 		if (nodes == null) {
 			return;
 		}
@@ -36,20 +36,38 @@
 		for (var i = 0; i < nodes.length; i++) {
 			var liElement = document.createElement('li');
 			liElement.setAttribute('id', nodes[i].uniqueId);
+			if (styleClassName != null) {
+				liElement.setAttribute('class', styleClassName);
+			}
+			if (isGroupSelected(selectedGroups, nodes[i].uniqueId)) {
+				liElement.style.fontWeight = 'bold';
+			}
 			var link = document.createElement('a');
 			link.setAttribute('href', '#');
-			var text=document.createTextNode(nodes[i].name);
+			var text = document.createTextNode(nodes[i].name);
 			link.appendChild(text);
 			liElement.appendChild(link);
 			if(nodes[i].hasChildren == true){
 				var ulElement = document.createElement('ul');
-				ulElement = addTreeElements(nodes[i].children, ulElement);
+				ulElement = addTreeElements(nodes[i].children, ulElement, styleClassName, selectedGroups);
 				ulElement.setAttribute('class', 'tree_drag_drop');
 				liElement.appendChild(ulElement);
 			}
 			rootUl.appendChild(liElement);
 		}
 		return rootUl;
+	}
+	
+	function isGroupSelected(selectedGroups, id) {
+		if (selectedGroups == null || id == null) {
+			return false;
+		}
+		for (var i = 0; i < selectedGroups.length; i++) {
+			if (id == selectedGroups[i]) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	function GroupTree()

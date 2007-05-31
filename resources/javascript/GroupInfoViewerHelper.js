@@ -8,12 +8,12 @@ function getSelectedGroups(instanceId, containerId, message) {
 	//	To be sure we'll call to 'local' server
 	prepareDwr(GroupService, getDefaultDwrPath());
 	
-	/*GroupService.getGroupPropertiesBean(instanceId, {
+	GroupService.getGroupPropertiesBean(instanceId, {
 		callback: function(properties) {
 			getGroupPropertiesCallback(properties, containerId);
 		}
-	});*/
-	getGroupPropertiesCallback(new GroupPropertiesBean(), containerId);	//	For testing
+	});
+	//getGroupPropertiesCallback(new GroupPropertiesBean(), containerId);	//	For testing
 }
 
 function GroupPropertiesBean() {
@@ -39,6 +39,11 @@ function GroupPropertiesBean() {
 
 function getGroupPropertiesCallback(properties, containerId) {
 	if (properties == null) {
+		closeLoadingMessage();
+		return false;
+	}
+	
+	if (properties.server == null || properties.login == null || properties.password == null) {
 		closeLoadingMessage();
 		return false;
 	}
@@ -93,7 +98,7 @@ function getGroupInfoPresentationObjectCallback(presentationObject, containerId)
 	if (container == null) {
 		return false;
 	}
-	removeChildren(container);
 	
+	removeChildren(container);
 	insertNodesToContainer(presentationObject, container);
 }

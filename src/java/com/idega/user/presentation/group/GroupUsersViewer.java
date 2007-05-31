@@ -11,7 +11,6 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
-import com.idega.presentation.Page;
 import com.idega.user.business.UserConstants;
 import com.idega.webface.WFUtil;
 
@@ -111,12 +110,7 @@ public class GroupUsersViewer extends Block {
 		WFUtil.invoke(UserConstants.GROUPS_MANAGER_BEAN_ID, "addUserProperties", parameters, classes);
 	}
 	
-	private void addJavaScript(IWContext iwc, String instanceId) {
-		Page parent = getParentPage();
-		if (parent == null) {
-			return;
-		}
-		
+	private void addJavaScript(IWContext iwc, String instanceId) {		
 		IWBundle iwb = getBundle(iwc);
 		if (iwb == null) {
 			return;
@@ -136,7 +130,11 @@ public class GroupUsersViewer extends Block {
 		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {getSelectedUsers('");
 		action.append(instanceId).append("', '").append(USERS_INFO_CONTAINER_ID).append("', '");
 		action.append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("');});");
-		parent.addJavaScriptAfterJavaScriptURLs("get_users_action", action.toString());
+		
+		//	Adding script to page
+		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n").append("\t").append(action);
+		scriptString.append(" \n").append("</script> \n");
+		add(scriptString.toString());
 	}
 	
 	public void setGroups(String server, String user, String password, List<String> uniqueIds) {

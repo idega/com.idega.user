@@ -84,7 +84,7 @@ public class GroupHelperBusinessBean {
 			if (o instanceof Group) {
 				group = (Group) o;
 				groupNode = new GroupNode(); 
-				groupNode.setUniqueId(group.getId());
+				groupNode.setUniqueId(group.getUniqueId());
 				groupNode.setName(group.getName());
 				if (group.getChildCount() > 0) {
 					groupNode.setChildren(convertGroupCollectionToGroupNodeCollection(group.getChildren(), iwac));

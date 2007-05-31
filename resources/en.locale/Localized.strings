@@ -310,3 +310,7 @@ user_school=School:
 user_area=Area: 
 user_began_work=Began work: 
 user_name=Name: 
+groups_tree=Groups tree
+how_select_group=Select (deselect) group by clicking it's name:
+no_groups_found=Sorry, no groups found on selected server.
+server=Server

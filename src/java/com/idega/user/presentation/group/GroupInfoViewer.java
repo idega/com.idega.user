@@ -6,12 +6,12 @@ import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.bean.GroupPropertiesBean;
+import com.idega.bean.PropertiesBean;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
-import com.idega.presentation.Page;
 import com.idega.user.business.UserConstants;
 import com.idega.webface.WFUtil;
 
@@ -36,7 +36,7 @@ public class GroupInfoViewer extends Block {
 	private boolean showAddress = false;
 	private boolean showEmptyFields = true;
 	
-	private String additionalInfo = null;
+	private boolean addJavaScriptForGroupsTree = true;
 	
 	public GroupInfoViewer() {
 		//setCacheable(getCacheKey());
@@ -51,8 +51,6 @@ public class GroupInfoViewer extends Block {
 	}*/
 	
 	public void main(IWContext iwc) {
-		System.out.println("Additional info");
-		
 		String instanceId = BuilderLogic.getInstance().getInstanceId(this);
 		if (instanceId == null) {
 			throw new NullPointerException("Instance of presentation object 'GroupInfoViewer' is null");
@@ -105,65 +103,102 @@ public class GroupInfoViewer extends Block {
 		WFUtil.invoke(UserConstants.GROUPS_MANAGER_BEAN_ID, "addGroupProperties", parameters, classes);
 	}
 	
-	private void addJavaScript(IWContext iwc, String instanceId) {
-		Page parent = getParentPage();
-		if (parent == null) {
-			return;
-		}
-		
+	private void addJavaScript(IWContext iwc, String instanceId) {		
 		IWBundle iwb = getBundle(iwc);
 		if (iwb == null) {
 			return;
 		}
 		
-		AddResource resourceAdder = AddResourceFactory.getInstance(iwc);
+		AddResource resource = AddResourceFactory.getInstance(iwc);
 		
-		//	"Helper"
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
+		//	"Helpers"
+		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
+		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
+		if (addJavaScriptForGroupsTree) {
+			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
+		}
 		
 		//	DWR
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
+		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
 
 		//	Actions to be performed on page loaded event
 		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {getSelectedGroups('");
 		action.append(instanceId).append("', '").append(GROUP_INFO_CONTAINER_ID).append("', '");
 		action.append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("');});");
-		parent.addJavaScriptAfterJavaScriptURLs("get_groups_action", action.toString());
+		
+		//	Adding script to page
+		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n").append("\t").append(action);
+		scriptString.append(" \n").append("</script> \n");
+		add(scriptString.toString());
 	}
 	
-	public void setGroups(String server, String user, String password, List<String> uniqueIds) {
-		this.server = server;
-		this.user = user;
-		this.password = password;
-		this.uniqueIds = uniqueIds;
+	public void setGroups(PropertiesBean groupsBean) {
+		this.server = groupsBean.getServer();
+		this.user = groupsBean.getLogin();
+		this.password = groupsBean.getPassword();
+		this.uniqueIds = groupsBean.getUniqueIds();
+		
+		if (server != null) {
+			if (!server.startsWith("http://") && !server.startsWith("https://")) {
+				server = new StringBuffer("http://").append(server).toString();
+			}
+			if (server.endsWith("/")) {
+				server = server.substring(0, server.lastIndexOf("/"));
+			}
+		}
 	}
-	
-	public void setDisplayOptions(boolean showName, boolean showHomePage, boolean showDescription, boolean showExtraInfo,
-			boolean showShortName, boolean showPhone, boolean showFax, boolean showEmails, boolean showAddress, boolean showEmptyFields) {
-		this.showName = showName;
-		this.showHomePage = showHomePage;
-		this.showDescription = showDescription;
-		this.showExtraInfo = showExtraInfo;
-		this.showShortName = showShortName;
-		this.showPhone = showPhone;
-		this.showFax = showFax;
-		this.showEmails = showEmails;
+
+	public void setShowAddress(boolean showAddress) {
 		this.showAddress = showAddress;
+	}
+
+	public void setShowDescription(boolean showDescription) {
+		this.showDescription = showDescription;
+	}
+
+	public void setShowEmails(boolean showEmails) {
+		this.showEmails = showEmails;
+	}
+
+	public void setShowEmptyFields(boolean showEmptyFields) {
 		this.showEmptyFields = showEmptyFields;
+	}
+
+	public void setShowExtraInfo(boolean showExtraInfo) {
+		this.showExtraInfo = showExtraInfo;
+	}
+
+	public void setShowFax(boolean showFax) {
+		this.showFax = showFax;
+	}
+
+	public void setShowHomePage(boolean showHomePage) {
+		this.showHomePage = showHomePage;
+	}
+
+	public void setShowName(boolean showName) {
+		this.showName = showName;
+	}
+
+	public void setShowPhone(boolean showPhone) {
+		this.showPhone = showPhone;
+	}
+
+	public void setShowShortName(boolean showShortName) {
+		this.showShortName = showShortName;
 	}
 
 	public String getBundleIdentifier()	{
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
 
-	public String getAdditionalInfo() {
-		return additionalInfo;
+	public boolean isAddJavaScriptForGroupsTree() {
+		return addJavaScriptForGroupsTree;
 	}
 
-	public void setAdditionalInfo(String additionalInfo) {
-		this.additionalInfo = additionalInfo;
+	public void setAddJavaScriptForGroupsTree(boolean addJavaScriptForGroupsTree) {
+		this.addJavaScriptForGroupsTree = addJavaScriptForGroupsTree;
 	}
 
 }

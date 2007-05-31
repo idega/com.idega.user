@@ -11,7 +11,19 @@ import com.idega.user.business.UserConstants;
 
 public class GroupTreeViewer extends Block {
 	
+	public GroupTreeViewer() {
+	}
+	
+	public GroupTreeViewer(boolean executeScriptOnLoad) {
+		this.executeScriptOnLoad = executeScriptOnLoad;
+	}
+	
 	private String groupsTreeContainerId = "local_groups_tree_container_id";
+	private String selectedGroupsParameter = "null";
+	private String loadRemoteGroupsFunction = null;
+	
+	private boolean executeScriptOnLoad = true;
+	private boolean addExtraJavaScript = true;
 	
 	public void main(IWContext iwc) {
 		Layer main = new Layer();
@@ -26,22 +38,38 @@ public class GroupTreeViewer extends Block {
 	}
 	
 	private void addJavaScript(IWContext iwc) {
-		IWBundle iwb = getBundle(iwc);
-		
-		AddResource resourceAdder = AddResourceFactory.getInstance(iwc);
-		
-		//	"Helpers"
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
-		
-		//	DWR
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
-
+		if (addExtraJavaScript) {
+			IWBundle iwb = getBundle(iwc);
+			
+			AddResource resource = AddResourceFactory.getInstance(iwc);
+			
+			//	"Helpers"
+			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
+			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
+			
+			//	DWR
+			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
+		}
 		
 		//	Actions to be performed on page loaded event
-		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {loadLocalTree('");
-		action.append(groupsTreeContainerId).append("')});");
+		StringBuffer loadTreeFunction = new StringBuffer();
+		if (loadRemoteGroupsFunction == null) {	//	Then loading local groups
+			loadTreeFunction.append("loadLocalTree('").append(groupsTreeContainerId).append("', '");
+			loadTreeFunction.append(getResourceBundle(iwc).getLocalizedString("no_groups_found", "Sorry, no groups found on selected server."));
+			loadTreeFunction.append("', ").append(selectedGroupsParameter).append(");");
+		}
+		else {
+			loadTreeFunction.append(loadRemoteGroupsFunction);
+		}
+		
+		StringBuffer action = new StringBuffer();
+		if (executeScriptOnLoad) {
+			action.append("registerEvent(window, 'load', function() {").append(loadTreeFunction).append("});");
+		}
+		else {
+			action = loadTreeFunction;
+		}
 		
 		StringBuffer scriptString = new StringBuffer();
 		scriptString.append("<script type=\"text/javascript\" > \n")
@@ -61,6 +89,30 @@ public class GroupTreeViewer extends Block {
 
 	public String getBundleIdentifier()	{
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
+	}
+
+	public boolean isAddExtraJavaScript() {
+		return addExtraJavaScript;
+	}
+
+	public void setAddExtraJavaScript(boolean addExtraJavaScript) {
+		this.addExtraJavaScript = addExtraJavaScript;
+	}
+
+	public boolean isExecuteScriptOnLoad() {
+		return executeScriptOnLoad;
+	}
+
+	public void setExecuteScriptOnLoad(boolean executeScriptOnLoad) {
+		this.executeScriptOnLoad = executeScriptOnLoad;
+	}
+
+	public void setLoadRemoteGroupsFunction(String loadRemoteGroupsFunction) {
+		this.loadRemoteGroupsFunction = loadRemoteGroupsFunction;
+	}
+
+	public void setSelectedGroupsParameter(String selectedGroupsParameter) {
+		this.selectedGroupsParameter = selectedGroupsParameter;
 	}
 
 }

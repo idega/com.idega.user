@@ -1,26 +1,144 @@
 var SERVER_START = 'http://';
 var DEFAULT_DWR_PATH = '/dwr';
 
+var UNIQUE_IDS_ID = 'uniqueids';
+var GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS = 'groups_tree_list_element';
+var NO_GROUPS_MESSAGE = 'Sorry, no groups found on selected server.';
+
 var SERVER = null;
 var LOGIN = null;
 var PASSWORD = null;
 
-function registerGroupInfoChooserActions(){
+function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, selectedGroups){
+	if (noGroupsMessage != null) {
+		NO_GROUPS_MESSAGE = noGroupsMessage;
+	}
 	$$('input.groupInfoChooserRadioStyle').each(
 		function(element) {
 			element.onclick = function() {
 				if (element.value) {
 					var values = element.value.split('@');
 					if (values.length = 2) {
-						manageConnectionType('local' == values[0], values[1]);
+						manageConnectionType('local' == values[0], values[1], noGroupsMessage, selectedGroups);
+						removeAllAdvancedProperties();	//	Because changing connection type
+						addAdvancedProperty('connection', values[0]);
 					}
 				}
 			}
     	}
     );
+    $$('li.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(
+		function(element) {
+			element.onclick = function() {
+				selectGroup(element);
+				checkOtherProperties(element);
+			}
+    	}
+    );
 }
 
-function manageConnectionType(useLocal, id) {
+function checkOtherProperties(clickedElement) {
+	//	Inputs' values (connection parameters)
+	$$('input.groupConnectionChooserInputStyle').each(
+		function(element) {
+			addAdvancedProperty(element.name, element.value);
+		}
+	);
+	
+	//	Connection type
+	var radio = null;
+	$$('input.groupInfoChooserRadioStyle').each(
+		function(element) {
+			if (element.checked) {
+				radio = element;
+			}
+    	}
+    );
+    if (radio != null) {
+    	if (radio.value) {
+			var values = radio.value.split('@');
+			if (values.length = 2) {
+				addAdvancedProperty('connection', values[0]);
+			}
+		}
+    }
+    
+    //	Seaching for selected nodes
+    var otherGroupsNodes = new Array();
+    $$('li.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(
+		function(element) {
+			if (element != clickedElement) {
+				otherGroupsNodes.push(element);
+			}
+    	}
+    );
+    for (var i = 0; i < otherGroupsNodes.length; i++) {
+    	if ('bold' == otherGroupsNodes[i].style.fontWeight) {
+    		var advancedProperty = getAdvancedProperty(UNIQUE_IDS_ID);
+			if (advancedProperty == null) {
+				addAdvancedProperty(UNIQUE_IDS_ID, otherGroupsNodes[i].id);
+			}
+			else {
+				var allIds = advancedProperty.value.split(',');
+				if (!existsElementInArray(allIds, otherGroupsNodes[i].id)) {	//	This node must be selected
+					var newValues = advancedProperty.value + ',' + otherGroupsNodes[i].id;	//	Adding new id
+					addAdvancedProperty(UNIQUE_IDS_ID, newValues);
+				}
+    		}
+    	}
+    }
+}
+
+function selectGroup(element) {
+	if (element == null) {
+		return;
+	}
+	if (element.id == null) {
+		return;
+	}
+	
+	var addId = false;
+	if (element.style.fontWeight == null) {
+		addId = true;
+	}
+	else {
+		if (element.style.fontWeight == '') {
+			addId = true;
+		}
+	}
+	if (addId) {
+		element.style.fontWeight = 'bold';
+	}
+	else {
+		element.style.fontWeight = '';
+	}
+	
+	var advancedProperty = getAdvancedProperty(UNIQUE_IDS_ID);
+	if (advancedProperty == null) {
+		if (addId) {
+			addAdvancedProperty(UNIQUE_IDS_ID, element.id);
+		}
+	}
+	else {
+		var newValues = '';
+		if (addId) {
+			 newValues = advancedProperty.value + ',' + element.id;	//	Adding new id
+		}
+		else {
+			var allIds = advancedProperty.value.split(',');
+			removeElementFromArray(allIds, element.id);	//	Removing id
+			for (var i = 0; i < allIds.length; i++) {	//	Building new value
+				newValues = allIds[i];
+				if (i + 1 < allIds.length) {
+					newValues += ',';
+				} 
+			}
+		}
+		addAdvancedProperty(UNIQUE_IDS_ID, newValues);
+	}
+}
+
+function manageConnectionType(useLocal, id, noGroupsMessage, selectedGroups) {
 	var connection = $('connectionData');
 	if (connection == null) {
 		return;
@@ -28,12 +146,12 @@ function manageConnectionType(useLocal, id) {
 	var displayValue = 'inline';
 	if (useLocal) {
 		displayValue = 'none';
-		loadLocalTree(id);
+		loadLocalTree(id, noGroupsMessage, selectedGroups);
 	}
 	connection.style.display = displayValue;
 }
 
-function getGroupsTree(serverId, loginId, passwordId, id, messages) {
+function getGroupsTree(serverId, loginId, passwordId, id, messages, selectedGroups) {
 	var serverInput = $(serverId);
 	var loginInput = $(loginId);
 	var passwordInput = $(passwordId);
@@ -64,15 +182,26 @@ function getGroupsTree(serverId, loginId, passwordId, id, messages) {
 		server = SERVER_START + server;
 	}
 	
-	showLoadingMessage(messages[4]);
+	addAdvancedProperty(serverInput.name, server);
+	addAdvancedProperty(loginInput.name, login);
+	addAdvancedProperty(passwordInput.name, password);
+	
+	getGroupsWithValues(messages[4], server, login, password, id, messages[5], messages[6], messages[7], false, selectedGroups);
+}
+
+function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, needsDecode, selectedGroups) {
+	showLoadingMessage(loadingMsg);
+	if (needsDecode) {
+		password = decode64(password);
+	}
 	GroupService.canUseRemoteServer(server, {
 		callback: function(result) {
-			canUseRemoteCallback(result, server, login, password, id, messages[5], messages[6]);
+			canUseRemoteCallback(result, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, selectedGroups);
 		}
 	});
 }
 
-function canUseRemoteCallback(result, server, login, password, id, severErrorMessage, logInErrorMessage) {
+function canUseRemoteCallback(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups) {
 	if (result) {
 		//	Can use remote server, preparing DWR
 		prepareDwr(GroupService, server + DEFAULT_DWR_PATH);
@@ -89,7 +218,7 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 				SERVER = server;
 				LOGIN = login;
 				PASSWORD = password;
-				setNodes(groups, id);
+				addGroupsTree(groups, id, noGroupsMessage, selectedGroups);
 			}
 		});
 	}
@@ -101,7 +230,7 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 	}
 }
 
-function loadLocalTree(id) {
+function loadLocalTree(id, noGroupsMessage, selectedGroups) {
 	SERVER = null;
 	LOGIN = null;
 	PASSWORD = null;
@@ -113,7 +242,7 @@ function loadLocalTree(id) {
 				closeLoadingMessage();
 				return false;
 			}
-			setNodes(groups, id);
+			addGroupsTree(groups, id, noGroupsMessage, selectedGroups);
 		}
 	});
 }
@@ -129,16 +258,18 @@ function getDefaultDwrPath() {
 	return DEFAULT_DWR_PATH;
 }
 
-function getServer() {
-	return SERVER;
+function addGroupsTree(groups, id, noGroupsMessage, selectedGroups) {
+	if (groups.length == 0) {
+		var container = document.getElementById(id);
+		if (container != null) {
+			removeChildren(container);
+			var textContainer = document.createElement('div');
+			textContainer.appendChild(document.createTextNode(noGroupsMessage));
+			container.appendChild(textContainer);
+		}
+	}
+	else {
+		setGroupsNodes(groups, id, GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS, selectedGroups);
+		registerGroupInfoChooserActions(null, noGroupsMessage);
+	}
 }
-
-function getLogin() {
-	return LOGIN;
-}
-
-function getPassword() {
-	return PASSWORD;
-}
-
-function empty(result){}
