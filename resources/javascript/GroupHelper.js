@@ -190,7 +190,7 @@ function getGroupsTree(serverId, loginId, passwordId, id, messages, selectedGrou
 }
 
 function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, needsDecode, selectedGroups) {
-	showLoadingMessage(loadingMsg);
+	//showLoadingMessage(loadingMsg);
 	if (needsDecode) {
 		password = decode64(password);
 	}
@@ -270,6 +270,6 @@ function addGroupsTree(groups, id, noGroupsMessage, selectedGroups) {
 	}
 	else {
 		setGroupsNodes(groups, id, GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS, selectedGroups);
-		registerGroupInfoChooserActions(null, noGroupsMessage);
+		registerGroupInfoChooserActions(null, noGroupsMessage, selectedGroups);
 	}
 }

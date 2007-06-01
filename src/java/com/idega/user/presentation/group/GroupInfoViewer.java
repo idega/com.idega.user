@@ -1,29 +1,19 @@
 package com.idega.user.presentation.group;
 
-import java.util.List;
-
 import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.bean.GroupPropertiesBean;
-import com.idega.bean.PropertiesBean;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.idegaweb.IWBundle;
-import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.user.business.UserConstants;
 import com.idega.webface.WFUtil;
 
-public class GroupInfoViewer extends Block {
+public class GroupInfoViewer extends GroupViewer {
 	
 	private static final String GROUP_INFO_CONTAINER_ID = "selected_group_info_container";
-	
-	private String server = null;
-	private String user = null;
-	private String password = null;
-	
-	private List<String> uniqueIds = null;
 	
 	private boolean showName = true;
 	private boolean showHomePage = false;
@@ -35,8 +25,6 @@ public class GroupInfoViewer extends Block {
 	private boolean showEmails = false;
 	private boolean showAddress = false;
 	private boolean showEmptyFields = true;
-	
-	private boolean addJavaScriptForGroupsTree = true;
 	
 	public GroupInfoViewer() {
 		//setCacheable(getCacheKey());
@@ -74,11 +62,11 @@ public class GroupInfoViewer extends Block {
 	private void setPropertiesBean(String instanceId) {
 		GroupPropertiesBean properties = new GroupPropertiesBean();
 		
-		properties.setServer(server);
-		properties.setLogin(user);
-		properties.setPassword(password);
+		properties.setServer(getServer());
+		properties.setLogin(getUser());
+		properties.setPassword(getPassword());
 		
-		properties.setUniqueIds(uniqueIds);
+		properties.setUniqueIds(getUniqueIds());
 		
 		properties.setShowName(showName);
 		properties.setShowHomePage(showHomePage);
@@ -90,6 +78,8 @@ public class GroupInfoViewer extends Block {
 		properties.setShowEmails(showEmails);
 		properties.setShowAddress(showAddress);
 		properties.setShowEmptyFields(showEmptyFields);
+		
+		properties.setRemoteMode(isRemoteMode());
 		
 		Object[] parameters = new Object[2];
 		parameters[0] = instanceId;
@@ -114,7 +104,7 @@ public class GroupInfoViewer extends Block {
 		//	"Helpers"
 		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
 		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
-		if (addJavaScriptForGroupsTree) {
+		if (isAddJavaScriptForGroupsTree()) {
 			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
 		}
 		
@@ -131,22 +121,6 @@ public class GroupInfoViewer extends Block {
 		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n").append("\t").append(action);
 		scriptString.append(" \n").append("</script> \n");
 		add(scriptString.toString());
-	}
-	
-	public void setGroups(PropertiesBean groupsBean) {
-		this.server = groupsBean.getServer();
-		this.user = groupsBean.getLogin();
-		this.password = groupsBean.getPassword();
-		this.uniqueIds = groupsBean.getUniqueIds();
-		
-		if (server != null) {
-			if (!server.startsWith("http://") && !server.startsWith("https://")) {
-				server = new StringBuffer("http://").append(server).toString();
-			}
-			if (server.endsWith("/")) {
-				server = server.substring(0, server.lastIndexOf("/"));
-			}
-		}
 	}
 
 	public void setShowAddress(boolean showAddress) {
@@ -191,14 +165,6 @@ public class GroupInfoViewer extends Block {
 
 	public String getBundleIdentifier()	{
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
-	}
-
-	public boolean isAddJavaScriptForGroupsTree() {
-		return addJavaScriptForGroupsTree;
-	}
-
-	public void setAddJavaScriptForGroupsTree(boolean addJavaScriptForGroupsTree) {
-		this.addJavaScriptForGroupsTree = addJavaScriptForGroupsTree;
 	}
 
 }

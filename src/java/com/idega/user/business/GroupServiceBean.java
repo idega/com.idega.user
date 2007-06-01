@@ -222,7 +222,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		if (bean == null) {
 			return null;
 		}
-		if (bean.getUniqueIds() == null || bean.getLogin() == null || bean.getPassword() == null) {
+		if (bean.getUniqueIds() == null) {
 			return null;
 		}
 		IWContext iwc = CoreUtil.getIWContext();
@@ -230,10 +230,12 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			return null;
 		}
 		
-		//	Checking if user is allowed to get info
-		if (!isLoggedUser(iwc, bean.getLogin())) {
-			if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
-				return null;
+		if (bean.isRemoteMode()) {
+			//	Checking if user is allowed to get info
+			if (!isLoggedUser(iwc, bean.getLogin())) {
+				if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
+					return null;
+				}
 			}
 		}
 		
@@ -275,7 +277,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		if (bean == null) {
 			return null;
 		}
-		if (bean.getUniqueIds() == null || bean.getLogin() == null || bean.getPassword() == null) {
+		if (bean.getUniqueIds() == null) {
 			return null;
 		}
 		IWContext iwc = CoreUtil.getIWContext();
@@ -283,10 +285,12 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			return null;
 		}
 		
-		//	Checking if user is allowed to get info
-		if (!isLoggedUser(iwc, bean.getLogin())) {
-			if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
-				return null;
+		if (bean.isRemoteMode()) {
+			//	Checking if user is allowed to get info
+			if (!isLoggedUser(iwc, bean.getLogin())) {
+				if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
+					return null;
+				}
 			}
 		}
 		

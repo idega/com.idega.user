@@ -13,28 +13,6 @@ function getSelectedGroups(instanceId, containerId, message) {
 			getGroupPropertiesCallback(properties, containerId);
 		}
 	});
-	//getGroupPropertiesCallback(new GroupPropertiesBean(), containerId);	//	For testing
-}
-
-function GroupPropertiesBean() {
-	this.server = 'http://formbuilder.idega.is';
-	this.login = 'Administrator';
-	this.password = 'idega';
-	this.uniqueIds = new Array();
-	this.uniqueIds.push('987654321');
-	this.uniqueIds.push('dfjikdjgiofdgjnmxcsuandyusndfvyn');
-	this.uniqueIds.push('123456789');
-	
-	this.showName = true;
-	this.showHomePage = true;
-	this.showDescription = true;
-	this.showExtraInfo = true;
-	this.showShortName = true;
-	this.showPhone = true;
-	this.showFax = true;
-	this.showEmails = true;
-	this.showAddress = true;
-	this.showEmptyFields = false;
 }
 
 function getGroupPropertiesCallback(properties, containerId) {
@@ -43,28 +21,40 @@ function getGroupPropertiesCallback(properties, containerId) {
 		return false;
 	}
 	
-	if (properties.server == null || properties.login == null || properties.password == null) {
-		closeLoadingMessage();
-		return false;
-	}
-	
-	GroupService.canUseRemoteServer(properties.server, {
-		callback: function(result) {
-			canUseRemoteServerForGroupCallback(result, properties, containerId);
+	if (properties.remoteMode) {
+		//	Remote mode
+		if (properties.server == null || properties.login == null || properties.password == null) {
+			closeLoadingMessage();
+			return false;
 		}
-	});
+		
+		GroupService.canUseRemoteServer(properties.server, {
+			callback: function(result) {
+				getGroupsData(result, properties, containerId);
+			}
+		});
+	}
+	else {
+		//	Local mode
+		getGroupsData(true, properties, containerId);
+	}
 }
 
-function canUseRemoteServerForGroupCallback(result, properties, containerId) {
+function getGroupsData(result, properties, containerId) {
 	if (!result) {
 		closeLoadingMessage();
 		return false;
 	}
 	
-	//	Preparing DWR for remote call
-	prepareDwr(GroupService, properties.server + getDefaultDwrPath());
-	
-	//	Calling method to get info about groups on remote server
+	if (properties.remoteMode) {
+		//	Preparing DWR for remote call
+		prepareDwr(GroupService, properties.server + getDefaultDwrPath());
+	}
+	else {
+		//	Preparing DWR for local call
+		prepareDwr(GroupService, getDefaultDwrPath());
+	}
+	//	Calling method to get info about groups on selected ('local' or 'remote') server
 	GroupService.getGroupsInfo(properties, {
 		callback: function(groupsInfo) {
 		 	getGroupsInfoCallback(groupsInfo, properties, containerId);

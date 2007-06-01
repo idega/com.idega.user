@@ -53,7 +53,11 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 	
 	private boolean isRemoteMode = false;
 	
+	private String idsParameterForFunction = null;
+	
 	public void main(IWContext iwc) {
+		idsParameterForFunction = getIdsString(uniqueIds);
+		
 		Layer main = new Layer();
 		
 		//	JavaScript
@@ -87,9 +91,10 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 			function.append(iwrb.getLocalizedString("cannot_connect", "Sorry, unable to connect to:")).append(PARAMETERS_SEPARATOR);
 			function.append(iwrb.getLocalizedString("failed_login", "Sorry, unable to log in to:")).append(PARAMETERS_SEPARATOR);
 			function.append(iwrb.getLocalizedString("no_groups_found", "Sorry, no groups found on selected server.")).append("', true");
-			function.append(", ").append(getIdsString(uniqueIds)).append(");");
+			function.append(", ").append(idsParameterForFunction).append(");");
 			groupsTree.setLoadRemoteGroupsFunction(function.toString());
 		}
+		groupsTree.setSelectedGroupsParameter(idsParameterForFunction);
 		groupsContainer.add(groupsTree);
 		
 		groupsTreeContainer.add(groupsContainer);
@@ -125,7 +130,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		}
 		function.append(", '");
 		function.append(getResourceBundle(iwc).getLocalizedString("no_groups_found", "Sorry, no groups found on selected server."));
-		function.append("', ").append(getIdsString(uniqueIds)).append(");");
+		function.append("', ").append(idsParameterForFunction).append(");");
 		
 		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n").append("\t");
 		if (executeScriptOnLoad) {
@@ -183,6 +188,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		connData.add(connectionContainer);
 		
 		Table data = new Table(2, 3);
+		data.setStyleClass("groupsChooserConnectionDataTableStyle");
 		connectionContainer.add(data);
 		
 		String server = getServer();
@@ -217,7 +223,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		action.append(PARAMETERS_SEPARATOR).append(iwrb.getLocalizedString("cannot_connect", "Sorry, unable to connect to:"));
 		action.append(PARAMETERS_SEPARATOR).append(iwrb.getLocalizedString("failed_login", "Sorry, unable to log in to:"));
 		action.append(PARAMETERS_SEPARATOR).append(iwrb.getLocalizedString("no_groups_found", "Sorry, no groups found on selected server."));
-		action.append("'], ").append(getIdsString(uniqueIds)).append(");");
+		action.append("'], ").append(idsParameterForFunction).append(");");
 		
 		return action.toString();
 	}

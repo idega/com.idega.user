@@ -10,10 +10,10 @@ import com.idega.user.business.UserConstants;
 
 /**
  * 
- * @author <a href="justinas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.1 $
+ * @author <a href="valdas@idega.com">Valdas Žemaitis</a>
+ * @version $Revision: 1.2 $
  *
- * Last modified: $Date: 2007/05/31 13:52:14 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/01 15:30:08 $ by $Author: valdas $
  *
  */
 public class GroupsChooser extends AbstractChooser {
@@ -39,31 +39,6 @@ public class GroupsChooser extends AbstractChooser {
 		
 		return chooser;
 	}
-	
-	/*private List<String> getSelectedUniqueIds(IWContext iwc) {
-		BuilderLogic builder = BuilderLogic.getInstance();
-		
-		String pageKey = builder.getCurrentIBPage(iwc);
-		if (pageKey == null) {
-			return null;
-		}
-		
-		String value = builder.getProperty(pageKey, getInstanceId(), getMethod());
-		if (value == null) {
-			return null;
-		}
-		String[] values = value.split(",");
-		if (values == null) {
-			return null;
-		}
-		
-		List<String> uniqueIds = new ArrayList<String>();
-		for (int i = 0; i < values.length; i++) {
-			uniqueIds.add(values[i]);
-		}
-		
-		return uniqueIds;
-	}*/
 	
 	public Class getChooserWindowClass() {
 		return GroupsChooserBlock.class;

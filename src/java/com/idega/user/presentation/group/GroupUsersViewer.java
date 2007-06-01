@@ -1,28 +1,19 @@
 package com.idega.user.presentation.group;
 
-import java.util.List;
-
 import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.bean.UserPropertiesBean;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.idegaweb.IWBundle;
-import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.user.business.UserConstants;
 import com.idega.webface.WFUtil;
 
-public class GroupUsersViewer extends Block {
+public class GroupUsersViewer extends GroupViewer {
 	
 	private static final String USERS_INFO_CONTAINER_ID = "selected_users_info_container";
-
-	private String server = null;
-	private String user = null;
-	private String password = null;
-	
-	private List<String> uniqueIds = null;
 	
 	private boolean showGroupName = true;
 	private boolean showTitle = true;
@@ -76,11 +67,11 @@ public class GroupUsersViewer extends Block {
 	private void setPropertiesBean(String instanceId) {
 		UserPropertiesBean properties = new UserPropertiesBean();
 		
-		properties.setServer(server);
-		properties.setLogin(user);
-		properties.setPassword(password);
+		properties.setServer(getServer());
+		properties.setLogin(getUser());
+		properties.setPassword(getPassword());
 		
-		properties.setUniqueIds(uniqueIds);
+		properties.setUniqueIds(getUniqueIds());
 		
 		properties.setShowGroupName(showGroupName);
 		properties.setShowTitle(showTitle);
@@ -94,6 +85,8 @@ public class GroupUsersViewer extends Block {
 		properties.setShowArea(showArea);
 		properties.setShowBeganWork(showBeganWork);
 		properties.setShowImage(showImage);
+		
+		properties.setRemoteMode(isRemoteMode());
 		
 		properties.setImageHeight(imageHeight);
 		properties.setImageWidth(imageWidth);
@@ -116,15 +109,18 @@ public class GroupUsersViewer extends Block {
 			return;
 		}
 		
-		AddResource resourceAdder = AddResourceFactory.getInstance(iwc);
+		AddResource resource = AddResourceFactory.getInstance(iwc);
 		
 		//	"Helper"
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/UserInfoViewerHelper.js"));
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
+		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/UserInfoViewerHelper.js"));
+		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
+		if (isAddJavaScriptForGroupsTree()) {
+			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
+		}
 		
 		//	DWR
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
-		resourceAdder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
+		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
 
 		//	Actions to be performed on page loaded event
 		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {getSelectedUsers('");
@@ -137,49 +133,64 @@ public class GroupUsersViewer extends Block {
 		add(scriptString.toString());
 	}
 	
-	public void setGroups(String server, String user, String password, List<String> uniqueIds) {
-		this.server = server;
-		this.user = user;
-		this.password = password;
-		this.uniqueIds = uniqueIds;
-	}
-	
-	public void setDisplayOptions(boolean showGroupName, boolean showTitle, boolean showAge, boolean showWorkPhone, boolean showHomePhone,
-			boolean showMobilePhone, boolean showEmails, boolean showEducation, boolean showSchool, boolean showArea, boolean showBeganWork,
-			boolean showImage) {
-		
-		this.showGroupName = showGroupName;
-		this.showTitle = showTitle;
+	public void setShowAge(boolean showAge) {
 		this.showAge = showAge;
-		this.showWorkPhone = showWorkPhone;
-		this.showHomePhone = showHomePhone;
-		this.showMobilePhone = showMobilePhone;
-		this.showEmails = showEmails;
-		this.showEducation = showEducation;
-		this.showSchool = showSchool;
-		this.showArea = showArea;
-		this.showBeganWork = showBeganWork;
-		this.showImage = showImage;
-	}
-	
-	public String getBundleIdentifier()	{
-		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
 
-	public String getImageHeight() {
-		return imageHeight;
+	public void setShowArea(boolean showArea) {
+		this.showArea = showArea;
+	}
+
+	public void setShowBeganWork(boolean showBeganWork) {
+		this.showBeganWork = showBeganWork;
+	}
+
+	public void setShowEducation(boolean showEducation) {
+		this.showEducation = showEducation;
+	}
+
+	public void setShowEmails(boolean showEmails) {
+		this.showEmails = showEmails;
+	}
+
+	public void setShowGroupName(boolean showGroupName) {
+		this.showGroupName = showGroupName;
+	}
+
+	public void setShowHomePhone(boolean showHomePhone) {
+		this.showHomePhone = showHomePhone;
+	}
+
+	public void setShowImage(boolean showImage) {
+		this.showImage = showImage;
+	}
+
+	public void setShowMobilePhone(boolean showMobilePhone) {
+		this.showMobilePhone = showMobilePhone;
+	}
+
+	public void setShowSchool(boolean showSchool) {
+		this.showSchool = showSchool;
+	}
+
+	public void setShowTitle(boolean showTitle) {
+		this.showTitle = showTitle;
+	}
+
+	public void setShowWorkPhone(boolean showWorkPhone) {
+		this.showWorkPhone = showWorkPhone;
 	}
 
 	public void setImageHeight(String imageHeight) {
 		this.imageHeight = imageHeight;
 	}
 
-	public String getImageWidth() {
-		return imageWidth;
-	}
-
 	public void setImageWidth(String imageWidth) {
 		this.imageWidth = imageWidth;
+	}
+	
+	public String getBundleIdentifier()	{
+		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
 	
 }

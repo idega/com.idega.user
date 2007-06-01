@@ -69,6 +69,7 @@
             			</value>
             			<type>map</type>
             			<simple>true</simple>
+            			<reload>true</reload>
           			</key>
           			<key>
             			<name>:method:1:implied:void:setShowDescription:boolean:</name>
@@ -124,6 +125,7 @@
             			</value>
             			<type>map</type>
             			<simple>true</simple>
+            			<reload>true</reload>
           			</key>
           			<key>
             			<name>:method:1:implied:void:setShowEmails:boolean:</name>
@@ -179,6 +181,7 @@
             			</value>
             			<type>map</type>
             			<simple>true</simple>
+            			<reload>true</reload>
           			</key>
           			<key>
             			<name>:method:1:implied:void:setShowEmptyFields:boolean:</name>
@@ -234,6 +237,7 @@
             			</value>
             			<type>map</type>
             			<simple>true</simple>
+            			<reload>true</reload>
           			</key>
           			<key>
             			<name>:method:1:implied:void:setShowExtraInfo:boolean:</name>
@@ -289,6 +293,7 @@
             			</value>
             			<type>map</type>
             			<simple>true</simple>
+            			<reload>true</reload>
           			</key>
           			<key>
             			<name>:method:1:implied:void:setShowFax:boolean:</name>
@@ -344,6 +349,7 @@
             			</value>
             			<type>map</type>
             			<simple>true</simple>
+            			<reload>true</reload>
           			</key>
           			<key>
             			<name>:method:1:implied:void:setShowHomePage:boolean:</name>
@@ -399,6 +405,7 @@
             			</value>
             			<type>map</type>
             			<simple>true</simple>
+            			<reload>true</reload>
           			</key>
           			<key>
             			<name>:method:1:implied:void:setShowName:boolean:</name>
@@ -454,6 +461,7 @@
             			</value>
             			<type>map</type>
             			<simple>true</simple>
+            			<reload>true</reload>
           			</key>
           			<key>
             			<name>:method:1:implied:void:setShowPhone:boolean:</name>
@@ -509,6 +517,7 @@
             			</value>
             			<type>map</type>
             			<simple>true</simple>
+            			<reload>true</reload>
           			</key>
           			<key>
             			<name>:method:1:implied:void:setShowShortName:boolean:</name>
@@ -564,6 +573,7 @@
             			</value>
             			<type>map</type>
             			<simple>true</simple>
+            			<reload>true</reload>
           			</key>
           			<key>
             			<name>:method:1:implied:void:setGroups:com.idega.bean.PropertiesBean:</name>

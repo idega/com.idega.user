@@ -50,4 +50,9 @@ public interface GroupService extends IBOService {
 	 * @see com.idega.user.business.GroupServiceBean#getGroupsMembersPresentationObject
 	 */
 	public Document getGroupsMembersPresentationObject(List<GroupMembersDataBean> membersData, UserPropertiesBean bean);
+	
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#getUserPropertiesBean
+	 */
+	public UserPropertiesBean getUserPropertiesBean(String instanceId);
 }
