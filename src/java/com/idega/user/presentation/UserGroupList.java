@@ -1,10 +1,10 @@
 package com.idega.user.presentation;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+
 import com.idega.event.IWLinkEvent;
 import com.idega.event.IWLinkListener;
 import com.idega.idegaweb.IWBundle;
@@ -271,19 +271,13 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 			return groups;
 		}
 		Collection result = new ArrayList();
-		UserBusiness userBusiness = this.getUserBusiness(iwc);
 		Iterator groupIter = groups.iterator();
-		User currentUser = iwc.getCurrentUser();
 		while (groupIter.hasNext()) {
 			Group group = (Group) groupIter.next();
 			boolean ok = false;
-			try {
-				ok = userBusiness.isGroupUnderUsersTopGroupNode(iwc, group, currentUser,topGroupNodes);
-			}
-			catch (RemoteException e) {
-				System.out.println("Could not check if group was descendant of a users top group, group not shown");
-				e.printStackTrace();
-			}
+
+			ok = iwc.getAccessController().hasViewPermissionFor(group, iwc);
+
 			if (ok) {
 				result.add(group);
 			}

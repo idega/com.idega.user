@@ -4,8 +4,10 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
 import javax.ejb.FinderException;
 import javax.transaction.TransactionManager;
+
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -14,10 +16,10 @@ import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
-import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.BackButton;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.transaction.IdegaTransactionManager;
@@ -185,28 +187,40 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 		}
 		++row;
 		++row;
-		Table bottomTable = new Table();
+		
+		Table buttonTable = new Table(3, 1);
+		buttonTable.setCellpadding(0);
+		buttonTable.setCellspacing(0);
+		buttonTable.setWidth(2, 5);
+				
+		Table bottomTable = new Table(2,1);
 		bottomTable.setCellpadding(0);
 		bottomTable.setCellspacing(5);
 		bottomTable.setWidth(Table.HUNDRED_PERCENT);
-		bottomTable.setHeight(39);
+		bottomTable.setHeight(30);
 		bottomTable.setStyleClass(this.mainTableStyle);
 		bottomTable.add(help, 1, 1);
 		bottomTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
-		bottomTable.add(new SubmitButton(this.iwrb.getLocalizedImageButton("cancel", "Cancel"), this.ACTION, this.ACTION_CANCEL), 2, 1);
-		bottomTable.add(Text.getNonBrakingSpace(), 2, 1);
+		bottomTable.add(buttonTable,2,1);
+		
+		
 		table.setAlignment(5, row, Table.HORIZONTAL_ALIGN_RIGHT);
 		table.setRowVerticalAlignment(row, Table.VERTICAL_ALIGN_TOP);
+		
 		if (verifyForm) {
 			table.mergeCells(1, row, 2, row);
-			bottomTable.add(new BackButton(this.iwrb.getLocalizedImageButton("back", "Back")), 1, 1);
+			StyledButton backButton = new StyledButton(new BackButton(this.iwrb.getLocalizedString("back", "Back")));
+			buttonTable.add(backButton, 1, 1);
 			if (foundUser) {
-				bottomTable.add(new SubmitButton(this.iwrb.getLocalizedImageButton("save", "Save"), this.ACTION, this.ACTION_SAVE), 2,
-						1);
+				StyledButton saveButton = new StyledButton(new SubmitButton(this.iwrb.getLocalizedString("save", "Save"), this.ACTION, this.ACTION_SAVE));
+				buttonTable.add(saveButton, 3,1);
 			}
 		}
 		else {
-			bottomTable.add(new SubmitButton(this.iwrb.getLocalizedImageButton("next", "Next"), this.ACTION, this.ACTION_NEXT), 2, 1);
+			StyledButton cancelButton = new StyledButton(new SubmitButton(this.iwrb.getLocalizedString("cancel", "Cancel"), this.ACTION, this.ACTION_CANCEL));
+			buttonTable.add(cancelButton, 1, 1);
+			StyledButton nextButton = new StyledButton(new SubmitButton(this.iwrb.getLocalizedString("next", "Next"), this.ACTION, this.ACTION_NEXT));
+			buttonTable.add(nextButton, 3, 1);
 		}
 		// add close button
 		mainTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);

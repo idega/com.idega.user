@@ -105,7 +105,6 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
 	    form.add(table);
 	    add(form,iwc);
 	}
-
 	catch (RemoveException e) {
 		e.printStackTrace();
 		add(e.getMessage());
@@ -114,6 +113,10 @@ public class DeleteGroupConfirmWindow extends StyledIWAdminWindow implements Sta
   }
 
 	private Table getContent(IWResourceBundle iwrb, Group group, boolean askForConfirmation) {
+		//TODO remove image buttons, replace with
+		//use a lightbox?
+		//StyledButton button = new StyledButton(new SubmitButton(this._createEvent.getIONameForCommit(), iwrb.getLocalizedString("save", "Save")));
+		
     // get selected group
     String groupName;
     groupName = group.getName();

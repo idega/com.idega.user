@@ -5,6 +5,12 @@
   </properties>
   <body>
 
+    <release version="3.1.7" date="2007-06-01">
+      <action dev="eiki" type="update">
+      		Added bundlestarter for viewnode and custom permission code, merged with missing stuff from HEAD and "fixed" Scrolltable style and button layout.
+      </action>       
+    </release>
+    
     <release version="3.1.6" date="2007-05-29">
       <action dev="sigtryggur" type="update">
       		Added some icons to the treeview in the userapplication

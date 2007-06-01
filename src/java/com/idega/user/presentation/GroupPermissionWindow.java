@@ -343,8 +343,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 			}
 		};
-		browser.setMandatoryColumn(column++, groupIdColumn);
-		browser.setEntityToPresentationConverter(groupIdColumn, contextValueConverter);
+		browser.setMandatoryColumnWithConverter(column++, groupIdColumn,contextValueConverter);
 		//converter ends
 
 		// define checkbox button converter class
@@ -430,8 +429,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 		while (iter.hasNext()) {
 			String type = (String) iter.next();
-			browser.setMandatoryColumn(column++, type);
-			browser.setEntityToPresentationConverter(type, permissionTypeConverter);
+			browser.setMandatoryColumnWithConverter(column++, type, permissionTypeConverter);
 		}
 		
 		
@@ -890,14 +888,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		filterTable.add(Text.NON_BREAKING_SPACE, 4, 1);
 		filterTable.add(filterButton, 5, 1);
 
-		Table filterContainingTable = new Table(1, 1);
-		filterContainingTable.setWidth(Table.HUNDRED_PERCENT);
-		filterContainingTable.setCellpadding(0);
-		filterContainingTable.setCellspacing(5);
-		filterContainingTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
-		filterContainingTable.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_RIGHT);
-		filterContainingTable.add(filterTable);
-		
 		Table table = new Table(2, 3);
 		table.setRowHeight(1,"20");
 		table.setStyleClass(this.mainStyleClass);
@@ -924,7 +914,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		
 		
 		table.add(browser, 1, 2);
-		table.add(filterContainingTable, 2, 3);
+		table.add(filterTable, 2, 3);
 		
 		Table bottomButtonTable = new Table();
 		bottomButtonTable.setCellpadding(0);
