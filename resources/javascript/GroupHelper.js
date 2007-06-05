@@ -27,7 +27,7 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
 			}
     	}
     );
-    $$('li.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(
+    $$('span.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(
 		function(element) {
 			element.onclick = function() {
 				selectGroup(element);
@@ -65,7 +65,7 @@ function checkOtherProperties(clickedElement) {
     
     //	Seaching for selected nodes
     var otherGroupsNodes = new Array();
-    $$('li.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(
+    $$('span.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(
 		function(element) {
 			if (element != clickedElement) {
 				otherGroupsNodes.push(element);
@@ -190,7 +190,7 @@ function getGroupsTree(serverId, loginId, passwordId, id, messages, selectedGrou
 }
 
 function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, needsDecode, selectedGroups) {
-	//showLoadingMessage(loadingMsg);
+	showLoadingMessage(loadingMsg);
 	if (needsDecode) {
 		password = decode64(password);
 	}
