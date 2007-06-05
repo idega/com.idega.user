@@ -41,7 +41,7 @@ public class UserSearchEngineBean extends IBOServiceBean implements UserSearchEn
 		String message = iwrb.getLocalizedString("uc_no_results_were_found", "Sorry, no results were found");
 		if (entities == null) {
 			container.add(new Text(message));
-			return BuilderLogic.getInstance().getRenderedPresentationObject(iwc, container, false);
+			return BuilderLogic.getInstance().getRenderedComponent(iwc, container, false);
 		}
 		else {
 			if (entities.size() > 0) {
@@ -55,7 +55,7 @@ public class UserSearchEngineBean extends IBOServiceBean implements UserSearchEn
 		
 		container.add(helper.getUserBrowser(entities, searchKey, iwc, 8));
 		
-		return BuilderLogic.getInstance().getRenderedPresentationObject(iwc, container, false);
+		return BuilderLogic.getInstance().getRenderedComponent(iwc, container, false);
 	}
 
 }

@@ -269,7 +269,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		
 		groupViewer.setGroupsData(groupsData);
 		
-		return BuilderLogic.getInstance().getRenderedPresentationObject(iwc, groupViewer, false);
+		return BuilderLogic.getInstance().getRenderedComponent(iwc, groupViewer, false);
 	}
 	
 	public List<GroupMembersDataBean> getUsersInfo(UserPropertiesBean bean) {
@@ -326,7 +326,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		
 		usersViewer.setServer(bean.getServer());
 		
-		return BuilderLogic.getInstance().getRenderedPresentationObject(iwc, usersViewer, false);
+		return BuilderLogic.getInstance().getRenderedComponent(iwc, usersViewer, false);
 	}
 	
 	/** Private methods starts **/
