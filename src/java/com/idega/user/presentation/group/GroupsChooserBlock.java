@@ -126,7 +126,8 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 			function.append("null");
 		}
 		else {
-			function.append("'").append(nodeOnClickAction).append("'");
+//			function.append("'").append(nodeOnClickAction).append("'");
+			function.append(nodeOnClickAction);
 		}
 		function.append(", '");
 		function.append(getResourceBundle(iwc).getLocalizedString("no_groups_found", "Sorry, no groups found on selected server."));
