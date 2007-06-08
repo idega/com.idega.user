@@ -26,8 +26,8 @@
 		treeObj.setTreeId('tree');
 		treeObj.initTree();
 		treeObj.expandAll();
-	}
-	
+		addBehaviour();
+	}			
 	function addTreeElements(nodes, rootUl, styleClassName, selectedGroups) {
 		if (nodes == null) {
 			return;
@@ -36,7 +36,6 @@
 		for (var i = 0; i < nodes.length; i++) {
 			var liElement = document.createElement('li');
 			liElement.setAttribute('id', nodes[i].uniqueId + 'li');
-			
 			var groupName = document.createElement('span');
 			if (styleClassName != null) {
 				groupName.setAttribute('class', styleClassName);
@@ -342,8 +341,7 @@
 			var menuItems = dhtmlgoodies_tree.getElementsByTagName('LI');	// Get an array of all menu items
 			var item = menuItems[0];
 			for(var no=0;no<menuItems.length;no++){
-				// No children var set ?
-				
+				// No children var set ?				
 				var noChildren = false;
 				var tmpVar = menuItems[no].getAttribute('noChildren');
 				if(!tmpVar)tmpVar = menuItems[no].noChildren;
@@ -402,9 +400,7 @@
 					numericId = aTag.id.replace(/[^0-9]/g,'');
 				else
 					numericId = (no+1);			
-	
-				aTag.id = menuItems[no].id + 'a';
-	
+//				aTag.id = menuItems[no].id + 'a';
 				var input = document.createElement('INPUT');
 				input.style.width = '40%';
 				input.style.display='none';
@@ -440,9 +436,8 @@
 				}
 				if(iconfile)
 					folderImg.src = iconfile;
-				menuItems[no].insertBefore(folderImg,input);				
-			}	
-		
+				menuItems[no].insertBefore(folderImg,input);									
+			}		
 			initExpandedNodes = this.Get_Cookie('dhtmlgoodies_expandedNodes');
 			if(initExpandedNodes){
 				var nodes = initExpandedNodes.split(',');
