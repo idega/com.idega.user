@@ -8,10 +8,18 @@ var NO_GROUPS_MESSAGE = 'Sorry, no groups found on selected server.';
 var SERVER = null;
 var LOGIN = null;
 var PASSWORD = null;
+var NODE_ON_CLICK_ACTION = null;
+
+function getGroupTreeListElementStyleClass(){
+	return GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS;
+}
 
 function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, selectedGroups){
 	if (noGroupsMessage != null) {
 		NO_GROUPS_MESSAGE = noGroupsMessage;
+	}
+	if (nodeOnClickAction != null){
+		NODE_ON_CLICK_ACTION = nodeOnClickAction;
 	}
 	$$('input.groupInfoChooserRadioStyle').each(
 		function(element) {
@@ -32,6 +40,9 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
 			element.onclick = function() {
 				selectGroup(element);
 				checkOtherProperties(element);
+			}
+			if (NODE_ON_CLICK_ACTION != null){
+				registerEvent(element, 'click', NODE_ON_CLICK_ACTION);
 			}
     	}
     );
