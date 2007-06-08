@@ -273,6 +273,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	}
 	
 	public List<GroupMembersDataBean> getUsersInfo(UserPropertiesBean bean) {
+		System.out.println("Requesting group members info");
 		//	Checking if valid parameters
 		if (bean == null) {
 			return null;

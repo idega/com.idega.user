@@ -34,37 +34,36 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 	private static final String SERVER_NAME_FIELD_ID  = "serverNameFieldId";
 	private static final String LOGIN_FIELD_ID = "loginFieldId";
 	private static final String PASSWORD_FIELD_ID = "passwordFieldId";
-	
-	private static final String GROUPS_TREE_CONTAINER_ID = "groups_tree_container_id";
-	
 	private static final String RADIO_BUTTON_STYLE = "groupInfoChooserRadioStyle";
-	
 	private static final String PARAMETERS_SEPARATOR = "', '";
 	
 	private boolean addExtraJavaScript = true;
 	private boolean executeScriptOnLoad = true;
+	private boolean isRemoteMode = false;
 	
+	private String groupsTreeContainerId = null;
 	private String nodeOnClickAction = null;
 	private String server = null;
 	private String login = null;
 	private String password = null;
+	private String idsParameterForFunction = null;
+	private String groupsTreeStyleClass = null;
 	
 	private List<String> uniqueIds = null;
 	
-	private boolean isRemoteMode = false;
-	
-	private String idsParameterForFunction = null;
-	
 	public void main(IWContext iwc) {
-		idsParameterForFunction = getIdsString(uniqueIds);
-		
 		Layer main = new Layer();
 		
-		//	JavaScript
-		addJavaScript(iwc);
+		idsParameterForFunction = getIdsString(uniqueIds);
+		if (groupsTreeContainerId == null) {
+			groupsTreeContainerId = new StringBuffer(main.getId()).append("TreeContainer").toString();
+		}
 		
 		//	Groups tree
 		addGroupsTreeContainer(iwc, main);
+		
+		//	JavaScript
+		addJavaScript(iwc);
 		
 		//	Connection chooser
 		addConnectionTypeField(iwc, main);
@@ -81,17 +80,21 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		groupsContainer.add(explanation);
 		
 		GroupTreeViewer groupsTree = new GroupTreeViewer(executeScriptOnLoad);
-		groupsTree.setGroupsTreeContainerId(GROUPS_TREE_CONTAINER_ID);
-		if (isRemoteMode) {
+		groupsTree.setGroupsTreeViewerId(groupsTreeContainerId);
+		groupsTree.setStyleClass("groupsTreeListElement");
+		groupsTreeStyleClass = groupsTree.getStyleClass();
+		
+		if (isRemoteMode) {	//	Defining function to load groups from remote server
 			StringBuffer function = new StringBuffer("getGroupsWithValues('");
 			function.append(iwrb.getLocalizedString("loading", "Loading...")).append(PARAMETERS_SEPARATOR);
 			function.append(server).append(PARAMETERS_SEPARATOR).append(login).append(PARAMETERS_SEPARATOR);
 			function.append(CoreUtil.getEncodedValue(password)).append(PARAMETERS_SEPARATOR);
-			function.append(GROUPS_TREE_CONTAINER_ID).append(PARAMETERS_SEPARATOR);
+			function.append(groupsTreeContainerId).append(PARAMETERS_SEPARATOR);
 			function.append(iwrb.getLocalizedString("cannot_connect", "Sorry, unable to connect to:")).append(PARAMETERS_SEPARATOR);
 			function.append(iwrb.getLocalizedString("failed_login", "Sorry, unable to log in to:")).append(PARAMETERS_SEPARATOR);
 			function.append(iwrb.getLocalizedString("no_groups_found", "Sorry, no groups found on selected server.")).append("', true");
-			function.append(", ").append(idsParameterForFunction).append(");");
+			function.append(", ").append(idsParameterForFunction).append(", ");
+			function.append(getGroupsTreeStyleClassParameter()).append(");");
 			groupsTree.setLoadRemoteGroupsFunction(function.toString());
 		}
 		groupsTree.setSelectedGroupsParameter(idsParameterForFunction);
@@ -126,12 +129,13 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 			function.append("null");
 		}
 		else {
-//			function.append("'").append(nodeOnClickAction).append("'");
 			function.append(nodeOnClickAction);
 		}
 		function.append(", '");
 		function.append(getResourceBundle(iwc).getLocalizedString("no_groups_found", "Sorry, no groups found on selected server."));
-		function.append("', ").append(idsParameterForFunction).append(");");
+		function.append("', ").append(idsParameterForFunction).append(", ");
+		function.append(getGroupsTreeStyleClassParameter());
+		function.append(");");
 		
 		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n").append("\t");
 		if (executeScriptOnLoad) {
@@ -156,12 +160,12 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		
 		Text txtLocal = new Text(iwrb.getLocalizedString("localServer", "Local server"));
 		RadioButton btnLocal = new RadioButton("server");
-		btnLocal.setValue(new StringBuffer("local").append("@").append(GROUPS_TREE_CONTAINER_ID).toString());
+		btnLocal.setValue(new StringBuffer("local").append("@").append(groupsTreeContainerId).toString());
 		btnLocal.setStyleClass(RADIO_BUTTON_STYLE);
 
 		Text txtRemote = new Text(iwrb.getLocalizedString("remoteServer", "Remote server"));
 		RadioButton btnRemote = new RadioButton("server");
-		btnRemote.setValue(new StringBuffer(ICBuilderConstants.GROUPS_CHOOSER_REMOTE_CONNECTION).append("@").append(GROUPS_TREE_CONTAINER_ID).toString());
+		btnRemote.setValue(new StringBuffer(ICBuilderConstants.GROUPS_CHOOSER_REMOTE_CONNECTION).append("@").append(groupsTreeContainerId).toString());
 		btnRemote.setStyleClass(RADIO_BUTTON_STYLE);
 		
 		if (isRemoteMode) {
@@ -216,7 +220,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 	private String getGroupsTreeAction(IWResourceBundle iwrb) {
 		StringBuffer action = new StringBuffer("getGroupsTree('").append(SERVER_NAME_FIELD_ID).append(PARAMETERS_SEPARATOR);
 		action.append(LOGIN_FIELD_ID).append(PARAMETERS_SEPARATOR).append(PASSWORD_FIELD_ID).append(PARAMETERS_SEPARATOR);
-		action.append(GROUPS_TREE_CONTAINER_ID).append("', ['").append(iwrb.getLocalizedString("enter_fields", "Please, fill all fields!"));
+		action.append(groupsTreeContainerId).append("', ['").append(iwrb.getLocalizedString("enter_fields", "Please, fill all fields!"));
 		action.append(PARAMETERS_SEPARATOR).append(iwrb.getLocalizedString("enter_server", "Please, enter server name!"));
 		action.append(PARAMETERS_SEPARATOR).append(iwrb.getLocalizedString("enter_login", "Please, enter Your login!"));
 		action.append(PARAMETERS_SEPARATOR).append(iwrb.getLocalizedString("enter_password", "Please, enter Your password!"));
@@ -224,7 +228,9 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		action.append(PARAMETERS_SEPARATOR).append(iwrb.getLocalizedString("cannot_connect", "Sorry, unable to connect to:"));
 		action.append(PARAMETERS_SEPARATOR).append(iwrb.getLocalizedString("failed_login", "Sorry, unable to log in to:"));
 		action.append(PARAMETERS_SEPARATOR).append(iwrb.getLocalizedString("no_groups_found", "Sorry, no groups found on selected server."));
-		action.append("'], ").append(idsParameterForFunction).append(");");
+		action.append("'], ").append(idsParameterForFunction).append(", ");
+		action.append(getGroupsTreeStyleClassParameter());
+		action.append(");");
 		
 		return action.toString();
 	}
@@ -367,6 +373,17 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 				server = server.substring(0, server.lastIndexOf("/"));
 			}
 		}
+	}
+	
+	private String getGroupsTreeStyleClassParameter() {
+		StringBuffer parameter = new StringBuffer();
+		if (groupsTreeStyleClass == null) {
+			parameter.append("null");
+		}
+		else {
+			parameter.append("'").append(groupsTreeStyleClass).append("'");
+		}
+		return parameter.toString();
 	}
 	
 }

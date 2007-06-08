@@ -13,8 +13,6 @@ import com.idega.webface.WFUtil;
 
 public class GroupInfoViewer extends GroupViewer {
 	
-	private static final String GROUP_INFO_CONTAINER_ID = "selected_group_info_container";
-	
 	private boolean showName = true;
 	private boolean showHomePage = false;
 	private boolean showDescription = false;
@@ -44,15 +42,14 @@ public class GroupInfoViewer extends GroupViewer {
 			throw new NullPointerException("Instance of presentation object 'GroupInfoViewer' is null");
 		}
 		
-		//	JavaScript
-		addJavaScript(iwc, instanceId);
-		
 		Layer main = new Layer();
 		
 		//	Group info container
 		Layer groupContainer = new Layer();
-		groupContainer.setId(GROUP_INFO_CONTAINER_ID);
 		main.add(groupContainer);
+		
+		//	JavaScript
+		addJavaScript(iwc, instanceId, groupContainer.getId());
 		
 		add(main);
 		
@@ -93,7 +90,7 @@ public class GroupInfoViewer extends GroupViewer {
 		WFUtil.invoke(UserConstants.GROUPS_MANAGER_BEAN_ID, "addGroupProperties", parameters, classes);
 	}
 	
-	private void addJavaScript(IWContext iwc, String instanceId) {		
+	private void addJavaScript(IWContext iwc, String instanceId, String id) {		
 		IWBundle iwb = getBundle(iwc);
 		if (iwb == null) {
 			return;
@@ -114,7 +111,7 @@ public class GroupInfoViewer extends GroupViewer {
 
 		//	Actions to be performed on page loaded event
 		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {getSelectedGroups('");
-		action.append(instanceId).append("', '").append(GROUP_INFO_CONTAINER_ID).append("', '");
+		action.append(instanceId).append("', '").append(id).append("', '");
 		action.append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("');});");
 		
 		//	Adding script to page

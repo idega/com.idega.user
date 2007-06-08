@@ -1,5 +1,6 @@
 package com.idega.user.business;
 
+
 import javax.ejb.CreateException;
 import com.idega.business.IBOHomeImpl;
 

@@ -66,6 +66,19 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 		closeLoadingMessage();
 		return false;
 	}
+	//alert('total entries: ' + usersInfo.length);
+	/*if (usersInfo.length > 0) {
+		var members = usersInfo[0].membersInfo;
+		if (members == null) {
+			//alert('no members in: ' + usersInfo[0].groupName);
+		}
+		//alert('Members: ' + members.length);
+		var newMembers = new Array();
+		for (var i = 0; i < 5; i++) {
+			newMembers.push(members[i]);
+		}
+		usersInfo[0].membersInfo = newMembers;
+	}*/
 	
 	//Received info about Groups users from 'remote' server
 	//Now rendering object in 'local' server

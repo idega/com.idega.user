@@ -37,17 +37,21 @@
 			var liElement = document.createElement('li');
 			liElement.setAttribute('id', nodes[i].uniqueId + 'li');
 			var groupName = document.createElement('span');
+			groupName.setAttribute('id', nodes[i].uniqueId);
 			if (styleClassName != null) {
 				groupName.setAttribute('class', styleClassName);
 			}
 			if (isGroupSelected(selectedGroups, nodes[i].uniqueId)) {
 				groupName.style.fontWeight = 'bold';
 			}
-			groupName.setAttribute('id', nodes[i].uniqueId);
+			else {
+				groupName.style.fontWeight = 'normal';
+			}
 			var text = document.createTextNode(nodes[i].name);
 			groupName.appendChild(text);
 			liElement.appendChild(groupName);
-			if(nodes[i].hasChildren == true){
+			
+			if (nodes[i].hasChildren == true) {
 				var ulElement = document.createElement('ul');
 				ulElement = addTreeElements(nodes[i].children, ulElement, styleClassName, selectedGroups);
 				ulElement.setAttribute('class', 'tree_drag_drop');
@@ -395,12 +399,7 @@
 				}
 						
 				var aTag = menuItems[no].getElementsByTagName('span')[0];
-			
-				if(aTag.id)
-					numericId = aTag.id.replace(/[^0-9]/g,'');
-				else
-					numericId = (no+1);			
-//				aTag.id = menuItems[no].id + 'a';
+	
 				var input = document.createElement('INPUT');
 				input.style.width = '40%';
 				input.style.display='none';

@@ -11,6 +11,14 @@ import com.idega.user.business.UserConstants;
 
 public class GroupTreeViewer extends Block {
 	
+	private String groupsTreeViewerId = null;
+	private String selectedGroupsParameter = "null";
+	private String loadRemoteGroupsFunction = null;
+	private String styleClass = null;	// Set your style if you want to define actions for tree node
+	
+	private boolean executeScriptOnLoad = true;
+	private boolean addExtraJavaScript = true;
+	
 	public GroupTreeViewer() {
 	}
 	
@@ -18,26 +26,21 @@ public class GroupTreeViewer extends Block {
 		this.executeScriptOnLoad = executeScriptOnLoad;
 	}
 	
-	private String groupsTreeContainerId = "local_groups_tree_container_id";
-	private String selectedGroupsParameter = "null";
-	private String loadRemoteGroupsFunction = null;
-	
-	private boolean executeScriptOnLoad = true;
-	private boolean addExtraJavaScript = true;
-	
 	public void main(IWContext iwc) {
 		Layer main = new Layer();
 		
 		Layer treeContainer = new Layer();
-		treeContainer.setId(groupsTreeContainerId);
+		if (groupsTreeViewerId != null) {
+			treeContainer.setId(groupsTreeViewerId);
+		}
 		main.add(treeContainer);
 		
-		addJavaScript(iwc);
+		addJavaScript(iwc, treeContainer.getId());
 		
 		add(main);
 	}
 	
-	private void addJavaScript(IWContext iwc) {
+	private void addJavaScript(IWContext iwc, String id) {
 		if (addExtraJavaScript) {
 			IWBundle iwb = getBundle(iwc);
 			
@@ -53,22 +56,29 @@ public class GroupTreeViewer extends Block {
 		}
 		
 		//	Actions to be performed on page loaded event
-		StringBuffer loadTreeFunction = new StringBuffer();
+		StringBuffer function = new StringBuffer();
 		if (loadRemoteGroupsFunction == null) {	//	Then loading local groups
-			loadTreeFunction.append("loadLocalTree('").append(groupsTreeContainerId).append("', '");
-			loadTreeFunction.append(getResourceBundle(iwc).getLocalizedString("no_groups_found", "Sorry, no groups found on selected server."));
-			loadTreeFunction.append("', ").append(selectedGroupsParameter).append(");");
+			function.append("loadLocalTree('").append(id).append("', '");
+			function.append(getResourceBundle(iwc).getLocalizedString("no_groups_found", "Sorry, no groups found on selected server."));
+			function.append("', ").append(selectedGroupsParameter).append(", ");
+			if (styleClass == null) {
+				function.append("null");
+			}
+			else {
+				function.append("'").append(styleClass).append("'");
+			}	
+			function.append(");");
 		}
 		else {
-			loadTreeFunction.append(loadRemoteGroupsFunction);
+			function.append(loadRemoteGroupsFunction);
 		}
 		
 		StringBuffer action = new StringBuffer();
 		if (executeScriptOnLoad) {
-			action.append("registerEvent(window, 'load', function() {").append(loadTreeFunction).append("});");
+			action.append("registerEvent(window, 'load', function() {").append(function).append("});");
 		}
 		else {
-			action = loadTreeFunction;
+			action = function;
 		}
 		
 		StringBuffer scriptString = new StringBuffer();
@@ -77,14 +87,6 @@ public class GroupTreeViewer extends Block {
 		.append("</script> \n");
 		 
 		add(scriptString.toString());
-	}
-	
-	public String getGroupsTreeContainerId() {
-		return groupsTreeContainerId;
-	}
-
-	public void setGroupsTreeContainerId(String groupsTreeContainerId) {
-		this.groupsTreeContainerId = groupsTreeContainerId;
 	}
 
 	public String getBundleIdentifier()	{
@@ -113,6 +115,18 @@ public class GroupTreeViewer extends Block {
 
 	public void setSelectedGroupsParameter(String selectedGroupsParameter) {
 		this.selectedGroupsParameter = selectedGroupsParameter;
+	}
+
+	public void setGroupsTreeViewerId(String groupsTreeViewerId) {
+		this.groupsTreeViewerId = groupsTreeViewerId;
+	}
+
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
+	}
+
+	public String getStyleClass() {
+		return styleClass;
 	}
 
 }

@@ -2,7 +2,7 @@ var SERVER_START = 'http://';
 var DEFAULT_DWR_PATH = '/dwr';
 
 var UNIQUE_IDS_ID = 'uniqueids';
-var GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS = 'groups_tree_list_element';
+var GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS = 'groupsTreeListElement';
 var NO_GROUPS_MESSAGE = 'Sorry, no groups found on selected server.';
 
 var SERVER = null;
@@ -14,7 +14,7 @@ function getGroupTreeListElementStyleClass(){
 	return GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS;
 }
 
-function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, selectedGroups){
+function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, selectedGroups, styleClass) {
 	if (noGroupsMessage != null) {
 		NO_GROUPS_MESSAGE = noGroupsMessage;
 	}
@@ -23,7 +23,7 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
 	}
 	$$('input.groupInfoChooserRadioStyle').each(
 		function(element) {
-			element.onclick = function() {
+			registerEvent(element, 'click', function() {
 				if (element.value) {
 					var values = element.value.split('@');
 					if (values.length = 2) {
@@ -32,20 +32,28 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
 						addAdvancedProperty('connection', values[0]);
 					}
 				}
-			}
+			});
     	}
     );
-    $$('span.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(
+    
+    $$('span.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(	//	These actions needed for Builder, define your own if need
 		function(element) {
-			element.onclick = function() {
+			registerEvent(element, 'click', function() {
 				selectGroup(element);
 				checkOtherProperties(element);
-			}
+			});
 			if (NODE_ON_CLICK_ACTION != null){
 				registerEvent(element, 'click', NODE_ON_CLICK_ACTION);
 			}
     	}
     );
+    if (styleClass != null && styleClass != GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS) {	//	We don't want to override default actions
+	    $$('span.' + styleClass).each(	//	These are custom actions
+			function(element) {
+				//registerEvent(element, 'click', customFunction);	<- example
+	    	}
+	    );
+    }
 }
 
 function checkOtherProperties(clickedElement) {
@@ -91,7 +99,7 @@ function checkOtherProperties(clickedElement) {
 			}
 			else {
 				var allIds = advancedProperty.value.split(',');
-				if (!existsElementInArray(allIds, otherGroupsNodes[i].id)) {	//	This node must be selected
+				if (!existsElementInArray(allIds, otherGroupsNodes[i].id)) {				//	This node must be selected
 					var newValues = advancedProperty.value + ',' + otherGroupsNodes[i].id;	//	Adding new id
 					addAdvancedProperty(UNIQUE_IDS_ID, newValues);
 				}
@@ -113,7 +121,7 @@ function selectGroup(element) {
 		addId = true;
 	}
 	else {
-		if (element.style.fontWeight == '') {
+		if (element.style.fontWeight == '' || element.style.fontWeight == 'normal') {
 			addId = true;
 		}
 	}
@@ -121,7 +129,7 @@ function selectGroup(element) {
 		element.style.fontWeight = 'bold';
 	}
 	else {
-		element.style.fontWeight = '';
+		element.style.fontWeight = 'normal';
 	}
 	
 	var advancedProperty = getAdvancedProperty(UNIQUE_IDS_ID);
@@ -162,7 +170,7 @@ function manageConnectionType(useLocal, id, noGroupsMessage, selectedGroups) {
 	connection.style.display = displayValue;
 }
 
-function getGroupsTree(serverId, loginId, passwordId, id, messages, selectedGroups) {
+function getGroupsTree(serverId, loginId, passwordId, id, messages, selectedGroups, styleClass) {
 	var serverInput = $(serverId);
 	var loginInput = $(loginId);
 	var passwordInput = $(passwordId);
@@ -197,22 +205,22 @@ function getGroupsTree(serverId, loginId, passwordId, id, messages, selectedGrou
 	addAdvancedProperty(loginInput.name, login);
 	addAdvancedProperty(passwordInput.name, password);
 	
-	getGroupsWithValues(messages[4], server, login, password, id, messages[5], messages[6], messages[7], false, selectedGroups);
+	getGroupsWithValues(messages[4], server, login, password, id, messages[5], messages[6], messages[7], false, selectedGroups, styleClass);
 }
 
-function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, needsDecode, selectedGroups) {
+function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, needsDecode, selectedGroups, styleClass) {
 	showLoadingMessage(loadingMsg);
 	if (needsDecode) {
 		password = decode64(password);
 	}
 	GroupService.canUseRemoteServer(server, {
 		callback: function(result) {
-			canUseRemoteCallback(result, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, selectedGroups);
+			canUseRemoteCallback(result, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, selectedGroups, styleClass);
 		}
 	});
 }
 
-function canUseRemoteCallback(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups) {
+function canUseRemoteCallback(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass) {
 	if (result) {
 		//	Can use remote server, preparing DWR
 		prepareDwr(GroupService, server + DEFAULT_DWR_PATH);
@@ -229,7 +237,7 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 				SERVER = server;
 				LOGIN = login;
 				PASSWORD = password;
-				addGroupsTree(groups, id, noGroupsMessage, selectedGroups);
+				addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass);
 			}
 		});
 	}
@@ -241,7 +249,7 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 	}
 }
 
-function loadLocalTree(id, noGroupsMessage, selectedGroups) {
+function loadLocalTree(id, noGroupsMessage, selectedGroups, styleClass) {
 	SERVER = null;
 	LOGIN = null;
 	PASSWORD = null;
@@ -253,7 +261,7 @@ function loadLocalTree(id, noGroupsMessage, selectedGroups) {
 				closeLoadingMessage();
 				return false;
 			}
-			addGroupsTree(groups, id, noGroupsMessage, selectedGroups);
+			addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass);
 		}
 	});
 }
@@ -269,7 +277,7 @@ function getDefaultDwrPath() {
 	return DEFAULT_DWR_PATH;
 }
 
-function addGroupsTree(groups, id, noGroupsMessage, selectedGroups) {
+function addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass) {
 	if (groups.length == 0) {
 		var container = document.getElementById(id);
 		if (container != null) {
@@ -280,7 +288,7 @@ function addGroupsTree(groups, id, noGroupsMessage, selectedGroups) {
 		}
 	}
 	else {
-		setGroupsNodes(groups, id, GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS, selectedGroups);
-		registerGroupInfoChooserActions(null, noGroupsMessage, selectedGroups);
+		setGroupsNodes(groups, id, styleClass, selectedGroups);
+		registerGroupInfoChooserActions(null, noGroupsMessage, selectedGroups, styleClass);
 	}
 }

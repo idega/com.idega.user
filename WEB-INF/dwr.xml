@@ -29,6 +29,7 @@
 			GroupService.getGroupsInfo(GroupPropertiesBean);
 			GroupService.getUsersInfo(UserPropertiesBean);
 			GroupService.getGroupInfoPresentationObject(List<GroupDataBean>, GroupPropertiesBean);
+			GroupService.getGroupsMembersPresentationObject(List<GroupMembersDataBean>, UserPropertiesBean);
   		]]>
 	</signatures>
 </dwr>

@@ -53,6 +53,17 @@ public class GroupInfoViewerBlock extends Block {
 		
 		for (int i = 0; i < groupsData.size(); i++) {
 			bean = groupsData.get(i);
+			
+			System.out.println("Name: " + bean.getName());
+			System.out.println("Short name: " + bean.getShortName());
+			System.out.println("Address: " + bean.getAddress());
+			System.out.println("Phone: " + bean.getPhoneNumber());
+			System.out.println("Fax: " + bean.getFaxNumber());
+			System.out.println("Home page: " + bean.getHomePageUrl());
+			System.out.println("Emails: " + bean.getEmailAddresses());
+			System.out.println("Description: " + bean.getDescription());
+			System.out.println("Extra info: " + bean.getExtraInfo());
+			
 			group = new ListItem();
 			
 			//	Name
@@ -120,8 +131,14 @@ public class GroupInfoViewerBlock extends Block {
 				String homePageUrl = getEmptyIfValueIsNull(bean.getHomePageUrl());
 				if (showEmptyFields || homePageUrl.length() > 0) {
 					Layer homePageContainer = new Layer();
+					homePageContainer.add(new Text(iwrb.getLocalizedString("group_homepage", "Homepage:")));
+					homePageContainer.add(new Text("\u00A0"));
 					Link link = new Link();
-					link.setText(iwrb.getLocalizedString("group_homepage", "Homepage: "));
+					link.setText(" " + homePageUrl);
+					link.setTarget("newWindow");
+					if (!homePageUrl.startsWith("http://")) {
+						homePageUrl = new StringBuffer("http://").append(homePageUrl).toString();
+					}
 					link.setURL(homePageUrl);
 					homePageContainer.add(link);
 					group.add(homePageContainer);
