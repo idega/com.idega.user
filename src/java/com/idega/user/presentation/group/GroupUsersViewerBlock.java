@@ -14,7 +14,6 @@ import com.idega.presentation.text.ListItem;
 import com.idega.presentation.text.Lists;
 import com.idega.presentation.text.Text;
 import com.idega.user.business.UserConstants;
-import com.idega.util.IWTimestamp;
 
 public class GroupUsersViewerBlock extends Block {
 
@@ -206,7 +205,7 @@ public class GroupUsersViewerBlock extends Block {
 							beganWorkContainer.add(new Text(iwrb.getLocalizedString("user_began_work", "Began work: ")));
 						}
 						if (userData.getBeganWork() != null) {
-							beganWorkContainer.add(new Text(new IWTimestamp(userData.getBeganWork()).getDateString("dd-MM-yyyy")));
+							beganWorkContainer.add(new Text(userData.getBeganWork()/*new IWTimestamp(userData.getBeganWork()).getDateString("dd-MM-yyyy")*/));
 						}
 						user.add(beganWorkContainer);
 					}
@@ -392,6 +391,10 @@ public class GroupUsersViewerBlock extends Block {
 	}
 
 	public void setServer(String server) {
+		if (server == null) {
+			this.server = null;
+			return;
+		}
 		if (server.endsWith("/")) {
 			server = server.substring(0, server.lastIndexOf("/"));
 		}

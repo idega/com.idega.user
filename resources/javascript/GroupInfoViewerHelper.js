@@ -67,28 +67,87 @@ function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 		closeLoadingMessage();
 		return false;
 	}
-	//Received info about Groups from 'remote' server
-	//Now rendering object in 'local' server
-	prepareDwr(GroupService, getDefaultDwrPath());
+	var main = document.getElementById(containerId);
+	if (main == null) {
+		closeLoadingMessage();
+		return false;
+	}
+	removeChildren(main);
 	
-	GroupService.getGroupInfoPresentationObject(groupsInfo, properties, {
-		callback: function(presentationObject) {
-			getGroupInfoPresentationObjectCallback(presentationObject, containerId);
+	var container = document.createElement('div');
+	container.className = 'groupsInfoList';
+	
+	var groups = document.createElement('ul');
+	container.appendChild(groups);
+	for (var i = 0; i < groupsInfo.length; i++) {
+		var group = document.createElement('li');
+		groups.appendChild(group);
+		
+		//	Name
+		if (properties.showName) {
+			group.appendChild(getGroupInfoEntryPO(properties.localizedText[0], groupsInfo[i].name, properties.showEmptyFields, properties.showLabels));
 		}
-	});
-}
-
-function getGroupInfoPresentationObjectCallback(presentationObject, containerId) {
+		//	Short name
+		if (properties.showShortName) {
+			group.appendChild(getGroupInfoEntryPO(properties.localizedText[1], groupsInfo[i].showShortName, properties.showEmptyFields, properties.showLabels));
+		}
+		//	Address
+		if (properties.showAddress) {
+			var addressContainer = document.createElement('div');
+			var address = groupsInfo[i].address;
+			if (address == null) {
+				if (properties.showEmptyFields) {
+					addressContainer.appendChild(document.createTextNode(properties.localizedText[2]));
+				}
+			}
+			else {
+				var allAddress = address.streetAddress + ', ' + address.postalCode + ' ' + address.city;
+				addressContainer.appendChild(document.createTextNode(properties.localizedText[2]));
+				addressContainer.appendChild(document.createTextNode(allAddress));
+			}
+			group.appendChild(addressContainer);
+		}
+		//	Phone
+		if (properties.showPhone) {
+			group.appendChild(getGroupInfoEntryPO(properties.localizedText[3], groupsInfo[i].phoneNumber, properties.showEmptyFields, properties.showLabels));
+		}
+		//	Fax
+		if (properties.showPhone) {
+			group.appendChild(getGroupInfoEntryPO(properties.localizedText[4], groupsInfo[i].faxNumber, properties.showEmptyFields, properties.showLabels));
+		}
+		//	HomePage
+		if (properties.showHomePage) {
+			var homePage = getEmptyValueIfNull(groupsInfo[i].homePageUrl);
+			if (properties.showEmptyFields || homePage.length > 0) {
+				var homePageContainer = document.createElement('div');
+				homePageContainer.appendChild(document.createTextNode(properties.localizedText[5]));
+				var link = document.createElement('a');
+				link.appendChild(document.createTextNode(homePage));
+				link.setAttribute('href', homePage);
+				link.setAttribute('target', 'newWindow');
+				group.appendChild(homePageContainer);
+			}
+		}
+		//	Emails
+		if (properties.showEmails) {
+			var emailsContainer = getEmailsContainer(groupsInfo[i].emailAddresses);
+			if (properties.showEmptyFields || emailsContainer != null) {
+				var mainEmailsContainer = document.createElement('div');
+				mainEmailsContainer.appendChild(document.createTextNode(properties.localizedText[6]));
+				mainEmailsContainer.appendChild(emailsContainer);
+				group.appendChild(mainEmailsContainer);
+			}
+		}
+		//	Description
+		if (properties.showDescription) {
+			group.appendChild(getGroupInfoEntryPO(properties.localizedText[7], groupsInfo[i].description, properties.showEmptyFields, properties.showLabels));
+		}
+		//	Extra info
+		if (properties.showExtraInfo) {
+			group.appendChild(getGroupInfoEntryPO(properties.localizedText[8], groupsInfo[i].extraInfo, properties.showEmptyFields, properties.showLabels));
+		}
+	}
+	
+	main.appendChild(container);
 	closeLoadingMessage();
-	if (presentationObject == null || containerId == null) {
-		return false;
-	}
-	
-	var container = document.getElementById(containerId);
-	if (container == null) {
-		return false;
-	}
-	
-	removeChildren(container);
-	insertNodesToContainer(presentationObject, container);
 }

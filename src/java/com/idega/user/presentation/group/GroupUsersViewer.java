@@ -25,6 +25,7 @@ public class GroupUsersViewer extends GroupViewer {
 	private boolean showArea = true;
 	private boolean showBeganWork = true;
 	private boolean showImage = true;
+	private boolean showLabels = false;
 	
 	private String imageWidth = "100";
 	private String imageHeight = "150";
@@ -82,6 +83,7 @@ public class GroupUsersViewer extends GroupViewer {
 		properties.setShowArea(showArea);
 		properties.setShowBeganWork(showBeganWork);
 		properties.setShowImage(showImage);
+		properties.setShowLabels(showLabels);
 		
 		properties.setRemoteMode(isRemoteMode());
 		
@@ -188,6 +190,10 @@ public class GroupUsersViewer extends GroupViewer {
 	
 	public String getBundleIdentifier()	{
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
+	}
+
+	public void setShowLabels(boolean showLabels) {
+		this.showLabels = showLabels;
 	}
 	
 }

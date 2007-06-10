@@ -23,6 +23,7 @@ public class GroupInfoViewer extends GroupViewer {
 	private boolean showEmails = false;
 	private boolean showAddress = false;
 	private boolean showEmptyFields = true;
+	private boolean showLabels = true;
 	
 	public GroupInfoViewer() {
 		//setCacheable(getCacheKey());
@@ -75,6 +76,7 @@ public class GroupInfoViewer extends GroupViewer {
 		properties.setShowEmails(showEmails);
 		properties.setShowAddress(showAddress);
 		properties.setShowEmptyFields(showEmptyFields);
+		properties.setShowLabels(showLabels);
 		
 		properties.setRemoteMode(isRemoteMode());
 		
@@ -158,6 +160,10 @@ public class GroupInfoViewer extends GroupViewer {
 
 	public void setShowShortName(boolean showShortName) {
 		this.showShortName = showShortName;
+	}
+
+	public void setShowLabels(boolean showLabels) {
+		this.showLabels = showLabels;
 	}
 
 	public String getBundleIdentifier()	{

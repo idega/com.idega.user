@@ -62,46 +62,109 @@ function getGroupsUsersData(result, properties, containerId) {
 }
 
 function getUsersInfoCallback(usersInfo, properties, containerId) {
-	if (usersInfo == null) {
+	if (usersInfo == null || containerId == null) {
 		closeLoadingMessage();
 		return false;
 	}
-	//alert('total entries: ' + usersInfo.length);
-	/*if (usersInfo.length > 0) {
-		var members = usersInfo[0].membersInfo;
-		if (members == null) {
-			//alert('no members in: ' + usersInfo[0].groupName);
-		}
-		//alert('Members: ' + members.length);
-		var newMembers = new Array();
-		for (var i = 0; i < 5; i++) {
-			newMembers.push(members[i]);
-		}
-		usersInfo[0].membersInfo = newMembers;
-	}*/
-	
-	//Received info about Groups users from 'remote' server
-	//Now rendering object in 'local' server
-	prepareDwr(GroupService, getDefaultDwrPath());
-	
-	GroupService.getGroupsMembersPresentationObject(usersInfo, properties, {
-		callback: function(presentationObject) {
-			getGroupsMembersPresentationObjectCallback(presentationObject, containerId);
-		}
-	});
-}
-
-function getGroupsMembersPresentationObjectCallback(presentationObject, containerId) {
-	closeLoadingMessage();
-	if (presentationObject == null || containerId == null) {
+	var main = document.getElementById(containerId);
+	if (main == null) {
+		closeLoadingMessage();
 		return false;
 	}
+	removeChildren(main);
 	
-	var container = document.getElementById(containerId);
-	if (container == null) {
-		return false;
+	var container = document.createElement('div');
+	container.className = 'groupsMembersInfoList';
+	
+	var groups = document.createElement('ul');
+	container.appendChild(groups);
+	
+	for (var i = 0; i < usersInfo.length; i++) {
+		var group = document.createElement('li');
+		groups.appendChild(group);
+		
+		//	Group name
+		if (properties.showGroupName) {
+			group.appendChild(getGroupInfoEntryPO(null, usersInfo[i].groupName, false));
+		}
+		var members = usersInfo[i].membersInfo;
+		if (members != null) {
+			var users = document.createElement('ul');
+			group.appendChild(users);
+			for (var j = 0; j < members.length; j++) {
+				var user = document.createElement('li');
+				users.appendChild(user);
+				
+				//	Image
+				if (properties.showImage) {
+					if (members[j].imageUrl != null) {
+						var imageContainer = document.createElement('div');
+						var image = document.createElement('img');
+						image.setAttribute('src', properties.server + members[j].imageUrl);
+						if (properties.imageWidth != null) {
+							image.setAttribute('width', properties.imageWidth);
+						}
+						if (properties.imageHeight != null) {
+							image.setAttribute('height', properties.imageHeight);
+						}
+						imageContainer.appendChild(image);
+						user.appendChild(imageContainer);
+					}
+				}
+				//	Name
+				user.appendChild(getGroupInfoEntryPO(properties.localizedText[0], members[j].name, true, properties.showLabels));
+				//	Title
+				if (properties.showTitle) {
+					user.appendChild(getGroupInfoEntryPO(properties.localizedText[1], members[j].title, true, properties.showLabels));
+				}
+				//	Age
+				if (properties.showAge) {
+					user.appendChild(getGroupInfoEntryPO(properties.localizedText[2], members[j].age, true, properties.showLabels));
+				}
+				//	Work phone
+				if (properties.showWorkPhone) {
+					user.appendChild(getGroupInfoEntryPO(properties.localizedText[3], members[j].workPhone, true, properties.showLabels));
+				}
+				//	Home phone
+				if (properties.showHomePhone) {
+					user.appendChild(getGroupInfoEntryPO(properties.localizedText[4], members[j].homePhone, true, properties.showLabels));
+				}
+				//	Mobile phone
+				if (properties.showMobilePhone) {
+					user.appendChild(getGroupInfoEntryPO(properties.localizedText[5], members[j].mobilePhone, true, properties.showLabels));
+				}
+				//	Emails
+				if (properties.showEmails) {
+					var mainEmailsContainer = document.createElement('div');
+					if (properties.showLabels) {
+						mainEmailsContainer.appendChild(document.createTextNode(properties.localizedText[6]));
+					}
+					var emailsContainer = getEmailsContainer(members[j].emailsAddresses);
+					if (emailsContainer != null) {
+						mainEmailsContainer.appendChild(emailsContainer);
+					}
+					user.appendChild(mainEmailsContainer);
+				}
+				//	Education
+				if (properties.showEducation) {
+					user.appendChild(getGroupInfoEntryPO(properties.localizedText[7], members[j].education, true, properties.showLabels));
+				}
+				//	School
+				if (properties.showSchool) {
+					user.appendChild(getGroupInfoEntryPO(properties.localizedText[8], members[j].school, true, properties.showLabels));
+				}
+				//	Area
+				if (properties.showArea) {
+					user.appendChild(getGroupInfoEntryPO(properties.localizedText[9], members[j].area, true, properties.showLabels));
+				}
+				//	Began work
+				if (properties.showBeganWork) {
+					user.appendChild(getGroupInfoEntryPO(properties.localizedText[10], members[j].beganWork, true, properties.showLabels));
+				}
+			}
+		}
 	}
-	removeChildren(container);
 	
-	insertNodesToContainer(presentationObject, container);
+	main.appendChild(container);
+	closeLoadingMessage();	
 }

@@ -26,6 +26,7 @@ public class GroupInfoViewerBlock extends Block {
 	private boolean showEmails = false;
 	private boolean showAddress = false;
 	private boolean showEmptyFields = true;
+	private boolean showLabels = true;
 	
 	private List<GroupDataBean> groupsData = null;
 	
@@ -134,7 +135,7 @@ public class GroupInfoViewerBlock extends Block {
 					homePageContainer.add(new Text(iwrb.getLocalizedString("group_homepage", "Homepage:")));
 					homePageContainer.add(new Text("\u00A0"));
 					Link link = new Link();
-					link.setText(" " + homePageUrl);
+					link.setText(homePageUrl);
 					link.setTarget("newWindow");
 					if (!homePageUrl.startsWith("http://")) {
 						homePageUrl = new StringBuffer("http://").append(homePageUrl).toString();
@@ -305,4 +306,13 @@ public class GroupInfoViewerBlock extends Block {
 	private String getEmptyIfValueIsNull(String value) {
 		return value == null ? "" : value;
 	}
+
+	public boolean isShowLabels() {
+		return showLabels;
+	}
+
+	public void setShowLabels(boolean showLabels) {
+		this.showLabels = showLabels;
+	}
+	
 }

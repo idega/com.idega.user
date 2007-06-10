@@ -2,6 +2,7 @@ package com.idega.user.business;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.FinderException;
@@ -21,6 +22,7 @@ import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.bean.GroupsManagerBean;
 import com.idega.user.data.User;
@@ -194,7 +196,27 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			return null;
 		}
 		
-		return bean.getGroupProperties(instanceId);
+		GroupPropertiesBean properties = bean.getGroupProperties(instanceId);
+		if (properties == null) {
+			return null;
+		}
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
+		List<String> localizedText = new ArrayList<String>();
+		localizedText.add(iwrb.getLocalizedString("group_name", "Name: "));					//	0
+		localizedText.add(iwrb.getLocalizedString("short_name", "Short name: "));			//	1
+		localizedText.add(iwrb.getLocalizedString("group_address", "Address: "));			//	2
+		localizedText.add(iwrb.getLocalizedString("group_phone", "Phone: "));				//	3
+		localizedText.add(iwrb.getLocalizedString("group_fax", "Fax: "));					//	4
+		localizedText.add(iwrb.getLocalizedString("group_homepage", "Homepage: "));			//	5
+		localizedText.add(iwrb.getLocalizedString("group_email", "Email: "));				//	6
+		localizedText.add(iwrb.getLocalizedString("group_description", "Description: "));	//	7
+		localizedText.add(iwrb.getLocalizedString("goup_extra_info", "Info: "));			//	8
+		properties.setLocalizedText(localizedText);
+		return properties;
 	}
 	
 	/**
@@ -211,7 +233,31 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			return null;
 		}
 		
-		return bean.getUserProperties(instanceId);
+		UserPropertiesBean properties = bean.getUserProperties(instanceId);
+		if (properties == null) {
+			return null;
+		}
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
+		List<String> localizedText = new ArrayList<String>();
+		
+		localizedText.add(iwrb.getLocalizedString("user_name", "Name: "));					//	0
+		localizedText.add(iwrb.getLocalizedString("user_title", "Title: "));				//	1
+		localizedText.add(iwrb.getLocalizedString("user_age", "Age: "));					//	2
+		localizedText.add(iwrb.getLocalizedString("user_workphone", "Workphone: "));		//	3
+		localizedText.add(iwrb.getLocalizedString("user_homephone", "Homephone: "));		//	4
+		localizedText.add(iwrb.getLocalizedString("user_mobilephone", "Mobilephone: "));	//	5
+		localizedText.add(iwrb.getLocalizedString("group_email", "Email: "));				//	6
+		localizedText.add(iwrb.getLocalizedString("user_education", "Education: "));		//	7
+		localizedText.add(iwrb.getLocalizedString("user_school", "School: "));				//	8
+		localizedText.add(iwrb.getLocalizedString("user_area", "Area: "));					//	9
+		localizedText.add(iwrb.getLocalizedString("user_began_work", "Began work: "));		//	10
+		
+		properties.setLocalizedText(localizedText);
+		return properties;
 	}
 	
 	/**
@@ -243,10 +289,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	}
 	
 	public Document getGroupInfoPresentationObject(List<GroupDataBean> groupsData, GroupPropertiesBean bean) {
-		if (groupsData == null) {
-			return null;
-		}
-		if (groupsData.size() == 0) {
+		if (groupsData == null || bean == null) {
 			return null;
 		}
 		
@@ -266,6 +309,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		groupViewer.setShowEmails(bean.isShowEmails());
 		groupViewer.setShowAddress(bean.isShowAddress());
 		groupViewer.setShowEmptyFields(bean.isShowEmptyFields());
+		groupViewer.setShowLabels(bean.isShowLabels());
 		
 		groupViewer.setGroupsData(groupsData);
 		
@@ -273,7 +317,6 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	}
 	
 	public List<GroupMembersDataBean> getUsersInfo(UserPropertiesBean bean) {
-		System.out.println("Requesting group members info");
 		//	Checking if valid parameters
 		if (bean == null) {
 			return null;
@@ -319,6 +362,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		usersViewer.setShowSchool(bean.isShowSchool());
 		usersViewer.setShowArea(bean.isShowArea());
 		usersViewer.setShowBeganWork(bean.isShowBeganWork());
+		usersViewer.setShowLabels(bean.isShowLabels());
 		
 		usersViewer.setMembersData(membersData);
 		
@@ -381,5 +425,9 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			}
 		}
 		return userBusiness;
+	}
+	
+	protected String getBundleIdentifier() {
+		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
 }

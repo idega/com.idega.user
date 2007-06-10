@@ -292,3 +292,42 @@ function addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass) 
 		registerGroupInfoChooserActions(null, noGroupsMessage, selectedGroups, styleClass);
 	}
 }
+
+function getGroupInfoEntryPO(text, value, showEmptyFields, showLabel) {
+	var container = document.createElement('div');
+	value = getEmptyValueIfNull(value);
+	if (showEmptyFields || value.length > 0) {
+		if (showLabel) {
+			if (text != null) {
+				container.appendChild(document.createTextNode(text));
+			}
+		}
+		container.appendChild(document.createTextNode(value));
+	}
+	return container;
+}
+
+function getEmptyValueIfNull(value) {
+	if (value == null) {
+		return '';
+	}
+	return value;
+}
+
+function getEmailsContainer(emailAddresses) {
+	if (emailAddresses == null) {
+		return null;
+	}
+	
+	var emails = document.createElement('div');
+	for (var i = 0; i < emailAddresses.length; i++) {
+		var link = document.createElement('a');
+		link.appendChild(document.createTextNode(emailAddresses[i]));
+		link.setAttribute('href', 'mailto:' + emailAddresses[i]);
+		emails.appendChild(link);
+		if (i + 1 < emailAddresses.length) {
+			emails.appendChild(document.createTextNode(', '));
+		}
+	}
+	return emails;
+}
