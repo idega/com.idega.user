@@ -26,7 +26,6 @@
 		treeObj.setTreeId('tree');
 		treeObj.initTree();
 		treeObj.expandAll();
-		addBehaviour();
 	}			
 	function addTreeElements(nodes, rootUl, styleClassName, selectedGroups) {
 		if (nodes == null) {
