@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page-templates>
+	<page name="Group" type="group" iconfile="idegaweb/bundles/com.idega.user.bundle/resources/images/pageIcons/group.png" templatefile="idegaweb/bundles/com.idega.user.bundle/resources/pages/idega_theme_group.xml"></page>
+</page-templates>
