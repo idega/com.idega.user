@@ -62,13 +62,13 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		//	Groups tree
 		addGroupsTreeContainer(iwc, main);
 		
-		//	JavaScript
-		addJavaScript(iwc);
-		
 		//	Connection chooser
 		addConnectionTypeField(iwc, main);
 		
 		add(main);
+		
+		//	JavaScript
+		addJavaScript(iwc);
 	}
 	
 	private void addGroupsTreeContainer(IWContext iwc, Layer main) {

@@ -1,7 +1,7 @@
 package com.idega.user.presentation.group;
 
-import org.apache.myfaces.renderkit.html.util.AddResource;
-import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.idega.bean.GroupPropertiesBean;
 import com.idega.builder.business.BuilderLogic;
@@ -39,9 +39,9 @@ public class GroupInfoViewer extends GroupViewer {
 	
 	public void main(IWContext iwc) {
 		String instanceId = BuilderLogic.getInstance().getInstanceId(this);
-		if (instanceId == null) {
+		/*if (instanceId == null) {
 			throw new NullPointerException("Instance of presentation object 'GroupInfoViewer' is null");
-		}
+		}*/
 		
 		Layer main = new Layer();
 		
@@ -98,18 +98,17 @@ public class GroupInfoViewer extends GroupViewer {
 			return;
 		}
 		
-		AddResource resource = AddResourceFactory.getInstance(iwc);
-		
+		List<String> files = new ArrayList<String>();
 		//	"Helpers"
-		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
-		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
+		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
+		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
 		if (isAddJavaScriptForGroupsTree()) {
-			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
+			files.add(iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
 		}
-		
 		//	DWR
-		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
-		resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
+		files.add(UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+		files.add("/dwr/engine.js");
+		addScriptFiles(iwc, files, instanceId == null);
 
 		//	Actions to be performed on page loaded event
 		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {getSelectedGroups('");
