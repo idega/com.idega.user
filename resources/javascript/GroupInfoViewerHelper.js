@@ -1,3 +1,18 @@
+function reloadGroupProperties(instanceId, containerId, message) {
+	GroupService.reloadProperties(instanceId, {
+		callback: function(result) {
+			reloadGroupPropertiesCallback(result, instanceId, containerId, message);
+		}
+	})
+}
+
+function reloadGroupPropertiesCallback(result, instanceId, containerId, message) {
+	if (!result) {
+		return false;
+	}
+	getSelectedGroups(instanceId, containerId, message);
+}
+
 function getSelectedGroups(instanceId, containerId, message) {
 	if (instanceId == null) {
 		return;
@@ -17,14 +32,14 @@ function getSelectedGroups(instanceId, containerId, message) {
 
 function getGroupPropertiesCallback(properties, containerId) {
 	if (properties == null) {
-		closeLoadingMessage();
+		closeAllLoadingMessages();
 		return false;
 	}
 	
 	if (properties.remoteMode) {
 		//	Remote mode
 		if (properties.server == null || properties.login == null || properties.password == null) {
-			closeLoadingMessage();
+			closeAllLoadingMessages();
 			return false;
 		}
 		
@@ -42,7 +57,7 @@ function getGroupPropertiesCallback(properties, containerId) {
 
 function getGroupsData(result, properties, containerId) {
 	if (!result) {
-		closeLoadingMessage();
+		closeAllLoadingMessages();
 		return false;
 	}
 	
@@ -64,12 +79,12 @@ function getGroupsData(result, properties, containerId) {
 
 function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 	if (groupsInfo == null || containerId == null) {
-		closeLoadingMessage();
+		closeAllLoadingMessages();
 		return false;
 	}
 	var main = document.getElementById(containerId);
 	if (main == null) {
-		closeLoadingMessage();
+		closeAllLoadingMessages();
 		return false;
 	}
 	removeChildren(main);
@@ -149,5 +164,5 @@ function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 	}
 	
 	main.appendChild(container);
-	closeLoadingMessage();
+	closeAllLoadingMessages();
 }

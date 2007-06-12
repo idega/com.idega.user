@@ -11,17 +11,17 @@ import com.idega.user.business.UserConstants;
 /**
  * 
  * @author <a href="valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  *
- * Last modified: $Date: 2007/06/01 15:30:08 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/12 17:35:10 $ by $Author: valdas $
  *
  */
 public class GroupsChooser extends AbstractChooser {
-	
+		
 	private PropertiesBean bean = null;
 	
-	public GroupsChooser(String instanceId, String method) {
-		super(false);
+	public GroupsChooser(String instanceId, String method, String actionAfterPropertySaved) {
+		super(false, false, actionAfterPropertySaved);
 		addForm(false);
 		setInstanceId(instanceId);
 		setMethod(method);

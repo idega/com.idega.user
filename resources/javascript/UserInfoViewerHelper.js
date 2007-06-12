@@ -1,3 +1,18 @@
+function reloadGroupMemberProperties(instanceId, containerId, message) {
+	GroupService.reloadProperties(instanceId, {
+		callback: function(result) {
+			reloadGroupMemberPropertiesCallback(result, instanceId, containerId, message);
+		}
+	})
+}
+
+function reloadGroupMemberPropertiesCallback(result, instanceId, containerId, message) {
+	if (!result) {
+		return false;
+	}
+	getSelectedUsers(instanceId, containerId, message);
+}
+
 function getSelectedUsers(instanceId, containerId, message) {
 	if (instanceId == null) {
 		return;
@@ -17,14 +32,14 @@ function getSelectedUsers(instanceId, containerId, message) {
 
 function getUserPropertiesCallback(properties, containerId) {
 	if (properties == null) {
-		closeLoadingMessage();
+		closeAllLoadingMessages();
 		return false;
 	}
 	
 	if (properties.remoteMode) {
 		//	Remote mode
 		if (properties.server == null || properties.login == null || properties.password == null) {
-			closeLoadingMessage();
+			closeAllLoadingMessages();
 			return false;
 		}
 	
@@ -42,7 +57,7 @@ function getUserPropertiesCallback(properties, containerId) {
 
 function getGroupsUsersData(result, properties, containerId) {
 	if (!result) {
-		closeLoadingMessage();
+		closeAllLoadingMessages();
 		return false;
 	}
 	
@@ -63,12 +78,12 @@ function getGroupsUsersData(result, properties, containerId) {
 
 function getUsersInfoCallback(usersInfo, properties, containerId) {
 	if (usersInfo == null || containerId == null) {
-		closeLoadingMessage();
+		closeAllLoadingMessages();
 		return false;
 	}
 	var main = document.getElementById(containerId);
 	if (main == null) {
-		closeLoadingMessage();
+		closeAllLoadingMessages();
 		return false;
 	}
 	removeChildren(main);
@@ -166,5 +181,5 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 	}
 	
 	main.appendChild(container);
-	closeLoadingMessage();	
+	closeAllLoadingMessages();	
 }

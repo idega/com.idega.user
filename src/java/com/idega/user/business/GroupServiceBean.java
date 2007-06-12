@@ -12,11 +12,13 @@ import org.jdom.Document;
 import com.idega.bean.GroupDataBean;
 import com.idega.bean.GroupMembersDataBean;
 import com.idega.bean.GroupPropertiesBean;
+import com.idega.bean.PropertiesBean;
 import com.idega.bean.UserPropertiesBean;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBOServiceBean;
+import com.idega.business.chooser.helper.GroupsChooserHelper;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
@@ -286,6 +288,43 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		}
 		
 		return getGroupBusiness(iwc).getGroupsData(bean);
+	}
+	
+	public boolean reloadProperties(String instanceId) {
+		if (instanceId == null) {
+			return false;
+		}
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return false;
+		}
+		
+		BuilderLogic builder = BuilderLogic.getInstance();
+		String pageKey = builder.getCurrentIBPage(iwc);
+		String propertyName = ":method:1:implied:void:setGroups:com.idega.bean.PropertiesBean:";
+		String[] values = builder.getPropertyValues(iwc.getIWMainApplication(), pageKey, instanceId, propertyName, null, true);
+		if (values == null) {
+			return false;
+		}
+		if (values.length == 0) {
+			return false;
+		}
+		GroupsChooserHelper helper = new GroupsChooserHelper();
+		PropertiesBean bean = helper.getExtractedPropertiesFromString(values[0]);
+		if (bean == null) {
+			return false;
+		}
+		Object[] parameters = new Object[2];
+		parameters[0] = instanceId;
+		parameters[1] = bean;
+		
+		Class[] classes = new Class[2];
+		classes[0] = String.class;
+		classes[1] = PropertiesBean.class;
+		
+		//	Setting parameters to bean, these parameters will be taken by DWR and sent to selected server to get required info
+		WFUtil.invoke(UserConstants.GROUPS_MANAGER_BEAN_ID, "addAbstractProperties", parameters, classes);
+		return true;
 	}
 	
 	public Document getGroupInfoPresentationObject(List<GroupDataBean> groupsData, GroupPropertiesBean bean) {

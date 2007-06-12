@@ -55,4 +55,9 @@ public interface GroupService extends IBOService {
 	 * @see com.idega.user.business.GroupServiceBean#getGroupsMembersPresentationObject
 	 */
 	public Document getGroupsMembersPresentationObject(List<GroupMembersDataBean> membersData, UserPropertiesBean bean) throws RemoteException;
+	
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#reloadProperties
+	 */
+	public boolean reloadProperties(String instanceId);
 }

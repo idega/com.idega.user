@@ -16,4 +16,6 @@ public class UserConstants implements ConstantsPlaceholder {
 
 	public static final String GROUP_SERVICE_DWR_INTERFACE_SCRIPT = "/dwr/interface/GroupService.js";
 	
+	public static final String GROUP_VIEWER_CONTAINER_ID_ENDING = "_realChildComponent";
+	
 }

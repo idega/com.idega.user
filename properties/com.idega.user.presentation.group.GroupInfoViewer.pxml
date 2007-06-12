@@ -685,7 +685,6 @@
             			</value>
             			<type>map</type>
             			<simple>true</simple>
-            			<reload>true</reload>
           			</key>
         		</map>
       		</value>

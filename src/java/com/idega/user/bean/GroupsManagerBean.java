@@ -5,18 +5,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.idega.bean.GroupPropertiesBean;
+import com.idega.bean.PropertiesBean;
 import com.idega.bean.UserPropertiesBean;
 
 public class GroupsManagerBean implements Serializable {
 
 	private static final long serialVersionUID = 3054659649289011497L;
 	
+	private Map<String, PropertiesBean> abstractProperties = null;
 	private Map<String, GroupPropertiesBean> groupProperties = null;
 	private Map<String, UserPropertiesBean> userProperties = null;
 	
 	public GroupsManagerBean() {
+		abstractProperties = new HashMap<String, PropertiesBean>();
 		groupProperties = new HashMap<String, GroupPropertiesBean>();
 		userProperties = new HashMap<String, UserPropertiesBean>();
+	}
+	
+	public boolean addAbstractProperties(String instanceId, PropertiesBean propertiesBean) {
+		if (instanceId == null || propertiesBean == null) {
+			return false;
+		}
+		abstractProperties.put(instanceId, propertiesBean);
+		return true;
+	}
+	
+	private PropertiesBean getAbstractProperties(String instanceId) {
+		if (instanceId == null) {
+			return null;
+		}
+		return abstractProperties.get(instanceId);
 	}
 	
 	public boolean addGroupProperties(String instanceId, GroupPropertiesBean propertiesBean) {
@@ -39,14 +57,29 @@ public class GroupsManagerBean implements Serializable {
 		if (instanceId == null) {
 			return null;
 		}
-		return groupProperties.get(instanceId);
+		PropertiesBean bean = getAbstractProperties(instanceId);
+		if (bean == null) {
+			return groupProperties.get(instanceId);
+		}
+		else {
+			abstractProperties.remove(instanceId);
+			return new GroupPropertiesBean(bean);
+		}
+		
 	}
 	
 	public UserPropertiesBean getUserProperties(String instanceId) {
 		if (instanceId == null) {
 			return null;
 		}
-		return userProperties.get(instanceId);
+		PropertiesBean bean = getAbstractProperties(instanceId);
+		if (bean == null) {
+			return userProperties.get(instanceId);
+		}
+		else {
+			abstractProperties.remove(instanceId);
+			return new UserPropertiesBean(bean);
+		}
 	}
 	
 	public boolean removeGroupProperties(String instanceId) {

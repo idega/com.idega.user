@@ -47,6 +47,9 @@ public class GroupInfoViewer extends GroupViewer {
 		
 		//	Group info container
 		Layer groupContainer = new Layer();
+		if (instanceId != null) {
+			groupContainer.setId(new StringBuffer(instanceId).append(UserConstants.GROUP_VIEWER_CONTAINER_ID_ENDING).toString());
+		}
 		main.add(groupContainer);
 		
 		//	JavaScript
@@ -108,7 +111,7 @@ public class GroupInfoViewer extends GroupViewer {
 		//	DWR
 		files.add(UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		files.add("/dwr/engine.js");
-		addScriptFiles(iwc, files, instanceId == null);
+		addScriptFiles(iwc, files, true);	//	TODO
 
 		//	Actions to be performed on page loaded event
 		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {getSelectedGroups('");
