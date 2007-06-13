@@ -7,7 +7,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
-import com.idega.user.business.UserConstants;
+import com.idega.util.CoreConstants;
 
 public class GroupTreeViewer extends Block {
 	
@@ -51,7 +51,7 @@ public class GroupTreeViewer extends Block {
 			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
 			
 			//	DWR
-			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
 		}
 		
@@ -90,7 +90,7 @@ public class GroupTreeViewer extends Block {
 	}
 
 	public String getBundleIdentifier()	{
-		return UserConstants.IW_BUNDLE_IDENTIFIER;
+		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
 
 	public boolean isAddExtraJavaScript() {

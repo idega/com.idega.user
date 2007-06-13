@@ -28,7 +28,6 @@ import com.idega.presentation.ui.SelectOption;
 import com.idega.user.block.search.presentation.SearchForm;
 import com.idega.user.block.search.presentation.SearchWindow;
 import com.idega.user.business.GroupBusiness;
-import com.idega.user.business.UserConstants;
 import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.User;
 import com.idega.user.event.ChangeClassEvent;
@@ -36,6 +35,7 @@ import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.CreateUser;
 import com.idega.user.presentation.MassMovingWindowPlugin;
 import com.idega.user.presentation.RoleMastersWindow;
+import com.idega.util.CoreConstants;
 
 /**
  * <p>
@@ -86,7 +86,7 @@ public class Toolbar extends Page implements IWBrowserView {
 	}
 
 	public String getBundleIdentifier() {
-		return UserConstants.IW_BUNDLE_IDENTIFIER;
+		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
 
 	public void setControlEventModel(IWPresentationEvent model) {

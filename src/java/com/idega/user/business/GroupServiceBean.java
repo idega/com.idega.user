@@ -30,6 +30,7 @@ import com.idega.user.bean.GroupsManagerBean;
 import com.idega.user.data.User;
 import com.idega.user.presentation.group.GroupInfoViewerBlock;
 import com.idega.user.presentation.group.GroupUsersViewerBlock;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.webface.WFUtil;
 
@@ -89,7 +90,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		}
 		
 		String engineScript = new StringBuffer(server).append("/dwr/engine.js").toString();
-		String interfaceScript = new StringBuffer(server).append(UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT).toString();
+		String interfaceScript = new StringBuffer(server).append(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT).toString();
 		
 		return (existsFileOnRemoteServer(engineScript) && existsFileOnRemoteServer(interfaceScript));
 	}
@@ -467,6 +468,6 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	}
 	
 	protected String getBundleIdentifier() {
-		return UserConstants.IW_BUNDLE_IDENTIFIER;
+		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
 }

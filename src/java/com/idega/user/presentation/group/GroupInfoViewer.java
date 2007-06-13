@@ -9,19 +9,20 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.user.business.UserConstants;
+import com.idega.util.CoreConstants;
 import com.idega.webface.WFUtil;
 
 public class GroupInfoViewer extends GroupViewer {
 	
 	private boolean showName = true;
-	private boolean showHomePage = false;
-	private boolean showDescription = false;
-	private boolean showExtraInfo = false;
-	private boolean showShortName = false;
-	private boolean showPhone = false;
-	private boolean showFax = false;
-	private boolean showEmails = false;
-	private boolean showAddress = false;
+	private boolean showHomePage = true;
+	private boolean showDescription = true;
+	private boolean showExtraInfo = true;
+	private boolean showShortName = true;
+	private boolean showPhone = true;
+	private boolean showFax = true;
+	private boolean showEmails = true;
+	private boolean showAddress = true;
 	private boolean showEmptyFields = true;
 	private boolean showLabels = true;
 	
@@ -109,9 +110,9 @@ public class GroupInfoViewer extends GroupViewer {
 			files.add(iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
 		}
 		//	DWR
-		files.add(UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+		files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		files.add("/dwr/engine.js");
-		addScriptFiles(iwc, files, true);	//	TODO
+		addScriptFiles(iwc, files, false);
 
 		//	Actions to be performed on page loaded event
 		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {getSelectedGroups('");
@@ -169,7 +170,7 @@ public class GroupInfoViewer extends GroupViewer {
 	}
 
 	public String getBundleIdentifier()	{
-		return UserConstants.IW_BUNDLE_IDENTIFIER;
+		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
 
 }

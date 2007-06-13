@@ -15,9 +15,9 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.TextInput;
-import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -486,7 +486,7 @@ public class UserLoginTab extends UserTab {
 		IWBundle iwb = getBundle(iwc);
 		Help help = new Help();
 		Image helpImage = iwb.getImage("help.gif");
-		help.setHelpTextBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
+		help.setHelpTextBundle(CoreConstants.IW_USER_BUNDLE_IDENTIFIER);
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;

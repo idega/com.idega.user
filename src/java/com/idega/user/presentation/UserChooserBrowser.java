@@ -13,7 +13,7 @@ import com.idega.builder.business.BuilderConstants;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.ui.AbstractChooser;
-import com.idega.user.business.UserConstants;
+import com.idega.util.CoreConstants;
 
 
 public class UserChooserBrowser extends AbstractChooser {
@@ -40,7 +40,7 @@ public class UserChooserBrowser extends AbstractChooser {
     empty();
     IWBundle iwb = null;
     if (this.isUserBundle) {
-    	iwb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
+    	iwb = iwc.getIWMainApplication().getBundle(CoreConstants.IW_USER_BUNDLE_IDENTIFIER);
     }
     else {
     	iwb = iwc.getIWMainApplication().getBundle(BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);

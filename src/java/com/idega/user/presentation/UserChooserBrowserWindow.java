@@ -23,8 +23,8 @@ import com.idega.presentation.ui.StyledAbstractChooserWindow;
 import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
-import com.idega.user.business.UserConstants;
 import com.idega.user.helpers.UserHelper;
+import com.idega.util.CoreConstants;
 
 public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
   
@@ -148,6 +148,6 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
   }
   
   public String getBundleIdentifier(){
-    return UserConstants.IW_BUNDLE_IDENTIFIER;
+    return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
   }
 }

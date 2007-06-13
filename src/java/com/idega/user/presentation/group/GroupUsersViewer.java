@@ -9,6 +9,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.user.business.UserConstants;
+import com.idega.util.CoreConstants;
 import com.idega.webface.WFUtil;
 
 public class GroupUsersViewer extends GroupViewer {
@@ -25,7 +26,7 @@ public class GroupUsersViewer extends GroupViewer {
 	private boolean showArea = true;
 	private boolean showBeganWork = true;
 	private boolean showImage = true;
-	private boolean showLabels = false;
+	private boolean showLabels = true;
 	
 	private String imageWidth = "100";
 	private String imageHeight = "150";
@@ -119,9 +120,9 @@ public class GroupUsersViewer extends GroupViewer {
 			files.add(iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
 		}
 		//	DWR
-		files.add(UserConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+		files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		files.add("/dwr/engine.js");
-		addScriptFiles(iwc, files, /*instanceId == null*/true);	//	TODO
+		addScriptFiles(iwc, files, false);
 		
 		//	Actions to be performed on page loaded event
 		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {getSelectedUsers('");
@@ -191,7 +192,7 @@ public class GroupUsersViewer extends GroupViewer {
 	}
 	
 	public String getBundleIdentifier()	{
-		return UserConstants.IW_BUNDLE_IDENTIFIER;
+		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
 
 	public void setShowLabels(boolean showLabels) {

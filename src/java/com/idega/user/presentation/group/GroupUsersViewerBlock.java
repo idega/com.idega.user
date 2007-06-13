@@ -13,7 +13,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.ListItem;
 import com.idega.presentation.text.Lists;
 import com.idega.presentation.text.Text;
-import com.idega.user.business.UserConstants;
+import com.idega.util.CoreConstants;
 
 public class GroupUsersViewerBlock extends Block {
 
@@ -223,7 +223,7 @@ public class GroupUsersViewerBlock extends Block {
 	}
 	
 	public String getBundleIdentifier()	{
-		return UserConstants.IW_BUNDLE_IDENTIFIER;
+		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
 
 	public List<GroupMembersDataBean> getMembersData() {

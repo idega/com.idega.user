@@ -12,6 +12,7 @@ import com.idega.user.business.UserConstants;
 import com.idega.user.presentation.group.GroupInfoViewer;
 import com.idega.user.presentation.group.GroupUsersViewer;
 import com.idega.user.presentation.group.GroupsChooser;
+import com.idega.util.CoreConstants;
 
 public class GroupsHandler implements ICPropertyHandler {
 
@@ -29,7 +30,7 @@ public class GroupsHandler implements ICPropertyHandler {
 		if (className != null) {
 			String message = "Loading...";
 			try{
-				IWResourceBundle iwrb =  iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+				IWResourceBundle iwrb =  iwc.getIWMainApplication().getBundle(CoreConstants.IW_USER_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
 				message = iwrb.getLocalizedString("loading", message);
 			} catch (Exception e) {}
 			

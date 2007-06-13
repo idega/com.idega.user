@@ -37,11 +37,11 @@ import com.idega.user.app.ToolbarElement;
 import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
-import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.GroupTypeConstants;
 import com.idega.user.event.CreateGroupEvent;
+import com.idega.util.CoreConstants;
 
 /**
  *
@@ -337,7 +337,7 @@ public class CreateGroupWindow extends StyledIWAdminWindow implements StatefullP
 	}
 	
 	public String getBundleIdentifier() {
-		return UserConstants.IW_BUNDLE_IDENTIFIER;
+		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
 	
 	public Class getPresentationStateClass() {

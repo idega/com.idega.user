@@ -6,14 +6,14 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.AbstractChooser;
-import com.idega.user.business.UserConstants;
+import com.idega.util.CoreConstants;
 
 /**
  * 
  * @author <a href="valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  *
- * Last modified: $Date: 2007/06/12 17:35:10 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/13 12:53:12 $ by $Author: valdas $
  *
  */
 public class GroupsChooser extends AbstractChooser {
@@ -45,7 +45,7 @@ public class GroupsChooser extends AbstractChooser {
 	}
 	
 	public String getBundleIdentifier()	{
-		return UserConstants.IW_BUNDLE_IDENTIFIER;
+		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
 
 	public void setBean(PropertiesBean bean) {

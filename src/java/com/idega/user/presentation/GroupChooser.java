@@ -7,7 +7,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.AbstractChooser;
 import com.idega.presentation.ui.Form;
 import com.idega.user.business.GroupTreeNode;
-import com.idega.user.business.UserConstants;
+import com.idega.util.CoreConstants;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -56,7 +56,7 @@ public class GroupChooser extends AbstractChooser {
   public void main(IWContext iwc){
     empty();
     if (this.chooserButtonImage == null) {
-		IWBundle iwb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
+		IWBundle iwb = iwc.getIWMainApplication().getBundle(CoreConstants.IW_USER_BUNDLE_IDENTIFIER);
 		setChooseButtonImage(iwb.getImage("magnifyingglass.gif","Choose"));
     }
     	
@@ -78,7 +78,7 @@ public class GroupChooser extends AbstractChooser {
   }
   
   public String getBundleIdentifier(){
-    return UserConstants.IW_BUNDLE_IDENTIFIER;
+    return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
   }
 
 	/* (non-Javadoc)

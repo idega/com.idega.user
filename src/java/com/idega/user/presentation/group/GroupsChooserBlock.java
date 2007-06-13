@@ -26,7 +26,7 @@ import com.idega.presentation.ui.RadioButton;
 import com.idega.presentation.ui.RadioGroup;
 import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.util.AbstractChooserBlock;
-import com.idega.user.business.UserConstants;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 
 public class GroupsChooserBlock extends AbstractChooserBlock {
@@ -283,7 +283,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 	}
 	
 	public String getBundleIdentifier()	{
-		return UserConstants.IW_BUNDLE_IDENTIFIER;
+		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
 
 	@Override

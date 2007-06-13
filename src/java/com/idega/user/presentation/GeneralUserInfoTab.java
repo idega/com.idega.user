@@ -22,12 +22,12 @@ import com.idega.presentation.ui.DateInput;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
-import com.idega.user.business.UserConstants;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.user.util.ICUserConstants;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -255,7 +255,7 @@ public class GeneralUserInfoTab extends UserTab {
 		IWBundle iwb = getBundle(iwc);
 		Help help = new Help();
 		Image helpImage = iwb.getImage("help.gif");
-		help.setHelpTextBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
+		help.setHelpTextBundle(CoreConstants.IW_USER_BUNDLE_IDENTIFIER);
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;
