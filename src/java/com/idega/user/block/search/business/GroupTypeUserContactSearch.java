@@ -1,5 +1,5 @@
 /*
- * $Id: GroupTypeUserContactSearch.java,v 1.4 2007/05/08 16:35:49 eiki Exp $
+ * $Id: GroupTypeUserContactSearch.java,v 1.5 2007/06/14 18:58:05 civilis Exp $
  * Created on Jan 19, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -28,13 +28,13 @@ import com.idega.user.data.Group;
 
 /**
  * 
- *  Last modified: $Date: 2007/05/08 16:35:49 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/06/14 18:58:05 $ by $Author: civilis $
  * 
  * This class implements the Searchplugin interface and can therefore be used in a Search block (com.idega.core.search).<br>
  * It searches for groups by their type and returns contact information for the users in the groups that it finds<br>
  * To use it simply register this class as a iw.searchplugin component in a bundle.
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class GroupTypeUserContactSearch extends UserContactSearch implements SearchPlugin{
 
@@ -54,6 +54,11 @@ public class GroupTypeUserContactSearch extends UserContactSearch implements Sea
 	public String getSearchName() {
 		IWBundle bundle = this.iwma.getBundle(IW_BUNDLE_IDENTIFIER);
 		return bundle.getResourceBundle(IWContext.getInstance()).getLocalizedString(SEARCH_NAME_LOCALIZABLE_KEY,"Contacts by group type");
+	}
+	
+	@Override
+	public String getSearchIdentifier() {
+		return iwma.getBundle(IW_BUNDLE_IDENTIFIER).getComponentName(this.getClass());
 	}
 
 	/* (non-Javadoc)
