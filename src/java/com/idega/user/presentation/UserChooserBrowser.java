@@ -80,5 +80,8 @@ public class UserChooserBrowser extends AbstractChooser {
     return link;
   }*/
 
-  
+	@Override
+	protected String getChooserHelperVarName() {
+		  return "userbrowser_chooser_helper";
+	}
 }

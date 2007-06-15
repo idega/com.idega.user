@@ -101,4 +101,9 @@ public class GroupChooser extends AbstractChooser {
 	public void setToSubmitParentFormOnChange(){
 		this.submitForm = true;
 	}
+	
+	@Override
+	protected String getChooserHelperVarName() {
+		  return "group_chooser_helper";
+	}
 }

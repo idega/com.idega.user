@@ -62,4 +62,8 @@ public class UserChooser extends AbstractChooser {
 		this.useUserPks = true;	
 	}
 
+	@Override
+	protected String getChooserHelperVarName() {
+		  return "user_chooser_helper";
+	}
 }

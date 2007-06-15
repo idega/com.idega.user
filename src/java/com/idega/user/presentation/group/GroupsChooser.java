@@ -11,9 +11,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  *
- * Last modified: $Date: 2007/06/13 12:53:12 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/15 13:19:27 $ by $Author: civilis $
  *
  */
 public class GroupsChooser extends AbstractChooser {
@@ -52,4 +52,8 @@ public class GroupsChooser extends AbstractChooser {
 		this.bean = bean;
 	}
 	
+	@Override
+	protected String getChooserHelperVarName() {
+		  return "groups_chooser_helper";
+	}
 }
