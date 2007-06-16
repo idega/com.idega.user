@@ -1,0 +1,35 @@
+package com.idega.user.business;
+
+
+import com.idega.business.IBOService;
+import java.util.List;
+import com.idega.bean.GroupPropertiesBean;
+import java.rmi.RemoteException;
+import com.idega.bean.UserPropertiesBean;
+
+public interface GroupService extends IBOService {
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#getTopGroupNodes
+	 */
+	public List getTopGroupNodes() throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#getGroupsTree
+	 */
+	public List getGroupsTree(String login, String password) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#canUseRemoteServer
+	 */
+	public boolean canUseRemoteServer(String server) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#getGroupsInfo
+	 */
+	public List getGroupsInfo(GroupPropertiesBean bean) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#getUsersInfo
+	 */
+	public List getUsersInfo(UserPropertiesBean bean) throws RemoteException;
+}

@@ -3,13 +3,10 @@
 
 <dwr>
 	<allow>
-		<create creator="ibo" javascript="UserSearchEngine" scope="application">
-			<param name="class" value="com.idega.user.business.search.UserSearchEngine" />
-		</create>
-		
 		<create creator="ibo" javascript="GroupService" scope="application">
 			<param name="class" value="com.idega.user.business.GroupService" />
 		</create>
+		
 		<convert converter="bean" match="com.idega.bean.GroupPropertiesBean" />
 		<convert converter="bean" match="com.idega.bean.UserPropertiesBean" />
 		<convert converter="bean" match="com.idega.bean.GroupDataBean" />
