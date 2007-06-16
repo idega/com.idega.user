@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://www.getahead.ltd.uk/dwr//dwr20.dtd">
+
+<dwr>
+	<allow>
+		<create creator="ibo" javascript="UserSearchEngine" scope="application">
+			<param name="class" value="com.idega.user.business.search.UserSearchEngine" />
+		</create>
+		
+		<create creator="ibo" javascript="GroupService" scope="application">
+			<param name="class" value="com.idega.user.business.GroupService" />
+		</create>
+		<convert converter="bean" match="com.idega.bean.GroupPropertiesBean" />
+		<convert converter="bean" match="com.idega.bean.UserPropertiesBean" />
+		<convert converter="bean" match="com.idega.bean.GroupDataBean" />
+		<convert converter="bean" match="com.idega.bean.GroupMembersDataBean" />
+		<convert converter="bean" match="com.idega.bean.GroupMemberDataBean" />
+		<convert converter="bean" match="com.idega.bean.AddressData" />
+		<convert converter="bean" match="com.idega.user.business.GroupNode" />
+	</allow>
+	<signatures>
+		<![CDATA[
+			import com.idega.bean.GroupPropertiesBean;
+			import com.idega.bean.UserPropertiesBean;
+
+			GroupService.getGroupsInfo(GroupPropertiesBean);
+			GroupService.getUsersInfo(UserPropertiesBean);
+  		]]>
+	</signatures>
+</dwr>
