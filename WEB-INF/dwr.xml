@@ -9,6 +9,7 @@
 		
 		<convert converter="bean" match="com.idega.bean.GroupPropertiesBean" />
 		<convert converter="bean" match="com.idega.bean.UserPropertiesBean" />
+		<convert converter="bean" match="com.idega.bean.DataBean" />
 		<convert converter="bean" match="com.idega.bean.GroupDataBean" />
 		<convert converter="bean" match="com.idega.bean.GroupMembersDataBean" />
 		<convert converter="bean" match="com.idega.bean.GroupMemberDataBean" />
