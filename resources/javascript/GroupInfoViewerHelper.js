@@ -145,7 +145,7 @@ function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 		}
 		//	Emails
 		if (properties.showEmails) {
-			var emailsContainer = getEmailsContainer(groupsInfo[i].emailAddresses);
+			var emailsContainer = getEmailsContainer(groupsInfo[i].emailsAddresses);
 			if (properties.showEmptyFields || emailsContainer != null) {
 				var mainEmailsContainer = document.createElement('div');
 				mainEmailsContainer.appendChild(document.createTextNode(properties.localizedText[6]));

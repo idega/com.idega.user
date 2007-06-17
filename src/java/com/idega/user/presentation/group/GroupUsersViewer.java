@@ -14,22 +14,31 @@ import com.idega.webface.WFUtil;
 
 public class GroupUsersViewer extends GroupViewer {
 	
-	private boolean showGroupName = true;
-	private boolean showTitle = true;
-	private boolean showAge = true;
+	private boolean showGroupName = false;
+	private boolean showTitle = false;
+	private boolean showAge = false;
 	private boolean showWorkPhone = true;
 	private boolean showHomePhone = true;
 	private boolean showMobilePhone = true;
 	private boolean showEmails = true;
-	private boolean showEducation = true;
-	private boolean showSchool = true;
-	private boolean showArea = true;
-	private boolean showBeganWork = true;
+	private boolean showEducation = false;
+	private boolean showSchool = false;
+	private boolean showArea = false;
+	private boolean showBeganWork = false;
 	private boolean showImage = true;
-	private boolean showLabels = true;
+	private boolean showLabels = false;
+	private boolean showAddress = true;
+	private boolean showCompanyAddress = false;
+	private boolean showExtraInfo = false;
+	private boolean showDescription = false;
+	private boolean showDateOfBirth = false;
+	private boolean showJob = false;
+	private boolean showWorkplace = false;
+	private boolean showStatus = true;
 	
-	private String imageWidth = "100";
-	private String imageHeight = "150";
+	
+	private String imageWidth = "70";
+	private String imageHeight = "90";
 	
 	public GroupUsersViewer() {
 //		setCacheable(getCacheKey());
@@ -88,6 +97,14 @@ public class GroupUsersViewer extends GroupViewer {
 		properties.setShowBeganWork(showBeganWork);
 		properties.setShowImage(showImage);
 		properties.setShowLabels(showLabels);
+		properties.setShowAddress(showAddress);
+		properties.setShowExtraInfo(showExtraInfo);
+		properties.setShowDescription(showDescription);
+		properties.setShowDateOfBirth(showDateOfBirth);
+		properties.setShowJob(showJob);
+		properties.setShowCompanyAddress(showCompanyAddress);
+		properties.setShowWorkplace(showWorkplace);
+		properties.setShowStatus(showStatus);
 		
 		properties.setRemoteMode(isRemoteMode());
 		
@@ -115,10 +132,6 @@ public class GroupUsersViewer extends GroupViewer {
 		List<String> files = new ArrayList<String>();
 		//	"Helpers"
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/UserInfoViewerHelper.js"));
-		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
-		if (isAddJavaScriptForGroupsTree()) {
-			files.add(iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
-		}
 		//	DWR
 		files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		files.add("/dwr/engine.js");
@@ -197,6 +210,38 @@ public class GroupUsersViewer extends GroupViewer {
 
 	public void setShowLabels(boolean showLabels) {
 		this.showLabels = showLabels;
+	}
+
+	public void setShowAddress(boolean showAddress) {
+		this.showAddress = showAddress;
+	}
+
+	public void setShowCompanyAddress(boolean showCompanyAddress) {
+		this.showCompanyAddress = showCompanyAddress;
+	}
+
+	public void setShowDateOfBirth(boolean showDateOfBirth) {
+		this.showDateOfBirth = showDateOfBirth;
+	}
+
+	public void setShowDescription(boolean showDescription) {
+		this.showDescription = showDescription;
+	}
+
+	public void setShowExtraInfo(boolean showExtraInfo) {
+		this.showExtraInfo = showExtraInfo;
+	}
+
+	public void setShowJob(boolean showJob) {
+		this.showJob = showJob;
+	}
+
+	public void setShowStatus(boolean showStatus) {
+		this.showStatus = showStatus;
+	}
+
+	public void setShowWorkplace(boolean showWorkplace) {
+		this.showWorkplace = showWorkplace;
 	}
 	
 }

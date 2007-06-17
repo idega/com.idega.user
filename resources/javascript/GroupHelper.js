@@ -23,13 +23,13 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
 	}
 	$$('input.groupInfoChooserRadioStyle').each(
 		function(element) {
-			registerEvent(element, 'click', function() {
+			element.addEvent('click', function() {
 				if (element.value) {
 					var values = element.value.split('@');
 					if (values.length = 2) {
-						manageConnectionType('local' == values[0], values[1], noGroupsMessage, selectedGroups);
-						removeAllAdvancedProperties();	//	Because changing connection type
-						addAdvancedProperty('connection', values[0]);
+						manageConnectionType('local' == values[0], values[1], noGroupsMessage, selectedGroups, styleClass);
+						groups_chooser_helper.removeAllAdvancedProperties();	//	Because changing connection type
+						groups_chooser_helper.addAdvancedProperty('connection', values[0]);
 					}
 				}
 			});
@@ -38,19 +38,19 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
     
     $$('span.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(	//	These actions needed for Builder, define your own if need
 		function(element) {
-			registerEvent(element, 'click', function() {
+			element.addEvent('click', function() {
 				selectGroup(element);
 				checkOtherProperties(element);
 			});
 			if (NODE_ON_CLICK_ACTION != null){
-				registerEvent(element, 'click', NODE_ON_CLICK_ACTION);
+				element.addEvent('click', NODE_ON_CLICK_ACTION);
 			}
     	}
     );
     if (styleClass != null && styleClass != GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS) {	//	We don't want to override default actions
 	    $$('span.' + styleClass).each(	//	These are custom actions
 			function(element) {
-				//registerEvent(element, 'click', customFunction);	<- example
+				//element.addEvent('click', customFunction);	<- example
 	    	}
 	    );
     }
@@ -60,7 +60,7 @@ function checkOtherProperties(clickedElement) {
 	//	Inputs' values (connection parameters)
 	$$('input.groupConnectionChooserInputStyle').each(
 		function(element) {
-			addAdvancedProperty(element.name, element.value);
+			groups_chooser_helper.addAdvancedProperty(element.name, element.value);
 		}
 	);
 	
@@ -77,7 +77,7 @@ function checkOtherProperties(clickedElement) {
     	if (radio.value) {
 			var values = radio.value.split('@');
 			if (values.length = 2) {
-				addAdvancedProperty('connection', values[0]);
+				groups_chooser_helper.addAdvancedProperty('connection', values[0]);
 			}
 		}
     }
@@ -93,15 +93,15 @@ function checkOtherProperties(clickedElement) {
     );
     for (var i = 0; i < otherGroupsNodes.length; i++) {
     	if ('bold' == otherGroupsNodes[i].style.fontWeight) {
-    		var advancedProperty = getAdvancedProperty(UNIQUE_IDS_ID);
+    		var advancedProperty = groups_chooser_helper.getAdvancedProperty(UNIQUE_IDS_ID);
 			if (advancedProperty == null) {
-				addAdvancedProperty(UNIQUE_IDS_ID, otherGroupsNodes[i].id);
+				groups_chooser_helper.addAdvancedProperty(UNIQUE_IDS_ID, otherGroupsNodes[i].id);
 			}
 			else {
 				var allIds = advancedProperty.value.split(',');
 				if (!existsElementInArray(allIds, otherGroupsNodes[i].id)) {				//	This node must be selected
 					var newValues = advancedProperty.value + ',' + otherGroupsNodes[i].id;	//	Adding new id
-					addAdvancedProperty(UNIQUE_IDS_ID, newValues);
+					groups_chooser_helper.addAdvancedProperty(UNIQUE_IDS_ID, newValues);
 				}
     		}
     	}
@@ -132,10 +132,10 @@ function selectGroup(element) {
 		element.style.fontWeight = 'normal';
 	}
 	
-	var advancedProperty = getAdvancedProperty(UNIQUE_IDS_ID);
+	var advancedProperty = groups_chooser_helper.getAdvancedProperty(UNIQUE_IDS_ID);
 	if (advancedProperty == null) {
 		if (addId) {
-			addAdvancedProperty(UNIQUE_IDS_ID, element.id);
+			groups_chooser_helper.addAdvancedProperty(UNIQUE_IDS_ID, element.id);
 		}
 	}
 	else {
@@ -150,14 +150,14 @@ function selectGroup(element) {
 				newValues = allIds[i];
 				if (i + 1 < allIds.length) {
 					newValues += ',';
-				} 
+				}
 			}
 		}
-		addAdvancedProperty(UNIQUE_IDS_ID, newValues);
+		groups_chooser_helper.addAdvancedProperty(UNIQUE_IDS_ID, newValues);
 	}
 }
 
-function manageConnectionType(useLocal, id, noGroupsMessage, selectedGroups) {
+function manageConnectionType(useLocal, id, noGroupsMessage, selectedGroups, styleClass) {
 	var connection = $('connectionData');
 	if (connection == null) {
 		return;
@@ -165,7 +165,7 @@ function manageConnectionType(useLocal, id, noGroupsMessage, selectedGroups) {
 	var displayValue = 'inline';
 	if (useLocal) {
 		displayValue = 'none';
-		loadLocalTree(id, noGroupsMessage, selectedGroups);
+		loadLocalTree(id, noGroupsMessage, selectedGroups, styleClass);
 	}
 	connection.style.display = displayValue;
 }
@@ -201,9 +201,9 @@ function getGroupsTree(serverId, loginId, passwordId, id, messages, selectedGrou
 		server = SERVER_START + server;
 	}
 	
-	addAdvancedProperty(serverInput.name, server);
-	addAdvancedProperty(loginInput.name, login);
-	addAdvancedProperty(passwordInput.name, password);
+	groups_chooser_helper.addAdvancedProperty(serverInput.name, server);
+	groups_chooser_helper.addAdvancedProperty(loginInput.name, login);
+	groups_chooser_helper.addAdvancedProperty(passwordInput.name, password);
 	
 	getGroupsWithValues(messages[4], server, login, password, id, messages[5], messages[6], messages[7], false, selectedGroups, styleClass);
 }

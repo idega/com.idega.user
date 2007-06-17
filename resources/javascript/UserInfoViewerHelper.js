@@ -107,15 +107,27 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 			var users = document.createElement('ul');
 			group.appendChild(users);
 			for (var j = 0; j < members.length; j++) {
-				var user = document.createElement('li');
-				users.appendChild(user);
+				var groupMember = document.createElement('li');
+				users.appendChild(groupMember);
+				
+				var user = document.createElement('div');
+				groupMember.appendChild(user);
 				
 				//	Image
 				if (properties.showImage) {
-					if (members[j].imageUrl != null) {
+					var imageSrc = members[j].imageUrl;
+					if (imageSrc == null) {
+						imageSrc = properties.defaultPhoto;	//	Default 'photo'
+					}
+					else {
+						if (properties.remoteMode) {
+							imageSrc = properties.server + imageSrc;	//	Setting full path
+						}
+					}
+					if (imageSrc != null) {
 						var imageContainer = document.createElement('div');
 						var image = document.createElement('img');
-						image.setAttribute('src', properties.server + members[j].imageUrl);
+						image.setAttribute('src', imageSrc);
 						if (properties.imageWidth != null) {
 							image.setAttribute('width', properties.imageWidth);
 						}

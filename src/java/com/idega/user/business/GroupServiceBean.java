@@ -49,7 +49,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	/**
 	 * Returns tree of Groups
 	 */
-	public List<GroupNode> getTopGroupNodes(){
+	public List<GroupNode> getTopGroupNodes() {
 		return helper.getTopGroupNodes();
 	}
 	
@@ -93,98 +93,6 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		String interfaceScript = new StringBuffer(server).append(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT).toString();
 		
 		return (existsFileOnRemoteServer(engineScript) && existsFileOnRemoteServer(interfaceScript));
-	}
-	
-	/**
-	 * Logs in user
-	 * @param iwc
-	 * @param login
-	 * @param password
-	 * @return
-	 */
-	private boolean logInUser(IWContext iwc, String login, String password) {
-		if (iwc == null || login == null || password == null) {
-			return false;
-		}
-
-		return getLoginBean(iwc).logInUser(iwc.getRequest(), login, password);
-	}
-	
-	/**
-	 * Checks if file exists on server
-	 * @param urlToFile
-	 * @return
-	 */
-	private boolean existsFileOnRemoteServer(String urlToFile) {
-		InputStream streamToFile = null;
-		
-		try {
-			URL dwr = new URL(urlToFile);
-			streamToFile = dwr.openStream();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		
-		if (streamToFile == null) {
-			return false;
-		}
-		try {
-			streamToFile.close();
-		} catch (Exception e) {}
-		
-		return true;
-	}
-	
-	/**
-	 * Checks if current (logged) user is the same user that is making request
-	 * @param iwc
-	 * @param userName
-	 * @return
-	 */
-	private boolean isLoggedUser(IWContext iwc, String userName) {
-		if (iwc == null || userName == null) {
-			return false;
-		}
-		
-		//	Geting current user
-		User current = null;
-		try {
-			current = iwc.getCurrentUser();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		if (current == null) {	//	Not logged
-			return false;
-		}
-		
-		LoginTableHome loginHome = getLoginHome();
-		if (loginHome == null) {
-			return false;
-		}
-		
-		int userId = 0;
-		try {
-			userId = Integer.valueOf(current.getId());
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			return false;
-		}
-		
-		//	Checking if current user is making request
-		LoginTable login = null;
-		try {
-			login = loginHome.findLoginForUser(userId);
-		} catch (FinderException e) {
-			e.printStackTrace();
-			return false;
-		}
-		if (userName.equals(login.getUserLogin())) {
-			return true;
-		}
-		
-		return false;
 	}
 	
 	/**
@@ -415,6 +323,98 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	}
 	
 	/** Private methods starts **/
+	/**
+	 * Logs in user
+	 * @param iwc
+	 * @param login
+	 * @param password
+	 * @return
+	 */
+	private boolean logInUser(IWContext iwc, String login, String password) {
+		if (iwc == null || login == null || password == null) {
+			return false;
+		}
+
+		return getLoginBean(iwc).logInUser(iwc.getRequest(), login, password);
+	}
+	
+	/**
+	 * Checks if file exists on server
+	 * @param urlToFile
+	 * @return
+	 */
+	private boolean existsFileOnRemoteServer(String urlToFile) {
+		InputStream streamToFile = null;
+		
+		try {
+			URL dwr = new URL(urlToFile);
+			streamToFile = dwr.openStream();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		if (streamToFile == null) {
+			return false;
+		}
+		try {
+			streamToFile.close();
+		} catch (Exception e) {}
+		
+		return true;
+	}
+	
+	/**
+	 * Checks if current (logged) user is the same user that is making request
+	 * @param iwc
+	 * @param userName
+	 * @return
+	 */
+	private boolean isLoggedUser(IWContext iwc, String userName) {
+		if (iwc == null || userName == null) {
+			return false;
+		}
+		
+		//	Geting current user
+		User current = null;
+		try {
+			current = iwc.getCurrentUser();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		if (current == null) {	//	Not logged
+			return false;
+		}
+		
+		LoginTableHome loginHome = getLoginHome();
+		if (loginHome == null) {
+			return false;
+		}
+		
+		int userId = 0;
+		try {
+			userId = Integer.valueOf(current.getId());
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		//	Checking if current user is making request
+		LoginTable login = null;
+		try {
+			login = loginHome.findLoginForUser(userId);
+		} catch (FinderException e) {
+			e.printStackTrace();
+			return false;
+		}
+		if (userName.equals(login.getUserLogin())) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	private GroupsManagerBean getBean() {
 		Object o = WFUtil.getBeanInstance(UserConstants.GROUPS_MANAGER_BEAN_ID);
 		if (!(o instanceof GroupsManagerBean)) {

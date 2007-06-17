@@ -18,13 +18,13 @@ public class GroupInfoViewer extends GroupViewer {
 	private boolean showHomePage = true;
 	private boolean showDescription = true;
 	private boolean showExtraInfo = true;
-	private boolean showShortName = true;
+	private boolean showShortName = false;
 	private boolean showPhone = true;
 	private boolean showFax = true;
 	private boolean showEmails = true;
 	private boolean showAddress = true;
-	private boolean showEmptyFields = true;
-	private boolean showLabels = true;
+	private boolean showEmptyFields = false;
+	private boolean showLabels = false;
 	
 	public GroupInfoViewer() {
 		//setCacheable(getCacheKey());
@@ -105,10 +105,6 @@ public class GroupInfoViewer extends GroupViewer {
 		List<String> files = new ArrayList<String>();
 		//	"Helpers"
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
-		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
-		if (isAddJavaScriptForGroupsTree()) {
-			files.add(iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
-		}
 		//	DWR
 		files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		files.add("/dwr/engine.js");

@@ -55,16 +55,6 @@ public class GroupInfoViewerBlock extends Block {
 		for (int i = 0; i < groupsData.size(); i++) {
 			bean = groupsData.get(i);
 			
-			System.out.println("Name: " + bean.getName());
-			System.out.println("Short name: " + bean.getShortName());
-			System.out.println("Address: " + bean.getAddress());
-			System.out.println("Phone: " + bean.getPhoneNumber());
-			System.out.println("Fax: " + bean.getFaxNumber());
-			System.out.println("Home page: " + bean.getHomePageUrl());
-			System.out.println("Emails: " + bean.getEmailAddresses());
-			System.out.println("Description: " + bean.getDescription());
-			System.out.println("Extra info: " + bean.getExtraInfo());
-			
 			group = new ListItem();
 			
 			//	Name
@@ -148,7 +138,7 @@ public class GroupInfoViewerBlock extends Block {
 				
 			//	Emails
 			if (showEmails) {
-				Layer emails = getEmails(bean.getEmailAddresses());
+				Layer emails = getEmails(bean.getEmailsAddresses());
 				if (showEmptyFields || emails != null) {
 					Layer emailContainer = new Layer();
 					emailContainer.add(new Text(iwrb.getLocalizedString("group_email", "Email: ")));

@@ -11,14 +11,15 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  *
- * Last modified: $Date: 2007/06/15 13:19:27 $ by $Author: civilis $
+ * Last modified: $Date: 2007/06/17 10:50:30 $ by $Author: valdas $
  *
  */
 public class GroupsChooser extends AbstractChooser {
-		
+	
 	private PropertiesBean bean = null;
+	private String chooserObjectInJavaScript = "groups_chooser_helper";
 	
 	public GroupsChooser(String instanceId, String method, String actionAfterPropertySaved) {
 		super(false, false, actionAfterPropertySaved);
@@ -29,6 +30,8 @@ public class GroupsChooser extends AbstractChooser {
 	
 	public PresentationObject getChooser(IWContext iwc, IWBundle bundle) {
 		Layer chooser = new Layer();
+		
+		add(new StringBuffer("<script type=\"text/javascript\">var ").append(getChooserObjectInJavaScript()).append(" = new ChooserHelper();</script>").toString());
 		
 		GroupsChooserBlock groupsChooser = new GroupsChooserBlock();
 		groupsChooser.setAddExtraJavaScript(false);
@@ -52,8 +55,16 @@ public class GroupsChooser extends AbstractChooser {
 		this.bean = bean;
 	}
 	
+	public String getChooserObjectInJavaScript() {
+		return chooserObjectInJavaScript;
+	}
+
+	public void setChooserObjectInJavaScript(String chooserObjectInJavaScript) {
+		this.chooserObjectInJavaScript = chooserObjectInJavaScript;
+	}
+
 	@Override
 	protected String getChooserHelperVarName() {
-		  return "groups_chooser_helper";
+		  return getChooserObjectInJavaScript();
 	}
 }
