@@ -9,6 +9,7 @@ import javax.ejb.FinderException;
 
 import org.jdom.Document;
 
+import com.idega.bean.AdvancedProperty;
 import com.idega.bean.GroupDataBean;
 import com.idega.bean.GroupMembersDataBean;
 import com.idega.bean.GroupPropertiesBean;
@@ -154,23 +155,69 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		}
 		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
 		List<String> localizedText = new ArrayList<String>();
-		
-		localizedText.add(iwrb.getLocalizedString("user_name", "Name: "));					//	0
-		localizedText.add(iwrb.getLocalizedString("user_title", "Title: "));				//	1
-		localizedText.add(iwrb.getLocalizedString("user_age", "Age: "));					//	2
-		localizedText.add(iwrb.getLocalizedString("user_workphone", "Workphone: "));		//	3
-		localizedText.add(iwrb.getLocalizedString("user_homephone", "Homephone: "));		//	4
-		localizedText.add(iwrb.getLocalizedString("user_mobilephone", "Mobilephone: "));	//	5
-		localizedText.add(iwrb.getLocalizedString("group_email", "Email: "));				//	6
-		localizedText.add(iwrb.getLocalizedString("user_education", "Education: "));		//	7
-		localizedText.add(iwrb.getLocalizedString("user_school", "School: "));				//	8
-		localizedText.add(iwrb.getLocalizedString("user_area", "Area: "));					//	9
-		localizedText.add(iwrb.getLocalizedString("user_began_work", "Began work: "));		//	10
-		localizedText.add(iwrb.getLocalizedString("user_status", "Status: "));				//	11
-		localizedText.add(iwrb.getLocalizedString("user_address", "Address: "));			//	12
-		
+		localizedText.add(iwrb.getLocalizedString("user_name", "Name: "));							//	0
+		localizedText.add(iwrb.getLocalizedString("user_title", "Title: "));						//	1
+		localizedText.add(iwrb.getLocalizedString("user_age", "Age: "));							//	2
+		localizedText.add(iwrb.getLocalizedString("user_workphone", "Workphone: "));				//	3
+		localizedText.add(iwrb.getLocalizedString("user_homephone", "Homephone: "));				//	4
+		localizedText.add(iwrb.getLocalizedString("user_mobilephone", "Mobilephone: "));			//	5
+		localizedText.add(iwrb.getLocalizedString("group_email", "Email: "));						//	6
+		localizedText.add(iwrb.getLocalizedString("user_education", "Education: "));				//	7
+		localizedText.add(iwrb.getLocalizedString("user_school", "School: "));						//	8
+		localizedText.add(iwrb.getLocalizedString("user_area", "Area: "));							//	9
+		localizedText.add(iwrb.getLocalizedString("user_began_work", "Began work: "));				//	10
+		localizedText.add(iwrb.getLocalizedString("user_status", "Status: "));						//	11
+		localizedText.add(iwrb.getLocalizedString("user_address", "Address: "));					//	12
+		localizedText.add(iwrb.getLocalizedString("home", "hm"));									//	13
+		localizedText.add(iwrb.getLocalizedString("work", "wrk"));									//	14
+		localizedText.add(iwrb.getLocalizedString("mobile", "mbl"));								//	15
+		localizedText.add(iwrb.getLocalizedString("user_extra_info", "Extra info: "));				//	16
+		localizedText.add(iwrb.getLocalizedString("user_description", "Description: "));			//	17
+		localizedText.add(iwrb.getLocalizedString("user_company_address", "Company's address: "));	//	18
+		localizedText.add(iwrb.getLocalizedString("user_date_of_birth", "Date of birth: "));		//	19
+		localizedText.add(iwrb.getLocalizedString("user_job", "Job: "));							//	20
+		localizedText.add(iwrb.getLocalizedString("user_workplace", "Workplace: "));				//	21
+		localizedText.add(iwrb.getLocalizedString("user_group", "Group: "));						//	22
 		properties.setLocalizedText(localizedText);
+		
+		List<AdvancedProperty> statusLocalization = new ArrayList<AdvancedProperty>();
+		/*addStatusLocalization(statusLocalization, "STAT_ASSCOACH", iwrb.getLocalizedString("STAT_ASSCOACH", "Assistant Coach"));
+		addStatusLocalization(statusLocalization, "STAT_B_CASH", iwrb.getLocalizedString("STAT_B_CASH", "Cashier"));
+		addStatusLocalization(statusLocalization, "STAT_B_CEO", iwrb.getLocalizedString("STAT_B_CEO", "CEO"));
+		addStatusLocalization(statusLocalization, "STAT_B_CHAIR", iwrb.getLocalizedString("STAT_B_CHAIR", "Chairman"));
+		addStatusLocalization(statusLocalization, "STAT_B_COCHIEF", iwrb.getLocalizedString("STAT_B_COCHIEF", "Co-Executive"));
+		addStatusLocalization(statusLocalization, "STAT_B_EXTRA", iwrb.getLocalizedString("STAT_B_EXTRA", "Stand in"));
+		addStatusLocalization(statusLocalization, "STAT_B_EXTRABOARD", iwrb.getLocalizedString("STAT_B_EXTRABOARD", "Stand in board member"));
+		addStatusLocalization(statusLocalization, "STAT_B_MAINBOARD", iwrb.getLocalizedString("STAT_B_MAINBOARD", "Executive board"));
+		addStatusLocalization(statusLocalization, "STAT_B_PRES", iwrb.getLocalizedString("STAT_B_PRES", "President"));
+		addStatusLocalization(statusLocalization, "STAT_B_SECR", iwrb.getLocalizedString("STAT_B_SECR", "Secretery"));
+		addStatusLocalization(statusLocalization, "STAT_B_VICECHAIR", iwrb.getLocalizedString("STAT_B_VICECHAIR", "Vice Chairman"));
+		addStatusLocalization(statusLocalization, "STAT_B_VICEPRES", iwrb.getLocalizedString("STAT_B_VICEPRES", "Vice President"));
+		addStatusLocalization(statusLocalization, "STAT_CHIEF_TRAINER", iwrb.getLocalizedString("STAT_CHIEF_TRAINER", "Head Coach"));
+		addStatusLocalization(statusLocalization, "STAT_COACH", iwrb.getLocalizedString("STAT_COACH", "Coach"));
+		addStatusLocalization(statusLocalization, "STAT_COMP", iwrb.getLocalizedString("STAT_COMP", "Competitor"));
+		addStatusLocalization(statusLocalization, "STAT_COMPYEAR", iwrb.getLocalizedString("STAT_COMPYEAR", "Competing this year"));
+		addStatusLocalization(statusLocalization, "STAT_EMPL", iwrb.getLocalizedString("STAT_EMPL", "Employee"));
+		addStatusLocalization(statusLocalization, "STAT_FIELD_MANAGER", iwrb.getLocalizedString("STAT_FIELD_MANAGER", "Field Manager"));
+		addStatusLocalization(statusLocalization, "STAT_MEMBER", iwrb.getLocalizedString("STAT_MEMBER", "Member"));
+		addStatusLocalization(statusLocalization, "STAT_MEMBYEAR", iwrb.getLocalizedString("STAT_MEMBYEAR", "Member this year"));
+		addStatusLocalization(statusLocalization, "STAT_PRACT", iwrb.getLocalizedString("STAT_PRACT", "Practicioner"));
+		addStatusLocalization(statusLocalization, "STAT_PRACTYEAR", iwrb.getLocalizedString("STAT_PRACTYEAR", "Practicioner this year"));
+		addStatusLocalization(statusLocalization, "STAT_REF", iwrb.getLocalizedString("STAT_REF", "Referee"));
+		addStatusLocalization(statusLocalization, "STAT_SPONS", iwrb.getLocalizedString("STAT_SPONS", "Sponsor"));
+		addStatusLocalization(statusLocalization, "STAT_PHYSIOTHERAPIST", iwrb.getLocalizedString("STAT_PHYSIOTHERAPIST", "Physio Therapist"));
+		addStatusLocalization(statusLocalization, "STAT_GUIDE", iwrb.getLocalizedString("STAT_GUIDE", "Tour Guide"));
+		addStatusLocalization(statusLocalization, "STAT_REGION_MANAGER", iwrb.getLocalizedString("STAT_REGION_MANAGER", "Regional Manager"));*/
+		properties.setStatusLocalization(statusLocalization);
+		
 		return properties;
+	}
+	
+	private void addStatusLocalization(List<AdvancedProperty> list, String key, String defaultValue) {
+		AdvancedProperty localizedStatus = new AdvancedProperty();
+		localizedStatus.setId(key);
+		localizedStatus.setValue(defaultValue);
+		list.add(localizedStatus);
 	}
 	
 	/**

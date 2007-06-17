@@ -1,3 +1,32 @@
+var LOCALIZATIONS = new Array();	//	TEMPORARY!!!
+LOCALIZATIONS.push(new LocalizationProperty('STAT_ASSCOACH', 'Assistant Coach'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_B_CASH', 'Cashier'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_B_CEO', 'CEO'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_B_CHAIR', 'Chairman'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_B_COCHIEF', 'Co-Executive'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_B_EXTRA', 'Stand in'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_B_EXTRABOARD', 'Stand in board member'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_B_MAINBOARD', 'Executive board'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_B_PRES', 'President'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_B_SECR', 'Secretery'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_B_VICECHAIR', 'Vice Chairman'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_B_VICEPRES', 'Vice President'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_CHIEF_TRAINER', 'Head Coach'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_COACH', 'Coach'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_COMP', 'Competitor'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_COMPYEAR', 'Competing this year'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_EMPL', 'Employee'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_FIELD_MANAGER', 'Field Manager'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_MEMBER', 'Member'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_MEMBYEAR', 'Member this year'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_PRACT', 'Practicioner'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_PRACTYEAR', 'Practicioner this year'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_REF', 'Referee'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_SPONS', 'Sponsor'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_PHYSIOTHERAPIST', 'Physio Therapist'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_GUIDE', 'Tour Guide'));
+LOCALIZATIONS.push(new LocalizationProperty('STAT_REGION_MANAGER', 'Regional Manager'));
+
 function reloadGroupMemberProperties(instanceId, containerId, message) {
 	GroupService.reloadProperties(instanceId, {
 		callback: function(result) {
@@ -95,10 +124,6 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 		var group = document.createElement('div');
 		container.appendChild(group);
 		
-		//	Group name
-		/*if (properties.showGroupName) {
-			group.appendChild(getGroupInfoEntryPO(null, usersInfo[i].groupName, false));
-		}*/
 		var members = usersInfo[i].membersInfo;
 		if (members != null) {
 			var users = document.createElement('div');
@@ -148,7 +173,7 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 				
 				//	Status
 				if (properties.showStatus) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[11], members[j].status, true, properties.showLabels, 'groupMemberStatusContainerStyleClass'));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[11], getLocalizationForUserStatus(properties.statusLocalization, members[j].status), true, properties.showLabels, 'groupMemberStatusContainerStyleClass'));
 				}
 				
 				//	Empty line
@@ -165,15 +190,10 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 					infoContainer.appendChild(getAddressContainer(members[j].address, 'groupMemberAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[12]));
 				}
 				
-				//	Title
-				if (properties.showTitle) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[1], members[j].title, true, properties.showLabels, 'groupMemberTitleContainerStyleClass'));
-				}
-				//	Age
-				if (properties.showAge) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[2], members[j].age, true, properties.showLabels, 'groupMemberAgeContainerStyleClass'));
-				}
-				//	Work phone
+				//	Phones and mails
+				infoContainer.appendChild(getPhonesAndEmailsContainer(members[j].homePhone, members[j].workPhone, members[j].mobilePhone, members[j].emailsAddresses, 'groupMemberPhonesAndMailsContainerStyleClass', properties));
+				
+				/*//	Work phone
 				if (properties.showWorkPhone) {
 					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[3], members[j].workPhone, true, properties.showLabels, 'groupMemberWorkphoneContainerStyleClass'));
 				}
@@ -196,22 +216,70 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 						mainEmailsContainer.appendChild(emailsContainer);
 					}
 					infoContainer.appendChild(mainEmailsContainer);
+				}*/
+				
+				//	Company address
+				if (properties.showCompanyAddress) {
+					var companyAddressContainer = getAddressContainer(members[j].companyAddress, 'groupMemberCompanyAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[18]);
+					if (companyAddressContainer != null) {
+						infoContainer.appendChild(companyAddressContainer);
+					}
+				}
+				
+				//	Group name
+				if (properties.showGroupName) {
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[22], usersInfo[i].groupName, false, properties.showLabels, 'groupMemberGroupContainerStyleClass'));
+				}
+				
+				//	Date of birth
+				if (properties.showDateOfBirth) {
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[19], members[j].dateOfBirth, false, properties.showLabels, 'groupMemberDateOfBirthContainerStyleClass'));
+				}
+				
+				//	Age
+				if (properties.showAge) {
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[2], members[j].age, false, properties.showLabels, 'groupMemberAgeContainerStyleClass'));
+				}
+				
+				//	Job
+				if (properties.showJob) {
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[20], members[j].job, false, properties.showLabels, 'groupMemberJobContainerStyleClass'));
+				}
+				
+				//	Workplace
+				if (properties.showWorkplace) {
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[21], members[j].workPlace, false, properties.showLabels, 'groupMemberWorkplaceContainerStyleClass'));
+				}
+				
+				//	Extra info
+				if (properties.showExtraInfo) {
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[16], members[j].extraInfo, false, properties.showLabels, 'groupMemberExtraInfoContainerStyleClass'));
+				}
+				
+				//	Description
+				if (properties.showDescription) {
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[17], members[j].description, false, properties.showLabels, 'groupMemberDescriptionContainerStyleClass'));
+				}
+				
+				//	Title
+				if (properties.showTitle) {
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[1], members[j].title, false, properties.showLabels, 'groupMemberTitleContainerStyleClass'));
 				}
 				//	Education
 				if (properties.showEducation) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[7], members[j].education, true, properties.showLabels, 'groupMemberEducationContainerStyleClass'));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[7], members[j].education, false, properties.showLabels, 'groupMemberEducationContainerStyleClass'));
 				}
 				//	School
 				if (properties.showSchool) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[8], members[j].school, true, properties.showLabels, 'groupMemberSchoolContainerStyleClass'));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[8], members[j].school, false, properties.showLabels, 'groupMemberSchoolContainerStyleClass'));
 				}
 				//	Area
 				if (properties.showArea) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[9], members[j].area, true, properties.showLabels, 'groupMemberAreaContainerStyleClass'));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[9], members[j].area, false, properties.showLabels, 'groupMemberAreaContainerStyleClass'));
 				}
 				//	Began work
 				if (properties.showBeganWork) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[10], members[j].beganWork, true, properties.showLabels, 'groupMemberBeganworkContainerStyleClass'));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[10], members[j].beganWork, false, properties.showLabels, 'groupMemberBeganworkContainerStyleClass'));
 				}
 			}
 		}
@@ -220,4 +288,88 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 	main.appendChild(container);
 	main.appendChild(getDivsSpacer());
 	closeAllLoadingMessages();	
+}
+
+function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, styleClass, properties) {
+	var container = document.createElement('div');
+	if (styleClass != null) {
+		container.setAttribute('class', styleClass);
+	}
+	
+	var addedAnything = false;
+	
+	//	Home phone
+	if (properties.showHomePhone) {
+		if (homePhone != null && homePhone != '') {
+			container.appendChild(getUserPhoneLine(properties.localizedText[13], homePhone));
+			addedAnything = true;
+		}
+	}
+	
+	//	Work phone
+	if (properties.showWorkPhone) {
+		if (workPhone != null && workPhone != '') {
+			if (addedAnything) {
+				container.appendChild(document.createTextNode(' / '));
+			}
+			container.appendChild(getUserPhoneLine(properties.localizedText[14], workPhone));
+			addedAnything = true;
+		}
+	}
+	
+	//	Mobile phone
+	if (properties.showMobilePhone && mobilePhone != '') {
+		if (mobilePhone != null) {
+			if (addedAnything) {
+				container.appendChild(document.createTextNode(' / '));
+			}
+			container.appendChild(getUserPhoneLine(properties.localizedText[15], mobilePhone));
+			addedAnything = true;
+		}
+	}
+	
+	//	Emails
+	if (properties.showEmails) {
+		if (emails != null) {
+			var emailsContainer = getEmailsContainer(emails);
+			if (emailsContainer != null) {
+				emailsContainer.setAttribute('class', 'groupMemberEmailsContainerStyleClass');
+				if (addedAnything) {
+					container.appendChild(document.createTextNode(' / '));
+				}
+				container.appendChild(emailsContainer);
+			}
+		}
+	}
+	
+	return container;
+}
+
+function getUserPhoneLine(loacalization, number) {
+	return document.createTextNode(loacalization + '. ' + number);
+}
+
+function getLocalizationForUserStatus(localizations, key) {
+	localizations = LOCALIZATIONS;
+	if (localizations == null || key == null) {
+		return null;
+	}
+	
+	var localization = null;
+	var found = false;
+	for (var i = 0; i < localizations.length; i++) {
+		if (localizations[i].id == key) {
+			localization = localizations[i].value;
+			found = true;
+		}
+	}
+	if (found) {
+		return localization;
+	}
+	return 'Unknown';
+}
+
+function LocalizationProperty(id, value) {
+	this.id = id;
+	this.value = value;
 }
