@@ -7,6 +7,7 @@
 			<param name="class" value="com.idega.user.business.GroupService" />
 		</create>
 		
+		<convert converter="bean" match="com.idega.bean.PropertiesBean" />
 		<convert converter="bean" match="com.idega.bean.GroupPropertiesBean" />
 		<convert converter="bean" match="com.idega.bean.UserPropertiesBean" />
 		<convert converter="bean" match="com.idega.bean.DataBean" />
