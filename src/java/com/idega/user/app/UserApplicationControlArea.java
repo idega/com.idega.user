@@ -222,7 +222,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	 * @return
 	 */
 	public Table displayTable(IWContext iwc) {
-		Table table = new Table(1, 2);
+		Table table = new Table(1, 1);
 		table.setCellpadding(7);
 		table.setCellpaddingTop(1, 2, 0);
 		table.setWidth(Table.HUNDRED_PERCENT);
@@ -241,13 +241,8 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		Layer layer = new Layer(Layer.DIV);
 		layer.setWidth(208);
 		layer.setHeight("100%");
-		//layer.setStyleAttribute("border", "1px #cccccc solid");
-		//layer.setStyleAttribute("background-color", "#ffffff");
-		//layer.setStyleClass("main");
-		//layer.setPadding(0);
-		//layer.add(groupTree);
 		layer.setOverflow("auto");
-		borderTable.add(layer);
+		borderTable.add(layer,1,1);
 		
 		Table treeTable = new Table(1, 1);
 		treeTable.setCellpadding(4);
@@ -258,41 +253,8 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		layer.add(treeTable);
 		
 		table.add(borderTable, 1, 1);
-		
-		Image image = getBundle(iwc).getImage("banner.gif");
-		table.add(image, 1, 2);
 
 		return table;
-	}
-
-	public Table welcomeMessageTable(IWContext iwc) {
-		IWBundle iwb = getBundle(iwc);
-		Image lockImage = iwb.getImage("las.gif");
-
-		WelcomeMessage welcomeMessage = new WelcomeMessage();
-		welcomeMessage.setBold();
-
-		IWTimestamp s = IWTimestamp.RightNow();
-		Text date = new Text(s.getDateString("EEEEEEEEEEEE dd.MM.yyyy", iwc.getCurrentLocale()));
-		date.setFontClass("boldBlue");
-
-		Table welcomeMessageTable = new Table(2, 1);
-		welcomeMessageTable.setCellspacing(0);
-		welcomeMessageTable.setCellpadding(0);
-		welcomeMessageTable.setWidth(Table.HUNDRED_PERCENT);
-		welcomeMessageTable.setHeight(42);
-		welcomeMessageTable.setAlignment(1, 1, "center");
-		welcomeMessageTable.setAlignment(2, 1, "left");
-		welcomeMessageTable.setVerticalAlignment(1, 1, "middle");
-		welcomeMessageTable.setVerticalAlignment(2, 1, "middle");
-		if (iwc.isLoggedOn()) {
-			welcomeMessageTable.add(lockImage, 1, 1);
-		}
-		welcomeMessageTable.add(welcomeMessage, 2, 1);
-		welcomeMessageTable.add(Text.BREAK, 2, 1);
-		welcomeMessageTable.add(date, 2, 1);
-
-		return welcomeMessageTable;
 	}
 
 	public void main(IWContext iwc) throws Exception {
@@ -303,20 +265,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		String styleSrc = iwb.getVirtualPathWithFileNameString(this.styleScript);
 		parentPage.addStyleSheetURL(styleSrc);
 
-		Table table = new Table(1, 2);
-		table.setCellpaddingAndCellspacing(0);
-		table.setWidth(Table.HUNDRED_PERCENT);
-		table.setHeight(Table.HUNDRED_PERCENT);
-		table.setHeight(1, 1, 42);
-		table.setBackgroundImage(1, 1, iwb.getImage("bgtile.gif"));
-		table.setHeight(1, 2, Table.HUNDRED_PERCENT);
-		table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
-		table.setCellpaddingLeft(1, 1, 7);
-		table.setStyleClass(1, 2, "back");
-		
-		table.add(welcomeMessageTable(iwc), 1, 1);
-		table.add(displayTable(iwc), 1, 2);
-		add(table);
+		add(displayTable(iwc));
 
 		if (iwc.isSuperAdmin()) {
 			GroupTreeNode node = new GroupTreeNode(iwc.getDomain(), iwc.getApplicationContext());
@@ -329,27 +278,6 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 			this.groupTree.setFirstLevelNodes(groupNodes.iterator());
 
 		}
-
-		//    Collection topGroups =
-		// iwc.getDomain().getTopLevelGroupsUnderDomain();
-		//
-		//    if(topGroups != null){
-		//      String type = gBusiness.getGroupType(UserGroupRepresentative.class);
-		//      Iterator iter = topGroups.iterator();
-		//      while (iter.hasNext()) {
-		//        Group item = (Group)iter.next();
-		//        if(type.equals(item.getGroupType())){
-		//          iter.remove();
-		//        }
-		//      }
-
-		//      groupTree.setFirstLevelNodes(topGroups.iterator());
-		//    }
-
-		//    groupTree.setControlEventModel(_contolEvent);
-		//    groupTree.setControlTarget(_controlTarget);
-
-		//    this.getParentPage().setBackgroundColor("#d4d0c8");
 	}
 
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
