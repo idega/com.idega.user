@@ -89,31 +89,30 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 	removeChildren(main);
 	
 	var container = document.createElement('div');
-	container.className = 'groupsMembersInfoList';
-	
-	var groups = document.createElement('ul');
-	container.appendChild(groups);
+	container.setAttribute('class', 'groupsMembersInfoList');
 	
 	for (var i = 0; i < usersInfo.length; i++) {
-		var group = document.createElement('li');
-		groups.appendChild(group);
+		var group = document.createElement('div');
+		container.appendChild(group);
 		
 		//	Group name
-		if (properties.showGroupName) {
+		/*if (properties.showGroupName) {
 			group.appendChild(getGroupInfoEntryPO(null, usersInfo[i].groupName, false));
-		}
+		}*/
 		var members = usersInfo[i].membersInfo;
 		if (members != null) {
-			var users = document.createElement('ul');
+			var users = document.createElement('div');
 			group.appendChild(users);
 			for (var j = 0; j < members.length; j++) {
-				var groupMember = document.createElement('li');
-				users.appendChild(groupMember);
-				
 				var user = document.createElement('div');
-				groupMember.appendChild(user);
+				users.appendChild(user);
+				user.setAttribute('class', 'groupMemberStyleClass');
+				users.appendChild(getDivsSpacer());
 				
 				//	Image
+				var imageContainer = document.createElement('div');
+				imageContainer.setAttribute('class', 'groupMemberPhotoContainerStyleClass');
+				user.appendChild(imageContainer);
 				if (properties.showImage) {
 					var imageSrc = members[j].imageUrl;
 					if (imageSrc == null) {
@@ -125,7 +124,6 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 						}
 					}
 					if (imageSrc != null) {
-						var imageContainer = document.createElement('div');
 						var image = document.createElement('img');
 						image.setAttribute('src', imageSrc);
 						if (properties.imageWidth != null) {
@@ -135,30 +133,57 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 							image.setAttribute('height', properties.imageHeight);
 						}
 						imageContainer.appendChild(image);
-						user.appendChild(imageContainer);
+						
+						//	Add reflecion?
+						if (properties.addReflection) {
+							image.addReflection({height: '0.16', opacity: '0.55'});
+						}
 					}
 				}
+				
+				//	Info
+				var infoContainer = document.createElement('div');
+				infoContainer.setAttribute('class', 'groupMemberInfoContainerStyleClass');
+				user.appendChild(infoContainer);
+				
+				//	Status
+				if (properties.showStatus) {
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[11], members[j].status, true, properties.showLabels, 'groupMemberStatusContainerStyleClass'));
+				}
+				
+				//	Empty line
+				var emptyLine = document.createElement('div');
+				emptyLine.setAttribute('class', 'emptyLineContainerStyleClass');
+				emptyLine.appendChild(document.createElement('br'));
+				infoContainer.appendChild(emptyLine);
+				
 				//	Name
-				user.appendChild(getGroupInfoEntryPO(properties.localizedText[0], members[j].name, true, properties.showLabels));
+				infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[0], members[j].name, true, properties.showLabels, 'groupMemberNameContainerStyleClass'));
+				
+				// Address
+				if (properties.showAddress) {
+					infoContainer.appendChild(getAddressContainer(members[j].address, 'groupMemberAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[12]));
+				}
+				
 				//	Title
 				if (properties.showTitle) {
-					user.appendChild(getGroupInfoEntryPO(properties.localizedText[1], members[j].title, true, properties.showLabels));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[1], members[j].title, true, properties.showLabels, 'groupMemberTitleContainerStyleClass'));
 				}
 				//	Age
 				if (properties.showAge) {
-					user.appendChild(getGroupInfoEntryPO(properties.localizedText[2], members[j].age, true, properties.showLabels));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[2], members[j].age, true, properties.showLabels, 'groupMemberAgeContainerStyleClass'));
 				}
 				//	Work phone
 				if (properties.showWorkPhone) {
-					user.appendChild(getGroupInfoEntryPO(properties.localizedText[3], members[j].workPhone, true, properties.showLabels));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[3], members[j].workPhone, true, properties.showLabels, 'groupMemberWorkphoneContainerStyleClass'));
 				}
 				//	Home phone
 				if (properties.showHomePhone) {
-					user.appendChild(getGroupInfoEntryPO(properties.localizedText[4], members[j].homePhone, true, properties.showLabels));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[4], members[j].homePhone, true, properties.showLabels, 'groupMemberHomephoneContainerStyleClass'));
 				}
 				//	Mobile phone
 				if (properties.showMobilePhone) {
-					user.appendChild(getGroupInfoEntryPO(properties.localizedText[5], members[j].mobilePhone, true, properties.showLabels));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[5], members[j].mobilePhone, true, properties.showLabels, 'groupMemberMobilephoneContainerStyleClass'));
 				}
 				//	Emails
 				if (properties.showEmails) {
@@ -170,28 +195,29 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 					if (emailsContainer != null) {
 						mainEmailsContainer.appendChild(emailsContainer);
 					}
-					user.appendChild(mainEmailsContainer);
+					infoContainer.appendChild(mainEmailsContainer);
 				}
 				//	Education
 				if (properties.showEducation) {
-					user.appendChild(getGroupInfoEntryPO(properties.localizedText[7], members[j].education, true, properties.showLabels));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[7], members[j].education, true, properties.showLabels, 'groupMemberEducationContainerStyleClass'));
 				}
 				//	School
 				if (properties.showSchool) {
-					user.appendChild(getGroupInfoEntryPO(properties.localizedText[8], members[j].school, true, properties.showLabels));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[8], members[j].school, true, properties.showLabels, 'groupMemberSchoolContainerStyleClass'));
 				}
 				//	Area
 				if (properties.showArea) {
-					user.appendChild(getGroupInfoEntryPO(properties.localizedText[9], members[j].area, true, properties.showLabels));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[9], members[j].area, true, properties.showLabels, 'groupMemberAreaContainerStyleClass'));
 				}
 				//	Began work
 				if (properties.showBeganWork) {
-					user.appendChild(getGroupInfoEntryPO(properties.localizedText[10], members[j].beganWork, true, properties.showLabels));
+					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[10], members[j].beganWork, true, properties.showLabels, 'groupMemberBeganworkContainerStyleClass'));
 				}
 			}
 		}
 	}
 	
 	main.appendChild(container);
+	main.appendChild(getDivsSpacer());
 	closeAllLoadingMessages();	
 }

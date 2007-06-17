@@ -293,8 +293,11 @@ function addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass) 
 	}
 }
 
-function getGroupInfoEntryPO(text, value, showEmptyFields, showLabel) {
+function getGroupInfoEntryPO(text, value, showEmptyFields, showLabel, styleClass) {
 	var container = document.createElement('div');
+	if (styleClass != null) {
+		container.setAttribute('class', styleClass);
+	}
 	value = getEmptyValueIfNull(value);
 	if (showEmptyFields || value.length > 0) {
 		if (showLabel) {
@@ -330,4 +333,30 @@ function getEmailsContainer(emailAddresses) {
 		}
 	}
 	return emails;
+}
+
+function getAddressContainer(address, styleClass, showEmptyFields, showLabels, localizedText) {	
+	var addressContainer = document.createElement('div');
+	if (styleClass != null) {
+		addressContainer.setAttribute('class', styleClass);
+	}
+	if (address == null) {
+		if (showEmptyFields) {
+			addressContainer.appendChild(document.createTextNode(localizedText));
+		}
+	}
+	else {
+		var allAddress = address.streetAddress + ', ' + address.postalCode + ' ' + address.city;
+		if (showLabels) {
+			addressContainer.appendChild(document.createTextNode(localizedText));
+		}
+		addressContainer.appendChild(document.createTextNode(allAddress));
+	}
+	return addressContainer;
+}
+
+function getDivsSpacer() {
+	var spacer = document.createElement('div');
+	spacer.setAttribute('class', 'spacer');
+	return spacer;
 }

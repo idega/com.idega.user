@@ -34,6 +34,8 @@ public class GroupInfoViewer extends GroupViewer {
 	}*/
 	
 	public void main(IWContext iwc) {
+		super.main(iwc);
+		
 		String instanceId = BuilderLogic.getInstance().getInstanceId(this);
 		
 		Layer main = new Layer();
@@ -97,13 +99,14 @@ public class GroupInfoViewer extends GroupViewer {
 		List<String> files = new ArrayList<String>();
 		//	"Helpers"
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
+		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
 		//	DWR
 		files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		files.add("/dwr/engine.js");
 		addScriptFiles(iwc, files, false);
 
 		//	Actions to be performed on page loaded event
-		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {getSelectedGroups('");
+		StringBuffer action = new StringBuffer("window.addEvent('load', function() {getSelectedGroups('");
 		action.append(instanceId).append("', '").append(id).append("', '");
 		action.append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("');});");
 		

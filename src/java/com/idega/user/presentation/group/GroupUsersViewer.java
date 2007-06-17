@@ -30,6 +30,7 @@ public class GroupUsersViewer extends GroupViewer {
 	private boolean showJob = false;
 	private boolean showWorkplace = false;
 	private boolean showStatus = true;
+	private boolean addReflection = true;
 	
 	private String imageWidth = "70";
 	private String imageHeight = "90";
@@ -47,6 +48,8 @@ public class GroupUsersViewer extends GroupViewer {
 	}*/
 	
 	public void main(IWContext iwc) {
+		super.main(iwc);
+		
 		String instanceId = BuilderLogic.getInstance().getInstanceId(this);
 		
 		Layer main = new Layer();
@@ -96,6 +99,7 @@ public class GroupUsersViewer extends GroupViewer {
 		properties.setShowCompanyAddress(showCompanyAddress);
 		properties.setShowWorkplace(showWorkplace);
 		properties.setShowStatus(showStatus);
+		properties.setAddReflection(addReflection);
 		
 		properties.setRemoteMode(isRemoteMode());
 		
@@ -123,13 +127,14 @@ public class GroupUsersViewer extends GroupViewer {
 		List<String> files = new ArrayList<String>();
 		//	"Helpers"
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/UserInfoViewerHelper.js"));
+		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
 		//	DWR
 		files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		files.add("/dwr/engine.js");
 		addScriptFiles(iwc, files, false);
 		
 		//	Actions to be performed on page loaded event
-		StringBuffer action = new StringBuffer("registerEvent(window, 'load', function() {getSelectedUsers('");
+		StringBuffer action = new StringBuffer("window.addEvent('load', function() {getSelectedUsers('");
 		action.append(instanceId).append("', '").append(id).append("', '");
 		action.append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("');});");
 		
@@ -213,6 +218,10 @@ public class GroupUsersViewer extends GroupViewer {
 
 	public void setShowWorkplace(boolean showWorkplace) {
 		this.showWorkplace = showWorkplace;
+	}
+
+	public void setAddReflection(boolean addReflection) {
+		this.addReflection = addReflection;
 	}
 	
 }

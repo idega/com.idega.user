@@ -1,11 +1,15 @@
 package com.idega.user.presentation.group;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.bean.PropertiesBean;
+import com.idega.block.web2.business.Web2Business;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 
@@ -25,6 +29,12 @@ public class GroupViewer extends Block {
 	private boolean showEmails = true;
 	private boolean showAddress = true;
 	private boolean showLabels = false;
+	
+	public void main(IWContext iwc) {
+		AddResource adder = AddResourceFactory.getInstance(iwc);
+		
+		adder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, getBundle(iwc).getVirtualPathWithFileNameString("style/user.css"));
+	}
 	
 	public boolean isAddJavaScriptForGroupsTree() {
 		return addJavaScriptForGroupsTree;
@@ -103,6 +113,23 @@ public class GroupViewer extends Block {
 		if (iwc == null || files == null) {
 			return;
 		}
+		
+		//	Mootools and reflection
+		Web2Business web2 = null;
+		try {
+			web2 = (Web2Business) IBOLookup.getServiceInstance(iwc, Web2Business.class);
+		} catch (IBOLookupException e) {
+			e.printStackTrace();
+		}
+		if (web2 != null) {
+			try {
+				files.add(web2.getBundleURIToMootoolsLib());
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			files.add(web2.getReflectionForMootoolsScriptFilePath());
+		}
+		
 		if (addDirectly) {
 			for (int i = 0; i < files.size(); i++) {
 				add(new StringBuffer("<script type=\"text/javascript\" src=\"").append(files.get(i)).append("\"><!--//--></script>").toString());

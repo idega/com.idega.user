@@ -1,0 +1,19 @@
+.groupMemberStyleClass {
+	float: left;
+}
+
+.groupMemberPhotoContainerStyleClass {
+	float: left;
+	width: auto;
+	margin-right: 5px;
+	margin-top: 5px;
+}
+
+.groupMemberInfoContainerStyleClass {
+	float: left;
+}
+
+.groupMemberStatusContainerStyleClass {
+	font-weight: bold;
+	font-size: 12px;
+}

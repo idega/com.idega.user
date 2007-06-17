@@ -100,35 +100,23 @@ function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 		
 		//	Name
 		if (properties.showName) {
-			group.appendChild(getGroupInfoEntryPO(properties.localizedText[0], groupsInfo[i].name, properties.showEmptyFields, properties.showLabels));
+			group.appendChild(getGroupInfoEntryPO(properties.localizedText[0], groupsInfo[i].name, properties.showEmptyFields, properties.showLabels, null));
 		}
 		//	Short name
 		if (properties.showShortName) {
-			group.appendChild(getGroupInfoEntryPO(properties.localizedText[1], groupsInfo[i].showShortName, properties.showEmptyFields, properties.showLabels));
+			group.appendChild(getGroupInfoEntryPO(properties.localizedText[1], groupsInfo[i].showShortName, properties.showEmptyFields, properties.showLabels, null));
 		}
 		//	Address
 		if (properties.showAddress) {
-			var addressContainer = document.createElement('div');
-			var address = groupsInfo[i].address;
-			if (address == null) {
-				if (properties.showEmptyFields) {
-					addressContainer.appendChild(document.createTextNode(properties.localizedText[2]));
-				}
-			}
-			else {
-				var allAddress = address.streetAddress + ', ' + address.postalCode + ' ' + address.city;
-				addressContainer.appendChild(document.createTextNode(properties.localizedText[2]));
-				addressContainer.appendChild(document.createTextNode(allAddress));
-			}
-			group.appendChild(addressContainer);
+			group.appendChild(getAddressContainer(groupsInfo[i].address, 'groupAddressContainer', properties.showEmptyFields, properties.showLabels, properties.localizedText[2]));
 		}
 		//	Phone
 		if (properties.showPhone) {
-			group.appendChild(getGroupInfoEntryPO(properties.localizedText[3], groupsInfo[i].phoneNumber, properties.showEmptyFields, properties.showLabels));
+			group.appendChild(getGroupInfoEntryPO(properties.localizedText[3], groupsInfo[i].phoneNumber, properties.showEmptyFields, properties.showLabels, null));
 		}
 		//	Fax
 		if (properties.showPhone) {
-			group.appendChild(getGroupInfoEntryPO(properties.localizedText[4], groupsInfo[i].faxNumber, properties.showEmptyFields, properties.showLabels));
+			group.appendChild(getGroupInfoEntryPO(properties.localizedText[4], groupsInfo[i].faxNumber, properties.showEmptyFields, properties.showLabels, null));
 		}
 		//	HomePage
 		if (properties.showHomePage) {
@@ -155,11 +143,11 @@ function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 		}
 		//	Description
 		if (properties.showDescription) {
-			group.appendChild(getGroupInfoEntryPO(properties.localizedText[7], groupsInfo[i].description, properties.showEmptyFields, properties.showLabels));
+			group.appendChild(getGroupInfoEntryPO(properties.localizedText[7], groupsInfo[i].description, properties.showEmptyFields, properties.showLabels, null));
 		}
 		//	Extra info
 		if (properties.showExtraInfo) {
-			group.appendChild(getGroupInfoEntryPO(properties.localizedText[8], groupsInfo[i].extraInfo, properties.showEmptyFields, properties.showLabels));
+			group.appendChild(getGroupInfoEntryPO(properties.localizedText[8], groupsInfo[i].extraInfo, properties.showEmptyFields, properties.showLabels, null));
 		}
 	}
 	

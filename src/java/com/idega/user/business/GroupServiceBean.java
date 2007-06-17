@@ -166,6 +166,8 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		localizedText.add(iwrb.getLocalizedString("user_school", "School: "));				//	8
 		localizedText.add(iwrb.getLocalizedString("user_area", "Area: "));					//	9
 		localizedText.add(iwrb.getLocalizedString("user_began_work", "Began work: "));		//	10
+		localizedText.add(iwrb.getLocalizedString("user_status", "Status: "));				//	11
+		localizedText.add(iwrb.getLocalizedString("user_address", "Address: "));			//	12
 		
 		properties.setLocalizedText(localizedText);
 		return properties;
