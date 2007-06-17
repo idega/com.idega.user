@@ -20,6 +20,12 @@ public class GroupViewer extends Block {
 	private boolean remoteMode = false;
 	private boolean addJavaScriptForGroupsTree = true;
 	
+	private boolean showDescription = false;
+	private boolean showExtraInfo = false;
+	private boolean showEmails = true;
+	private boolean showAddress = true;
+	private boolean showLabels = false;
+	
 	public boolean isAddJavaScriptForGroupsTree() {
 		return addJavaScriptForGroupsTree;
 	}
@@ -108,6 +114,46 @@ public class GroupViewer extends Block {
 				resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, files.get(i));
 			}
 		}
+	}
+
+	public boolean isShowAddress() {
+		return showAddress;
+	}
+
+	public void setShowAddress(boolean showAddress) {
+		this.showAddress = showAddress;
+	}
+
+	public boolean isShowDescription() {
+		return showDescription;
+	}
+
+	public void setShowDescription(boolean showDescription) {
+		this.showDescription = showDescription;
+	}
+
+	public boolean isShowEmails() {
+		return showEmails;
+	}
+
+	public void setShowEmails(boolean showEmails) {
+		this.showEmails = showEmails;
+	}
+
+	public boolean isShowExtraInfo() {
+		return showExtraInfo;
+	}
+
+	public void setShowExtraInfo(boolean showExtraInfo) {
+		this.showExtraInfo = showExtraInfo;
+	}
+
+	public boolean isShowLabels() {
+		return showLabels;
+	}
+
+	public void setShowLabels(boolean showLabels) {
+		this.showLabels = showLabels;
 	}
 	
 }

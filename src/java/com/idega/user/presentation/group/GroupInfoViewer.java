@@ -16,15 +16,10 @@ public class GroupInfoViewer extends GroupViewer {
 	
 	private boolean showName = true;
 	private boolean showHomePage = true;
-	private boolean showDescription = true;
-	private boolean showExtraInfo = true;
 	private boolean showShortName = false;
 	private boolean showPhone = true;
 	private boolean showFax = true;
-	private boolean showEmails = true;
-	private boolean showAddress = true;
 	private boolean showEmptyFields = false;
-	private boolean showLabels = false;
 	
 	public GroupInfoViewer() {
 		//setCacheable(getCacheKey());
@@ -40,9 +35,6 @@ public class GroupInfoViewer extends GroupViewer {
 	
 	public void main(IWContext iwc) {
 		String instanceId = BuilderLogic.getInstance().getInstanceId(this);
-		/*if (instanceId == null) {
-			throw new NullPointerException("Instance of presentation object 'GroupInfoViewer' is null");
-		}*/
 		
 		Layer main = new Layer();
 		
@@ -72,15 +64,15 @@ public class GroupInfoViewer extends GroupViewer {
 		
 		properties.setShowName(showName);
 		properties.setShowHomePage(showHomePage);
-		properties.setShowDescription(showDescription);
-		properties.setShowExtraInfo(showExtraInfo);
+		properties.setShowDescription(isShowDescription());
+		properties.setShowExtraInfo(isShowExtraInfo());
 		properties.setShowShortName(showShortName);
 		properties.setShowPhone(showPhone);
 		properties.setShowFax(showFax);
-		properties.setShowEmails(showEmails);
-		properties.setShowAddress(showAddress);
+		properties.setShowEmails(isShowEmails());
+		properties.setShowAddress(isShowAddress());
 		properties.setShowEmptyFields(showEmptyFields);
-		properties.setShowLabels(showLabels);
+		properties.setShowLabels(isShowLabels());
 		
 		properties.setRemoteMode(isRemoteMode());
 		
@@ -121,24 +113,8 @@ public class GroupInfoViewer extends GroupViewer {
 		add(scriptString.toString());
 	}
 
-	public void setShowAddress(boolean showAddress) {
-		this.showAddress = showAddress;
-	}
-
-	public void setShowDescription(boolean showDescription) {
-		this.showDescription = showDescription;
-	}
-
-	public void setShowEmails(boolean showEmails) {
-		this.showEmails = showEmails;
-	}
-
 	public void setShowEmptyFields(boolean showEmptyFields) {
 		this.showEmptyFields = showEmptyFields;
-	}
-
-	public void setShowExtraInfo(boolean showExtraInfo) {
-		this.showExtraInfo = showExtraInfo;
 	}
 
 	public void setShowFax(boolean showFax) {
@@ -159,10 +135,6 @@ public class GroupInfoViewer extends GroupViewer {
 
 	public void setShowShortName(boolean showShortName) {
 		this.showShortName = showShortName;
-	}
-
-	public void setShowLabels(boolean showLabels) {
-		this.showLabels = showLabels;
 	}
 
 	public String getBundleIdentifier()	{

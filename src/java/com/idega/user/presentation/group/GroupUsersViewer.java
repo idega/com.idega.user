@@ -20,22 +20,16 @@ public class GroupUsersViewer extends GroupViewer {
 	private boolean showWorkPhone = true;
 	private boolean showHomePhone = true;
 	private boolean showMobilePhone = true;
-	private boolean showEmails = true;
 	private boolean showEducation = false;
 	private boolean showSchool = false;
 	private boolean showArea = false;
 	private boolean showBeganWork = false;
-	private boolean showImage = true;
-	private boolean showLabels = false;
-	private boolean showAddress = true;
+	private boolean showImage = true;	
 	private boolean showCompanyAddress = false;
-	private boolean showExtraInfo = false;
-	private boolean showDescription = false;
 	private boolean showDateOfBirth = false;
 	private boolean showJob = false;
 	private boolean showWorkplace = false;
 	private boolean showStatus = true;
-	
 	
 	private String imageWidth = "70";
 	private String imageHeight = "90";
@@ -54,9 +48,6 @@ public class GroupUsersViewer extends GroupViewer {
 	
 	public void main(IWContext iwc) {
 		String instanceId = BuilderLogic.getInstance().getInstanceId(this);
-		/*if (instanceId == null) {
-			throw new NullPointerException("Instance of presentation object 'GroupUsersViewer' is null");
-		}*/
 		
 		Layer main = new Layer();
 		
@@ -90,16 +81,16 @@ public class GroupUsersViewer extends GroupViewer {
 		properties.setShowWorkPhone(showWorkPhone);
 		properties.setShowHomePhone(showHomePhone);
 		properties.setShowMobilePhone(showMobilePhone);
-		properties.setShowEmails(showEmails);
+		properties.setShowEmails(isShowEmails());
 		properties.setShowEducation(showEducation);
 		properties.setShowSchool(showSchool);
 		properties.setShowArea(showArea);
 		properties.setShowBeganWork(showBeganWork);
 		properties.setShowImage(showImage);
-		properties.setShowLabels(showLabels);
-		properties.setShowAddress(showAddress);
-		properties.setShowExtraInfo(showExtraInfo);
-		properties.setShowDescription(showDescription);
+		properties.setShowLabels(isShowLabels());
+		properties.setShowAddress(isShowAddress());
+		properties.setShowExtraInfo(isShowExtraInfo());
+		properties.setShowDescription(isShowDescription());
 		properties.setShowDateOfBirth(showDateOfBirth);
 		properties.setShowJob(showJob);
 		properties.setShowCompanyAddress(showCompanyAddress);
@@ -164,10 +155,6 @@ public class GroupUsersViewer extends GroupViewer {
 		this.showEducation = showEducation;
 	}
 
-	public void setShowEmails(boolean showEmails) {
-		this.showEmails = showEmails;
-	}
-
 	public void setShowGroupName(boolean showGroupName) {
 		this.showGroupName = showGroupName;
 	}
@@ -208,28 +195,12 @@ public class GroupUsersViewer extends GroupViewer {
 		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
 
-	public void setShowLabels(boolean showLabels) {
-		this.showLabels = showLabels;
-	}
-
-	public void setShowAddress(boolean showAddress) {
-		this.showAddress = showAddress;
-	}
-
 	public void setShowCompanyAddress(boolean showCompanyAddress) {
 		this.showCompanyAddress = showCompanyAddress;
 	}
 
 	public void setShowDateOfBirth(boolean showDateOfBirth) {
 		this.showDateOfBirth = showDateOfBirth;
-	}
-
-	public void setShowDescription(boolean showDescription) {
-		this.showDescription = showDescription;
-	}
-
-	public void setShowExtraInfo(boolean showExtraInfo) {
-		this.showExtraInfo = showExtraInfo;
 	}
 
 	public void setShowJob(boolean showJob) {
