@@ -1,6 +1,7 @@
 var LOCALIZATIONS = null;
 
 function reloadGroupMemberProperties(instanceId, containerId, message) {
+	prepareDwr(GroupService, getDefaultDwrPath());
 	GroupService.reloadProperties(instanceId, {
 		callback: function(result) {
 			reloadGroupMemberPropertiesCallback(result, instanceId, containerId, message);
@@ -56,6 +57,9 @@ function getUserPropertiesCallback(properties, containerId) {
 	}
 	
 	if (properties.remoteMode) {
+		//	To be sure we'll call to 'local' server
+		prepareDwr(GroupService, getDefaultDwrPath());
+		
 		//	Remote mode
 		if (properties.server == null || properties.login == null || properties.password == null) {
 			closeAllLoadingMessages();
@@ -100,6 +104,7 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 		closeAllLoadingMessages();
 		return false;
 	}
+	
 	var main = document.getElementById(containerId);
 	if (main == null) {
 		closeAllLoadingMessages();
@@ -107,27 +112,28 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 	}
 	removeChildren(main);
 	
-	var container = document.createElement('div');
-	container.setAttribute('class', 'groupsMembersInfoList');
+	var container = new Element('div');
+	container.addClass('groupsMembersInfoList');
 	
 	for (var i = 0; i < usersInfo.length; i++) {
-		var group = document.createElement('div');
-		container.appendChild(group);
+		var group = new Element('div');
+		group.injectInside(container);
 		
 		var members = usersInfo[i].membersInfo;
 		if (members != null) {
-			var users = document.createElement('div');
-			group.appendChild(users);
-			for (var j = 0; j < members.length; j++) {
-				var user = document.createElement('div');
-				users.appendChild(user);
-				user.setAttribute('class', 'groupMemberStyleClass');
-				users.appendChild(getDivsSpacer());
+			var users = new Element('div');
+			
+			var maxElements = members.length;	//	TODO: make paging
+			if (members.length > 40) {
+				maxElements = 40;
+			}
+			for (var j = 0; j < maxElements; j++) {
+				var user = new Element('div');
 				
 				//	Image
-				var imageContainer = document.createElement('div');
-				imageContainer.setAttribute('class', 'groupMemberPhotoContainerStyleClass');
-				user.appendChild(imageContainer);
+				var imageContainer = new Element('div');
+				imageContainer.addClass('groupMemberPhotoContainerStyleClass');
+				imageContainer.injectInside(user);
 				if (properties.showImage) {
 					var imageSrc = members[j].imageUrl;
 					if (imageSrc == null) {
@@ -139,7 +145,7 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 						}
 					}
 					if (imageSrc != null) {
-						var image = document.createElement('img');
+						var image = new Element('img');
 						image.setAttribute('src', imageSrc);
 						if (properties.imageWidth != null) {
 							image.setAttribute('width', properties.imageWidth);
@@ -147,7 +153,7 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 						if (properties.imageHeight != null) {
 							image.setAttribute('height', properties.imageHeight);
 						}
-						imageContainer.appendChild(image);
+						image.injectInside(imageContainer);
 						
 						//	Add reflecion?
 						if (properties.addReflection) {
@@ -157,117 +163,119 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 				}
 				
 				//	Info
-				var infoContainer = document.createElement('div');
-				infoContainer.setAttribute('class', 'groupMemberInfoContainerStyleClass');
-				user.appendChild(infoContainer);
+				var infoContainer = new Element('div');
+				infoContainer.addClass('groupMemberInfoContainerStyleClass');
 				
 				//	Status
 				if (properties.showStatus) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[11], getLocalizationForUserStatus(members[j].status), true, properties.showLabels, 'groupMemberStatusContainerStyleClass'));
+					getGroupInfoEntryPO(properties.localizedText[11], getLocalizationForUserStatus(members[j].status), true, properties.showLabels, 'groupMemberStatusContainerStyleClass').injectInside(infoContainer);
 				
 					//	Empty line
-					var emptyLine = document.createElement('div');
-					emptyLine.setAttribute('class', 'emptyLineContainerStyleClass');
-					emptyLine.appendChild(document.createElement('br'));
-					infoContainer.appendChild(emptyLine);
+					var emptyLine = new Element('div');
+					emptyLine.addClass('emptyLineContainerStyleClass');
+					new Element('br').injectInside(emptyLine);
+					emptyLine.injectInside(infoContainer);
 				}
 				
 				//	Name and age
-				infoContainer.appendChild(getUserNameAndAgeContainer(members[j].name, members[j].age, properties));
+				getUserNameAndAgeContainer(members[j].name, members[j].age, properties).injectInside(infoContainer);
 				
 				// Address
 				if (properties.showAddress) {
-					infoContainer.appendChild(getAddressContainer(members[j].address, 'groupMemberAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[12]));
+					getAddressContainer(members[j].address, 'groupMemberAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[12]).injectInside(infoContainer);
 				}
 				
 				//	Phones and mails
-				infoContainer.appendChild(getPhonesAndEmailsContainer(members[j].homePhone, members[j].workPhone, members[j].mobilePhone, members[j].emailsAddresses, 'groupMemberPhonesAndMailsContainerStyleClass', properties));
+				getPhonesAndEmailsContainer(members[j].homePhone, members[j].workPhone, members[j].mobilePhone, members[j].emailsAddresses, 'groupMemberPhonesAndMailsContainerStyleClass', properties).injectInside(infoContainer);
 				
 				//	Company address
 				if (properties.showCompanyAddress) {
-					var companyAddressContainer = getAddressContainer(members[j].companyAddress, 'groupMemberCompanyAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[18]);
-					if (companyAddressContainer != null) {
-						infoContainer.appendChild(companyAddressContainer);
-					}
+					getAddressContainer(members[j].companyAddress, 'groupMemberCompanyAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[18]).injectInside(infoContainer);
 				}
 				
 				//	Group name
 				if (properties.showGroupName) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[22], usersInfo[i].groupName, false, properties.showLabels, 'groupMemberGroupContainerStyleClass'));
+					getGroupInfoEntryPO(properties.localizedText[22], usersInfo[i].groupName, false, properties.showLabels, 'groupMemberGroupContainerStyleClass').injectInside(infoContainer);
 				}
 				
 				//	Date of birth
 				if (properties.showDateOfBirth) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[19], members[j].dateOfBirth, false, properties.showLabels, 'groupMemberDateOfBirthContainerStyleClass'));
+					getGroupInfoEntryPO(properties.localizedText[19], members[j].dateOfBirth, false, properties.showLabels, 'groupMemberDateOfBirthContainerStyleClass').injectInside(infoContainer);
 				}
 				
 				//	Job
 				if (properties.showJob) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[20], members[j].job, false, properties.showLabels, 'groupMemberJobContainerStyleClass'));
+					getGroupInfoEntryPO(properties.localizedText[20], members[j].job, false, properties.showLabels, 'groupMemberJobContainerStyleClass').injectInside(infoContainer);
 				}
 				
 				//	Workplace
 				if (properties.showWorkplace) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[21], members[j].workPlace, false, properties.showLabels, 'groupMemberWorkplaceContainerStyleClass'));
+					getGroupInfoEntryPO(properties.localizedText[21], members[j].workPlace, false, properties.showLabels, 'groupMemberWorkplaceContainerStyleClass').injectInside(infoContainer);
 				}
 				
 				//	Extra info
 				if (properties.showExtraInfo) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[16], members[j].extraInfo, false, properties.showLabels, 'groupMemberExtraInfoContainerStyleClass'));
+					getGroupInfoEntryPO(properties.localizedText[16], members[j].extraInfo, false, properties.showLabels, 'groupMemberExtraInfoContainerStyleClass').injectInside(infoContainer);
 				}
 				
 				//	Description
 				if (properties.showDescription) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[17], members[j].description, false, properties.showLabels, 'groupMemberDescriptionContainerStyleClass'));
+					getGroupInfoEntryPO(properties.localizedText[17], members[j].description, false, properties.showLabels, 'groupMemberDescriptionContainerStyleClass').injectInside(infoContainer);
 				}
 				
-				//	Title
+				/*//	Title
 				if (properties.showTitle) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[1], members[j].title, false, properties.showLabels, 'groupMemberTitleContainerStyleClass'));
+					getGroupInfoEntryPO(properties.localizedText[1], members[j].title, false, properties.showLabels, 'groupMemberTitleContainerStyleClass').injectInside(infoContainer);
 				}
 				//	Education
 				if (properties.showEducation) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[7], members[j].education, false, properties.showLabels, 'groupMemberEducationContainerStyleClass'));
+					getGroupInfoEntryPO(properties.localizedText[7], members[j].education, false, properties.showLabels, 'groupMemberEducationContainerStyleClass').injectInside(infoContainer);
 				}
 				//	School
 				if (properties.showSchool) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[8], members[j].school, false, properties.showLabels, 'groupMemberSchoolContainerStyleClass'));
+					getGroupInfoEntryPO(properties.localizedText[8], members[j].school, false, properties.showLabels, 'groupMemberSchoolContainerStyleClass').injectInside(infoContainer);
 				}
 				//	Area
 				if (properties.showArea) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[9], members[j].area, false, properties.showLabels, 'groupMemberAreaContainerStyleClass'));
+					getGroupInfoEntryPO(properties.localizedText[9], members[j].area, false, properties.showLabels, 'groupMemberAreaContainerStyleClass').injectInside(infoContainer);
 				}
 				//	Began work
 				if (properties.showBeganWork) {
-					infoContainer.appendChild(getGroupInfoEntryPO(properties.localizedText[10], members[j].beganWork, false, properties.showLabels, 'groupMemberBeganworkContainerStyleClass'));
-				}
+					getGroupInfoEntryPO(properties.localizedText[10], members[j].beganWork, false, properties.showLabels, 'groupMemberBeganworkContainerStyleClass').injectInside(infoContainer);
+				}*/
+				
+				infoContainer.injectInside(user);
+				user.addClass('groupMemberStyleClass');
+				user.injectInside(users);
+				getDivsSpacer().injectInside(users);
 			}
+			users.injectInside(group);
 		}
 	}
 	
-	main.appendChild(container);
-	main.appendChild(getDivsSpacer());
+	container.injectInside(main);
+	getDivsSpacer().injectInside(main);
 	closeAllLoadingMessages();	
 }
 
 function getUserNameAndAgeContainer(name, age, properties) {
-	var container = document.createElement('div');
-	container.setAttribute('class', 'groupMemberNameAndAgeContainerStyleClass');
+	var container = new Element('div');
+	container.addClass('groupMemberNameAndAgeContainerStyleClass');
 	
 	//	Name
 	if (properties.showLabels) {
-		container.appendChild(document.createTextNode(properties.localizedText[0]));
+		container.appendText(properties.localizedText[0]);
 	}
-	container.appendChild(document.createTextNode(name));
+	container.appendText(name);
 	
 	//	Age
 	if (age != null && age != '') {
 		if (properties.showAge) {
 			if (properties.showLabels) {
-				container.appendChild(document.createTextNode(' ' + properties.localizedText[2] + age));
+				container.appendText(' ' + properties.localizedText[2] + age);
 			}
 			else {
-				container.appendChild(document.createTextNode(' (' + age + ')'));
+				container.appendText(' (' + age + ')');
 			}
 		}
 	}
@@ -276,9 +284,9 @@ function getUserNameAndAgeContainer(name, age, properties) {
 }
 
 function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, styleClass, properties) {
-	var container = document.createElement('div');
+	var container = new Element('div');
 	if (styleClass != null) {
-		container.setAttribute('class', styleClass);
+		container.addClass(styleClass);
 	}
 	
 	var addedAnything = false;
@@ -286,7 +294,7 @@ function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, 
 	//	Home phone
 	if (properties.showHomePhone) {
 		if (homePhone != null && homePhone != '') {
-			container.appendChild(getUserPhoneLine(properties.localizedText[13], homePhone));
+			container.appendText(properties.localizedText[13] + '. ' + homePhone);
 			addedAnything = true;
 		}
 	}
@@ -295,9 +303,9 @@ function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, 
 	if (properties.showWorkPhone) {
 		if (workPhone != null && workPhone != '') {
 			if (addedAnything) {
-				container.appendChild(document.createTextNode(' / '));
+				container.appendText(' / ');
 			}
-			container.appendChild(getUserPhoneLine(properties.localizedText[14], workPhone));
+			container.appendText(properties.localizedText[14] + '. ' + workPhone);
 			addedAnything = true;
 		}
 	}
@@ -306,9 +314,9 @@ function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, 
 	if (properties.showMobilePhone && mobilePhone != '') {
 		if (mobilePhone != null) {
 			if (addedAnything) {
-				container.appendChild(document.createTextNode(' / '));
+				container.appendText(' / ');
 			}
-			container.appendChild(getUserPhoneLine(properties.localizedText[15], mobilePhone));
+			container.appendText(properties.localizedText[15] + '. ' +  mobilePhone);
 			addedAnything = true;
 		}
 	}
@@ -318,20 +326,16 @@ function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, 
 		if (emails != null) {
 			var emailsContainer = getEmailsContainer(emails);
 			if (emailsContainer != null) {
-				emailsContainer.setAttribute('class', 'groupMemberEmailsContainerStyleClass');
+				emailsContainer.addClass('groupMemberEmailsContainerStyleClass');
 				if (addedAnything) {
-					container.appendChild(document.createTextNode(' / '));
+					container.appendText(' / ');
 				}
-				container.appendChild(emailsContainer);
+				emailsContainer.injectInside(container);
 			}
 		}
 	}
 	
 	return container;
-}
-
-function getUserPhoneLine(loacalization, number) {
-	return document.createTextNode(loacalization + '. ' + number);
 }
 
 function getLocalizationForUserStatus(key) {

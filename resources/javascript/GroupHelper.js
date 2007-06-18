@@ -213,6 +213,7 @@ function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConn
 	if (needsDecode) {
 		password = decode64(password);
 	}
+	prepareDwr(GroupService, getDefaultDwrPath());
 	GroupService.canUseRemoteServer(server, {
 		callback: function(result) {
 			canUseRemoteCallback(result, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, selectedGroups, styleClass);
@@ -282,9 +283,9 @@ function addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass) 
 		var container = document.getElementById(id);
 		if (container != null) {
 			removeChildren(container);
-			var textContainer = document.createElement('div');
-			textContainer.appendChild(document.createTextNode(noGroupsMessage));
-			container.appendChild(textContainer);
+			var textContainer = new Element('div');
+			textContainer.appendText(noGroupsMessage);
+			textContainer.injectInside(container);
 		}
 	}
 	else {
@@ -294,18 +295,18 @@ function addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass) 
 }
 
 function getGroupInfoEntryPO(text, value, showEmptyFields, showLabel, styleClass) {
-	var container = document.createElement('div');
+	var container = new Element('div');
 	if (styleClass != null) {
-		container.setAttribute('class', styleClass);
+		container.addClass(styleClass);
 	}
 	value = getEmptyValueIfNull(value);
 	if (showEmptyFields || value.length > 0) {
 		if (showLabel) {
 			if (text != null) {
-				container.appendChild(document.createTextNode(text));
+				container.appendText(text);
 			}
 		}
-		container.appendChild(document.createTextNode(value));
+		container.appendText(value);
 	}
 	return container;
 }
@@ -322,41 +323,61 @@ function getEmailsContainer(emailAddresses) {
 		return null;
 	}
 	
-	var emails = document.createElement('div');
+	var emails = new Element('div');
 	for (var i = 0; i < emailAddresses.length; i++) {
-		var link = document.createElement('a');
-		link.appendChild(document.createTextNode(emailAddresses[i]));
-		link.setAttribute('href', 'mailto:' + emailAddresses[i]);
-		emails.appendChild(link);
+		var link = new Element('a');
+		link.appendText(emailAddresses[i]);
+		link.setProperty('href', 'mailto:' + emailAddresses[i]);
+		link.injectInside(emails);
 		if (i + 1 < emailAddresses.length) {
-			emails.appendChild(document.createTextNode(', '));
+			emails.appendText(', ');
 		}
 	}
 	return emails;
 }
 
 function getAddressContainer(address, styleClass, showEmptyFields, showLabels, localizedText) {	
-	var addressContainer = document.createElement('div');
+	var addressContainer = new Element('div');
 	if (styleClass != null) {
-		addressContainer.setAttribute('class', styleClass);
+		addressContainer.addClass(styleClass);
 	}
 	if (address == null) {
 		if (showEmptyFields) {
-			addressContainer.appendChild(document.createTextNode(localizedText));
+			addressContainer.appendText(localizedText);
 		}
 	}
 	else {
-		var allAddress = address.streetAddress + ', ' + address.postalCode + ' ' + address.city;
-		if (showLabels) {
-			addressContainer.appendChild(document.createTextNode(localizedText));
+		var addedAnything = false;
+		var allAddress = '';
+		if (address.streetAddress != null && address.streetAddress != '') {
+			allAddress = address.streetAddress;
+			addedAnything = true;
 		}
-		addressContainer.appendChild(document.createTextNode(allAddress));
+		if (address.postalCode != null && address.postalCode != '') {
+			if (addedAnything) {
+				allAddress += ', ';
+			}
+			allAddress += address.postalCode;
+			addedAnything = true;
+		}
+		if (address.city != null && address.city != '') {
+			if (addedAnything) {
+				allAddress += ' ';
+			}
+			allAddress += address.city;
+		}
+		if (allAddress != '') {
+			if (showLabels) {
+				addressContainer.appendText(localizedText);
+			}
+			addressContainer.appendText(allAddress);
+		}
 	}
 	return addressContainer;
 }
 
 function getDivsSpacer() {
-	var spacer = document.createElement('div');
-	spacer.setAttribute('class', 'spacer');
+	var spacer = new Element('div');
+	spacer.addClass('spacer');
 	return spacer;
 }
