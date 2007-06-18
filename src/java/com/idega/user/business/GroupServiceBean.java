@@ -180,44 +180,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		localizedText.add(iwrb.getLocalizedString("user_group", "Group: "));						//	22
 		properties.setLocalizedText(localizedText);
 		
-		List<AdvancedProperty> statusLocalization = new ArrayList<AdvancedProperty>();
-		/*addStatusLocalization(statusLocalization, "STAT_ASSCOACH", iwrb.getLocalizedString("STAT_ASSCOACH", "Assistant Coach"));
-		addStatusLocalization(statusLocalization, "STAT_B_CASH", iwrb.getLocalizedString("STAT_B_CASH", "Cashier"));
-		addStatusLocalization(statusLocalization, "STAT_B_CEO", iwrb.getLocalizedString("STAT_B_CEO", "CEO"));
-		addStatusLocalization(statusLocalization, "STAT_B_CHAIR", iwrb.getLocalizedString("STAT_B_CHAIR", "Chairman"));
-		addStatusLocalization(statusLocalization, "STAT_B_COCHIEF", iwrb.getLocalizedString("STAT_B_COCHIEF", "Co-Executive"));
-		addStatusLocalization(statusLocalization, "STAT_B_EXTRA", iwrb.getLocalizedString("STAT_B_EXTRA", "Stand in"));
-		addStatusLocalization(statusLocalization, "STAT_B_EXTRABOARD", iwrb.getLocalizedString("STAT_B_EXTRABOARD", "Stand in board member"));
-		addStatusLocalization(statusLocalization, "STAT_B_MAINBOARD", iwrb.getLocalizedString("STAT_B_MAINBOARD", "Executive board"));
-		addStatusLocalization(statusLocalization, "STAT_B_PRES", iwrb.getLocalizedString("STAT_B_PRES", "President"));
-		addStatusLocalization(statusLocalization, "STAT_B_SECR", iwrb.getLocalizedString("STAT_B_SECR", "Secretery"));
-		addStatusLocalization(statusLocalization, "STAT_B_VICECHAIR", iwrb.getLocalizedString("STAT_B_VICECHAIR", "Vice Chairman"));
-		addStatusLocalization(statusLocalization, "STAT_B_VICEPRES", iwrb.getLocalizedString("STAT_B_VICEPRES", "Vice President"));
-		addStatusLocalization(statusLocalization, "STAT_CHIEF_TRAINER", iwrb.getLocalizedString("STAT_CHIEF_TRAINER", "Head Coach"));
-		addStatusLocalization(statusLocalization, "STAT_COACH", iwrb.getLocalizedString("STAT_COACH", "Coach"));
-		addStatusLocalization(statusLocalization, "STAT_COMP", iwrb.getLocalizedString("STAT_COMP", "Competitor"));
-		addStatusLocalization(statusLocalization, "STAT_COMPYEAR", iwrb.getLocalizedString("STAT_COMPYEAR", "Competing this year"));
-		addStatusLocalization(statusLocalization, "STAT_EMPL", iwrb.getLocalizedString("STAT_EMPL", "Employee"));
-		addStatusLocalization(statusLocalization, "STAT_FIELD_MANAGER", iwrb.getLocalizedString("STAT_FIELD_MANAGER", "Field Manager"));
-		addStatusLocalization(statusLocalization, "STAT_MEMBER", iwrb.getLocalizedString("STAT_MEMBER", "Member"));
-		addStatusLocalization(statusLocalization, "STAT_MEMBYEAR", iwrb.getLocalizedString("STAT_MEMBYEAR", "Member this year"));
-		addStatusLocalization(statusLocalization, "STAT_PRACT", iwrb.getLocalizedString("STAT_PRACT", "Practicioner"));
-		addStatusLocalization(statusLocalization, "STAT_PRACTYEAR", iwrb.getLocalizedString("STAT_PRACTYEAR", "Practicioner this year"));
-		addStatusLocalization(statusLocalization, "STAT_REF", iwrb.getLocalizedString("STAT_REF", "Referee"));
-		addStatusLocalization(statusLocalization, "STAT_SPONS", iwrb.getLocalizedString("STAT_SPONS", "Sponsor"));
-		addStatusLocalization(statusLocalization, "STAT_PHYSIOTHERAPIST", iwrb.getLocalizedString("STAT_PHYSIOTHERAPIST", "Physio Therapist"));
-		addStatusLocalization(statusLocalization, "STAT_GUIDE", iwrb.getLocalizedString("STAT_GUIDE", "Tour Guide"));
-		addStatusLocalization(statusLocalization, "STAT_REGION_MANAGER", iwrb.getLocalizedString("STAT_REGION_MANAGER", "Regional Manager"));*/
-		properties.setStatusLocalization(statusLocalization);
-		
 		return properties;
-	}
-	
-	private void addStatusLocalization(List<AdvancedProperty> list, String key, String defaultValue) {
-		AdvancedProperty localizedStatus = new AdvancedProperty();
-		localizedStatus.setId(key);
-		localizedStatus.setValue(defaultValue);
-		list.add(localizedStatus);
 	}
 	
 	/**
@@ -371,6 +334,56 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, usersViewer, false);
 	}
 	
+	public List<AdvancedProperty> getUserStatusLocalization() {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		IWResourceBundle iwrb = null;
+		try {
+			iwrb = getBundle().getResourceBundle(iwc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		List<AdvancedProperty> statusLocalization = new ArrayList<AdvancedProperty>();
+		addStatusLocalization(statusLocalization, "STAT_ASSCOACH", iwrb.getLocalizedString("STAT_ASSCOACH", "Assistant Coach"));
+		addStatusLocalization(statusLocalization, "STAT_B_CASH", iwrb.getLocalizedString("STAT_B_CASH", "Cashier"));
+		addStatusLocalization(statusLocalization, "STAT_B_CEO", iwrb.getLocalizedString("STAT_B_CEO", "CEO"));
+		addStatusLocalization(statusLocalization, "STAT_B_CHAIR", iwrb.getLocalizedString("STAT_B_CHAIR", "Chairman"));
+		addStatusLocalization(statusLocalization, "STAT_B_COCHIEF", iwrb.getLocalizedString("STAT_B_COCHIEF", "Co-Executive"));
+		addStatusLocalization(statusLocalization, "STAT_B_EXTRA", iwrb.getLocalizedString("STAT_B_EXTRA", "Stand in"));
+		addStatusLocalization(statusLocalization, "STAT_B_EXTRABOARD", iwrb.getLocalizedString("STAT_B_EXTRABOARD", "Stand in board member"));
+		addStatusLocalization(statusLocalization, "STAT_B_MAINBOARD", iwrb.getLocalizedString("STAT_B_MAINBOARD", "Executive board"));
+		addStatusLocalization(statusLocalization, "STAT_B_PRES", iwrb.getLocalizedString("STAT_B_PRES", "President"));
+		addStatusLocalization(statusLocalization, "STAT_B_SECR", iwrb.getLocalizedString("STAT_B_SECR", "Secretery"));
+		addStatusLocalization(statusLocalization, "STAT_B_VICECHAIR", iwrb.getLocalizedString("STAT_B_VICECHAIR", "Vice Chairman"));
+		addStatusLocalization(statusLocalization, "STAT_B_VICEPRES", iwrb.getLocalizedString("STAT_B_VICEPRES", "Vice President"));
+		addStatusLocalization(statusLocalization, "STAT_CHIEF_TRAINER", iwrb.getLocalizedString("STAT_CHIEF_TRAINER", "Head Coach"));
+		addStatusLocalization(statusLocalization, "STAT_COACH", iwrb.getLocalizedString("STAT_COACH", "Coach"));
+		addStatusLocalization(statusLocalization, "STAT_COMP", iwrb.getLocalizedString("STAT_COMP", "Competitor"));
+		addStatusLocalization(statusLocalization, "STAT_COMPYEAR", iwrb.getLocalizedString("STAT_COMPYEAR", "Competing this year"));
+		addStatusLocalization(statusLocalization, "STAT_EMPL", iwrb.getLocalizedString("STAT_EMPL", "Employee"));
+		addStatusLocalization(statusLocalization, "STAT_FIELD_MANAGER", iwrb.getLocalizedString("STAT_FIELD_MANAGER", "Field Manager"));
+		addStatusLocalization(statusLocalization, "STAT_MEMBER", iwrb.getLocalizedString("STAT_MEMBER", "Member"));
+		addStatusLocalization(statusLocalization, "STAT_MEMBYEAR", iwrb.getLocalizedString("STAT_MEMBYEAR", "Member this year"));
+		addStatusLocalization(statusLocalization, "STAT_PRACT", iwrb.getLocalizedString("STAT_PRACT", "Practicioner"));
+		addStatusLocalization(statusLocalization, "STAT_PRACTYEAR", iwrb.getLocalizedString("STAT_PRACTYEAR", "Practicioner this year"));
+		addStatusLocalization(statusLocalization, "STAT_REF", iwrb.getLocalizedString("STAT_REF", "Referee"));
+		addStatusLocalization(statusLocalization, "STAT_SPONS", iwrb.getLocalizedString("STAT_SPONS", "Sponsor"));
+		addStatusLocalization(statusLocalization, "STAT_PHYSIOTHERAPIST", iwrb.getLocalizedString("STAT_PHYSIOTHERAPIST", "Physio Therapist"));
+		addStatusLocalization(statusLocalization, "STAT_GUIDE", iwrb.getLocalizedString("STAT_GUIDE", "Tour Guide"));
+		addStatusLocalization(statusLocalization, "STAT_REGION_MANAGER", iwrb.getLocalizedString("STAT_REGION_MANAGER", "Regional Manager"));
+		
+		return statusLocalization;
+	}
+	
+	protected String getBundleIdentifier() {
+		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
+	}
+	
 	/** Private methods starts **/
 	/**
 	 * Logs in user
@@ -516,7 +529,10 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		return userBusiness;
 	}
 	
-	protected String getBundleIdentifier() {
-		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
+	private void addStatusLocalization(List<AdvancedProperty> list, String key, String defaultValue) {
+		AdvancedProperty localizedStatus = new AdvancedProperty();
+		localizedStatus.setId(key);
+		localizedStatus.setValue(defaultValue);
+		list.add(localizedStatus);
 	}
 }

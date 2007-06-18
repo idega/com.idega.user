@@ -4,6 +4,7 @@ import com.idega.business.IBOService;
 import java.util.List;
 import org.jdom.Document;
 
+import com.idega.bean.AdvancedProperty;
 import com.idega.bean.GroupDataBean;
 import com.idega.bean.GroupMembersDataBean;
 import com.idega.bean.GroupPropertiesBean;
@@ -60,4 +61,9 @@ public interface GroupService extends IBOService {
 	 * @see com.idega.user.business.GroupServiceBean#reloadProperties
 	 */
 	public boolean reloadProperties(String instanceId);
+	
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#getUserStatusLocalization
+	 */
+	public List<AdvancedProperty> getUserStatusLocalization();
 }
