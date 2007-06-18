@@ -267,13 +267,6 @@ function loadLocalTree(id, noGroupsMessage, selectedGroups, styleClass) {
 	});
 }
 
-function prepareDwr(interfaceClass, path) {
-	//	Preparing DWR
-	dwr.engine._defaultPath = path;
-	interfaceClass._path = path;
-	DWREngine.setMethod(DWREngine.ScriptTag);
-}
-
 function getDefaultDwrPath() {
 	return DEFAULT_DWR_PATH;
 }
