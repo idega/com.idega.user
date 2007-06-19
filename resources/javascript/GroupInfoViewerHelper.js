@@ -133,7 +133,7 @@ function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 				}
 				var link = new Element('a');
 				link.appendText(homePage);
-				link.setProperty('href', homePage);
+				link.setProperty('href', 'http://' + homePage);
 				link.setProperty('target', 'newWindow');
 				link.injectInside(homePageContainer);
 				homePageContainer.injectInside(group);
