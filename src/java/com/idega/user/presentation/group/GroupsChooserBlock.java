@@ -47,7 +47,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 	private String login = null;
 	private String password = null;
 	private String idsParameterForFunction = null;
-	private String groupsTreeStyleClass = null;
+	private String groupsTreeStyleClass = "groupsTreeListElement";
 	
 	private List<String> uniqueIds = null;
 	
@@ -59,11 +59,11 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 			groupsTreeContainerId = new StringBuffer(main.getId()).append("TreeContainer").toString();
 		}
 		
-		//	Groups tree
-		addGroupsTreeContainer(iwc, main);
-		
 		//	Connection chooser
 		addConnectionTypeField(iwc, main);
+		
+		//	Groups tree
+		addGroupsTreeContainer(iwc, main);
 		
 		add(main);
 		
@@ -81,8 +81,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		
 		GroupTreeViewer groupsTree = new GroupTreeViewer(executeScriptOnLoad);
 		groupsTree.setGroupsTreeViewerId(groupsTreeContainerId);
-		groupsTree.setStyleClass("groupsTreeListElement");
-		groupsTreeStyleClass = groupsTree.getStyleClass();
+		groupsTree.setStyleClass(groupsTreeStyleClass);
 		
 		if (isRemoteMode) {	//	Defining function to load groups from remote server
 			StringBuffer function = new StringBuffer("getGroupsWithValues('");
@@ -139,7 +138,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		
 		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n").append("\t");
 		if (executeScriptOnLoad) {
-			scriptString.append("registerEvent(window, 'load', ").append("function(){").append(function).append("});");
+			scriptString.append("window.addEvent('domready', ").append("function(){").append(function).append("});");
 		}
 		else {
 			scriptString.append(function);
@@ -385,5 +384,9 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		}
 		return parameter.toString();
 	}
-	
+
+	public void setGroupsTreeStyleClass(String groupsTreeStyleClass) {
+		this.groupsTreeStyleClass = groupsTreeStyleClass;
+	}
+
 }

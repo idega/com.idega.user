@@ -10,6 +10,7 @@ function reloadGroupMemberProperties(instanceId, containerId, message) {
 }
 
 function reloadGroupMemberPropertiesCallback(result, instanceId, containerId, message) {
+	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
 	if (!result) {
 		return false;
 	}
@@ -34,10 +35,8 @@ function getSelectedUsers(instanceId, containerId, message) {
 }
 
 function getUserStatusLocalizationCallback(list, instanceId, containerId) {
-	if (list == null) {
-		closeAllLoadingMessages();
-		return false;
-	}
+	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+
 	LOCALIZATIONS = list;
 	
 	//	To be sure we'll call to 'local' server
@@ -51,6 +50,7 @@ function getUserStatusLocalizationCallback(list, instanceId, containerId) {
 }
 
 function getUserPropertiesCallback(properties, containerId) {
+	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
 	if (properties == null) {
 		closeAllLoadingMessages();
 		return false;
@@ -79,6 +79,7 @@ function getUserPropertiesCallback(properties, containerId) {
 }
 
 function getGroupsUsersData(result, properties, containerId) {
+	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
 	if (!result) {
 		closeAllLoadingMessages();
 		return false;
@@ -100,6 +101,7 @@ function getGroupsUsersData(result, properties, containerId) {
 }
 
 function getUsersInfoCallback(usersInfo, properties, containerId) {
+	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
 	if (usersInfo == null || containerId == null) {
 		closeAllLoadingMessages();
 		return false;
@@ -323,16 +325,11 @@ function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, 
 	
 	//	Emails
 	if (properties.showEmails) {
-		if (emails != null) {
-			var emailsContainer = getEmailsContainer(emails);
-			if (emailsContainer != null) {
-				emailsContainer.addClass('groupMemberEmailsContainerStyleClass');
-				if (addedAnything) {
-					container.appendText(' / ');
-				}
-				emailsContainer.injectInside(container);
-			}
+		var emailsContainer = getEmailsContainer(null, emails, 'groupMemberEmailsContainerStyleClass');
+		if (addedAnything) {
+			container.appendText(' / ');
 		}
+		emailsContainer.injectInside(container);
 	}
 	
 	return container;

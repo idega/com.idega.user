@@ -1,4 +1,5 @@
 function reloadGroupProperties(instanceId, containerId, message) {
+	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
 	GroupService.reloadProperties(instanceId, {
 		callback: function(result) {
 			reloadGroupPropertiesCallback(result, instanceId, containerId, message);
@@ -7,6 +8,7 @@ function reloadGroupProperties(instanceId, containerId, message) {
 }
 
 function reloadGroupPropertiesCallback(result, instanceId, containerId, message) {
+	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
 	if (!result) {
 		return false;
 	}
@@ -31,6 +33,7 @@ function getSelectedGroups(instanceId, containerId, message) {
 }
 
 function getGroupPropertiesCallback(properties, containerId) {
+	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
 	if (properties == null) {
 		closeAllLoadingMessages();
 		return false;
@@ -43,6 +46,7 @@ function getGroupPropertiesCallback(properties, containerId) {
 			return false;
 		}
 		
+		prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
 		GroupService.canUseRemoteServer(properties.server, {
 			callback: function(result) {
 				getGroupsData(result, properties, containerId);
@@ -56,6 +60,7 @@ function getGroupPropertiesCallback(properties, containerId) {
 }
 
 function getGroupsData(result, properties, containerId) {
+	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
 	if (!result) {
 		closeAllLoadingMessages();
 		return false;
@@ -78,6 +83,7 @@ function getGroupsData(result, properties, containerId) {
 }
 
 function getGroupsInfoCallback(groupsInfo, properties, containerId) {
+	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
 	if (groupsInfo == null || containerId == null) {
 		closeAllLoadingMessages();
 		return false;
@@ -89,68 +95,73 @@ function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 	}
 	removeChildren(main);
 	
-	var container = document.createElement('div');
-	container.className = 'groupsInfoList';
+	var container = new Element('div');
+	container.addClass('groupsInfoList');
 	
-	var groups = document.createElement('ul');
-	container.appendChild(groups);
 	for (var i = 0; i < groupsInfo.length; i++) {
-		var group = document.createElement('li');
-		groups.appendChild(group);
+		var group = new Element('div');
+		group.addClass('groupInfoEntryContainerStyleClass');
 		
 		//	Name
 		if (properties.showName) {
-			group.appendChild(getGroupInfoEntryPO(properties.localizedText[0], groupsInfo[i].name, properties.showEmptyFields, properties.showLabels, null));
+			getGroupInfoEntryPO(properties.localizedText[0], groupsInfo[i].name, properties.showEmptyFields, properties.showLabels, 'groupInfoNameContainerStyleClass').injectInside(group);
 		}
 		//	Short name
 		if (properties.showShortName) {
-			group.appendChild(getGroupInfoEntryPO(properties.localizedText[1], groupsInfo[i].showShortName, properties.showEmptyFields, properties.showLabels, null));
+			getGroupInfoEntryPO(properties.localizedText[1], groupsInfo[i].showShortName, properties.showEmptyFields, properties.showLabels, 'groupInfoShortNameContainerStyleClass').injectInside(group);
 		}
 		//	Address
 		if (properties.showAddress) {
-			group.appendChild(getAddressContainer(groupsInfo[i].address, 'groupAddressContainer', properties.showEmptyFields, properties.showLabels, properties.localizedText[2]));
+			getAddressContainer(groupsInfo[i].address, 'groupAddressContainer', properties.showEmptyFields, properties.showLabels, properties.localizedText[2]).injectInside(group);
 		}
 		//	Phone
 		if (properties.showPhone) {
-			group.appendChild(getGroupInfoEntryPO(properties.localizedText[3], groupsInfo[i].phoneNumber, properties.showEmptyFields, properties.showLabels, null));
+			getGroupInfoEntryPO(properties.localizedText[3], groupsInfo[i].phoneNumber, properties.showEmptyFields, true, 'groupInfoPhoneContainerStyleClass').injectInside(group);
 		}
 		//	Fax
 		if (properties.showPhone) {
-			group.appendChild(getGroupInfoEntryPO(properties.localizedText[4], groupsInfo[i].faxNumber, properties.showEmptyFields, properties.showLabels, null));
+			getGroupInfoEntryPO(properties.localizedText[4], groupsInfo[i].faxNumber, properties.showEmptyFields, true, 'groupInfoFaxContainerStyleClass').injectInside(group);
 		}
 		//	HomePage
 		if (properties.showHomePage) {
 			var homePage = getEmptyValueIfNull(groupsInfo[i].homePageUrl);
 			if (properties.showEmptyFields || homePage.length > 0) {
-				var homePageContainer = document.createElement('div');
-				homePageContainer.appendChild(document.createTextNode(properties.localizedText[5]));
-				var link = document.createElement('a');
-				link.appendChild(document.createTextNode(homePage));
-				link.setAttribute('href', homePage);
-				link.setAttribute('target', 'newWindow');
-				group.appendChild(homePageContainer);
+				var homePageContainer = new Element('div');
+				homePageContainer.addClass('groupInfoHomepageContainerStyleClass');
+				if (properties.showLabels) {
+					homePageContainer.appendText(properties.localizedText[5]);
+				}
+				var link = new Element('a');
+				link.appendText(homePage);
+				link.setProperty('href', homePage);
+				link.setProperty('target', 'newWindow');
+				link.injectInside(homePageContainer);
+				homePageContainer.injectInside(group);
 			}
 		}
 		//	Emails
 		if (properties.showEmails) {
-			var emailsContainer = getEmailsContainer(groupsInfo[i].emailsAddresses);
-			if (properties.showEmptyFields || emailsContainer != null) {
-				var mainEmailsContainer = document.createElement('div');
-				mainEmailsContainer.appendChild(document.createTextNode(properties.localizedText[6]));
-				mainEmailsContainer.appendChild(emailsContainer);
-				group.appendChild(mainEmailsContainer);
+			var text = null;
+			if (properties.showEmptyFields) {
+				text = properties.localizedText[6];
 			}
+			var emailsContainer = getEmailsContainer(text, groupsInfo[i].emailsAddresses, 'groupInfoEmailsContainerStyleClass');
+			emailsContainer.injectInside(group);
 		}
 		//	Description
 		if (properties.showDescription) {
-			group.appendChild(getGroupInfoEntryPO(properties.localizedText[7], groupsInfo[i].description, properties.showEmptyFields, properties.showLabels, null));
+			getGroupInfoEntryPO(properties.localizedText[7], groupsInfo[i].description, properties.showEmptyFields, properties.showLabels, 'groupInfoDescriptionContainerStyleClass').injectInside(group);
 		}
 		//	Extra info
 		if (properties.showExtraInfo) {
-			group.appendChild(getGroupInfoEntryPO(properties.localizedText[8], groupsInfo[i].extraInfo, properties.showEmptyFields, properties.showLabels, null));
+			getGroupInfoEntryPO(properties.localizedText[8], groupsInfo[i].extraInfo, properties.showEmptyFields, properties.showLabels, 'groupInfoExtrainfoContainerStyleClass').injectInside(group);
 		}
+		
+		getDivsSpacer().injectInside(group);
+		group.injectInside(container);
 	}
 	
-	main.appendChild(container);
+	getDivsSpacer().injectInside(container);
+	container.injectInside(main);
 	closeAllLoadingMessages();
 }

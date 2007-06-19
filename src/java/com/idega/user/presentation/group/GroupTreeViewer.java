@@ -1,8 +1,13 @@
 package com.idega.user.presentation.group;
 
+import java.rmi.RemoteException;
+
 import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
+import com.idega.block.web2.business.Web2Business;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -53,6 +58,21 @@ public class GroupTreeViewer extends Block {
 			//	DWR
 			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
+			
+			//	Mootools
+			Web2Business web2 = null;
+			try {
+				web2 = (Web2Business) IBOLookup.getServiceInstance(iwc, Web2Business.class);
+			} catch (IBOLookupException e) {
+				e.printStackTrace();
+			}
+			if (web2 != null) {
+				try {
+					resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, web2.getBundleURIToMootoolsLib());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		//	Actions to be performed on page loaded event
@@ -75,7 +95,7 @@ public class GroupTreeViewer extends Block {
 		
 		StringBuffer action = new StringBuffer();
 		if (executeScriptOnLoad) {
-			action.append("registerEvent(window, 'load', function() {").append(function).append("});");
+			action.append("window.addEvent('domready', function() {").append(function).append("});");
 		}
 		else {
 			action = function;

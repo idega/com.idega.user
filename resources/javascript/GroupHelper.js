@@ -1,5 +1,4 @@
 var SERVER_START = 'http://';
-var DEFAULT_DWR_PATH = '/dwr';
 
 var UNIQUE_IDS_ID = 'uniqueids';
 var GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS = 'groupsTreeListElement';
@@ -222,13 +221,16 @@ function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConn
 }
 
 function canUseRemoteCallback(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass) {
+	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+	
 	if (result) {
 		//	Can use remote server, preparing DWR
-		prepareDwr(GroupService, server + DEFAULT_DWR_PATH);
+		prepareDwr(GroupService, server + getDefaultDwrPath());
 	
 		//	Getting info from remote server
 		GroupService.getGroupsTree(login, password, {
 			callback: function(groups) {
+				prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
 				if (groups == null) {
 					//	Login failed
 					closeLoadingMessage();
@@ -254,7 +256,7 @@ function loadLocalTree(id, noGroupsMessage, selectedGroups, styleClass) {
 	SERVER = null;
 	LOGIN = null;
 	PASSWORD = null;
-	prepareDwr(GroupService, DEFAULT_DWR_PATH);
+	prepareDwr(GroupService, getDefaultDwrPath());
 	
 	GroupService.getTopGroupNodes({
 		callback: function(groups) {
@@ -267,11 +269,8 @@ function loadLocalTree(id, noGroupsMessage, selectedGroups, styleClass) {
 	});
 }
 
-function getDefaultDwrPath() {
-	return DEFAULT_DWR_PATH;
-}
-
 function addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass) {
+	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
 	if (groups.length == 0) {
 		var container = document.getElementById(id);
 		if (container != null) {
@@ -311,12 +310,20 @@ function getEmptyValueIfNull(value) {
 	return value;
 }
 
-function getEmailsContainer(emailAddresses) {
-	if (emailAddresses == null) {
-		return null;
+function getEmailsContainer(text, emailAddresses, styleClass) {	
+	var emails = new Element('div');
+	if (styleClass != null) {
+		emails.addClass(styleClass);
 	}
 	
-	var emails = new Element('div');
+	if (emailAddresses == null) {
+		return emails;
+	}
+	
+	if (text != null) {
+		emails.appendText(text);
+	}
+	
 	for (var i = 0; i < emailAddresses.length; i++) {
 		var link = new Element('a');
 		link.appendText(emailAddresses[i]);

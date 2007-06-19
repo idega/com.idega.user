@@ -1,6 +1,7 @@
 .groupMemberStyleClass {
 	float: left;
 	padding-bottom: 7px;
+	height: auto;
 }
 
 .groupMemberPhotoContainerStyleClass {
@@ -24,4 +25,13 @@
 
 .groupMemberEmailsContainerStyleClass {
 	float: left;
+}
+
+.groupInfoNameContainerStyleClass {
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.groupInfoEntryContainerStyleClass {
+	padding-bottom: 5px;
 }

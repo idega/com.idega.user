@@ -134,7 +134,7 @@ public class GroupUsersViewer extends GroupViewer {
 		addScriptFiles(iwc, files, false);
 		
 		//	Actions to be performed on page loaded event
-		StringBuffer action = new StringBuffer("window.addEvent('load', function() {getSelectedUsers('");
+		StringBuffer action = new StringBuffer("window.addEvent('domready', function() {getSelectedUsers('");
 		action.append(instanceId).append("', '").append(id).append("', '");
 		action.append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("');});");
 		

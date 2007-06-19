@@ -106,7 +106,7 @@ public class GroupInfoViewer extends GroupViewer {
 		addScriptFiles(iwc, files, false);
 
 		//	Actions to be performed on page loaded event
-		StringBuffer action = new StringBuffer("window.addEvent('load', function() {getSelectedGroups('");
+		StringBuffer action = new StringBuffer("window.addEvent('domready', function() {getSelectedGroups('");
 		action.append(instanceId).append("', '").append(id).append("', '");
 		action.append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("');});");
 		
