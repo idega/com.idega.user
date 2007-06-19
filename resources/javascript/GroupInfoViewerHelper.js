@@ -142,7 +142,7 @@ function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 		//	Emails
 		if (properties.showEmails) {
 			var text = null;
-			if (properties.showEmptyFields) {
+			if (properties.showLabels) {
 				text = properties.localizedText[6];
 			}
 			var emailsContainer = getEmailsContainer(text, groupsInfo[i].emailsAddresses, 'groupInfoEmailsContainerStyleClass');
