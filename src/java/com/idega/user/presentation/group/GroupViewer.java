@@ -8,8 +8,7 @@ import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.bean.PropertiesBean;
 import com.idega.block.web2.business.Web2Business;
-import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
+import com.idega.business.SpringBeanLookup;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 
@@ -115,12 +114,8 @@ public class GroupViewer extends Block {
 		}
 		
 		//	Mootools and reflection
-		Web2Business web2 = null;
-		try {
-			web2 = (Web2Business) IBOLookup.getServiceInstance(iwc, Web2Business.class);
-		} catch (IBOLookupException e) {
-			e.printStackTrace();
-		}
+		Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+		
 		if (web2 != null) {
 			try {
 				files.add(web2.getBundleURIToMootoolsLib());

@@ -6,8 +6,7 @@ import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.block.web2.business.Web2Business;
-import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
+import com.idega.business.SpringBeanLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -60,12 +59,8 @@ public class GroupTreeViewer extends Block {
 			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
 			
 			//	Mootools
-			Web2Business web2 = null;
-			try {
-				web2 = (Web2Business) IBOLookup.getServiceInstance(iwc, Web2Business.class);
-			} catch (IBOLookupException e) {
-				e.printStackTrace();
-			}
+			Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+			
 			if (web2 != null) {
 				try {
 					resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, web2.getBundleURIToMootoolsLib());

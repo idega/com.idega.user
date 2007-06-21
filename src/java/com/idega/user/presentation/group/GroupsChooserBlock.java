@@ -8,8 +8,7 @@ import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.bean.PropertiesBean;
 import com.idega.block.web2.business.Web2Business;
-import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
+import com.idega.business.SpringBeanLookup;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
@@ -106,12 +105,8 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 	private void addJavaScript(IWContext iwc) {		
 		if (addExtraJavaScript) {
 			//	MooTools
-			Web2Business web2Bean = null;
-			try {
-				web2Bean = (Web2Business) IBOLookup.getServiceInstance(iwc, Web2Business.class);
-			} catch (IBOLookupException e) {
-				e.printStackTrace();
-			}
+			Web2Business web2Bean = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+			
 			if (web2Bean != null) {
 				try {
 					AddResource resource = AddResourceFactory.getInstance(iwc);
