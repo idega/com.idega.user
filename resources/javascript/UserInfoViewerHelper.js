@@ -190,6 +190,21 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 				//	Phones and mails
 				getPhonesAndEmailsContainer(members[j].homePhone, members[j].workPhone, members[j].mobilePhone, members[j].emailsAddresses, 'groupMemberPhonesAndMailsContainerStyleClass', properties).injectInside(infoContainer);
 				
+				// User info 1
+				if (properties.showUserInfoOne) {
+					getGroupInfoEntryPO(null,  members[j].infoOne, false, properties.showLabels, 'groupMemberInfoContainerStyleClass').injectInside(infoContainer);
+				}
+				
+				// User info 2
+				if (properties.showUserInfoTwo) {
+					getGroupInfoEntryPO(null,  members[j].infoTwo, false, properties.showLabels, 'groupMemberInfoContainerStyleClass').injectInside(infoContainer);
+				}
+				
+				// User info 3
+				if (properties.showUserInfoThree) {
+					getGroupInfoEntryPO(null,  members[j].infoThree, false, properties.showLabels, 'groupMemberInfoContainerStyleClass').injectInside(infoContainer);
+				}
+				
 				//	Company address
 				if (properties.showCompanyAddress) {
 					getAddressContainer(members[j].companyAddress, 'groupMemberCompanyAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[18]).injectInside(infoContainer);

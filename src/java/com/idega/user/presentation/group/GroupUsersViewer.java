@@ -31,6 +31,9 @@ public class GroupUsersViewer extends GroupViewer {
 	private boolean showWorkplace = false;
 	private boolean showStatus = true;
 	private boolean addReflection = true;
+	private boolean showUserInfoOne = false;
+	private boolean showUserInfoTwo = false;
+	private boolean showUserInfoThree = false;
 	
 	private String imageWidth = "70";
 	private String imageHeight = "90";
@@ -100,6 +103,9 @@ public class GroupUsersViewer extends GroupViewer {
 		properties.setShowWorkplace(showWorkplace);
 		properties.setShowStatus(showStatus);
 		properties.setAddReflection(addReflection);
+		properties.setShowUserInfoOne(showUserInfoOne);
+		properties.setShowUserInfoTwo(showUserInfoTwo);
+		properties.setShowUserInfoThree(showUserInfoThree);
 		
 		properties.setRemoteMode(isRemoteMode());
 		
@@ -224,4 +230,9 @@ public class GroupUsersViewer extends GroupViewer {
 		this.addReflection = addReflection;
 	}
 	
+	public void setDescriptions(boolean showUserInfoOne, boolean showUserInfoTwo, boolean showUserInfoThree) {
+		this.showUserInfoOne = showUserInfoOne;
+		this.showUserInfoTwo = showUserInfoTwo;
+		this.showUserInfoThree = showUserInfoThree;
+	}
 }
