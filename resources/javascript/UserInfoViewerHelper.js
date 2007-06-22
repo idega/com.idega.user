@@ -172,11 +172,13 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 				if (properties.showStatus) {
 					getGroupInfoEntryPO(properties.localizedText[11], getLocalizationForUserStatus(members[j].status), true, properties.showLabels, 'groupMemberStatusContainerStyleClass').injectInside(infoContainer);
 				
-					//	Empty line
-					var emptyLine = new Element('div');
-					emptyLine.addClass('emptyLineContainerStyleClass');
-					new Element('br').injectInside(emptyLine);
-					emptyLine.injectInside(infoContainer);
+					if (members[j].status != null && members[j].status != '') {
+						//	Empty line
+						var emptyLine = new Element('div');
+						emptyLine.addClass('emptyLineContainerStyleClass');
+						new Element('br').injectInside(emptyLine);
+						emptyLine.injectInside(infoContainer);
+					}
 				}
 				
 				//	Name and age
@@ -189,20 +191,21 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 				
 				//	Phones and mails
 				getPhonesAndEmailsContainer(members[j].homePhone, members[j].workPhone, members[j].mobilePhone, members[j].emailsAddresses, 'groupMemberPhonesAndMailsContainerStyleClass', properties).injectInside(infoContainer);
+				getDivsSpacer().injectInside(infoContainer);
 				
 				// User info 1
 				if (properties.showUserInfoOne) {
-					getGroupInfoEntryPO(null,  members[j].infoOne, false, properties.showLabels, 'groupMemberInfoContainerStyleClass').injectInside(infoContainer);
+					getGroupInfoEntryPO(null,  members[j].infoOne, false, properties.showLabels, 'groupMemberInfoOneContainerStyleClass').injectInside(infoContainer);
 				}
 				
 				// User info 2
 				if (properties.showUserInfoTwo) {
-					getGroupInfoEntryPO(null,  members[j].infoTwo, false, properties.showLabels, 'groupMemberInfoContainerStyleClass').injectInside(infoContainer);
+					getGroupInfoEntryPO(null,  members[j].infoTwo, false, properties.showLabels, 'groupMemberInfoTwoContainerStyleClass').injectInside(infoContainer);
 				}
 				
 				// User info 3
 				if (properties.showUserInfoThree) {
-					getGroupInfoEntryPO(null,  members[j].infoThree, false, properties.showLabels, 'groupMemberInfoContainerStyleClass').injectInside(infoContainer);
+					getGroupInfoEntryPO(null,  members[j].infoThree, false, properties.showLabels, 'groupMemberInfoThreeContainerStyleClass').injectInside(infoContainer);
 				}
 				
 				//	Company address
@@ -311,7 +314,10 @@ function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, 
 	//	Home phone
 	if (properties.showHomePhone) {
 		if (homePhone != null && homePhone != '') {
-			container.appendText(properties.localizedText[13] + '. ' + homePhone);
+			var homePhoneContainer = new Element('div');
+			homePhoneContainer.setStyle('float', 'left');
+			homePhoneContainer.appendText(properties.localizedText[13] + '. ' + homePhone);
+			homePhoneContainer.injectInside(container);
 			addedAnything = true;
 		}
 	}
@@ -319,33 +325,46 @@ function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, 
 	//	Work phone
 	if (properties.showWorkPhone) {
 		if (workPhone != null && workPhone != '') {
+			var workPhoneContainer = new Element('div');
+			workPhoneContainer.setStyle('float', 'left');
 			if (addedAnything) {
-				container.appendText(' / ');
+				workPhoneContainer.appendText('\u00a0/\u00a0');
 			}
-			container.appendText(properties.localizedText[14] + '. ' + workPhone);
+			workPhoneContainer.appendText(properties.localizedText[14] + '. ' + workPhone);
+			workPhoneContainer.injectInside(container);
 			addedAnything = true;
 		}
 	}
 	
 	//	Mobile phone
-	if (properties.showMobilePhone && mobilePhone != '') {
-		if (mobilePhone != null) {
+	if (properties.showMobilePhone) {
+		if (mobilePhone != null && mobilePhone != '') {
+			var mobilePhoneContainer = new Element('div');
+			mobilePhoneContainer.setStyle('float', 'left');
 			if (addedAnything) {
-				container.appendText(' / ');
+				mobilePhoneContainer.appendText('\u00a0/\u00a0');
 			}
-			container.appendText(properties.localizedText[15] + '. ' +  mobilePhone);
+			mobilePhoneContainer.appendText(properties.localizedText[15] + '. ' +  mobilePhone);
+			mobilePhoneContainer.injectInside(container);
 			addedAnything = true;
 		}
 	}
 	
 	//	Emails
 	if (properties.showEmails) {
-		var emailsContainer = getEmailsContainer(null, emails, 'groupMemberEmailsContainerStyleClass');
-		if (addedAnything) {
-			container.appendText(' / ');
+		if (emails != null) {
+			if (emails.length > 0) {
+				var text = null;
+				if (addedAnything) {
+					text = '\u00a0/\u00a0';
+				}
+				var emailsContainer = getEmailsContainer(text, emails, 'groupMemberEmailsContainerStyleClass');
+				emailsContainer.injectInside(container);
+			}
 		}
-		emailsContainer.injectInside(container);
 	}
+	
+	getDivsSpacer().injectInside(container);
 	
 	return container;
 }
