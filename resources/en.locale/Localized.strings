@@ -331,3 +331,12 @@ server=Server
 home=hm
 work=wrk
 mobile=mbl
+
+group_name_user_contact_search.name=Contacts by group name
+group_name_user_contact_search.description=Searches for user contact information by group name
+
+group_type_user_contact_search.name=Contacts by group type
+group_type_user_contact_search.description=Searches for user contact information by group type
+
+user_contact_search.name=Contacts
+user_contact_search.description=Searches for user contact information
