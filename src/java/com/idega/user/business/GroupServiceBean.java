@@ -36,7 +36,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	/**
 	 * Returns tree of Groups
 	 */
-	public List getTopGroupNodes(){
+	public List getTopGroupNodes() {
 		return helper.getTopGroupNodes();
 	}
 	
