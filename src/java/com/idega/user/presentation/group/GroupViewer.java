@@ -29,6 +29,8 @@ public class GroupViewer extends Block {
 	private boolean showAddress = true;
 	private boolean showLabels = false;
 	
+	private Integer cacheTime = 10;
+	
 	public void main(IWContext iwc) {
 		AddResource adder = AddResourceFactory.getInstance(iwc);
 		
@@ -177,5 +179,36 @@ public class GroupViewer extends Block {
 	public void setShowLabels(boolean showLabels) {
 		this.showLabels = showLabels;
 	}
+
+	public Integer getCacheTime() {
+		return cacheTime;
+	}
+
+	public void setCacheTime(Integer cacheTime) {
+		this.cacheTime = cacheTime;
+	}
 	
+	protected void setBasicProperties(PropertiesBean bean, String instanceId) {
+		if (bean == null || instanceId == null) {
+			return;
+		}
+		
+		bean.setServer(getServer());
+		bean.setLogin(getUser());
+		bean.setPassword(getPassword());
+		
+		bean.setUniqueIds(getUniqueIds());
+		
+		bean.setShowDescription(isShowDescription());
+		bean.setShowExtraInfo(isShowExtraInfo());
+		bean.setShowEmails(isShowEmails());
+		bean.setShowAddress(isShowAddress());
+		bean.setShowLabels(isShowLabels());
+		
+		bean.setRemoteMode(isRemoteMode());
+		
+		bean.setCacheTime(getCacheTime());
+		
+		bean.setInstanceId(instanceId);
+	}
 }

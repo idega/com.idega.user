@@ -57,26 +57,14 @@ public class GroupInfoViewer extends GroupViewer {
 	
 	private void setPropertiesBean(String instanceId) {
 		GroupPropertiesBean properties = new GroupPropertiesBean();
-		
-		properties.setServer(getServer());
-		properties.setLogin(getUser());
-		properties.setPassword(getPassword());
-		
-		properties.setUniqueIds(getUniqueIds());
+		setBasicProperties(properties, instanceId);
 		
 		properties.setShowName(showName);
 		properties.setShowHomePage(showHomePage);
-		properties.setShowDescription(isShowDescription());
-		properties.setShowExtraInfo(isShowExtraInfo());
 		properties.setShowShortName(showShortName);
 		properties.setShowPhone(showPhone);
 		properties.setShowFax(showFax);
-		properties.setShowEmails(isShowEmails());
-		properties.setShowAddress(isShowAddress());
 		properties.setShowEmptyFields(showEmptyFields);
-		properties.setShowLabels(isShowLabels());
-		
-		properties.setRemoteMode(isRemoteMode());
 		
 		Object[] parameters = new Object[2];
 		parameters[0] = instanceId;

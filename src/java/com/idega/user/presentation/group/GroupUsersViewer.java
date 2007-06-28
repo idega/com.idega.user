@@ -74,29 +74,19 @@ public class GroupUsersViewer extends GroupViewer {
 	
 	private void setPropertiesBean(String instanceId) {
 		UserPropertiesBean properties = new UserPropertiesBean();
-		
-		properties.setServer(getServer());
-		properties.setLogin(getUser());
-		properties.setPassword(getPassword());
-		
-		properties.setUniqueIds(getUniqueIds());
-		
+		setBasicProperties(properties, instanceId);
+
 		properties.setShowGroupName(showGroupName);
 		properties.setShowTitle(showTitle);
 		properties.setShowAge(showAge);
 		properties.setShowWorkPhone(showWorkPhone);
 		properties.setShowHomePhone(showHomePhone);
 		properties.setShowMobilePhone(showMobilePhone);
-		properties.setShowEmails(isShowEmails());
 		properties.setShowEducation(showEducation);
 		properties.setShowSchool(showSchool);
 		properties.setShowArea(showArea);
 		properties.setShowBeganWork(showBeganWork);
 		properties.setShowImage(showImage);
-		properties.setShowLabels(isShowLabels());
-		properties.setShowAddress(isShowAddress());
-		properties.setShowExtraInfo(isShowExtraInfo());
-		properties.setShowDescription(isShowDescription());
 		properties.setShowDateOfBirth(showDateOfBirth);
 		properties.setShowJob(showJob);
 		properties.setShowCompanyAddress(showCompanyAddress);
@@ -106,8 +96,6 @@ public class GroupUsersViewer extends GroupViewer {
 		properties.setShowUserInfoOne(showUserInfoOne);
 		properties.setShowUserInfoTwo(showUserInfoTwo);
 		properties.setShowUserInfoThree(showUserInfoThree);
-		
-		properties.setRemoteMode(isRemoteMode());
 		
 		properties.setImageHeight(imageHeight);
 		properties.setImageWidth(imageWidth);
