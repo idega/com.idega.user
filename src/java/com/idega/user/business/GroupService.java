@@ -3,9 +3,10 @@ package com.idega.user.business;
 
 import com.idega.business.IBOService;
 import java.util.List;
-import com.idega.bean.GroupPropertiesBean;
 import java.rmi.RemoteException;
-import com.idega.bean.UserPropertiesBean;
+
+import com.idega.user.bean.GroupPropertiesBean;
+import com.idega.user.bean.UserPropertiesBean;
 
 public interface GroupService extends IBOService {
 	/**
