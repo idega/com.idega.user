@@ -8,6 +8,8 @@ public class UserConstants implements ConstantsPlaceholder {
 	public static final String GROUP_INFO_VIEWER_CACHE_KEY = "group_info_viewer_block";
 	public static final String GROUP_USERS_VIEWER_CACHE_KEY = "group_users_viewer_block";
 	public static final String GROUP_INFO_CHOOSER_CACHE_KEY = "group_info_chooser_block";
+	public static final String GROUP_INFO_VIEWER_DATA_CACHE_KEY = "group_info_viewer_data_cache_key";
+	public static final String GROUP_USERS_VIEWER_DATA_CACHE_KEY = "group_users_viewer_data_cache_key";
 	
 	//	Bean ids
 	public static final String GROUPS_MANAGER_BEAN_ID = "GroupsManagerBean";

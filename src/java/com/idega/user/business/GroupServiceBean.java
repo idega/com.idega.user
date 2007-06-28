@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.FinderException;
 
@@ -24,6 +25,7 @@ import com.idega.business.chooser.helper.GroupsChooserHelper;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
+import com.idega.core.cache.IWCacheManager2;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWResourceBundle;
@@ -184,6 +186,65 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		return properties;
 	}
 	
+	private Map getCache(IWContext iwc, String cacheKey, int minutes) {
+		IWCacheManager2 cache = IWCacheManager2.getInstance(iwc.getIWMainApplication());
+		if (cache == null) {
+			return null;
+		}
+		
+		long time = new Long(minutes * 60).longValue();
+		return cache.getCache(cacheKey, 1000, true, false, time, time);
+	}
+	
+	private List<GroupDataBean> getGroupInfoFromCache(IWContext iwc, String id, int minutes) {
+		Map cache = getCache(iwc, UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, minutes);
+		if (cache == null) {
+			return null;
+		}
+		
+		Object cachedList = null;
+		try {
+			cachedList = cache.get(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (cachedList == null) {
+			return null;
+		}
+		
+		if (cachedList instanceof List) {
+			List abstractList = (List) cachedList;
+			List<GroupDataBean> extractedData = new ArrayList<GroupDataBean>();
+			Object o = null;
+			for (int i = 0; i < abstractList.size(); i++) {
+				o = abstractList.get(i);
+				if (o instanceof GroupDataBean) {
+					extractedData.add((GroupDataBean) o);
+				}
+				else {
+					return null;
+				}
+			}
+			return extractedData;
+		}
+		
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void addGroupInfoToCache(IWContext iwc, String id, int minutes, List<GroupDataBean> info) {
+		Map cache = getCache(iwc, UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, minutes);
+		if (cache == null) {
+			return;
+		}
+		
+		try {
+			cache.put(id, info);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Returns info about selected groups
 	 */
@@ -195,6 +256,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		if (bean.getUniqueIds() == null) {
 			return null;
 		}
+		
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
@@ -209,7 +271,20 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			}
 		}
 		
-		return getGroupBusiness(iwc).getGroupsData(bean);
+		Integer cacheTime = bean.getCacheTime();
+		boolean useCache = cacheTime == null ? false : true;
+		if (useCache) {
+			List<GroupDataBean> cachedInfo = getGroupInfoFromCache(iwc, bean.getInstanceId(), cacheTime.intValue());
+			if (cachedInfo != null) {
+				return cachedInfo;
+			}
+		}
+		
+		List<GroupDataBean> info = getGroupBusiness(iwc).getGroupsData(bean);
+		if (useCache && info != null) {
+			addGroupInfoToCache(iwc, bean.getInstanceId(), cacheTime.intValue(), info);
+		}
+		return info;
 	}
 	
 	public boolean reloadProperties(String instanceId) {
@@ -277,6 +352,55 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, groupViewer, false);
 	}
 	
+	private List<GroupMemberDataBean> getUsersInfoFromCache(IWContext iwc, String id, int minutes) {
+		Map cache = getCache(iwc, UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, minutes);
+		if (cache == null) {
+			return null;
+		}
+		
+		Object cachedList = null;
+		try {
+			cachedList = cache.get(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (cachedList == null) {
+			return null;
+		}
+		
+		if (cachedList instanceof List) {
+			List abstractList = (List) cachedList;
+			List<GroupMemberDataBean> extractedData = new ArrayList<GroupMemberDataBean>();
+			Object o = null;
+			for (int i = 0; i < abstractList.size(); i++) {
+				o = abstractList.get(i);
+				if (o instanceof GroupMemberDataBean) {
+					extractedData.add((GroupMemberDataBean) o);
+				}
+				else {
+					return null;
+				}
+			}
+			return extractedData;
+		}
+		
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void addUsersInfoToCache(IWContext iwc, String id, int minutes, List<GroupMemberDataBean> info) {
+		Map cache = getCache(iwc, UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, minutes);
+		if (cache == null) {
+			return;
+		}
+		
+		try {
+			cache.put(id, info);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public List<GroupMemberDataBean> getUsersInfo(UserPropertiesBean bean) {
 		//	Checking if valid parameters
 		if (bean == null) {
@@ -299,7 +423,20 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			}
 		}
 		
-		return getUserBusiness(iwc).getGroupsMembersData(bean);
+		Integer cacheTime = bean.getCacheTime();
+		boolean useCache = cacheTime == null ? false : true;
+		if (useCache) {
+			List<GroupMemberDataBean> cachedInfo = getUsersInfoFromCache(iwc, bean.getInstanceId(), cacheTime.intValue());
+			if (cachedInfo != null) {
+				return cachedInfo;
+			}
+		}
+		
+		List<GroupMemberDataBean> info = getUserBusiness(iwc).getGroupsMembersData(bean);
+		if (useCache && info != null) {
+			addUsersInfoToCache(iwc, bean.getInstanceId(), cacheTime.intValue(), info);
+		}
+		return info;
 	}
 	
 	public Document getGroupsMembersPresentationObject(List<GroupMembersDataBean> membersData, UserPropertiesBean bean) {
