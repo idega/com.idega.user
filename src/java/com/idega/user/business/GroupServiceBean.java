@@ -11,6 +11,7 @@ import org.jdom.Document;
 
 import com.idega.bean.AdvancedProperty;
 import com.idega.bean.GroupDataBean;
+import com.idega.bean.GroupMemberDataBean;
 import com.idega.bean.GroupMembersDataBean;
 import com.idega.bean.GroupPropertiesBean;
 import com.idega.bean.PropertiesBean;
@@ -276,7 +277,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, groupViewer, false);
 	}
 	
-	public List<GroupMembersDataBean> getUsersInfo(UserPropertiesBean bean) {
+	public List<GroupMemberDataBean> getUsersInfo(UserPropertiesBean bean) {
 		//	Checking if valid parameters
 		if (bean == null) {
 			return null;

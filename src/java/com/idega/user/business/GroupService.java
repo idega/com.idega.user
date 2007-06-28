@@ -6,6 +6,7 @@ import org.jdom.Document;
 
 import com.idega.bean.AdvancedProperty;
 import com.idega.bean.GroupDataBean;
+import com.idega.bean.GroupMemberDataBean;
 import com.idega.bean.GroupMembersDataBean;
 import com.idega.bean.GroupPropertiesBean;
 import java.rmi.RemoteException;
@@ -50,7 +51,7 @@ public interface GroupService extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getUsersInfo
 	 */
-	public List<GroupMembersDataBean> getUsersInfo(UserPropertiesBean bean) throws RemoteException;
+	public List<GroupMemberDataBean> getUsersInfo(UserPropertiesBean bean) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getGroupsMembersPresentationObject

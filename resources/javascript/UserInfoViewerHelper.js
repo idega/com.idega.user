@@ -100,9 +100,9 @@ function getGroupsUsersData(result, properties, containerId) {
 	});
 }
 
-function getUsersInfoCallback(usersInfo, properties, containerId) {
+function getUsersInfoCallback(members, properties, containerId) {
 	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
-	if (usersInfo == null || containerId == null) {
+	if (members == null || containerId == null) {
 		closeAllLoadingMessages();
 		return false;
 	}
@@ -116,161 +116,150 @@ function getUsersInfoCallback(usersInfo, properties, containerId) {
 	
 	var container = new Element('div');
 	container.addClass('groupsMembersInfoList');
-	
-	for (var i = 0; i < usersInfo.length; i++) {
-		var group = new Element('div');
-		group.injectInside(container);
+				
+	var maxElements = members.length;	//	TODO: make paging
+	if (members.length > 40) {
+		maxElements = 40;
+	}
+	for (var j = 0; j < maxElements; j++) {
+		var user = new Element('div');
 		
-		var members = usersInfo[i].membersInfo;
-		if (members != null) {
-			var users = new Element('div');
-			
-			var maxElements = members.length;	//	TODO: make paging
-			if (members.length > 40) {
-				maxElements = 40;
+		//	Image
+		var imageContainer = new Element('div');
+		imageContainer.addClass('groupMemberPhotoContainerStyleClass');
+		imageContainer.injectInside(user);
+		if (properties.showImage) {
+			var imageSrc = members[j].imageUrl;
+			if (imageSrc == null) {
+				imageSrc = properties.defaultPhoto;	//	Default 'photo'
 			}
-			for (var j = 0; j < maxElements; j++) {
-				var user = new Element('div');
-				
-				//	Image
-				var imageContainer = new Element('div');
-				imageContainer.addClass('groupMemberPhotoContainerStyleClass');
-				imageContainer.injectInside(user);
-				if (properties.showImage) {
-					var imageSrc = members[j].imageUrl;
-					if (imageSrc == null) {
-						imageSrc = properties.defaultPhoto;	//	Default 'photo'
-					}
-					else {
-						if (properties.remoteMode) {
-							imageSrc = properties.server + imageSrc;	//	Setting full path
-						}
-					}
-					if (imageSrc != null) {
-						var image = new Element('img');
-						image.setAttribute('src', imageSrc);
-						if (properties.imageWidth != null) {
-							image.setAttribute('width', properties.imageWidth);
-						}
-						if (properties.imageHeight != null) {
-							image.setAttribute('height', properties.imageHeight);
-						}
-						image.injectInside(imageContainer);
-						
-						//	Add reflecion?
-						if (properties.addReflection) {
-							image.addReflection({height: '0.16', opacity: '0.55'});
-						}
-					}
+			else {
+				if (properties.remoteMode) {
+					imageSrc = properties.server + imageSrc;	//	Setting full path
 				}
-				
-				//	Info
-				var infoContainer = new Element('div');
-				infoContainer.addClass('groupMemberInfoContainerStyleClass');
-				
-				//	Status
-				if (properties.showStatus) {
-					getGroupInfoEntryPO(properties.localizedText[11], getLocalizationForUserStatus(members[j].status), true, properties.showLabels, 'groupMemberStatusContainerStyleClass').injectInside(infoContainer);
-				
-					if (members[j].status != null && members[j].status != '') {
-						//	Empty line
-						var emptyLine = new Element('div');
-						emptyLine.addClass('emptyLineContainerStyleClass');
-						new Element('br').injectInside(emptyLine);
-						emptyLine.injectInside(infoContainer);
-					}
-				}
-				
-				//	Name and age
-				getUserNameAndAgeContainer(members[j].name, members[j].age, properties).injectInside(infoContainer);
-				
-				// Address
-				if (properties.showAddress) {
-					getAddressContainer(members[j].address, 'groupMemberAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[12]).injectInside(infoContainer);
-				}
-				
-				//	Phones and mails
-				getPhonesAndEmailsContainer(members[j].homePhone, members[j].workPhone, members[j].mobilePhone, members[j].emailsAddresses, 'groupMemberPhonesAndMailsContainerStyleClass', properties).injectInside(infoContainer);
-				getDivsSpacer().injectInside(infoContainer);
-				
-				// User info 1
-				if (properties.showUserInfoOne) {
-					getGroupInfoEntryPO(null,  members[j].infoOne, false, properties.showLabels, 'groupMemberInfoOneContainerStyleClass').injectInside(infoContainer);
-				}
-				
-				// User info 2
-				if (properties.showUserInfoTwo) {
-					getGroupInfoEntryPO(null,  members[j].infoTwo, false, properties.showLabels, 'groupMemberInfoTwoContainerStyleClass').injectInside(infoContainer);
-				}
-				
-				// User info 3
-				if (properties.showUserInfoThree) {
-					getGroupInfoEntryPO(null,  members[j].infoThree, false, properties.showLabels, 'groupMemberInfoThreeContainerStyleClass').injectInside(infoContainer);
-				}
-				
-				//	Company address
-				if (properties.showCompanyAddress) {
-					getAddressContainer(members[j].companyAddress, 'groupMemberCompanyAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[18]).injectInside(infoContainer);
-				}
-				
-				//	Group name
-				if (properties.showGroupName) {
-					getGroupInfoEntryPO(properties.localizedText[22], usersInfo[i].groupName, false, properties.showLabels, 'groupMemberGroupContainerStyleClass').injectInside(infoContainer);
-				}
-				
-				//	Date of birth
-				if (properties.showDateOfBirth) {
-					getGroupInfoEntryPO(properties.localizedText[19], members[j].dateOfBirth, false, properties.showLabels, 'groupMemberDateOfBirthContainerStyleClass').injectInside(infoContainer);
-				}
-				
-				//	Job
-				if (properties.showJob) {
-					getGroupInfoEntryPO(properties.localizedText[20], members[j].job, false, properties.showLabels, 'groupMemberJobContainerStyleClass').injectInside(infoContainer);
-				}
-				
-				//	Workplace
-				if (properties.showWorkplace) {
-					getGroupInfoEntryPO(properties.localizedText[21], members[j].workPlace, false, properties.showLabels, 'groupMemberWorkplaceContainerStyleClass').injectInside(infoContainer);
-				}
-				
-				//	Extra info
-				if (properties.showExtraInfo) {
-					getGroupInfoEntryPO(properties.localizedText[16], members[j].extraInfo, false, properties.showLabels, 'groupMemberExtraInfoContainerStyleClass').injectInside(infoContainer);
-				}
-				
-				//	Description
-				if (properties.showDescription) {
-					getGroupInfoEntryPO(properties.localizedText[17], members[j].description, false, properties.showLabels, 'groupMemberDescriptionContainerStyleClass').injectInside(infoContainer);
-				}
-				
-				/*//	Title
-				if (properties.showTitle) {
-					getGroupInfoEntryPO(properties.localizedText[1], members[j].title, false, properties.showLabels, 'groupMemberTitleContainerStyleClass').injectInside(infoContainer);
-				}
-				//	Education
-				if (properties.showEducation) {
-					getGroupInfoEntryPO(properties.localizedText[7], members[j].education, false, properties.showLabels, 'groupMemberEducationContainerStyleClass').injectInside(infoContainer);
-				}
-				//	School
-				if (properties.showSchool) {
-					getGroupInfoEntryPO(properties.localizedText[8], members[j].school, false, properties.showLabels, 'groupMemberSchoolContainerStyleClass').injectInside(infoContainer);
-				}
-				//	Area
-				if (properties.showArea) {
-					getGroupInfoEntryPO(properties.localizedText[9], members[j].area, false, properties.showLabels, 'groupMemberAreaContainerStyleClass').injectInside(infoContainer);
-				}
-				//	Began work
-				if (properties.showBeganWork) {
-					getGroupInfoEntryPO(properties.localizedText[10], members[j].beganWork, false, properties.showLabels, 'groupMemberBeganworkContainerStyleClass').injectInside(infoContainer);
-				}*/
-				
-				infoContainer.injectInside(user);
-				user.addClass('groupMemberStyleClass');
-				user.injectInside(users);
-				getDivsSpacer().injectInside(users);
 			}
-			users.injectInside(group);
+			if (imageSrc != null) {
+				var image = new Element('img');
+				image.setAttribute('src', imageSrc);
+				if (properties.imageWidth != null) {
+					image.setAttribute('width', properties.imageWidth);
+				}
+				if (properties.imageHeight != null) {
+					image.setAttribute('height', properties.imageHeight);
+				}
+				image.injectInside(imageContainer);
+				
+				//	Add reflecion?
+				if (properties.addReflection) {
+					image.addReflection({height: '0.16', opacity: '0.55'});
+				}
+			}
 		}
+		
+		//	Info
+		var infoContainer = new Element('div');
+		infoContainer.addClass('groupMemberInfoContainerStyleClass');
+				
+		//	Status
+		if (properties.showStatus) {
+			getGroupInfoEntryPO(properties.localizedText[11], getLocalizationForUserStatus(members[j].status), true, properties.showLabels, 'groupMemberStatusContainerStyleClass').injectInside(infoContainer);
+		
+			if (members[j].status != null && members[j].status != '') {
+				//	Empty line
+				var emptyLine = new Element('div');
+				emptyLine.addClass('emptyLineContainerStyleClass');
+				new Element('br').injectInside(emptyLine);
+				emptyLine.injectInside(infoContainer);
+			}
+		}
+		
+		//	Name and age
+		getUserNameAndAgeContainer(members[j].name, members[j].age, properties).injectInside(infoContainer);
+		
+		// Address
+		if (properties.showAddress) {
+			getAddressContainer(members[j].address, 'groupMemberAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[12]).injectInside(infoContainer);
+		}
+				
+		//	Phones and mails
+		getPhonesAndEmailsContainer(members[j].homePhone, members[j].workPhone, members[j].mobilePhone, members[j].emailsAddresses, 'groupMemberPhonesAndMailsContainerStyleClass', properties).injectInside(infoContainer);
+		getDivsSpacer().injectInside(infoContainer);
+				
+		// User info 1
+		if (properties.showUserInfoOne) {
+			getGroupInfoEntryPO(null,  members[j].infoOne, false, properties.showLabels, 'groupMemberInfoOneContainerStyleClass').injectInside(infoContainer);
+		}
+				
+		// User info 2
+		if (properties.showUserInfoTwo) {
+			getGroupInfoEntryPO(null,  members[j].infoTwo, false, properties.showLabels, 'groupMemberInfoTwoContainerStyleClass').injectInside(infoContainer);
+		}
+		
+		// User info 3
+		if (properties.showUserInfoThree) {
+			getGroupInfoEntryPO(null,  members[j].infoThree, false, properties.showLabels, 'groupMemberInfoThreeContainerStyleClass').injectInside(infoContainer);
+		}
+				
+		//	Company address
+		if (properties.showCompanyAddress) {
+			getAddressContainer(members[j].companyAddress, 'groupMemberCompanyAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[18]).injectInside(infoContainer);
+		}
+				
+		//	Group name
+		if (properties.showGroupName) {
+			getGroupInfoEntryPO(properties.localizedText[22], members[j].groupName, false, properties.showLabels, 'groupMemberGroupContainerStyleClass').injectInside(infoContainer);
+		}
+				
+		//	Date of birth
+		if (properties.showDateOfBirth) {
+			getGroupInfoEntryPO(properties.localizedText[19], members[j].dateOfBirth, false, properties.showLabels, 'groupMemberDateOfBirthContainerStyleClass').injectInside(infoContainer);
+		}
+				
+		//	Job
+		if (properties.showJob) {
+			getGroupInfoEntryPO(properties.localizedText[20], members[j].job, false, properties.showLabels, 'groupMemberJobContainerStyleClass').injectInside(infoContainer);
+		}
+				
+		//	Workplace
+		if (properties.showWorkplace) {
+			getGroupInfoEntryPO(properties.localizedText[21], members[j].workPlace, false, properties.showLabels, 'groupMemberWorkplaceContainerStyleClass').injectInside(infoContainer);
+		}
+				
+		//	Extra info
+		if (properties.showExtraInfo) {
+			getGroupInfoEntryPO(properties.localizedText[16], members[j].extraInfo, false, properties.showLabels, 'groupMemberExtraInfoContainerStyleClass').injectInside(infoContainer);
+		}
+				
+		//	Description
+		if (properties.showDescription) {
+			getGroupInfoEntryPO(properties.localizedText[17], members[j].description, false, properties.showLabels, 'groupMemberDescriptionContainerStyleClass').injectInside(infoContainer);
+		}
+				
+		/*//	Title
+		if (properties.showTitle) {
+			getGroupInfoEntryPO(properties.localizedText[1], members[j].title, false, properties.showLabels, 'groupMemberTitleContainerStyleClass').injectInside(infoContainer);
+		}
+		//	Education
+		if (properties.showEducation) {
+			getGroupInfoEntryPO(properties.localizedText[7], members[j].education, false, properties.showLabels, 'groupMemberEducationContainerStyleClass').injectInside(infoContainer);
+		}
+		//	School
+		if (properties.showSchool) {
+			getGroupInfoEntryPO(properties.localizedText[8], members[j].school, false, properties.showLabels, 'groupMemberSchoolContainerStyleClass').injectInside(infoContainer);
+		}
+		//	Area
+		if (properties.showArea) {
+			getGroupInfoEntryPO(properties.localizedText[9], members[j].area, false, properties.showLabels, 'groupMemberAreaContainerStyleClass').injectInside(infoContainer);
+		}
+		//	Began work
+		if (properties.showBeganWork) {
+			getGroupInfoEntryPO(properties.localizedText[10], members[j].beganWork, false, properties.showLabels, 'groupMemberBeganworkContainerStyleClass').injectInside(infoContainer);
+		}*/
+		
+		infoContainer.injectInside(user);
+		user.addClass('groupMemberStyleClass');
+		getDivsSpacer().injectInside(user);
+		user.injectInside(container);		
 	}
 	
 	container.injectInside(main);
