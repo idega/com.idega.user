@@ -4,7 +4,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import com.idega.bean.GroupDataBean;
+import com.idega.bean.GroupMemberDataBean;
 import com.idega.bean.GroupPropertiesBean;
 import com.idega.bean.UserPropertiesBean;
 import com.idega.business.IBOLookup;
@@ -13,6 +16,7 @@ import com.idega.business.IBOServiceBean;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
+import com.idega.core.cache.IWCacheManager2;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWResourceBundle;
@@ -82,6 +86,193 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		return (existsFileOnRemoteServer(engineScript) && existsFileOnRemoteServer(interfaceScript));
 	}
 	
+	private Map getCache(IWContext iwc, String cacheKey, int minutes) {
+		IWCacheManager2 cache = IWCacheManager2.getInstance(iwc.getIWMainApplication());
+		if (cache == null) {
+			return null;
+		}
+		
+		long time = new Long(minutes * 60).longValue();
+		return cache.getCache(cacheKey, 1000, true, false, time, time);
+	}
+	
+	private List getGroupInfoFromCache(IWContext iwc, String id, int minutes) {
+		Map cache = getCache(iwc, UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, minutes);
+		if (cache == null) {
+			return null;
+		}
+		
+		Object cachedList = null;
+		try {
+			cachedList = cache.get(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (cachedList == null) {
+			return null;
+		}
+		
+		if (cachedList instanceof List) {
+			List abstractList = (List) cachedList;
+			List extractedData = new ArrayList();
+			Object o = null;
+			for (int i = 0; i < abstractList.size(); i++) {
+				o = abstractList.get(i);
+				if (o instanceof GroupDataBean) {
+					extractedData.add((GroupDataBean) o);
+				}
+				else {
+					return null;
+				}
+			}
+			return extractedData;
+		}
+		
+		return null;
+	}
+	
+	private void addGroupInfoToCache(IWContext iwc, String id, int minutes, List info) {
+		Map cache = getCache(iwc, UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, minutes);
+		if (cache == null) {
+			return;
+		}
+		
+		try {
+			cache.put(id, info);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Returns info about selected groups
+	 */
+	public List getGroupsInfo(GroupPropertiesBean bean) {
+		//	Checking if valid parameters
+		if (bean == null) {
+			return null;
+		}
+		if (bean.getUniqueIds() == null) {
+			return null;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		if (bean.isRemoteMode()) {
+			//	Checking if user is allowed to get info
+			if (!isLoggedUser(iwc, bean.getLogin())) {
+				if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
+					return null;
+				}
+			}
+		}
+		
+		Integer cacheTime = bean.getCacheTime();
+		boolean useCache = cacheTime == null ? false : true;
+		if (useCache) {
+			List cachedInfo = getGroupInfoFromCache(iwc, bean.getInstanceId(), cacheTime.intValue());
+			if (cachedInfo != null) {
+				return cachedInfo;
+			}
+		}
+		
+		List info = getGroupBusiness(iwc).getGroupsData(bean);
+		if (useCache && info != null) {
+			addGroupInfoToCache(iwc, bean.getInstanceId(), cacheTime.intValue(), info);
+		}
+		return info;
+	}
+	
+	private List getUsersInfoFromCache(IWContext iwc, String id, int minutes) {
+		Map cache = getCache(iwc, UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, minutes);
+		if (cache == null) {
+			return null;
+		}
+		
+		Object cachedList = null;
+		try {
+			cachedList = cache.get(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (cachedList == null) {
+			return null;
+		}
+		
+		if (cachedList instanceof List) {
+			List abstractList = (List) cachedList;
+			List extractedData = new ArrayList();
+			Object o = null;
+			for (int i = 0; i < abstractList.size(); i++) {
+				o = abstractList.get(i);
+				if (o instanceof GroupMemberDataBean) {
+					extractedData.add((GroupMemberDataBean) o);
+				}
+				else {
+					return null;
+				}
+			}
+			return extractedData;
+		}
+		
+		return null;
+	}
+
+	private void addUsersInfoToCache(IWContext iwc, String id, int minutes, List info) {
+		Map cache = getCache(iwc, UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, minutes);
+		if (cache == null) {
+			return;
+		}
+		
+		try {
+			cache.put(id, info);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public List getUsersInfo(UserPropertiesBean bean) {
+		//	Checking if valid parameters
+		if (bean == null) {
+			return null;
+		}
+		if (bean.getUniqueIds() == null) {
+			return null;
+		}
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		if (bean.isRemoteMode()) {
+			//	Checking if user is allowed to get info
+			if (!isLoggedUser(iwc, bean.getLogin())) {
+				if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
+					return null;
+				}
+			}
+		}
+		
+		Integer cacheTime = bean.getCacheTime();
+		boolean useCache = cacheTime == null ? false : true;
+		if (useCache) {
+			List cachedInfo = getUsersInfoFromCache(iwc, bean.getInstanceId(), cacheTime.intValue());
+			if (cachedInfo != null) {
+				return cachedInfo;
+			}
+		}
+		
+		List info = getUserBusiness(iwc).getGroupsMembersData(bean);
+		if (useCache && info != null) {
+			addUsersInfoToCache(iwc, bean.getInstanceId(), cacheTime.intValue(), info);
+		}
+		return info;
+	}
+	
+	/** Private methods starts **/
 	/**
 	 * Logs in user
 	 * @param iwc
@@ -172,59 +363,6 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		}
 		
 		return false;
-	}
-	
-	/**
-	 * Returns info about selected groups
-	 */
-	public List getGroupsInfo(GroupPropertiesBean bean) {
-		//	Checking if valid parameters
-		if (bean == null) {
-			return null;
-		}
-		if (bean.getUniqueIds() == null) {
-			return null;
-		}
-		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
-			return null;
-		}
-		
-		if (bean.isRemoteMode()) {
-			//	Checking if user is allowed to get info
-			if (!isLoggedUser(iwc, bean.getLogin())) {
-				if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
-					return null;
-				}
-			}
-		}
-		
-		return getGroupBusiness(iwc).getGroupsData(bean);
-	}
-	
-	public List getUsersInfo(UserPropertiesBean bean) {
-		//	Checking if valid parameters
-		if (bean == null) {
-			return null;
-		}
-		if (bean.getUniqueIds() == null) {
-			return null;
-		}
-		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
-			return null;
-		}
-		
-		if (bean.isRemoteMode()) {
-			//	Checking if user is allowed to get info
-			if (!isLoggedUser(iwc, bean.getLogin())) {
-				if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
-					return null;
-				}
-			}
-		}
-		
-		return getUserBusiness(iwc).getGroupsMembersData(bean);
 	}
 	
 	private synchronized GroupBusiness getGroupBusiness(IWContext iwc) {
