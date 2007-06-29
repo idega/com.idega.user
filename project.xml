@@ -115,7 +115,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
-      <version>3.1.51</version>
+      <version>3.1.52</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
@@ -125,7 +125,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.block.login</artifactId>
-      <version>3.1.3</version>
+      <version>3.1.4</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
     </dependency>
