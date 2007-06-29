@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.idega.bean.GroupPropertiesBean;
-import com.idega.bean.PropertiesBean;
-import com.idega.bean.UserPropertiesBean;
 
 public class GroupsManagerBean implements Serializable {
 

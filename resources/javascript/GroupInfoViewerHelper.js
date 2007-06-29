@@ -1,10 +1,44 @@
 function reloadGroupProperties(instanceId, containerId, message) {
 	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
-	GroupService.reloadProperties(instanceId, {
-		callback: function(result) {
-			reloadGroupPropertiesCallback(result, instanceId, containerId, message);
+	
+	var strings = new Array();
+	strings.push(instanceId);
+	strings.push(containerId);
+	strings.push(message);
+	
+	//	Getting proeprties bean
+	GroupService.getBasicGroupPropertiesBean(instanceId, {
+		callback: function(bean) {
+			getBasicGroupPropertiesBeanCallback(bean, strings);
 		}
-	})
+	});
+}
+
+function getBasicGroupPropertiesBeanCallback(bean, strings) {
+	if (bean.remoteMode) {
+		prepareDwr(GroupService, bean.server + getDefaultDwrPath());
+	}
+	else {
+		prepareDwr(GroupService, getDefaultDwrPath());
+	}
+	
+	//	Clearing cache
+	GroupService.clearGroupInfoCache(bean, {
+		callback: function(result) {
+			clearGroupInfoCacheCallback(strings);
+		}
+	});
+}
+
+function clearGroupInfoCacheCallback(strings) {
+	prepareDwr(GroupService, getDefaultDwrPath());
+	
+	//	Reloading properties
+	GroupService.reloadProperties(strings[0], {
+		callback: function(result) {
+			reloadGroupPropertiesCallback(result, strings[0], strings[1], strings[2]);
+		}
+	});
 }
 
 function reloadGroupPropertiesCallback(result, instanceId, containerId, message) {

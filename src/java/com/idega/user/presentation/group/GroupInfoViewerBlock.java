@@ -2,8 +2,6 @@ package com.idega.user.presentation.group;
 
 import java.util.List;
 
-import com.idega.bean.AddressData;
-import com.idega.bean.GroupDataBean;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -12,6 +10,8 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.ListItem;
 import com.idega.presentation.text.Lists;
 import com.idega.presentation.text.Text;
+import com.idega.user.bean.AddressData;
+import com.idega.user.bean.GroupDataBean;
 import com.idega.util.CoreConstants;
 
 public class GroupInfoViewerBlock extends Block {

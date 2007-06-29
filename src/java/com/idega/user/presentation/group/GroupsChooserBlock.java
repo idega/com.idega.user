@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
-import com.idega.bean.PropertiesBean;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.business.SpringBeanLookup;
 import com.idega.core.builder.business.ICBuilderConstants;
@@ -25,6 +24,7 @@ import com.idega.presentation.ui.RadioButton;
 import com.idega.presentation.ui.RadioGroup;
 import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.util.AbstractChooserBlock;
+import com.idega.user.bean.PropertiesBean;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 

@@ -2,11 +2,45 @@ var LOCALIZATIONS = null;
 
 function reloadGroupMemberProperties(instanceId, containerId, message) {
 	prepareDwr(GroupService, getDefaultDwrPath());
-	GroupService.reloadProperties(instanceId, {
-		callback: function(result) {
-			reloadGroupMemberPropertiesCallback(result, instanceId, containerId, message);
+	
+	var strings = new Array();
+	strings.push(instanceId);
+	strings.push(containerId);
+	strings.push(message);
+	
+	//	Getting proeprties bean
+	GroupService.getBasicUserPropertiesBean(instanceId, {
+		callback: function(bean) {
+			getBasicUserPropertiesBeanCallback(bean, strings);
 		}
-	})
+	});
+}
+
+function getBasicUserPropertiesBeanCallback(bean, strings) {
+	if (bean.remoteMode) {
+		prepareDwr(GroupService, bean.server + getDefaultDwrPath());
+	}
+	else {
+		prepareDwr(GroupService, getDefaultDwrPath());
+	}
+	
+	//	Clearing cache
+	GroupService.clearUsersInfoCache(bean, {
+		callback: function(result) {
+			clearUsersInfoCacheCallback(strings);
+		}
+	});
+}
+
+function clearUsersInfoCacheCallback(strings) {
+	prepareDwr(GroupService, getDefaultDwrPath());
+	
+	//	Reloading properties
+	GroupService.reloadProperties(strings[0], {
+		callback: function(result) {
+			reloadGroupMemberPropertiesCallback(result, strings[0], strings[1], strings[2]);
+		}
+	});
 }
 
 function reloadGroupMemberPropertiesCallback(result, instanceId, containerId, message) {

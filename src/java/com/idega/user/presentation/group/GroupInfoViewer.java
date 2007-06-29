@@ -3,11 +3,11 @@ package com.idega.user.presentation.group;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.idega.bean.GroupPropertiesBean;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
+import com.idega.user.bean.GroupPropertiesBean;
 import com.idega.user.business.UserConstants;
 import com.idega.util.CoreConstants;
 import com.idega.webface.WFUtil;

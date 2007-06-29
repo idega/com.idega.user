@@ -11,28 +11,30 @@
 			<param name="class" value="com.idega.user.business.GroupService" />
 		</create>
 		
-		<convert converter="bean" match="com.idega.bean.PropertiesBean" />
-		<convert converter="bean" match="com.idega.bean.GroupPropertiesBean" />
-		<convert converter="bean" match="com.idega.bean.UserPropertiesBean" />
-		<convert converter="bean" match="com.idega.bean.DataBean" />
-		<convert converter="bean" match="com.idega.bean.GroupDataBean" />
-		<convert converter="bean" match="com.idega.bean.GroupMembersDataBean" />
-		<convert converter="bean" match="com.idega.bean.GroupMemberDataBean" />
-		<convert converter="bean" match="com.idega.bean.AddressData" />
+		<convert converter="bean" match="com.idega.user.bean.PropertiesBean" />
+		<convert converter="bean" match="com.idega.user.bean.GroupPropertiesBean" />
+		<convert converter="bean" match="com.idega.user.bean.UserPropertiesBean" />
+		<convert converter="bean" match="com.idega.user.bean.DataBean" />
+		<convert converter="bean" match="com.idega.user.bean.GroupDataBean" />
+		<convert converter="bean" match="com.idega.user.bean.GroupMembersDataBean" />
+		<convert converter="bean" match="com.idega.user.bean.GroupMemberDataBean" />
+		<convert converter="bean" match="com.idega.user.bean.AddressData" />
 		<convert converter="bean" match="com.idega.user.business.GroupNode" />
 	</allow>
 	<signatures>
 		<![CDATA[
 			import java.util.List;
-			import com.idega.bean.GroupPropertiesBean;
-			import com.idega.bean.UserPropertiesBean;
-			import com.idega.bean.GroupDataBean;
-			import com.idega.bean.GroupMembersDataBean;
+			import com.idega.user.bean.GroupPropertiesBean;
+			import com.idega.user.bean.UserPropertiesBean;
+			import com.idega.user.bean.GroupDataBean;
+			import com.idega.user.bean.GroupMembersDataBean;
 
 			GroupService.getGroupsInfo(GroupPropertiesBean);
 			GroupService.getUsersInfo(UserPropertiesBean);
 			GroupService.getGroupInfoPresentationObject(List<GroupDataBean>, GroupPropertiesBean);
 			GroupService.getGroupsMembersPresentationObject(List<GroupMembersDataBean>, UserPropertiesBean);
+			GroupService.clearGroupInfoCache(GroupPropertiesBean);
+			GroupService.clearUsersInfoCache(UserPropertiesBean);
   		]]>
 	</signatures>
 </dwr>

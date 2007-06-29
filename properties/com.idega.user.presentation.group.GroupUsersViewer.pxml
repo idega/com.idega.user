@@ -1462,7 +1462,7 @@
             			<reload>true</reload>
           			</key>
 					<key>
-            			<name>:method:1:implied:void:setGroups:com.idega.bean.PropertiesBean:</name>
+            			<name>:method:1:implied:void:setGroups:com.idega.user.bean.PropertiesBean:</name>
             			<value>
               				<map>
                 				<key>
@@ -1509,7 +1509,7 @@
                 				<key>
                   					<name>iw_method_identifier</name>
                   					<type>java.lang.String</type>
-                  					<value>:method:1:implied:void:setGroups:com.idega.bean.PropertiesBean:</value>
+                  					<value>:method:1:implied:void:setGroups:com.idega.user.bean.PropertiesBean:</value>
                 				</key>
               				</map>
             			</value>

@@ -1,19 +1,19 @@
 package com.idega.user.presentation.group;
 
-import com.idega.bean.PropertiesBean;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.AbstractChooser;
+import com.idega.user.bean.PropertiesBean;
 import com.idega.util.CoreConstants;
 
 /**
  * 
  * @author <a href="valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  *
- * Last modified: $Date: 2007/06/17 10:50:30 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/29 10:01:27 $ by $Author: valdas $
  *
  */
 public class GroupsChooser extends AbstractChooser {

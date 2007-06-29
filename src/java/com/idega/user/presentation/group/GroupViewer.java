@@ -6,11 +6,11 @@ import java.util.List;
 import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
-import com.idega.bean.PropertiesBean;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.business.SpringBeanLookup;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
+import com.idega.user.bean.PropertiesBean;
 
 public class GroupViewer extends Block {
 	
