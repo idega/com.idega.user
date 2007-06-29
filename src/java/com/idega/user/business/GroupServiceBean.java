@@ -20,6 +20,7 @@ import com.idega.presentation.IWContext;
 import com.idega.user.bean.GroupDataBean;
 import com.idega.user.bean.GroupMemberDataBean;
 import com.idega.user.bean.GroupPropertiesBean;
+import com.idega.user.bean.PropertiesBean;
 import com.idega.user.bean.UserPropertiesBean;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
@@ -161,13 +162,8 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			return null;
 		}
 		
-		if (bean.isRemoteMode()) {
-			//	Checking if user is allowed to get info
-			if (!isLoggedUser(iwc, bean.getLogin())) {
-				if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
-					return null;
-				}
-			}
+		if (!canUseServer(iwc, bean)) {
+			return null;
 		}
 		
 		Integer cacheTime = bean.getCacheTime();
@@ -247,13 +243,8 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			return null;
 		}
 		
-		if (bean.isRemoteMode()) {
-			//	Checking if user is allowed to get info
-			if (!isLoggedUser(iwc, bean.getLogin())) {
-				if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
-					return null;
-				}
-			}
+		if (!canUseServer(iwc, bean)) {
+			return null;
 		}
 		
 		Integer cacheTime = bean.getCacheTime();
@@ -411,5 +402,65 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	
 	protected String getBundleIdentifier() {
 		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
+	}
+	
+	private boolean canUseServer(IWContext iwc, PropertiesBean bean) {
+		if (bean.isRemoteMode()) {
+			//	Checking if user is allowed to use server
+			if (!isLoggedUser(iwc, bean.getLogin())) {
+				if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
+					return false;
+				}
+				else {
+					return true;
+				}
+			}
+			else {
+				return true;
+			}
+		}
+		return true;
+	}
+	
+	private boolean clearCache(String cacheKey, PropertiesBean bean) {
+		if (cacheKey == null || bean == null) {
+			return false;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return false;
+		}
+		
+		if (!canUseServer(iwc, bean)) {
+			return false;
+		}
+		
+		int minutes = 0;
+		Integer cacheTime = bean.getCacheTime();
+		if (cacheTime != null) {
+			minutes = cacheTime.intValue();
+		}
+		
+		Map cache = getCache(iwc, cacheKey, minutes);
+		if (cache == null) {
+			return false;
+		}
+		
+		try {
+			cache.remove(bean.getInstanceId());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean clearGroupInfoCache(GroupPropertiesBean bean) {
+		return clearCache(UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, bean);
+	}
+	
+	public boolean clearUsersInfoCache(UserPropertiesBean bean) {
+		return clearCache(UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, bean);
 	}
 }

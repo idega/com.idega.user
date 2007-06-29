@@ -33,4 +33,14 @@ public interface GroupService extends IBOService {
 	 * @see com.idega.user.business.GroupServiceBean#getUsersInfo
 	 */
 	public List getUsersInfo(UserPropertiesBean bean) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#clearGroupInfoCache
+	 */
+	public boolean clearGroupInfoCache(GroupPropertiesBean bean);
+	
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#clearUsersInfoCache
+	 */
+	public boolean clearUsersInfoCache(UserPropertiesBean bean);
 }
