@@ -1,16 +1,17 @@
 package com.idega.user.business;
 
+import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.IBOService;
 import java.util.List;
 import org.jdom.Document;
 
-import com.idega.bean.AdvancedProperty;
-import com.idega.bean.GroupDataBean;
-import com.idega.bean.GroupMemberDataBean;
-import com.idega.bean.GroupMembersDataBean;
-import com.idega.bean.GroupPropertiesBean;
 import java.rmi.RemoteException;
-import com.idega.bean.UserPropertiesBean;
+
+import com.idega.user.bean.GroupDataBean;
+import com.idega.user.bean.GroupMemberDataBean;
+import com.idega.user.bean.GroupMembersDataBean;
+import com.idega.user.bean.GroupPropertiesBean;
+import com.idega.user.bean.UserPropertiesBean;
 
 public interface GroupService extends IBOService {
 	/**
@@ -67,4 +68,24 @@ public interface GroupService extends IBOService {
 	 * @see com.idega.user.business.GroupServiceBean#getUserStatusLocalization
 	 */
 	public List<AdvancedProperty> getUserStatusLocalization();
+	
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#getBasicUserPropertiesBean
+	 */
+	public UserPropertiesBean getBasicUserPropertiesBean(String instanceId);
+	
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#getBasicGroupPropertiesBean
+	 */
+	public GroupPropertiesBean getBasicGroupPropertiesBean(String instanceId);
+	
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#clearGroupInfoCache
+	 */
+	public boolean clearGroupInfoCache(GroupPropertiesBean bean);
+	
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#clearUsersInfoCache
+	 */
+	public boolean clearUsersInfoCache(UserPropertiesBean bean);
 }

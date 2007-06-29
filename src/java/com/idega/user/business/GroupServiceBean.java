@@ -10,13 +10,7 @@ import javax.ejb.FinderException;
 
 import org.jdom.Document;
 
-import com.idega.bean.AdvancedProperty;
-import com.idega.bean.GroupDataBean;
-import com.idega.bean.GroupMemberDataBean;
-import com.idega.bean.GroupMembersDataBean;
-import com.idega.bean.GroupPropertiesBean;
-import com.idega.bean.PropertiesBean;
-import com.idega.bean.UserPropertiesBean;
+import com.idega.builder.bean.AdvancedProperty;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
@@ -30,7 +24,13 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.user.bean.GroupDataBean;
+import com.idega.user.bean.GroupMemberDataBean;
+import com.idega.user.bean.GroupMembersDataBean;
+import com.idega.user.bean.GroupPropertiesBean;
 import com.idega.user.bean.GroupsManagerBean;
+import com.idega.user.bean.PropertiesBean;
+import com.idega.user.bean.UserPropertiesBean;
 import com.idega.user.data.User;
 import com.idega.user.presentation.group.GroupInfoViewerBlock;
 import com.idega.user.presentation.group.GroupUsersViewerBlock;
@@ -103,15 +103,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	 * Returns user's parameters for getting info about Groups
 	 */
 	public GroupPropertiesBean getGroupPropertiesBean(String instanceId) {
-		if (instanceId == null) {
-			return null;
-		}
-		GroupsManagerBean bean = getBean();
-		if (bean == null) {
-			return null;
-		}
-		
-		GroupPropertiesBean properties = bean.getGroupProperties(instanceId);
+		GroupPropertiesBean properties = getBasicGroupPropertiesBean(instanceId);
 		if (properties == null) {
 			return null;
 		}
@@ -140,15 +132,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	 * @return
 	 */
 	public UserPropertiesBean getUserPropertiesBean(String instanceId) {
-		if (instanceId == null) {
-			return null;
-		}
-		GroupsManagerBean bean = getBean();
-		if (bean == null) {
-			return null;
-		}
-		
-		UserPropertiesBean properties = bean.getUserProperties(instanceId);
+		UserPropertiesBean properties = getBasicUserPropertiesBean(instanceId);
 		if (properties == null) {
 			return null;
 		}
@@ -262,13 +246,8 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			return null;
 		}
 		
-		if (bean.isRemoteMode()) {
-			//	Checking if user is allowed to get info
-			if (!isLoggedUser(iwc, bean.getLogin())) {
-				if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
-					return null;
-				}
-			}
+		if (!canUseServer(iwc, bean)) {
+			return null;
 		}
 		
 		Integer cacheTime = bean.getCacheTime();
@@ -298,8 +277,8 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		
 		BuilderLogic builder = BuilderLogic.getInstance();
 		String pageKey = builder.getCurrentIBPage(iwc);
-		String propertyName = ":method:1:implied:void:setGroups:com.idega.bean.PropertiesBean:";
-		String[] values = builder.getPropertyValues(iwc.getIWMainApplication(), pageKey, instanceId, propertyName, null, true);
+		String name = new StringBuffer(":method:1:implied:void:setGroups:").append(PropertiesBean.class.getName()).append(":").toString();
+		String[] values = builder.getPropertyValues(iwc.getIWMainApplication(), pageKey, instanceId, name, null, true);
 		if (values == null) {
 			return false;
 		}
@@ -414,13 +393,8 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			return null;
 		}
 		
-		if (bean.isRemoteMode()) {
-			//	Checking if user is allowed to get info
-			if (!isLoggedUser(iwc, bean.getLogin())) {
-				if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
-					return null;
-				}
-			}
+		if (!canUseServer(iwc, bean)) {
+			return null;
 		}
 		
 		Integer cacheTime = bean.getCacheTime();
@@ -672,5 +646,89 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		localizedStatus.setId(key);
 		localizedStatus.setValue(defaultValue);
 		list.add(localizedStatus);
+	}
+	
+	private boolean canUseServer(IWContext iwc, PropertiesBean bean) {
+		if (bean.isRemoteMode()) {
+			//	Checking if user is allowed to use server
+			if (!isLoggedUser(iwc, bean.getLogin())) {
+				if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
+					return false;
+				}
+				else {
+					return true;
+				}
+			}
+			else {
+				return true;
+			}
+		}
+		return true;
+	}
+	
+	public GroupPropertiesBean getBasicGroupPropertiesBean(String instanceId) {
+		if (instanceId == null) {
+			return null;
+		}
+		GroupsManagerBean bean = getBean();
+		if (bean == null) {
+			return null;
+		}
+		
+		return bean.getGroupProperties(instanceId);
+	}
+	
+	public UserPropertiesBean getBasicUserPropertiesBean(String instanceId) {
+		if (instanceId == null) {
+			return null;
+		}
+		GroupsManagerBean bean = getBean();
+		if (bean == null) {
+			return null;
+		}
+		
+		return bean.getUserProperties(instanceId);
+	}
+	
+	private boolean clearCache(String cacheKey, PropertiesBean bean) {
+		if (cacheKey == null || bean == null) {
+			return false;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return false;
+		}
+		
+		if (!canUseServer(iwc, bean)) {
+			return false;
+		}
+		
+		int minutes = 0;
+		Integer cacheTime = bean.getCacheTime();
+		if (cacheTime != null) {
+			minutes = cacheTime.intValue();
+		}
+		
+		Map cache = getCache(iwc, cacheKey, minutes);
+		if (cache == null) {
+			return false;
+		}
+		
+		try {
+			cache.remove(bean.getInstanceId());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean clearGroupInfoCache(GroupPropertiesBean bean) {
+		return clearCache(UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, bean);
+	}
+	
+	public boolean clearUsersInfoCache(UserPropertiesBean bean) {
+		return clearCache(UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, bean);
 	}
 }
