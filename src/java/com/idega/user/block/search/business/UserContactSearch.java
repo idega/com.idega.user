@@ -1,5 +1,5 @@
 /*
- * $Id: UserContactSearch.java,v 1.14 2007/06/14 18:58:05 civilis Exp $ Created on
+ * $Id: UserContactSearch.java,v 1.15 2007/07/02 16:16:09 civilis Exp $ Created on
  * Jan 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -35,7 +35,7 @@ import com.idega.util.ListUtil;
 
 /**
  * 
- * Last modified: $Date: 2007/06/14 18:58:05 $ by $Author: civilis $ This class
+ * Last modified: $Date: 2007/07/02 16:16:09 $ by $Author: civilis $ This class
  * implements the Searchplugin interface and can therefore be used in a Search
  * block (com.idega.core.search). <br>
  * It searches lots of user related info like name, personalid,email etc. and
@@ -44,7 +44,7 @@ import com.idega.util.ListUtil;
  * bundle.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class UserContactSearch implements SearchPlugin {
 
@@ -275,5 +275,9 @@ public class UserContactSearch implements SearchPlugin {
 	public String getSearchIdentifier() {
 		
 		return iwma.getBundle(IW_BUNDLE_IDENTIFIER).getComponentName(this.getClass());
+	}
+	
+	public String getResultImgByResultURI(String result_uri) {
+		return null;
 	}
 }
