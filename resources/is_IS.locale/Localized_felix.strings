@@ -250,7 +250,7 @@ iw.component.com.idega.user.block.homepage.presentation.OwnerGroupInformationTex
 iw.component.com.idega.user.data.GroupDomainRelationType.name=GroupDomainRelationType
 iw_postal_code_id=P\u00F3stn\u00FAmer
 iwapplication_name.AccessControllerApp=A\u00F0gangsst\u00FDringakerfi
-iwapplication_name.UserApplication=Notendakerfi
+iwapplication_name.UserApplication=Felix
 iwma_run=Hlaup
 iwma_run_distance=Vegalengd
 iwma_run_group=Kyn-/Aldursh\u00F3pur

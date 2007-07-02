@@ -43,7 +43,7 @@ public class IWBundleStarter implements IWBundleStartable {
 				
 				//inline class to override the default hasUserAccess to check to top node view access
 				FramedWindowClassViewNode userNode = new FramedWindowClassViewNode("user",viewManager.getWorkspaceRoot()){
-					
+				
 					public boolean hasUserAccess(IWUserContext iwuc){
 						try {
 							return getUserBusiness().hasTopNodes(iwuc.getCurrentUser(), iwuc);
@@ -66,7 +66,7 @@ public class IWBundleStarter implements IWBundleStartable {
 				
 				
 				userNode.setKeyboardShortcut(new KeyboardShortcut("1"));
-				
+				userNode.setName("#{localizedStrings['com.idega.user']['iwapplication_name.UserApplication']}");
 				Collection roles = new ArrayList();
 				roles.add(StandardRoles.ROLE_KEY_USERADMIN);
 				userNode.setAuthorizedRoles(roles);
