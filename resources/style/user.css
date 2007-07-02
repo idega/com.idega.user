@@ -1,0 +1,55 @@
+@CHARSET "UTF-8";
+
+.choosersAndDescriptionStyleClass {
+}
+
+.userApplicationChoosersContainer {
+	float: left;
+	width: 25%;
+}
+
+.userApplicationDescriptionContainerStyleClass {
+	float: left;
+	width: 45%;
+	padding-left: 5%;
+}
+
+.parentGroupLabelContainerStyleClass {
+	float: left;
+	width: 50%;
+}
+
+.parentGroupContainerStyleClass {
+	float: left;
+	width: 50%;
+}
+
+.childGroupsLabelContainerStyleClass {
+	float: left;
+	width: 50%;
+}
+
+.childGroupChooserContainerSyleClass {
+	float: left;
+	width: 50%;
+}
+
+.orderByLabelContainerStyleClass {
+	float: left;
+	width: 50%;
+}
+
+.orderByChooserStyleClass {
+	float: left;
+	width: 50%;
+}
+
+.userAppLowerPartStyleClass {
+	padding-top: 5%;
+	width: 100%;
+}
+
+.userApplicationButtonsContainerStyleClass {
+	padding-top: 1%;
+	float: right;
+}

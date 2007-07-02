@@ -16,6 +16,10 @@
 		<convert converter="bean" match="com.idega.user.bean.GroupMemberDataBean" />
 		<convert converter="bean" match="com.idega.user.bean.AddressData" />
 		<convert converter="bean" match="com.idega.user.business.GroupNode" />
+		
+		<create creator="ibo" javascript="UserApplicationEngine" scope="session">
+			<param name="class" value="com.idega.user.business.UserApplicationEngine" />
+		</create>
 	</allow>
 	<signatures>
 		<![CDATA[
