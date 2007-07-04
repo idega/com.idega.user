@@ -3,12 +3,15 @@ package com.idega.user.business;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
+import com.idega.user.app.SimpleUserApp;
+import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreUtil;
@@ -58,7 +61,30 @@ public class GroupHelperBusinessBean {
 		}
 	}
 	
-	private synchronized UserBusiness getUserBusiness(IWApplicationContext iwc) {
+	public Collection getTopAndParentGroups(Collection topGroups) {
+		if (topGroups == null) {
+			return null;
+		}
+		
+		Object o = null;
+		Group group = null;
+		Collection topAndParentGroups = new ArrayList(topGroups);
+		List parentGroups = null;
+		for (Iterator it = topGroups.iterator(); it.hasNext();) {
+			o = it.next();
+			if (o instanceof Group) {
+				group = (Group) o;
+				parentGroups = group.getParentGroups();
+				if (parentGroups != null) {
+					topAndParentGroups.addAll(parentGroups);
+				}
+			}
+		}
+		
+		return topAndParentGroups;
+	}
+	
+	private synchronized UserBusiness getUserBusiness(IWContext iwc) {
 		if (userBusiness == null) {
 			try {
 				userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
@@ -159,9 +185,9 @@ public class GroupHelperBusinessBean {
 		return getFilteredGroups(groups, getExtractedTypesList(typesValue, splitter));
 	}
 	
-	public Collection getFilteredChildGroups(IWContext iwc, Collection groups, String typesValue, String splitter) {
+	public List getFilteredChildGroups(IWContext iwc, Group parent, String groupTypes, String groupRoles, String splitter) {
 		List filtered = new ArrayList();
-		if (groups == null) {
+		if (parent == null) {
 			return filtered;
 		}
 		
@@ -170,25 +196,16 @@ public class GroupHelperBusinessBean {
 			return filtered;
 		}
 		
-		List types = getExtractedTypesList(typesValue, splitter);
-		List uniqueIds = new ArrayList();
+		List types = getExtractedTypesList(groupTypes, splitter);
+		try {
+			filtered.addAll(groupBusiness.getChildGroupsRecursiveResultFiltered(parent, types, true));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		
 		Object o = null;
 		Group group = null;
-		for (Iterator it = groups.iterator(); it.hasNext();) {
-			o = it.next();
-			if (o instanceof Group) {
-				group = (Group) o;
-				uniqueIds.add(group.getUniqueId());
-				try {
-					filtered.addAll(groupBusiness.getChildGroupsRecursiveResultFiltered(group, types, true));
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		Collection checkedFiltered = new ArrayList();
+		List checkedFiltered = new ArrayList();
 		for (int i = 0; i < filtered.size(); i++) {
 			o = filtered.get(i);
 			if (o instanceof Group) {
@@ -197,7 +214,7 @@ public class GroupHelperBusinessBean {
 					checkedFiltered.add(group);
 				}
 				else {
-					if (!uniqueIds.contains(group.getUniqueId())) {
+					if (!parent.getUniqueId().equals(group.getUniqueId())) {
 						checkedFiltered.add(group);
 					}
 				}
@@ -225,5 +242,36 @@ public class GroupHelperBusinessBean {
 			typesList.add(types[i].trim());
 		}
 		return typesList;
+	}
+	
+	public List getSortedUsers(IWContext iwc, SimpleUserPropertiesBean bean) {
+		if (bean == null) {
+			return null;
+		}
+		
+		UserBusiness userBusiness = getUserBusiness(iwc);
+		if (userBusiness == null) {
+			return null;
+		}
+		
+		Collection users = null;
+		try {
+			users = userBusiness.getUsersInGroup(bean.getGroupId());
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		if (users == null) {
+			return null;
+		}
+		
+		List sortedUsers = new ArrayList(users);
+		if (bean.getOrderBy() == SimpleUserApp.USER_ORDER_BY_ID) {
+			Collections.sort(sortedUsers, new UserComparatorByPersonalId());
+		}
+		else if (bean.getOrderBy() == SimpleUserApp.USER_ORDER_BY_NAME) {
+			Collections.sort(sortedUsers, new UserComparatorByName());
+		}
+		
+		return sortedUsers;
 	}
 }

@@ -23,6 +23,7 @@
 	</allow>
 	<signatures>
 		<![CDATA[
+			import java.util.List;
 			import com.idega.user.bean.GroupPropertiesBean;
 			import com.idega.user.bean.UserPropertiesBean;
 
@@ -30,6 +31,8 @@
 			GroupService.getUsersInfo(UserPropertiesBean);
 			GroupService.clearGroupInfoCache(GroupPropertiesBean);
 			GroupService.clearUsersInfoCache(UserPropertiesBean);
+			
+			List<Integer> UserApplicationEngine.removeUsers(List<Integer>, Integer);
   		]]>
 	</signatures>
 </dwr>
