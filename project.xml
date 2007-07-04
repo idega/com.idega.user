@@ -5,7 +5,7 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb User</name>
   <artifactId>com.idega.user</artifactId>
-  <currentVersion>3.1.9</currentVersion>
+  <currentVersion>3.1.10</currentVersion>
   <inceptionYear>2000</inceptionYear>
   <shortDescription>User Interface application for managing the User system</shortDescription>
   <versions>
