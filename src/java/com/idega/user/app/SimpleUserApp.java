@@ -157,8 +157,8 @@ public class SimpleUserApp extends Block {
 		DropdownMenu childGroupsChooser = new DropdownMenu();
 		String childGroupsChooserId = childGroupsChooser.getId();
 		
-		DropdownMenu orderByMenu = new DropdownMenu();
-		String orderByChooserId = orderByMenu.getId();
+		DropdownMenu orderByChooser = new DropdownMenu();
+		String orderByChooserId = orderByChooser.getId();
 		
 		//	Parent group
 		Layer parentGroupLabelContainer = new Layer();
@@ -187,15 +187,20 @@ public class SimpleUserApp extends Block {
 		choosers.add(orderByLabelContainer);
 		orderByLabelContainer.setStyleClass("orderByLabelContainerStyleClass");
 		orderByLabelContainer.add(new Text(iwrb.getLocalizedString("order_by", "Order by")));
-		Layer orderByChooser = new Layer();
-		choosers.add(orderByChooser);
-		orderByChooser.setStyleClass("orderByChooserStyleClass");
+		Layer orderByChooserContainer = new Layer();
+		choosers.add(orderByChooserContainer);
+		orderByChooserContainer.setStyleClass("orderByChooserStyleClass");
 		
 		SelectOption byName = new SelectOption(iwrb.getLocalizedString("name", "Name"), USER_ORDER_BY_NAME);
-		orderByMenu.addOption(byName);
+		orderByChooser.addOption(byName);
+		StringBuffer orderByAction = new StringBuffer("reOrderGroupUsers('").append(parentGroupsChooserId);
+		orderByAction.append(PARAMS_SEPARATOR).append(childGroupsChooserId).append(PARAMS_SEPARATOR).append(orderByChooserId);
+		orderByAction.append(PARAMS_SEPARATOR).append(groupUsersContainerId).append(PARAMS_SEPARATOR);
+		orderByAction.append(iwrb.getLocalizedString("loading", "Loading...")).append("');");
+		orderByChooser.setOnChange(orderByAction.toString());
 		SelectOption byId = new SelectOption(iwrb.getLocalizedString("personal_id", "Personal ID"), USER_ORDER_BY_ID);
-		orderByMenu.addOption(byId);
-		orderByChooser.add(orderByMenu);
+		orderByChooser.addOption(byId);
+		orderByChooserContainer.add(orderByChooser);
 		
 		SimpleUserPropertiesBean bean = new SimpleUserPropertiesBean();
 		if (parentGroup != null) {

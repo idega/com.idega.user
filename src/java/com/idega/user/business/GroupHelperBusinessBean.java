@@ -15,6 +15,7 @@ import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreUtil;
+import com.idega.util.GenericUserComparator;
 
 public class GroupHelperBusinessBean {
 	
@@ -266,10 +267,10 @@ public class GroupHelperBusinessBean {
 		
 		List sortedUsers = new ArrayList(users);
 		if (bean.getOrderBy() == SimpleUserApp.USER_ORDER_BY_ID) {
-			Collections.sort(sortedUsers, new UserComparatorByPersonalId());
+			Collections.sort(sortedUsers, new GenericUserComparator(iwc.getCurrentLocale(), GenericUserComparator.PERSONALID));
 		}
 		else if (bean.getOrderBy() == SimpleUserApp.USER_ORDER_BY_NAME) {
-			Collections.sort(sortedUsers, new UserComparatorByName());
+			Collections.sort(sortedUsers, new GenericUserComparator(iwc.getCurrentLocale(), GenericUserComparator.FIRSTLASTMIDDLE));
 		}
 		
 		return sortedUsers;

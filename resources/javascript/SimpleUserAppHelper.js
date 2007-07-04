@@ -86,22 +86,15 @@ function getSelectObjectValue(id) {
 	return -1;
 }
 
+function reOrderGroupUsers(parentGroupChooserId, childGroupChooserId, orderByChooserId, containerId, message) {
+	var groupId = getSelectObjectValue(childGroupChooserId);
+	selectChildGroup(groupId, containerId, parentGroupChooserId, orderByChooserId, message);
+}
+
 function selectChildGroup(groupId, containerId, parentGroupChooserId, orderByChooserId, message) {
 	showLoadingMessage(message);
-	var parentGroupId = -1;
-	var orderBy = 0;
-	var parentGroupChooser = document.getElementById(parentGroupChooserId);
-	if (parentGroupChooser != null) {
-		if (parentGroupChooser.value) {
-			parentGroupId = parentGroupChooser.value;
-		}
-	}
-	var orderByChooser = document.getElementById(orderByChooserId);
-	if (orderByChooser != null) {
-		if (orderByChooser.value) {
-			orderBy = orderByChooser.value;
-		}
-	}
+	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
+	var orderBy = getSelectObjectValue(orderByChooserId);
 	
 	showLoadingMessage(message);
 	UserApplicationEngine.getMembersList(parentGroupId, groupId, orderBy, {
