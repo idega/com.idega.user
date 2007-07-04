@@ -79,6 +79,11 @@
       <name>3.1.9</name>
       <tag>USER_3_1_9</tag>
     </version>
+    <version>
+      <id>3.1.10</id>
+      <name>3.1.10</name>
+      <tag>USER_3_1_10</tag>
+    </version>
   </versions>
   <branches/>
   <developers>
@@ -115,7 +120,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
-      <version>3.1.53</version>
+      <version>3.1.54</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
@@ -132,7 +137,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.builder</artifactId>
-      <version>3.1.9</version>
+      <version>3.1.10</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
     </dependency>

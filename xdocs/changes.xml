@@ -5,6 +5,13 @@
   </properties>
   <body>
 
+	<release version="3.1.10" date="2007-07-04">
+      <action dev="valdas" type="add">
+		Added Simple User application component.
+		Built logic for 'view users' case. 
+      </action>
+    </release>
+
 	<release version="3.1.9" date="2007-06-16">
       <action dev="eiki" type="update">
 		Updated DWR to 2.0.1 and added some dwr beans.
