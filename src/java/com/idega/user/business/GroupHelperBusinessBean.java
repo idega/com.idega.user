@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.ejb.FinderException;
+
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
@@ -85,7 +87,7 @@ public class GroupHelperBusinessBean {
 		return topAndParentGroups;
 	}
 	
-	private synchronized UserBusiness getUserBusiness(IWContext iwc) {
+	public synchronized UserBusiness getUserBusiness(IWContext iwc) {
 		if (userBusiness == null) {
 			try {
 				userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
@@ -186,6 +188,22 @@ public class GroupHelperBusinessBean {
 		return getFilteredGroups(groups, getExtractedTypesList(typesValue, splitter));
 	}
 	
+	public List getFilteredChildGroups(IWContext iwc, int parentGroupId, String groupTypes, String groupRoles, String splitter) {
+		GroupBusiness groupBusiness = getGroupBusiness(iwc);
+		if (groupBusiness == null) {
+			return null;
+		}
+		Group parent = null;
+		try {
+			parent = groupBusiness.getGroupByGroupID(parentGroupId);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		return getFilteredChildGroups(iwc, parent, groupTypes, groupRoles, splitter);
+	}
+	
 	public List getFilteredChildGroups(IWContext iwc, Group parent, String groupTypes, String groupRoles, String splitter) {
 		List filtered = new ArrayList();
 		if (parent == null) {
@@ -274,5 +292,76 @@ public class GroupHelperBusinessBean {
 		}
 		
 		return sortedUsers;
+	}
+	
+	public Group getGroup(IWContext iwc, int id) {
+		GroupBusiness groupBusiness = getGroupBusiness(iwc);
+		if (groupBusiness == null) {
+			return null;
+		}
+		
+		try {
+			return groupBusiness.getGroupByGroupID(id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public Group getGroup(IWContext iwc, String id) {
+		return getGroup(iwc, getParsedValue(id));
+	}
+	
+	public List getGroups(IWContext iwc, List groupsIds) {
+		if (groupsIds == null) {
+			return null;
+		}
+		
+		Object o = null;
+		List groups = new ArrayList();
+		Group group = null;
+		for (int i = 0; i < groupsIds.size(); i++) {
+			o = groupsIds.get(i);
+			if (o instanceof Integer) {
+				group = getGroup(iwc, ((Integer) o).intValue());
+				if (group != null) {
+					groups.add(group);
+				}
+			}
+		}
+		
+		return groups;
+	}
+	
+	public User getUser(IWContext iwc, String id) {
+		return getUser(iwc, getParsedValue(id));
+	}
+	
+	public User getUser(IWContext iwc, int id) {
+		UserBusiness userBusiness = getUserBusiness(iwc);
+		if (userBusiness == null) {
+			return null;
+		}
+		
+		try {
+			return userBusiness.getUser(id);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private int getParsedValue(String value) {
+		if (value == null) {
+			return -1;
+		}
+		try {
+			return Integer.valueOf(value).intValue();
+		} catch(NumberFormatException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 }

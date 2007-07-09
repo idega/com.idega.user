@@ -2,6 +2,7 @@ package com.idega.user.app;
 
 import java.util.List;
 
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
@@ -9,6 +10,8 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.business.GroupHelperBusinessBean;
+import com.idega.user.business.UserConstants;
+import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 
@@ -35,6 +38,7 @@ public class SimpleUserAppHelper {
 		String personalIdContainerStyleClass = "userPersonalIdValueContainerStyleClass";
 		String changeUserContainerStyleClass = "changeUserImageContainerStyleClass";
 		String removeUserContainerStyleClass = "removeUserCheckboxContainerStyleClass";
+		String changeUserImageStyleClass = "changeUserImageStyleClass";
 		Layer lineContainer = null;
 		Layer nameContainer = null;
 		Layer personalIdContainer = null;
@@ -43,6 +47,7 @@ public class SimpleUserAppHelper {
 		Image changeUserImage = null;
 		CheckBox removeUserCheckbox = null;
 		StringBuffer checkBoxAction = null;
+		StringBuffer changeUserAction = null;
 		for (int i = 0; i < users.size(); i++) {
 			o = users.get(i);
 			if (o instanceof User) {
@@ -65,6 +70,34 @@ public class SimpleUserAppHelper {
 				changeUserContainer = new Layer();
 				changeUserContainer.setStyleClass(changeUserContainerStyleClass);
 				changeUserImage = new Image(image);
+				changeUserImage.setStyleClass(changeUserImageStyleClass);
+				changeUserAction = new StringBuffer("addUserPresentationObject('").append(bean.getInstanceId());
+				changeUserAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR).append(bean.getContainerId());
+				changeUserAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR).append(bean.getParentGroupChooserId());
+				changeUserAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR).append(bean.getGroupChooserId());
+				changeUserAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR).append(bean.getMessage()).append("', ");
+				if (bean.getDefaultGroupId() == null) {
+					changeUserAction.append("null");
+				}
+				else {
+					changeUserAction.append("'").append(bean.getDefaultGroupId()).append("'");
+				}
+				changeUserAction.append(", '").append(user.getId()).append("', ");
+				if (bean.getGroupTypes() == null) {
+					changeUserAction.append("null");
+				}
+				else {
+					changeUserAction.append("'").append(bean.getGroupTypes()).append("'");
+				}
+				changeUserAction.append(", ");
+				if (bean.getRoleTypes() == null) {
+					changeUserAction.append("null");
+				}
+				else {
+					changeUserAction.append("'").append(bean.getRoleTypes()).append("'");
+				}
+				changeUserAction.append(");");
+				changeUserImage.setOnClick(changeUserAction.toString());
 				changeUserContainer.add(changeUserImage);
 				lineContainer.add(changeUserContainer);
 				
@@ -72,8 +105,8 @@ public class SimpleUserAppHelper {
 				removeUserContainer.setStyleClass(removeUserContainerStyleClass);
 				removeUserCheckbox = new CheckBox();
 				checkBoxAction = new StringBuffer("removeUser('").append(lineContainer.getId());
-				checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(user.getId());
-				checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getGroupId()).append("', this.checked);");
+				checkBoxAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR).append(user.getId());
+				checkBoxAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR).append(bean.getGroupId()).append("', this.checked);");
 				removeUserCheckbox.setOnClick(checkBoxAction.toString());
 				removeUserContainer.add(removeUserCheckbox);
 				lineContainer.add(removeUserContainer);
@@ -81,6 +114,80 @@ public class SimpleUserAppHelper {
 		}
 		
 		return valuesContainer;
+	}
+	
+	public Layer getSelectedGroupsByIds(IWContext iwc, GroupHelperBusinessBean helper, List groupsIds, List ids, String selectedGroupId) {
+		Layer selectedGroups = new Layer();
+		
+		if (groupsIds == null) {
+			addLabelForNoGroups(iwc, selectedGroups);
+			return selectedGroups;
+		}
+		
+		List groups = helper.getGroups(iwc, groupsIds);
+		return getSelectedGroups(iwc, helper, groups, ids, selectedGroupId);
+	}
+	
+	public Layer getSelectedGroups(IWContext iwc, GroupHelperBusinessBean helper, List groups, List ids, String selectedGroupId) {
+		Layer selectedGroups = new Layer();
+		
+		if (groups == null) {
+			addLabelForNoGroups(iwc, selectedGroups);
+			return selectedGroups;
+		}
+		if (groups.size() == 0) {
+			addLabelForNoGroups(iwc, selectedGroups);
+			return selectedGroups;
+		}
+		
+		if (ids == null) {
+			addLabelForNoGroups(iwc, selectedGroups);
+			return selectedGroups;
+		}
+		
+		Object o = null;
+		Group group = null;
+		String groupId = null;
+		for (int i = 0; i < groups.size(); i++) {
+			o = groups.get(i);
+			if (o instanceof Group) {
+				group = (Group) o;
+				
+				//	Layer
+				Layer selectedGroup = new Layer();
+				selectedGroups.add(selectedGroup);
+				
+				//	Checkbox
+				groupId = group.getId() == null ? CoreConstants.EMPTY : group.getId();
+				CheckBox selectGroup = new CheckBox(group.getName(), groupId);
+				if (groupId.equals(selectedGroupId)) {
+					selectGroup.setChecked(true);
+				}
+				ids.add(selectGroup.getId());
+				selectedGroup.add(selectGroup);
+				
+				//	Label
+				selectedGroup.add(new Text(group.getName() == null ? CoreConstants.EMPTY : group.getName()));
+			}
+		}
+		
+		return selectedGroups;
+	}
+	
+	private void addLabelForNoGroups(IWContext iwc, Layer container) {
+		IWResourceBundle iwrb = null;
+		String text = "There are no groups available";
+		try {
+			iwrb = iwc.getApplicationContext().getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (iwrb == null) {
+			container.add(new Text(text));
+		}
+		else {
+			container.add(new Text(iwrb.getLocalizedString("no_groups_available", text)));
+		}
 	}
 
 }

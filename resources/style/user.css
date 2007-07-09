@@ -121,3 +121,28 @@
 .membersListContainerStyleClass {
 	margin: 5px;
 }
+
+.addUserlabelContainerStyleClass {
+	width: 100%;
+}
+
+.userFieldsContainerStyleClass {
+	float: left;
+	width: 50%;
+}
+
+.userFieldLabelContainerStyleClass {
+	float: left;
+	width: 20%;
+}
+
+.userFieldValueContainerStyleClass {
+	float: left;
+}
+
+.changeUserImageStyleClass {
+}
+
+.changeUserImageStyleClass:HOVER {
+	cursor: pointer;
+}

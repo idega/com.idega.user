@@ -6,6 +6,15 @@ public class SimpleUserPropertiesBean {
 	private int groupId = -1;
 	private int orderBy = -1;
 	
+	private String instanceId = null;
+	private String containerId = null;
+	private String parentGroupChooserId = null;
+	private String groupChooserId = null;
+	private String defaultGroupId = null;
+	private String groupTypes = null;
+	private String roleTypes = null;
+	private String message = null;
+	
 	public SimpleUserPropertiesBean() {}
 	
 	public SimpleUserPropertiesBean(int parentGroupId, int groupId, int orderBy) {
@@ -32,6 +41,70 @@ public class SimpleUserPropertiesBean {
 	}
 	public void setParentGroupId(int parentGroupId) {
 		this.parentGroupId = parentGroupId;
+	}
+
+	public String getContainerId() {
+		return containerId;
+	}
+
+	public void setContainerId(String containerId) {
+		this.containerId = containerId;
+	}
+
+	public String getDefaultGroupId() {
+		return defaultGroupId;
+	}
+
+	public void setDefaultGroupId(String defaultGroupId) {
+		this.defaultGroupId = defaultGroupId;
+	}
+
+	public String getGroupChooserId() {
+		return groupChooserId;
+	}
+
+	public void setGroupChooserId(String groupChooserId) {
+		this.groupChooserId = groupChooserId;
+	}
+
+	public String getGroupTypes() {
+		return groupTypes;
+	}
+
+	public void setGroupTypes(String groupTypes) {
+		this.groupTypes = groupTypes;
+	}
+
+	public String getInstanceId() {
+		return instanceId;
+	}
+
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
+	}
+
+	public String getRoleTypes() {
+		return roleTypes;
+	}
+
+	public void setRoleTypes(String roleType) {
+		this.roleTypes = roleType;
+	}
+
+	public String getParentGroupChooserId() {
+		return parentGroupChooserId;
+	}
+
+	public void setParentGroupChooserId(String parentGroupChooserId) {
+		this.parentGroupChooserId = parentGroupChooserId;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 }

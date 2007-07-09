@@ -1,24 +1,24 @@
 var USERS_TO_REMOVE = new Array();
 
-function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles, groupId) {
+function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles, groupId,
+							instanceId, mainContainerId, defaultGroupId) {
 	showLoadingMessage(message);
 	DWRUtil.removeAllOptions(childGroupsChooserId);
-	/*if (IE) {
-		//alert('IE');
-		UserApplicationEngine.getChildGroupsInString(groupId, groupTypes, groupRoles, myCallback);
-		/*UserApplicationEngine.getChildGroupsInString(groupId, groupTypes, {
-			callback: function(childGroups) {
-				getChildGroupsInStringCallback(childGroups, childGroupsChooserId);
-			}
-		});
-	}
-	else {*/
-		UserApplicationEngine.getChildGroups(groupId, groupTypes, groupRoles, {
-			callback: function(childGroups) {
-				getChildGroupsCallback(childGroups, childGroupsChooserId, orderByChooserId, containerId, chooserId, message);
-			}
-		});
-	//}
+	
+	var params = new Array();
+	params.push(instanceId);
+	params.push(mainContainerId);
+	params.push(childGroupsChooserId);
+	params.push(defaultGroupId);
+	params.push(groupTypes);
+	params.push(groupRoles);
+	params.push(message);
+	
+	UserApplicationEngine.getChildGroups(groupId, groupTypes, groupRoles, {
+		callback: function(childGroups) {
+			getChildGroupsCallback(childGroups, childGroupsChooserId, orderByChooserId, containerId, chooserId, message, params);
+		}
+	});
 }
 
 function myCallback(data) {
@@ -53,7 +53,7 @@ function getChildGroupsInStringCallback(childGroups, childGroupsChooserId) {
 	getChildGroupsCallback(advancedProperties, childGroupsChooserId)
 }
 
-function getChildGroupsCallback(childGroups, childGroupsChooserId, orderByChooserId, containerId, chooserId, message) {
+function getChildGroupsCallback(childGroups, childGroupsChooserId, orderByChooserId, containerId, chooserId, message, params) {
 	closeAllLoadingMessages();
 	if (childGroups == null) {
 		return false;
@@ -69,7 +69,7 @@ function getChildGroupsCallback(childGroups, childGroupsChooserId, orderByChoose
 	}
 	
 	var groupId = getSelectObjectValue(childGroupsChooserId);
-	selectChildGroup(groupId, containerId, chooserId, orderByChooserId, message);
+	selectChildGroup(groupId, containerId, chooserId, orderByChooserId, message, params);
 }
 
 function getSelectObjectValue(id) {
@@ -86,18 +86,18 @@ function getSelectObjectValue(id) {
 	return -1;
 }
 
-function reOrderGroupUsers(parentGroupChooserId, childGroupChooserId, orderByChooserId, containerId, message) {
+function reOrderGroupUsers(parentGroupChooserId, childGroupChooserId, orderByChooserId, containerId, message, params) {
 	var groupId = getSelectObjectValue(childGroupChooserId);
-	selectChildGroup(groupId, containerId, parentGroupChooserId, orderByChooserId, message);
+	selectChildGroup(groupId, containerId, parentGroupChooserId, orderByChooserId, message, params);
 }
 
-function selectChildGroup(groupId, containerId, parentGroupChooserId, orderByChooserId, message) {
+function selectChildGroup(groupId, containerId, parentGroupChooserId, orderByChooserId, message, parameters) {
 	showLoadingMessage(message);
 	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
 	var orderBy = getSelectObjectValue(orderByChooserId);
 	
 	showLoadingMessage(message);
-	UserApplicationEngine.getMembersList(parentGroupId, groupId, orderBy, {
+	UserApplicationEngine.getMembersList(parentGroupId, groupId, orderBy, parameters, {
 		callback: function(component) {
 			getMembersListCallback(component, containerId);
 		}
@@ -215,4 +215,190 @@ function removeUser(containerId, userId, groupId, isChecked) {
 	if (isChecked) {
 		USERS_TO_REMOVE.push(new MarkedUsers(containerId, userId, groupId));
 	}
+}
+
+function addUserPresentationObject(instanceId, containerId, parentGroupChooserId, groupChooserId, message, defaultGroupId, userId, groupTypes, roleTypes) {
+	showLoadingMessage(message);
+	
+	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
+	var groupId = getSelectObjectValue(groupChooserId);
+	
+	//	IDs
+	var ids = new Array();
+	ids.push(instanceId);
+	ids.push(parentGroupId);
+	ids.push(groupId);
+	ids.push(defaultGroupId);
+	ids.push(containerId);
+	
+	//	Parent groups
+	var parentGroups = getSelectObjectValues(parentGroupChooserId);
+	
+	//	Groups
+	var groups = getSelectObjectValues(groupChooserId);
+	
+	UserApplicationEngine.getAddUserPresentationObject(ids, parentGroups, groups, userId, groupTypes, roleTypes, {
+		callback: function(component) {
+			getAddUserPresentationObjectCallback(component, containerId);
+		}
+	});
+}
+
+function getSelectObjectValues(id) {
+	if (id == null) {
+		return null;
+	}
+	
+	var chooser = document.getElementById(id);
+	if (chooser == null) {
+		return null;
+	}
+	var options = chooser.options;
+	if (options == null) {
+		return null;
+	}
+	var values = new Array();
+	for (var i = 0; i < options.length; i++) {
+		values.push(options[i].value);
+	}
+	
+	return values;
+}
+
+function getAddUserPresentationObjectCallback(component, containerId) {
+	closeAllLoadingMessages();
+	
+	if (component == null) {
+		return false;
+	}
+	var container = document.getElementById(containerId);
+	if (container == null) {
+		return false;
+	}
+	
+	removeChildren(container);
+	insertNodesToContainer(component, container);
+	return true;
+}
+
+function goBackToSimpleUserApp(instanceId, containerId, message) {
+	showLoadingMessage(message);
+	UserApplicationEngine.getSimpleUserApplication(instanceId, {
+		callback: function(component) {
+			getAddUserPresentationObjectCallback(component, containerId);
+		} 
+	});
+}
+
+function reloadAvailableGroupsForUser(groupId, parameters) {
+	var containerId = parameters[0];
+	var message = parameters[1];
+	var groupTypes = parameters[2];
+	var roleTypes = parameters[3];
+	showLoadingMessage(message);
+	UserApplicationEngine.getAvailableGroupsForUserPresentationObject(groupId, groupTypes, roleTypes, {
+		callback: function(component) {
+			getAddUserPresentationObjectCallback(component, containerId);
+		}
+	});
+}
+
+function getUserByPersonalId(personalId, nameInputId, loginNameInputId, passwordInputId, message) {
+	if (personalId == null) {
+		return false;
+	}
+	if (personalId.length < 10) {
+		return false;
+	}
+	
+	var lastIndex = personalId.length;
+	var lastChar = personalId.charAt(lastIndex-1);
+	if (lastChar == '-') {
+		personalId = personalId.substring(0, lastIndex-1);
+	}
+	
+	var id = userApplicationRemoveSpaces(personalId);
+	showLoadingMessage(message);
+	UserApplicationEngine.getUserByPersonalId(id, {
+		callback: function(info) {
+			getUserByPersonalIdCallback(info, nameInputId, loginNameInputId, passwordInputId);
+		}
+	});
+}
+
+function userApplicationRemoveSpaces(value) {
+	if (value == null) {
+		return null;
+	}
+	return value.replace(/^\s+|\s+$/g, '');
+}
+
+function getUserByPersonalIdCallback(info, nameInputId, loginNameInputId, passwordInputId) {
+	closeAllLoadingMessages();
+	
+	var nameInput = document.getElementById(nameInputId);
+	if (nameInput == null) {
+		return false;
+	}
+	var loginInput = document.getElementById(loginNameInputId);
+	if (loginInput == null) {
+		return false;
+	}
+	var passwordInput = document.getElementById(passwordInputId);
+	if (passwordInput != null) {
+		passwordInput.value = '';
+	}
+	nameInput.value = '';
+	loginInput.value = '';
+	
+	if (info == null) {
+		return false;
+	}
+	if (info.length == 1) {
+		alert(info[0]);
+		return false;
+	}
+	
+	nameInput.value = info[0];
+	loginInput.value = info[1];
+	/*if (passwordInput != null) {
+		passwordInput.value = info[2];
+	}*/
+	return true;
+}
+
+function saveUserInSimpleUserApplication(ids, childGroups, message) {
+	var parentGroupChooserId = ids[0];
+	var nameValueInputId = ids[1];
+	var loginInputId = ids[2];
+	var passwordInputId = ids[3];
+	var groupForUsersWithoutLoginId = ids[4];
+	
+	var selectedGroups = new Array();
+	if (childGroups == null) {
+		selectedGroups.push(groupForUsersWithoutLoginId);
+	}
+	else {
+		var checkbox = null;
+		for (var i = 0; i < childGroups.length; i++) {
+			checkbox = document.getElementById(childGroups[i]);
+			if (checkbox != null) {
+				if (checkbox.checked) {
+					selectedGroups.push(checkbox.value);
+				}
+			}
+		}
+	}
+	
+	var userName = document.getElementById(nameValueInputId).value;
+	var personalId = document.getElementById(loginInputId).value;	// Personal ID = Login name
+	var password = document.getElementById(passwordInputId).value;
+	var primaryGroupId = getSelectObjectValue(parentGroupChooserId);
+	
+	showLoadingMessage(message);
+	UserApplicationEngine.createUser(userName, personalId, password, primaryGroupId, selectedGroups, {
+		callback: function(result) {
+			closeAllLoadingMessages();
+		}
+	});
 }

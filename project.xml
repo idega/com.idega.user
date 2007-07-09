@@ -115,6 +115,13 @@
       <organization>idega software</organization>
       <roles/>
     </developer>
+    <developer>
+      <name>Valdas Zemaitis</name>
+      <id>valdas</id>
+      <email>valdas@idega.com</email>
+      <organization>idega software</organization>
+      <roles/>
+    </developer>
   </developers>
   <dependencies>
     <dependency>
@@ -137,7 +144,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.builder</artifactId>
-      <version>3.1.10</version>
+      <version>3.1.11</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
     </dependency>
