@@ -25,6 +25,7 @@
 		<![CDATA[
 			import java.util.List;
 			import org.jdom.Document;
+			import com.idega.builder.bean.AdvancedProperty;
 			import com.idega.user.bean.GroupPropertiesBean;
 			import com.idega.user.bean.UserPropertiesBean;
 
@@ -33,11 +34,12 @@
 			GroupService.clearGroupInfoCache(GroupPropertiesBean);
 			GroupService.clearUsersInfoCache(UserPropertiesBean);
 			
+			List<AdvancedProperty> UserApplicationEngine.getChildGroups(String, String, String);
 			List<Integer> UserApplicationEngine.removeUsers(List<Integer>, Integer);
 			Document UserApplicationEngine.getAddUserPresentationObject(String[], List<Integer>, List<Integer>, Integer, String, String);
 			Document UserApplicationEngine.getAvailableGroupsForUserPresentationObject(Integer, String, String);
 			List<String> UserApplicationEngine.getUserByPersonalId(String);
-			Boolean UserApplicationEngine.createUser(String, String, String, Integer, List<Integer>);
+			String UserApplicationEngine.createUser(String, String, String, Integer, List<Integer>);
   		]]>
 	</signatures>
 </dwr>
