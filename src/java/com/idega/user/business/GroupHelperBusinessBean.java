@@ -11,6 +11,7 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.user.app.SimpleUserApp;
@@ -241,7 +242,39 @@ public class GroupHelperBusinessBean {
 			}
 		}
 		
-		return checkedFiltered;
+		List roles = getExtractedTypesList(groupRoles, splitter);
+		if (roles == null) {
+			return checkedFiltered;
+		}
+		
+		AccessController controler = iwc.getAccessController();
+		if (controler == null) {
+			return checkedFiltered;
+		}
+		
+		List filteredByRole = new ArrayList();
+		String roleKey = null;
+		group = null;
+		for (int i = 0; i < roles.size(); i++) {
+			roleKey = roles.get(i).toString();
+			for (int j = 0; j < checkedFiltered.size(); j++) {
+				group = (Group) checkedFiltered.get(j);
+				if (controler.hasRole(roleKey, group, iwc)) {
+					filteredByRole.add(group);
+				}
+			}
+			
+			if (checkedFiltered.size() > 0) {	//	Removing groups (from basic groups list) that were filtered and added to list
+				for (int j = 0; j < filteredByRole.size(); j++) {
+					group = (Group) filteredByRole.get(j);
+					if (checkedFiltered.contains(group)) {
+						checkedFiltered.remove(group);
+					}
+				}
+			}
+		}
+		
+		return filteredByRole;
 	}
 	
 	private List getExtractedTypesList(String typesValue, String splitter) {

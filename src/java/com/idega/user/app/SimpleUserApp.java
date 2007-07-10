@@ -42,7 +42,8 @@ public class SimpleUserApp extends Block {
 		add(container);
 		
 		String instanceId = BuilderLogic.getInstance().getInstanceId(this);
-		SimpleUserAppViewUsers viewUsers = new SimpleUserAppViewUsers(instanceId, container.getId());
+		SimpleUserAppViewUsers viewUsers = new SimpleUserAppViewUsers(instanceId, container.getId(), parentGroup,
+				groupForUsersWithoutLogin, groupTypes, groupTypesForChildGroups, roleTypesForChildGroups, getParentGroupsFromTopNodes);
 		container.add(viewUsers);
 		
 		UserApplicationEngine userEngine = null;
@@ -69,16 +70,13 @@ public class SimpleUserApp extends Block {
 		adder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, bundle.getVirtualPathWithFileNameString("style/user.css"));
 	}
 	
+	/** Methods for properties start **/
 	public void setGroupTypes(String groupTypes) {
 		this.groupTypes = groupTypes;
 	}
 	
 	public void setParentGroup(Group parentGroup) {
 		this.parentGroup = parentGroup;
-	}
-	
-	public String getBundleIdentifier() {
-		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
 
 	public void setGetParentGroupsFromTopNodes(boolean getParentGroupsFromTopNodes) {
@@ -96,29 +94,10 @@ public class SimpleUserApp extends Block {
 	public void setGroupForUsersWithoutLogin(Group groupForUsersWithoutLogin) {
 		this.groupForUsersWithoutLogin = groupForUsersWithoutLogin;
 	}
+	/** Methods for properties end **/
 
-	protected Group getGroupForUsersWithoutLogin() {
-		return groupForUsersWithoutLogin;
-	}
-
-	protected boolean isGetParentGroupsFromTopNodes() {
-		return getParentGroupsFromTopNodes;
-	}
-
-	protected String getGroupTypes() {
-		return groupTypes;
-	}
-
-	protected String getGroupTypesForChildGroups() {
-		return groupTypesForChildGroups;
-	}
-
-	protected Group getParentGroup() {
-		return parentGroup;
-	}
-
-	protected String getRoleTypesForChildGroups() {
-		return roleTypesForChildGroups;
+	public String getBundleIdentifier() {
+		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
 	
 }

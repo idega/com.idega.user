@@ -22,12 +22,32 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 	private String containerId = null;
 	private String instanceId = null;
 	
+	private Group parentGroup = null;
+	private Group groupForUsersWithoutLogin = null;
+	
+	private String groupTypes = null;
+	private String groupTypesForChildGroups = null;
+	private String roleTypesForChildGroups = null;
+	
+	private boolean getParentGroupsFromTopNodes = true;
+	
 	private GroupHelperBusinessBean groupsHelper = new GroupHelperBusinessBean();
 	SimpleUserAppHelper helper = new SimpleUserAppHelper();
 
 	public SimpleUserAppViewUsers(String instanceId, String containerId) {
 		this.instanceId = instanceId;
 		this.containerId = containerId;
+	}
+	
+	public SimpleUserAppViewUsers(String instanceId, String containerId, Group parentGroup, Group groupForUsersWithoutLogin,
+			String groupTypes, String groupTypesForChildGroups, String roleTypesForChildGroups, boolean getParentGroupsFromTopNodes) {
+		this(instanceId, containerId);
+		this.parentGroup = parentGroup;
+		this.groupForUsersWithoutLogin = groupForUsersWithoutLogin;
+		this.groupTypes = groupTypes;
+		this.groupTypesForChildGroups = groupTypesForChildGroups;
+		this.roleTypesForChildGroups = roleTypesForChildGroups;
+		this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
 	}
 
 	public void main(IWContext iwc) {
@@ -362,6 +382,54 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		Layer spacer = new Layer();
 		spacer.setStyleClass("spacer");
 		return spacer;
+	}
+
+	public void setGroupForUsersWithoutLogin(Group groupForUsersWithoutLogin) {
+		this.groupForUsersWithoutLogin = groupForUsersWithoutLogin;
+	}
+
+	public void setGroupTypes(String groupTypes) {
+		this.groupTypes = groupTypes;
+	}
+
+	public void setGroupTypesForChildGroups(String groupTypesForChildGroups) {
+		this.groupTypesForChildGroups = groupTypesForChildGroups;
+	}
+
+	public void setParentGroup(Group parentGroup) {
+		this.parentGroup = parentGroup;
+	}
+
+	public void setRoleTypesForChildGroups(String roleTypesForChildGroups) {
+		this.roleTypesForChildGroups = roleTypesForChildGroups;
+	}
+
+	public void setGetParentGroupsFromTopNodes(boolean getParentGroupsFromTopNodes) {
+		this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
+	}
+
+	private boolean isGetParentGroupsFromTopNodes() {
+		return getParentGroupsFromTopNodes;
+	}
+
+	private Group getGroupForUsersWithoutLogin() {
+		return groupForUsersWithoutLogin;
+	}
+
+	private String getGroupTypes() {
+		return groupTypes;
+	}
+
+	private String getGroupTypesForChildGroups() {
+		return groupTypesForChildGroups;
+	}
+
+	private Group getParentGroup() {
+		return parentGroup;
+	}
+
+	private String getRoleTypesForChildGroups() {
+		return roleTypesForChildGroups;
 	}
 	
 }
