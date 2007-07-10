@@ -123,15 +123,17 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 			UserBusiness userBusiness = groupsHelper.getUserBusiness(iwc);
 			if (userBusiness != null) {
 				String login = userBusiness.getUserLogin(user);
-				if (login != null) {
+				if (login == null) {
+					loginValueInput.setContent(user.getPersonalID());
+				}
+				else {
 					loginValueInput.setContent(login);
 				}
 				String password = userBusiness.getUserPassword(user);
 				if (password != null) {
-					//passwordInput.setContent(password);
+					passwordInput.setContent(password);
 					passwordInput.setDisabled(true);
 				}
-				passwordInput.setDisabled(true);
 			}
 		}
 		addLoginFields(iwc, userLoginContainer, loginValueInput, passwordInput);
@@ -311,21 +313,23 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 		container.add(back);
 		
 		GenericButton save = new GenericButton(iwrb.getLocalizedString("save", "Save"));
-		StringBuffer saveAction = new StringBuffer("saveUserInSimpleUserApplication(['");
+		StringBuffer saveAction = new StringBuffer("saveUserInSimpleUserApplication([");
 		for (int i = 0; i < ids.length; i++) {
-			saveAction.append(ids[i]);
-			if (i + 1 < ids.length) {
-				saveAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR);
+			saveAction.append(getJavaScriptParameter(ids[i]));
+			if ((i + 1) < ids.length) {
+				saveAction.append(", ");
 			}
 		}
-		saveAction.append(ids[4]).append("'], ['");
+		saveAction.append("], ['");
 		for (int i = 0; i < childGroups.size(); i++) {
 			saveAction.append(childGroups.get(i).toString());
-			if (i + 1 < childGroups.size()) {
+			if ((i + 1) < childGroups.size()) {
 				saveAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR);
 			}
 		}
-		saveAction.append("'], '").append(iwrb.getLocalizedString("saving", "Saving...")).append("');");
+		saveAction.append("'], '").append(iwrb.getLocalizedString("saving", "Saving..."));
+		saveAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR);
+		saveAction.append(iwrb.getLocalizedString("please_enter_password", "Please, enter password!")).append("');");
 		save.setOnClick(saveAction.toString());
 		container.add(save);
 	}

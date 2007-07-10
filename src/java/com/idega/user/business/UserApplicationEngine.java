@@ -30,6 +30,6 @@ public interface UserApplicationEngine extends IBOSession {
 	
 	public List getUserByPersonalId(String personalId);
 	
-	public boolean createUser(String name, String personalId, String password, Integer primaryGroupId, List childGroups);
+	public String createUser(String name, String personalId, String password, Integer primaryGroupId, List childGroups);
 	
 }

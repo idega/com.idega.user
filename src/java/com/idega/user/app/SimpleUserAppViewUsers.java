@@ -219,7 +219,7 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		StringBuffer orderByAction = new StringBuffer("reOrderGroupUsers('").append(parentGroupsChooserId);
 		orderByAction.append(PARAMS_SEPARATOR).append(childGroupsChooserId).append(PARAMS_SEPARATOR).append(orderByChooserId);
 		orderByAction.append(PARAMS_SEPARATOR).append(groupUsersContainerId).append(PARAMS_SEPARATOR);
-		orderByAction.append(loadingMessage).append("', ").append(getDefaultParameters(ids[2], loadingMessage)).append(");");
+		orderByAction.append(loadingMessage).append("', ").append(getDefaultParameters(ids[1], ids[2], loadingMessage)).append(");");
 		orderByChooser.setOnChange(orderByAction.toString());
 		SelectOption byId = new SelectOption(iwrb.getLocalizedString("personal_id", "Personal ID"), USER_ORDER_BY_ID);
 		orderByChooser.addOption(byId);
@@ -281,18 +281,19 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		onChangeChildGroupsChooserAction.append(parentGroupChooserId).append(PARAMS_SEPARATOR);
 		onChangeChildGroupsChooserAction.append(orderByChooserId).append(PARAMS_SEPARATOR);
 		onChangeChildGroupsChooserAction.append(loadingMessage).append("', ");
-		onChangeChildGroupsChooserAction.append(getDefaultParameters(ids[2], loadingMessage)).append(");");
+		onChangeChildGroupsChooserAction.append(getDefaultParameters(ids[1], ids[2], loadingMessage)).append(");");
 		childGroups.setOnChange(onChangeChildGroupsChooserAction.toString());
 		container.add(childGroups);
 		return (Group) filteredChildGroups.get(0);
 	}
 	
-	private String getDefaultParameters(String childGroupChooserId, String message) {
+	private String getDefaultParameters(String parentGroupChooserId, String childGroupChooserId, String message) {
 		StringBuffer params = new StringBuffer("[").append(getJavaScriptParameter(instanceId)).append(", ");
 		params.append(getJavaScriptParameter(containerId)).append(", ").append(getJavaScriptParameter(childGroupChooserId));
 		params.append(", ").append(getJavaScriptParameter(getGroupForUsersWithoutLogin() == null ? null : getGroupForUsersWithoutLogin().getId()));
 		params.append(", ").append(getJavaScriptParameter(getGroupTypesForChildGroups())).append(", ");
 		params.append(getJavaScriptParameter(getRoleTypesForChildGroups())).append(", ").append(getJavaScriptParameter(message));
+		params.append(", ").append(getJavaScriptParameter(parentGroupChooserId));
 		params.append("]");
 		
 		return params.toString();
@@ -325,7 +326,7 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 					action.append(getJavaScriptParameter(getRoleTypesForChildGroups())).append(", this.value, ");
 					action.append(getJavaScriptParameter(instanceId)).append(", ").append(getJavaScriptParameter(containerId));
 					action.append(", ").append(getJavaScriptParameter(getGroupForUsersWithoutLogin() == null ? null : getGroupForUsersWithoutLogin().getId()));
-					action.append(");");
+					action.append(", ").append(getJavaScriptParameter(ids[1])).append(");");
 					groupsDropdown.setOnChange(action.toString());
 					container.add(groupsDropdown);
 					return (Group) filteredTopGroups.get(0);

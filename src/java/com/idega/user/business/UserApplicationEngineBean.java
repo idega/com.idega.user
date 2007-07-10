@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.CreateException;
+import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
@@ -186,14 +187,14 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		if (parameters == null) {
 			return null;
 		}
-		if (parameters.length != 7) {
+		if (parameters.length != 8) {
 			return null;
 		}
 		
 		SimpleUserPropertiesBean bean = new SimpleUserPropertiesBean(parentGroupId, groupId, orderBy);
 		bean.setInstanceId(parameters[0]);
 		bean.setContainerId(parameters[1]);
-		bean.setParentGroupChooserId(String.valueOf(parentGroupId));
+		bean.setParentGroupChooserId(parameters[7]);
 		bean.setGroupChooserId(parameters[2]);
 		bean.setMessage(parameters[6]);
 		bean.setDefaultGroupId(parameters[3]);
@@ -345,34 +346,37 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		return info;
 	}
 	
-	public boolean createUser(String name, String personalId, String password, Integer primaryGroupId, List childGroups) {
+	public String createUser(String name, String personalId, String password, Integer primaryGroupId, List childGroups) {
 		if (name == null || personalId == null || password == null || primaryGroupId == null || childGroups == null) {
-			return false;
+			return null;
 		}
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
-			return false;
+			return null;
 		}
+		
+		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
+		String sucessText = iwrb.getLocalizedString("success_saving_user", "Your changes were successfully saved.");
+		String errorText = iwrb.getLocalizedString("error_saving_user", "Error occurred while saving Your changes.");
 		
 		UserBusiness userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
-			return false;
+			return errorText;
 		}
 		GroupBusiness groupBusiness = getGroupBusiness(iwc);
 		if (groupBusiness == null) {
-			return false;
+			return errorText;
 		}
 		
 		User user = null;
 		try {
 			user = userBusiness.getUser(personalId);
 		} catch (RemoteException e) {
-			e.printStackTrace();
 		} catch (FinderException e) {
-			e.printStackTrace();
 		}
-		if (user == null) {
-			//	Creating user
+		
+		
+		if (user == null) {	//	Creating user
 			try {
 				user = userBusiness.createUserByPersonalIDIfDoesNotExist(name, personalId, null, null);
 			} catch (RemoteException e) {
@@ -381,55 +385,90 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 				e.printStackTrace();
 			}
 			if (user == null) {
-				return false;
+				return errorText;
 			}
-			
-			//	Creating login
-			int userId = -1;
+		}
+		
+		LoginTable loginTable = null;
+		loginTable = LoginDBHandler.getUserLogin(user);
+		if (loginTable == null) {	//	Creating login
 			try {
-				userId = Integer.valueOf(user.getId()).intValue();
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-			LoginTable loginTable = null;
-			try {
-				loginTable = LoginDBHandler.createLogin(userId, personalId, password);
+				loginTable = LoginDBHandler.createLogin(user, personalId, password);
 			} catch (LoginCreateException e) {
 				e.printStackTrace();
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 			if (loginTable == null) {
-				return false;
+				return errorText;
 			}
 			loginTable.store();
 		}
 		
-		//	Setting primary group
-		user.setPrimaryGroupID(primaryGroupId);
+		//	Removing from old groups
+		removeUserFromOldGroups(iwc, user);
 		
-		//	Setting available groups
+		//	Setting new available groups for user
 		Object o = null;
-		Group group = null;
 		for (int i = 0; i < childGroups.size(); i++) {
 			o = childGroups.get(i);
 			if (o instanceof Integer) {
-				group = null;
 				try {
-					group = groupBusiness.getGroupByGroupID(((Integer) o).intValue());
+					groupBusiness.addUser(((Integer) o).intValue(), user);
+				} catch (EJBException e) {
+					e.printStackTrace();
 				} catch (RemoteException e) {
 					e.printStackTrace();
-				} catch (FinderException e) {
-					e.printStackTrace();
-				}
-				if (group != null) {
-					group.addGroup(user);
 				}
 			}
 		}
 		
-		return true;
+		//	Setting primary group
+		user.setPrimaryGroupID(primaryGroupId);
+		user.store();
+		
+		return sucessText;
+	}
+	
+	private void removeUserFromOldGroups(IWContext iwc, User user) {
+		if (iwc == null || user == null) {
+			return;
+		}
+		
+		UserBusiness userBusiness = getUserBusiness(iwc);
+		if (userBusiness == null) {
+			return;
+		}
+		
+		Collection groups = null;
+		try {
+			groups = userBusiness.getUserGroups(user);
+		} catch (EJBException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		if (groups == null) {
+			return;
+		}
+		
+		User currentUser = iwc.getCurrentUser();
+		
+		Object o = null;
+		Group group = null;
+		for (Iterator it = groups.iterator(); it.hasNext();) {
+			o = it.next();
+			if (o instanceof Group) {
+				group = (Group) o;
+				try {
+					userBusiness.removeUserFromGroup(user, group, currentUser);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (RemoveException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	private UserBusiness getUserBusiness(IWContext iwc) {

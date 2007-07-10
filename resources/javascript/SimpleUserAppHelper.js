@@ -1,7 +1,7 @@
 var USERS_TO_REMOVE = new Array();
 
 function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles, groupId,
-							instanceId, mainContainerId, defaultGroupId) {
+							instanceId, mainContainerId, defaultGroupId, parentGroupChooserId) {
 	showLoadingMessage(message);
 	DWRUtil.removeAllOptions(childGroupsChooserId);
 	
@@ -13,6 +13,7 @@ function reloadComponents(message, childGroupsChooserId, orderByChooserId, conta
 	params.push(groupTypes);
 	params.push(groupRoles);
 	params.push(message);
+	params.push(parentGroupChooserId);
 	
 	UserApplicationEngine.getChildGroups(groupId, groupTypes, groupRoles, {
 		callback: function(childGroups) {
@@ -361,13 +362,19 @@ function getUserByPersonalIdCallback(info, nameInputId, loginNameInputId, passwo
 	
 	nameInput.value = info[0];
 	loginInput.value = info[1];
-	/*if (passwordInput != null) {
-		passwordInput.value = info[2];
-	}*/
+	if (passwordInput != null) {
+		if (info[2] == null || info[2] == '') {
+			passwordInput.removeAttribute('disabled');
+		}
+		else {
+			passwordInput.setAttribute('disabled', 'true');
+			passwordInput.value = info[2];	
+		}
+	}
 	return true;
 }
 
-function saveUserInSimpleUserApplication(ids, childGroups, message) {
+function saveUserInSimpleUserApplication(ids, childGroups, message, passwordErrorMessage) {
 	var parentGroupChooserId = ids[0];
 	var nameValueInputId = ids[1];
 	var loginInputId = ids[2];
@@ -393,12 +400,19 @@ function saveUserInSimpleUserApplication(ids, childGroups, message) {
 	var userName = document.getElementById(nameValueInputId).value;
 	var personalId = document.getElementById(loginInputId).value;	// Personal ID = Login name
 	var password = document.getElementById(passwordInputId).value;
+	if (password == null || password == '') {
+		alert(passwordErrorMessage);
+		return false;
+	}
 	var primaryGroupId = getSelectObjectValue(parentGroupChooserId);
 	
 	showLoadingMessage(message);
 	UserApplicationEngine.createUser(userName, personalId, password, primaryGroupId, selectedGroups, {
 		callback: function(result) {
 			closeAllLoadingMessages();
+			if (result != null) {
+				alert(result);
+			}
 		}
 	});
 }
