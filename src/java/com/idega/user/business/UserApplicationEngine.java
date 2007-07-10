@@ -24,7 +24,7 @@ public interface UserApplicationEngine extends IBOSession {
 	
 	public Document getSimpleUserApplication(String instanceId);
 	
-	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, String groupTypes, String groupRoles);
+	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, Integer userId, String groupTypes, String groupRoles);
 	
 	public void addViewUsersCase(String instanceId, SimpleUserAppViewUsers viewUsers);
 	

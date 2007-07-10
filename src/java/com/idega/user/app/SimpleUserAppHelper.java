@@ -72,30 +72,13 @@ public class SimpleUserAppHelper {
 				changeUserImage = new Image(image);
 				changeUserImage.setStyleClass(changeUserImageStyleClass);
 				changeUserAction = new StringBuffer("addUserPresentationObject('").append(bean.getInstanceId());
-				changeUserAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR).append(bean.getContainerId());
-				changeUserAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR).append(bean.getParentGroupChooserId());
-				changeUserAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR).append(bean.getGroupChooserId());
-				changeUserAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR).append(bean.getMessage()).append("', ");
-				if (bean.getDefaultGroupId() == null) {
-					changeUserAction.append("null");
-				}
-				else {
-					changeUserAction.append("'").append(bean.getDefaultGroupId()).append("'");
-				}
-				changeUserAction.append(", '").append(user.getId()).append("', ");
-				if (bean.getGroupTypes() == null) {
-					changeUserAction.append("null");
-				}
-				else {
-					changeUserAction.append("'").append(bean.getGroupTypes()).append("'");
-				}
-				changeUserAction.append(", ");
-				if (bean.getRoleTypes() == null) {
-					changeUserAction.append("null");
-				}
-				else {
-					changeUserAction.append("'").append(bean.getRoleTypes()).append("'");
-				}
+				changeUserAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getContainerId());
+				changeUserAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getParentGroupChooserId());
+				changeUserAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getGroupChooserId());
+				changeUserAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getMessage()).append("', ");
+				changeUserAction.append(getJavaScriptParameter(bean.getDefaultGroupId())).append(", '").append(user.getId());
+				changeUserAction.append("', ").append(getJavaScriptParameter(bean.getGroupTypes()));
+				changeUserAction.append(SimpleUserApp.COMMA_SEPARATOR).append(getJavaScriptParameter(bean.getRoleTypes()));
 				changeUserAction.append(");");
 				changeUserImage.setOnClick(changeUserAction.toString());
 				changeUserContainer.add(changeUserImage);
@@ -105,8 +88,8 @@ public class SimpleUserAppHelper {
 				removeUserContainer.setStyleClass(removeUserContainerStyleClass);
 				removeUserCheckbox = new CheckBox();
 				checkBoxAction = new StringBuffer("removeUser('").append(lineContainer.getId());
-				checkBoxAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR).append(user.getId());
-				checkBoxAction.append(SimpleUserAppViewUsers.PARAMS_SEPARATOR).append(bean.getGroupId()).append("', this.checked);");
+				checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(user.getId());
+				checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getGroupId()).append("', this.checked);");
 				removeUserCheckbox.setOnClick(checkBoxAction.toString());
 				removeUserContainer.add(removeUserCheckbox);
 				lineContainer.add(removeUserContainer);
@@ -116,7 +99,7 @@ public class SimpleUserAppHelper {
 		return valuesContainer;
 	}
 	
-	public Layer getSelectedGroupsByIds(IWContext iwc, GroupHelperBusinessBean helper, List groupsIds, List ids, String selectedGroupId) {
+	public Layer getSelectedGroupsByIds(IWContext iwc, User user, GroupHelperBusinessBean helper, List groupsIds, List ids, String selectedGroupId) {
 		Layer selectedGroups = new Layer();
 		
 		if (groupsIds == null) {
@@ -125,10 +108,10 @@ public class SimpleUserAppHelper {
 		}
 		
 		List groups = helper.getGroups(iwc, groupsIds);
-		return getSelectedGroups(iwc, helper, groups, ids, selectedGroupId);
+		return getSelectedGroups(iwc, user, helper, groups, ids, selectedGroupId);
 	}
 	
-	public Layer getSelectedGroups(IWContext iwc, GroupHelperBusinessBean helper, List groups, List ids, String selectedGroupId) {
+	public Layer getSelectedGroups(IWContext iwc, User user, GroupHelperBusinessBean helper, List groups, List ids, String selectedGroupId) {
 		Layer selectedGroups = new Layer();
 		
 		if (groups == null) {
@@ -145,6 +128,8 @@ public class SimpleUserAppHelper {
 			return selectedGroups;
 		}
 		
+		List userGroups = helper.getUserGroupsIds(iwc, user);
+		
 		Object o = null;
 		Group group = null;
 		String groupId = null;
@@ -160,7 +145,7 @@ public class SimpleUserAppHelper {
 				//	Checkbox
 				groupId = group.getId() == null ? CoreConstants.EMPTY : group.getId();
 				CheckBox selectGroup = new CheckBox(group.getName(), groupId);
-				if (groupId.equals(selectedGroupId)) {
+				if (groupId.equals(selectedGroupId) || userGroups.contains(groupId)) {
 					selectGroup.setChecked(true);
 				}
 				ids.add(selectGroup.getId());
@@ -188,6 +173,13 @@ public class SimpleUserAppHelper {
 		else {
 			container.add(new Text(iwrb.getLocalizedString("no_groups_available", text)));
 		}
+	}
+	
+	protected String getJavaScriptParameter(String parameter) {
+		if (parameter == null) {
+			return "null";
+		}
+		return new StringBuffer("'").append(parameter).append("'").toString();
 	}
 
 }

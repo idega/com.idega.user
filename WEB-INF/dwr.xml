@@ -37,7 +37,7 @@
 			List<AdvancedProperty> UserApplicationEngine.getChildGroups(String, String, String);
 			List<Integer> UserApplicationEngine.removeUsers(List<Integer>, Integer);
 			Document UserApplicationEngine.getAddUserPresentationObject(String[], List<Integer>, List<Integer>, Integer, String, String);
-			Document UserApplicationEngine.getAvailableGroupsForUserPresentationObject(Integer, String, String);
+			Document UserApplicationEngine.getAvailableGroupsForUserPresentationObject(Integer, Integer, String, String);
 			List<String> UserApplicationEngine.getUserByPersonalId(String);
 			String UserApplicationEngine.createUser(String, String, String, Integer, List<Integer>);
   		]]>

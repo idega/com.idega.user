@@ -291,13 +291,13 @@ function goBackToSimpleUserApp(instanceId, containerId, message) {
 	});
 }
 
-function reloadAvailableGroupsForUser(groupId, parameters) {
+function reloadAvailableGroupsForUser(groupId, userId, parameters) {
 	var containerId = parameters[0];
 	var message = parameters[1];
 	var groupTypes = parameters[2];
 	var roleTypes = parameters[3];
 	showLoadingMessage(message);
-	UserApplicationEngine.getAvailableGroupsForUserPresentationObject(groupId, groupTypes, roleTypes, {
+	UserApplicationEngine.getAvailableGroupsForUserPresentationObject(groupId, userId, groupTypes, roleTypes, {
 		callback: function(component) {
 			getAddUserPresentationObjectCallback(component, containerId);
 		}

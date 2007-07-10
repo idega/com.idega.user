@@ -282,7 +282,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		simpleUserApps.put(instanceId, viewUsers);
 	}
 	
-	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, String groupTypes, String groupRoles) {
+	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, Integer userId, String groupTypes, String groupRoles) {
 		if (parentGroupId == null) {
 			return null;
 		}
@@ -291,9 +291,21 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 			return null;
 		}
 		
+		User user = null;
+		if (userId != null) {
+			UserBusiness userBusiness = getUserBusiness(iwc);
+			if (userBusiness != null) {
+				try {
+					user = userBusiness.getUser(userId);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		List groups = groupHelper.getFilteredChildGroups(iwc, parentGroupId.intValue(), groupTypes, groupRoles, ",");
 		List ids = new ArrayList();
-		Layer availableGroupsContainer = presentationHelper.getSelectedGroups(iwc, groupHelper, groups, ids, null);
+		Layer availableGroupsContainer = presentationHelper.getSelectedGroups(iwc, user, groupHelper, groups, ids, null);
 		
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, availableGroupsContainer);
 	}

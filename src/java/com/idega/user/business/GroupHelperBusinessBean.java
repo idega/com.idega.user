@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
@@ -363,5 +364,39 @@ public class GroupHelperBusinessBean {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+	
+	public List getUserGroupsIds(IWContext iwc, User user) {
+		List ids = new ArrayList();
+		if (user == null) {
+			return ids;
+		}
+		
+		UserBusiness userBusiness = getUserBusiness(iwc);
+		if (userBusiness == null) {
+			return ids;
+		}
+		
+		Collection userGroups = null;
+		try {
+			userGroups = userBusiness.getUserGroups(user);
+		} catch (EJBException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		if (userGroups == null) {
+			return ids;
+		}
+		
+		Object o = null;
+		for (Iterator it = userGroups.iterator(); it.hasNext();) {
+			o = it.next();
+			if (o instanceof Group) {
+				ids.add(((Group) o).getId());
+			}
+		}
+		
+		return ids;
 	}
 }

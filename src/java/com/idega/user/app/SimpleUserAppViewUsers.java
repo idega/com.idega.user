@@ -23,9 +23,8 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 	private String instanceId = null;
 	
 	private GroupHelperBusinessBean groupsHelper = new GroupHelperBusinessBean();
+	SimpleUserAppHelper helper = new SimpleUserAppHelper();
 
-	protected static final String PARAMS_SEPARATOR = "', '";
-	
 	public SimpleUserAppViewUsers(String instanceId, String containerId) {
 		this.instanceId = instanceId;
 		this.containerId = containerId;
@@ -124,9 +123,9 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		addUserAction.append(PARAMS_SEPARATOR).append(ids[4]).append(PARAMS_SEPARATOR).append(ids[1]);
 		addUserAction.append(PARAMS_SEPARATOR).append(ids[2]).append(PARAMS_SEPARATOR);
 		addUserAction.append(iwrb.getLocalizedString("loading", "Loading...")).append("', ");
-		addUserAction.append(getJavaScriptParameter(id)).append(", null, ");
-		addUserAction.append(getJavaScriptParameter(getGroupTypesForChildGroups())).append(", ");
-		addUserAction.append(getJavaScriptParameter(getRoleTypesForChildGroups())).append(");");
+		addUserAction.append(helper.getJavaScriptParameter(id)).append(", null, ");
+		addUserAction.append(helper.getJavaScriptParameter(getGroupTypesForChildGroups())).append(COMMA_SEPARATOR);
+		addUserAction.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(");");
 		addUser.setOnClick(addUserAction.toString());
 		container.add(addUser);
 	}
@@ -164,9 +163,8 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		
 		container.add(valuesContainer);
 		
-		SimpleUserAppHelper presentationHelper = new SimpleUserAppHelper();
 		String image = bundle.getVirtualPathWithFileNameString(EDIT_IMAGE);
-		valuesContainer.add(presentationHelper.getMembersList(iwc, bean, groupsHelper, image));
+		valuesContainer.add(helper.getMembersList(iwc, bean, groupsHelper, image));
 	}
 	
 	private SimpleUserPropertiesBean addChooserContainer(IWContext iwc, Layer choosers, DropdownMenu[] dropDowns, String[] ids) {
@@ -288,12 +286,14 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 	}
 	
 	private String getDefaultParameters(String parentGroupChooserId, String childGroupChooserId, String message) {
-		StringBuffer params = new StringBuffer("[").append(getJavaScriptParameter(instanceId)).append(", ");
-		params.append(getJavaScriptParameter(containerId)).append(", ").append(getJavaScriptParameter(childGroupChooserId));
-		params.append(", ").append(getJavaScriptParameter(getGroupForUsersWithoutLogin() == null ? null : getGroupForUsersWithoutLogin().getId()));
-		params.append(", ").append(getJavaScriptParameter(getGroupTypesForChildGroups())).append(", ");
-		params.append(getJavaScriptParameter(getRoleTypesForChildGroups())).append(", ").append(getJavaScriptParameter(message));
-		params.append(", ").append(getJavaScriptParameter(parentGroupChooserId));
+		StringBuffer params = new StringBuffer("[").append(helper.getJavaScriptParameter(instanceId)).append(COMMA_SEPARATOR);
+		params.append(helper.getJavaScriptParameter(containerId)).append(COMMA_SEPARATOR);
+		params.append(helper.getJavaScriptParameter(childGroupChooserId)).append(COMMA_SEPARATOR);
+		params.append(helper.getJavaScriptParameter(getGroupForUsersWithoutLogin() == null ? null : getGroupForUsersWithoutLogin().getId()));
+		params.append(COMMA_SEPARATOR).append(helper.getJavaScriptParameter(getGroupTypesForChildGroups())).append(COMMA_SEPARATOR);
+		params.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(COMMA_SEPARATOR);
+		params.append(helper.getJavaScriptParameter(message)).append(COMMA_SEPARATOR);
+		params.append(helper.getJavaScriptParameter(parentGroupChooserId));
 		params.append("]");
 		
 		return params.toString();
@@ -322,11 +322,12 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 					action.append(orderByChooserId).append(PARAMS_SEPARATOR);
 					action.append(groupUsersContainerId).append(PARAMS_SEPARATOR);
 					action.append(groupsDropdown.getId()).append("', ");
-					action.append(getJavaScriptParameter(getGroupTypesForChildGroups())).append(", ");
-					action.append(getJavaScriptParameter(getRoleTypesForChildGroups())).append(", this.value, ");
-					action.append(getJavaScriptParameter(instanceId)).append(", ").append(getJavaScriptParameter(containerId));
-					action.append(", ").append(getJavaScriptParameter(getGroupForUsersWithoutLogin() == null ? null : getGroupForUsersWithoutLogin().getId()));
-					action.append(", ").append(getJavaScriptParameter(ids[1])).append(");");
+					action.append(helper.getJavaScriptParameter(getGroupTypesForChildGroups())).append(COMMA_SEPARATOR);
+					action.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(", this.value, ");
+					action.append(helper.getJavaScriptParameter(instanceId)).append(COMMA_SEPARATOR);
+					action.append(helper.getJavaScriptParameter(containerId)).append(COMMA_SEPARATOR);
+					action.append(helper.getJavaScriptParameter(getGroupForUsersWithoutLogin() == null ? null : getGroupForUsersWithoutLogin().getId()));
+					action.append(COMMA_SEPARATOR).append(helper.getJavaScriptParameter(ids[1])).append(");");
 					groupsDropdown.setOnChange(action.toString());
 					container.add(groupsDropdown);
 					return (Group) filteredTopGroups.get(0);
