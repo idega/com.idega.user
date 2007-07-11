@@ -89,7 +89,8 @@ public class SimpleUserAppHelper {
 				removeUserCheckbox = new CheckBox();
 				checkBoxAction = new StringBuffer("removeUser('").append(lineContainer.getId());
 				checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(user.getId());
-				checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getGroupId()).append("', this.checked);");
+				checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getGroupId()).append("', ");
+				checkBoxAction.append(getJavaScriptParameter(removeUserCheckbox.getId())).append(");");
 				removeUserCheckbox.setOnClick(checkBoxAction.toString());
 				removeUserContainer.add(removeUserCheckbox);
 				lineContainer.add(removeUserContainer);
@@ -146,7 +147,7 @@ public class SimpleUserAppHelper {
 				groupId = group.getId() == null ? CoreConstants.EMPTY : group.getId();
 				CheckBox selectGroup = new CheckBox(group.getName(), groupId);
 				if (groupId.equals(selectedGroupId) || userGroups.contains(groupId)) {
-					selectGroup.setChecked(true);
+					selectGroup.setChecked(true, true);
 				}
 				ids.add(selectGroup.getId());
 				selectedGroup.add(selectGroup);

@@ -80,7 +80,8 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 		container.add(parentGroupsContainer);
 		DropdownMenu parentGroupsChooser = new DropdownMenu();
 		String parentGroupChooserId = parentGroupsChooser.getId();
-		StringBuffer action = new StringBuffer("reloadAvailableGroupsForUser(this.value, ");
+		StringBuffer action = new StringBuffer("reloadAvailableGroupsForUser(");
+		action.append(helper.getJavaScriptParameter(parentGroupChooserId)).append(", ");
 		action.append(helper.getJavaScriptParameter(user == null ? null : user.getId())).append(COMMA_SEPARATOR).append("['");
 		action.append(availableGroupsOfUserContaianer.getId()).append(PARAMS_SEPARATOR);
 		action.append(iwrb.getLocalizedString("loading", "Loading...")).append("', ");
@@ -100,7 +101,8 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 		container.add(userFieldsContainer);
 		TextInput idValueInput = new TextInput();
 		idValueInput.setMaxlength(12);
-		StringBuffer idAction = new StringBuffer("getUserByPersonalId(this.value, '").append(nameValueInputId);
+		StringBuffer idAction = new StringBuffer("getUserByPersonalId(");
+		idAction.append(helper.getJavaScriptParameter(idValueInput.getId())).append(", '").append(nameValueInputId);
 		idAction.append(PARAMS_SEPARATOR).append(loginInputId);
 		idAction.append(PARAMS_SEPARATOR).append(passwordInputId);
 		idAction.append(PARAMS_SEPARATOR).append(iwrb.getLocalizedString("loading", "Loading..."));

@@ -1,9 +1,11 @@
 var USERS_TO_REMOVE = new Array();
 
-function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles, groupId,
+function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles,
 							instanceId, mainContainerId, defaultGroupId, parentGroupChooserId) {
 	showLoadingMessage(message);
 	DWRUtil.removeAllOptions(childGroupsChooserId);
+	
+	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
 	
 	var params = new Array();
 	params.push(instanceId);
@@ -15,7 +17,7 @@ function reloadComponents(message, childGroupsChooserId, orderByChooserId, conta
 	params.push(message);
 	params.push(parentGroupChooserId);
 	
-	UserApplicationEngine.getChildGroups(groupId, groupTypes, groupRoles, {
+	UserApplicationEngine.getChildGroups(parentGroupId, groupTypes, groupRoles, {
 		callback: function(childGroups) {
 			getChildGroupsCallback(childGroups, childGroupsChooserId, orderByChooserId, containerId, chooserId, message, params);
 		}
@@ -38,7 +40,7 @@ function getChildGroupsCallback(childGroups, childGroupsChooserId, orderByChoose
 	}
 	
 	var groupId = getSelectObjectValue(childGroupsChooserId);
-	selectChildGroup(groupId, containerId, chooserId, orderByChooserId, message, params);
+	selectChildGroup(childGroupsChooserId, containerId, chooserId, orderByChooserId, message, params);
 }
 
 function getSelectObjectValue(id) {
@@ -57,12 +59,13 @@ function getSelectObjectValue(id) {
 
 function reOrderGroupUsers(parentGroupChooserId, childGroupChooserId, orderByChooserId, containerId, message, params) {
 	var groupId = getSelectObjectValue(childGroupChooserId);
-	selectChildGroup(groupId, containerId, parentGroupChooserId, orderByChooserId, message, params);
+	selectChildGroup(childGroupChooserId, containerId, parentGroupChooserId, orderByChooserId, message, params);
 }
 
-function selectChildGroup(groupId, containerId, parentGroupChooserId, orderByChooserId, message, parameters) {
+function selectChildGroup(groupChooserId, containerId, parentGroupChooserId, orderByChooserId, message, parameters) {
 	showLoadingMessage(message);
 	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
+	var groupId = getSelectObjectValue(groupChooserId);
 	var orderBy = getSelectObjectValue(orderByChooserId);
 	
 	var bean = new SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy, parameters);
@@ -178,11 +181,18 @@ function findMarkedUser(containerId, userId, groupId) {
 	return index;
 }
 
-function removeUser(containerId, userId, groupId, isChecked) {
+function removeUser(containerId, userId, groupId, checkBoxId) {
 	var index = findMarkedUser(containerId, userId, groupId);
 	if (index != -1) {
 		USERS_TO_REMOVE.splice(index, 1);
 	}
+	
+	var isChecked = false;
+	var checkbox = document.getElementById(checkBoxId);
+	if (checkbox != null) {
+		isChecked = checkbox.checked;
+	}
+	
 	if (isChecked) {
 		USERS_TO_REMOVE.push(new MarkedUsers(containerId, userId, groupId));
 	}
@@ -257,7 +267,8 @@ function goBackToSimpleUserApp(instanceId, containerId, message) {
 	});
 }
 
-function reloadAvailableGroupsForUser(groupId, userId, parameters) {
+function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters) {
+	var groupId = getSelectObjectValue(parentGroupChooserId);
 	var containerId = parameters[0];
 	var message = parameters[1];
 	var groupTypes = parameters[2];
@@ -270,7 +281,15 @@ function reloadAvailableGroupsForUser(groupId, userId, parameters) {
 	});
 }
 
-function getUserByPersonalId(personalId, nameInputId, loginNameInputId, passwordInputId, message) {
+function getUserByPersonalId(valueInputId, nameInputId, loginNameInputId, passwordInputId, message) {
+	if (valueInputId == null) {
+		return false;
+	}
+	var input = document.getElementById(valueInputId);
+	if (input == null) {
+		return false;
+	}
+	var personalId = input.value;
 	if (personalId == null) {
 		return false;
 	}

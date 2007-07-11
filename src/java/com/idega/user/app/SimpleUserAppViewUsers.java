@@ -294,7 +294,8 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		String orderByChooserId = ids[3];
 		
 		childGroups.addMenuElements(filteredChildGroups);
-		StringBuffer onChangeChildGroupsChooserAction = new StringBuffer("selectChildGroup(this.value, '");
+		StringBuffer onChangeChildGroupsChooserAction = new StringBuffer("selectChildGroup(");
+		onChangeChildGroupsChooserAction.append(helper.getJavaScriptParameter(ids[2])).append(", '");
 		onChangeChildGroupsChooserAction.append(groupUsersContainerId).append(PARAMS_SEPARATOR);
 		onChangeChildGroupsChooserAction.append(parentGroupChooserId).append(PARAMS_SEPARATOR);
 		onChangeChildGroupsChooserAction.append(orderByChooserId).append(PARAMS_SEPARATOR);
@@ -343,7 +344,7 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 					action.append(groupUsersContainerId).append(PARAMS_SEPARATOR);
 					action.append(groupsDropdown.getId()).append("', ");
 					action.append(helper.getJavaScriptParameter(getGroupTypesForChildGroups())).append(COMMA_SEPARATOR);
-					action.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(", this.value, ");
+					action.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(COMMA_SEPARATOR);
 					action.append(helper.getJavaScriptParameter(instanceId)).append(COMMA_SEPARATOR);
 					action.append(helper.getJavaScriptParameter(containerId)).append(COMMA_SEPARATOR);
 					action.append(helper.getJavaScriptParameter(getGroupForUsersWithoutLogin() == null ? null : getGroupForUsersWithoutLogin().getId()));
