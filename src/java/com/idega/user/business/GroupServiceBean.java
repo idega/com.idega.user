@@ -1,7 +1,5 @@
 package com.idega.user.business;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +13,6 @@ import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
-import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.bean.GroupDataBean;
 import com.idega.user.bean.GroupMemberDataBean;
@@ -67,24 +64,6 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		}
 		
 		return null;
-	}
-	
-	/**
-	 * Checks if can use DWR on remote server
-	 */
-	public boolean canUseRemoteServer(String server) {
-		if (server == null) {
-			return false;
-		}
-		
-		if (server.endsWith("/")) {
-			server = server.substring(0, server.lastIndexOf("/"));
-		}
-		
-		String engineScript = new StringBuffer(server).append("/dwr/engine.js").toString();
-		String interfaceScript = new StringBuffer(server).append(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT).toString();
-		
-		return (existsFileOnRemoteServer(engineScript) && existsFileOnRemoteServer(interfaceScript));
 	}
 	
 	private Map getCache(IWContext iwc, String cacheKey, int minutes) {
@@ -280,32 +259,6 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	}
 	
 	/**
-	 * Checks if file exists on server
-	 * @param urlToFile
-	 * @return
-	 */
-	private boolean existsFileOnRemoteServer(String urlToFile) {
-		InputStream streamToFile = null;
-		
-		try {
-			URL dwr = new URL(urlToFile);
-			streamToFile = dwr.openStream();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		
-		if (streamToFile == null) {
-			return false;
-		}
-		try {
-			streamToFile.close();
-		} catch (Exception e) {}
-		
-		return true;
-	}
-	
-	/**
 	 * Checks if current (logged) user is the same user that is making request
 	 * @param iwc
 	 * @param userName
@@ -422,18 +375,18 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		return true;
 	}
 	
-	private boolean clearCache(String cacheKey, PropertiesBean bean) {
+	private Boolean clearCache(String cacheKey, PropertiesBean bean) {
 		if (cacheKey == null || bean == null) {
-			return false;
+			return Boolean.FALSE;
 		}
 		
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
-			return false;
+			return Boolean.FALSE;
 		}
 		
 		if (!canUseServer(iwc, bean)) {
-			return false;
+			return Boolean.FALSE;
 		}
 		
 		int minutes = 0;
@@ -444,23 +397,23 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		
 		Map cache = getCache(iwc, cacheKey, minutes);
 		if (cache == null) {
-			return false;
+			return Boolean.FALSE;
 		}
 		
 		try {
 			cache.remove(bean.getInstanceId());
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return Boolean.FALSE;
 		}
-		return true;
+		return Boolean.TRUE;
 	}
 	
-	public boolean clearGroupInfoCache(GroupPropertiesBean bean) {
+	public Boolean clearGroupInfoCache(GroupPropertiesBean bean) {
 		return clearCache(UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, bean);
 	}
 	
-	public boolean clearUsersInfoCache(UserPropertiesBean bean) {
+	public Boolean clearUsersInfoCache(UserPropertiesBean bean) {
 		return clearCache(UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, bean);
 	}
 }

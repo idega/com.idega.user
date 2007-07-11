@@ -20,11 +20,6 @@ public interface GroupService extends IBOService {
 	public List getGroupsTree(String login, String password) throws RemoteException;
 
 	/**
-	 * @see com.idega.user.business.GroupServiceBean#canUseRemoteServer
-	 */
-	public boolean canUseRemoteServer(String server) throws RemoteException;
-
-	/**
 	 * @see com.idega.user.business.GroupServiceBean#getGroupsInfo
 	 */
 	public List getGroupsInfo(GroupPropertiesBean bean) throws RemoteException;
@@ -37,10 +32,10 @@ public interface GroupService extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#clearGroupInfoCache
 	 */
-	public boolean clearGroupInfoCache(GroupPropertiesBean bean);
+	public Boolean clearGroupInfoCache(GroupPropertiesBean bean);
 	
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#clearUsersInfoCache
 	 */
-	public boolean clearUsersInfoCache(UserPropertiesBean bean);
+	public Boolean clearUsersInfoCache(UserPropertiesBean bean);
 }

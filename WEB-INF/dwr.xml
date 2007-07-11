@@ -20,23 +20,37 @@
 		<create creator="ibo" javascript="UserApplicationEngine" scope="session">
 			<param name="class" value="com.idega.user.business.UserApplicationEngine" />
 		</create>
+		<convert converter="bean" match="com.idega.user.bean.SimpleUserPropertiesBean" />
+		
 	</allow>
 	<signatures>
 		<![CDATA[
+			import com.idega.user.business.UserApplicationEngine;
+			import com.idega.user.business.GroupService;
+		
 			import java.util.List;
 			import org.jdom.Document;
-			import com.idega.builder.bean.AdvancedProperty;
+			
 			import com.idega.user.bean.GroupPropertiesBean;
 			import com.idega.user.bean.UserPropertiesBean;
+			import com.idega.user.bean.GroupDataBean;
+			import com.idega.user.bean.GroupMemberDataBean;
+			import com.idega.user.business.GroupNode;
+			
+			import com.idega.builder.bean.AdvancedProperty;
+			import com.idega.user.bean.SimpleUserPropertiesBean;
 
-			GroupService.getGroupsInfo(GroupPropertiesBean);
-			GroupService.getUsersInfo(UserPropertiesBean);
-			GroupService.clearGroupInfoCache(GroupPropertiesBean);
-			GroupService.clearUsersInfoCache(UserPropertiesBean);
+			List<GroupDataBean> GroupService.getGroupsInfo(GroupPropertiesBean);
+			List<GroupMemberDataBean> GroupService.getUsersInfo(UserPropertiesBean);
+			Boolean GroupService.clearGroupInfoCache(GroupPropertiesBean);
+			Boolean GroupService.clearUsersInfoCache(UserPropertiesBean);
+			List<GroupNode> GroupService.getGroupsTree(String, String);
 			
 			List<AdvancedProperty> UserApplicationEngine.getChildGroups(String, String, String);
 			List<Integer> UserApplicationEngine.removeUsers(List<Integer>, Integer);
-			Document UserApplicationEngine.getAddUserPresentationObject(String[], List<Integer>, List<Integer>, Integer, String, String);
+			Document UserApplicationEngine.getMembersList(SimpleUserPropertiesBean);
+			Document UserApplicationEngine.getAddUserPresentationObject(SimpleUserPropertiesBean, List<Integer>, List<Integer>, Integer);
+			Document UserApplicationEngine.getSimpleUserApplication(String);
 			Document UserApplicationEngine.getAvailableGroupsForUserPresentationObject(Integer, Integer, String, String);
 			List<String> UserApplicationEngine.getUserByPersonalId(String);
 			String UserApplicationEngine.createUser(String, String, String, Integer, List<Integer>);
