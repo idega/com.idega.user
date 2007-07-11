@@ -22,38 +22,6 @@ function reloadComponents(message, childGroupsChooserId, orderByChooserId, conta
 	});
 }
 
-function myCallback(data) {
-	alert(data);
-	closeAllLoadingMessages();
-}
-
-function getChildGroupsInStringCallback(childGroups, childGroupsChooserId) {
-	//alert('info: ' + childGroups);
-	if (childGroups == null) {
-		closeAllLoadingMessages();
-		return false;
-	}
-	if (childGroups == '') {
-		closeAllLoadingMessages();
-		return false;
-	}
-	
-	var properties = childGroups.split('@prop_separator@');
-	if (properties == null) {
-		closeAllLoadingMessages();
-		return false;
-	}
-	var advancedProperties = new Array();
-	for (var i = 0; i < properties.length; i++) {
-		var property = properties[i].split(',');
-		if (property != null) {
-			advancedProperties.push(new AdvancedProperty(property[0], property[1]));
-		}
-	}
-	
-	getChildGroupsCallback(advancedProperties, childGroupsChooserId)
-}
-
 function getChildGroupsCallback(childGroups, childGroupsChooserId, orderByChooserId, containerId, chooserId, message, params) {
 	closeAllLoadingMessages();
 	if (childGroups == null) {
@@ -97,8 +65,10 @@ function selectChildGroup(groupId, containerId, parentGroupChooserId, orderByCho
 	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
 	var orderBy = getSelectObjectValue(orderByChooserId);
 	
+	var bean = new SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy, parameters);
+	
 	showLoadingMessage(message);
-	UserApplicationEngine.getMembersList(parentGroupId, groupId, orderBy, parameters, {
+	UserApplicationEngine.getMembersList(bean, {
 		callback: function(component) {
 			getMembersListCallback(component, containerId);
 		}
@@ -218,19 +188,15 @@ function removeUser(containerId, userId, groupId, isChecked) {
 	}
 }
 
-function addUserPresentationObject(instanceId, containerId, parentGroupChooserId, groupChooserId, message, defaultGroupId, userId, groupTypes, roleTypes) {
+function addUserPresentationObject(instanceId, containerId, parentGroupChooserId, groupChooserId, message, defaultGroupId, userId,
+										groupTypes, roleTypes) {
 	showLoadingMessage(message);
 	
 	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
 	var groupId = getSelectObjectValue(groupChooserId);
 	
-	//	IDs
-	var ids = new Array();
-	ids.push(instanceId);
-	ids.push(parentGroupId);
-	ids.push(groupId);
-	ids.push(defaultGroupId);
-	ids.push(containerId);
+	//	Properties bean
+	var bean = new SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes);
 	
 	//	Parent groups
 	var parentGroups = getSelectObjectValues(parentGroupChooserId);
@@ -238,7 +204,7 @@ function addUserPresentationObject(instanceId, containerId, parentGroupChooserId
 	//	Groups
 	var groups = getSelectObjectValues(groupChooserId);
 	
-	UserApplicationEngine.getAddUserPresentationObject(ids, parentGroups, groups, userId, groupTypes, roleTypes, {
+	UserApplicationEngine.getAddUserPresentationObject(bean, parentGroups, groups, userId, {
 		callback: function(component) {
 			getAddUserPresentationObjectCallback(component, containerId);
 		}
@@ -415,4 +381,44 @@ function saveUserInSimpleUserApplication(ids, childGroups, message, passwordErro
 			}
 		}
 	});
+}
+
+function SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes) {
+	this.instanceId = instanceId;
+	this.parentGroupId = parentGroupId;
+	this.groupId = groupId;
+	this.defaultGroupId = defaultGroupId;
+	this.containerId = containerId;
+	this.groupTypes = groupTypes;
+	this.roleTypes = roleTypes;
+}
+
+function SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy, parameters) {
+	this.instanceId = null;
+	this.containerId = null;
+	this.parentGroupChooserId = null;
+	this.groupChooserId = null;
+	this.message = null;
+	this.defaultGroupId = null;
+	this.groupTypes = null;
+	this.roleTypes = null;
+	
+	this.parentGroupId = parentGroupId;
+	this.groupId = groupId;
+	this.orderBy = orderBy;
+	
+	if (parameters == null) {
+		return;
+	}
+	if (parameters.length < 8) {
+		return;
+	}
+	this.instanceId = parameters[0];
+	this.containerId = parameters[1];
+	this.parentGroupChooserId = parameters[7];
+	this.groupChooserId = parameters[2];
+	this.message = parameters[6];
+	this.defaultGroupId = parameters[3];
+	this.groupTypes = parameters[4];
+	this.roleTypes = parameters[5];
 }

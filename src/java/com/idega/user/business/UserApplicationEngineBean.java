@@ -99,34 +99,6 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		return childGroupsProperties;
 	}
 	
-	public String getChildGroupsInString(String groupId, String groupTypes, String groupRoles) {
-		List properties = getChildGroups(groupId, groupTypes, groupRoles);
-		if (properties == null) {
-			return null;
-		}
-		if (properties.size() == 0) {
-			return null;
-		}
-		
-		String comma = ",";
-		String separator = "@prop_separator@";
-		StringBuffer childGroups = new StringBuffer();
-		AdvancedProperty property = null;
-		for (int i = 0; i < properties.size(); i++) {
-			property = (AdvancedProperty) properties.get(i);
-			childGroups.append(property.getId()).append(comma).append(property.getValue());
-			if (i + 1 < properties.size()) {
-				childGroups.append(separator);
-			}
-		}
-		
-		return childGroups.toString();
-	}
-	
-	public String getSomeData(String groupId, String types) {
-		return new StringBuffer(groupId).append(" ").append(types).toString();
-	}
-	
 	public List removeUsers(List usersIds, Integer groupId) {
 		if (usersIds == null || groupId == null) {
 			return null;
@@ -179,27 +151,14 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		return removedUsers;
 	}
 	
-	public Document getMembersList(int parentGroupId, int groupId, int orderBy, String[] parameters) {
+	public Document getMembersList(SimpleUserPropertiesBean bean) {
+		if (bean == null) {
+			return null;
+		}
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
 		}
-		if (parameters == null) {
-			return null;
-		}
-		if (parameters.length != 8) {
-			return null;
-		}
-		
-		SimpleUserPropertiesBean bean = new SimpleUserPropertiesBean(parentGroupId, groupId, orderBy);
-		bean.setInstanceId(parameters[0]);
-		bean.setContainerId(parameters[1]);
-		bean.setParentGroupChooserId(parameters[7]);
-		bean.setGroupChooserId(parameters[2]);
-		bean.setMessage(parameters[6]);
-		bean.setDefaultGroupId(parameters[3]);
-		bean.setGroupTypes(parameters[4]);
-		bean.setRoleTypes(parameters[5]);
 		
 		String image = null;
 		IWBundle bundle = getBundle();
@@ -213,22 +172,19 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		return builder.getRenderedComponent(iwc, membersList);
 	}
 	
-	public Document getAddUserPresentationObject(String[] ids, List parentGroups, List childGroups, Integer userId, String groupTypes, String roleTypes) {
-		if (ids == null) {
-			return null;
-		}
-		if (ids.length != 5) {
-			return null;
-		}
-		String instanceId = ids[0];
-		if (instanceId == null) {
+	public Document getAddUserPresentationObject(SimpleUserPropertiesBean bean, List parentGroups, List childGroups, Integer userId) {
+		if (bean == null) {
 			return null;
 		}
 		
-		String parentGroupId = ids[1];
-		String groupId = ids[2];
-		String groupForUsersWithoutLoginId = ids[3];
-		String containerId = ids[4];
+		String instanceId = bean.getInstanceId();
+		if (instanceId == null) {
+			return null;
+		}
+		String parentGroupId = String.valueOf(bean.getParentGroupId());
+		String groupId = String.valueOf(bean.getGroupId());
+		String groupForUsersWithoutLoginId = bean.getDefaultGroupId();
+		String containerId = bean.getContainerId();
 		
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
@@ -244,8 +200,8 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		addUser.setParentGroups(parentGroups);
 		addUser.setChildGroups(childGroups);
 		addUser.setUserId(userId);
-		addUser.setGroupTypes(groupTypes);
-		addUser.setRoleTypes(roleTypes);
+		addUser.setGroupTypes(bean.getGroupTypes());
+		addUser.setRoleTypes(bean.getRoleTypes());
 		
 		return builder.getRenderedComponent(iwc, addUser);
 	}

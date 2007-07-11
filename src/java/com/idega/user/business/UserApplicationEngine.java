@@ -7,20 +7,17 @@ import org.jdom.Document;
 
 import com.idega.business.IBOSession;
 import com.idega.user.app.SimpleUserAppViewUsers;
+import com.idega.user.bean.SimpleUserPropertiesBean;
 
 public interface UserApplicationEngine extends IBOSession {
 	
 	public List getChildGroups(String groupId, String groupTypes, String groupRoles);
 	
-	public String getChildGroupsInString(String groupId, String groupTypes, String groupRoles);
-	
-	public String getSomeData(String groupId, String groupTypes);
-	
 	public List removeUsers(List usersIds, Integer groupId);
 	
-	public Document getMembersList(int parentGroupId, int groupId, int orderBy, String[] parameters);
+	public Document getMembersList(SimpleUserPropertiesBean bean);
 	
-	public Document getAddUserPresentationObject(String[] ids, List parentGroups, List childGroups, Integer userId, String groupTypes, String roleTypes);
+	public Document getAddUserPresentationObject(SimpleUserPropertiesBean bean, List parentGroups, List childGroups, Integer userId);
 	
 	public Document getSimpleUserApplication(String instanceId);
 	
