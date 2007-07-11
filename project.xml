@@ -5,7 +5,7 @@
   <pomVersion>3</pomVersion>
   <name>idegaWeb User</name>
   <artifactId>com.idega.user</artifactId>
-  <currentVersion>3.1.10</currentVersion>
+  <currentVersion>3.1.11</currentVersion>
   <inceptionYear>2000</inceptionYear>
   <shortDescription>User Interface application for managing the User system</shortDescription>
   <versions>
@@ -84,6 +84,11 @@
       <name>3.1.10</name>
       <tag>USER_3_1_10</tag>
     </version>
+    <version>
+      <id>3.1.11</id>
+      <name>3.1.11</name>
+      <tag>USER_3_1_11</tag>
+    </version>
   </versions>
   <branches/>
   <developers>
@@ -127,7 +132,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
-      <version>3.1.54</version>
+      <version>3.1.55</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
@@ -144,7 +149,7 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.builder</artifactId>
-      <version>3.1.11</version>
+      <version>3.1.13</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
     </dependency>
