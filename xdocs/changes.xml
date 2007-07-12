@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+  	<release version="3.1.12" date="2007-07-12">
+     	<action dev="valdas" type="update">
+			Passing parameter true to clean rendered UIComponent for Simple User Application
+    	</action>
+    </release>
+  
   	<release version="3.1.11" date="2007-07-11">
       <action dev="valdas" type="update">
 		Backed DWR to 1.1
