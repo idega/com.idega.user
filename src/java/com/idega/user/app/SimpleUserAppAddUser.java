@@ -1,6 +1,7 @@
  package com.idega.user.app;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.idega.idegaweb.IWResourceBundle;
@@ -30,6 +31,8 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 	private String parentContainerId = null;
 	private String groupTypes = null;
 	private String roleTypes = null;
+	
+	private boolean getParentGroupsFromTopNodes = true;
 	
 	private Integer userId = null;
 	
@@ -280,7 +283,17 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 		if (parentGroups == null) {
 			Group group = groupsHelper.getGroup(iwc, parentGroupId);
 			if (group == null) {
-				addLabelForNoGroups(iwrb, parentGroupValueContainer);	//	No group availabe
+				Collection topGroups = groupsHelper.getTopGroups(iwc, iwc.getCurrentUser());
+				if (!getParentGroupsFromTopNodes) {
+					topGroups = groupsHelper.getTopAndParentGroups(topGroups);	//	Will get top nodes and parent groups for them
+				}
+				if (topGroups == null) {
+					addLabelForNoGroups(iwrb, parentGroupValueContainer);	//	No group availabe
+				}
+				else {
+					parentGroupsChooser.addMenuElements(topGroups);
+					parentGroupValueContainer.add(parentGroupsChooser);
+				}
 			}
 			else {
 				String groupName = group.getName() == null ? iwrb.getLocalizedString("unknown_group", "Unknown group") : group.getName();
@@ -372,6 +385,10 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 
 	public void setRoleTypes(String roleTypes) {
 		this.roleTypes = roleTypes;
+	}
+
+	public void setGetParentGroupsFromTopNodes(boolean getParentGroupsFromTopNodes) {
+		this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
 	}
 
 	private Layer getSpacer() {

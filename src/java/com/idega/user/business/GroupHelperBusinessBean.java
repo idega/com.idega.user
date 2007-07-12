@@ -301,6 +301,9 @@ public class GroupHelperBusinessBean {
 		if (bean == null) {
 			return null;
 		}
+		if (bean.getGroupId() < 0) {
+			return null;
+		}
 		
 		UserBusiness userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
@@ -329,6 +332,10 @@ public class GroupHelperBusinessBean {
 	}
 	
 	public Group getGroup(IWContext iwc, int id) {
+		if (id < 0) {
+			return null;
+		}
+		
 		GroupBusiness groupBusiness = getGroupBusiness(iwc);
 		if (groupBusiness == null) {
 			return null;

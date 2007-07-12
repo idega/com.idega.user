@@ -199,14 +199,14 @@ function removeUser(containerId, userId, groupId, checkBoxId) {
 }
 
 function addUserPresentationObject(instanceId, containerId, parentGroupChooserId, groupChooserId, message, defaultGroupId, userId,
-										groupTypes, roleTypes) {
+										groupTypes, roleTypes, getParentGroupsFromTopNodes) {
 	showLoadingMessage(message);
 	
 	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
 	var groupId = getSelectObjectValue(groupChooserId);
 	
 	//	Properties bean
-	var bean = new SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes);
+	var bean = new SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes, getParentGroupsFromTopNodes);
 	
 	//	Parent groups
 	var parentGroups = getSelectObjectValues(parentGroupChooserId);
@@ -402,7 +402,7 @@ function saveUserInSimpleUserApplication(ids, childGroups, message, passwordErro
 	});
 }
 
-function SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes) {
+function SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes, getParentGroupsFromTopNodes) {
 	this.instanceId = instanceId;
 	this.parentGroupId = parentGroupId;
 	this.groupId = groupId;
@@ -410,6 +410,7 @@ function SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGro
 	this.containerId = containerId;
 	this.groupTypes = groupTypes;
 	this.roleTypes = roleTypes;
+	this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
 }
 
 function SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy, parameters) {

@@ -145,7 +145,8 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		addUserAction.append(iwrb.getLocalizedString("loading", "Loading...")).append("', ");
 		addUserAction.append(helper.getJavaScriptParameter(id)).append(", null, ");
 		addUserAction.append(helper.getJavaScriptParameter(getGroupTypesForChildGroups())).append(COMMA_SEPARATOR);
-		addUserAction.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(");");
+		addUserAction.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(COMMA_SEPARATOR);
+		addUserAction.append(getParentGroupsFromTopNodes).append(");");
 		addUser.setOnClick(addUserAction.toString());
 		container.add(addUser);
 	}

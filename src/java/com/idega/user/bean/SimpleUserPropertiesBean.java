@@ -15,6 +15,8 @@ public class SimpleUserPropertiesBean {
 	private String roleTypes = null;
 	private String message = null;
 	
+	private boolean getParentGroupsFromTopNodes = true;
+	
 	public SimpleUserPropertiesBean() {}
 	
 	public SimpleUserPropertiesBean(int parentGroupId, int groupId, int orderBy) {
@@ -105,6 +107,14 @@ public class SimpleUserPropertiesBean {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public boolean isGetParentGroupsFromTopNodes() {
+		return getParentGroupsFromTopNodes;
+	}
+
+	public void setGetParentGroupsFromTopNodes(boolean getParentGroupsFromTopNodes) {
+		this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
 	}
 
 }

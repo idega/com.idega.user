@@ -169,7 +169,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		Layer membersList = presentationHelper.getMembersList(iwc, bean, groupHelper, image);
 		
 		BuilderLogic builder = BuilderLogic.getInstance();
-		return builder.getRenderedComponent(iwc, membersList);
+		return builder.getRenderedComponent(iwc, membersList, true);
 	}
 	
 	public Document getAddUserPresentationObject(SimpleUserPropertiesBean bean, List parentGroups, List childGroups, Integer userId) {
@@ -202,8 +202,9 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		addUser.setUserId(userId);
 		addUser.setGroupTypes(bean.getGroupTypes());
 		addUser.setRoleTypes(bean.getRoleTypes());
+		addUser.setGetParentGroupsFromTopNodes(bean.isGetParentGroupsFromTopNodes());
 		
-		return builder.getRenderedComponent(iwc, addUser);
+		return builder.getRenderedComponent(iwc, addUser, true);
 	}
 	
 	public Document getSimpleUserApplication(String instanceId) {
@@ -224,7 +225,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 				viewUsers.removeAll(children);
 			}
 			
-			return BuilderLogic.getInstance().getRenderedComponent(iwc, viewUsers);
+			return BuilderLogic.getInstance().getRenderedComponent(iwc, viewUsers, true);
 		}
 		
 		return null;
@@ -263,7 +264,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		List ids = new ArrayList();
 		Layer availableGroupsContainer = presentationHelper.getSelectedGroups(iwc, user, groupHelper, groups, ids, null);
 		
-		return BuilderLogic.getInstance().getRenderedComponent(iwc, availableGroupsContainer);
+		return BuilderLogic.getInstance().getRenderedComponent(iwc, availableGroupsContainer, true);
 	}
 	
 	public List getUserByPersonalId(String personalId) {
