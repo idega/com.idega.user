@@ -287,10 +287,6 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		
 		List filteredChildGroups = groupsHelper.getFilteredChildGroups(iwc, parent, getGroupTypesForChildGroups(),
 				getRoleTypesForChildGroups(), ",");
-		if (filteredChildGroups.size() == 0) {
-			container.add(new Text(iwrb.getLocalizedString("no_groups_available", "There are no groups available")));
-			return null;
-		}
 		
 		String parentGroupChooserId = ids[1];
 		String groupUsersContainerId = ids[0];
@@ -306,6 +302,9 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		onChangeChildGroupsChooserAction.append(getDefaultParameters(ids[1], ids[2], loadingMessage)).append(");");
 		childGroups.setOnChange(onChangeChildGroupsChooserAction.toString());
 		container.add(childGroups);
+		if (filteredChildGroups.size() == 0) {
+			return null;
+		}
 		return (Group) filteredChildGroups.get(0);
 	}
 	
