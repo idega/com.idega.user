@@ -374,9 +374,6 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 			loginTable.store();
 		}
 		
-		//	Removing from old groups
-		removeUserFromOldGroups(iwc, user);
-		
 		//	Setting new available groups for user
 		Object o = null;
 		for (int i = 0; i < childGroups.size(); i++) {
@@ -397,47 +394,6 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		user.store();
 		
 		return sucessText;
-	}
-	
-	private void removeUserFromOldGroups(IWContext iwc, User user) {
-		if (iwc == null || user == null) {
-			return;
-		}
-		
-		UserBusiness userBusiness = getUserBusiness(iwc);
-		if (userBusiness == null) {
-			return;
-		}
-		
-		Collection groups = null;
-		try {
-			groups = userBusiness.getUserGroups(user);
-		} catch (EJBException e) {
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		if (groups == null) {
-			return;
-		}
-		
-		User currentUser = iwc.getCurrentUser();
-		
-		Object o = null;
-		Group group = null;
-		for (Iterator it = groups.iterator(); it.hasNext();) {
-			o = it.next();
-			if (o instanceof Group) {
-				group = (Group) o;
-				try {
-					userBusiness.removeUserFromGroup(user, group, currentUser);
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				} catch (RemoveException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 	
 	private UserBusiness getUserBusiness(IWContext iwc) {
