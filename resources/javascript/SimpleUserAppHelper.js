@@ -3,7 +3,10 @@ var USERS_TO_REMOVE = new Array();
 function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles,
 							instanceId, mainContainerId, defaultGroupId, parentGroupChooserId) {
 	showLoadingMessage(message);
-	DWRUtil.removeAllOptions(childGroupsChooserId);
+	var chooser = document.getElementById(childGroupsChooserId);
+	if (chooser != null) {
+		DWRUtil.removeAllOptions(childGroupsChooserId);
+	}
 	
 	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
 	
@@ -31,6 +34,9 @@ function getChildGroupsCallback(childGroups, childGroupsChooserId, orderByChoose
 	}
 	
 	var chooser = document.getElementById(childGroupsChooserId);
+	if (chooser == null) {
+		return false;
+	}
 	chooser.removeAttribute('disabled');
 	if (childGroups == null) {
 		chooser.setAttribute('disabled', true);
