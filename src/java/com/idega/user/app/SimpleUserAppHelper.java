@@ -47,7 +47,6 @@ public class SimpleUserAppHelper {
 		Image changeUserImage = null;
 		CheckBox removeUserCheckbox = null;
 		StringBuffer checkBoxAction = null;
-		StringBuffer changeUserAction = null;
 		for (int i = 0; i < users.size(); i++) {
 			o = users.get(i);
 			if (o instanceof User) {
@@ -71,16 +70,8 @@ public class SimpleUserAppHelper {
 				changeUserContainer.setStyleClass(changeUserContainerStyleClass);
 				changeUserImage = new Image(image);
 				changeUserImage.setStyleClass(changeUserImageStyleClass);
-				changeUserAction = new StringBuffer("addUserPresentationObject('").append(bean.getInstanceId());
-				changeUserAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getContainerId());
-				changeUserAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getParentGroupChooserId());
-				changeUserAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getGroupChooserId());
-				changeUserAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getMessage()).append("', ");
-				changeUserAction.append(getJavaScriptParameter(bean.getDefaultGroupId())).append(", '").append(user.getId());
-				changeUserAction.append("', ").append(getJavaScriptParameter(bean.getGroupTypes()));
-				changeUserAction.append(SimpleUserApp.COMMA_SEPARATOR).append(getJavaScriptParameter(bean.getRoleTypes()));
-				changeUserAction.append(");");
-				changeUserImage.setOnClick(changeUserAction.toString());
+				
+				changeUserImage.setOnClick(getActionForAddUserView(bean, user.getId()));
 				changeUserContainer.add(changeUserImage);
 				lineContainer.add(changeUserContainer);
 				
@@ -160,11 +151,15 @@ public class SimpleUserAppHelper {
 		return selectedGroups;
 	}
 	
+	private IWResourceBundle getResourceBundle(IWContext iwc) {
+		return iwc.getApplicationContext().getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+	}
+	
 	private void addLabelForNoGroups(IWContext iwc, Layer container) {
 		IWResourceBundle iwrb = null;
 		String text = "There are no groups available";
 		try {
-			iwrb = iwc.getApplicationContext().getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+			iwrb = getResourceBundle(iwc);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -181,6 +176,21 @@ public class SimpleUserAppHelper {
 			return "null";
 		}
 		return new StringBuffer("'").append(parameter).append("'").toString();
+	}
+	
+	protected String getActionForAddUserView(SimpleUserPropertiesBean bean, String userId) {
+		StringBuffer action = new StringBuffer("addUserPresentationObject('").append(bean.getInstanceId());
+		action.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getContainerId());
+		action.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getParentGroupChooserId());
+		action.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getGroupChooserId());
+		action.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getMessage()).append("', ");
+		action.append(getJavaScriptParameter(bean.getDefaultGroupId())).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(getJavaScriptParameter(userId)).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(getJavaScriptParameter(bean.getGroupTypes()));
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(getJavaScriptParameter(bean.getRoleTypes()));
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isGetParentGroupsFromTopNodes());
+		action.append(");");
+		return action.toString();
 	}
 
 }

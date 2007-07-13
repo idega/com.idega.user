@@ -139,15 +139,17 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 	
 		GenericButton addUser = new GenericButton(iwrb.getLocalizedString("add_user", "Add user"));
 		String id = getGroupForUsersWithoutLogin() == null ? null : getGroupForUsersWithoutLogin().getId();
-		StringBuffer addUserAction = new StringBuffer("addUserPresentationObject('").append(instanceId);
-		addUserAction.append(PARAMS_SEPARATOR).append(ids[4]).append(PARAMS_SEPARATOR).append(ids[1]);
-		addUserAction.append(PARAMS_SEPARATOR).append(ids[2]).append(PARAMS_SEPARATOR);
-		addUserAction.append(iwrb.getLocalizedString("loading", "Loading...")).append("', ");
-		addUserAction.append(helper.getJavaScriptParameter(id)).append(", null, ");
-		addUserAction.append(helper.getJavaScriptParameter(getGroupTypesForChildGroups())).append(COMMA_SEPARATOR);
-		addUserAction.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(COMMA_SEPARATOR);
-		addUserAction.append(getParentGroupsFromTopNodes).append(");");
-		addUser.setOnClick(addUserAction.toString());
+		SimpleUserPropertiesBean bean = new SimpleUserPropertiesBean();
+		bean.setInstanceId(instanceId);
+		bean.setContainerId(containerId);
+		bean.setParentGroupChooserId(ids[1]);
+		bean.setGroupChooserId(ids[2]);
+		bean.setMessage(iwrb.getLocalizedString("loading", "Loading..."));
+		bean.setDefaultGroupId(id);
+		bean.setGroupTypes(groupTypesForChildGroups);
+		bean.setRoleTypes(roleTypesForChildGroups);
+		bean.setGetParentGroupsFromTopNodes(getParentGroupsFromTopNodes);
+		addUser.setOnClick(helper.getActionForAddUserView(bean, null));
 		container.add(addUser);
 	}
 	
