@@ -58,7 +58,13 @@ public class SimpleUserAppHelper {
 				user = (User) o;
 				userId = user.getId();
 				name = user.getName();
+				if (CoreConstants.EMPTY.equals(name)) {
+					name = null;
+				}
 				personalId = user.getPersonalID();
+				if (CoreConstants.EMPTY.equals(personalId)) {
+					personalId = null;
+				}
 				
 				lineContainer = new Layer();
 				lineContainer.setStyleClass(userValuesLineContainerStyleClass);
