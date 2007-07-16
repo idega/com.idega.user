@@ -51,9 +51,17 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		//	User
+		String id = null;
+		String name = null;
+		String personalId = null;
 		User user = null;
 		if (userId != null) {
 			user = groupsHelper.getUser(iwc, userId.intValue());
+			if (user != null) {
+				id = user.getId();
+				name = user.getName();
+				personalId = user.getPersonalID();
+			}
 		}
 		
 		//	User name input
@@ -84,8 +92,8 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 		DropdownMenu parentGroupsChooser = new DropdownMenu();
 		String parentGroupChooserId = parentGroupsChooser.getId();
 		StringBuffer action = new StringBuffer("reloadAvailableGroupsForUser(");
-		action.append(helper.getJavaScriptParameter(parentGroupChooserId)).append(", ");
-		action.append(helper.getJavaScriptParameter(user == null ? null : user.getId())).append(COMMA_SEPARATOR).append("['");
+		action.append(helper.getJavaScriptParameter(parentGroupChooserId)).append(COMMA_SEPARATOR);
+		action.append(helper.getJavaScriptParameter(id)).append(COMMA_SEPARATOR).append("['");
 		action.append(availableGroupsOfUserContaianer.getId()).append(PARAMS_SEPARATOR);
 		action.append(iwrb.getLocalizedString("loading", "Loading...")).append("', ");
 		action.append(helper.getJavaScriptParameter(groupTypes)).append(COMMA_SEPARATOR);
@@ -112,10 +120,8 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 		idAction.append("');");
 		idValueInput.setOnKeyUp(idAction.toString());
 		nameValueInput.setDisabled(true);
-		if (user != null) {
-			idValueInput.setContent(user.getPersonalID() == null ? CoreConstants.EMPTY : user.getPersonalID());
-			nameValueInput.setContent(user.getName() == null ? CoreConstants.EMPTY : user.getName());
-		}
+		idValueInput.setContent(personalId == null ? CoreConstants.EMPTY : personalId);
+		nameValueInput.setContent(name == null ? CoreConstants.EMPTY : name);
 		addUserFields(iwc, userFieldsContainer, idValueInput, nameValueInput, loginInputId);
 		
 		//	Login information
@@ -132,7 +138,7 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 			if (userBusiness != null) {
 				String login = userBusiness.getUserLogin(user);
 				if (login == null) {
-					loginValueInput.setContent(user.getPersonalID());
+					loginValueInput.setContent(personalId == null ? CoreConstants.EMPTY : personalId);
 				}
 				else {
 					loginValueInput.setContent(login);

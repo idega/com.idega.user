@@ -47,10 +47,18 @@ public class SimpleUserAppHelper {
 		Image changeUserImage = null;
 		CheckBox removeUserCheckbox = null;
 		StringBuffer checkBoxAction = null;
+		
+		String unknown = getResourceBundle(iwc).getLocalizedString("unknown", "Unknown");
+		String name = null;
+		String personalId = null;
+		String userId = null;
 		for (int i = 0; i < users.size(); i++) {
 			o = users.get(i);
 			if (o instanceof User) {
 				user = (User) o;
+				userId = user.getId();
+				name = user.getName();
+				personalId = user.getPersonalID();
 				
 				lineContainer = new Layer();
 				lineContainer.setStyleClass(userValuesLineContainerStyleClass);
@@ -58,12 +66,12 @@ public class SimpleUserAppHelper {
 				
 				nameContainer = new Layer();
 				nameContainer.setStyleClass(nameContainerStyleClass);
-				nameContainer.add(new Text(user.getName() == null ? CoreConstants.EMPTY : user.getName()));
+				nameContainer.add(new Text(name == null ? unknown : name));
 				lineContainer.add(nameContainer);
 				
 				personalIdContainer = new Layer();
 				personalIdContainer.setStyleClass(personalIdContainerStyleClass);
-				personalIdContainer.add(new Text(user.getPersonalID() == null ? CoreConstants.EMPTY : user.getPersonalID()));
+				personalIdContainer.add(new Text(personalId == null ? unknown : personalId));
 				lineContainer.add(personalIdContainer);
 				
 				changeUserContainer = new Layer();
@@ -71,7 +79,7 @@ public class SimpleUserAppHelper {
 				changeUserImage = new Image(image);
 				changeUserImage.setStyleClass(changeUserImageStyleClass);
 				
-				changeUserImage.setOnClick(getActionForAddUserView(bean, user.getId()));
+				changeUserImage.setOnClick(getActionForAddUserView(bean, userId));
 				changeUserContainer.add(changeUserImage);
 				lineContainer.add(changeUserContainer);
 				
@@ -79,7 +87,7 @@ public class SimpleUserAppHelper {
 				removeUserContainer.setStyleClass(removeUserContainerStyleClass);
 				removeUserCheckbox = new CheckBox();
 				checkBoxAction = new StringBuffer("removeUser('").append(lineContainer.getId());
-				checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(user.getId());
+				checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(userId);
 				checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getGroupId()).append("', ");
 				checkBoxAction.append(getJavaScriptParameter(removeUserCheckbox.getId())).append(");");
 				removeUserCheckbox.setOnClick(checkBoxAction.toString());
