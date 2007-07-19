@@ -21,6 +21,7 @@
 			<param name="class" value="com.idega.user.business.UserApplicationEngine" />
 		</create>
 		<convert converter="bean" match="com.idega.user.bean.SimpleUserPropertiesBean" />
+		<convert converter="bean" match="com.idega.user.bean.UserDataBean" />
 		
 	</allow>
 	<signatures>
@@ -39,6 +40,7 @@
 			
 			import com.idega.builder.bean.AdvancedProperty;
 			import com.idega.user.bean.SimpleUserPropertiesBean;
+			import com.idega.user.bean.UserDataBean;
 
 			List<GroupDataBean> GroupService.getGroupsInfo(GroupPropertiesBean);
 			List<GroupMemberDataBean> GroupService.getUsersInfo(UserPropertiesBean);
@@ -52,8 +54,8 @@
 			Document UserApplicationEngine.getAddUserPresentationObject(SimpleUserPropertiesBean, List<Integer>, List<Integer>, Integer);
 			Document UserApplicationEngine.getSimpleUserApplication(String);
 			Document UserApplicationEngine.getAvailableGroupsForUserPresentationObject(Integer, Integer, String, String);
-			List<String> UserApplicationEngine.getUserByPersonalId(String);
-			String UserApplicationEngine.createUser(String, String, String, Integer, List<Integer>);
+			UserDataBean UserApplicationEngine.getUserByPersonalId(String);
+			String UserApplicationEngine.createUser(String, String, String, String, Integer, List<Integer>);
   		]]>
 	</signatures>
 </dwr>

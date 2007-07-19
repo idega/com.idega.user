@@ -22,6 +22,7 @@ import com.idega.business.IBOSessionBean;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.contact.data.Email;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
@@ -31,10 +32,12 @@ import com.idega.user.app.SimpleUserAppAddUser;
 import com.idega.user.app.SimpleUserAppHelper;
 import com.idega.user.app.SimpleUserAppViewUsers;
 import com.idega.user.bean.SimpleUserPropertiesBean;
+import com.idega.user.bean.UserDataBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.EmailValidator;
 
 public class UserApplicationEngineBean extends IBOSessionBean implements UserApplicationEngine {
 
@@ -267,7 +270,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, availableGroupsContainer, true);
 	}
 	
-	public List getUserByPersonalId(String personalId) {
+	public UserDataBean getUserByPersonalId(String personalId) {
 		if (personalId == null) {
 			return null;
 		}
@@ -282,6 +285,8 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 			return null;
 		}
 		
+		UserDataBean bean = new UserDataBean();
+		
 		User user = null;
 		try {
 			user = userBusiness.getUser(personalId);
@@ -291,7 +296,6 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 			e.printStackTrace();
 		}
 		
-		List info = new ArrayList();
 		if (user == null) {
 			IWResourceBundle iwrb = null;
 			String errorMessage = "Unable to find user by provided personal ID!";
@@ -303,19 +307,26 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 			if (iwrb != null) {
 				errorMessage = iwrb.getLocalizedString("unable_to_find_user_by_personal_id", errorMessage);
 			}
-			info.add(errorMessage);
+			bean.setErrorMessage(errorMessage);
 		}
 		else {
 			String password = userBusiness.getUserPassword(user);
-			info.add(user.getName());
-			info.add(user.getPersonalID() == null ? personalId : user.getPersonalID());
-			info.add(password == null ? CoreConstants.EMPTY : password);
+			String personalID = user.getPersonalID();
+			Email email = null;
+			try {
+				email = userBusiness.getUserMail(user);
+			} catch (RemoteException e) {}
+			String mail = email == null ? CoreConstants.EMPTY : email.getEmailAddress();
+			bean.setName(user.getName());
+			bean.setPersonalId(personalID == null ? personalId : personalID);
+			bean.setPassword(password == null ? CoreConstants.EMPTY : password);
+			bean.setEmail(mail == null ? CoreConstants.EMPTY : mail);
 		}
 		
-		return info;
+		return bean;
 	}
 	
-	public String createUser(String name, String personalId, String password, Integer primaryGroupId, List childGroups) {
+	public String createUser(String name, String personalId, String password, String email, Integer primaryGroupId, List childGroups) {
 		if (name == null || personalId == null || password == null || primaryGroupId == null || childGroups == null) {
 			return null;
 		}
@@ -358,6 +369,24 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 			}
 		}
 		
+		//	Email
+		Email mail = null;
+		try {
+			mail = userBusiness.getUserMail(user);
+		} catch (RemoteException e) {}
+		if (mail == null) {
+			try {
+				mail = userBusiness.updateUserMail(user, email);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} catch (CreateException e) {
+				e.printStackTrace();
+			}
+			if (mail == null) {
+				return errorText;
+			}
+		}
+		
 		LoginTable loginTable = null;
 		loginTable = LoginDBHandler.getUserLogin(user);
 		if (loginTable == null) {	//	Creating login
@@ -394,6 +423,27 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		user.store();
 		
 		return sucessText;
+	}
+	
+	public String isValidEmail(String email) {
+		String error = "Please provide valid email!";
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return error;
+		}
+		
+		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
+		String errorText = iwrb.getLocalizedString("invalid_email", error);
+		
+		if (email == null) {
+			return errorText;
+		}
+		
+		if (EmailValidator.getInstance().validateEmail(email)) {
+			return null;	// Email is valid
+		}
+		
+		return errorText;	//	Email is invalid
 	}
 	
 	private UserBusiness getUserBusiness(IWContext iwc) {

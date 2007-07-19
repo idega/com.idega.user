@@ -287,7 +287,7 @@ function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters) 
 	});
 }
 
-function getUserByPersonalId(valueInputId, nameInputId, loginNameInputId, passwordInputId, message) {
+function getUserByPersonalId(valueInputId, nameInputId, loginNameInputId, passwordInputId, message, emailInputId) {
 	if (valueInputId == null) {
 		return false;
 	}
@@ -313,7 +313,7 @@ function getUserByPersonalId(valueInputId, nameInputId, loginNameInputId, passwo
 	showLoadingMessage(message);
 	UserApplicationEngine.getUserByPersonalId(id, {
 		callback: function(info) {
-			getUserByPersonalIdCallback(info, nameInputId, loginNameInputId, passwordInputId);
+			getUserByPersonalIdCallback(info, nameInputId, loginNameInputId, passwordInputId, emailInputId);
 		}
 	});
 }
@@ -325,7 +325,7 @@ function userApplicationRemoveSpaces(value) {
 	return value.replace(/^\s+|\s+$/g, '');
 }
 
-function getUserByPersonalIdCallback(info, nameInputId, loginNameInputId, passwordInputId) {
+function getUserByPersonalIdCallback(bean, nameInputId, loginNameInputId, passwordInputId, emailInputId) {
 	closeAllLoadingMessages();
 	
 	var nameInput = document.getElementById(nameInputId);
@@ -340,37 +340,67 @@ function getUserByPersonalIdCallback(info, nameInputId, loginNameInputId, passwo
 	if (passwordInput != null) {
 		passwordInput.value = '';
 	}
+	var emailInput = document.getElementById(emailInputId);
+	if (emailInput != null) {
+		emailInput.value = '';
+	}
 	nameInput.value = '';
 	loginInput.value = '';
 	
-	if (info == null) {
+	if (bean == null) {
 		return false;
 	}
-	if (info.length == 1) {
-		alert(info[0]);
+	if (bean.errorMessage != null) {
+		alert(bean.errorMessage);
 		return false;
 	}
 	
-	nameInput.value = info[0];
-	loginInput.value = info[1];
-	if (passwordInput != null) {
-		if (info[2] == null || info[2] == '') {
-			passwordInput.removeAttribute('disabled');
-		}
-		else {
-			passwordInput.setAttribute('disabled', 'true');
-			passwordInput.value = info[2];	
-		}
-	}
+	nameInput.value = bean.name;
+	loginInput.value = bean.personalId;
+	setValueForUserInput(passwordInput, bean.password);
+	setValueForUserInput(emailInput, bean.email);
+	
 	return true;
 }
 
+function setValueForUserInput(input, value) {
+	if (input == null) {
+		return false;
+	}
+	
+	if (value == null || value == '') {
+		input.removeAttribute('disabled');
+	}
+	else {
+		input.setAttribute('disabled', 'true');
+		input.value = value;	
+	}
+}
+
 function saveUserInSimpleUserApplication(ids, childGroups, message, passwordErrorMessage) {
+	showLoadingMessage(message);
+	var emailInputId = ids[5];
+	var email = document.getElementById(emailInputId).value;
+	UserApplicationEngine.isValidEmail(email, {
+		callback: function(result) {
+			isValidUserEmailCallback(result, ids, childGroups, message, passwordErrorMessage);
+		}
+	});
+}
+
+function isValidUserEmailCallback(result, ids, childGroups, message, passwordErrorMessage) {
+	closeAllLoadingMessages();
+	if (result != null) {
+		alert(result);
+		return false;
+	}
+	
 	var parentGroupChooserId = ids[0];
 	var nameValueInputId = ids[1];
 	var loginInputId = ids[2];
 	var passwordInputId = ids[3];
 	var groupForUsersWithoutLoginId = ids[4];
+	var emailInputId = ids[5];
 	
 	var selectedGroups = new Array();
 	if (childGroups == null) {
@@ -395,10 +425,11 @@ function saveUserInSimpleUserApplication(ids, childGroups, message, passwordErro
 		alert(passwordErrorMessage);
 		return false;
 	}
+	var email = document.getElementById(emailInputId).value;
 	var primaryGroupId = getSelectObjectValue(parentGroupChooserId);
 	
 	showLoadingMessage(message);
-	UserApplicationEngine.createUser(userName, personalId, password, primaryGroupId, selectedGroups, {
+	UserApplicationEngine.createUser(userName, personalId, password, email, primaryGroupId, selectedGroups, {
 		callback: function(result) {
 			closeAllLoadingMessages();
 			if (result != null) {

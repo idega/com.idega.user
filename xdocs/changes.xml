@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+  	<release version="3.1.13" date="2007-07-19">
+     	<action dev="valdas" type="update">
+			Added email field for Simple User Application
+    	</action>
+    </release>
+  
   	<release version="3.1.12" date="2007-07-12">
      	<action dev="valdas" type="update">
 			Passing parameter true to clean rendered UIComponent for Simple User Application

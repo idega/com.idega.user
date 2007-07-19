@@ -8,6 +8,7 @@ import org.jdom.Document;
 import com.idega.business.IBOSession;
 import com.idega.user.app.SimpleUserAppViewUsers;
 import com.idega.user.bean.SimpleUserPropertiesBean;
+import com.idega.user.bean.UserDataBean;
 
 public interface UserApplicationEngine extends IBOSession {
 	
@@ -25,8 +26,10 @@ public interface UserApplicationEngine extends IBOSession {
 	
 	public void addViewUsersCase(String instanceId, SimpleUserAppViewUsers viewUsers);
 	
-	public List getUserByPersonalId(String personalId);
+	public UserDataBean getUserByPersonalId(String personalId);
 	
-	public String createUser(String name, String personalId, String password, Integer primaryGroupId, List childGroups);
+	public String createUser(String name, String personalId, String password, String email, Integer primaryGroupId, List childGroups);
+	
+	public String isValidEmail(String email);
 	
 }
