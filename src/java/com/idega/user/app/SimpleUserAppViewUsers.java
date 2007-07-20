@@ -355,7 +355,7 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 					container.add(groupsDropdown);
 					return (Group) filteredTopGroups.get(0);
 				}
-				else {
+				else if (filteredTopGroups.size() == 1) {
 					//	Only one group available
 					Object o = filteredTopGroups.get(0);
 					if (o instanceof Group) {
@@ -363,6 +363,13 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 						addGroupNameLabel(iwrb, container, group);
 						return group;
 					}
+					container.add(new Text(iwrb.getLocalizedString("no_groups_available", "There are no groups available")));
+
+					return null;
+				}
+				else {
+					container.add(new Text(iwrb.getLocalizedString("no_groups_available", "There are no groups available")));
+
 					return null;
 				}
 			}
