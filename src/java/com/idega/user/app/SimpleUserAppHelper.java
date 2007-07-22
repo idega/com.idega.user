@@ -139,6 +139,7 @@ public class SimpleUserAppHelper {
 		Object o = null;
 		Group group = null;
 		String groupId = null;
+		StringBuffer action = null;
 		for (int i = 0; i < groups.size(); i++) {
 			o = groups.get(i);
 			if (o instanceof Group) {
@@ -154,6 +155,8 @@ public class SimpleUserAppHelper {
 				if (groupId.equals(selectedGroupId) || userGroups.contains(groupId)) {
 					selectGroup.setChecked(true, true);
 				}
+				action = new StringBuffer("deselectUserFromGroup(").append(getJavaScriptParameter(groupId)).append(");");
+				selectGroup.setOnClick(action.toString());
 				ids.add(selectGroup.getId());
 				selectedGroup.add(selectGroup);
 				

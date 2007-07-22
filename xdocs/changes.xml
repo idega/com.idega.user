@@ -5,6 +5,13 @@
   </properties>
   <body>
   
+  	<release version="3.1.14" date="2007-07-22">
+     	<action dev="valdas" type="update">
+			Now forcing to choose group when saving user (if any groups exist) in Simple User Application
+			Now before saving user, removing user from de-selected groups in Simple User Application
+    	</action>
+    </release>
+  
   	<release version="3.1.13" date="2007-07-19">
      	<action dev="valdas" type="update">
 			Added email field for Simple User Application

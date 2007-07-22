@@ -297,16 +297,9 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		}
 		
 		if (user == null) {
-			IWResourceBundle iwrb = null;
+			IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
 			String errorMessage = "Unable to find user by provided personal ID!";
-			try {
-				iwrb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			if (iwrb != null) {
-				errorMessage = iwrb.getLocalizedString("unable_to_find_user_by_personal_id", errorMessage);
-			}
+			errorMessage = iwrb.getLocalizedString("unable_to_find_user_by_personal_id", errorMessage);
 			bean.setErrorMessage(errorMessage);
 		}
 		else {
@@ -326,7 +319,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		return bean;
 	}
 	
-	public String createUser(String name, String personalId, String password, String email, Integer primaryGroupId, List childGroups) {
+	public String createUser(String name, String personalId, String password, String email, Integer primaryGroupId, List childGroups, List deselectedGroups) {
 		if (name == null || personalId == null || password == null || primaryGroupId == null || childGroups == null) {
 			return null;
 		}
@@ -355,8 +348,8 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		} catch (FinderException e) {
 		}
 		
-		
-		if (user == null) {	//	Creating user
+		if (user == null) {
+			//	Creating user
 			try {
 				user = userBusiness.createUserByPersonalIDIfDoesNotExist(name, personalId, null, null);
 			} catch (RemoteException e) {
@@ -368,6 +361,8 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 				return errorText;
 			}
 		}
+		
+		removeUserFromOldGroups(iwc, deselectedGroups, user);
 		
 		//	Email
 		Email mail = null;
@@ -389,7 +384,8 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		
 		LoginTable loginTable = null;
 		loginTable = LoginDBHandler.getUserLogin(user);
-		if (loginTable == null) {	//	Creating login
+		if (loginTable == null) {
+			//	Creating login
 			try {
 				loginTable = LoginDBHandler.createLogin(user, personalId, password);
 			} catch (LoginCreateException e) {
@@ -444,6 +440,65 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		}
 		
 		return errorText;	//	Email is invalid
+	}
+	
+	private void removeUserFromOldGroups(IWContext iwc, List deselectedGroups, User user) {
+		if (iwc == null || deselectedGroups == null || user == null) {
+			return;
+		}
+		if (deselectedGroups.size() == 0) {
+			return;
+		}
+		
+		UserBusiness userBusiness = getUserBusiness(iwc);
+		if (userBusiness == null) {
+			return;
+		}
+		GroupBusiness groupBusiness = getGroupBusiness(iwc);
+		if (groupBusiness == null) {
+			return;
+		}
+		
+		//	Getting deselected groups
+		Object o = null;
+		Integer groupId = null;
+		Group group = null;
+		List groups = new ArrayList();
+		for (int i = 0; i < deselectedGroups.size(); i++) {
+			group = null;
+			o = deselectedGroups.get(i);
+			if (o instanceof Integer) {
+				groupId = (Integer) o;
+				try {
+					group = groupBusiness.getGroupByGroupID(groupId.intValue());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (FinderException e) {
+					e.printStackTrace();
+				}
+				if (group != null) {
+					groups.add(group);
+				}
+			}
+		}
+
+		//	Removing user from deselected groups
+		User currentUser = iwc.getCurrentUser();
+		o = null;
+		group = null;
+		for (Iterator it = groups.iterator(); it.hasNext();) {
+			o = it.next();
+			if (o instanceof Group) {
+				group = (Group) o;
+				try {
+					userBusiness.removeUserFromGroup(user, group, currentUser);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (RemoveException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	private UserBusiness getUserBusiness(IWContext iwc) {

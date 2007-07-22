@@ -1,4 +1,5 @@
 var USERS_TO_REMOVE = new Array();
+var DESELECTED_GROUPS = new Array();
 
 function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles,
 							instanceId, mainContainerId, defaultGroupId, parentGroupChooserId) {
@@ -206,6 +207,7 @@ function removeUser(containerId, userId, groupId, checkBoxId) {
 
 function addUserPresentationObject(instanceId, containerId, parentGroupChooserId, groupChooserId, message, defaultGroupId, userId,
 										groupTypes, roleTypes, getParentGroupsFromTopNodes) {
+	refreshDeselectedGroups();
 	showLoadingMessage(message);
 	
 	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
@@ -265,6 +267,7 @@ function getAddUserPresentationObjectCallback(component, containerId) {
 }
 
 function goBackToSimpleUserApp(instanceId, containerId, message) {
+	refreshDeselectedGroups();
 	showLoadingMessage(message);
 	UserApplicationEngine.getSimpleUserApplication(instanceId, {
 		callback: function(component) {
@@ -274,6 +277,7 @@ function goBackToSimpleUserApp(instanceId, containerId, message) {
 }
 
 function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters) {
+	refreshDeselectedGroups();
 	var groupId = getSelectObjectValue(parentGroupChooserId);
 	var containerId = parameters[0];
 	var message = parameters[1];
@@ -355,6 +359,8 @@ function getUserByPersonalIdCallback(bean, nameInputId, loginNameInputId, passwo
 		return false;
 	}
 	
+	refreshDeselectedGroups();
+	
 	nameInput.value = bean.name;
 	loginInput.value = bean.personalId;
 	setValueForUserInput(passwordInput, bean.password);
@@ -407,14 +413,15 @@ function isValidUserEmailCallback(result, ids, childGroups, message, passwordErr
 		selectedGroups.push(groupForUsersWithoutLoginId);
 	}
 	else {
-		var checkbox = null;
+		var checkboxValue = null;
 		for (var i = 0; i < childGroups.length; i++) {
-			checkbox = document.getElementById(childGroups[i]);
-			if (checkbox != null) {
-				if (checkbox.checked) {
-					selectedGroups.push(checkbox.value);
-				}
+			checkboxValue = getCheckboxValue(childGroups[i], true);
+			if (checkboxValue != null) {
+				selectedGroups.push(checkboxValue);
 			}
+		}
+		if (selectedGroups.length == 0 && DESELECTED_GROUPS.length == 0) {
+			selectedGroups.push(getCheckboxValue(childGroups[0], false));	// Nothing selected, adding the first group
 		}
 	}
 	
@@ -429,7 +436,7 @@ function isValidUserEmailCallback(result, ids, childGroups, message, passwordErr
 	var primaryGroupId = getSelectObjectValue(parentGroupChooserId);
 	
 	showLoadingMessage(message);
-	UserApplicationEngine.createUser(userName, personalId, password, email, primaryGroupId, selectedGroups, {
+	UserApplicationEngine.createUser(userName, personalId, password, email, primaryGroupId, selectedGroups, DESELECTED_GROUPS, {
 		callback: function(result) {
 			closeAllLoadingMessages();
 			if (result != null) {
@@ -437,6 +444,23 @@ function isValidUserEmailCallback(result, ids, childGroups, message, passwordErr
 			}
 		}
 	});
+}
+
+function getCheckboxValue(id, checkIfChecked) {
+	if (id == null) {
+		return null;
+	}
+	var checkbox = document.getElementById(id);
+	if (checkbox == null) {
+		return null;
+	}
+	if (checkIfChecked) {
+		if (checkbox.checked) {
+			return checkbox.value;
+		}
+		return null;
+	}
+	return checkbox.value;
 }
 
 function SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes, getParentGroupsFromTopNodes) {
@@ -478,4 +502,21 @@ function SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy,
 	this.defaultGroupId = parameters[3];
 	this.groupTypes = parameters[4];
 	this.roleTypes = parameters[5];
+}
+
+function refreshDeselectedGroups() {
+	DESELECTED_GROUPS = new Array();
+}
+
+function deselectUserFromGroup(groupId) {
+	var existsId = false;
+	for (var i = 0; (i < DESELECTED_GROUPS.length && !existsId); i++) {
+		if (DESELECTED_GROUPS[i] == groupId) {
+			existsId = true;
+		}
+	}
+	if (existsId) {
+		return;
+	}
+	DESELECTED_GROUPS.push(groupId);
 }

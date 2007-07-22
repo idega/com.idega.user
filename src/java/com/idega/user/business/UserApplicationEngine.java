@@ -28,7 +28,7 @@ public interface UserApplicationEngine extends IBOSession {
 	
 	public UserDataBean getUserByPersonalId(String personalId);
 	
-	public String createUser(String name, String personalId, String password, String email, Integer primaryGroupId, List childGroups);
+	public String createUser(String name, String personalId, String password, String email, Integer primaryGroupId, List childGroups, List deselectedGroups);
 	
 	public String isValidEmail(String email);
 	
