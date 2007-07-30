@@ -263,7 +263,7 @@ public class UserDetailPreferences extends Block {
 			formItem = new Layer(Layer.DIV);
 			formItem.setStyleClass("formItem");
 			label = new Label();
-			label.add(new Text(this.iwrb.getLocalizedString("image", "Image")));
+			label.add(new Text(this.iwrb.getLocalizedString(KEY_PREFIX + "image", "Image")));
 			formItem.add(label);
 			formItem.add(image);
 			layer.add(formItem);
@@ -272,7 +272,7 @@ public class UserDetailPreferences extends Block {
 			formItem.setStyleClass("formItem");
 			formItem.setStyleClass("indentedCheckbox");
 			formItem.setID("removeImage");
-			label = new Label(this.iwrb.getLocalizedString("remove_image", "Remove image"), removeImage);
+			label = new Label(this.iwrb.getLocalizedString(KEY_PREFIX + "remove_image", "Remove image"), removeImage);
 			formItem.add(removeImage);
 			formItem.add(label);
 			layer.add(formItem);
