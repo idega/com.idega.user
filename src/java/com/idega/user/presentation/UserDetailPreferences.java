@@ -497,7 +497,10 @@ public class UserDetailPreferences extends Block {
 			}
 
 			Address coAddress = getCOAddress(iwc);
-			coAddress.setStreetName(coStreetAddress);
+			String streetName = getAddressBusiness(iwc).getStreetNameFromAddressString(coStreetAddress);
+			String streetNumber = getAddressBusiness(iwc).getStreetNumberFromAddressString(coStreetAddress);
+			coAddress.setStreetName(streetName);
+			coAddress.setStreetNumber(streetNumber);
 
 			AddressBusiness addressBusiness = (AddressBusiness) IBOLookup.getServiceInstance(iwc, AddressBusiness.class);
 			Country country = addressBusiness.getCountryHome().findByPrimaryKey(new Integer(coCountry));
@@ -611,7 +614,7 @@ public class UserDetailPreferences extends Block {
 		image.setStyleClass("errorImage");
 		layer.add(image);
 		
-		Heading1 heading = new Heading1(getResourceBundle(iwc).getLocalizedString("application_errors_occured", "There was a problem with the following items"));
+		Heading1 heading = new Heading1(getResourceBundle(iwc).getLocalizedString(KEY_PREFIX + "application_errors_occured", "There was a problem with the following items"));
 		layer.add(heading);
 		
 		Lists list = new Lists();
@@ -622,10 +625,23 @@ public class UserDetailPreferences extends Block {
 			String element = (String) iter.next();
 			ListItem item = new ListItem();
 			item.add(new Text(element));
-			
+			IWContext.getInstance();
 			list.add(item);
 		}
 		
 		add(layer);
 	}
+
+	public static AddressBusiness getAddressBusiness(IWContext iwc) {
+		AddressBusiness business = null;
+        if (business == null) {
+            try {
+                business = (AddressBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, AddressBusiness.class);
+            }
+            catch (java.rmi.RemoteException rme) {
+                throw new RuntimeException(rme.getMessage());
+            }
+        }
+        return business;
+    }
 }
