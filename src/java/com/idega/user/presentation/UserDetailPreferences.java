@@ -86,6 +86,7 @@ public class UserDetailPreferences extends Block {
 	private final static String KEY_CO_POSTAL_CODE_MISSING = KEY_PREFIX + "co_postal_code_missing";
 	private final static String KEY_CO_CITY_MISSING = KEY_PREFIX + "co_city_missing";
 	private final static String KEY_PREFERENCES_SAVED = KEY_PREFIX + "preferenced_saved";
+	private final static String KEY_PREFERENCES_SAVED_TEXT = KEY_PREFIX + "preferenced_saved_text";
 	private final static String PREFERRED_LANGUAGE = "preferred_language";
 
 	private final static String DEFAULT_EMAIL = "E-mail";
@@ -93,15 +94,16 @@ public class UserDetailPreferences extends Block {
 	private final static String DEFAULT_PHONE_HOME = "Phone (home)";
 	private final static String DEFAULT_PHONE_MOBILE = "Phone (mobile)";
 	private final static String DEFAULT_PHONE_WORK = "Phone (work)";
-	private final static String DEFAULT_CO_STREET_ADDRESS = "Street address c/o";
-	private final static String DEFAULT_CO_POSTAL_CODE = "Postal code c/o";
-	private final static String DEFAULT_CO_CITY = "City c/o";
-	private final static String DEFAULT_CO_COUNTRY = "Country c/o";
+	private final static String DEFAULT_CO_STREET_ADDRESS = "Street address";
+	private final static String DEFAULT_CO_POSTAL_CODE = "Postal code";
+	private final static String DEFAULT_CO_CITY = "City";
+	private final static String DEFAULT_CO_COUNTRY = "Country";
 	private final static String DEFAULT_EMAIL_INVALID = "Email address invalid.";
-	private final static String DEFAULT_CO_STREET_ADDRESS_MISSING = "Street address c/o must be entered.";
-	private final static String DEFAULT_CO_POSTAL_CODE_MISSING = "Postal code c/o must be entered.";
-	private final static String DEFAULT_CO_CITY_MISSING = "City c/o must be entered.";
-	private final static String DEFAULT_PREFERENCES_SAVED = "Your preferences has been saved.";
+	private final static String DEFAULT_CO_STREET_ADDRESS_MISSING = "Street address must be entered.";
+	private final static String DEFAULT_CO_POSTAL_CODE_MISSING = "Postal code must be entered.";
+	private final static String DEFAULT_CO_CITY_MISSING = "City must be entered.";
+	private final static String DEFAULT_PREFERENCES_SAVED = "Preferences saved";
+	private final static String DEFAULT_PREFERENCES_SAVED_TEXT = "Your preferences have been saved.";
 
 	private User user = null;
 
@@ -519,7 +521,7 @@ public class UserDetailPreferences extends Block {
 			header.setStyleClass("header");
 			add(header);
 
-			Heading1 heading = new Heading1(this.iwrb.getLocalizedString("user_detail_preferences", "User detail preferences"));
+			Heading1 heading = new Heading1(this.iwrb.getLocalizedString(KEY_PREFIX + "user_detail_preferences", "User detail preferences"));
 			header.add(heading);
 
 			Layer layer = new Layer(Layer.DIV);
@@ -533,7 +535,7 @@ public class UserDetailPreferences extends Block {
 			layer.add(heading);
 
 			Paragraph paragraph = new Paragraph();
-			paragraph.add(new Text(this.iwrb.getLocalizedString(KEY_PREFERENCES_SAVED + "_text", DEFAULT_PREFERENCES_SAVED + " info")));
+			paragraph.add(new Text(this.iwrb.getLocalizedString(KEY_PREFERENCES_SAVED_TEXT, DEFAULT_PREFERENCES_SAVED_TEXT)));
 			layer.add(paragraph);
 
 			try {
