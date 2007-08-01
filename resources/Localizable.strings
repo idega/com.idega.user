@@ -284,6 +284,7 @@ finance=
 from_address=From Address
 fskAdmin=fskAdmin
 fskCompany=fskCompany
+fskCompanyAdmin=fskCompanyAdmin
 fsk_course=fsk_course
 fsk_division=fsk_division
 fsk_group=fsk_group
