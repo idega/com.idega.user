@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+  	<release version="3.1.15" date="2007-08-01">
+     	<action dev="sigtryggur" type="update">
+			Refectored CitizenImage and CitizenAccountPreferences to UserImage and UserDetailPreferences from the citizen bundle
+    	</action>
+    </release>
+  	
   	<release version="3.1.14" date="2007-07-22">
      	<action dev="valdas" type="update">
 			Now forcing to choose group when saving user (if any groups exist) in Simple User Application
