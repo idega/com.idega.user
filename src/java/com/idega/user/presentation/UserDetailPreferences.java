@@ -64,10 +64,10 @@ public class UserDetailPreferences extends Block {
 	private final static String PARAMETER_PHONE_HOME = "cap_phn_h";
 	private final static String PARAMETER_PHONE_WORK = "cap_phn_w";
 	private final static String PARAMETER_PHONE_MOBILE = "cap_phn_m";
-	private final static String PARAMETER_CO_STREET_ADDRESS = "cap_co_sa";
-	private final static String PARAMETER_CO_POSTAL_CODE = "cap_co_pc";
-	private final static String PARAMETER_CO_CITY = "cap_co_ct";
-	private final static String PARAMETER_CO_COUNTRY = "cap_co_country";
+	private final static String PARAMETER_STREET_ADDRESS = "cap_sa";
+	private final static String PARAMETER_POSTAL_CODE = "cap_pc";
+	private final static String PARAMETER_CITY = "cap_ct";
+	private final static String PARAMETER_COUNTRY = "cap_country";
 	private final static String PARAMETER_REMOVE_IMAGE = "cap_remove_image";
 	private final static String PARAMETER_PREFERRED_LOCALE = "cap_pref_locale";
 
@@ -77,14 +77,14 @@ public class UserDetailPreferences extends Block {
 	private final static String KEY_PHONE_HOME = KEY_PREFIX + "phone_home";
 	private final static String KEY_PHONE_MOBILE = KEY_PREFIX + "phone_mobile";
 	private final static String KEY_PHONE_WORK = KEY_PREFIX + "phone_work";
-	private final static String KEY_CO_STREET_ADDRESS = KEY_PREFIX + "co_street_address";
-	private final static String KEY_CO_POSTAL_CODE = KEY_PREFIX + "co_postal_code";
-	private final static String KEY_CO_CITY = KEY_PREFIX + "co_city";
-	private final static String KEY_CO_COUNTRY = KEY_PREFIX + "co_country";
+	private final static String KEY_STREET_ADDRESS = KEY_PREFIX + "street_address";
+	private final static String KEY_POSTAL_CODE = KEY_PREFIX + "postal_code";
+	private final static String KEY_CITY = KEY_PREFIX + "city";
+	private final static String KEY_COUNTRY = KEY_PREFIX + "country";
 	private final static String KEY_EMAIL_INVALID = KEY_PREFIX + "email_invalid";
-	private final static String KEY_CO_STREET_ADDRESS_MISSING = KEY_PREFIX + "co_street_address_missing";
-	private final static String KEY_CO_POSTAL_CODE_MISSING = KEY_PREFIX + "co_postal_code_missing";
-	private final static String KEY_CO_CITY_MISSING = KEY_PREFIX + "co_city_missing";
+	private final static String KEY_STREET_ADDRESS_MISSING = KEY_PREFIX + "street_address_missing";
+	private final static String KEY_POSTAL_CODE_MISSING = KEY_PREFIX + "postal_code_missing";
+	private final static String KEY_CITY_MISSING = KEY_PREFIX + "city_missing";
 	private final static String KEY_PREFERENCES_SAVED = KEY_PREFIX + "preferenced_saved";
 	private final static String KEY_PREFERENCES_SAVED_TEXT = KEY_PREFIX + "preferenced_saved_text";
 	private final static String PREFERRED_LANGUAGE = "preferred_language";
@@ -94,14 +94,14 @@ public class UserDetailPreferences extends Block {
 	private final static String DEFAULT_PHONE_HOME = "Phone (home)";
 	private final static String DEFAULT_PHONE_MOBILE = "Phone (mobile)";
 	private final static String DEFAULT_PHONE_WORK = "Phone (work)";
-	private final static String DEFAULT_CO_STREET_ADDRESS = "Street address";
-	private final static String DEFAULT_CO_POSTAL_CODE = "Postal code";
-	private final static String DEFAULT_CO_CITY = "City";
-	private final static String DEFAULT_CO_COUNTRY = "Country";
+	private final static String DEFAULT_STREET_ADDRESS = "Street address";
+	private final static String DEFAULT_POSTAL_CODE = "Postal code";
+	private final static String DEFAULT_CITY = "City";
+	private final static String DEFAULT_COUNTRY = "Country";
 	private final static String DEFAULT_EMAIL_INVALID = "Email address invalid.";
-	private final static String DEFAULT_CO_STREET_ADDRESS_MISSING = "Street address must be entered.";
-	private final static String DEFAULT_CO_POSTAL_CODE_MISSING = "Postal code must be entered.";
-	private final static String DEFAULT_CO_CITY_MISSING = "City must be entered.";
+	private final static String DEFAULT_STREET_ADDRESS_MISSING = "Street address must be entered.";
+	private final static String DEFAULT_POSTAL_CODE_MISSING = "Postal code must be entered.";
+	private final static String DEFAULt_CITY_MISSING = "City must be entered.";
 	private final static String DEFAULT_PREFERENCES_SAVED = "Preferences saved";
 	private final static String DEFAULT_PREFERENCES_SAVED_TEXT = "Your preferences have been saved.";
 
@@ -225,22 +225,22 @@ public class UserDetailPreferences extends Block {
 			tiPhoneWork.setContent(workPhone.getNumber());
 		}
 
-		TextInput tiCOStreetAddress = new TextInput(PARAMETER_CO_STREET_ADDRESS);
+		TextInput tiCOStreetAddress = new TextInput(PARAMETER_STREET_ADDRESS);
 		if (coAddress != null && coAddress.getStreetAddress() != null) {
 			tiCOStreetAddress.setContent(coAddress.getStreetAddress());
 		}
 
-		TextInput tiCOPostalCode = new TextInput(PARAMETER_CO_POSTAL_CODE);
+		TextInput tiCOPostalCode = new TextInput(PARAMETER_POSTAL_CODE);
 		if (postal != null && postal.getPostalCode() != null) {
 			tiCOPostalCode.setValue(postal.getPostalCode());
 		}
 
-		TextInput tiCOCity = new TextInput(PARAMETER_CO_CITY);
+		TextInput tiCOCity = new TextInput(PARAMETER_CITY);
 		if (coAddress != null && coAddress.getCity() != null) {
 			tiCOCity.setValue(coAddress.getCity());
 		}
 
-		CountryDropdownMenu tiCOCountry = new CountryDropdownMenu(PARAMETER_CO_COUNTRY);
+		CountryDropdownMenu tiCOCountry = new CountryDropdownMenu(PARAMETER_COUNTRY);
 		if (postal != null && postal.getCountryID() > -1) {
 			tiCOCountry.setSelectedCountry(postal.getCountry());
 		}
@@ -351,33 +351,33 @@ public class UserDetailPreferences extends Block {
 
 		helpLayer = new Layer(Layer.DIV);
 		helpLayer.setStyleClass("helperText");
-		helpLayer.add(new Text(this.iwrb.getLocalizedString(KEY_PREFIX + "residence_help", "If you would like to receive letters via your C/O address, rather than your registered one, you can check the checkbox below and fill in your C/O address.")));
+		helpLayer.add(new Text(this.iwrb.getLocalizedString(KEY_PREFIX + "residence_help", "If you would like to receive letters via your address, rather than your registered one, you can check the checkbox below and fill in your address.")));
 		layer.add(helpLayer);
 
 		formItem = new Layer(Layer.DIV);
 		formItem.setStyleClass("formItem");
-		label = new Label(this.iwrb.getLocalizedString(KEY_CO_STREET_ADDRESS, DEFAULT_CO_STREET_ADDRESS), tiCOStreetAddress);
+		label = new Label(this.iwrb.getLocalizedString(KEY_STREET_ADDRESS, DEFAULT_STREET_ADDRESS), tiCOStreetAddress);
 		formItem.add(label);
 		formItem.add(tiCOStreetAddress);
 		layer.add(formItem);
 
 		formItem = new Layer(Layer.DIV);
 		formItem.setStyleClass("formItem");
-		label = new Label(this.iwrb.getLocalizedString(KEY_CO_POSTAL_CODE, DEFAULT_CO_POSTAL_CODE), tiCOPostalCode);
+		label = new Label(this.iwrb.getLocalizedString(KEY_POSTAL_CODE, DEFAULT_POSTAL_CODE), tiCOPostalCode);
 		formItem.add(label);
 		formItem.add(tiCOPostalCode);
 		layer.add(formItem);
 
 		formItem = new Layer(Layer.DIV);
 		formItem.setStyleClass("formItem");
-		label = new Label(this.iwrb.getLocalizedString(KEY_CO_CITY, DEFAULT_CO_CITY), tiCOCity);
+		label = new Label(this.iwrb.getLocalizedString(KEY_CITY, DEFAULT_CITY), tiCOCity);
 		formItem.add(label);
 		formItem.add(tiCOCity);
 		layer.add(formItem);
 
 		formItem = new Layer(Layer.DIV);
 		formItem.setStyleClass("formItem");
-		label = new Label(this.iwrb.getLocalizedString(KEY_CO_COUNTRY, DEFAULT_CO_COUNTRY), tiCOCountry);
+		label = new Label(this.iwrb.getLocalizedString(KEY_COUNTRY, DEFAULT_COUNTRY), tiCOCountry);
 		formItem.add(label);
 		formItem.add(tiCOCountry);
 		layer.add(formItem);
@@ -453,10 +453,10 @@ public class UserDetailPreferences extends Block {
 		String phoneHome = iwc.getParameter(PARAMETER_PHONE_HOME);
 		String phoneMobile = iwc.getParameter(PARAMETER_PHONE_MOBILE);
 		String phoneWork = iwc.getParameter(PARAMETER_PHONE_WORK);
-		String coStreetAddress = iwc.getParameter(PARAMETER_CO_STREET_ADDRESS);
-		String coPostalCode = iwc.getParameter(PARAMETER_CO_POSTAL_CODE);
-		String coCity = iwc.getParameter(PARAMETER_CO_CITY);
-		String coCountry = iwc.getParameter(PARAMETER_CO_COUNTRY);
+		String coStreetAddress = iwc.getParameter(PARAMETER_STREET_ADDRESS);
+		String coPostalCode = iwc.getParameter(PARAMETER_POSTAL_CODE);
+		String coCity = iwc.getParameter(PARAMETER_CITY);
+		String coCountry = iwc.getParameter(PARAMETER_COUNTRY);
 		String preferredLocale = iwc.getParameter(PARAMETER_PREFERRED_LOCALE);
 		boolean removeImage = iwc.isParameterSet(PARAMETER_REMOVE_IMAGE);
 
@@ -471,15 +471,15 @@ public class UserDetailPreferences extends Block {
 		}
 
 		if (coStreetAddress.equals("")) {
-			errors.add(this.iwrb.getLocalizedString(KEY_CO_STREET_ADDRESS_MISSING, DEFAULT_CO_STREET_ADDRESS_MISSING));
+			errors.add(this.iwrb.getLocalizedString(KEY_STREET_ADDRESS_MISSING, DEFAULT_STREET_ADDRESS_MISSING));
 			hasErrors = true;
 		}
 		if (coPostalCode.equals("")) {
-			errors.add(this.iwrb.getLocalizedString(KEY_CO_POSTAL_CODE_MISSING, DEFAULT_CO_POSTAL_CODE_MISSING));
+			errors.add(this.iwrb.getLocalizedString(KEY_POSTAL_CODE_MISSING, DEFAULT_POSTAL_CODE_MISSING));
 			hasErrors = true;
 		}
 		if (coCity.equals("")) {
-			errors.add(this.iwrb.getLocalizedString(KEY_CO_CITY_MISSING, DEFAULT_CO_CITY_MISSING));
+			errors.add(this.iwrb.getLocalizedString(KEY_CITY_MISSING, DEFAULt_CITY_MISSING));
 			hasErrors = true;
 		}
 
@@ -595,7 +595,7 @@ public class UserDetailPreferences extends Block {
 
 	/**
 	 * @param showPreferredLocaleChooser
-	 *          The showPreferredLocaleChooser to set.
+	 * The showPreferredLocaleChooser to set.
 	 */
 	public void setToShowPreferredLocaleChooser(boolean showPreferredLocaleChooser) {
 		this.showPreferredLocaleChooser = showPreferredLocaleChooser;
@@ -634,14 +634,14 @@ public class UserDetailPreferences extends Block {
 
 	public static AddressBusiness getAddressBusiness(IWContext iwc) {
 		AddressBusiness business = null;
-        if (business == null) {
-            try {
-                business = (AddressBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, AddressBusiness.class);
-            }
-            catch (java.rmi.RemoteException rme) {
-                throw new RuntimeException(rme.getMessage());
-            }
-        }
-        return business;
-    }
+		if (business == null) {
+			try {
+				business = (AddressBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, AddressBusiness.class);
+			}
+			catch (java.rmi.RemoteException rme) {
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return business;
+	}
 }
