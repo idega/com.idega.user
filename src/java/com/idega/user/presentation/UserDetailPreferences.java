@@ -614,7 +614,7 @@ public class UserDetailPreferences extends Block {
 		image.setStyleClass("errorImage");
 		layer.add(image);
 		
-		Heading1 heading = new Heading1(getResourceBundle(iwc).getLocalizedString(KEY_PREFIX + "application_errors_occured", "There was a problem with the following items"));
+		Heading1 heading = new Heading1(getResourceBundle(iwc).getLocalizedString("application_errors_occured", "There was a problem with the following items"));
 		layer.add(heading);
 		
 		Lists list = new Lists();
