@@ -153,8 +153,3 @@
 .changeUserImageStyleClass:HOVER {
 	cursor: pointer;
 }
-
-div.userImage img {
-	width: 79px;
-	border: 1px #8A8A8A solid;
-}
