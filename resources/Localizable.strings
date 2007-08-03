@@ -169,6 +169,7 @@ all_users_were_moved_to\ the_specified_group=
 allergies=allergies
 allergies_details=allergies_details
 allows_groups=allows_groups
+application_errors_occured=There was a problem with the following items
 are_you_sure=Are You sure?
 assistant=assistant
 assistants=assistants
