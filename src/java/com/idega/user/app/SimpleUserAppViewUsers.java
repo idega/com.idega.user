@@ -351,7 +351,7 @@ public class SimpleUserAppViewUsers extends Block {
 					String childGroupsChooserId = ids[2];
 					String orderByChooserId = ids[3];
 					
-					groupsDropdown.addMenuElements(topGroups);
+					groupsDropdown.addMenuElements(filteredTopGroups);
 					StringBuffer action = new StringBuffer("reloadComponents('");
 					action.append(iwrb.getLocalizedString("loading", "Loading...")).append(SimpleUserApp.PARAMS_SEPARATOR);
 					action.append(childGroupsChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);
