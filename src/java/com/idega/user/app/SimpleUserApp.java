@@ -22,6 +22,8 @@ public class SimpleUserApp extends Block {
 	protected static final String PARAMS_SEPARATOR = "', '";
 	protected static final String COMMA_SEPARATOR = ", ";
 	
+	private String instanceId = null;
+	
 	public static final String EDIT_IMAGE = "images/edit.png";
 	
 	/** Properties start **/
@@ -33,17 +35,32 @@ public class SimpleUserApp extends Block {
 	private String roleTypesForChildGroups = null;
 	
 	private boolean getParentGroupsFromTopNodes = true;
+	private boolean useChildrenOfTopNodesAsParentGroups = false;
 	/** Properties end **/
 	
+	/**
+	 * Provide instance id of the parent (container, wrapper etc.) module insterted in IBXMLPage or null if this object is inserted
+	 */
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
+	}
+	
 	public void main(IWContext iwc) {
+		if (instanceId == null)	{
+			instanceId = BuilderLogic.getInstance().getInstanceId(this);
+		}
+		if (instanceId == null) {
+			throw new NullPointerException("Provide instanceId for " + SimpleUserApp.class.getName());
+		}
+		
 		addFiles(iwc);
 		
 		Layer container = new Layer();
 		add(container);
 		
-		String instanceId = BuilderLogic.getInstance().getInstanceId(this);
 		SimpleUserAppViewUsers viewUsers = new SimpleUserAppViewUsers(instanceId, container.getId(), parentGroup,
-				groupForUsersWithoutLogin, groupTypes, groupTypesForChildGroups, roleTypesForChildGroups, getParentGroupsFromTopNodes);
+				groupForUsersWithoutLogin, groupTypes, groupTypesForChildGroups, roleTypesForChildGroups,
+				getParentGroupsFromTopNodes, useChildrenOfTopNodesAsParentGroups);
 		container.add(viewUsers);
 		
 		UserApplicationEngine userEngine = null;
@@ -93,6 +110,10 @@ public class SimpleUserApp extends Block {
 
 	public void setGroupForUsersWithoutLogin(Group groupForUsersWithoutLogin) {
 		this.groupForUsersWithoutLogin = groupForUsersWithoutLogin;
+	}
+	
+	public void setUseChildrenOfTopNodesAsParentGroups(boolean useChildrenOfTopNodesAsParentGroups) {
+		this.useChildrenOfTopNodesAsParentGroups = useChildrenOfTopNodesAsParentGroups;
 	}
 	/** Methods for properties end **/
 

@@ -140,13 +140,32 @@ public class GroupHelperBusinessBean {
 		return list;
 	}
 	
+	private List getChilrenfOfGroups(Collection groups) {
+		List children = new ArrayList();
+		if (groups == null) {
+			return null;
+		}
+		Object o = null;
+		Group group = null;
+		for(Iterator it = groups.iterator(); it.hasNext();) {
+			o = it.next();
+			if (o instanceof Group) {
+				group = (Group) o;
+				children.addAll(group.getChildGroups());
+			}
+		}
+		
+		return children;
+	}
+	
 	/**
 	 * Returns groups filtered by type(s)
 	 * @param groups - list of Group objects
 	 * @param types - list of String (group type value)
+	 * @param useChildrenAsTopNodes - returns filtered children of provided groups
 	 * @return
 	 */
-	public Collection getFilteredGroups(Collection groups, List types) {
+	public Collection getFilteredGroups(Collection groups, List types, boolean useChildrenAsTopNodes) {
 		Collection filtered = new ArrayList();
 		if (groups == null) {
 			return filtered;
@@ -156,11 +175,26 @@ public class GroupHelperBusinessBean {
 		}
 		
 		if (types == null) {
-			return groups;
+			if (useChildrenAsTopNodes) {
+				return getChilrenfOfGroups(groups);
+			}
+ 			return groups;
 		}
 		if (types.size() == 0) {
+			if (useChildrenAsTopNodes) {
+				return getChilrenfOfGroups(groups);
+			}
 			return groups;
 		}
+		
+		if (useChildrenAsTopNodes) {
+			return getFilteredGroups(getChilrenfOfGroups(groups), types);
+		}
+		return getFilteredGroups(groups, types);
+	}
+	
+	private Collection getFilteredGroups(Collection groups, List types) {
+		Collection filtered = new ArrayList();
 		
 		Object o = null;
 		Group group = null;
@@ -186,8 +220,8 @@ public class GroupHelperBusinessBean {
 	 * @param splitter - typesValue separator
 	 * @return
 	 */
-	public Collection getFilteredGroups(Collection groups, String typesValue, String splitter) {
-		return getFilteredGroups(groups, getExtractedTypesList(typesValue, splitter));
+	public Collection getFilteredGroups(Collection groups, String typesValue, String splitter, boolean useChildrenAsTopNodes) {
+		return getFilteredGroups(groups, getExtractedTypesList(typesValue, splitter), useChildrenAsTopNodes);
 	}
 	
 	public List getFilteredChildGroups(IWContext iwc, int parentGroupId, String groupTypes, String groupRoles, String splitter) {

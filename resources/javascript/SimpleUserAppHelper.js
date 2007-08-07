@@ -206,7 +206,8 @@ function removeUser(containerId, userId, groupId, checkBoxId) {
 }
 
 function addUserPresentationObject(instanceId, containerId, parentGroupChooserId, groupChooserId, message, defaultGroupId, userId,
-										groupTypes, roleTypes, getParentGroupsFromTopNodes) {
+										groupTypes, roleTypes, getParentGroupsFromTopNodes, groupTypesForParentGroups,
+										useChildrenOfTopNodesAsParentGroups) {
 	refreshDeselectedGroups();
 	showLoadingMessage(message);
 	
@@ -214,7 +215,7 @@ function addUserPresentationObject(instanceId, containerId, parentGroupChooserId
 	var groupId = getSelectObjectValue(groupChooserId);
 	
 	//	Properties bean
-	var bean = new SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes, getParentGroupsFromTopNodes);
+	var bean = new SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes, getParentGroupsFromTopNodes, groupTypesForParentGroups, useChildrenOfTopNodesAsParentGroups);
 	
 	//	Parent groups
 	var parentGroups = getSelectObjectValues(parentGroupChooserId);
@@ -463,7 +464,7 @@ function getCheckboxValue(id, checkIfChecked) {
 	return checkbox.value;
 }
 
-function SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes, getParentGroupsFromTopNodes) {
+function SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes, getParentGroupsFromTopNodes, groupTypesForParentGroups, useChildrenOfTopNodesAsParentGroups) {
 	this.instanceId = instanceId;
 	this.parentGroupId = parentGroupId;
 	this.groupId = groupId;
@@ -472,6 +473,8 @@ function SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGro
 	this.groupTypes = groupTypes;
 	this.roleTypes = roleTypes;
 	this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
+	this.groupTypesForParentGroups = groupTypesForParentGroups;
+	this.useChildrenOfTopNodesAsParentGroups = useChildrenOfTopNodesAsParentGroups;
 }
 
 function SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy, parameters) {
@@ -491,7 +494,7 @@ function SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy,
 	if (parameters == null) {
 		return;
 	}
-	if (parameters.length < 8) {
+	if (parameters.length < 10) {
 		return;
 	}
 	this.instanceId = parameters[0];
@@ -502,6 +505,8 @@ function SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy,
 	this.defaultGroupId = parameters[3];
 	this.groupTypes = parameters[4];
 	this.roleTypes = parameters[5];
+	this.groupTypesForParentGroups = parameters[8];
+	this.useChildrenOfTopNodesAsParentGroups = parameters[9];
 }
 
 function refreshDeselectedGroups() {

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.text.Text;
@@ -15,9 +16,10 @@ import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.SelectOption;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.business.GroupHelperBusinessBean;
+import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 
-public class SimpleUserAppViewUsers extends SimpleUserApp {
+public class SimpleUserAppViewUsers extends Block {
 	
 	private String containerId = null;
 	private String instanceId = null;
@@ -30,6 +32,7 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 	private String roleTypesForChildGroups = null;
 	
 	private boolean getParentGroupsFromTopNodes = true;
+	private boolean useChildrenOfTopNodesAsParentGroups = false;
 	
 	private GroupHelperBusinessBean groupsHelper = new GroupHelperBusinessBean();
 	SimpleUserAppHelper helper = new SimpleUserAppHelper();
@@ -40,7 +43,8 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 	}
 	
 	public SimpleUserAppViewUsers(String instanceId, String containerId, Group parentGroup, Group groupForUsersWithoutLogin,
-			String groupTypes, String groupTypesForChildGroups, String roleTypesForChildGroups, boolean getParentGroupsFromTopNodes) {
+			String groupTypes, String groupTypesForChildGroups, String roleTypesForChildGroups, boolean getParentGroupsFromTopNodes,
+			boolean useChildrenOfTopNodesAsParentGroups) {
 		this(instanceId, containerId);
 		this.parentGroup = parentGroup;
 		this.groupForUsersWithoutLogin = groupForUsersWithoutLogin;
@@ -48,6 +52,7 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		this.groupTypesForChildGroups = groupTypesForChildGroups;
 		this.roleTypesForChildGroups = roleTypesForChildGroups;
 		this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
+		this.useChildrenOfTopNodesAsParentGroups = useChildrenOfTopNodesAsParentGroups;
 	}
 
 	public void main(IWContext iwc) {
@@ -90,6 +95,8 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		choosersAndDescription.add(choosersContainer);
 		choosersContainer.setStyleClass("userApplicationChoosersContainer");
 		SimpleUserPropertiesBean bean = addChooserContainer(iwc, choosersContainer, dropDowns, ids);
+		bean.setGroupTypesForParentGroups(groupTypes);
+		bean.setUseChildrenOfTopNodesAsParentGroups(useChildrenOfTopNodesAsParentGroups);
 		
 		//	Description
 		Layer descriptionContainer = new Layer();
@@ -130,8 +137,8 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		
 		GenericButton removeFromGroup = new GenericButton(iwrb.getLocalizedString("remove_from_group", "Remove from group"));
 		StringBuffer removeAction = new StringBuffer("removeSelectedUsers('");
-		removeAction.append(iwrb.getLocalizedString("removing", "Removing...")).append(PARAMS_SEPARATOR);
-		removeAction.append(iwrb.getLocalizedString("are_you_sure", "Are You sure?")).append(PARAMS_SEPARATOR);
+		removeAction.append(iwrb.getLocalizedString("removing", "Removing...")).append(SimpleUserApp.PARAMS_SEPARATOR);
+		removeAction.append(iwrb.getLocalizedString("are_you_sure", "Are You sure?")).append(SimpleUserApp.PARAMS_SEPARATOR);
 		removeAction.append(iwrb.getLocalizedString("select_users_to_remove", "Please, select user(s) to remove firstly!"));
 		removeAction.append("');");
 		removeFromGroup.setOnClick(removeAction.toString());
@@ -139,6 +146,7 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 	
 		GenericButton addUser = new GenericButton(iwrb.getLocalizedString("add_user", "Add user"));
 		String id = getGroupForUsersWithoutLogin() == null ? null : getGroupForUsersWithoutLogin().getId();
+		
 		SimpleUserPropertiesBean bean = new SimpleUserPropertiesBean();
 		bean.setInstanceId(instanceId);
 		bean.setContainerId(containerId);
@@ -149,6 +157,9 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		bean.setGroupTypes(groupTypesForChildGroups);
 		bean.setRoleTypes(roleTypesForChildGroups);
 		bean.setGetParentGroupsFromTopNodes(getParentGroupsFromTopNodes);
+		bean.setGroupTypesForParentGroups(groupTypes);
+		bean.setUseChildrenOfTopNodesAsParentGroups(useChildrenOfTopNodesAsParentGroups);
+		
 		addUser.setOnClick(helper.getActionForAddUserView(bean, null));
 		container.add(addUser);
 	}
@@ -186,7 +197,7 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		
 		container.add(valuesContainer);
 		
-		String image = bundle.getVirtualPathWithFileNameString(EDIT_IMAGE);
+		String image = bundle.getVirtualPathWithFileNameString(SimpleUserApp.EDIT_IMAGE);
 		valuesContainer.add(helper.getMembersList(iwc, bean, groupsHelper, image));
 	}
 	
@@ -235,14 +246,14 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		choosers.add(orderByChooserContainer);
 		orderByChooserContainer.setStyleClass("orderByChooserStyleClass");
 		
-		SelectOption byName = new SelectOption(iwrb.getLocalizedString("name", "Name"), USER_ORDER_BY_NAME);
+		SelectOption byName = new SelectOption(iwrb.getLocalizedString("name", "Name"), SimpleUserApp.USER_ORDER_BY_NAME);
 		orderByChooser.addOption(byName);
 		StringBuffer orderByAction = new StringBuffer("reOrderGroupUsers('").append(parentGroupsChooserId);
-		orderByAction.append(PARAMS_SEPARATOR).append(childGroupsChooserId).append(PARAMS_SEPARATOR).append(orderByChooserId);
-		orderByAction.append(PARAMS_SEPARATOR).append(groupUsersContainerId).append(PARAMS_SEPARATOR);
+		orderByAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(childGroupsChooserId).append(SimpleUserApp.PARAMS_SEPARATOR).append(orderByChooserId);
+		orderByAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(groupUsersContainerId).append(SimpleUserApp.PARAMS_SEPARATOR);
 		orderByAction.append(loadingMessage).append("', ").append(getDefaultParameters(ids[1], ids[2], loadingMessage)).append(");");
 		orderByChooser.setOnChange(orderByAction.toString());
-		SelectOption byId = new SelectOption(iwrb.getLocalizedString("personal_id", "Personal ID"), USER_ORDER_BY_ID);
+		SelectOption byId = new SelectOption(iwrb.getLocalizedString("personal_id", "Personal ID"), SimpleUserApp.USER_ORDER_BY_ID);
 		orderByChooser.addOption(byId);
 		orderByChooserContainer.add(orderByChooser);
 		
@@ -261,7 +272,7 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		if (childGroup != null) {
 			bean.setGroupId(getParsedId(childGroup.getId()));
 		}
-		bean.setOrderBy(USER_ORDER_BY_NAME);
+		bean.setOrderBy(SimpleUserApp.USER_ORDER_BY_NAME);
 		
 		return bean;
 	}
@@ -295,9 +306,9 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 		childGroups.addMenuElements(filteredChildGroups);
 		StringBuffer onChangeChildGroupsChooserAction = new StringBuffer("selectChildGroup(");
 		onChangeChildGroupsChooserAction.append(helper.getJavaScriptParameter(ids[2])).append(", '");
-		onChangeChildGroupsChooserAction.append(groupUsersContainerId).append(PARAMS_SEPARATOR);
-		onChangeChildGroupsChooserAction.append(parentGroupChooserId).append(PARAMS_SEPARATOR);
-		onChangeChildGroupsChooserAction.append(orderByChooserId).append(PARAMS_SEPARATOR);
+		onChangeChildGroupsChooserAction.append(groupUsersContainerId).append(SimpleUserApp.PARAMS_SEPARATOR);
+		onChangeChildGroupsChooserAction.append(parentGroupChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);
+		onChangeChildGroupsChooserAction.append(orderByChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);
 		onChangeChildGroupsChooserAction.append(loadingMessage).append("', ");
 		onChangeChildGroupsChooserAction.append(getDefaultParameters(ids[1], ids[2], loadingMessage)).append(");");
 		childGroups.setOnChange(onChangeChildGroupsChooserAction.toString());
@@ -309,14 +320,16 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 	}
 	
 	private String getDefaultParameters(String parentGroupChooserId, String childGroupChooserId, String message) {
-		StringBuffer params = new StringBuffer("[").append(helper.getJavaScriptParameter(instanceId)).append(COMMA_SEPARATOR);
-		params.append(helper.getJavaScriptParameter(containerId)).append(COMMA_SEPARATOR);
-		params.append(helper.getJavaScriptParameter(childGroupChooserId)).append(COMMA_SEPARATOR);
+		StringBuffer params = new StringBuffer("[").append(helper.getJavaScriptParameter(instanceId)).append(SimpleUserApp.COMMA_SEPARATOR);
+		params.append(helper.getJavaScriptParameter(containerId)).append(SimpleUserApp.COMMA_SEPARATOR);
+		params.append(helper.getJavaScriptParameter(childGroupChooserId)).append(SimpleUserApp.COMMA_SEPARATOR);
 		params.append(helper.getJavaScriptParameter(getGroupForUsersWithoutLogin() == null ? null : getGroupForUsersWithoutLogin().getId()));
-		params.append(COMMA_SEPARATOR).append(helper.getJavaScriptParameter(getGroupTypesForChildGroups())).append(COMMA_SEPARATOR);
-		params.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(COMMA_SEPARATOR);
-		params.append(helper.getJavaScriptParameter(message)).append(COMMA_SEPARATOR);
-		params.append(helper.getJavaScriptParameter(parentGroupChooserId));
+		params.append(SimpleUserApp.COMMA_SEPARATOR).append(helper.getJavaScriptParameter(getGroupTypesForChildGroups())).append(SimpleUserApp.COMMA_SEPARATOR);
+		params.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(SimpleUserApp.COMMA_SEPARATOR);
+		params.append(helper.getJavaScriptParameter(message)).append(SimpleUserApp.COMMA_SEPARATOR);
+		params.append(helper.getJavaScriptParameter(parentGroupChooserId)).append(SimpleUserApp.COMMA_SEPARATOR);
+		params.append(helper.getJavaScriptParameter(groupTypes)).append(SimpleUserApp.COMMA_SEPARATOR);
+		params.append(isUseChildrenOfTopNodesAsParentGroups());
 		params.append("]");
 		
 		return params.toString();
@@ -332,7 +345,7 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 			}
 			
 			if (topGroups.size() > 0) {
-				List filteredTopGroups = new ArrayList(groupsHelper.getFilteredGroups(topGroups, getGroupTypes(), ","));
+				List filteredTopGroups = new ArrayList(groupsHelper.getFilteredGroups(topGroups, getGroupTypes(), ",", useChildrenOfTopNodesAsParentGroups));
 				if (filteredTopGroups.size() > 1) {
 					String groupUsersContainerId = ids[0];
 					String childGroupsChooserId = ids[2];
@@ -340,17 +353,20 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 					
 					groupsDropdown.addMenuElements(topGroups);
 					StringBuffer action = new StringBuffer("reloadComponents('");
-					action.append(iwrb.getLocalizedString("loading", "Loading...")).append(PARAMS_SEPARATOR);
-					action.append(childGroupsChooserId).append(PARAMS_SEPARATOR);
-					action.append(orderByChooserId).append(PARAMS_SEPARATOR);
-					action.append(groupUsersContainerId).append(PARAMS_SEPARATOR);
+					action.append(iwrb.getLocalizedString("loading", "Loading...")).append(SimpleUserApp.PARAMS_SEPARATOR);
+					action.append(childGroupsChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);
+					action.append(orderByChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);
+					action.append(groupUsersContainerId).append(SimpleUserApp.PARAMS_SEPARATOR);
 					action.append(groupsDropdown.getId()).append("', ");
-					action.append(helper.getJavaScriptParameter(getGroupTypesForChildGroups())).append(COMMA_SEPARATOR);
-					action.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(COMMA_SEPARATOR);
-					action.append(helper.getJavaScriptParameter(instanceId)).append(COMMA_SEPARATOR);
-					action.append(helper.getJavaScriptParameter(containerId)).append(COMMA_SEPARATOR);
+					action.append(helper.getJavaScriptParameter(getGroupTypesForChildGroups())).append(SimpleUserApp.COMMA_SEPARATOR);
+					action.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(SimpleUserApp.COMMA_SEPARATOR);
+					action.append(helper.getJavaScriptParameter(instanceId)).append(SimpleUserApp.COMMA_SEPARATOR);
+					action.append(helper.getJavaScriptParameter(containerId)).append(SimpleUserApp.COMMA_SEPARATOR);
 					action.append(helper.getJavaScriptParameter(getGroupForUsersWithoutLogin() == null ? null : getGroupForUsersWithoutLogin().getId()));
-					action.append(COMMA_SEPARATOR).append(helper.getJavaScriptParameter(ids[1])).append(");");
+					action.append(SimpleUserApp.COMMA_SEPARATOR).append(helper.getJavaScriptParameter(ids[1]));
+					action.append(SimpleUserApp.COMMA_SEPARATOR).append(helper.getJavaScriptParameter(groupTypes));
+					action.append(SimpleUserApp.COMMA_SEPARATOR).append(isUseChildrenOfTopNodesAsParentGroups());
+					action.append(");");
 					groupsDropdown.setOnChange(action.toString());
 					container.add(groupsDropdown);
 					return (Group) filteredTopGroups.get(0);
@@ -440,6 +456,14 @@ public class SimpleUserAppViewUsers extends SimpleUserApp {
 
 	private String getRoleTypesForChildGroups() {
 		return roleTypesForChildGroups;
+	}
+	
+	public String getBundleIdentifier() {
+		return UserConstants.IW_BUNDLE_IDENTIFIER;
+	}
+
+	public boolean isUseChildrenOfTopNodesAsParentGroups() {
+		return useChildrenOfTopNodesAsParentGroups;
 	}
 	
 }

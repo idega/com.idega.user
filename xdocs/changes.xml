@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+ 	 <release version="3.1.16" date="2007-08-07">
+     	<action dev="valdas" type="update">
+			Added validation if instanceId is known for Simple User Application
+    	</action>
+    </release>
   
   	<release version="3.1.15" date="2007-08-01">
      	<action dev="sigtryggur" type="update">

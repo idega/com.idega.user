@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.idega.core.contact.data.Email;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.text.Text;
@@ -21,11 +22,12 @@ import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 
-public class SimpleUserAppAddUser extends SimpleUserApp {
+public class SimpleUserAppAddUser extends Block {
 	
 	private List parentGroups = null;
 	private List childGroups = null;
 	
+	private String groupTypesForParentGroups = null;
 	private String parentGroupId = null;
 	private String groupId = null;
 	private String groupForUsersWithoutLoginId = null;
@@ -35,6 +37,7 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 	private String roleTypes = null;
 	
 	private boolean getParentGroupsFromTopNodes = true;
+	private boolean useChildrenOfTopNodesAsParentGroups = false;
 	
 	private Integer userId = null;
 	
@@ -42,6 +45,9 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 	private SimpleUserAppHelper helper = new SimpleUserAppHelper();
 	
 	public SimpleUserAppAddUser(String parentComponentInstanceId, String parentContainerId) {
+		if (parentComponentInstanceId == null || parentContainerId == null) {
+			throw new NullPointerException("Provide valid parameters for " + SimpleUserAppAddUser.class.getName());
+		}
 		this.parentComponentInstanceId = parentComponentInstanceId;
 		this.parentContainerId = parentContainerId;
 	}
@@ -96,11 +102,11 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 		DropdownMenu parentGroupsChooser = new DropdownMenu();
 		String parentGroupChooserId = parentGroupsChooser.getId();
 		StringBuffer action = new StringBuffer("reloadAvailableGroupsForUser(");
-		action.append(helper.getJavaScriptParameter(parentGroupChooserId)).append(COMMA_SEPARATOR);
-		action.append(helper.getJavaScriptParameter(id)).append(COMMA_SEPARATOR).append("['");
-		action.append(availableGroupsOfUserContaianer.getId()).append(PARAMS_SEPARATOR);
+		action.append(helper.getJavaScriptParameter(parentGroupChooserId)).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(helper.getJavaScriptParameter(id)).append(SimpleUserApp.COMMA_SEPARATOR).append("['");
+		action.append(availableGroupsOfUserContaianer.getId()).append(SimpleUserApp.PARAMS_SEPARATOR);
 		action.append(iwrb.getLocalizedString("loading", "Loading...")).append("', ");
-		action.append(helper.getJavaScriptParameter(groupTypes)).append(COMMA_SEPARATOR);
+		action.append(helper.getJavaScriptParameter(groupTypes)).append(SimpleUserApp.COMMA_SEPARATOR);
 		action.append(helper.getJavaScriptParameter(roleTypes)).append("]);");
 		parentGroupsChooser.setOnChange(action.toString());
 		addParentGroups(iwc, parentGroupsContainer, parentGroupsChooser);
@@ -124,9 +130,9 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 		idValueInput.setMaxlength(12);
 		StringBuffer idAction = new StringBuffer("getUserByPersonalId(");
 		idAction.append(helper.getJavaScriptParameter(idValueInput.getId())).append(", '").append(nameValueInputId);
-		idAction.append(PARAMS_SEPARATOR).append(loginInputId);
-		idAction.append(PARAMS_SEPARATOR).append(passwordInputId);
-		idAction.append(PARAMS_SEPARATOR).append(iwrb.getLocalizedString("loading", "Loading...")).append(PARAMS_SEPARATOR);
+		idAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(loginInputId);
+		idAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(passwordInputId);
+		idAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(iwrb.getLocalizedString("loading", "Loading...")).append(SimpleUserApp.PARAMS_SEPARATOR);
 		idAction.append(emailInputId).append("');");
 		idValueInput.setOnKeyUp(idAction.toString());
 		nameValueInput.setDisabled(true);
@@ -331,7 +337,7 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 		Layer parentGroupValueContainer = new Layer();
 		parentGroupValueContainer.setStyleClass("userFieldValueContainerStyleClass");
 		fieldsContainer.add(parentGroupValueContainer);
-		if (parentGroups == null) {
+		if (parentGroups == null) {	//	Normally shouldn't be null
 			Group group = groupsHelper.getGroup(iwc, parentGroupId);
 			if (group == null) {
 				Collection topGroups = groupsHelper.getTopGroups(iwc, iwc.getCurrentUser());
@@ -342,7 +348,7 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 					addLabelForNoGroups(iwrb, parentGroupValueContainer);	//	No group availabe
 				}
 				else {
-					parentGroupsChooser.addMenuElements(topGroups);
+					parentGroupsChooser.addMenuElements(groupsHelper.getFilteredGroups(topGroups, groupTypesForParentGroups, ",", useChildrenOfTopNodesAsParentGroups));
 					parentGroupValueContainer.add(parentGroupsChooser);
 				}
 			}
@@ -375,7 +381,7 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 		
 		GenericButton back = new GenericButton(iwrb.getLocalizedString("back", "Back"));
 		StringBuffer backAction = new StringBuffer("goBackToSimpleUserApp('").append(parentComponentInstanceId);
-		backAction.append(PARAMS_SEPARATOR).append(parentContainerId).append(PARAMS_SEPARATOR);
+		backAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(parentContainerId).append(SimpleUserApp.PARAMS_SEPARATOR);
 		backAction.append(iwrb.getLocalizedString("loading", "Loading...")).append("')");
 		back.setOnClick(backAction.toString());
 		container.add(back);
@@ -385,18 +391,18 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 		for (int i = 0; i < ids.length; i++) {
 			saveAction.append(helper.getJavaScriptParameter(ids[i]));
 			if ((i + 1) < ids.length) {
-				saveAction.append(COMMA_SEPARATOR);
+				saveAction.append(SimpleUserApp.COMMA_SEPARATOR);
 			}
 		}
 		saveAction.append("], ['");
 		for (int i = 0; i < childGroups.size(); i++) {
 			saveAction.append(childGroups.get(i).toString());
 			if ((i + 1) < childGroups.size()) {
-				saveAction.append(PARAMS_SEPARATOR);
+				saveAction.append(SimpleUserApp.PARAMS_SEPARATOR);
 			}
 		}
 		saveAction.append("'], '").append(iwrb.getLocalizedString("saving", "Saving..."));
-		saveAction.append(PARAMS_SEPARATOR);
+		saveAction.append(SimpleUserApp.PARAMS_SEPARATOR);
 		saveAction.append(iwrb.getLocalizedString("please_enter_password", "Please, enter password!")).append("');");
 		save.setOnClick(saveAction.toString());
 		container.add(save);
@@ -446,6 +452,15 @@ public class SimpleUserAppAddUser extends SimpleUserApp {
 		Layer spacer = new Layer();
 		spacer.setStyleClass("spacer");
 		return spacer;
+	}
+
+	public void setGroupTypesForParentGroups(String groupTypesForParentGroups) {
+		this.groupTypesForParentGroups = groupTypesForParentGroups;
+	}
+
+	public void setUseChildrenOfTopNodesAsParentGroups(
+			boolean useChildrenOfTopNodesAsParentGroups) {
+		this.useChildrenOfTopNodesAsParentGroups = useChildrenOfTopNodesAsParentGroups;
 	}
 
 }

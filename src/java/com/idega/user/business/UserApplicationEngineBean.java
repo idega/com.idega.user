@@ -206,6 +206,8 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		addUser.setGroupTypes(bean.getGroupTypes());
 		addUser.setRoleTypes(bean.getRoleTypes());
 		addUser.setGetParentGroupsFromTopNodes(bean.isGetParentGroupsFromTopNodes());
+		addUser.setGroupTypesForParentGroups(bean.getGroupTypesForParentGroups());
+		addUser.setUseChildrenOfTopNodesAsParentGroups(bean.isUseChildrenOfTopNodesAsParentGroups());
 		
 		return builder.getRenderedComponent(iwc, addUser, true);
 	}

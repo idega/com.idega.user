@@ -14,8 +14,10 @@ public class SimpleUserPropertiesBean {
 	private String groupTypes = null;
 	private String roleTypes = null;
 	private String message = null;
+	private String groupTypesForParentGroups = null;
 	
 	private boolean getParentGroupsFromTopNodes = true;
+	private boolean useChildrenOfTopNodesAsParentGroups = false;
 	
 	public SimpleUserPropertiesBean() {}
 	
@@ -115,6 +117,23 @@ public class SimpleUserPropertiesBean {
 
 	public void setGetParentGroupsFromTopNodes(boolean getParentGroupsFromTopNodes) {
 		this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
+	}
+
+	public String getGroupTypesForParentGroups() {
+		return groupTypesForParentGroups;
+	}
+
+	public void setGroupTypesForParentGroups(String groupTypesForParentGroups) {
+		this.groupTypesForParentGroups = groupTypesForParentGroups;
+	}
+
+	public boolean isUseChildrenOfTopNodesAsParentGroups() {
+		return useChildrenOfTopNodesAsParentGroups;
+	}
+
+	public void setUseChildrenOfTopNodesAsParentGroups(
+			boolean useChildrenOfTopNodesAsParentGroups) {
+		this.useChildrenOfTopNodesAsParentGroups = useChildrenOfTopNodesAsParentGroups;
 	}
 
 }
