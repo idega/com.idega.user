@@ -181,21 +181,24 @@ public class UserDetailPreferences extends Block {
 			homePhone = ub.getUsersHomePhone(this.user);
 		}
 		catch (NoPhoneFoundException e) {
-			e.printStackTrace();
+			//No phone found. Doesn't matter. It is optional to register phone 
+			//e.printStackTrace();
 		}
 		Phone mobilePhone = null;
 		try {
 			mobilePhone = ub.getUsersMobilePhone(this.user);
 		}
 		catch (NoPhoneFoundException e) {
-			e.printStackTrace();
+			//No mobilephone found. Doesn't matter. It is optional to register phone 
+			//e.printStackTrace();
 		}
 		Phone workPhone = null;
 		try {
 			workPhone = ub.getUsersWorkPhone(this.user);
 		}
 		catch (NoPhoneFoundException e) {
-			e.printStackTrace();
+			//No workphone found. Doesn't matter. It is optional to register phone 
+			//e.printStackTrace();
 		}
 		Address coAddress = getCOAddress(iwc);
 		PostalCode postal = null;
