@@ -11,9 +11,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  *
- * Last modified: $Date: 2007/06/29 10:01:27 $ by $Author: valdas $
+ * Last modified: $Date: 2007/08/27 09:27:43 $ by $Author: valdas $
  *
  */
 public class GroupsChooser extends AbstractChooser {
@@ -43,7 +43,7 @@ public class GroupsChooser extends AbstractChooser {
 		return chooser;
 	}
 	
-	public Class getChooserWindowClass() {
+	public Class<GroupsChooserBlock> getChooserWindowClass() {
 		return GroupsChooserBlock.class;
 	}
 	

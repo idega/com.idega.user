@@ -72,6 +72,7 @@ public class GroupUsersViewer extends GroupViewer {
 		setPropertiesBean(instanceId);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void setPropertiesBean(String instanceId) {
 		UserPropertiesBean properties = new UserPropertiesBean();
 		setBasicProperties(properties, instanceId);
