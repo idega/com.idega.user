@@ -1,8 +1,11 @@
 package com.idega.user.business;
 
 import com.idega.repository.data.ConstantsPlaceholder;
+import com.idega.util.CoreConstants;
 
 public class UserConstants implements ConstantsPlaceholder {
+	
+	public static final String IW_BUNDLE_IDENTIFIER = CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	
 	//	Cache keys
 	public static final String GROUP_INFO_VIEWER_CACHE_KEY = "group_info_viewer_block";

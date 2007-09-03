@@ -20,6 +20,12 @@
 		<convert converter="bean" match="com.idega.user.bean.GroupMemberDataBean" />
 		<convert converter="bean" match="com.idega.user.bean.AddressData" />
 		<convert converter="bean" match="com.idega.user.business.GroupNode" />
+		
+		<create creator="ibo" javascript="UserApplicationEngine" scope="session">
+			<param name="class" value="com.idega.user.business.UserApplicationEngine" />
+		</create>
+		<convert converter="bean" match="com.idega.user.bean.SimpleUserPropertiesBean" />
+		<convert converter="bean" match="com.idega.user.bean.UserDataBean" />
 	</allow>
 	<signatures>
 		<![CDATA[
@@ -28,6 +34,11 @@
 			import com.idega.user.bean.UserPropertiesBean;
 			import com.idega.user.bean.GroupDataBean;
 			import com.idega.user.bean.GroupMembersDataBean;
+			
+			import com.idega.user.bean.SimpleUserPropertiesBean;
+			import com.idega.user.bean.UserDataBean;
+			
+			import com.idega.builder.bean.AdvancedProperty;
 
 			GroupService.getGroupsInfo(GroupPropertiesBean);
 			GroupService.getUsersInfo(UserPropertiesBean);
@@ -35,6 +46,15 @@
 			GroupService.getGroupsMembersPresentationObject(List<GroupMembersDataBean>, UserPropertiesBean);
 			GroupService.clearGroupInfoCache(GroupPropertiesBean);
 			GroupService.clearUsersInfoCache(UserPropertiesBean);
+			
+			List<AdvancedProperty> UserApplicationEngine.getChildGroups(String, String, String);
+			List<Integer> UserApplicationEngine.removeUsers(List<Integer>, Integer);
+			Document UserApplicationEngine.getMembersList(SimpleUserPropertiesBean);
+			Document UserApplicationEngine.getAddUserPresentationObject(SimpleUserPropertiesBean, List<Integer>, List<Integer>, Integer);
+			Document UserApplicationEngine.getSimpleUserApplication(String);
+			Document UserApplicationEngine.getAvailableGroupsForUserPresentationObject(Integer, Integer, String, String);
+			UserDataBean UserApplicationEngine.getUserByPersonalId(String);
+			String UserApplicationEngine.createUser(String, String, String, String, Integer, List<Integer>, List<Integer>);
   		]]>
 	</signatures>
 </dwr>
