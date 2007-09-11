@@ -8,7 +8,6 @@ import java.util.Vector;
 
 import javax.swing.event.ChangeListener;
 
-import com.idega.block.login.presentation.WelcomeMessage;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.event.IWActionListener;
@@ -29,16 +28,13 @@ import com.idega.presentation.Page;
 import com.idega.presentation.Script;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.StatefullPresentationImplHandler;
-import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
-import com.idega.presentation.text.Text;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.presentation.BasicUserOverview;
 import com.idega.user.presentation.BasicUserOverviewPS;
 import com.idega.user.presentation.GroupTreeView;
-import com.idega.util.IWTimestamp;
 
 /**
  * <p>
@@ -82,7 +78,6 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	private GroupTreeView groupTree = new GroupTreeView();
 
 	private UserBusiness userBiz = null;
-	
 
 	public UserApplicationControlArea() {
 		this.setAllMargins(0);
@@ -154,7 +149,6 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		 */
 		//    EventListenerList list = this.getEventListenerList(iwc);
 		//this.setIWUserContext(iwc);
-
 		IWPresentationState gtState = this.groupTree.getPresentationState(iwc);
 		if (gtState instanceof IWActionListener) {
 			((UserApplicationControlAreaPS) this.getPresentationState(iwc)).addIWActionListener((IWActionListener) gtState);
@@ -164,7 +158,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 			getParentPage().setStyleDefinition("A", LINK_STYLE);
 			getParentPage().setStyleDefinition("A:hover", LINK_HOVER_STYLE);
 
-		//TODO add bold stuff with a Behaviour and style class
+			//TODO add bold stuff with a Behaviour and style class
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("function setLinkToBold(input) {").append("\n\t");
 			buffer.append("if (boldLink != null)").append("\n\t\t");
@@ -193,7 +187,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		this.groupTree.setToShowSuperRootNode(true);
 		this.groupTree.setDefaultOpenLevel(1);
 		this.groupTree.setSuperRootNodeName(this.iwrb.getLocalizedString("tree.super.node.name", "My groups"));
-		
+
 		Image icon = this.iwb.getImage("super_root_icon.gif");
 		this.groupTree.setSuperRootNodeIcon(icon);
 		Collection topGroupNodes = null;
@@ -203,12 +197,12 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		if(topGroupNodes != null && topGroupNodes.size() > 0) {
+		if (topGroupNodes != null && topGroupNodes.size() > 0) {
 			Image refreshIcon = this.iwb.getImage("refresh.gif");
 			Link refreshLink = new Link(refreshIcon);
 			this.groupTree.setRefreshLink(refreshLink);
 		}
-		
+
 		ChangeListener[] chListeners = this.getPresentationState(iwc).getChangeListener();
 		if (chListeners != null) {
 			for (int i = 0; i < chListeners.length; i++) {
@@ -221,40 +215,12 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	 * 
 	 * @return
 	 */
-	public Table displayTable(IWContext iwc) {
-		Table table = new Table(1, 1);
-		table.setCellpadding(7);
-		table.setCellpaddingTop(1, 2, 0);
-		table.setWidth(Table.HUNDRED_PERCENT);
-		table.setHeight(Table.HUNDRED_PERCENT);
-		table.setHeight(1, Table.HUNDRED_PERCENT);
-		table.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_CENTER);
-		
-		Table borderTable = new Table(1, 1);
-		borderTable.setCellpadding(0);
-		borderTable.setCellspacing(0);
-		borderTable.setWidth(Table.HUNDRED_PERCENT);
-		borderTable.setHeight(Table.HUNDRED_PERCENT);
-		borderTable.setCellBorder(1, 1, 1, "#cccccc", "solid");
-		borderTable.setColor(1, 1, "#FFFFFF");
-		
+	public Layer displayLayer(IWContext iwc) {
 		Layer layer = new Layer(Layer.DIV);
-		layer.setWidth(208);
-		layer.setHeight("100%");
-		layer.setOverflow("auto");
-		borderTable.add(layer,1,1);
-		
-		Table treeTable = new Table(1, 1);
-		treeTable.setCellpadding(4);
-		treeTable.add(this.groupTree, 1, 1);
-		treeTable.setWidth(Table.HUNDRED_PERCENT);
-		treeTable.setHeight(Table.HUNDRED_PERCENT);
-		treeTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
-		layer.add(treeTable);
-		
-		table.add(borderTable, 1, 1);
+		layer.setID("treeLayer");
+		layer.add(this.groupTree);
 
-		return table;
+		return layer;
 	}
 
 	public void main(IWContext iwc) throws Exception {
@@ -265,7 +231,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		String styleSrc = iwb.getVirtualPathWithFileNameString(this.styleScript);
 		parentPage.addStyleSheetURL(styleSrc);
 
-		add(displayTable(iwc));
+		add(displayLayer(iwc));
 
 		if (iwc.isSuperAdmin()) {
 			GroupTreeNode node = new GroupTreeNode(iwc.getDomain(), iwc.getApplicationContext());
