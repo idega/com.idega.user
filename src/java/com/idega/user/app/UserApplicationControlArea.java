@@ -8,6 +8,8 @@ import java.util.Vector;
 
 import javax.swing.event.ChangeListener;
 
+import org.apache.myfaces.renderkit.html.util.AddResource;
+import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.event.IWActionListener;
@@ -78,6 +80,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	private GroupTreeView groupTree = new GroupTreeView();
 
 	private UserBusiness userBiz = null;
+	
 
 	public UserApplicationControlArea() {
 		this.setAllMargins(0);
@@ -149,6 +152,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		 */
 		//    EventListenerList list = this.getEventListenerList(iwc);
 		//this.setIWUserContext(iwc);
+
 		IWPresentationState gtState = this.groupTree.getPresentationState(iwc);
 		if (gtState instanceof IWActionListener) {
 			((UserApplicationControlAreaPS) this.getPresentationState(iwc)).addIWActionListener((IWActionListener) gtState);
@@ -158,7 +162,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 			getParentPage().setStyleDefinition("A", LINK_STYLE);
 			getParentPage().setStyleDefinition("A:hover", LINK_HOVER_STYLE);
 
-			//TODO add bold stuff with a Behaviour and style class
+		//TODO add bold stuff with a Behaviour and style class
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("function setLinkToBold(input) {").append("\n\t");
 			buffer.append("if (boldLink != null)").append("\n\t\t");
@@ -187,7 +191,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		this.groupTree.setToShowSuperRootNode(true);
 		this.groupTree.setDefaultOpenLevel(1);
 		this.groupTree.setSuperRootNodeName(this.iwrb.getLocalizedString("tree.super.node.name", "My groups"));
-
+		
 		Image icon = this.iwb.getImage("super_root_icon.gif");
 		this.groupTree.setSuperRootNodeIcon(icon);
 		Collection topGroupNodes = null;
@@ -197,12 +201,12 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		if (topGroupNodes != null && topGroupNodes.size() > 0) {
+		if(topGroupNodes != null && topGroupNodes.size() > 0) {
 			Image refreshIcon = this.iwb.getImage("refresh.gif");
 			Link refreshLink = new Link(refreshIcon);
 			this.groupTree.setRefreshLink(refreshLink);
 		}
-
+		
 		ChangeListener[] chListeners = this.getPresentationState(iwc).getChangeListener();
 		if (chListeners != null) {
 			for (int i = 0; i < chListeners.length; i++) {
@@ -219,7 +223,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		Layer layer = new Layer(Layer.DIV);
 		layer.setID("treeLayer");
 		layer.add(this.groupTree);
-
+		
 		return layer;
 	}
 
@@ -227,10 +231,12 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		this.empty();
 
 		IWBundle iwb = getBundle(iwc);
-		Page parentPage = this.getParentPage();
 		String styleSrc = iwb.getVirtualPathWithFileNameString(this.styleScript);
-		parentPage.addStyleSheetURL(styleSrc);
-
+	
+		
+		AddResource resourceAdder = AddResourceFactory.getInstance(iwc);
+		resourceAdder.addStyleSheet(iwc, AddResource.HEADER_BEGIN,styleSrc);	
+		
 		add(displayLayer(iwc));
 
 		if (iwc.isSuperAdmin()) {
