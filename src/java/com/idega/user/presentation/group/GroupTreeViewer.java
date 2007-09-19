@@ -18,7 +18,7 @@ public class GroupTreeViewer extends Block {
 	private String groupsTreeViewerId = null;
 	private String selectedGroupsParameter = "null";
 	private String loadRemoteGroupsFunction = null;
-	private String styleClass = null;	// Set your style if you want to define actions for tree node
+	private String styleClass = "groupsTreeListElement";	// Set your style if you want to define actions for tree node
 	
 	private boolean executeScriptOnLoad = true;
 	private boolean addExtraJavaScript = true;
