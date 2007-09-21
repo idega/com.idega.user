@@ -43,7 +43,7 @@ import com.idega.user.event.SelectGroupEvent;
  * Company: idega Software
  * </p>
  * 
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson </a>
  * @version 1.0
  */
 
@@ -87,6 +87,10 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 
     public Group getSelectedGroup() {
         return this._selectedGroup;
+    }
+    
+    public void setSelectedGroup(Group selectedGroup){
+    	this._selectedGroup = selectedGroup;
     }
 
     public ICDomain getSelectedDomain() {
