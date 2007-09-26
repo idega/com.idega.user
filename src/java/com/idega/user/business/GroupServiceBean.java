@@ -99,7 +99,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			for (int i = 0; i < abstractList.size(); i++) {
 				o = abstractList.get(i);
 				if (o instanceof GroupDataBean) {
-					extractedData.add((GroupDataBean) o);
+					extractedData.add(o);
 				}
 				else {
 					return null;
@@ -184,7 +184,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			for (int i = 0; i < abstractList.size(); i++) {
 				o = abstractList.get(i);
 				if (o instanceof GroupMemberDataBean) {
-					extractedData.add((GroupMemberDataBean) o);
+					extractedData.add(o);
 				}
 				else {
 					return null;
