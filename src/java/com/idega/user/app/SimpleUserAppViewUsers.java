@@ -138,7 +138,7 @@ public class SimpleUserAppViewUsers extends Block {
 		GenericButton removeFromGroup = new GenericButton(iwrb.getLocalizedString("remove_from_group", "Remove from group"));
 		StringBuffer removeAction = new StringBuffer("removeSelectedUsers('");
 		removeAction.append(iwrb.getLocalizedString("removing", "Removing...")).append(SimpleUserApp.PARAMS_SEPARATOR);
-		removeAction.append(iwrb.getLocalizedString("are_you_sure", "Are You sure?")).append(SimpleUserApp.PARAMS_SEPARATOR);
+		removeAction.append(iwrb.getLocalizedString("are_you_sure", "Are you sure?")).append(SimpleUserApp.PARAMS_SEPARATOR);
 		removeAction.append(iwrb.getLocalizedString("select_users_to_remove", "Please, select user(s) to remove firstly!"));
 		removeAction.append("');");
 		removeFromGroup.setOnClick(removeAction.toString());

@@ -332,7 +332,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		
 		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
 		String sucessText = iwrb.getLocalizedString("success_saving_user", "Your changes were successfully saved.");
-		String errorText = iwrb.getLocalizedString("error_saving_user", "Error occurred while saving Your changes.");
+		String errorText = iwrb.getLocalizedString("error_saving_user", "Error occurred while saving your changes.");
 		
 		UserBusiness userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
