@@ -63,7 +63,7 @@ public class UserChooser extends AbstractChooser {
 	}
 
 	@Override
-	protected String getChooserHelperVarName() {
+	public String getChooserHelperVarName() {
 		  return "user_chooser_helper";
 	}
 }

@@ -103,7 +103,7 @@ public class GroupChooser extends AbstractChooser {
 	}
 	
 	@Override
-	protected String getChooserHelperVarName() {
+	public String getChooserHelperVarName() {
 		  return "group_chooser_helper";
 	}
 }

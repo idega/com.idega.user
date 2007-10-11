@@ -11,9 +11,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  *
- * Last modified: $Date: 2007/08/27 09:27:43 $ by $Author: valdas $
+ * Last modified: $Date: 2007/10/11 11:28:19 $ by $Author: valdas $
  *
  */
 public class GroupsChooser extends AbstractChooser {
@@ -30,8 +30,6 @@ public class GroupsChooser extends AbstractChooser {
 	
 	public PresentationObject getChooser(IWContext iwc, IWBundle bundle) {
 		Layer chooser = new Layer();
-		
-		add(new StringBuffer("<script type=\"text/javascript\">var ").append(getChooserObjectInJavaScript()).append(" = new ChooserHelper();</script>").toString());
 		
 		GroupsChooserBlock groupsChooser = new GroupsChooserBlock();
 		groupsChooser.setAddExtraJavaScript(false);
@@ -64,7 +62,7 @@ public class GroupsChooser extends AbstractChooser {
 	}
 
 	@Override
-	protected String getChooserHelperVarName() {
+	public String getChooserHelperVarName() {
 		  return getChooserObjectInJavaScript();
 	}
 }
