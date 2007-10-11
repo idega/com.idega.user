@@ -20,8 +20,11 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
 	if (nodeOnClickAction != null){
 		NODE_ON_CLICK_ACTION = nodeOnClickAction;
 	}
+	
 	$$('input.groupInfoChooserRadioStyle').each(
 		function(element) {
+			element.removeEvents('click');
+			
 			element.addEvent('click', function() {
 				if (element.value) {
 					var values = element.value.split('@');
@@ -37,6 +40,8 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
     
     $$('span.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(	//	These actions needed for Builder, define your own if need
 		function(element) {
+			element.removeEvents('click');
+			
 			element.addEvent('click', function() {
 				selectGroup(element);
 				checkOtherProperties(element);
@@ -159,7 +164,7 @@ function selectGroup(element) {
 function manageConnectionType(useLocal, id, noGroupsMessage, selectedGroups, styleClass) {
 	var connection = $('connectionData');
 	if (connection == null) {
-		return;
+		return false;
 	}
 	var displayValue = 'inline';
 	if (useLocal) {
@@ -230,10 +235,11 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 		//	Getting info from remote server
 		GroupService.getGroupsTree(login, password, {
 			callback: function(groups) {
+				closeAllLoadingMessages();
+				
 				prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
 				if (groups == null) {
 					//	Login failed
-					closeLoadingMessage();
 					alert(logInErrorMessage + ' ' + server);
 					return false;
 				}
@@ -246,7 +252,7 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 	}
 	else {
 		//	Cannot use remote server
-		closeLoadingMessage();
+		closeAllLoadingMessages();
 		alert(severErrorMessage + ' ' + server);
 		return false;
 	}
@@ -261,7 +267,7 @@ function loadLocalTree(id, noGroupsMessage, selectedGroups, styleClass) {
 	GroupService.getTopGroupNodes({
 		callback: function(groups) {
 			if (groups == null) {
-				closeLoadingMessage();
+				closeAllLoadingMessages();
 				return false;
 			}
 			addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass);
