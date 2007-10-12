@@ -49,7 +49,7 @@ public class GroupChooserBlock extends AbstractChooserBlock {
 		
 		Link link = new Link();
 		link = new Link();
-		link.setURL(new StringBuffer("#").append(id).toString());
+		link.setURL("javascript:void(0)");
 		link.setNoTextObject(true);
 		//viewer.setLinkOpenClosePrototype(link);
 		
