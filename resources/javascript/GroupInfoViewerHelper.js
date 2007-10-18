@@ -122,12 +122,12 @@ function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 		closeAllLoadingMessages();
 		return false;
 	}
-	var main = document.getElementById(containerId);
+	var main = $(containerId);
 	if (main == null) {
 		closeAllLoadingMessages();
 		return false;
 	}
-	removeChildren(main);
+	main.empty();
 	
 	var container = new Element('div');
 	container.addClass('groupsInfoList');
