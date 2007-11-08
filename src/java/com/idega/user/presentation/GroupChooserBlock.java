@@ -51,7 +51,6 @@ public class GroupChooserBlock extends AbstractChooserBlock {
 		link = new Link();
 		link.setURL("javascript:void(0)");
 		link.setNoTextObject(true);
-		//viewer.setLinkOpenClosePrototype(link);
 		
 		StringBuffer action = new StringBuffer();
 		//	Action to remove old value
