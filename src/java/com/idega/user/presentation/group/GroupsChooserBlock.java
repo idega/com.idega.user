@@ -12,7 +12,8 @@ import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
-import com.idega.presentation.Table;
+import com.idega.presentation.Table2;
+import com.idega.presentation.TableBodyRowGroup;
 import com.idega.presentation.TableCell2;
 import com.idega.presentation.TableRow;
 import com.idega.presentation.text.Text;
@@ -21,7 +22,6 @@ import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.Legend;
 import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.RadioButton;
-import com.idega.presentation.ui.RadioGroup;
 import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.util.AbstractChooserBlock;
 import com.idega.user.bean.PropertiesBean;
@@ -150,17 +150,24 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		layer.setId("groupInfoConnectionChooser");
 		
 		FieldSet serverContainer = new FieldSet(new Legend(iwrb.getLocalizedString("server", "Server")));
-		RadioGroup radioGroup = new RadioGroup("server");
 		
+		Layer localConnection = new Layer();
+		serverContainer.add(localConnection);
 		Text txtLocal = new Text(iwrb.getLocalizedString("localServer", "Local server"));
 		RadioButton btnLocal = new RadioButton("server");
 		btnLocal.setValue(new StringBuffer("local").append("@").append(groupsTreeContainerId).toString());
 		btnLocal.setStyleClass(RADIO_BUTTON_STYLE);
+		localConnection.add(btnLocal);
+		localConnection.add(txtLocal);
 
+		Layer remoteConnection = new Layer();
+		serverContainer.add(remoteConnection);
 		Text txtRemote = new Text(iwrb.getLocalizedString("remoteServer", "Remote server"));
 		RadioButton btnRemote = new RadioButton("server");
 		btnRemote.setValue(new StringBuffer(ICBuilderConstants.GROUPS_CHOOSER_REMOTE_CONNECTION).append("@").append(groupsTreeContainerId).toString());
 		btnRemote.setStyleClass(RADIO_BUTTON_STYLE);
+		remoteConnection.add(btnRemote);
+		remoteConnection.add(txtRemote);
 		
 		if (isRemoteMode) {
 			btnRemote.setSelected();
@@ -168,17 +175,13 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		else {
 			btnLocal.setSelected();
 		}
-		
-		radioGroup.addRadioButton(btnLocal, txtLocal);
-		radioGroup.addRadioButton(btnRemote, txtRemote);
-		
-		serverContainer.add(radioGroup);
+
 		layer.add(serverContainer);
 		
 		//	Remote connection data
 		Layer connData = new Layer();
 		connData.setId("connectionData");
-		connData.setStyleClass("hidden_table");
+		connData.setStyleClass("groupsChooserConnectionHiddenTable");
 		if (!isRemoteMode) {
 			connData.setStyleAttribute("display: none");
 		}
@@ -186,17 +189,18 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		FieldSet connectionContainer = new FieldSet(new Legend(iwrb.getLocalizedString("remote_connection_data", "Connection")));
 		connData.add(connectionContainer);
 		
-		Table data = new Table(2, 3);
+		Table2 data = new Table2();
 		data.setStyleClass("groupsChooserConnectionDataTableStyle");
 		connectionContainer.add(data);
+		TableBodyRowGroup body = data.createBodyRowGroup();
 		
 		String server = getServer();
 		if (server == null) {
 			server = "http://";
 		}
-		addRowToConnectionTable(data, server, iwrb.getLocalizedString("serverName", "Server name"), SERVER_NAME_FIELD_ID, "server", false);
-		addRowToConnectionTable(data, login, iwrb.getLocalizedString("login", "Login"), LOGIN_FIELD_ID, "login", false);
-		addRowToConnectionTable(data, password, iwrb.getLocalizedString("password", "password"), PASSWORD_FIELD_ID, "password", true);
+		addRowToConnectionTable(body, server, iwrb.getLocalizedString("serverName", "Server name"), SERVER_NAME_FIELD_ID, "server", false);
+		addRowToConnectionTable(body, login, iwrb.getLocalizedString("login", "Login"), LOGIN_FIELD_ID, "login", false);
+		addRowToConnectionTable(body, password, iwrb.getLocalizedString("password", "password"), PASSWORD_FIELD_ID, "password", true);
 		
 		Layer buttonLayer = new Layer();
 		GenericButton button = new GenericButton(iwrb.getLocalizedString("refresh", "Refresh"));
@@ -253,11 +257,11 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 	}
 	
 	@SuppressWarnings("deprecation")
-	private void addRowToConnectionTable(Table table, String value, String content, String inputId, String name, boolean isPassword) {
-		TableRow tableRow = new TableRow();
-		table.add(tableRow);
+	private void addRowToConnectionTable(TableBodyRowGroup body, String value, String content, String inputId, String name, boolean isPassword) {
+		TableRow tableRow = body.createRow();
 		
 		TableCell2 textCell = tableRow.createCell();
+		textCell.setStyleClass("groupsChooserConnectionTableTextCellStyle");
 		textCell.add(new Text(content));
 		TableCell2 inputCell = tableRow.createCell();
 		TextInput input = null;
