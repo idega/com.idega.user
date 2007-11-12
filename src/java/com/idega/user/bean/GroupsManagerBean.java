@@ -60,7 +60,7 @@ public class GroupsManagerBean implements Serializable {
 		}
 		else {
 			abstractProperties.remove(instanceId);
-			return new GroupPropertiesBean(bean);
+			return new GroupPropertiesBean(bean, instanceId);
 		}
 		
 	}
@@ -87,6 +87,7 @@ public class GroupsManagerBean implements Serializable {
 		return removeProperties(instanceId, userProperties);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private boolean removeProperties(String key, Map properties) {
 		if (key == null) {
 			return false;

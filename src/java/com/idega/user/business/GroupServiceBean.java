@@ -3,7 +3,6 @@ package com.idega.user.business;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +22,7 @@ import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.bean.GroupDataBean;
@@ -50,8 +50,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	
 	private GroupBusiness groupBusiness = null;
 	private UserBusiness userBusiness = null;
-	
-	private Map<String, List<String>> groupIds = new HashMap<String, List<String>>();
 
 	/**
 	 * Returns tree of Groups
@@ -183,7 +181,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	 * Returns info about selected groups
 	 */
 	public List<GroupDataBean> getGroupsInfo(GroupPropertiesBean bean) {
-		//System.out.println("Bean: " + bean);
 		//	Checking if valid parameters
 		if (bean == null) {
 			return null;
@@ -193,8 +190,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return null;
 		}
 		
-		List<String> uniqueIds = groupIds.get(bean.getInstanceId());
-		//System.out.println("Ids: " + uniqueIds);
+		List<String> uniqueIds = getGroupsIds().get(bean.getInstanceId());
 		if (uniqueIds == null) {
 			return null;
 		}
@@ -413,7 +409,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		
 		IWResourceBundle iwrb = null;
 		try {
-			iwrb = getBundle().getResourceBundle(iwc);
+			iwrb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -762,12 +758,20 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		}
 		
 		try {
-			groupIds.put(instanceId, ids);
+			getGroupsIds().put(instanceId, ids);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		
 		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<String, List<String>> getGroupsIds() throws NullPointerException {
+		IWCacheManager2 cache = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
+		
+		long cacheTime = 20 * 60;
+		return cache.getCache("groupInfoViewersUniqueIdsCache", 1000, true, false, cacheTime, cacheTime);
 	}
 }

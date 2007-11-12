@@ -1,16 +1,17 @@
 package com.idega.user.business;
 
+import java.rmi.RemoteException;
+import java.util.List;
+
+import org.jdom.Document;
+
+import com.idega.builder.bean.AdvancedProperty;
+import com.idega.business.IBOSession;
 import com.idega.user.bean.GroupDataBean;
 import com.idega.user.bean.GroupMemberDataBean;
 import com.idega.user.bean.GroupMembersDataBean;
 import com.idega.user.bean.GroupPropertiesBean;
 import com.idega.user.bean.UserPropertiesBean;
-import java.util.List;
-import org.jdom.Document;
-
-import com.idega.builder.bean.AdvancedProperty;
-import com.idega.business.IBOSession;
-import java.rmi.RemoteException;
 
 public interface GroupService extends IBOSession {
 	/**
