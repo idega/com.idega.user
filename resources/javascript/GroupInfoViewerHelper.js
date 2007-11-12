@@ -117,7 +117,6 @@ function getGroupsData(result, properties, containerId) {
 	
 	GroupService.addGroupIds(properties.instanceId, properties.uniqueIds, {
 		callback: function(result) {
-			//alert('added ids: ' + result);
 			if (!result) {
 				closeAllLoadingMessages();
 				return false;
@@ -131,7 +130,8 @@ function getGroupsData(result, properties, containerId) {
 				},
 				rpcType:dwrCallType
 			});
-		}
+		},
+		rpcType:dwrCallType
 	});
 }
 
