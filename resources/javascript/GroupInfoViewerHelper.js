@@ -155,7 +155,7 @@ function GroupPropertiesBean(properties) {
 	this.showShortName = properties.showShortName;
 	this.showPhone = properties.showPhone;
 	this.showFax = properties.showFax;
-	this.howEmptyFields = properties.howEmptyFields;
+	this.showEmptyFields = properties.showEmptyFields;
 }
 
 function getGroupsInfoCallback(groupsInfo, properties, containerId) {
