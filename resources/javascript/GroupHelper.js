@@ -9,6 +9,11 @@ var LOGIN = null;
 var PASSWORD = null;
 var NODE_ON_CLICK_ACTION = null;
 
+var groups_chooser_helper = null;
+try {
+	groups_chooser_helper = new ChooserHelper();
+} catch(e) {}
+
 function getGroupTreeListElementStyleClass(){
 	return GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS;
 }
@@ -27,6 +32,15 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
 			
 			element.addEvent('click', function() {
 				if (element.value) {
+					
+					var inputs = $$('input.groupInfoChooserRadioStyle');
+					for (var i = 0; i < inputs.length; i++){
+						if (element != inputs[i]) {
+							inputs[i].checked = false;
+						}
+					}
+					element.checked = true;
+					
 					var values = element.value.split('@');
 					if (values.length = 2) {
 						manageConnectionType('local' == values[0], values[1], noGroupsMessage, selectedGroups, styleClass);
@@ -38,7 +52,7 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
     	}
     );
     
-    $$('span.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(	//	These actions needed for Builder, define your own if need
+	$$('span.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(	//	These actions needed for Builder, define your own if need
 		function(element) {
 			element.removeEvents('click');
 			
@@ -51,6 +65,7 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
 			}
     	}
     );
+    
     if (styleClass != null && styleClass != GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS) {	//	We don't want to override default actions
 	    $$('span.' + styleClass).each(	//	These are custom actions
 			function(element) {
@@ -95,8 +110,9 @@ function checkOtherProperties(clickedElement) {
 			}
     	}
     );
+    
     for (var i = 0; i < otherGroupsNodes.length; i++) {
-    	if ('bold' == otherGroupsNodes[i].style.fontWeight) {
+    	if ('bold' == otherGroupsNodes[i].getStyle('font-weight')) {
     		var advancedProperty = groups_chooser_helper.getAdvancedProperty(UNIQUE_IDS_ID);
 			if (advancedProperty == null) {
 				groups_chooser_helper.addAdvancedProperty(UNIQUE_IDS_ID, otherGroupsNodes[i].id);
@@ -121,20 +137,23 @@ function selectGroup(element) {
 	}
 	
 	var addId = false;
-	if (element.style.fontWeight == null) {
+	var fontVariant = element.getStyle('font-weight');
+	if (fontVariant == null) {
 		addId = true;
 	}
 	else {
-		if (element.style.fontWeight == '' || element.style.fontWeight == 'normal') {
+		if (fontVariant == '' || fontVariant == 'normal') {
 			addId = true;
 		}
 	}
+	
 	if (addId) {
-		element.style.fontWeight = 'bold';
+		fontVariant = 'bold';
 	}
 	else {
-		element.style.fontWeight = 'normal';
+		fontVariant = 'normal';
 	}
+	element.setStyle('font-weight', fontVariant);
 	
 	var advancedProperty = groups_chooser_helper.getAdvancedProperty(UNIQUE_IDS_ID);
 	if (advancedProperty == null) {
@@ -166,12 +185,12 @@ function manageConnectionType(useLocal, id, noGroupsMessage, selectedGroups, sty
 	if (connection == null) {
 		return false;
 	}
-	var displayValue = 'inline';
+	var displayValue = 'block';
 	if (useLocal) {
 		displayValue = 'none';
 		loadLocalTree(id, noGroupsMessage, selectedGroups, styleClass);
 	}
-	connection.style.display = displayValue;
+	connection.setStyle('display', displayValue);
 }
 
 function getGroupsTree(serverId, loginId, passwordId, id, messages, selectedGroups, styleClass) {
@@ -221,12 +240,13 @@ function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConn
 	GroupService.canUseRemoteServer(server, {
 		callback: function(result) {
 			canUseRemoteCallback(result, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, selectedGroups, styleClass);
-		}
+		},
+		rpcType:dwr.engine.XMLHttpRequest
 	});
 }
 
 function canUseRemoteCallback(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass) {
-	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+	prepareDwr(GroupService, getDefaultDwrPath());
 	
 	if (result) {
 		//	Can use remote server, preparing DWR
@@ -237,7 +257,7 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 			callback: function(groups) {
 				closeAllLoadingMessages();
 				
-				prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+				prepareDwr(GroupService, getDefaultDwrPath());
 				if (groups == null) {
 					//	Login failed
 					alert(logInErrorMessage + ' ' + server);
@@ -247,7 +267,8 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 				LOGIN = login;
 				PASSWORD = password;
 				addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass);
-			}
+			},
+			rpcType:dwr.engine.ScriptTag
 		});
 	}
 	else {
@@ -271,16 +292,17 @@ function loadLocalTree(id, noGroupsMessage, selectedGroups, styleClass) {
 				return false;
 			}
 			addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass);
-		}
+		},
+		rpcType:dwr.engine.XMLHttpRequest
 	});
 }
 
 function addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass) {
-	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+	prepareDwr(GroupService, getDefaultDwrPath());
 	if (groups.length == 0) {
-		var container = document.getElementById(id);
+		var container = $(id);
 		if (container != null) {
-			removeChildren(container);
+			container.empty();
 			var textContainer = new Element('div');
 			textContainer.appendText(noGroupsMessage);
 			textContainer.injectInside(container);

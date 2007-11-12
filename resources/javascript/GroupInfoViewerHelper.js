@@ -1,22 +1,25 @@
 function reloadGroupProperties(instanceId, containerId, message) {
-	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+	prepareDwr(GroupService, getDefaultDwrPath());
 	
 	var strings = new Array();
 	strings.push(instanceId);
 	strings.push(containerId);
 	strings.push(message);
 	
-	//	Getting proeprties bean
+	//	Getting properties bean
 	GroupService.getBasicGroupPropertiesBean(instanceId, {
 		callback: function(bean) {
 			getBasicGroupPropertiesBeanCallback(bean, strings);
-		}
+		},
+		rpcType:dwr.engine.XMLHttpRequest
 	});
 }
 
 function getBasicGroupPropertiesBeanCallback(bean, strings) {
+	var dwrCallType = dwr.engine.XMLHttpRequest;
 	if (bean.remoteMode) {
 		prepareDwr(GroupService, bean.server + getDefaultDwrPath());
+		dwrCallType = dwr.engine.ScriptTag;
 	}
 	else {
 		prepareDwr(GroupService, getDefaultDwrPath());
@@ -26,7 +29,8 @@ function getBasicGroupPropertiesBeanCallback(bean, strings) {
 	GroupService.clearGroupInfoCache(bean, {
 		callback: function(result) {
 			clearGroupInfoCacheCallback(strings);
-		}
+		},
+		rpcType:dwrCallType
 	});
 }
 
@@ -37,12 +41,13 @@ function clearGroupInfoCacheCallback(strings) {
 	GroupService.reloadProperties(strings[0], {
 		callback: function(result) {
 			reloadGroupPropertiesCallback(result, strings[0], strings[1], strings[2]);
-		}
+		},
+		rpcType:dwr.engine.XMLHttpRequest
 	});
 }
 
 function reloadGroupPropertiesCallback(result, instanceId, containerId, message) {
-	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+	prepareDwr(GroupService, getDefaultDwrPath());
 	if (!result) {
 		return false;
 	}
@@ -58,16 +63,16 @@ function getSelectedGroups(instanceId, containerId, message) {
 
 	//	To be sure we'll call to 'local' server
 	prepareDwr(GroupService, getDefaultDwrPath());
-	
 	GroupService.getGroupPropertiesBean(instanceId, {
 		callback: function(properties) {
 			getGroupPropertiesCallback(properties, containerId);
-		}
+		},
+		rpcType:dwr.engine.XMLHttpRequest
 	});
 }
 
 function getGroupPropertiesCallback(properties, containerId) {
-	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+	prepareDwr(GroupService, getDefaultDwrPath());
 	if (properties == null) {
 		closeAllLoadingMessages();
 		return false;
@@ -80,11 +85,12 @@ function getGroupPropertiesCallback(properties, containerId) {
 			return false;
 		}
 		
-		prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+		prepareDwr(GroupService, getDefaultDwrPath());
 		GroupService.canUseRemoteServer(properties.server, {
 			callback: function(result) {
 				getGroupsData(result, properties, containerId);
-			}
+			},
+			rpcType:dwr.engine.XMLHttpRequest
 		});
 	}
 	else {
@@ -94,34 +100,80 @@ function getGroupPropertiesCallback(properties, containerId) {
 }
 
 function getGroupsData(result, properties, containerId) {
-	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+	prepareDwr(GroupService, getDefaultDwrPath());
 	if (!result) {
 		closeAllLoadingMessages();
 		return false;
 	}
 	
+	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrPath = getDefaultDwrPath();
 	if (properties.remoteMode) {
 		//	Preparing DWR for remote call
-		prepareDwr(GroupService, properties.server + getDefaultDwrPath());
+		dwrPath = properties.server + getDefaultDwrPath();	
+		dwrCallType = dwr.engine.ScriptTag;
 	}
-	else {
-		//	Preparing DWR for local call
-		prepareDwr(GroupService, getDefaultDwrPath());
-	}
-	//	Calling method to get info about groups on selected ('local' or 'remote') server
-	GroupService.getGroupsInfo(properties, {
-		callback: function(groupsInfo) {
-		 	getGroupsInfoCallback(groupsInfo, properties, containerId);
+	prepareDwr(GroupService, dwrPath);
+	
+	GroupService.addGroupIds(properties.instanceId, properties.uniqueIds, {
+		callback: function(result) {
+			//alert('added ids: ' + result);
+			if (!result) {
+				closeAllLoadingMessages();
+				return false;
+			}
+			
+			prepareDwr(GroupService, dwrPath);
+			//	Calling method to get info about groups on selected ('local' or 'remote') server
+			GroupService.getGroupsInfo(new GroupPropertiesBean(properties), {
+				callback: function(groupsInfo) {
+				 	getGroupsInfoCallback(groupsInfo, properties, containerId);
+				},
+				rpcType:dwrCallType
+			});
 		}
 	});
 }
 
+function GroupPropertiesBean(properties) {
+	this.server = properties.server;
+	this.login = properties.login;
+	this.password = properties.password;
+	this.instanceId = properties.instanceId;
+	
+	this.remoteMode = properties.remoteMode;
+	this.showLabels = properties.showLabels;
+	this.showAddress = properties.showAddress;
+	this.showDescription = properties.showDescription;
+	this.showExtraInfo = properties.showExtraInfo;
+	this.showEmails = properties.showEmails;
+	
+	this.cacheTime = properties.cacheTime;
+	
+	this.showName = properties.showName;
+	this.showHomePage = properties.showHomePage;
+	this.showShortName = properties.showShortName;
+	this.showPhone = properties.showPhone;
+	this.showFax = properties.showFax;
+	this.howEmptyFields = properties.howEmptyFields;
+}
+
 function getGroupsInfoCallback(groupsInfo, properties, containerId) {
-	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+	prepareDwr(GroupService, getDefaultDwrPath());
 	if (groupsInfo == null || containerId == null) {
 		closeAllLoadingMessages();
 		return false;
 	}
+	
+	GroupService.getLocalizationForGroupInfo({
+		callback: function(localizedText) {
+			renderGroupsInfoViewerWithAllData(groupsInfo, properties, containerId, localizedText);
+		},
+		rpcType:dwr.engine.XMLHttpRequest
+	});
+}
+
+function renderGroupsInfoViewerWithAllData(groupsInfo, properties, containerId, localizedText) {
 	var main = $(containerId);
 	if (main == null) {
 		closeAllLoadingMessages();
@@ -138,23 +190,23 @@ function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 		
 		//	Name
 		if (properties.showName) {
-			getGroupInfoEntryPO(properties.localizedText[0], groupsInfo[i].name, properties.showEmptyFields, properties.showLabels, 'groupInfoNameContainerStyleClass').injectInside(group);
+			getGroupInfoEntryPO(localizedText[0], groupsInfo[i].name, properties.showEmptyFields, properties.showLabels, 'groupInfoNameContainerStyleClass').injectInside(group);
 		}
 		//	Short name
 		if (properties.showShortName) {
-			getGroupInfoEntryPO(properties.localizedText[1], groupsInfo[i].showShortName, properties.showEmptyFields, properties.showLabels, 'groupInfoShortNameContainerStyleClass').injectInside(group);
+			getGroupInfoEntryPO(localizedText[1], groupsInfo[i].showShortName, properties.showEmptyFields, properties.showLabels, 'groupInfoShortNameContainerStyleClass').injectInside(group);
 		}
 		//	Address
 		if (properties.showAddress) {
-			getAddressContainer(groupsInfo[i].address, 'groupAddressContainer', properties.showEmptyFields, properties.showLabels, properties.localizedText[2]).injectInside(group);
+			getAddressContainer(groupsInfo[i].address, 'groupAddressContainer', properties.showEmptyFields, properties.showLabels, localizedText[2]).injectInside(group);
 		}
 		//	Phone
 		if (properties.showPhone) {
-			getGroupInfoEntryPO(properties.localizedText[3], groupsInfo[i].phoneNumber, properties.showEmptyFields, true, 'groupInfoPhoneContainerStyleClass').injectInside(group);
+			getGroupInfoEntryPO(localizedText[3], groupsInfo[i].phoneNumber, properties.showEmptyFields, true, 'groupInfoPhoneContainerStyleClass').injectInside(group);
 		}
 		//	Fax
 		if (properties.showPhone) {
-			getGroupInfoEntryPO(properties.localizedText[4], groupsInfo[i].faxNumber, properties.showEmptyFields, true, 'groupInfoFaxContainerStyleClass').injectInside(group);
+			getGroupInfoEntryPO(localizedText[4], groupsInfo[i].faxNumber, properties.showEmptyFields, true, 'groupInfoFaxContainerStyleClass').injectInside(group);
 		}
 		//	HomePage
 		if (properties.showHomePage) {
@@ -163,7 +215,7 @@ function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 				var homePageContainer = new Element('div');
 				homePageContainer.addClass('groupInfoHomepageContainerStyleClass');
 				if (properties.showLabels) {
-					homePageContainer.appendText(properties.localizedText[5]);
+					homePageContainer.appendText(localizedText[5]);
 				}
 				var link = new Element('a');
 				link.appendText(homePage);
@@ -177,18 +229,18 @@ function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 		if (properties.showEmails) {
 			var text = null;
 			if (properties.showLabels) {
-				text = properties.localizedText[6];
+				text = localizedText[6];
 			}
 			var emailsContainer = getEmailsContainer(text, groupsInfo[i].emailsAddresses, 'groupInfoEmailsContainerStyleClass');
 			emailsContainer.injectInside(group);
 		}
 		//	Description
 		if (properties.showDescription) {
-			getGroupInfoEntryPO(properties.localizedText[7], groupsInfo[i].description, properties.showEmptyFields, properties.showLabels, 'groupInfoDescriptionContainerStyleClass').injectInside(group);
+			getGroupInfoEntryPO(localizedText[7], groupsInfo[i].description, properties.showEmptyFields, properties.showLabels, 'groupInfoDescriptionContainerStyleClass').injectInside(group);
 		}
 		//	Extra info
 		if (properties.showExtraInfo) {
-			getGroupInfoEntryPO(properties.localizedText[8], groupsInfo[i].extraInfo, properties.showEmptyFields, properties.showLabels, 'groupInfoExtrainfoContainerStyleClass').injectInside(group);
+			getGroupInfoEntryPO(localizedText[8], groupsInfo[i].extraInfo, properties.showEmptyFields, properties.showLabels, 'groupInfoExtrainfoContainerStyleClass').injectInside(group);
 		}
 		
 		getDivsSpacer().injectInside(group);

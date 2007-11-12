@@ -10,55 +10,57 @@
 		
 
 	function setGroupsNodes(nodes, id, styleClassName, selectedGroups){
-		closeLoadingMessage();
+		closeAllLoadingMessages();
 
-		var rootUl = document.createElement('ul');		
-		rootUl = addTreeElements(nodes, rootUl, styleClassName, selectedGroups);
-		rootUl.setAttribute('class', 'tree_drag_drop');
-		rootUl.setAttribute('id','tree');
-		var container = document.getElementById(id);
+		var rootUl = new Element('ul');		
+		addTreeElements(nodes, rootUl, styleClassName, selectedGroups);
+		rootUl.addClass('tree_drag_drop');
+		rootUl.setProperty('id', 'tree');
+		
+		var container = $(id);
 		if (container != null) {
-			removeChildren(container);
-			container.appendChild(rootUl);
+			container.empty();
+			rootUl.injectInside(container);
 		}
 		
-		treeObj = new GroupTree();
-		treeObj.setTreeId('tree');
-		treeObj.initTree();
-		treeObj.expandAll();
-	}			
+		//var treeObj = new GroupTree();
+		//treeObj.setTreeId('tree');
+		//treeObj.initTree();
+		//treeObj.expandAll();
+	}
+	
 	function addTreeElements(nodes, rootUl, styleClassName, selectedGroups) {
 		if (nodes == null) {
-			return;
+			return false;
 		}
 		
 		for (var i = 0; i < nodes.length; i++) {
-			var liElement = document.createElement('li');
-			liElement.setAttribute('id', nodes[i].uniqueId + 'li');
-			var groupName = document.createElement('span');
-			groupName.setAttribute('id', nodes[i].uniqueId);
+			var liElement = new Element('li');
+			liElement.setProperty('id', nodes[i].uniqueId + 'li');
+			
+			var groupName = new Element('span');
+			groupName.setProperty('id', nodes[i].uniqueId);
 			if (styleClassName != null) {
-				groupName.setAttribute('class', styleClassName);
+				groupName.addClass(styleClassName);
 			}
+			var fontVariant = 'normal';
 			if (isGroupSelected(selectedGroups, nodes[i].uniqueId)) {
-				groupName.style.fontWeight = 'bold';
+				fontVariant = 'bold';
 			}
-			else {
-				groupName.style.fontWeight = 'normal';
-			}
-			var text = document.createTextNode(nodes[i].name);
-			groupName.appendChild(text);
-			liElement.appendChild(groupName);
+			groupName.setStyle('font-weight', fontVariant);
+			groupName.appendText(nodes[i].name);
+			groupName.injectInside(liElement);
 			
 			if (nodes[i].hasChildren == true) {
-				var ulElement = document.createElement('ul');
-				ulElement = addTreeElements(nodes[i].children, ulElement, styleClassName, selectedGroups);
-				ulElement.setAttribute('class', 'tree_drag_drop');
-				liElement.appendChild(ulElement);
+				var ulElement = new Element('ul');
+				addTreeElements(nodes[i].children, ulElement, styleClassName, selectedGroups);
+				ulElement.addClass('tree_drag_drop');
+				ulElement.injectInside(liElement);
 			}
-			rootUl.appendChild(liElement);
+			liElement.injectInside(rootUl);
 		}
-		return rootUl;
+		
+		return true;
 	}
 	
 	function isGroupSelected(selectedGroups, id) {
@@ -73,8 +75,7 @@
 		return false;
 	}
 
-	function GroupTree()
-	{
+	function GroupTree() {
 		var thisTree = false;
 		var idOfTree;
 		
@@ -114,13 +115,8 @@
 		this.sourceTreee = true;
 		this.actionOnMouseUp = 'empty';
 		
-//		this.imageFolder = '/idegaweb/bundles/com.idega.content.bundle/resources/images/';
-//		this.iconFolder = '/idegaweb/bundles/com.idega.content.bundle/resources/images/pageIcons/';
 		this.imageFolder = '/idegaweb/bundles/com.idega.user.bundle/resources/images/';
 		this.iconFolder = '/idegaweb/bundles/com.idega.user.bundle/resources/images/';
-//		this.imageFolder = '/idegaweb/bundles/com.idega.block.cal.bundle/resources/';
-//		this.iconFolder = '/idegaweb/bundles/com.idega.block.cal.bundle/resources/';
-//		this.folderImage = 'text.png';
 		this.folderImage = 'general_node_closed.gif';
 		this.plusImage = 'nav-plus.gif';
 		this.minusImage = 'nav-minus.gif';
@@ -156,7 +152,6 @@
 	
 	/* GroupTree class */
 	GroupTree.prototype = {
-		
 		Get_Cookie : function(name) { 
 		   var start = document.cookie.indexOf(name+"="); 
 		   var len = start+name.length+1; 
@@ -331,11 +326,9 @@
 			return false;
 		}
 		,		
-		initTree : function()
-		{
+		initTree : function() {
 			JSTreeObj = this;
-//			ThemesEngine.getPathToImageFolder(JSTreeObj.folderPath);
-//			JSTreeObj.createDropIndicator();
+			
 			document.documentElement.onselectstart = JSTreeObj.cancelSelectionEvent;
 			document.documentElement.ondragstart = JSTreeObj.cancelEvent;
 			var nodeId = 0;
@@ -371,7 +364,6 @@
 				else {
 					var pageType = menuItems[no].getAttribute('pagetype');
 					if (pageType)
-//						iconfile = this.imageFolder + menuItems[no].getAttribute('pagetype') +'.png';
 						iconfile = JSTreeObj.iconFolder + menuItems[no].getAttribute('pagetype') +'.png';
 					else
 						iconfile = JSTreeObj.iconFolder + this.folderImage;
@@ -406,8 +398,6 @@
 				menuItems[no].insertBefore(input,aTag);
 	
 				input.id = menuItems[no].id + 'input';
-	
-//				if(!noDrag)
 
 				aTag.onclick = JSTreeObj.copyDragableNode;
 
@@ -429,8 +419,7 @@
 				if(menuItems[no].className){
 					folderImg.src = this.imageFolder + menuItems[no].className;
 				}else{
-					folderImg.src = this.imageFolder + this.folderImage;					
-//					folderImg.src = this.imageFolder + this.iconFolder;					
+					folderImg.src = this.imageFolder + this.folderImage;
 				}
 				if(iconfile)
 					folderImg.src = iconfile;

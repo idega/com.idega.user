@@ -12,13 +12,16 @@ function reloadGroupMemberProperties(instanceId, containerId, message) {
 	GroupService.getBasicUserPropertiesBean(instanceId, {
 		callback: function(bean) {
 			getBasicUserPropertiesBeanCallback(bean, strings);
-		}
+		},
+		rpcType:dwr.engine.XMLHttpRequest
 	});
 }
 
 function getBasicUserPropertiesBeanCallback(bean, strings) {
+	var dwrCallType = dwr.engine.XMLHttpRequest;
 	if (bean.remoteMode) {
 		prepareDwr(GroupService, bean.server + getDefaultDwrPath());
+		dwrCallType = dwr.engine.ScriptTag;
 	}
 	else {
 		prepareDwr(GroupService, getDefaultDwrPath());
@@ -28,7 +31,8 @@ function getBasicUserPropertiesBeanCallback(bean, strings) {
 	GroupService.clearUsersInfoCache(bean, {
 		callback: function(result) {
 			clearUsersInfoCacheCallback(strings);
-		}
+		},
+		rpcType:dwrCallType
 	});
 }
 
@@ -39,15 +43,17 @@ function clearUsersInfoCacheCallback(strings) {
 	GroupService.reloadProperties(strings[0], {
 		callback: function(result) {
 			reloadGroupMemberPropertiesCallback(result, strings[0], strings[1], strings[2]);
-		}
+		},
+		rpcType:dwr.engine.XMLHttpRequest
 	});
 }
 
 function reloadGroupMemberPropertiesCallback(result, instanceId, containerId, message) {
-	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+	prepareDwr(GroupService, getDefaultDwrPath());
 	if (!result) {
 		return false;
 	}
+	
 	getSelectedUsers(instanceId, containerId, message);
 }
 
@@ -58,40 +64,35 @@ function getSelectedUsers(instanceId, containerId, message) {
 
 	showLoadingMessage(message);
 
-	//	To be sure we'll call to 'local' server
 	prepareDwr(GroupService, getDefaultDwrPath());
-	
 	GroupService.getUserStatusLocalization({
 		callback: function(list) {
 			getUserStatusLocalizationCallback(list, instanceId, containerId);
-		}
+		},
+		rpcType:dwr.engine.XMLHttpRequest
 	});
 }
 
 function getUserStatusLocalizationCallback(list, instanceId, containerId) {
-	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
-
 	LOCALIZATIONS = list;
-	
-	//	To be sure we'll call to 'local' server
+
 	prepareDwr(GroupService, getDefaultDwrPath());
-	
 	GroupService.getUserPropertiesBean(instanceId, {
 		callback: function(properties) {
 			getUserPropertiesCallback(properties, containerId);
-		}
+		},
+		rpcType:dwr.engine.XMLHttpRequest
 	});
 }
 
 function getUserPropertiesCallback(properties, containerId) {
-	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+	prepareDwr(GroupService, getDefaultDwrPath());
 	if (properties == null) {
 		closeAllLoadingMessages();
 		return false;
 	}
-	
+
 	if (properties.remoteMode) {
-		//	To be sure we'll call to 'local' server
 		prepareDwr(GroupService, getDefaultDwrPath());
 		
 		//	Remote mode
@@ -103,7 +104,8 @@ function getUserPropertiesCallback(properties, containerId) {
 		GroupService.canUseRemoteServer(properties.server, {
 			callback: function(result) {
 				getGroupsUsersData(result, properties, containerId);
-			}
+			},
+			rpcType:dwr.engine.XMLHttpRequest
 		});
 	}
 	else {
@@ -113,34 +115,48 @@ function getUserPropertiesCallback(properties, containerId) {
 }
 
 function getGroupsUsersData(result, properties, containerId) {
-	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+	prepareDwr(GroupService, getDefaultDwrPath());
 	if (!result) {
 		closeAllLoadingMessages();
 		return false;
 	}
 	
+	var dwrCallType = dwr.engine.XMLHttpRequest;
 	if (properties.remoteMode) {
 		//	Preparing DWR for remote call
 		prepareDwr(GroupService, properties.server + getDefaultDwrPath());
+		dwrCallType = dwr.engine.ScriptTag;
 	}
 	else {
 		//	Preparing DWR for local call
 		prepareDwr(GroupService, getDefaultDwrPath());
 	}
+	
 	GroupService.getUsersInfo(properties, {
 		callback: function(usersInfo) {
 		 	getUsersInfoCallback(usersInfo, properties, containerId);
-		}
+		},
+		rpcType:dwrCallType
 	});
 }
 
 function getUsersInfoCallback(members, properties, containerId) {
-	prepareDwr(GroupService, getDefaultDwrPath());	//	Restoring DWR
+	//alert('got users: ' + members);
+	prepareDwr(GroupService, getDefaultDwrPath());
 	if (members == null || containerId == null) {
 		closeAllLoadingMessages();
 		return false;
 	}
+
+	GroupService.getLocalizationForGroupUsersInfo({
+		callback: function(localizedText) {
+			renderGroupUserInfoViewerWithAllData(members, properties, containerId, localizedText)
+		},
+		rpcType:dwr.engine.XMLHttpRequest
+	});
+}
 	
+function renderGroupUserInfoViewerWithAllData(members, properties, containerId, localizedText) {
 	var main = $(containerId);
 	if (main == null) {
 		closeAllLoadingMessages();
@@ -196,7 +212,7 @@ function getUsersInfoCallback(members, properties, containerId) {
 				
 		//	Status
 		if (properties.showStatus) {
-			getGroupInfoEntryPO(properties.localizedText[11], getLocalizationForUserStatus(members[j].status), true, properties.showLabels, 'groupMemberStatusContainerStyleClass').injectInside(infoContainer);
+			getGroupInfoEntryPO(localizedText[11], getLocalizationForUserStatus(members[j].status), true, properties.showLabels, 'groupMemberStatusContainerStyleClass').injectInside(infoContainer);
 		
 			if (members[j].status != null && members[j].status != '') {
 				//	Empty line
@@ -208,15 +224,15 @@ function getUsersInfoCallback(members, properties, containerId) {
 		}
 		
 		//	Name and age
-		getUserNameAndAgeContainer(members[j].name, members[j].age, properties).injectInside(infoContainer);
+		getUserNameAndAgeContainer(members[j].name, members[j].age, properties, localizedText).injectInside(infoContainer);
 		
 		// Address
 		if (properties.showAddress) {
-			getAddressContainer(members[j].address, 'groupMemberAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[12]).injectInside(infoContainer);
+			getAddressContainer(members[j].address, 'groupMemberAddressContainerStyleClass', false, properties.showLabels, localizedText[12]).injectInside(infoContainer);
 		}
 				
 		//	Phones and mails
-		getPhonesAndEmailsContainer(members[j].homePhone, members[j].workPhone, members[j].mobilePhone, members[j].emailsAddresses, 'groupMemberPhonesAndMailsContainerStyleClass', properties).injectInside(infoContainer);
+		getPhonesAndEmailsContainer(members[j].homePhone, members[j].workPhone, members[j].mobilePhone, members[j].emailsAddresses, 'groupMemberPhonesAndMailsContainerStyleClass', properties, localizedText).injectInside(infoContainer);
 		getDivsSpacer().injectInside(infoContainer);
 				
 		// User info 1
@@ -236,58 +252,58 @@ function getUsersInfoCallback(members, properties, containerId) {
 				
 		//	Company address
 		if (properties.showCompanyAddress) {
-			getAddressContainer(members[j].companyAddress, 'groupMemberCompanyAddressContainerStyleClass', false, properties.showLabels, properties.localizedText[18]).injectInside(infoContainer);
+			getAddressContainer(members[j].companyAddress, 'groupMemberCompanyAddressContainerStyleClass', false, properties.showLabels, localizedText[18]).injectInside(infoContainer);
 		}
 				
 		//	Group name
 		if (properties.showGroupName) {
-			getGroupInfoEntryPO(properties.localizedText[22], members[j].groupName, false, properties.showLabels, 'groupMemberGroupContainerStyleClass').injectInside(infoContainer);
+			getGroupInfoEntryPO(localizedText[22], members[j].groupName, false, properties.showLabels, 'groupMemberGroupContainerStyleClass').injectInside(infoContainer);
 		}
 				
 		//	Date of birth
 		if (properties.showDateOfBirth) {
-			getGroupInfoEntryPO(properties.localizedText[19], members[j].dateOfBirth, false, properties.showLabels, 'groupMemberDateOfBirthContainerStyleClass').injectInside(infoContainer);
+			getGroupInfoEntryPO(localizedText[19], members[j].dateOfBirth, false, properties.showLabels, 'groupMemberDateOfBirthContainerStyleClass').injectInside(infoContainer);
 		}
 				
 		//	Job
 		if (properties.showJob) {
-			getGroupInfoEntryPO(properties.localizedText[20], members[j].job, false, properties.showLabels, 'groupMemberJobContainerStyleClass').injectInside(infoContainer);
+			getGroupInfoEntryPO(localizedText[20], members[j].job, false, properties.showLabels, 'groupMemberJobContainerStyleClass').injectInside(infoContainer);
 		}
 				
 		//	Workplace
 		if (properties.showWorkplace) {
-			getGroupInfoEntryPO(properties.localizedText[21], members[j].workPlace, false, properties.showLabels, 'groupMemberWorkplaceContainerStyleClass').injectInside(infoContainer);
+			getGroupInfoEntryPO(localizedText[21], members[j].workPlace, false, properties.showLabels, 'groupMemberWorkplaceContainerStyleClass').injectInside(infoContainer);
 		}
 				
 		//	Extra info
 		if (properties.showExtraInfo) {
-			getGroupInfoEntryPO(properties.localizedText[16], members[j].extraInfo, false, properties.showLabels, 'groupMemberExtraInfoContainerStyleClass').injectInside(infoContainer);
+			getGroupInfoEntryPO(localizedText[16], members[j].extraInfo, false, properties.showLabels, 'groupMemberExtraInfoContainerStyleClass').injectInside(infoContainer);
 		}
 				
 		//	Description
 		if (properties.showDescription) {
-			getGroupInfoEntryPO(properties.localizedText[17], members[j].description, false, properties.showLabels, 'groupMemberDescriptionContainerStyleClass').injectInside(infoContainer);
+			getGroupInfoEntryPO(localizedText[17], members[j].description, false, properties.showLabels, 'groupMemberDescriptionContainerStyleClass').injectInside(infoContainer);
 		}
 				
 		/*//	Title
 		if (properties.showTitle) {
-			getGroupInfoEntryPO(properties.localizedText[1], members[j].title, false, properties.showLabels, 'groupMemberTitleContainerStyleClass').injectInside(infoContainer);
+			getGroupInfoEntryPO(localizedText[1], members[j].title, false, properties.showLabels, 'groupMemberTitleContainerStyleClass').injectInside(infoContainer);
 		}
 		//	Education
 		if (properties.showEducation) {
-			getGroupInfoEntryPO(properties.localizedText[7], members[j].education, false, properties.showLabels, 'groupMemberEducationContainerStyleClass').injectInside(infoContainer);
+			getGroupInfoEntryPO(localizedText[7], members[j].education, false, properties.showLabels, 'groupMemberEducationContainerStyleClass').injectInside(infoContainer);
 		}
 		//	School
 		if (properties.showSchool) {
-			getGroupInfoEntryPO(properties.localizedText[8], members[j].school, false, properties.showLabels, 'groupMemberSchoolContainerStyleClass').injectInside(infoContainer);
+			getGroupInfoEntryPO(localizedText[8], members[j].school, false, properties.showLabels, 'groupMemberSchoolContainerStyleClass').injectInside(infoContainer);
 		}
 		//	Area
 		if (properties.showArea) {
-			getGroupInfoEntryPO(properties.localizedText[9], members[j].area, false, properties.showLabels, 'groupMemberAreaContainerStyleClass').injectInside(infoContainer);
+			getGroupInfoEntryPO(localizedText[9], members[j].area, false, properties.showLabels, 'groupMemberAreaContainerStyleClass').injectInside(infoContainer);
 		}
 		//	Began work
 		if (properties.showBeganWork) {
-			getGroupInfoEntryPO(properties.localizedText[10], members[j].beganWork, false, properties.showLabels, 'groupMemberBeganworkContainerStyleClass').injectInside(infoContainer);
+			getGroupInfoEntryPO(localizedText[10], members[j].beganWork, false, properties.showLabels, 'groupMemberBeganworkContainerStyleClass').injectInside(infoContainer);
 		}*/
 		
 		infoContainer.injectInside(user);
@@ -301,13 +317,13 @@ function getUsersInfoCallback(members, properties, containerId) {
 	closeAllLoadingMessages();	
 }
 
-function getUserNameAndAgeContainer(name, age, properties) {
+function getUserNameAndAgeContainer(name, age, properties, localizedText) {
 	var container = new Element('div');
 	container.addClass('groupMemberNameAndAgeContainerStyleClass');
 	
 	//	Name
 	if (properties.showLabels) {
-		container.appendText(properties.localizedText[0]);
+		container.appendText(localizedText[0]);
 	}
 	container.appendText(name);
 	
@@ -315,7 +331,7 @@ function getUserNameAndAgeContainer(name, age, properties) {
 	if (age != null && age != '') {
 		if (properties.showAge) {
 			if (properties.showLabels) {
-				container.appendText(' ' + properties.localizedText[2] + age);
+				container.appendText(' ' + localizedText[2] + age);
 			}
 			else {
 				container.appendText(' (' + age + ')');
@@ -326,7 +342,7 @@ function getUserNameAndAgeContainer(name, age, properties) {
 	return container;
 }
 
-function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, styleClass, properties) {
+function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, styleClass, properties, localizedText) {
 	var container = new Element('div');
 	if (styleClass != null) {
 		container.addClass(styleClass);
@@ -339,7 +355,7 @@ function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, 
 		if (homePhone != null && homePhone != '') {
 			var homePhoneContainer = new Element('div');
 			homePhoneContainer.setStyle('float', 'left');
-			homePhoneContainer.appendText(properties.localizedText[13] + '. ' + homePhone);
+			homePhoneContainer.appendText(localizedText[13] + '. ' + homePhone);
 			homePhoneContainer.injectInside(container);
 			addedAnything = true;
 		}
@@ -353,7 +369,7 @@ function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, 
 			if (addedAnything) {
 				workPhoneContainer.appendText('\u00a0/\u00a0');
 			}
-			workPhoneContainer.appendText(properties.localizedText[14] + '. ' + workPhone);
+			workPhoneContainer.appendText(localizedText[14] + '. ' + workPhone);
 			workPhoneContainer.injectInside(container);
 			addedAnything = true;
 		}
@@ -367,7 +383,7 @@ function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, 
 			if (addedAnything) {
 				mobilePhoneContainer.appendText('\u00a0/\u00a0');
 			}
-			mobilePhoneContainer.appendText(properties.localizedText[15] + '. ' +  mobilePhone);
+			mobilePhoneContainer.appendText(localizedText[15] + '. ' +  mobilePhone);
 			mobilePhoneContainer.injectInside(container);
 			addedAnything = true;
 		}
