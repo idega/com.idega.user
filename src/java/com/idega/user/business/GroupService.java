@@ -99,5 +99,7 @@ public interface GroupService extends IBOSession {
 	 */
 	public List<String> getLocalizationForGroupUsersInfo() throws RemoteException;
 	
-	public boolean addGroupIds(String instanceId, List<String> ids);
+	public boolean addGroupsIds(String instanceId, List<String> ids);
+	
+	public boolean addUsersIds(String instanceId, List<String> ids);
 }

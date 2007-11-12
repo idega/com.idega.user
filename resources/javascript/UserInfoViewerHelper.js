@@ -8,7 +8,7 @@ function reloadGroupMemberProperties(instanceId, containerId, message) {
 	strings.push(containerId);
 	strings.push(message);
 	
-	//	Getting proeprties bean
+	//	Getting properties bean
 	GroupService.getBasicUserPropertiesBean(instanceId, {
 		callback: function(bean) {
 			getBasicUserPropertiesBeanCallback(bean, strings);
@@ -122,26 +122,75 @@ function getGroupsUsersData(result, properties, containerId) {
 	}
 	
 	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrPath = getDefaultDwrPath();
 	if (properties.remoteMode) {
 		//	Preparing DWR for remote call
-		prepareDwr(GroupService, properties.server + getDefaultDwrPath());
+		dwrPath = properties.server + getDefaultDwrPath();
 		dwrCallType = dwr.engine.ScriptTag;
 	}
-	else {
-		//	Preparing DWR for local call
-		prepareDwr(GroupService, getDefaultDwrPath());
-	}
+	prepareDwr(GroupService, dwrPath);
 	
-	GroupService.getUsersInfo(properties, {
-		callback: function(usersInfo) {
-		 	getUsersInfoCallback(usersInfo, properties, containerId);
+	GroupService.addUsersIds(properties.instanceId, properties.uniqueIds, {
+		callback:function(result) {
+			if (!result) {
+				closeAllLoadingMessages();
+				return false;
+			}
+			
+			GroupService.getUsersInfo(new UserPropertiesBean(properties), {
+				callback: function(usersInfo) {
+				 	getUsersInfoCallback(usersInfo, properties, containerId);
+				},
+				rpcType:dwrCallType
+			});
 		},
 		rpcType:dwrCallType
 	});
 }
 
+function UserPropertiesBean(properties) {
+	this.server = properties.server;
+	this.login = properties.login;
+	this.password = properties.password;
+	this.instanceId = properties.instanceId;
+	
+	this.remoteMode = properties.remoteMode;
+	this.showLabels = properties.showLabels;
+	this.showAddress = properties.showAddress;
+	this.showDescription = properties.showDescription;
+	this.showExtraInfo = properties.showExtraInfo;
+	this.showEmails = properties.showEmails;
+	
+	this.cacheTime = properties.cacheTime;
+	
+	this.showGroupName = properties.showGroupName;
+	this.showTitle = properties.showTitle;
+	this.showAge = properties.showAge;
+	this.showWorkPhone = properties.showWorkPhone;
+	this.showHomePhone = properties.showHomePhone;
+	this.showMobilePhone = properties.showMobilePhone;
+	this.showEducation = properties.showEducation;
+	this.showSchool = properties.showSchool;
+	this.showArea = properties.showArea;
+	this.showBeganWork = properties.showBeganWork;
+	this.showImage = properties.showImage;
+	this.showCompanyAddress = properties.showCompanyAddress;
+	this.showDateOfBirth = properties.showDateOfBirth;
+	this.showJob = properties.showJob;
+	this.showWorkplace = properties.showWorkplace;
+	this.showStatus = properties.showStatus;
+	this.addReflection = properties.addReflection;
+	this.showUserInfoOne = properties.showUserInfoOne;
+	this.showUserInfoTwo = properties.showUserInfoTwo;
+	this.showUserInfoThree = properties.showUserInfoThree;
+	
+	this.imageWidth = properties.imageWidth;
+	this.imageHeight = properties.imageHeight;
+	
+	this.defaultPhoto = properties.defaultPhoto;
+}
+
 function getUsersInfoCallback(members, properties, containerId) {
-	//alert('got users: ' + members);
 	prepareDwr(GroupService, getDefaultDwrPath());
 	if (members == null || containerId == null) {
 		closeAllLoadingMessages();

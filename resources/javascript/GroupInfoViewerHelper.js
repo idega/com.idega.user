@@ -115,7 +115,7 @@ function getGroupsData(result, properties, containerId) {
 	}
 	prepareDwr(GroupService, dwrPath);
 	
-	GroupService.addGroupIds(properties.instanceId, properties.uniqueIds, {
+	GroupService.addGroupsIds(properties.instanceId, properties.uniqueIds, {
 		callback: function(result) {
 			if (!result) {
 				closeAllLoadingMessages();

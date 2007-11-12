@@ -190,7 +190,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return null;
 		}
 		
-		List<String> uniqueIds = getGroupsIds().get(bean.getInstanceId());
+		List<String> uniqueIds = getUniqueIds(true).get(bean.getInstanceId());
 		if (uniqueIds == null) {
 			return null;
 		}
@@ -340,9 +340,12 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		if (bean == null) {
 			return null;
 		}
-		if (bean.getUniqueIds() == null) {
+		
+		List<String> uniqueIds = getUniqueIds(false).get(bean.getInstanceId());
+		if (uniqueIds == null) {
 			return null;
 		}
+		
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
@@ -361,7 +364,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			}
 		}
 		
-		List<GroupMemberDataBean> info = getUserBusiness(iwc).getGroupsMembersData(bean);
+		List<GroupMemberDataBean> info = getUserBusiness(iwc).getGroupsMembersData(bean, uniqueIds);
 		if (useCache && info != null) {
 			addUsersInfoToCache(iwc, bean.getInstanceId(), cacheTime.intValue(), info);
 		}
@@ -752,13 +755,28 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return localizedText;
 	}
 	
-	public boolean addGroupIds(String instanceId, List<String> ids) {
+	public boolean addGroupsIds(String instanceId, List<String> ids) {
 		if (instanceId == null || ids == null) {
 			return false;
 		}
 		
 		try {
-			getGroupsIds().put(instanceId, ids);
+			getUniqueIds(true).put(instanceId, ids);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean addUsersIds(String instanceId, List<String> ids) {
+		if (instanceId == null || ids == null) {
+			return false;
+		}
+		
+		try {
+			getUniqueIds(false).put(instanceId, ids);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -768,10 +786,18 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Map<String, List<String>> getGroupsIds() throws NullPointerException {
+	private Map<String, List<String>> getUniqueIds(boolean group) throws NullPointerException {
 		IWCacheManager2 cache = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
 		
+		int caheSize = 1000;
+		boolean overFlowDisk = true;
+		boolean eternal = false;
 		long cacheTime = 20 * 60;
-		return cache.getCache("groupInfoViewersUniqueIdsCache", 1000, true, false, cacheTime, cacheTime);
+		String cacheName = "groupsUsersInfoViewersUniqueIdsCache";
+		if (group) {
+			cacheName = "groupsInfoViewersUniqueIdsCache";
+		}
+		
+		return cache.getCache(cacheName, caheSize, overFlowDisk, eternal, cacheTime, cacheTime);
 	}
 }
