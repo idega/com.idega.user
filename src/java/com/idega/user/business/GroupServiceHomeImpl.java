@@ -8,7 +8,7 @@ public class GroupServiceHomeImpl extends IBOHomeImpl implements GroupServiceHom
 
 	private static final long serialVersionUID = -7275929807687783008L;
 
-	public Class getBeanInterfaceClass() {
+	public Class<GroupService> getBeanInterfaceClass() {
 		return GroupService.class;
 	}
 

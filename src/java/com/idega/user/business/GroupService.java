@@ -1,19 +1,18 @@
 package com.idega.user.business;
 
-import com.idega.builder.bean.AdvancedProperty;
-import com.idega.business.IBOService;
-import java.util.List;
-import org.jdom.Document;
-
-import java.rmi.RemoteException;
-
 import com.idega.user.bean.GroupDataBean;
 import com.idega.user.bean.GroupMemberDataBean;
 import com.idega.user.bean.GroupMembersDataBean;
 import com.idega.user.bean.GroupPropertiesBean;
 import com.idega.user.bean.UserPropertiesBean;
+import java.util.List;
+import org.jdom.Document;
 
-public interface GroupService extends IBOService {
+import com.idega.builder.bean.AdvancedProperty;
+import com.idega.business.IBOSession;
+import java.rmi.RemoteException;
+
+public interface GroupService extends IBOSession {
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getTopGroupNodes
 	 */
@@ -45,6 +44,11 @@ public interface GroupService extends IBOService {
 	public List<GroupDataBean> getGroupsInfo(GroupPropertiesBean bean) throws RemoteException;
 
 	/**
+	 * @see com.idega.user.business.GroupServiceBean#reloadProperties
+	 */
+	public boolean reloadProperties(String instanceId) throws RemoteException;
+
+	/**
 	 * @see com.idega.user.business.GroupServiceBean#getGroupInfoPresentationObject
 	 */
 	public Document getGroupInfoPresentationObject(List<GroupDataBean> groupsData, GroupPropertiesBean bean) throws RemoteException;
@@ -58,34 +62,41 @@ public interface GroupService extends IBOService {
 	 * @see com.idega.user.business.GroupServiceBean#getGroupsMembersPresentationObject
 	 */
 	public Document getGroupsMembersPresentationObject(List<GroupMembersDataBean> membersData, UserPropertiesBean bean) throws RemoteException;
-	
-	/**
-	 * @see com.idega.user.business.GroupServiceBean#reloadProperties
-	 */
-	public boolean reloadProperties(String instanceId);
-	
+
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getUserStatusLocalization
 	 */
-	public List<AdvancedProperty> getUserStatusLocalization();
-	
-	/**
-	 * @see com.idega.user.business.GroupServiceBean#getBasicUserPropertiesBean
-	 */
-	public UserPropertiesBean getBasicUserPropertiesBean(String instanceId);
-	
+	public List<AdvancedProperty> getUserStatusLocalization() throws RemoteException;
+
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getBasicGroupPropertiesBean
 	 */
-	public GroupPropertiesBean getBasicGroupPropertiesBean(String instanceId);
-	
+	public GroupPropertiesBean getBasicGroupPropertiesBean(String instanceId) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#getBasicUserPropertiesBean
+	 */
+	public UserPropertiesBean getBasicUserPropertiesBean(String instanceId) throws RemoteException;
+
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#clearGroupInfoCache
 	 */
-	public boolean clearGroupInfoCache(GroupPropertiesBean bean);
-	
+	public boolean clearGroupInfoCache(GroupPropertiesBean bean) throws RemoteException;
+
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#clearUsersInfoCache
 	 */
-	public boolean clearUsersInfoCache(UserPropertiesBean bean);
+	public boolean clearUsersInfoCache(UserPropertiesBean bean) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#getLocalizationForGroupInfo
+	 */
+	public List<String> getLocalizationForGroupInfo() throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#getLocalizationForGroupUsersInfo
+	 */
+	public List<String> getLocalizationForGroupUsersInfo() throws RemoteException;
+	
+	public boolean addGroupIds(String instanceId, List<String> ids);
 }

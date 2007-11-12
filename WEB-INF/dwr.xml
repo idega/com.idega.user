@@ -7,7 +7,7 @@
 			<param name="class" value="com.idega.user.business.search.UserSearchEngine" />
 		</create>
 		
-		<create creator="ibo" javascript="GroupService" scope="application">
+		<create creator="ibo" javascript="GroupService" scope="session">
 			<param name="class" value="com.idega.user.business.GroupService" />
 		</create>
 		

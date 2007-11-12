@@ -3,6 +3,7 @@ package com.idega.user.business;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import com.idega.builder.bean.AdvancedProperty;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
-import com.idega.business.IBOServiceBean;
+import com.idega.business.IBOSessionBean;
 import com.idega.business.chooser.helper.GroupsChooserHelper;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.data.LoginTable;
@@ -38,7 +39,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.webface.WFUtil;
 
-public class GroupServiceBean extends IBOServiceBean implements GroupService {
+public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	
 	private static final long serialVersionUID = 1649699626972508631L;
 	
@@ -49,6 +50,8 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	
 	private GroupBusiness groupBusiness = null;
 	private UserBusiness userBusiness = null;
+	
+	private Map<String, List<String>> groupIds = new HashMap<String, List<String>>();
 
 	/**
 	 * Returns tree of Groups
@@ -103,27 +106,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	 * Returns user's parameters for getting info about Groups
 	 */
 	public GroupPropertiesBean getGroupPropertiesBean(String instanceId) {
-		GroupPropertiesBean properties = getBasicGroupPropertiesBean(instanceId);
-		if (properties == null) {
-			return null;
-		}
-		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
-			return null;
-		}
-		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
-		List<String> localizedText = new ArrayList<String>();
-		localizedText.add(iwrb.getLocalizedString("group_name", "Name: "));					//	0
-		localizedText.add(iwrb.getLocalizedString("short_name", "Short name: "));			//	1
-		localizedText.add(iwrb.getLocalizedString("group_address", "Address: "));			//	2
-		localizedText.add(iwrb.getLocalizedString("group_phone", "Phone: "));				//	3
-		localizedText.add(iwrb.getLocalizedString("group_fax", "Fax: "));					//	4
-		localizedText.add(iwrb.getLocalizedString("group_homepage", "Homepage: "));			//	5
-		localizedText.add(iwrb.getLocalizedString("group_email", "Email: "));				//	6
-		localizedText.add(iwrb.getLocalizedString("group_description", "Description: "));	//	7
-		localizedText.add(iwrb.getLocalizedString("goup_extra_info", "Info: "));			//	8
-		properties.setLocalizedText(localizedText);
-		return properties;
+		return getBasicGroupPropertiesBean(instanceId);
 	}
 	
 	/**
@@ -132,44 +115,10 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	 * @return
 	 */
 	public UserPropertiesBean getUserPropertiesBean(String instanceId) {
-		UserPropertiesBean properties = getBasicUserPropertiesBean(instanceId);
-		if (properties == null) {
-			return null;
-		}
-		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
-			return null;
-		}
-		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
-		List<String> localizedText = new ArrayList<String>();
-		localizedText.add(iwrb.getLocalizedString("user_name", "Name: "));							//	0
-		localizedText.add(iwrb.getLocalizedString("user_title", "Title: "));						//	1
-		localizedText.add(iwrb.getLocalizedString("user_age", "Age: "));							//	2
-		localizedText.add(iwrb.getLocalizedString("user_workphone", "Workphone: "));				//	3
-		localizedText.add(iwrb.getLocalizedString("user_homephone", "Homephone: "));				//	4
-		localizedText.add(iwrb.getLocalizedString("user_mobilephone", "Mobilephone: "));			//	5
-		localizedText.add(iwrb.getLocalizedString("group_email", "Email: "));						//	6
-		localizedText.add(iwrb.getLocalizedString("user_education", "Education: "));				//	7
-		localizedText.add(iwrb.getLocalizedString("user_school", "School: "));						//	8
-		localizedText.add(iwrb.getLocalizedString("user_area", "Area: "));							//	9
-		localizedText.add(iwrb.getLocalizedString("user_began_work", "Began work: "));				//	10
-		localizedText.add(iwrb.getLocalizedString("user_status", "Status: "));						//	11
-		localizedText.add(iwrb.getLocalizedString("user_address", "Address: "));					//	12
-		localizedText.add(iwrb.getLocalizedString("home", "hm"));									//	13
-		localizedText.add(iwrb.getLocalizedString("work", "wrk"));									//	14
-		localizedText.add(iwrb.getLocalizedString("mobile", "mbl"));								//	15
-		localizedText.add(iwrb.getLocalizedString("user_extra_info", "Extra info: "));				//	16
-		localizedText.add(iwrb.getLocalizedString("user_description", "Description: "));			//	17
-		localizedText.add(iwrb.getLocalizedString("user_company_address", "Company's address: "));	//	18
-		localizedText.add(iwrb.getLocalizedString("user_date_of_birth", "Date of birth: "));		//	19
-		localizedText.add(iwrb.getLocalizedString("user_job", "Job: "));							//	20
-		localizedText.add(iwrb.getLocalizedString("user_workplace", "Workplace: "));				//	21
-		localizedText.add(iwrb.getLocalizedString("user_group", "Group: "));						//	22
-		properties.setLocalizedText(localizedText);
-		
-		return properties;
+		return getBasicUserPropertiesBean(instanceId);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Map getCache(IWContext iwc, String cacheKey, int minutes) {
 		IWCacheManager2 cache = IWCacheManager2.getInstance(iwc.getIWMainApplication());
 		if (cache == null) {
@@ -180,6 +129,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		return cache.getCache(cacheKey, 1000, true, false, time, time);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<GroupDataBean> getGroupInfoFromCache(IWContext iwc, String id, int minutes) {
 		Map cache = getCache(iwc, UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, minutes);
 		if (cache == null) {
@@ -233,11 +183,19 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	 * Returns info about selected groups
 	 */
 	public List<GroupDataBean> getGroupsInfo(GroupPropertiesBean bean) {
+		//System.out.println("Bean: " + bean);
 		//	Checking if valid parameters
 		if (bean == null) {
 			return null;
 		}
-		if (bean.getUniqueIds() == null) {
+		
+		if (bean.getInstanceId() == null) {
+			return null;
+		}
+		
+		List<String> uniqueIds = groupIds.get(bean.getInstanceId());
+		//System.out.println("Ids: " + uniqueIds);
+		if (uniqueIds == null) {
 			return null;
 		}
 		
@@ -259,7 +217,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			}
 		}
 		
-		List<GroupDataBean> info = getGroupBusiness(iwc).getGroupsData(bean);
+		List<GroupDataBean> info = getGroupBusiness(iwc).getGroupsData(bean, uniqueIds);
 		if (useCache && info != null) {
 			addGroupInfoToCache(iwc, bean.getInstanceId(), cacheTime.intValue(), info);
 		}
@@ -294,7 +252,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		parameters[0] = instanceId;
 		parameters[1] = bean;
 		
-		Class[] classes = new Class[2];
+		Class<?>[] classes = new Class[2];
 		classes[0] = String.class;
 		classes[1] = PropertiesBean.class;
 		
@@ -331,6 +289,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, groupViewer, false);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<GroupMemberDataBean> getUsersInfoFromCache(IWContext iwc, String id, int minutes) {
 		Map cache = getCache(iwc, UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, minutes);
 		if (cache == null) {
@@ -690,6 +649,7 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		return bean.getUserProperties(instanceId);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private boolean clearCache(String cacheKey, PropertiesBean bean) {
 		if (cacheKey == null || bean == null) {
 			return false;
@@ -730,5 +690,84 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	
 	public boolean clearUsersInfoCache(UserPropertiesBean bean) {
 		return clearCache(UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, bean);
+	}
+	
+	public List<String> getLocalizationForGroupInfo() {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+		if (iwrb == null) {
+			return null;
+		}
+		
+		List<String> localizedText = new ArrayList<String>();
+		localizedText.add(iwrb.getLocalizedString("group_name", "Name: "));					//	0
+		localizedText.add(iwrb.getLocalizedString("short_name", "Short name: "));			//	1
+		localizedText.add(iwrb.getLocalizedString("group_address", "Address: "));			//	2
+		localizedText.add(iwrb.getLocalizedString("group_phone", "Phone: "));				//	3
+		localizedText.add(iwrb.getLocalizedString("group_fax", "Fax: "));					//	4
+		localizedText.add(iwrb.getLocalizedString("group_homepage", "Homepage: "));			//	5
+		localizedText.add(iwrb.getLocalizedString("group_email", "Email: "));				//	6
+		localizedText.add(iwrb.getLocalizedString("group_description", "Description: "));	//	7
+		localizedText.add(iwrb.getLocalizedString("goup_extra_info", "Info: "));			//	8
+		
+		return localizedText;
+	}
+	
+	public List<String> getLocalizationForGroupUsersInfo() {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+		if (iwrb == null) {
+			return null;
+		}
+		
+		List<String> localizedText = new ArrayList<String>();
+		localizedText.add(iwrb.getLocalizedString("user_name", "Name: "));							//	0
+		localizedText.add(iwrb.getLocalizedString("user_title", "Title: "));						//	1
+		localizedText.add(iwrb.getLocalizedString("user_age", "Age: "));							//	2
+		localizedText.add(iwrb.getLocalizedString("user_workphone", "Workphone: "));				//	3
+		localizedText.add(iwrb.getLocalizedString("user_homephone", "Homephone: "));				//	4
+		localizedText.add(iwrb.getLocalizedString("user_mobilephone", "Mobilephone: "));			//	5
+		localizedText.add(iwrb.getLocalizedString("group_email", "Email: "));						//	6
+		localizedText.add(iwrb.getLocalizedString("user_education", "Education: "));				//	7
+		localizedText.add(iwrb.getLocalizedString("user_school", "School: "));						//	8
+		localizedText.add(iwrb.getLocalizedString("user_area", "Area: "));							//	9
+		localizedText.add(iwrb.getLocalizedString("user_began_work", "Began work: "));				//	10
+		localizedText.add(iwrb.getLocalizedString("user_status", "Status: "));						//	11
+		localizedText.add(iwrb.getLocalizedString("user_address", "Address: "));					//	12
+		localizedText.add(iwrb.getLocalizedString("home", "hm"));									//	13
+		localizedText.add(iwrb.getLocalizedString("work", "wrk"));									//	14
+		localizedText.add(iwrb.getLocalizedString("mobile", "mbl"));								//	15
+		localizedText.add(iwrb.getLocalizedString("user_extra_info", "Extra info: "));				//	16
+		localizedText.add(iwrb.getLocalizedString("user_description", "Description: "));			//	17
+		localizedText.add(iwrb.getLocalizedString("user_company_address", "Company's address: "));	//	18
+		localizedText.add(iwrb.getLocalizedString("user_date_of_birth", "Date of birth: "));		//	19
+		localizedText.add(iwrb.getLocalizedString("user_job", "Job: "));							//	20
+		localizedText.add(iwrb.getLocalizedString("user_workplace", "Workplace: "));				//	21
+		localizedText.add(iwrb.getLocalizedString("user_group", "Group: "));						//	22
+		
+		return localizedText;
+	}
+	
+	public boolean addGroupIds(String instanceId, List<String> ids) {
+		if (instanceId == null || ids == null) {
+			return false;
+		}
+		
+		try {
+			groupIds.put(instanceId, ids);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
 	}
 }
