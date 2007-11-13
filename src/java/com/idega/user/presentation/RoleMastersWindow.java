@@ -16,7 +16,6 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
@@ -110,6 +109,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		super(name, width, height);
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		this.iwrb = this.getResourceBundle(iwc);
 		
@@ -237,6 +237,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 
 		CheckBoxConverter deleteCheckBoxConverter = new CheckBoxConverter(DELETE_PERMISSIONS_KEY) {
 
+			@Override
 			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
 				Group group = (Group) entity;
 
@@ -334,6 +335,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		this.saveChanges = iwc.isParameterSet(PARAM_SAVING);
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
@@ -361,10 +363,12 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 	/**
 	 * @see com.idega.presentation.PresentationObject#getName()
 	 */
+	@Override
 	public String getName() {
 		return "Roles";
 	}
 
+	@Override
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
 		if (this.userBiz == null) {
 			try {
