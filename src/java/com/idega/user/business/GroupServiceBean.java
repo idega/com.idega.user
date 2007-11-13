@@ -6,24 +6,22 @@ import java.util.Map;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
-import com.idega.business.IBOServiceBean;
+import com.idega.business.IBOSessionBean;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.user.bean.GroupDataBean;
 import com.idega.user.bean.GroupMemberDataBean;
-import com.idega.user.bean.GroupPropertiesBean;
-import com.idega.user.bean.PropertiesBean;
-import com.idega.user.bean.UserPropertiesBean;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 
-public class GroupServiceBean extends IBOServiceBean implements GroupService {
+public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	
 	private static final long serialVersionUID = 1649699626972508631L;
 	
@@ -127,12 +125,24 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 	/**
 	 * Returns info about selected groups
 	 */
-	public List getGroupsInfo(GroupPropertiesBean bean) {
+	public List getGroupsInfo(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
 		//	Checking if valid parameters
-		if (bean == null) {
+		if (instanceId == null) {
 			return null;
 		}
-		if (bean.getUniqueIds() == null) {
+		
+		if (remoteMode && (login == null || password == null)) {
+			return null;
+		}
+		
+		List uniqueIds = null;
+		try {
+			uniqueIds = (List) getUniqueIds(true).get(instanceId);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		if (uniqueIds == null) {
 			return null;
 		}
 		
@@ -141,22 +151,21 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 			return null;
 		}
 		
-		if (!canUseServer(iwc, bean)) {
+		if (remoteMode && !canUseServer(iwc, login, password)) {
 			return null;
 		}
-		
-		Integer cacheTime = bean.getCacheTime();
+
 		boolean useCache = cacheTime == null ? false : true;
 		if (useCache) {
-			List cachedInfo = getGroupInfoFromCache(iwc, bean.getInstanceId(), cacheTime.intValue());
+			List cachedInfo = getGroupInfoFromCache(iwc, instanceId, cacheTime.intValue());
 			if (cachedInfo != null) {
 				return cachedInfo;
 			}
 		}
 		
-		List info = getGroupBusiness(iwc).getGroupsData(bean);
+		List info = getGroupBusiness(iwc).getGroupsData(uniqueIds);
 		if (useCache && info != null) {
-			addGroupInfoToCache(iwc, bean.getInstanceId(), cacheTime.intValue(), info);
+			addGroupInfoToCache(iwc, instanceId, cacheTime.intValue(), info);
 		}
 		return info;
 	}
@@ -209,35 +218,47 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		}
 	}
 	
-	public List getUsersInfo(UserPropertiesBean bean) {
+	public List getUsersInfo(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
 		//	Checking if valid parameters
-		if (bean == null) {
+		if (instanceId == null) {
 			return null;
 		}
-		if (bean.getUniqueIds() == null) {
+		
+		if (remoteMode && (login == null || password == null)) {
 			return null;
 		}
+		
+		List uniqueIds = null;
+		try {
+			uniqueIds = (List) getUniqueIds(false).get(instanceId);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		if (uniqueIds == null) {
+			return null;
+		}
+		
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
 		}
 		
-		if (!canUseServer(iwc, bean)) {
+		if (remoteMode && !canUseServer(iwc, login, password)) {
 			return null;
 		}
 		
-		Integer cacheTime = bean.getCacheTime();
 		boolean useCache = cacheTime == null ? false : true;
 		if (useCache) {
-			List cachedInfo = getUsersInfoFromCache(iwc, bean.getInstanceId(), cacheTime.intValue());
+			List cachedInfo = getUsersInfoFromCache(iwc, instanceId, cacheTime.intValue());
 			if (cachedInfo != null) {
 				return cachedInfo;
 			}
 		}
 		
-		List info = getUserBusiness(iwc).getGroupsMembersData(bean);
+		List info = getUserBusiness(iwc).getGroupsMembersData(uniqueIds);
 		if (useCache && info != null) {
-			addUsersInfoToCache(iwc, bean.getInstanceId(), cacheTime.intValue(), info);
+			addUsersInfoToCache(iwc, instanceId, cacheTime.intValue(), info);
 		}
 		return info;
 	}
@@ -357,63 +378,107 @@ public class GroupServiceBean extends IBOServiceBean implements GroupService {
 		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
 	
-	private boolean canUseServer(IWContext iwc, PropertiesBean bean) {
-		if (bean.isRemoteMode()) {
-			//	Checking if user is allowed to use server
-			if (!isLoggedUser(iwc, bean.getLogin())) {
-				if (!logInUser(iwc, bean.getLogin(), bean.getPassword())) {
-					return false;
-				}
-				else {
-					return true;
-				}
+	private boolean canUseServer(IWContext iwc, String login, String password) {
+		if (iwc == null || login == null || password == null) {
+			return false;
+		}
+		
+		//	Checking if user is allowed to use server
+		if (!isLoggedUser(iwc, login)) {
+			if (!logInUser(iwc, login, password)) {
+				return false;
 			}
 			else {
 				return true;
 			}
 		}
+		
 		return true;
 	}
 	
-	private Boolean clearCache(String cacheKey, PropertiesBean bean) {
-		if (cacheKey == null || bean == null) {
-			return Boolean.FALSE;
+	private boolean clearCache(String cacheKey, String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
+		if (cacheKey == null || instanceId == null) {
+			return false;
 		}
 		
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
-			return Boolean.FALSE;
+			return false;
 		}
 		
-		if (!canUseServer(iwc, bean)) {
-			return Boolean.FALSE;
+		if (remoteMode && !canUseServer(iwc, login, password)) {
+			return false;
 		}
 		
 		int minutes = 0;
-		Integer cacheTime = bean.getCacheTime();
 		if (cacheTime != null) {
 			minutes = cacheTime.intValue();
 		}
 		
 		Map cache = getCache(iwc, cacheKey, minutes);
 		if (cache == null) {
-			return Boolean.FALSE;
+			return false;
 		}
 		
 		try {
-			cache.remove(bean.getInstanceId());
+			cache.remove(instanceId);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Boolean.FALSE;
+			return false;
 		}
-		return Boolean.TRUE;
+		return true;
 	}
 	
-	public Boolean clearGroupInfoCache(GroupPropertiesBean bean) {
-		return clearCache(UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, bean);
+	public boolean clearGroupInfoCache(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
+		return clearCache(UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, login, password, instanceId, cacheTime, remoteMode);
 	}
 	
-	public Boolean clearUsersInfoCache(UserPropertiesBean bean) {
-		return clearCache(UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, bean);
+	public boolean clearUsersInfoCache(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
+		return clearCache(UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, login, password, instanceId, cacheTime, remoteMode);
+	}
+	
+	public boolean addGroupsIds(String instanceId, List ids) {
+		if (instanceId == null || ids == null) {
+			return false;
+		}
+		
+		try {
+			getUniqueIds(true).put(instanceId, ids);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean addUsersIds(String instanceId, List ids) {
+		if (instanceId == null || ids == null) {
+			return false;
+		}
+		
+		try {
+			getUniqueIds(false).put(instanceId, ids);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private Map getUniqueIds(boolean group) throws NullPointerException {
+		IWCacheManager2 cache = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
+		
+		int caheSize = 1000;
+		boolean overFlowDisk = true;
+		boolean eternal = false;
+		long cacheTime = 5 * 60;	// Seconds
+		String cacheName = "groupsUsersInfoViewersUniqueIdsCache";
+		if (group) {
+			cacheName = "groupsInfoViewersUniqueIdsCache";
+		}
+		
+		return cache.getCache(cacheName, caheSize, overFlowDisk, eternal, cacheTime, cacheTime);
 	}
 }

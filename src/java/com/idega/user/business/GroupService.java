@@ -1,14 +1,12 @@
 package com.idega.user.business;
 
 
-import com.idega.business.IBOService;
-import java.util.List;
 import java.rmi.RemoteException;
+import java.util.List;
 
-import com.idega.user.bean.GroupPropertiesBean;
-import com.idega.user.bean.UserPropertiesBean;
+import com.idega.business.IBOSession;
 
-public interface GroupService extends IBOService {
+public interface GroupService extends IBOSession {
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getTopGroupNodes
 	 */
@@ -22,20 +20,30 @@ public interface GroupService extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getGroupsInfo
 	 */
-	public List getGroupsInfo(GroupPropertiesBean bean) throws RemoteException;
+	public List getGroupsInfo(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getUsersInfo
 	 */
-	public List getUsersInfo(UserPropertiesBean bean) throws RemoteException;
+	public List getUsersInfo(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#clearGroupInfoCache
 	 */
-	public Boolean clearGroupInfoCache(GroupPropertiesBean bean);
-	
+	public boolean clearGroupInfoCache(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) throws RemoteException;
+
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#clearUsersInfoCache
 	 */
-	public Boolean clearUsersInfoCache(UserPropertiesBean bean);
+	public boolean clearUsersInfoCache(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#addGroupsIds
+	 */
+	public boolean addGroupsIds(String instanceId, List ids) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#addUsersIds
+	 */
+	public boolean addUsersIds(String instanceId, List ids) throws RemoteException;
 }

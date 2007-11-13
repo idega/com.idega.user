@@ -3,7 +3,7 @@
 
 <dwr>
 	<allow>
-		<create creator="ibo" javascript="GroupService" scope="application">
+		<create creator="ibo" javascript="GroupService" scope="session">
 			<param name="class" value="com.idega.user.business.GroupService" />
 		</create>
 		
@@ -32,20 +32,12 @@
 			import java.util.List;
 			import org.jdom.Document;
 			
-			import com.idega.user.bean.GroupPropertiesBean;
-			import com.idega.user.bean.UserPropertiesBean;
-			import com.idega.user.bean.GroupDataBean;
-			import com.idega.user.bean.GroupMemberDataBean;
 			import com.idega.user.business.GroupNode;
 			
 			import com.idega.builder.bean.AdvancedProperty;
 			import com.idega.user.bean.SimpleUserPropertiesBean;
 			import com.idega.user.bean.UserDataBean;
 
-			List<GroupDataBean> GroupService.getGroupsInfo(GroupPropertiesBean);
-			List<GroupMemberDataBean> GroupService.getUsersInfo(UserPropertiesBean);
-			Boolean GroupService.clearGroupInfoCache(GroupPropertiesBean);
-			Boolean GroupService.clearUsersInfoCache(UserPropertiesBean);
 			List<GroupNode> GroupService.getGroupsTree(String, String);
 			
 			List<AdvancedProperty> UserApplicationEngine.getChildGroups(String, String, String);
