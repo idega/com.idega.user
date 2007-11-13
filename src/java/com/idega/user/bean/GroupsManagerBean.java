@@ -75,7 +75,7 @@ public class GroupsManagerBean implements Serializable {
 		}
 		else {
 			abstractProperties.remove(instanceId);
-			return new UserPropertiesBean(bean);
+			return new UserPropertiesBean(bean, instanceId);
 		}
 	}
 	

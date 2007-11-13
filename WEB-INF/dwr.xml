@@ -30,22 +30,11 @@
 	<signatures>
 		<![CDATA[
 			import java.util.List;
-			import com.idega.user.bean.GroupPropertiesBean;
-			import com.idega.user.bean.UserPropertiesBean;
-			import com.idega.user.bean.GroupDataBean;
-			import com.idega.user.bean.GroupMembersDataBean;
 			
 			import com.idega.user.bean.SimpleUserPropertiesBean;
 			import com.idega.user.bean.UserDataBean;
 			
 			import com.idega.builder.bean.AdvancedProperty;
-
-			GroupService.getGroupsInfo(GroupPropertiesBean);
-			GroupService.getUsersInfo(UserPropertiesBean);
-			GroupService.getGroupInfoPresentationObject(List<GroupDataBean>, GroupPropertiesBean);
-			GroupService.getGroupsMembersPresentationObject(List<GroupMembersDataBean>, UserPropertiesBean);
-			GroupService.clearGroupInfoCache(GroupPropertiesBean);
-			GroupService.clearUsersInfoCache(UserPropertiesBean);
 			
 			List<AdvancedProperty> UserApplicationEngine.getChildGroups(String, String, String);
 			List<Integer> UserApplicationEngine.removeUsers(List<Integer>, Integer);

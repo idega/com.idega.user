@@ -1,15 +1,13 @@
 package com.idega.user.business;
 
+
 import java.rmi.RemoteException;
 import java.util.List;
-
-import org.jdom.Document;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.IBOSession;
 import com.idega.user.bean.GroupDataBean;
 import com.idega.user.bean.GroupMemberDataBean;
-import com.idega.user.bean.GroupMembersDataBean;
 import com.idega.user.bean.GroupPropertiesBean;
 import com.idega.user.bean.UserPropertiesBean;
 
@@ -42,7 +40,7 @@ public interface GroupService extends IBOSession {
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getGroupsInfo
 	 */
-	public List<GroupDataBean> getGroupsInfo(GroupPropertiesBean bean) throws RemoteException;
+	public List<GroupDataBean> getGroupsInfo(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#reloadProperties
@@ -50,19 +48,9 @@ public interface GroupService extends IBOSession {
 	public boolean reloadProperties(String instanceId) throws RemoteException;
 
 	/**
-	 * @see com.idega.user.business.GroupServiceBean#getGroupInfoPresentationObject
-	 */
-	public Document getGroupInfoPresentationObject(List<GroupDataBean> groupsData, GroupPropertiesBean bean) throws RemoteException;
-
-	/**
 	 * @see com.idega.user.business.GroupServiceBean#getUsersInfo
 	 */
-	public List<GroupMemberDataBean> getUsersInfo(UserPropertiesBean bean) throws RemoteException;
-
-	/**
-	 * @see com.idega.user.business.GroupServiceBean#getGroupsMembersPresentationObject
-	 */
-	public Document getGroupsMembersPresentationObject(List<GroupMembersDataBean> membersData, UserPropertiesBean bean) throws RemoteException;
+	public List<GroupMemberDataBean> getUsersInfo(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getUserStatusLocalization
@@ -82,12 +70,12 @@ public interface GroupService extends IBOSession {
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#clearGroupInfoCache
 	 */
-	public boolean clearGroupInfoCache(GroupPropertiesBean bean) throws RemoteException;
+	public boolean clearGroupInfoCache(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#clearUsersInfoCache
 	 */
-	public boolean clearUsersInfoCache(UserPropertiesBean bean) throws RemoteException;
+	public boolean clearUsersInfoCache(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getLocalizationForGroupInfo
@@ -98,8 +86,14 @@ public interface GroupService extends IBOSession {
 	 * @see com.idega.user.business.GroupServiceBean#getLocalizationForGroupUsersInfo
 	 */
 	public List<String> getLocalizationForGroupUsersInfo() throws RemoteException;
-	
-	public boolean addGroupsIds(String instanceId, List<String> ids);
-	
-	public boolean addUsersIds(String instanceId, List<String> ids);
+
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#addGroupsIds
+	 */
+	public boolean addGroupsIds(String instanceId, List<String> ids) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupServiceBean#addUsersIds
+	 */
+	public boolean addUsersIds(String instanceId, List<String> ids) throws RemoteException;
 }

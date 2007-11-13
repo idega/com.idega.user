@@ -26,7 +26,7 @@ function getBasicGroupPropertiesBeanCallback(bean, strings) {
 	}
 	
 	//	Clearing cache
-	GroupService.clearGroupInfoCache(bean, {
+	GroupService.clearGroupInfoCache(bean.login, bean.password, bean.instanceId, bean.cacheTime, bean.remoteMode, {
 		callback: function(result) {
 			clearGroupInfoCacheCallback(strings);
 		},
@@ -124,7 +124,7 @@ function getGroupsData(result, properties, containerId) {
 			
 			prepareDwr(GroupService, dwrPath);
 			//	Calling method to get info about groups on selected ('local' or 'remote') server
-			GroupService.getGroupsInfo(new GroupPropertiesBean(properties), {
+			GroupService.getGroupsInfo(properties.login, properties.password, properties.instanceId, properties.cacheTime, properties.remoteMode, {
 				callback: function(groupsInfo) {
 				 	getGroupsInfoCallback(groupsInfo, properties, containerId);
 				},
@@ -133,29 +133,6 @@ function getGroupsData(result, properties, containerId) {
 		},
 		rpcType:dwrCallType
 	});
-}
-
-function GroupPropertiesBean(properties) {
-	this.server = properties.server;
-	this.login = properties.login;
-	this.password = properties.password;
-	this.instanceId = properties.instanceId;
-	
-	this.remoteMode = properties.remoteMode;
-	this.showLabels = properties.showLabels;
-	this.showAddress = properties.showAddress;
-	this.showDescription = properties.showDescription;
-	this.showExtraInfo = properties.showExtraInfo;
-	this.showEmails = properties.showEmails;
-	
-	this.cacheTime = properties.cacheTime;
-	
-	this.showName = properties.showName;
-	this.showHomePage = properties.showHomePage;
-	this.showShortName = properties.showShortName;
-	this.showPhone = properties.showPhone;
-	this.showFax = properties.showFax;
-	this.showEmptyFields = properties.showEmptyFields;
 }
 
 function getGroupsInfoCallback(groupsInfo, properties, containerId) {

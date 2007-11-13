@@ -28,7 +28,7 @@ function getBasicUserPropertiesBeanCallback(bean, strings) {
 	}
 	
 	//	Clearing cache
-	GroupService.clearUsersInfoCache(bean, {
+	GroupService.clearUsersInfoCache(bean.login, bean.password, bean.instanceId, bean.cacheTime, bean.remoteMode, {
 		callback: function(result) {
 			clearUsersInfoCacheCallback(strings);
 		},
@@ -137,7 +137,8 @@ function getGroupsUsersData(result, properties, containerId) {
 				return false;
 			}
 			
-			GroupService.getUsersInfo(new UserPropertiesBean(properties), {
+			prepareDwr(GroupService, dwrPath);
+			GroupService.getUsersInfo(properties.login, properties.password, properties.instanceId, properties.cacheTime, properties.remoteMode, {
 				callback: function(usersInfo) {
 				 	getUsersInfoCallback(usersInfo, properties, containerId);
 				},
@@ -146,48 +147,6 @@ function getGroupsUsersData(result, properties, containerId) {
 		},
 		rpcType:dwrCallType
 	});
-}
-
-function UserPropertiesBean(properties) {
-	this.server = properties.server;
-	this.login = properties.login;
-	this.password = properties.password;
-	this.instanceId = properties.instanceId;
-	
-	this.remoteMode = properties.remoteMode;
-	this.showLabels = properties.showLabels;
-	this.showAddress = properties.showAddress;
-	this.showDescription = properties.showDescription;
-	this.showExtraInfo = properties.showExtraInfo;
-	this.showEmails = properties.showEmails;
-	
-	this.cacheTime = properties.cacheTime;
-	
-	this.showGroupName = properties.showGroupName;
-	this.showTitle = properties.showTitle;
-	this.showAge = properties.showAge;
-	this.showWorkPhone = properties.showWorkPhone;
-	this.showHomePhone = properties.showHomePhone;
-	this.showMobilePhone = properties.showMobilePhone;
-	this.showEducation = properties.showEducation;
-	this.showSchool = properties.showSchool;
-	this.showArea = properties.showArea;
-	this.showBeganWork = properties.showBeganWork;
-	this.showImage = properties.showImage;
-	this.showCompanyAddress = properties.showCompanyAddress;
-	this.showDateOfBirth = properties.showDateOfBirth;
-	this.showJob = properties.showJob;
-	this.showWorkplace = properties.showWorkplace;
-	this.showStatus = properties.showStatus;
-	this.addReflection = properties.addReflection;
-	this.showUserInfoOne = properties.showUserInfoOne;
-	this.showUserInfoTwo = properties.showUserInfoTwo;
-	this.showUserInfoThree = properties.showUserInfoThree;
-	
-	this.imageWidth = properties.imageWidth;
-	this.imageHeight = properties.imageHeight;
-	
-	this.defaultPhoto = properties.defaultPhoto;
 }
 
 function getUsersInfoCallback(members, properties, containerId) {
