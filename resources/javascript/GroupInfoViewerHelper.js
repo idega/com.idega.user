@@ -182,7 +182,7 @@ function renderGroupsInfoViewerWithAllData(groupsInfo, properties, containerId, 
 			getGroupInfoEntryPO(localizedText[3], groupsInfo[i].phoneNumber, properties.showEmptyFields, true, 'groupInfoPhoneContainerStyleClass').injectInside(group);
 		}
 		//	Fax
-		if (properties.showPhone) {
+		if (properties.showFax) {
 			getGroupInfoEntryPO(localizedText[4], groupsInfo[i].faxNumber, properties.showEmptyFields, true, 'groupInfoFaxContainerStyleClass').injectInside(group);
 		}
 		//	HomePage
