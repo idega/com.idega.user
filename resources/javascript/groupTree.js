@@ -203,11 +203,14 @@
 						if (children == null || children.length == 0) {
 							var parentGroupUniqueId = image.getParent().getLast().getProperty('id');
 							
+							var moodalBox = $('mb_contents');
+							var loadingLayerAboveTree = $(setLoadingLayerForElement(moodalBox.id, false, moodalBox.getSize(), moodalBox.getPosition()));
+							
 							if (SERVER == null && LOGIN == null && PASSWORD == null) {
 								prepareDwr(GroupService, getDefaultDwrPath());
 								GroupService.getChildrenOfGroup(parentGroupUniqueId, {
 									callback: function(nodes) {
-										appendChildrenOfGroup(listRoot, nodes, image, lastElement, selectedGroups, styleClassName);
+										appendChildrenOfGroup(listRoot, nodes, image, lastElement, selectedGroups, styleClassName, loadingLayerAboveTree);
 									},
 									rpcType:dwr.engine.XMLHttpRequest
 								});
@@ -216,7 +219,7 @@
 								prepareDwr(GroupService, SERVER + getDefaultDwrPath());
 								GroupService.getChildrenOfGroupWithLogin(LOGIN, PASSWORD, parentGroupUniqueId, {
 									callback: function(nodes) {
-										appendChildrenOfGroup(listRoot, nodes, image, lastElement, selectedGroups, styleClassName);
+										appendChildrenOfGroup(listRoot, nodes, image, lastElement, selectedGroups, styleClassName, loadingLayerAboveTree);
 									},
 									rpcType:dwr.engine.ScriptTag
 								});
@@ -242,7 +245,11 @@
 		}
 	}
 	
-	function appendChildrenOfGroup(listRoot, nodes, image, lastElement, selectedGroups, styleClassName) {
+	function appendChildrenOfGroup(listRoot, nodes, image, lastElement, selectedGroups, styleClassName, loadingLayerAboveTree) {
+		if (loadingLayerAboveTree != null) {
+			loadingLayerAboveTree.remove();
+		}
+		
 		if (nodes == null) {
 			return false;
 		}
