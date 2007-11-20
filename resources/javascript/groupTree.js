@@ -13,7 +13,7 @@
 			groupsList.injectInside(container);
 		}
 		
-		initGroupsTree(selectedGroups);
+		initGroupsTree(selectedGroups, styleClassName);
 		
 		var firstLevelChildren = groupsList.getChildren();
 		if (firstLevelChildren == null) {
@@ -24,7 +24,7 @@
 			firsLevelChild = firstLevelChildren[i];
 			if (firsLevelChild) {
 				if (firsLevelChild.getTag() == 'li' && firsLevelChild.hasClass('groupsTreePartNode')) {
-					openOrCloseGroupTreeListPart(firsLevelChild.getFirst().getFirst(), true);
+					openOrCloseGroupTreeListPart(firsLevelChild.getFirst().getFirst(), true, selectedGroups, styleClassName);
 				}
 			}
 		}
@@ -60,6 +60,15 @@
 			image.setProperty('id', 'id' + new Date().getTime());
 			image.addClass('groupsTreeExpanderCollapserImageStyle');
 			image.injectInside(imageAndSpanContainer);
+			
+			var groupImage = new Element('img');
+			if (node.image == null) {
+				groupImage.setStyle('visibility', 'hidden');
+			}
+			else {
+				groupImage.setProperty('src', node.image);
+			}
+			groupImage.injectInside(imageAndSpanContainer);
 			
 			var groupName = new Element('span');
 			groupName.setProperty('id', node.uniqueId);
@@ -105,30 +114,32 @@
 		return false;
 	}
 	
-	function initGroupsTree(selectedGroups) {
+	function initGroupsTree(selectedGroups, styleClassName) {
 		$$('img.groupsTreeExpanderCollapserImageStyle').each(
 			function(image) {
+				image.removeEvents('click');
+				
 				image.addEvent('click', function() {
-					openOrCloseGroupTreeListPart(image, false);
+					openOrCloseGroupTreeListPart(image, false, selectedGroups, styleClassName);
 				});
 			}
 		);
 		
 		$$('img.groupsTreeExpanderCollapserImageStyle').each(
 			function(image) {
-				var spanElement = image.getNext();
+				var spanElement = image.getParent().getLast();
 				if (spanElement) {
 					if (isGroupSelected(selectedGroups, spanElement.id)) {
-						openOrCloseGroupTreeListPart(image, true);
+						openOrCloseGroupTreeListPart(image, true, selectedGroups, styleClassName);
 						
-						openAllParentGroupsTreeParts(image);
+						openAllParentGroupsTreeParts(image, selectedGroups, styleClassName);
 					}
 				}
 			}
 		);
 	}
 	
-	function openAllParentGroupsTreeParts(image) {
+	function openAllParentGroupsTreeParts(image, selectedGroups, styleClassName) {
 		var imageAndSpanDiv = image.getParent();
 		if (imageAndSpanDiv == null) {
 			return false;
@@ -170,13 +181,13 @@
 			return false;
 		}
 		if (nextImage.hasClass('groupsTreeExpanderCollapserImageStyle')) {
-			openOrCloseGroupTreeListPart(nextImage, true);
+			openOrCloseGroupTreeListPart(nextImage, true, selectedGroups, styleClassName);
 			
-			openAllParentGroupsTreeParts(nextImage);
+			openAllParentGroupsTreeParts(nextImage, selectedGroups, styleClassName);
 		}
 	}
 	
-	function openOrCloseGroupTreeListPart(image, forceOpen) {
+	function openOrCloseGroupTreeListPart(image, forceOpen, selectedGroups, styleClassName) {
 		var lastElement = image.getParent().getNext();
 		if (lastElement) {
 			var needOpen = image.getProperty('opened') == 'false';
@@ -185,14 +196,92 @@
 			}
 		
 			if (needOpen) {
-				image.setProperty('opened',  true);
-				image.setProperty('src', '/idegaweb/bundles/com.idega.user.bundle/resources/images/nav-minus.gif');
-				lastElement.setStyle('display', 'inline');
+				var listRoot = lastElement.getFirst();
+				if (listRoot) {
+					if (listRoot.getTag() == 'ul' && listRoot.hasClass('tree_drag_drop')) {
+						var children = listRoot.getChildren();
+						if (children == null || children.length == 0) {
+							var parentGroupUniqueId = image.getParent().getLast().getProperty('id');
+							
+							if (SERVER == null && LOGIN == null && PASSWORD == null) {
+								prepareDwr(GroupService, getDefaultDwrPath());
+								GroupService.getChildrenOfGroup(parentGroupUniqueId, {
+									callback: function(nodes) {
+										appendChildrenOfGroup(listRoot, nodes, image, lastElement, selectedGroups, styleClassName);
+									},
+									rpcType:dwr.engine.XMLHttpRequest
+								});
+							}
+							else {
+								prepareDwr(GroupService, SERVER + getDefaultDwrPath());
+								GroupService.getChildrenOfGroupWithLogin(LOGIN, PASSWORD, parentGroupUniqueId, {
+									callback: function(nodes) {
+										appendChildrenOfGroup(listRoot, nodes, image, lastElement, selectedGroups, styleClassName);
+									},
+									rpcType:dwr.engine.ScriptTag
+								});
+							}
+						}
+						else {
+							finishGroupTreeExpand(image, lastElement);
+						}
+						return true;
+					}
+				}
+				
+				return false;
 			}
 			else {
 				image.setProperty('opened',  false);
 				image.setProperty('src', '/idegaweb/bundles/com.idega.user.bundle/resources/images/nav-plus.gif');
+				
+				changeGroupImageAfterNodeClosedOrOpened(image, false);
+				
 				lastElement.setStyle('display', 'none');
 			}
 		}
+	}
+	
+	function appendChildrenOfGroup(listRoot, nodes, image, lastElement, selectedGroups, styleClassName) {
+		if (nodes == null) {
+			return false;
+		}
+		
+		addTreeElements(nodes, listRoot, styleClassName, selectedGroups);
+		initGroupsTree(selectedGroups, styleClassName);
+		
+		registerActionsForGroupTreeSpan();
+		
+		finishGroupTreeExpand(image, lastElement);
+	}
+	
+	function finishGroupTreeExpand(image, lastElement) {
+		image.setProperty('opened',  true);
+		image.setProperty('src', '/idegaweb/bundles/com.idega.user.bundle/resources/images/nav-minus.gif');
+		
+		changeGroupImageAfterNodeClosedOrOpened(image, true);
+		
+		lastElement.setStyle('display', 'inline');
+	}
+	
+	function changeGroupImageAfterNodeClosedOrOpened(image, opened) {
+		var groupImage = image.getNext();
+		
+		if (!groupImage) {
+			return false;
+		}
+		
+		var imageSrc = groupImage.getProperty('src');
+		if (imageSrc == null || imageSrc == '') {
+			return false;
+		}
+		
+		var imageSplitter = '_node_';
+		var srcParts = imageSrc.split(imageSplitter);
+		var imageEnd = 'closed.gif';
+		if (opened) {
+			imageEnd = 'open.gif';
+		}
+		
+		groupImage.setProperty('src', srcParts[0] + imageSplitter + imageEnd);
 	}

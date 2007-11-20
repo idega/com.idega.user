@@ -52,6 +52,18 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
     	}
     );
     
+	registerActionsForGroupTreeSpan();
+    
+    if (styleClass != null && styleClass != GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS) {	//	We don't want to override default actions
+	    $$('span.' + styleClass).each(	//	These are custom actions
+			function(element) {
+				//element.addEvent('click', customFunction);	<- example
+	    	}
+	    );
+    }
+}
+
+function registerActionsForGroupTreeSpan() {
 	$$('span.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(	//	These actions needed for Builder, define your own if need
 		function(element) {
 			element.removeEvents('click');
@@ -65,14 +77,6 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
 			}
     	}
     );
-    
-    if (styleClass != null && styleClass != GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS) {	//	We don't want to override default actions
-	    $$('span.' + styleClass).each(	//	These are custom actions
-			function(element) {
-				//element.addEvent('click', customFunction);	<- example
-	    	}
-	    );
-    }
 }
 
 function checkOtherProperties(clickedElement) {
@@ -253,7 +257,7 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 		prepareDwr(GroupService, server + getDefaultDwrPath());
 	
 		//	Getting info from remote server
-		GroupService.getGroupsTree(login, password, {
+		GroupService.getGroupsTree(login, password, selectedGroups, {
 			callback: function(groups) {
 				closeAllLoadingMessages();
 				
@@ -285,7 +289,7 @@ function loadLocalTree(id, noGroupsMessage, selectedGroups, styleClass) {
 	PASSWORD = null;
 	prepareDwr(GroupService, getDefaultDwrPath());
 	
-	GroupService.getTopGroupNodes({
+	GroupService.getTopGroupsAndDirectChildren(selectedGroups, {
 		callback: function(groups) {
 			if (groups == null) {
 				closeAllLoadingMessages();

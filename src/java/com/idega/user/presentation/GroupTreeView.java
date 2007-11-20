@@ -9,6 +9,7 @@ import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.ui.AbstractTreeViewer;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.event.SelectDomainEvent;
 import com.idega.user.event.SelectGroupEvent;
@@ -24,7 +25,7 @@ import com.idega.user.event.SelectGroupEvent;
 
 public class GroupTreeView extends IWTreeControl {
 
-	private static final String TREEVIEW_PREFIX = "treeviewer/ui/";
+	private static final String TREEVIEW_PREFIX = AbstractTreeViewer.TREEVIEW_PREFIX;
 
 	Image folderAndFileIcons[][] = null;
 	String folderAndFileIconNames[] = { "treeviewer_node_closed.gif", "treeviewer_node_open.gif", "treeviewer_node_leaf.gif" };
