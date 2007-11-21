@@ -636,12 +636,11 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return false;
 		}
 		
-		//	Geting current user
+		//	Getting current user
 		User current = null;
 		try {
 			current = iwc.getCurrentUser();
 		} catch (Exception e) {
-			e.printStackTrace();
 			return false;
 		}
 		if (current == null) {	//	Not logged
