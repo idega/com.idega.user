@@ -70,9 +70,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		}
 		
 		List<String> uniqueIdsOfTopGroups = new ArrayList<String>();
-		for (int i = 0; i < topGroupsAndDirectChildren.size(); i++) {
-			uniqueIdsOfTopGroups.add(topGroupsAndDirectChildren.get(i).getUniqueId());
-		}
+		uniqueIdsOfTopGroups = getCurrentTreeUniqueIds(uniqueIdsOfTopGroups, topGroupsAndDirectChildren);
 		
 		String image = helper.getGroupImageBaseUri(iwc);
 		
@@ -91,7 +89,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 				uniqueId = selectedGroup.getUniqueId();
 				if (uniqueId != null && !uniqueIdsOfTopGroups.contains(uniqueId)) {
 					try {
-						appendParentGroupsToList(groupBusiness.getParentGroups(selectedGroup), selectedGroup, topGroupsAndDirectChildren, groupBusiness, image);
+						topGroupsAndDirectChildren = appendParentGroupsToList(groupBusiness.getParentGroups(selectedGroup), selectedGroup, topGroupsAndDirectChildren, groupBusiness, image);
 					} catch (RemoteException e) {
 						e.printStackTrace();
 					}
@@ -102,10 +100,28 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return topGroupsAndDirectChildren;
 	}
 	
+	private List<String> getCurrentTreeUniqueIds(List<String> ids, List<GroupNode> nodes) {
+		if (nodes == null) {
+			return ids;
+		}
+		
+		GroupNode node = null;
+		for (int i = 0; i < nodes.size(); i++) {
+			node = nodes.get(i);
+			ids.add(node.getUniqueId());
+			
+			if (node.getChildren() != null) {
+				ids = getCurrentTreeUniqueIds(ids, node.getChildren());
+			}
+		}
+		
+		return ids;
+	}
+	
 	@SuppressWarnings("unchecked")
-	private void appendParentGroupsToList(Collection parentGroups, Group selectedGroup, List<GroupNode> groupNodes, GroupBusiness groupBusiness, String image) {
+	private List<GroupNode> appendParentGroupsToList(Collection parentGroups, Group selectedGroup, List<GroupNode> groupNodes, GroupBusiness groupBusiness, String image) {
 		if (parentGroups == null) {
-			return;
+			return null;
 		}
 		
 		Object o = null;
@@ -124,6 +140,8 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 				}
 			}
 		}
+		
+		return groupNodes;
 	}
 	
 	private GroupNode findParentNode(Group group, List<GroupNode> groupNodes) {
@@ -144,7 +162,10 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			}
 			else {
 				if (groupNode.getChildren() != null) {
-					return findParentNode(group, groupNode.getChildren());
+					GroupNode groupNodeRecursive = findParentNode(group, groupNode.getChildren());
+					if (groupNodeRecursive != null) {
+						return groupNodeRecursive;
+					}
 				}
 			}
 			
