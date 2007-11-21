@@ -915,7 +915,12 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			cacheName = "groupsInfoViewersUniqueIdsCache";
 		}
 		
-		return cache.getCache(cacheName, caheSize, overFlowDisk, eternal, cacheTime, cacheTime);
+		try {
+			return cache.getCache(cacheName, caheSize, overFlowDisk, eternal, cacheTime, cacheTime);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	public boolean streamUniqueIds(String instanceId, List<String> uniqueIds, boolean isGroupIds, boolean isTree) {
@@ -935,7 +940,12 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return false;
 		}
 		
-		List<String> ids = getUniqueIds(isGroupIds).get(instanceId);
+		List<String> ids = null;
+		try {
+			ids = getUniqueIds(isGroupIds).get(instanceId);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		if (ids == null) {
 			ids = uniqueIds;
 		}
