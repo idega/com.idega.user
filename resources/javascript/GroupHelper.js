@@ -254,7 +254,7 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 	
 	if (result) {
 		if (IE && selectedGroups != null) {
-			if (selectedGroups.uniqueIds.length > 20) {
+			if (selectedGroups.length > 20) {
 				if (streamUniqueIdsToServer(null, selectedGroups, server, true, false, true)) {
 					addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass, true);
 				}
