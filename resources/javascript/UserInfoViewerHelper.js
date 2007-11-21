@@ -132,7 +132,7 @@ function getGroupsUsersData(result, properties, containerId) {
 	
 	if (IE && properties.uniqueIds != null) { 
 		if (properties.uniqueIds.length > 20) {
-			if (streamUniqueIdsToServer(properties, containerId, false)) {
+			if (streamUniqueIdsToServer(properties.instanceId, properties.uniqueIds, properties.server, properties.remoteMode, false, false)) {
 				getUsersInfoAfterIdsAreAdded(true, properties, containerId);
 			}
 			

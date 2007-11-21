@@ -49,6 +49,8 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	
 	private GroupBusiness groupBusiness = null;
 	private UserBusiness userBusiness = null;
+	
+	private List<String> selectedGroups = new ArrayList<String>();
 
 	/**
 	 * Returns tree of Groups
@@ -56,7 +58,12 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	public List<GroupNode> getTopGroupsAndDirectChildren(List<String> uniqueIds) {
 		List<GroupNode> topGroupsAndDirectChildren = helper.getTopGroupsAndDirectChildren();
 		if (uniqueIds == null) {
-			return topGroupsAndDirectChildren;
+			if (selectedGroups.size() == 0) {
+				return topGroupsAndDirectChildren;
+			}
+			
+			uniqueIds = new ArrayList<String>(selectedGroups);
+			selectedGroups = new ArrayList<String>();
 		}
 		
 		IWContext iwc = CoreUtil.getIWContext();
@@ -911,7 +918,19 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return cache.getCache(cacheName, caheSize, overFlowDisk, eternal, cacheTime, cacheTime);
 	}
 	
-	public boolean streamUniqueIds(String instanceId, List<String> uniqueIds, boolean isGroupIds) {
+	public boolean streamUniqueIds(String instanceId, List<String> uniqueIds, boolean isGroupIds, boolean isTree) {
+		if (isTree) {
+			if (uniqueIds == null) {
+				return false;
+			}
+			
+			for (int i = 0; i < uniqueIds.size(); i++) {
+				selectedGroups.add(uniqueIds.get(i));
+			}
+			
+			return true;
+		}
+
 		if (instanceId == null || uniqueIds == null) {
 			return false;
 		}

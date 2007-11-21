@@ -253,27 +253,17 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 	prepareDwr(GroupService, getDefaultDwrPath());
 	
 	if (result) {
-		//	Can use remote server, preparing DWR
-		prepareDwr(GroupService, server + getDefaultDwrPath());
-	
-		//	Getting info from remote server
-		GroupService.getGroupsTree(login, password, selectedGroups, {
-			callback: function(groups) {
-				closeAllLoadingMessages();
-				
-				prepareDwr(GroupService, getDefaultDwrPath());
-				if (groups == null) {
-					//	Login failed
-					alert(logInErrorMessage + ' ' + server);
-					return false;
+		if (IE && selectedGroups != null) {
+			if (selectedGroups.uniqueIds.length > 20) {
+				if (streamUniqueIdsToServer(null, selectedGroups, server, true, false, true)) {
+					addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass, true);
 				}
-				SERVER = server;
-				LOGIN = login;
-				PASSWORD = password;
-				addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass);
-			},
-			rpcType:dwr.engine.ScriptTag
-		});
+				
+				return false;
+			}
+		}
+		
+		addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass, false);
 	}
 	else {
 		//	Cannot use remote server
@@ -281,6 +271,37 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 		alert(severErrorMessage + ' ' + server);
 		return false;
 	}
+}
+
+function addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass, fake) {
+	if (!result) {
+		closeAllLoadingMessages();
+		return false;
+	}
+	
+	var groupsToSend = selectedGroups;
+	if (fake) {
+		groupsToSend = null;
+	}
+	
+	prepareDwr(GroupService, server + getDefaultDwrPath());
+	GroupService.getGroupsTree(login, password, groupsToSend, {
+		callback: function(groups) {
+			closeAllLoadingMessages();
+
+			prepareDwr(GroupService, getDefaultDwrPath());
+			if (groups == null) {
+				//	Login failed
+				alert(logInErrorMessage + ' ' + server);
+				return false;
+			}
+			SERVER = server;
+			LOGIN = login;
+			PASSWORD = password;
+			addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass);
+		},
+		rpcType:dwr.engine.ScriptTag
+	});
 }
 
 function loadLocalTree(id, noGroupsMessage, selectedGroups, styleClass) {
@@ -414,32 +435,31 @@ function getDivsSpacer() {
 	return spacer;
 }
 
-function streamUniqueIdsToServer(properties, containerId, isGroup) {
-	var ids = properties.uniqueIds;
-	if (ids == null) {
-		return false;
+function streamUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup, isTree) {
+	var copiedUniqueIds = null;
+	
+	if (uniqueIds != null) {
+		copiedUniqueIds = new Array();
+		for (var i = 0; i < uniqueIds.length; i++) {
+			copiedUniqueIds.push(uniqueIds[i]);
+		}
 	}
 	
-	var copiedUniqueIds = new Array();
-	for (var i = 0; i < ids.length; i++) {
-		copiedUniqueIds.push(ids[i]);
-	}
-	
-	if (sendPackedUniqueIdsToServer(properties.instanceId, copiedUniqueIds, properties.server, properties.remoteMode, isGroup)) {
+	if (sendPackedUniqueIdsToServer(instanceId, copiedUniqueIds, server, remoteMode, isGroup, isTree)) {
 		return true;
 	}
 	
 	return false;
 }
 
-function sendPackedUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup) {
-	while (uniqueIds.length >= 19) {
+function sendPackedUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup, isTree) {
+	while (uniqueIds.length > 20) {
 		var pack = new Array();
 		for (var i = 0; i < 20; i++) {
 			pack.push(uniqueIds[i]);
 		}
 		
-		sendPackUniqueIdsToServer(instanceId, pack, server, remoteMode, isGroup);
+		sendPackUniqueIdsToServer(instanceId, pack, server, remoteMode, isGroup, isTree);
 		
 		for (var i = 0; i < pack.length; i++) {
 			removeElementFromArray(uniqueIds, pack[i]);
@@ -448,14 +468,14 @@ function sendPackedUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, 
 	
 	if (uniqueIds) {
 		if (uniqueIds.length > 0) {
-			sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup);
+			sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup, isTree);
 		}
 	}
 	
 	return true;
 }
 
-function sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup) {
+function sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup, isTree) {
 	var dwrCallType = dwr.engine.XMLHttpRequest;
 	var dwrPath = getDefaultDwrPath();
 	if (remoteMode) {
@@ -464,7 +484,7 @@ function sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, is
 	}
 	prepareDwr(GroupService, dwrPath);
 	
-	GroupService.streamUniqueIds(instanceId, uniqueIds, isGroup, {
+	GroupService.streamUniqueIds(instanceId, uniqueIds, isGroup, isTree, {
 		callback: function(result) {
 			return result;
 		},

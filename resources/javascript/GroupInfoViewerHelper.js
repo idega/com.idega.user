@@ -116,7 +116,7 @@ function getGroupsData(result, properties, containerId) {
 	
 	if (IE && properties.uniqueIds != null) { 
 		if (properties.uniqueIds.length > 20) {
-			if (streamUniqueIdsToServer(properties, containerId, true)) {
+			if (streamUniqueIdsToServer(properties.instanceId, properties.uniqueIds, properties.server, properties.remoteMode, true, false)) {
 				getGroupsInfoAfterIdsAreAdded(true, properties, containerId);
 			}
 			

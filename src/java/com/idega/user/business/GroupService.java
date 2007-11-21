@@ -101,5 +101,5 @@ public interface GroupService extends IBOSession {
 	
 	public List<GroupNode> getChildrenOfGroupWithLogin(String login, String password, String uniqueId);
 	
-	public boolean streamUniqueIds(String instanceId, List<String> uniqueIds, boolean isGroupIds);
+	public boolean streamUniqueIds(String instanceId, List<String> uniqueIds, boolean isGroupIds, boolean isTree);
 }
