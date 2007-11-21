@@ -910,4 +910,26 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		
 		return cache.getCache(cacheName, caheSize, overFlowDisk, eternal, cacheTime, cacheTime);
 	}
+	
+	public boolean streamUniqueIds(String instanceId, List<String> uniqueIds, boolean isGroupIds) {
+		if (instanceId == null || uniqueIds == null) {
+			return false;
+		}
+		
+		List<String> ids = getUniqueIds(isGroupIds).get(instanceId);
+		if (ids == null) {
+			ids = uniqueIds;
+		}
+		else {
+			for (int i = 0; i < uniqueIds.size(); i++) {
+				ids.add(uniqueIds.get(i));
+			}
+		}
+		
+		if (isGroupIds) {
+			return addGroupsIds(instanceId, ids);
+		}
+		
+		return addUsersIds(instanceId, ids);
+	}
 }

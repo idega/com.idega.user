@@ -109,27 +109,43 @@ function getGroupsData(result, properties, containerId) {
 	var dwrCallType = dwr.engine.XMLHttpRequest;
 	var dwrPath = getDefaultDwrPath();
 	if (properties.remoteMode) {
-		//	Preparing DWR for remote call
 		dwrPath = properties.server + getDefaultDwrPath();	
 		dwrCallType = dwr.engine.ScriptTag;
 	}
 	prepareDwr(GroupService, dwrPath);
 	
-	GroupService.addGroupsIds(properties.instanceId, properties.uniqueIds, {
-		callback: function(result) {
-			if (!result) {
-				closeAllLoadingMessages();
-				return false;
-			}
-			
-			prepareDwr(GroupService, dwrPath);
-			//	Calling method to get info about groups on selected ('local' or 'remote') server
-			GroupService.getGroupsInfo(properties.login, properties.password, properties.instanceId, properties.cacheTime, properties.remoteMode, {
-				callback: function(groupsInfo) {
-				 	getGroupsInfoCallback(groupsInfo, properties, containerId);
-				},
-				rpcType:dwrCallType
-			});
+	if (IE && properties.uniqueIds.length > 20) {
+		if (streamUniqueIdsToServer(properties, containerId, true)) {
+			getGroupsInfoAfterIdsAreAdded(true, properties, containerId);
+		}
+	}
+	else {
+		GroupService.addGroupsIds(properties.instanceId, properties.uniqueIds, {
+			callback: function(result) {
+				getGroupsInfoAfterIdsAreAdded(result, properties, containerId);
+			},
+			rpcType:dwrCallType
+		});
+	}
+}
+
+function getGroupsInfoAfterIdsAreAdded(successfullyAdded, properties, containerId) {
+	if (!successfullyAdded) {
+		closeAllLoadingMessages();
+		return false;
+	}
+	
+	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrPath = getDefaultDwrPath();
+	if (properties.remoteMode) {
+		dwrPath = properties.server + getDefaultDwrPath();	
+		dwrCallType = dwr.engine.ScriptTag;
+	}
+	prepareDwr(GroupService, dwrPath);
+	
+	GroupService.getGroupsInfo(properties.login, properties.password, properties.instanceId, properties.cacheTime, properties.remoteMode, {
+		callback: function(groupsInfo) {
+			getGroupsInfoCallback(groupsInfo, properties, containerId);
 		},
 		rpcType:dwrCallType
 	});

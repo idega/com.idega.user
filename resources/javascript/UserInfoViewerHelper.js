@@ -130,20 +130,38 @@ function getGroupsUsersData(result, properties, containerId) {
 	}
 	prepareDwr(GroupService, dwrPath);
 	
-	GroupService.addUsersIds(properties.instanceId, properties.uniqueIds, {
-		callback:function(result) {
-			if (!result) {
-				closeAllLoadingMessages();
-				return false;
-			}
-			
-			prepareDwr(GroupService, dwrPath);
-			GroupService.getUsersInfo(properties.login, properties.password, properties.instanceId, properties.cacheTime, properties.remoteMode, {
-				callback: function(usersInfo) {
-				 	getUsersInfoCallback(usersInfo, properties, containerId);
-				},
-				rpcType:dwrCallType
-			});
+	if (IE && properties.uniqueIds.length > 20) {
+		if (streamUniqueIdsToServer(properties, containerId, false)) {
+			getUsersInfoAfterIdsAreAdded(true, properties, containerId);
+		}
+	}
+	else {
+		GroupService.addUsersIds(properties.instanceId, properties.uniqueIds, {
+			callback:function(result) {
+				getUsersInfoAfterIdsAreAdded(result, properties, containerId)
+			},
+			rpcType:dwrCallType
+		});
+	}
+}
+
+function getUsersInfoAfterIdsAreAdded(result, properties, containerId) {
+	if (!result) {
+		closeAllLoadingMessages();
+		return false;
+	}
+	
+	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrPath = getDefaultDwrPath();
+	if (properties.remoteMode) {
+		dwrPath = properties.server + getDefaultDwrPath();	
+		dwrCallType = dwr.engine.ScriptTag;
+	}
+	prepareDwr(GroupService, dwrPath);
+	
+	GroupService.getUsersInfo(properties.login, properties.password, properties.instanceId, properties.cacheTime, properties.remoteMode, {
+		callback: function(usersInfo) {
+			getUsersInfoCallback(usersInfo, properties, containerId);
 		},
 		rpcType:dwrCallType
 	});

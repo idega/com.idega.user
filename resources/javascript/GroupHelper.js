@@ -413,3 +413,54 @@ function getDivsSpacer() {
 	spacer.addClass('spacer');
 	return spacer;
 }
+
+function streamUniqueIdsToServer(properties, containerId, isGroup) {
+	var copiedUniqueIds = new Array();
+	for (var i = 0; i < properties.uniqueIds.length; i++) {
+		copiedUniqueIds.push(properties.uniqueIds[i]);
+	}
+	
+	if (sendPackedUniqueIdsToServer(properties.instanceId, copiedUniqueIds, properties.server, properties.remoteMode, isGroup)) {
+		return true;
+	}
+	
+	return false;
+}
+
+function sendPackedUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup) {
+	while (uniqueIds.length >= 19) {
+		var pack = new Array();
+		for (var i = 0; i < 20; i++) {
+			pack.push(uniqueIds[i]);
+		}
+		
+		sendPackUniqueIdsToServer(instanceId, pack, server, remoteMode, isGroup);
+		
+		for (var i = 0; i < pack.length; i++) {
+			removeElementFromArray(uniqueIds, pack[i]);
+		}
+	}
+	
+	if (uniqueIds.length > 0) {
+		sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup);
+	}
+	
+	return true;
+}
+
+function sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup) {
+	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrPath = getDefaultDwrPath();
+	if (remoteMode) {
+		dwrPath = server + getDefaultDwrPath();	
+		dwrCallType = dwr.engine.ScriptTag;
+	}
+	prepareDwr(GroupService, dwrPath);
+	
+	GroupService.streamUniqueIds(instanceId, uniqueIds, isGroup, {
+		callback: function(result) {
+			return result;
+		},
+		rpcType:dwrCallType
+	});
+}
