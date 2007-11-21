@@ -55,7 +55,7 @@
 			else {
 				image.setStyle('visibility', 'hidden');
 			}
-			image.setProperty('opened',  false);
+			image.setProperty('opened',  'false');
 			image.setProperty('src', imgSrc);
 			image.setProperty('id', 'id' + new Date().getTime());
 			image.addClass('groupsTreeExpanderCollapserImageStyle');
@@ -235,7 +235,7 @@
 				return false;
 			}
 			else {
-				image.setProperty('opened',  false);
+				image.setProperty('opened',  'false');
 				image.setProperty('src', '/idegaweb/bundles/com.idega.user.bundle/resources/images/nav-plus.gif');
 				
 				changeGroupImageAfterNodeClosedOrOpened(image, false);
@@ -263,7 +263,7 @@
 	}
 	
 	function finishGroupTreeExpand(image, lastElement) {
-		image.setProperty('opened',  true);
+		image.setProperty('opened',  'true');
 		image.setProperty('src', '/idegaweb/bundles/com.idega.user.bundle/resources/images/nav-minus.gif');
 		
 		changeGroupImageAfterNodeClosedOrOpened(image, true);
