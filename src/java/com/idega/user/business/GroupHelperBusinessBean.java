@@ -141,6 +141,7 @@ public class GroupHelperBusinessBean {
 		}
 		imageUri.append(imageEnd);
 		node.setImage(imageUri.toString());
+		System.out.println("Image: " + node.getImage());
 		
 		return node;
 	}
@@ -155,8 +156,17 @@ public class GroupHelperBusinessBean {
 			return parentNode;
 		}
 		
-		List<GroupNode> children = new ArrayList<GroupNode>();
+		List<GroupNode> currentChildren = parentNode.getChildren();
+		if (currentChildren != null) {
+			if (currentChildren.size() == groups.size()) {
+				System.out.println("GroupNode already has all children");
+				return parentNode;
+			}
+		}
 		
+		System.out.println("Adding children ("+groups.size()+") for " + parentNode.getName());
+		
+		List<GroupNode> children = new ArrayList<GroupNode>();
 		Object o = null;
 		Group group = null;
 		GroupNode childNode = null;
@@ -164,7 +174,7 @@ public class GroupHelperBusinessBean {
 			o = it.next();
 			if (o instanceof Group) {
 				group = (Group) o;
-				childNode = createGroupNodeFromGroup(group, image, true);
+				childNode = createGroupNodeFromGroup(group, image, false);
 				
 				children.add(childNode);
 			}
