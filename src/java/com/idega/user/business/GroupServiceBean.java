@@ -50,7 +50,9 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	private GroupBusiness groupBusiness = null;
 	private UserBusiness userBusiness = null;
 	
-	private List<String> selectedGroups = new ArrayList<String>();
+	private String groupsCacheName = "groupsInfoViewersUniqueIdsCache";
+	private String usersCacheName = "groupsUsersInfoViewersUniqueIdsCache";
+	private String treeCacheName = "groupsChooserTreeSelectedGroupsUniqueIdsCache";
 
 	/**
 	 * Returns tree of Groups
@@ -58,12 +60,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	public List<GroupNode> getTopGroupsAndDirectChildren(List<String> uniqueIds) {
 		List<GroupNode> topGroupsAndDirectChildren = helper.getTopGroupsAndDirectChildren();
 		if (uniqueIds == null) {
-			if (selectedGroups.size() == 0) {
-				return topGroupsAndDirectChildren;
-			}
-			
-			uniqueIds = new ArrayList<String>(selectedGroups);
-			selectedGroups = new ArrayList<String>();
+			return topGroupsAndDirectChildren;
 		}
 		
 		IWContext iwc = CoreUtil.getIWContext();
@@ -240,7 +237,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	/**
 	 * Returns tree of Groups
 	 */
-	public List<GroupNode> getGroupsTree(String login, String password, List<String> uniqueIds) {
+	public List<GroupNode> getGroupsTree(String login, String password, String instanceId, List<String> uniqueIds) {
 		if (login == null || password == null) {
 			return null;
 		}
@@ -250,8 +247,22 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return null;
 		}
 		
+		if (uniqueIds == null && instanceId == null) {
+			return null;
+		}
+		
 		if (!isLoggedUser(iwc, login)) {
 			if (!logInUser(iwc, login, password)) {
+				return null;
+			}
+		}
+		
+		if (uniqueIds == null) {
+			uniqueIds = null;
+			try {
+				uniqueIds = getUniqueIds(treeCacheName).get(instanceId);
+			} catch(Exception e) {
+				e.printStackTrace();
 				return null;
 			}
 		}
@@ -367,7 +378,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return null;
 		}
 		
-		List<String> uniqueIds = getUniqueIds(true).get(instanceId);
+		List<String> uniqueIds = getUniqueIds(groupsCacheName).get(instanceId);
 		if (uniqueIds == null) {
 			return null;
 		}
@@ -493,7 +504,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return null;
 		}
 		
-		List<String> uniqueIds = getUniqueIds(false).get(instanceId);
+		List<String> uniqueIds = getUniqueIds(usersCacheName).get(instanceId);
 		if (uniqueIds == null) {
 			return null;
 		}
@@ -878,7 +889,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		}
 		
 		try {
-			getUniqueIds(true).put(instanceId, ids);
+			getUniqueIds(groupsCacheName).put(instanceId, ids);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -893,7 +904,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		}
 		
 		try {
-			getUniqueIds(false).put(instanceId, ids);
+			getUniqueIds(usersCacheName).put(instanceId, ids);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -903,17 +914,13 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Map<String, List<String>> getUniqueIds(boolean group) throws NullPointerException {
+	private Map<String, List<String>> getUniqueIds(String cacheName) throws NullPointerException {
 		IWCacheManager2 cache = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
 		
 		int caheSize = 1000;
 		boolean overFlowDisk = true;
 		boolean eternal = false;
 		long cacheTime = 5 * 60;	// Seconds
-		String cacheName = "groupsUsersInfoViewersUniqueIdsCache";
-		if (group) {
-			cacheName = "groupsInfoViewersUniqueIdsCache";
-		}
 		
 		try {
 			return cache.getCache(cacheName, caheSize, overFlowDisk, eternal, cacheTime, cacheTime);
@@ -924,28 +931,25 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	}
 	
 	public boolean streamUniqueIds(String instanceId, List<String> uniqueIds, boolean isGroupIds, boolean isTree) {
-		if (isTree) {
-			if (uniqueIds == null) {
-				return false;
-			}
-			
-			for (int i = 0; i < uniqueIds.size(); i++) {
-				selectedGroups.add(uniqueIds.get(i));
-			}
-			
-			return true;
-		}
-
 		if (instanceId == null || uniqueIds == null) {
 			return false;
 		}
 		
+		String cacheName = usersCacheName;
+		if (isGroupIds) {
+			cacheName = groupsCacheName;
+		}
+		if (isTree) {
+			cacheName = treeCacheName;
+		}
+		
 		List<String> ids = null;
 		try {
-			ids = getUniqueIds(isGroupIds).get(instanceId);
+			ids = getUniqueIds(cacheName).get(instanceId);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		
 		if (ids == null) {
 			ids = uniqueIds;
 		}
@@ -957,6 +961,16 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		
 		if (isGroupIds) {
 			return addGroupsIds(instanceId, ids);
+		}
+		
+		if (isTree) {
+			try {
+				getUniqueIds(treeCacheName).put(instanceId, ids);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+			return true;
 		}
 		
 		return addUsersIds(instanceId, ids);

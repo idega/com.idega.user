@@ -255,7 +255,7 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 	if (result) {
 		if (IE && selectedGroups != null) {
 			if (selectedGroups.length > 20) {
-				if (streamUniqueIdsToServer(null, selectedGroups, server, true, false, true)) {
+				if (streamUniqueIdsToServer(id, selectedGroups, server, true, false, true)) {
 					addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass, true);
 				}
 				
@@ -285,9 +285,8 @@ function addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, s
 	}
 	
 	prepareDwr(GroupService, server + getDefaultDwrPath());
-	GroupService.getGroupsTree(login, password, groupsToSend, {
-		asynchronous:false,
-		callback:function(groups) {
+	GroupService.getGroupsTree(login, password, id, groupsToSend, {
+		callback: function(groups) {
 			closeAllLoadingMessages();
 
 			prepareDwr(GroupService, getDefaultDwrPath());
@@ -486,8 +485,7 @@ function sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, is
 	prepareDwr(GroupService, dwrPath);
 	
 	GroupService.streamUniqueIds(instanceId, uniqueIds, isGroup, isTree, {
-		asynchronous:false,
-		callback:function(result) {
+		callback: function(result) {
 			return result;
 		},
 		rpcType:dwrCallType

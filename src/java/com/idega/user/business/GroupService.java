@@ -20,7 +20,7 @@ public interface GroupService extends IBOSession {
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getGroupsTree
 	 */
-	public List<GroupNode> getGroupsTree(String login, String password, List<String> uniqueIds) throws RemoteException;
+	public List<GroupNode> getGroupsTree(String login, String password, String instanceId, List<String> uniqueIds) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#canUseRemoteServer
