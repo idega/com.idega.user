@@ -286,7 +286,8 @@ function addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, s
 	
 	prepareDwr(GroupService, server + getDefaultDwrPath());
 	GroupService.getGroupsTree(login, password, groupsToSend, {
-		callback: function(groups) {
+		asynchronous:false,
+		callback:function(groups) {
 			closeAllLoadingMessages();
 
 			prepareDwr(GroupService, getDefaultDwrPath());
@@ -485,7 +486,8 @@ function sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, is
 	prepareDwr(GroupService, dwrPath);
 	
 	GroupService.streamUniqueIds(instanceId, uniqueIds, isGroup, isTree, {
-		callback: function(result) {
+		asynchronous:false,
+		callback:function(result) {
 			return result;
 		},
 		rpcType:dwrCallType
