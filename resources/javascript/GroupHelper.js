@@ -415,9 +415,14 @@ function getDivsSpacer() {
 }
 
 function streamUniqueIdsToServer(properties, containerId, isGroup) {
+	var ids = properties.uniqueIds;
+	if (ids == null) {
+		return false;
+	}
+	
 	var copiedUniqueIds = new Array();
-	for (var i = 0; i < properties.uniqueIds.length; i++) {
-		copiedUniqueIds.push(properties.uniqueIds[i]);
+	for (var i = 0; i < ids.length; i++) {
+		copiedUniqueIds.push(ids[i]);
 	}
 	
 	if (sendPackedUniqueIdsToServer(properties.instanceId, copiedUniqueIds, properties.server, properties.remoteMode, isGroup)) {
@@ -441,8 +446,10 @@ function sendPackedUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, 
 		}
 	}
 	
-	if (uniqueIds.length > 0) {
-		sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup);
+	if (uniqueIds) {
+		if (uniqueIds.length > 0) {
+			sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup);
+		}
 	}
 	
 	return true;

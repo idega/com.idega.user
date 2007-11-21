@@ -130,19 +130,22 @@ function getGroupsUsersData(result, properties, containerId) {
 	}
 	prepareDwr(GroupService, dwrPath);
 	
-	if (IE && properties.uniqueIds.length > 20) {
-		if (streamUniqueIdsToServer(properties, containerId, false)) {
-			getUsersInfoAfterIdsAreAdded(true, properties, containerId);
+	if (IE && properties.uniqueIds != null) { 
+		if (properties.uniqueIds.length > 20) {
+			if (streamUniqueIdsToServer(properties, containerId, false)) {
+				getUsersInfoAfterIdsAreAdded(true, properties, containerId);
+			}
+			
+			return false;
 		}
 	}
-	else {
-		GroupService.addUsersIds(properties.instanceId, properties.uniqueIds, {
-			callback:function(result) {
-				getUsersInfoAfterIdsAreAdded(result, properties, containerId)
-			},
-			rpcType:dwrCallType
-		});
-	}
+		
+	GroupService.addUsersIds(properties.instanceId, properties.uniqueIds, {
+		callback:function(result) {
+			getUsersInfoAfterIdsAreAdded(result, properties, containerId)
+		},
+		rpcType:dwrCallType
+	});
 }
 
 function getUsersInfoAfterIdsAreAdded(result, properties, containerId) {

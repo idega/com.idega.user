@@ -114,19 +114,22 @@ function getGroupsData(result, properties, containerId) {
 	}
 	prepareDwr(GroupService, dwrPath);
 	
-	if (IE && properties.uniqueIds.length > 20) {
-		if (streamUniqueIdsToServer(properties, containerId, true)) {
-			getGroupsInfoAfterIdsAreAdded(true, properties, containerId);
+	if (IE && properties.uniqueIds != null) { 
+		if (properties.uniqueIds.length > 20) {
+			if (streamUniqueIdsToServer(properties, containerId, true)) {
+				getGroupsInfoAfterIdsAreAdded(true, properties, containerId);
+			}
+			
+			return false;
 		}
 	}
-	else {
-		GroupService.addGroupsIds(properties.instanceId, properties.uniqueIds, {
-			callback: function(result) {
-				getGroupsInfoAfterIdsAreAdded(result, properties, containerId);
-			},
-			rpcType:dwrCallType
-		});
-	}
+
+	GroupService.addGroupsIds(properties.instanceId, properties.uniqueIds, {
+		callback: function(result) {
+			getGroupsInfoAfterIdsAreAdded(result, properties, containerId);
+		},
+		rpcType:dwrCallType
+	});
 }
 
 function getGroupsInfoAfterIdsAreAdded(successfullyAdded, properties, containerId) {
