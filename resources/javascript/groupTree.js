@@ -13,21 +13,7 @@
 			groupsList.injectInside(container);
 		}
 		
-		initGroupsTree(selectedGroups, styleClassName, true, true);
-		
-		var firstLevelChildren = groupsList.getChildren();
-		if (firstLevelChildren == null) {
-			return false;
-		}
-		var firsLevelChild = null;
-		for (var i = 0; i < firstLevelChildren.length; i++) {
-			firsLevelChild = firstLevelChildren[i];
-			if (firsLevelChild) {
-				if (firsLevelChild.getTag() == 'li' && firsLevelChild.hasClass('groupsTreePartNode')) {
-					openOrCloseGroupTreeListPart(firsLevelChild.getFirst().getFirst(), true, selectedGroups, styleClassName);
-				}
-			}
-		}
+		initGroupsTree(selectedGroups, styleClassName);
 	}
 	
 	function addTreeElements(nodes, rootUl, styleClassName, selectedGroups) {
@@ -49,13 +35,17 @@
 			
 			var image = new Element('img');
 			var imgSrc = '/idegaweb/bundles/com.idega.user.bundle/resources/images/nav-minus.gif';
+			var openedPropertyValue = 'true';
 			if (node.hasChildren) {
-				imgSrc = '/idegaweb/bundles/com.idega.user.bundle/resources/images/nav-plus.gif';
+				if (node.children == null) {
+					imgSrc = '/idegaweb/bundles/com.idega.user.bundle/resources/images/nav-plus.gif';
+					openedPropertyValue = 'false';
+				}
 			}
 			else {
 				image.setStyle('visibility', 'hidden');
 			}
-			image.setProperty('opened',  'false');
+			image.setProperty('opened', openedPropertyValue);
 			image.setProperty('src', imgSrc);
 			image.setProperty('id', 'id' + new Date().getTime());
 			image.addClass('groupsTreeExpanderCollapserImageStyle');
@@ -93,7 +83,7 @@
 				ulElement.addClass('tree_drag_drop');
 				ulElement.injectInside(otherListContainer);
 				
-				otherListContainer.setStyle('display', 'none');
+				otherListContainer.setStyle('display', 'block');
 			}
 			
 			liElement.injectInside(rootUl);
@@ -114,88 +104,22 @@
 		return false;
 	}
 	
-	function initGroupsTree(selectedGroups, styleClassName, forceOpen, openAllParent) {
+	function initGroupsTree(selectedGroups, styleClassName) {
 		$$('img.groupsTreeExpanderCollapserImageStyle').each(
 			function(image) {
 				image.removeEvents('click');
 				
 				image.addEvent('click', function() {
-					openOrCloseGroupTreeListPart(image, false, selectedGroups, styleClassName);
+					openOrCloseGroupTreeListPart(image, selectedGroups, styleClassName);
 				});
 			}
 		);
-		
-		if (openAllParent) {
-			$$('img.groupsTreeExpanderCollapserImageStyle').each(
-				function(image) {
-					var spanElement = image.getParent().getLast();
-					if (spanElement) {
-						if (isGroupSelected(selectedGroups, spanElement.id)) {
-							openOrCloseGroupTreeListPart(image, forceOpen, selectedGroups, styleClassName);
-							
-							openAllParentGroupsTreeParts(image, selectedGroups, styleClassName, forceOpen);
-						}
-					}
-				}
-			);
-		}
 	}
 	
-	function openAllParentGroupsTreeParts(image, selectedGroups, styleClassName, forceOpen) {
-		var imageAndSpanDiv = image.getParent();
-		if (imageAndSpanDiv == null) {
-			return false;
-		}
-		if (imageAndSpanDiv.getTag() != 'div') {
-			return false;
-		}
-		
-		var liElement = imageAndSpanDiv.getParent();
-		if (liElement == null) {
-			return false;
-		}
-		if (liElement.getTag() != 'li') {
-			return false;
-		}
-		
-		var ulElement = liElement.getParent();
-		if (ulElement == null) {
-			return false;
-		}
-		if (ulElement.getTag() != 'ul') {
-			return false;
-		}
-		if (!ulElement.hasClass('tree_drag_drop')) {
-			return false;
-		}
-		if (ulElement.getProperty('start') == 'true') {
-			return false;
-		}
-				
-		var nextImage = null;
-		try {
-			nextImage = ulElement.getParent().getPrevious().getFirst();
-		} catch(e) {}
-		if (nextImage == null) {
-			return false;
-		}
-		if (nextImage.getTag() != 'img') {
-			return false;
-		}
-		if (nextImage.hasClass('groupsTreeExpanderCollapserImageStyle')) {
-			openOrCloseGroupTreeListPart(nextImage, forceOpen, selectedGroups, styleClassName);
-			
-			openAllParentGroupsTreeParts(nextImage, selectedGroups, styleClassName, forceOpen);
-		}
-	}
-	
-	function openOrCloseGroupTreeListPart(image, forceOpen, selectedGroups, styleClassName) {
+	function openOrCloseGroupTreeListPart(image, selectedGroups, styleClassName) {
 		var lastElement = image.getParent().getNext();
 		if (lastElement) {
 			var needOpen = image.getProperty('opened') == 'false';
-			if (forceOpen) {
-				needOpen = true;
-			}
 		
 			if (needOpen) {
 				var listRoot = lastElement.getFirst();
@@ -257,7 +181,7 @@
 		}
 		
 		addTreeElements(nodes, listRoot, styleClassName, selectedGroups);
-		initGroupsTree(selectedGroups, styleClassName, false, false);
+		initGroupsTree(selectedGroups, styleClassName);
 		
 		registerActionsForGroupTreeSpan();
 		
