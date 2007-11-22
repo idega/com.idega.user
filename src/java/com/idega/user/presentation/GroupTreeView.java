@@ -23,7 +23,7 @@ import com.idega.user.event.SelectGroupEvent;
 
 public class GroupTreeView extends IWTreeControl {
 
-	private static final String TREEVIEW_PREFIX = "treeviewer/ui/";
+	public static final String TREEVIEW_PREFIX = "treeviewer/ui/";
 
 	Image folderAndFileIcons[][] = null;
 	String folderAndFileIconNames[] = { "treeviewer_node_closed.gif", "treeviewer_node_open.gif", "treeviewer_node_leaf.gif" };
