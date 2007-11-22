@@ -13,7 +13,7 @@
 			groupsList.injectInside(container);
 		}
 		
-		initGroupsTree(selectedGroups, styleClassName);
+		initGroupsTree(selectedGroups, styleClassName, true, true);
 		
 		var firstLevelChildren = groupsList.getChildren();
 		if (firstLevelChildren == null) {
@@ -114,7 +114,7 @@
 		return false;
 	}
 	
-	function initGroupsTree(selectedGroups, styleClassName) {
+	function initGroupsTree(selectedGroups, styleClassName, forceOpen, openAllParent) {
 		$$('img.groupsTreeExpanderCollapserImageStyle').each(
 			function(image) {
 				image.removeEvents('click');
@@ -125,21 +125,23 @@
 			}
 		);
 		
-		$$('img.groupsTreeExpanderCollapserImageStyle').each(
-			function(image) {
-				var spanElement = image.getParent().getLast();
-				if (spanElement) {
-					if (isGroupSelected(selectedGroups, spanElement.id)) {
-						openOrCloseGroupTreeListPart(image, true, selectedGroups, styleClassName);
-						
-						openAllParentGroupsTreeParts(image, selectedGroups, styleClassName);
+		if (openAllParent) {
+			$$('img.groupsTreeExpanderCollapserImageStyle').each(
+				function(image) {
+					var spanElement = image.getParent().getLast();
+					if (spanElement) {
+						if (isGroupSelected(selectedGroups, spanElement.id)) {
+							openOrCloseGroupTreeListPart(image, forceOpen, selectedGroups, styleClassName);
+							
+							openAllParentGroupsTreeParts(image, selectedGroups, styleClassName, forceOpen);
+						}
 					}
 				}
-			}
-		);
+			);
+		}
 	}
 	
-	function openAllParentGroupsTreeParts(image, selectedGroups, styleClassName) {
+	function openAllParentGroupsTreeParts(image, selectedGroups, styleClassName, forceOpen) {
 		var imageAndSpanDiv = image.getParent();
 		if (imageAndSpanDiv == null) {
 			return false;
@@ -181,9 +183,9 @@
 			return false;
 		}
 		if (nextImage.hasClass('groupsTreeExpanderCollapserImageStyle')) {
-			openOrCloseGroupTreeListPart(nextImage, true, selectedGroups, styleClassName);
+			openOrCloseGroupTreeListPart(nextImage, forceOpen, selectedGroups, styleClassName);
 			
-			openAllParentGroupsTreeParts(nextImage, selectedGroups, styleClassName);
+			openAllParentGroupsTreeParts(nextImage, selectedGroups, styleClassName, forceOpen);
 		}
 	}
 	
@@ -255,7 +257,7 @@
 		}
 		
 		addTreeElements(nodes, listRoot, styleClassName, selectedGroups);
-		initGroupsTree(selectedGroups, styleClassName);
+		initGroupsTree(selectedGroups, styleClassName, false, false);
 		
 		registerActionsForGroupTreeSpan();
 		
