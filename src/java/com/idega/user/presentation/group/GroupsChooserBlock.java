@@ -182,8 +182,11 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		Layer connData = new Layer();
 		connData.setId("connectionData");
 		connData.setStyleClass("groupsChooserConnectionHiddenTable");
-		if (!isRemoteMode) {
-			connData.setStyleAttribute("display: none");
+		if (isRemoteMode) {
+			connData.setStyleAttribute("display: block;");
+		}
+		else {
+			connData.setStyleAttribute("display: none;");
 		}
 		
 		FieldSet connectionContainer = new FieldSet(new Legend(iwrb.getLocalizedString("remote_connection_data", "Connection")));
