@@ -1,8 +1,13 @@
 package com.idega.user.business;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
@@ -17,6 +22,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.user.bean.GroupDataBean;
 import com.idega.user.bean.GroupMemberDataBean;
+import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
@@ -32,18 +38,172 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	
 	private GroupBusiness groupBusiness = null;
 	private UserBusiness userBusiness = null;
+	
+	private String groupsCacheName = "groupsInfoViewersUniqueIdsCache";
+	private String usersCacheName = "groupsUsersInfoViewersUniqueIdsCache";
+	private String treeCacheName = "groupsChooserTreeSelectedGroupsUniqueIdsCache";
 
 	/**
 	 * Returns tree of Groups
 	 */
-	public List getTopGroupNodes() {
-		return helper.getTopGroupNodes();
+	public List getTopGroupsAndDirectChildren(List uniqueIds) {
+		List topGroupsAndDirectChildren = helper.getTopGroupsAndDirectChildren();
+		if (uniqueIds == null) {
+			return topGroupsAndDirectChildren;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return topGroupsAndDirectChildren;
+		}
+		
+		GroupBusiness groupBusiness = getGroupBusiness(iwc);
+		if (groupBusiness == null) {
+			return topGroupsAndDirectChildren;
+		}
+		
+		List uniqueIdsOfTopGroups = new ArrayList();
+		uniqueIdsOfTopGroups = getCurrentTreeUniqueIds(uniqueIdsOfTopGroups, topGroupsAndDirectChildren);
+		
+		String image = helper.getGroupImageBaseUri(iwc);
+		
+		Group selectedGroup = null;
+		String uniqueId = null;
+		for (int i = 0; i < uniqueIds.size(); i++) {
+			uniqueId = null;
+			try {
+				selectedGroup = groupBusiness.getGroupByUniqueId(uniqueIds.get(i).toString());
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} catch (FinderException e) {
+				e.printStackTrace();
+			}
+			if (selectedGroup != null) {
+				uniqueId = selectedGroup.getUniqueId();
+				if (uniqueId != null && !uniqueIdsOfTopGroups.contains(uniqueId)) {
+					try {
+						topGroupsAndDirectChildren = appendParentGroupsToList(groupBusiness.getParentGroups(selectedGroup), selectedGroup, topGroupsAndDirectChildren, groupBusiness, image);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		return topGroupsAndDirectChildren;
 	}
 	
-	/**
-	 * Returns tree of Groups
-	 */
-	public List getGroupsTree(String login, String password) {
+	private List getCurrentTreeUniqueIds(List ids, List nodes) {
+		if (nodes == null) {
+			return ids;
+		}
+		
+		GroupNode node = null;
+		for (int i = 0; i < nodes.size(); i++) {
+			node = (GroupNode) nodes.get(i);
+			ids.add(node.getUniqueId());
+			
+			if (node.getChildren() != null) {
+				ids = getCurrentTreeUniqueIds(ids, node.getChildren());
+			}
+		}
+		
+		return ids;
+	}
+	
+	private List appendParentGroupsToList(Collection parentGroups, Group selectedGroup, List groupNodes, GroupBusiness groupBusiness, String image) {
+		if (parentGroups == null) {
+			return null;
+		}
+		
+		Object o = null;
+		Group parentGroup = null;
+		for (Iterator it = parentGroups.iterator(); it.hasNext();) {
+			o = it.next();
+			if (o instanceof Group) {
+				parentGroup = (Group) o;
+				GroupNode parentNode = findParentNode(parentGroup, groupNodes);
+				if (parentNode != null) {
+					try {
+						helper.addChildGroupsToNode(parentNode, groupBusiness.getChildGroups(parentGroup), image);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		return groupNodes;
+	}
+	
+	private GroupNode findParentNode(Group group, List groupNodes) {
+		if (group == null || groupNodes == null) {
+			return null;
+		}
+		
+		String uniqueId = group.getUniqueId();
+		if (uniqueId == null) {
+			return null;
+		}
+		
+		GroupNode groupNode = null;
+		for (int i = 0; i < groupNodes.size(); i++) {
+			groupNode = (GroupNode) groupNodes.get(i);
+			if (uniqueId.equals(groupNode.getUniqueId())) {
+				return groupNode;
+			}
+			else {
+				if (groupNode.getChildren() != null) {
+					GroupNode groupNodeRecursive = findParentNode(group, groupNode.getChildren());
+					if (groupNodeRecursive != null) {
+						return groupNodeRecursive;
+					}
+				}
+			}
+			
+		}
+		
+		return null;
+	}
+	
+	public List getChildrenOfGroup(String uniqueId) {
+		if (uniqueId == null) {
+			return null;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		GroupBusiness groupBusiness = getGroupBusiness(iwc);
+		if (groupBusiness == null) {
+			return null;
+		}
+		
+		Group group = null;
+		try {
+			group = groupBusiness.getGroupByUniqueId(uniqueId);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		
+		if (group == null) {
+			return null;
+		}
+		
+		try {
+			return helper.convertGroupsToGroupNodes(groupBusiness.getChildGroups(group), iwc, false, helper.getGroupImageBaseUri(iwc));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	
+		return null;
+	}
+	
+	public List getChildrenOfGroupWithLogin(String login, String password, String uniqueId) {
 		if (login == null || password == null) {
 			return null;
 		}
@@ -53,15 +213,48 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return null;
 		}
 		
-		if (isLoggedUser(iwc, login)) {
-			return getTopGroupNodes();
+		if (!isLoggedUser(iwc, login)) {
+			if (!logInUser(iwc, login, password)) {
+				return null;
+			}
 		}
 		
-		if (logInUser(iwc, login, password)) {
-			return getTopGroupNodes();
+		return getChildrenOfGroup(uniqueId);
+	}
+	
+	/**
+	 * Returns tree of Groups
+	 */
+	public List getGroupsTree(String login, String password, String instanceId, List uniqueIds) {
+		if (login == null || password == null) {
+			return null;
 		}
 		
-		return null;
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		if (uniqueIds == null && instanceId == null) {
+			return null;
+		}
+		
+		if (!isLoggedUser(iwc, login)) {
+			if (!logInUser(iwc, login, password)) {
+				return null;
+			}
+		}
+		
+		if (uniqueIds == null) {
+			try {
+				uniqueIds = (List) getUniqueIds(treeCacheName).get(instanceId);
+			} catch(Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		return getTopGroupsAndDirectChildren(uniqueIds);
 	}
 	
 	private Map getCache(IWContext iwc, String cacheKey, int minutes) {
@@ -137,10 +330,9 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		
 		List uniqueIds = null;
 		try {
-			uniqueIds = (List) getUniqueIds(true).get(instanceId);
+			uniqueIds = (List) getUniqueIds(groupsCacheName).get(instanceId);
 		} catch(Exception e) {
 			e.printStackTrace();
-			return null;
 		}
 		if (uniqueIds == null) {
 			return null;
@@ -230,10 +422,9 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		
 		List uniqueIds = null;
 		try {
-			uniqueIds = (List) getUniqueIds(false).get(instanceId);
+			uniqueIds = (List) getUniqueIds(usersCacheName).get(instanceId);
 		} catch(Exception e) {
 			e.printStackTrace();
-			return null;
 		}
 		if (uniqueIds == null) {
 			return null;
@@ -295,7 +486,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		try {
 			current = iwc.getCurrentUser();
 		} catch (Exception e) {
-			e.printStackTrace();
 			return false;
 		}
 		if (current == null) {	//	Not logged
@@ -443,7 +633,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		}
 		
 		try {
-			getUniqueIds(true).put(instanceId, ids);
+			getUniqueIds(groupsCacheName).put(instanceId, ids);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -458,7 +648,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		}
 		
 		try {
-			getUniqueIds(false).put(instanceId, ids);
+			getUniqueIds(usersCacheName).put(instanceId, ids);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -467,18 +657,65 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return true;
 	}
 	
-	private Map getUniqueIds(boolean group) throws NullPointerException {
+	private Map getUniqueIds(String cacheName) throws NullPointerException {
 		IWCacheManager2 cache = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
 		
 		int caheSize = 1000;
 		boolean overFlowDisk = true;
 		boolean eternal = false;
 		long cacheTime = 5 * 60;	// Seconds
-		String cacheName = "groupsUsersInfoViewersUniqueIdsCache";
-		if (group) {
-			cacheName = "groupsInfoViewersUniqueIdsCache";
+		
+		try {
+			return cache.getCache(cacheName, caheSize, overFlowDisk, eternal, cacheTime, cacheTime);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public boolean streamUniqueIds(String instanceId, List uniqueIds, boolean isGroupIds, boolean isTree) {
+		if (instanceId == null || uniqueIds == null) {
+			return false;
 		}
 		
-		return cache.getCache(cacheName, caheSize, overFlowDisk, eternal, cacheTime, cacheTime);
+		String cacheName = usersCacheName;
+		if (isGroupIds) {
+			cacheName = groupsCacheName;
+		}
+		if (isTree) {
+			cacheName = treeCacheName;
+		}
+		
+		List ids = null;
+		try {
+			ids = (List) getUniqueIds(cacheName).get(instanceId);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		if (ids == null) {
+			ids = uniqueIds;
+		}
+		else {
+			for (int i = 0; i < uniqueIds.size(); i++) {
+				ids.add(uniqueIds.get(i));
+			}
+		}
+		
+		if (isGroupIds) {
+			return addGroupsIds(instanceId, ids);
+		}
+		
+		if (isTree) {
+			try {
+				getUniqueIds(treeCacheName).put(instanceId, ids);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+			return true;
+		}
+		
+		return addUsersIds(instanceId, ids);
 	}
 }

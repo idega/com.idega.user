@@ -13,11 +13,15 @@ import javax.ejb.FinderException;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.ui.AbstractTreeViewer;
 import com.idega.user.app.SimpleUserApp;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.user.presentation.GroupTreeView;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.GenericUserComparator;
 
@@ -26,7 +30,7 @@ public class GroupHelperBusinessBean {
 	private UserBusiness userBusiness = null;
 	private GroupBusiness groupBusiness = null;
 	
-	public List getTopGroupNodes(){
+	protected List getTopGroupsAndDirectChildren(){
 		List fake = new ArrayList();
 		
 		IWContext iwc = CoreUtil.getIWContext();
@@ -41,55 +45,30 @@ public class GroupHelperBusinessBean {
 			return fake;
 		}
 		
-		return getTopGroupNodes(currentUser, iwc);
+		return getTopGroupsAndDirectChildren(currentUser, iwc);
 	}
 	
-	public List getTopGroupNodes(User user, IWContext iwc) {
-		return convertGroupCollectionToGroupNodeCollection(getTopGroups(iwc, user), iwc.getApplicationContext());
-	}
-
-	public Collection getTopGroups(IWContext iwc, User user) {
-		Collection fake = new ArrayList();
-		if (iwc == null || user == null) {
+	private List getTopGroupsAndDirectChildren(User user, IWContext iwc) {
+		List fake = new ArrayList();
+		
+		if (user == null || iwc == null) {
 			return fake;
 		}
+		
 		userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
 			return fake;
 		}
 		
 		try {
-			return userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwc);
+			return convertGroupsToGroupNodes(userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwc), iwc, true, getGroupImageBaseUri(iwc));
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			return fake;
 		}
 	}
 	
-	public Collection getTopAndParentGroups(Collection topGroups) {
-		if (topGroups == null) {
-			return null;
-		}
-		
-		Object o = null;
-		Group group = null;
-		Collection topAndParentGroups = new ArrayList(topGroups);
-		List parentGroups = null;
-		for (Iterator it = topGroups.iterator(); it.hasNext();) {
-			o = it.next();
-			if (o instanceof Group) {
-				group = (Group) o;
-				parentGroups = group.getParentGroups();
-				if (parentGroups != null) {
-					topAndParentGroups.addAll(parentGroups);
-				}
-			}
-		}
-		
-		return topAndParentGroups;
-	}
-	
-	public synchronized UserBusiness getUserBusiness(IWContext iwc) {
+	public synchronized UserBusiness getUserBusiness(IWApplicationContext iwc) {
 		if (userBusiness == null) {
 			try {
 				userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
@@ -101,43 +80,100 @@ public class GroupHelperBusinessBean {
 		return userBusiness;
 	}
 	
-	private synchronized GroupBusiness getGroupBusiness(IWContext iwc) {
-		if (groupBusiness == null) {
-			try {
-				groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return groupBusiness;
-	}
-	
-	private List convertGroupCollectionToGroupNodeCollection(Collection nodes, IWApplicationContext iwac){
+	protected List convertGroupsToGroupNodes(Collection groups, IWContext iwc, boolean isFirstLevel, String imageBaseUri) {
 		List list = new ArrayList();
-		if (nodes == null || iwac == null) {
+		if (groups == null || iwc == null) {
 			return list;
 		}
+		
+		GroupBusiness groupBusiness = getGroupBusiness(iwc);
 		
 		Object o = null;
 		Group group = null;
 		GroupNode groupNode = null;
-		for (Iterator it = nodes.iterator(); it.hasNext();) {
+		for (Iterator it = groups.iterator(); it.hasNext();) {
 			o = it.next();
 			if (o instanceof Group) {
 				group = (Group) o;
-				groupNode = new GroupNode(); 
-				groupNode.setUniqueId(group.getUniqueId());
-				groupNode.setName(group.getName());
-				if (group.getChildCount() > 0) {
-					groupNode.setChildren(convertGroupCollectionToGroupNodeCollection(group.getChildren(), iwac));
-					groupNode.setHasChildren(true);
+				groupNode = createGroupNodeFromGroup(group, imageBaseUri, false);
+				if (groupNode != null) {
+					if (isFirstLevel) {
+						if (groupBusiness != null) {
+							try {
+								groupNode.setChildren(convertGroupsToGroupNodes(groupBusiness.getChildGroups(group), iwc, false, imageBaseUri));
+							} catch (RemoteException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+					
+					list.add(groupNode);
 				}
-				list.add(groupNode);
 			}
 		}
 
 		return list;
+	}
+	
+	private GroupNode createGroupNodeFromGroup(Group group, String imageBaseUri, boolean nodeIsOpened) {
+		if (group == null) {
+			return null;
+		}
+		
+		String uniqueId = group.getUniqueId();
+		if (uniqueId == null) {
+			return null;
+		}
+		
+		GroupNode node = new GroupNode();
+		node.setUniqueId(uniqueId);
+		node.setName(group.getName());
+		node.setHasChildren(group.getChildCount() > 0);
+		
+		StringBuffer imageUri = new StringBuffer(imageBaseUri);
+		if (!imageBaseUri.endsWith(CoreConstants.SLASH)) {
+			imageUri.append(CoreConstants.SLASH);
+		}
+		imageUri.append(group.getGroupType());
+		String imageEnd = "_node_closed.gif";
+		if (nodeIsOpened) {
+			imageEnd = "_node_open.gif";
+		}
+		imageUri.append(imageEnd);
+		node.setImage(imageUri.toString());
+		
+		return node;
+	}
+	
+	protected GroupNode addChildGroupsToNode(GroupNode parentNode, Collection groups, String image) {
+		if (groups == null) {
+			parentNode.setHasChildren(false);
+			return parentNode;
+		}
+		if (groups.size() == 0) {
+			return parentNode;
+		}
+		
+		List children = new ArrayList();
+		Object o = null;
+		Group group = null;
+		GroupNode childNode = null;
+		for (Iterator it = groups.iterator(); it.hasNext();) {
+			o = it.next();
+			if (o instanceof Group) {
+				group = (Group) o;
+				childNode = createGroupNodeFromGroup(group, image, false);
+				
+				children.add(childNode);
+			}
+		}
+		
+		if (children.size() > 0) {
+			parentNode.setHasChildren(true);
+			parentNode.setChildren(children);
+		}
+		
+		return parentNode;
 	}
 	
 	private List getChilrenfOfGroups(Collection groups) {
@@ -222,6 +258,18 @@ public class GroupHelperBusinessBean {
 	 */
 	public Collection getFilteredGroups(Collection groups, String typesValue, String splitter, boolean useChildrenAsTopNodes) {
 		return getFilteredGroups(groups, getExtractedTypesList(typesValue, splitter), useChildrenAsTopNodes);
+	}
+	
+	private synchronized GroupBusiness getGroupBusiness(IWApplicationContext iwac) {
+		if (groupBusiness == null) {
+			try {
+				groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return groupBusiness;
 	}
 	
 	public List getFilteredChildGroups(IWContext iwc, int parentGroupId, String groupTypes, String groupRoles, String splitter) {
@@ -365,7 +413,7 @@ public class GroupHelperBusinessBean {
 		return sortedUsers;
 	}
 	
-	public Group getGroup(IWContext iwc, int id) {
+	private Group getGroup(IWContext iwc, int id) {
 		if (id < 0) {
 			return null;
 		}
@@ -408,10 +456,6 @@ public class GroupHelperBusinessBean {
 		}
 		
 		return groups;
-	}
-	
-	public User getUser(IWContext iwc, String id) {
-		return getUser(iwc, getParsedValue(id));
 	}
 	
 	public User getUser(IWContext iwc, int id) {
@@ -472,5 +516,64 @@ public class GroupHelperBusinessBean {
 		}
 		
 		return ids;
+	}
+
+	public Collection getTopGroups(IWContext iwc, User user) {
+		if (iwc == null || user == null) {
+			return new ArrayList();
+		}
+		userBusiness = getUserBusiness(iwc);
+		if (userBusiness == null) {
+			return new ArrayList();
+		}
+		
+		try {
+			return userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwc);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			return new ArrayList();
+		}
+	}
+	
+	public Collection getTopAndParentGroups(Collection topGroups) {
+		if (topGroups == null) {
+			return null;
+		}
+		
+		Object o = null;
+		Group group = null;
+		Collection topAndParentGroups = new ArrayList(topGroups);
+		List parentGroups = null;
+		for (Iterator it = topGroups.iterator(); it.hasNext();) {
+			o = it.next();
+			if (o instanceof Group) {
+				group = (Group) o;
+				parentGroups = group.getParentGroups();
+				if (parentGroups != null) {
+					topAndParentGroups.addAll(parentGroups);
+				}
+			}
+		}
+		
+		return topAndParentGroups;
+	}
+	
+	protected String getGroupImageBaseUri(IWContext iwc) {
+		if (iwc == null) {
+			return null;
+		}
+		
+		IWBundle iwb = null;
+		try {
+			iwb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		StringBuffer uri = new StringBuffer(iwb.getResourcesURL()).append(CoreConstants.SLASH).append(GroupTreeView.TREEVIEW_PREFIX);
+		uri.append(AbstractTreeViewer._UI_IW).append("group/");
+		
+		return uri.toString();
 	}
 }

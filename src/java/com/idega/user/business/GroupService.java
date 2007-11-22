@@ -10,12 +10,12 @@ public interface GroupService extends IBOSession {
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getTopGroupNodes
 	 */
-	public List getTopGroupNodes() throws RemoteException;
+	public List getTopGroupsAndDirectChildren(List uniqueIds) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getGroupsTree
 	 */
-	public List getGroupsTree(String login, String password) throws RemoteException;
+	public List getGroupsTree(String login, String password, String instanceId, List uniqueIds) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#getGroupsInfo
@@ -46,4 +46,10 @@ public interface GroupService extends IBOSession {
 	 * @see com.idega.user.business.GroupServiceBean#addUsersIds
 	 */
 	public boolean addUsersIds(String instanceId, List ids) throws RemoteException;
+	
+	public List getChildrenOfGroup(String uniqueId);
+	
+	public List getChildrenOfGroupWithLogin(String login, String password, String uniqueId);
+	
+	public boolean streamUniqueIds(String instanceId, List uniqueIds, boolean isGroupIds, boolean isTree);
 }

@@ -6,7 +6,10 @@ public class GroupNode {
 	
 	private String name = null;
 	private String uniqueId = null;
+	private String image = null;
+	
 	private boolean hasChildren = false;
+	
 	private List children = null;
 	
 
@@ -40,6 +43,14 @@ public class GroupNode {
 	
 	public void setChildren(List children) {
 		this.children = children;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 	
 }
