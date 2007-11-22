@@ -4,6 +4,12 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  	<release version="3.1.18" date="2007-11-22">
+     	<action dev="valdas" type="update">
+			Changes for groups tree, groups and users info viewers.
+    	</action>
+    </release>
+  
   	<release version="3.1.17" date="2007-11-13">
      	<action dev="valdas" type="update">
 			Changed GroupService bean - now session scope, added new methods, updated existing (because of IE + DWR cross domain).
