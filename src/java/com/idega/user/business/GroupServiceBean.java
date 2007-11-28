@@ -274,6 +274,14 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	 * Checks if can use DWR on remote server
 	 */
 	public boolean canUseRemoteServer(String server) {
+		List<String> scripts = new ArrayList<String>();
+		scripts.add("/dwr/engine.js");
+		scripts.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+		
+		return canMakeCallToServerAndScript(server, scripts);
+	}
+	
+	public boolean canMakeCallToServerAndScript(String server, List<String> scripts) {
 		if (server == null) {
 			return false;
 		}
@@ -282,10 +290,17 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			server = server.substring(0, server.lastIndexOf("/"));
 		}
 		
-		String engineScript = new StringBuffer(server).append("/dwr/engine.js").toString();
-		String interfaceScript = new StringBuffer(server).append(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT).toString();
+		if (scripts == null) {
+			return true;
+		}
 		
-		return (existsFileOnRemoteServer(engineScript) && existsFileOnRemoteServer(interfaceScript));
+		for (int i = 0; i < scripts.size(); i++) {
+			if (!existsFileOnRemoteServer(new StringBuffer(server).append(scripts.get(i)).toString())) {
+				return false;
+			}
+		}
+			
+		return true;
 	}
 	
 	/**
@@ -591,7 +606,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	 * @param password
 	 * @return
 	 */
-	private boolean logInUser(IWContext iwc, String login, String password) {
+	public boolean logInUser(IWContext iwc, String login, String password) {
 		if (iwc == null || login == null || password == null) {
 			return false;
 		}
@@ -631,7 +646,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	 * @param userName
 	 * @return
 	 */
-	private boolean isLoggedUser(IWContext iwc, String userName) {
+	public boolean isLoggedUser(IWContext iwc, String userName) {
 		if (iwc == null || userName == null) {
 			return false;
 		}

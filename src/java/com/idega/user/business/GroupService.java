@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.IBOSession;
+import com.idega.presentation.IWContext;
 import com.idega.user.bean.GroupDataBean;
 import com.idega.user.bean.GroupMemberDataBean;
 import com.idega.user.bean.GroupPropertiesBean;
@@ -102,4 +103,10 @@ public interface GroupService extends IBOSession {
 	public List<GroupNode> getChildrenOfGroupWithLogin(String login, String password, String uniqueId);
 	
 	public boolean streamUniqueIds(String instanceId, List<String> uniqueIds, boolean isGroupIds, boolean isTree);
+	
+	public boolean logInUser(IWContext iwc, String login, String password);
+	
+	public boolean isLoggedUser(IWContext iwc, String userName);
+	
+	public boolean canMakeCallToServerAndScript(String server, List<String> scripts);
 }
