@@ -39,7 +39,7 @@
 			import com.idega.user.bean.UserDataBean;
 
 			List<GroupNode> GroupService.getTopGroupsAndDirectChildren(List<String>);
-			List<GroupNode> GroupService.getGroupsTree(String, String, List<String>);
+			List<GroupNode> GroupService.getGroupsTree(String, String, String, List<String>);
 			List<GroupNode> GroupService.getChildrenOfGroup(String);
 			List<GroupNode> GroupService.getChildrenOfGroupWithLogin(String, String, String);
 			
