@@ -1,5 +1,5 @@
 /*
- * $Id: BasicUserOverviewEmailSenderWindow.java,v 1.1.2.3 2007/01/12 19:31:51 idegaweb Exp $
+ * $Id: BasicUserOverviewEmailSenderWindow.java,v 1.1.2.4 2007/12/04 10:00:45 gimmi Exp $
  * Created on Nov 28, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -48,6 +48,7 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 	
 	//fields
 	private MailToLink mailToLink;
+	private MailToLink mailToLink2;
 	private HiddenInput mailServerField;
 	private TextInput fromAddressField;
 	private TextInput toAddressField;
@@ -126,6 +127,10 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		this.mailToLink = new MailToLink(iwrb.getLocalizedString("open_in_default_mail_program", "Open in default mail program"));
 		this.mailToLink.setStyleClass(linkStyleUnderline);
 		
+		this.mailToLink2 = new MailToLink("(mac)");
+		this.mailToLink2.setStyleClass(linkStyleUnderline);
+
+		
 		this.fromAddressField = new TextInput(PARAM_FROM_ADDRESS);
 		this.fromAddressField.setSize(60);
 		this.fromAddressField.setReadOnly(true);
@@ -155,6 +160,8 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		this.subjectField.setContent((String)iwc.getSessionAttribute(PARAM_SUBJECT));
 		this.mailToLink.setRecipients((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS));
 		this.mailToLink.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
+		this.mailToLink2.setRecipients(((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS)).replace(';', ','));
+		this.mailToLink2.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
 	}
 	
 	public void lineUpFields(IWContext iwc) {	
@@ -180,6 +187,8 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 			inputTable.add(this.bodyText + ":",1,5);
 			inputTable.add(this.bodyField,2,5);
 			inputTable.add(this.mailToLink,2,6);
+			inputTable.add(Text.getNonBrakingSpace(),2,6);
+			inputTable.add(this.mailToLink2,2,6);
 		} else {
 			inputTable.add(this.sendingResultsText,1,1);
 			if (this.sendingResultsMessageText != null) {

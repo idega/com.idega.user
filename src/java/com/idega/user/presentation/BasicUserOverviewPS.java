@@ -160,7 +160,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 		        			Collection emails = user.getEmails();
 		        			if (emails != null && !emails.isEmpty()) {
 		        				if (!toAddresses.equals("")) {
-				        			toAddresses = toAddresses + ",";
+				        			toAddresses = toAddresses + ";";
 				        		}
 		        				toAddresses = toAddresses + ((Email) emails.iterator().next()).getEmailAddress();
 		        			}
