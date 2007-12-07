@@ -3,6 +3,8 @@ package com.idega.user.presentation.group;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import javax.faces.component.UIComponent;
+
 import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
@@ -47,8 +49,12 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 	private String password = null;
 	private String idsParameterForFunction = null;
 	private String groupsTreeStyleClass = "groupsTreeListElement";
+	private String customTreeFunctionToBeExecutedOnLoad = null;
+	private String specialMarkForRadioButton = null;
 	
 	private List<String> uniqueIds = null;
+	
+	private UIComponent middlePartOfChooser = null;
 	
 	public void main(IWContext iwc) {
 		Layer main = new Layer();
@@ -60,6 +66,11 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		
 		//	Connection chooser
 		addConnectionTypeField(iwc, main);
+		
+		//	Custom defined UIComponent
+		if (middlePartOfChooser != null) {
+			main.add(middlePartOfChooser);
+		}
 		
 		//	Groups tree
 		addGroupsTreeContainer(iwc, main);
@@ -94,6 +105,9 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 			function.append(", ").append(idsParameterForFunction).append(", ");
 			function.append(getGroupsTreeStyleClassParameter()).append(");");
 			groupsTree.setLoadRemoteGroupsFunction(function.toString());
+		}
+		if (customTreeFunctionToBeExecutedOnLoad != null) {
+			groupsTree.setCustomFunction(customTreeFunctionToBeExecutedOnLoad);
 		}
 		groupsTree.setSelectedGroupsParameter(idsParameterForFunction);
 		groupsContainer.add(groupsTree);
@@ -157,6 +171,9 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		RadioButton btnLocal = new RadioButton("server");
 		btnLocal.setValue(new StringBuffer("local").append("@").append(groupsTreeContainerId).toString());
 		btnLocal.setStyleClass(RADIO_BUTTON_STYLE);
+		if (specialMarkForRadioButton != null) {
+			btnLocal.setMarkupAttribute("specialmark", specialMarkForRadioButton);
+		}
 		localConnection.add(btnLocal);
 		localConnection.add(txtLocal);
 
@@ -166,6 +183,9 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		RadioButton btnRemote = new RadioButton("server");
 		btnRemote.setValue(new StringBuffer(ICBuilderConstants.GROUPS_CHOOSER_REMOTE_CONNECTION).append("@").append(groupsTreeContainerId).toString());
 		btnRemote.setStyleClass(RADIO_BUTTON_STYLE);
+		if (specialMarkForRadioButton != null) {
+			btnRemote.setMarkupAttribute("specialmark", specialMarkForRadioButton);
+		}
 		remoteConnection.add(btnRemote);
 		remoteConnection.add(txtRemote);
 		
@@ -230,7 +250,13 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		action.append(PARAMETERS_SEPARATOR).append(iwrb.getLocalizedString("failed_login", "Sorry, unable to log in to:"));
 		action.append(PARAMETERS_SEPARATOR).append(iwrb.getLocalizedString("no_groups_found", "Sorry, no groups found on selected server."));
 		action.append("'], ").append(idsParameterForFunction).append(", ");
-		action.append(getGroupsTreeStyleClassParameter());
+		action.append(getGroupsTreeStyleClassParameter()).append(", ");
+		if (specialMarkForRadioButton == null) {
+			action.append("null");
+		}
+		else {
+			action.append("'").append(specialMarkForRadioButton).append("'");
+		}
 		action.append(");");
 		
 		return action.toString();
@@ -389,6 +415,26 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 
 	public void setGroupsTreeStyleClass(String groupsTreeStyleClass) {
 		this.groupsTreeStyleClass = groupsTreeStyleClass;
+	}
+
+	public UIComponent getMiddlePartOfChooser() {
+		return middlePartOfChooser;
+	}
+
+	public void setMiddlePartOfChooser(UIComponent middlePartOfChooser) {
+		this.middlePartOfChooser = middlePartOfChooser;
+	}
+
+	public void setCustomTreeFunctionToBeExecutedOnLoad(String customTreeFunctionToBeExecutedOnLoad) {
+		this.customTreeFunctionToBeExecutedOnLoad = customTreeFunctionToBeExecutedOnLoad;
+	}
+
+	public String getSpecialMarkForRadioButton() {
+		return specialMarkForRadioButton;
+	}
+
+	public void setSpecialMarkForRadioButton(String specialMarkForRadioButton) {
+		this.specialMarkForRadioButton = specialMarkForRadioButton;
 	}
 
 }

@@ -43,7 +43,7 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
 					
 					var values = element.value.split('@');
 					if (values.length = 2) {
-						manageConnectionType('local' == values[0], values[1], noGroupsMessage, selectedGroups, styleClass);
+						manageConnectionType('local' == values[0], values[1], noGroupsMessage, selectedGroups, styleClass, element.getProperty('specialmark'));
 						groups_chooser_helper.removeAllAdvancedProperties();	//	Because changing connection type
 						groups_chooser_helper.addAdvancedProperty('connection', values[0]);
 					}
@@ -184,7 +184,7 @@ function selectGroup(element) {
 	}
 }
 
-function manageConnectionType(useLocal, id, noGroupsMessage, selectedGroups, styleClass) {
+function manageConnectionType(useLocal, id, noGroupsMessage, selectedGroups, styleClass, specialMark) {
 	var connection = $('connectionData');
 	if (connection == null) {
 		return false;
@@ -193,11 +193,17 @@ function manageConnectionType(useLocal, id, noGroupsMessage, selectedGroups, sty
 	if (useLocal) {
 		displayValue = 'none';
 		loadLocalTree(id, noGroupsMessage, selectedGroups, styleClass);
+		if (specialMark != null) {
+			if (specialMark == 'calendar') {
+				getSimpleCalendarTypes(null, null, null, false, CALENDAR_EVENTS_CONTAINER_ID, null);
+				getSimpleCalendarLedgers(null, null, null, false, CALENDAR_LEDGERS_CONTAINER_ID, null);
+			}
+		}
 	}
 	connection.setStyle('display', displayValue);
 }
 
-function getGroupsTree(serverId, loginId, passwordId, id, messages, selectedGroups, styleClass) {
+function getGroupsTree(serverId, loginId, passwordId, id, messages, selectedGroups, styleClass, specialMark) {
 	var serverInput = $(serverId);
 	var loginInput = $(loginId);
 	var passwordInput = $(passwordId);
@@ -233,6 +239,13 @@ function getGroupsTree(serverId, loginId, passwordId, id, messages, selectedGrou
 	groups_chooser_helper.addAdvancedProperty(passwordInput.name, password);
 	
 	getGroupsWithValues(messages[4], server, login, password, id, messages[5], messages[6], messages[7], false, selectedGroups, styleClass);
+	
+	if (specialMark != null) {
+		if (specialMark == 'calendar') {
+			getSimpleCalendarTypes(server, login, password, true, CALENDAR_EVENTS_CONTAINER_ID, null);
+			getSimpleCalendarLedgers(server, login, password, true, CALENDAR_LEDGERS_CONTAINER_ID, null);
+		}
+	}
 }
 
 function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, needsDecode, selectedGroups, styleClass) {

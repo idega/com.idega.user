@@ -20,6 +20,8 @@ public class GroupTreeViewer extends Block {
 	private String loadRemoteGroupsFunction = null;
 	private String styleClass = "groupsTreeListElement";	// Set your style if you want to define actions for tree node
 	
+	private String customFunction = null;
+	
 	private boolean executeScriptOnLoad = true;
 	private boolean addExtraJavaScript = true;
 	
@@ -88,6 +90,10 @@ public class GroupTreeViewer extends Block {
 			function.append(loadRemoteGroupsFunction);
 		}
 		
+		if (customFunction != null) {
+			function.append(" ").append(customFunction);
+		}
+		
 		StringBuffer action = new StringBuffer();
 		if (executeScriptOnLoad) {
 			action.append("window.addEvent('domready', function() {").append(function).append("});");
@@ -144,4 +150,12 @@ public class GroupTreeViewer extends Block {
 		return styleClass;
 	}
 
+	public String getCustomFunction() {
+		return customFunction;
+	}
+
+	public void setCustomFunction(String customFunction) {
+		this.customFunction = customFunction;
+	}
+	
 }
