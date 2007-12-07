@@ -403,7 +403,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return null;
 		}
 		
-		if (remoteMode && !canUseServer(iwc, login, password)) {
+		if (remoteMode && !isUserLoggedOn(iwc, login, password)) {
 			return null;
 		}
 
@@ -529,7 +529,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return null;
 		}
 		
-		if (remoteMode && !canUseServer(iwc, login, password)) {
+		if (remoteMode && !isUserLoggedOn(iwc, login, password)) {
 			return null;
 		}
 		
@@ -749,7 +749,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		list.add(localizedStatus);
 	}
 	
-	private boolean canUseServer(IWContext iwc, String login, String password) {
+	public boolean isUserLoggedOn(IWContext iwc, String login, String password) {
 		if (iwc == null || login == null || password == null) {
 			return false;
 		}
@@ -802,7 +802,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return false;
 		}
 		
-		if (remoteMode && !canUseServer(iwc, login, password)) {
+		if (remoteMode && !isUserLoggedOn(iwc, login, password)) {
 			return false;
 		}
 		
@@ -897,38 +897,31 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return localizedText;
 	}
 	
-	public boolean addGroupsIds(String instanceId, List<String> ids) {
-		if (instanceId == null || ids == null) {
+	public boolean addUniqueIds(String cacheName, String instanceId, List<String> ids) {
+		if (cacheName == null || instanceId == null || ids == null) {
 			return false;
 		}
 		
 		try {
-			getUniqueIds(groupsCacheName).put(instanceId, ids);
+			getUniqueIds(cacheName).put(instanceId, ids);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 		
 		return true;
+	}
+	
+	public boolean addGroupsIds(String instanceId, List<String> ids) {
+		return addUniqueIds(groupsCacheName, instanceId, ids);
 	}
 	
 	public boolean addUsersIds(String instanceId, List<String> ids) {
-		if (instanceId == null || ids == null) {
-			return false;
-		}
-		
-		try {
-			getUniqueIds(usersCacheName).put(instanceId, ids);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		
-		return true;
+		return addUniqueIds(usersCacheName, instanceId, ids);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Map<String, List<String>> getUniqueIds(String cacheName) throws NullPointerException {
+	public Map<String, List<String>> getUniqueIds(String cacheName) throws NullPointerException {
 		IWCacheManager2 cache = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
 		
 		int caheSize = 1000;

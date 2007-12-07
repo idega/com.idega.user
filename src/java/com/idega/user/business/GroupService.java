@@ -3,6 +3,7 @@ package com.idega.user.business;
 
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.IBOSession;
@@ -109,4 +110,10 @@ public interface GroupService extends IBOSession {
 	public boolean isLoggedUser(IWContext iwc, String userName);
 	
 	public boolean canMakeCallToServerAndScript(String server, List<String> scripts);
+	
+	public boolean addUniqueIds(String cacheName, String instanceId, List<String> ids);
+	
+	public Map<String, List<String>> getUniqueIds(String cacheName) throws NullPointerException;
+	
+	public boolean isUserLoggedOn(IWContext iwc, String login, String password);
 }
