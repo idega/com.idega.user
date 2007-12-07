@@ -16,12 +16,12 @@ import com.idega.util.CoreConstants;
 
 public class GroupsHandler implements ICPropertyHandler {
 
+	@SuppressWarnings("unchecked")
 	public List getDefaultHandlerTypes() {
 		return null;
 	}
 
-	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc, boolean oldGenerationHandler, String instanceId,
-			String method) {
+	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc, boolean oldGenerationHandler, String instanceId, String method) {
 		
 		String action = null;
 		
