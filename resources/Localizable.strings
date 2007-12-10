@@ -318,7 +318,7 @@ iw.component.com.idega.user.block.homepage.presentation.OwnerGroupInformationTex
 iw.component.com.idega.user.data.GroupDomainRelationType.name=GroupDomainRelationType
 iw_postal_code_id=
 iwapplication_name.AccessControllerApp=AccessControllerApp
-iwapplication_name.UserApplication=UserApplication
+iwapplication_name.UserApplication=Users
 iwma_run=iwma_run
 iwma_run_distance=iwma_run_distance
 iwma_run_group=iwma_run_group
@@ -520,7 +520,7 @@ user_report_report_builder=
 user_source_and_target_are_the_same=Source group and target group are the same
 user_status_bar.no_group_selected=No group selected
 user_suitable_group_could_not_be_found=
-userapplication=userapplication
+userapplication=Users
 usergroupsetter.close=
 usergroupsetter.in=
 usergroupsetter.not_in=
