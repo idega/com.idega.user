@@ -119,7 +119,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 	private void addJavaScript(IWContext iwc) {		
 		if (addExtraJavaScript) {
 			//	MooTools
-			Web2Business web2Bean = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+			Web2Business web2Bean = SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
 			
 			if (web2Bean != null) {
 				try {

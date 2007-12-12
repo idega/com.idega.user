@@ -116,7 +116,7 @@ public class GroupViewer extends Block {
 		}
 		
 		//	Mootools and reflection
-		Web2Business web2 = (Web2Business) SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+		Web2Business web2 = SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
 		
 		if (web2 != null) {
 			try {
