@@ -937,17 +937,9 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		}
 	}
 	
-	public boolean streamUniqueIds(String instanceId, List<String> uniqueIds, boolean isGroupIds, boolean isTree) {
-		if (instanceId == null || uniqueIds == null) {
+	public boolean streamUniqueIds(String instanceId, List<String> uniqueIds, String cacheName) {
+		if (instanceId == null || uniqueIds == null || cacheName == null) {
 			return false;
-		}
-		
-		String cacheName = usersCacheName;
-		if (isGroupIds) {
-			cacheName = groupsCacheName;
-		}
-		if (isTree) {
-			cacheName = treeCacheName;
 		}
 		
 		List<String> ids = null;
@@ -966,20 +958,13 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			}
 		}
 		
-		if (isGroupIds) {
-			return addGroupsIds(instanceId, ids);
+		try {
+			getUniqueIds(cacheName).put(instanceId, ids);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
 		
-		if (isTree) {
-			try {
-				getUniqueIds(treeCacheName).put(instanceId, ids);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-			return true;
-		}
-		
-		return addUsersIds(instanceId, ids);
+		return true;
 	}
 }
