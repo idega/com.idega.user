@@ -2,6 +2,7 @@ var SERVER_START = 'http://';
 
 var UNIQUE_IDS_ID = 'uniqueids';
 var GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS = 'groupsTreeListElement';
+var GROUPS_CHOOSER_TREE_SELECTED_GROUPS_CACHE_NAME = 'groupsChooserTreeSelectedGroupsUniqueIdsCache';
 var NO_GROUPS_MESSAGE = 'Sorry, no groups found on selected server.';
 
 var SERVER = null;
@@ -268,7 +269,7 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 	if (result) {
 		if (IE && selectedGroups != null) {
 			if (selectedGroups.length > 20) {
-				if (streamUniqueIdsToServer(id, selectedGroups, server, true, false, true)) {
+				if (streamUniqueIdsToServer(id, selectedGroups, server, true, GROUPS_CHOOSER_TREE_SELECTED_GROUPS_CACHE_NAME)) {
 					addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass, true);
 				}
 				
@@ -448,7 +449,10 @@ function getDivsSpacer() {
 	return spacer;
 }
 
-function streamUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup, isTree) {
+function streamUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, cacheName) {
+	if (instanceId == null || uniqueIds == null || cacheName == null) {
+		return false;
+	}
 	var copiedUniqueIds = null;
 	
 	if (uniqueIds != null) {
@@ -458,21 +462,21 @@ function streamUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGr
 		}
 	}
 	
-	if (sendPackedUniqueIdsToServer(instanceId, copiedUniqueIds, server, remoteMode, isGroup, isTree)) {
+	if (sendPackedUniqueIdsToServer(instanceId, copiedUniqueIds, server, remoteMode, cacheName)) {
 		return true;
 	}
 	
 	return false;
 }
 
-function sendPackedUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup, isTree) {
+function sendPackedUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, cacheName) {
 	while (uniqueIds.length > 20) {
 		var pack = new Array();
 		for (var i = 0; i < 20; i++) {
 			pack.push(uniqueIds[i]);
 		}
 		
-		sendPackUniqueIdsToServer(instanceId, pack, server, remoteMode, isGroup, isTree);
+		sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, cacheName);
 		
 		for (var i = 0; i < pack.length; i++) {
 			removeElementFromArray(uniqueIds, pack[i]);
@@ -481,14 +485,14 @@ function sendPackedUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, 
 	
 	if (uniqueIds) {
 		if (uniqueIds.length > 0) {
-			sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup, isTree);
+			sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, cacheName);
 		}
 	}
 	
 	return true;
 }
 
-function sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, isGroup, isTree) {
+function sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, cacheName) {
 	var dwrCallType = dwr.engine.XMLHttpRequest;
 	var dwrPath = getDefaultDwrPath();
 	if (remoteMode) {
@@ -497,10 +501,42 @@ function sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, is
 	}
 	prepareDwr(GroupService, dwrPath);
 	
-	GroupService.streamUniqueIds(instanceId, uniqueIds, isGroup, isTree, {
+	GroupService.streamUniqueIds(instanceId, uniqueIds, cacheName, {
 		callback: function(result) {
 			return result;
 		},
 		rpcType:dwrCallType
 	});
+}
+
+function addElementValueForAdvancedProperty(ids, key, value) {
+	if (ids == null) {
+		groups_chooser_helper.addAdvancedProperty(key, value);
+	}
+	else {
+		var allIds = ids.value.split(',');
+		if (!existsElementInArray(allIds, value)) {
+			var newValues = ids.value + ',' + value;		//	Adding new id
+			groups_chooser_helper.addAdvancedProperty(key, newValues);
+		}
+	}
+}
+
+function removeElementValueForAdvancedProperty(ids, key, value) {
+	if (ids == null) {
+		return false;
+	}
+	
+	var newValues = '';
+	var allIds = ids.value.split(',');
+	removeElementFromArray(allIds, value);				//	Removing id
+	if (allIds != null) {
+		for (var i = 0; i < allIds.length; i++) {		//	Building new value
+			newValues += allIds[i];
+			if (i + 1 < allIds.length) {
+				newValues += ',';
+			}
+		}
+	}
+	groups_chooser_helper.addAdvancedProperty(key, newValues);
 }

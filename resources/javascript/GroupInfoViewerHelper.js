@@ -1,3 +1,5 @@
+var GROUPS_INFO_VIEWER_UNIQUE_IDS_CACHE_NAME = 'groupsInfoViewersUniqueIdsCache';
+
 function reloadGroupProperties(instanceId, containerId, message) {
 	prepareDwr(GroupService, getDefaultDwrPath());
 	
@@ -116,7 +118,7 @@ function getGroupsData(result, properties, containerId) {
 	
 	if (IE && properties.uniqueIds != null) { 
 		if (properties.uniqueIds.length > 20) {
-			if (streamUniqueIdsToServer(properties.instanceId, properties.uniqueIds, properties.server, properties.remoteMode, true, false)) {
+			if (streamUniqueIdsToServer(properties.instanceId, properties.uniqueIds, properties.server, properties.remoteMode, GROUPS_INFO_VIEWER_UNIQUE_IDS_CACHE_NAME)) {
 				getGroupsInfoAfterIdsAreAdded(true, properties, containerId);
 			}
 			
