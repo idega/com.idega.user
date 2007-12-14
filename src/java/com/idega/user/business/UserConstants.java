@@ -19,4 +19,6 @@ public class UserConstants implements ConstantsPlaceholder {
 
 	public static final String GROUP_VIEWER_CONTAINER_ID_ENDING = "_realChildComponent";
 	
+	public static final String HELP_BUNDLE_IDENTFIER = "com.idega.user";
+	
 }
