@@ -8,9 +8,12 @@ import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.block.web2.business.Web2Business;
 import com.idega.business.SpringBeanLookup;
+import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.user.bean.PropertiesBean;
+import com.idega.user.business.UserConstants;
+import com.idega.util.CoreConstants;
 
 public class GroupViewer extends Block {
 	
@@ -113,6 +116,15 @@ public class GroupViewer extends Block {
 	protected void addScriptFiles(IWContext iwc, List<String> files, boolean addDirectly) {
 		if (iwc == null || files == null) {
 			return;
+		}
+		
+		IWBundle bundle = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
+		String groupHelper = bundle.getVirtualPathWithFileNameString("javascript/GroupHelper.js");
+		if (!(files.contains(groupHelper))) {
+			files.add(groupHelper);
+		}
+		if (!(files.contains(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT))) {
+			files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		}
 		
 		//	Mootools and reflection
