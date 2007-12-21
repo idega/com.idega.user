@@ -80,7 +80,7 @@ function registerActionsForGroupTreeSpan() {
     );
 }
 
-function checkOtherProperties(clickedElement) {
+function checkOtherGroupsChooserProperties() {
 	//	Inputs' values (connection parameters)
 	$$('input.groupConnectionChooserInputStyle').each(
 		function(element) {
@@ -105,7 +105,11 @@ function checkOtherProperties(clickedElement) {
 			}
 		}
     }
-    
+}
+
+function checkOtherProperties(clickedElement) {
+	checkOtherGroupsChooserProperties();
+	
     //	Seaching for selected nodes
     var otherGroupsNodes = new Array();
     $$('span.' + GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS).each(
