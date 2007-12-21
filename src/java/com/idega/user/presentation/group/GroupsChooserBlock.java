@@ -201,11 +201,12 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		//	Remote connection data
 		Layer connData = new Layer();
 		connData.setId("connectionData");
-		connData.setStyleClass("groupsChooserConnectionHiddenTable");
 		if (isRemoteMode) {
+			connData.setStyleClass("groupsChooserConnectionVisibleTable");
 			connData.setStyleAttribute("display: block;");
 		}
 		else {
+			connData.setStyleClass("groupsChooserConnectionHiddenTable");
 			connData.setStyleAttribute("display: none;");
 		}
 		
