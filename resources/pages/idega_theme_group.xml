@@ -12,7 +12,7 @@
     	<module id="" class="com.idega.user.presentation.group.GroupInfoViewer"></module>
     	<module id="" class="com.idega.user.presentation.group.GroupUsersViewer"></module>
     </region>
-    <region id="toolbar" label="toolbar">
+	<region id="toolbar" label="toolbar">
     	<module id="" class="com.idega.block.navigation.presentation.NavigationList">
     		<property>
     			<name>:method:1:implied:void:setAddStyleClassOnSelectedItem:boolean:</name>
@@ -31,6 +31,9 @@
 			</property>
     	</module>
     </region>
+    <region id="breadcrumb" label="breadcrumb">
+    	<module id="" class="com.idega.block.navigation.presentation.NavigationBreadCrumbsList" />
+    </region>
     <region id="sidebar" label="sidebar">
     	<module id="" class="com.idega.content.themes.presentation.ApplicationPropertyViewer">
       		<property>
@@ -39,16 +42,6 @@
         		<type>java.lang.String</type>
       		</property>
     	</module>
-    </region>
-    <region id="breadcrumbcontainer" label="breadcrumbcontainer">
-    	<module id="" class="com.idega.content.themes.presentation.ApplicationPropertyViewer">
-      		<property>
-        		<name>:method:1:implied:void:setApplicationPropertyKey:java.lang.String:</name>
-        		<value>breadcrumb</value>
-        		<type>java.lang.String</type>
-      		</property>
-    	</module>
-    	<module id="" class="com.idega.block.navigation.presentation.NavigationBreadCrumbsList" />
     </region>
     <region id="footer" label="footer">
     	<module id="" class="com.idega.content.themes.presentation.ApplicationPropertyViewer">
@@ -91,15 +84,6 @@
       		<property>
         		<name>:method:1:implied:void:setApplicationPropertyKey:java.lang.String:</name>
         		<value>title</value>
-        		<type>java.lang.String</type>
-      		</property>
-    	</module>
-    </region>
-    <region id="toolbar" label="toolbar">
-    	<module id="" class="com.idega.content.themes.presentation.ApplicationPropertyViewer">
-      		<property>
-        		<name>:method:1:implied:void:setApplicationPropertyKey:java.lang.String:</name>
-        		<value>toolbar</value>
         		<type>java.lang.String</type>
       		</property>
     	</module>
