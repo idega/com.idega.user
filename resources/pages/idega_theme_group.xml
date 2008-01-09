@@ -12,7 +12,7 @@
     	<module id="" class="com.idega.user.presentation.group.GroupInfoViewer"></module>
     	<module id="" class="com.idega.user.presentation.group.GroupUsersViewer"></module>
     </region>
-    <region id="navcontainer" label="navcontainer">
+    <region id="toolbar" label="toolbar">
     	<module id="" class="com.idega.block.navigation.presentation.NavigationList">
     		<property>
     			<name>:method:1:implied:void:setAddStyleClassOnSelectedItem:boolean:</name>
