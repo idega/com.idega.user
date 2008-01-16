@@ -184,9 +184,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		Group group = null;
 		try {
 			group = groupBusiness.getGroupByUniqueId(uniqueId);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (FinderException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -454,7 +452,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return info;
 	}
 	
-	/** Private methods starts **/
 	/**
 	 * Logs in user
 	 * @param iwc
@@ -462,7 +459,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	 * @param password
 	 * @return
 	 */
-	private boolean logInUser(IWContext iwc, String login, String password) {
+	public boolean logInUser(IWContext iwc, String login, String password) {
 		if (iwc == null || login == null || password == null) {
 			return false;
 		}
@@ -476,12 +473,12 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	 * @param userName
 	 * @return
 	 */
-	private boolean isLoggedUser(IWContext iwc, String userName) {
+	public boolean isLoggedUser(IWContext iwc, String userName) {
 		if (iwc == null || userName == null) {
 			return false;
 		}
 		
-		//	Geting current user
+		//	Getting current user
 		User current = null;
 		try {
 			current = iwc.getCurrentUser();
@@ -657,7 +654,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return true;
 	}
 	
-	private Map getUniqueIds(String cacheName) throws NullPointerException {
+	public Map getUniqueIds(String cacheName) throws NullPointerException {
 		IWCacheManager2 cache = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
 		
 		int caheSize = 1000;
@@ -718,4 +715,38 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		
 		return addUsersIds(instanceId, ids);
 	}
+	
+	public boolean addUniqueIds(String cacheName, String instanceId, List ids) {
+		if (cacheName == null || instanceId == null || ids == null) {
+			return false;
+		}
+		
+		try {
+			getUniqueIds(cacheName).put(instanceId, ids);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean isUserLoggedOn(IWContext iwc, String login, String password) {
+		if (iwc == null || login == null || password == null) {
+			return false;
+		}
+		
+		//	Checking if user is allowed to use server
+		if (!isLoggedUser(iwc, login)) {
+			if (!logInUser(iwc, login, password)) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		
+		return true;
+	}
+
 }

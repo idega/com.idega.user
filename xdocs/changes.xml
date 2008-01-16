@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  	<release version="3.1.20" date="2008-01-16">
+   		<action dev="valdas" type="update">
+   			Added few public methods to GroupService
+   		</action>
+   	</release>
    	<release version="3.1.19" date="2007-12-04">
    		<action dev="gimmi" type="update">
    			EmailFormFix

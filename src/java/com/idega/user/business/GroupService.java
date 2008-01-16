@@ -3,8 +3,10 @@ package com.idega.user.business;
 
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 import com.idega.business.IBOSession;
+import com.idega.presentation.IWContext;
 
 public interface GroupService extends IBOSession {
 	/**
@@ -52,4 +54,14 @@ public interface GroupService extends IBOSession {
 	public List getChildrenOfGroupWithLogin(String login, String password, String uniqueId);
 	
 	public boolean streamUniqueIds(String instanceId, List uniqueIds, boolean isGroupIds, boolean isTree);
+	
+	public boolean logInUser(IWContext iwc, String login, String password);
+	
+	public boolean isLoggedUser(IWContext iwc, String userName);
+	
+	public boolean addUniqueIds(String cacheName, String instanceId, List ids);
+	
+	public boolean isUserLoggedOn(IWContext iwc, String login, String password);
+	
+	public Map getUniqueIds(String cacheName) throws NullPointerException;
 }
