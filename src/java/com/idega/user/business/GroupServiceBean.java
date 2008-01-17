@@ -598,7 +598,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
 	
-	/** Private methods starts **/
 	/**
 	 * Logs in user
 	 * @param iwc
