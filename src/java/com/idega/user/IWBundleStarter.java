@@ -22,6 +22,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.business.UserAppDWREventListener;
 import com.idega.user.business.UserBusiness;
+import com.idega.util.CoreConstants;
 
 /**
  * A starter for adding the user app workspace node and more
@@ -113,7 +114,7 @@ public class IWBundleStarter implements IWBundleStartable {
 			userNode.setAuthorizedRoles(roles);
 			userNode.setWindowClass(applicationClass);
 			
-			String jspPath = iwma.getBundle("com.idega.workspace").getJSPURI("workspace.jsp");
+			String jspPath = iwma.getBundle(CoreConstants.WORKSPACE_BUNDLE_IDENTIFIER).getJSPURI("workspace.jsp");
 			userNode.setJspUri(jspPath);
 			
 			
