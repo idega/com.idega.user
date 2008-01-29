@@ -14,6 +14,8 @@ import com.idega.presentation.IWContext;
 import com.idega.user.bean.PropertiesBean;
 import com.idega.user.business.UserConstants;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
+import com.idega.util.PresentationUtil;
 
 public class GroupViewer extends Block {
 	
@@ -35,9 +37,15 @@ public class GroupViewer extends Block {
 	private Integer cacheTime = 10;
 	
 	public void main(IWContext iwc) {
-		AddResource adder = AddResourceFactory.getInstance(iwc);
-		
-		adder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, getBundle(iwc).getVirtualPathWithFileNameString("style/user.css"));
+		String css = getBundle(iwc).getVirtualPathWithFileNameString("style/user.css");
+		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
+			add(PresentationUtil.getStyleSheetSourceLine(css));
+		}
+		else {
+			AddResource adder = AddResourceFactory.getInstance(iwc);
+			
+			adder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, css);
+		}
 	}
 	
 	public boolean isAddJavaScriptForGroupsTree() {
@@ -127,16 +135,17 @@ public class GroupViewer extends Block {
 			files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		}
 		
-		//	Mootools and reflection
-		Web2Business web2 = SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
-		
-		if (web2 != null) {
-			try {
-				files.add(web2.getBundleURIToMootoolsLib());
-			} catch (RemoteException e) {
-				e.printStackTrace();
+		if (!addDirectly) {
+			//	MooTools and reflection
+			Web2Business web2 = SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+			if (web2 != null) {
+				try {
+					files.add(web2.getBundleURIToMootoolsLib());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+				files.add(web2.getReflectionForMootoolsScriptFilePath());
 			}
-			files.add(web2.getReflectionForMootoolsScriptFilePath());
 		}
 		
 		if (addDirectly) {

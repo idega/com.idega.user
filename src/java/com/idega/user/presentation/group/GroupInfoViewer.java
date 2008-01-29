@@ -10,6 +10,7 @@ import com.idega.presentation.Layer;
 import com.idega.user.bean.GroupPropertiesBean;
 import com.idega.user.business.UserConstants;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.webface.WFUtil;
 
 public class GroupInfoViewer extends GroupViewer {
@@ -20,18 +21,6 @@ public class GroupInfoViewer extends GroupViewer {
 	private boolean showPhone = true;
 	private boolean showFax = true;
 	private boolean showEmptyFields = false;
-	
-	public GroupInfoViewer() {
-		//setCacheable(getCacheKey());
-	}
-
-	/*public String getCacheKey() {
-		return UserConstants.GROUP_INFO_VIEWER_CACHE_KEY;
-	}
-	
-	protected String getCacheState(IWContext iwc, String cacheStatePrefix) {
-		return cacheStatePrefix;
-	}*/
 	
 	public void main(IWContext iwc) {
 		super.main(iwc);
@@ -85,6 +74,8 @@ public class GroupInfoViewer extends GroupViewer {
 			return;
 		}
 		
+		boolean singleRenderingProcess = CoreUtil.isSingleComponentRenderingProcess(iwc);
+		
 		List<String> files = new ArrayList<String>();
 		//	"Helpers"
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
@@ -92,15 +83,21 @@ public class GroupInfoViewer extends GroupViewer {
 		//	DWR
 		files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		files.add("/dwr/engine.js");
-		addScriptFiles(iwc, files, false);
+		addScriptFiles(iwc, files, singleRenderingProcess);
 
 		//	Actions to be performed on page loaded event
-		StringBuffer action = new StringBuffer("window.addEvent('domready', function() {getSelectedGroups('");
-		action.append(instanceId).append("', '").append(id).append("', '");
-		action.append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("');});");
+		StringBuffer singleAction = new StringBuffer("getSelectedGroups('").append(instanceId).append("', '").append(id).append("', '");
+		singleAction.append(iwb.getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("');");
+		StringBuffer action = null;
+		if (singleRenderingProcess) {
+			action = singleAction;
+		}
+		else {
+			action = new StringBuffer("window.addEvent('domready', function() {").append(singleAction.toString()).append("});");
+		}
 		
 		//	Adding script to page
-		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n").append("\t").append(action);
+		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n").append("\t").append(action.toString());
 		scriptString.append(" \n").append("</script> \n");
 		add(scriptString.toString());
 	}
