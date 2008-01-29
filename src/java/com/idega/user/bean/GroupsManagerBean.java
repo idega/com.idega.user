@@ -60,6 +60,10 @@ public class GroupsManagerBean implements Serializable {
 		}
 		else {
 			abstractProperties.remove(instanceId);
+			
+			if (bean instanceof GroupPropertiesBean) {
+				return (GroupPropertiesBean) bean;
+			}
 			return new GroupPropertiesBean(bean, instanceId);
 		}
 		
@@ -75,6 +79,10 @@ public class GroupsManagerBean implements Serializable {
 		}
 		else {
 			abstractProperties.remove(instanceId);
+			
+			if (bean instanceof UserPropertiesBean) {
+				return (UserPropertiesBean) bean;
+			}
 			return new UserPropertiesBean(bean, instanceId);
 		}
 	}

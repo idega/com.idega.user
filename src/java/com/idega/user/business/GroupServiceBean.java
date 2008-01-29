@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.FinderException;
+import javax.faces.component.UIComponent;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.builder.business.BuilderLogic;
@@ -34,6 +35,7 @@ import com.idega.user.bean.PropertiesBean;
 import com.idega.user.bean.UserPropertiesBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.user.presentation.group.GroupInfoViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.webface.WFUtil;
@@ -433,22 +435,37 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		
 		BuilderLogic builder = BuilderLogic.getInstance();
 		String pageKey = builder.getCurrentIBPage(iwc);
-		String name = new StringBuffer(":method:1:implied:void:setGroups:").append(PropertiesBean.class.getName()).append(":").toString();
-		String[] values = builder.getPropertyValues(iwc.getIWMainApplication(), pageKey, instanceId, name, null, true);
-		if (values == null) {
-			return false;
+		PropertiesBean properties = null;
+		UIComponent groups = builder.findComponentInPage(iwc, pageKey, instanceId);
+		if (groups == null) {
+			String name = new StringBuffer(":method:1:implied:void:setGroups:").append(PropertiesBean.class.getName()).append(":").toString();
+			String[] values = builder.getPropertyValues(iwc.getIWMainApplication(), pageKey, instanceId, name, null, true);
+			if (values == null) {
+				return false;
+			}
+			if (values.length == 0) {
+				return false;
+			}
+			GroupsChooserHelper helper = new GroupsChooserHelper();
+			properties = helper.getExtractedPropertiesFromString(values[0]);
 		}
-		if (values.length == 0) {
-			return false;
+		else {
+			builder.getRenderedComponent(iwc, groups, false);
+			
+			if (groups instanceof GroupInfoViewer) {
+				properties = getGroupPropertiesBean(instanceId);
+			}
+			else {
+				properties = getUserPropertiesBean(instanceId);
+			}
 		}
-		GroupsChooserHelper helper = new GroupsChooserHelper();
-		PropertiesBean bean = helper.getExtractedPropertiesFromString(values[0]);
-		if (bean == null) {
+		
+		if (properties == null) {
 			return false;
 		}
 		Object[] parameters = new Object[2];
 		parameters[0] = instanceId;
-		parameters[1] = bean;
+		parameters[1] = properties;
 		
 		Class<?>[] classes = new Class[2];
 		classes[0] = String.class;
