@@ -7,6 +7,7 @@
   	<release version="3.1.20" date="2008-01-16">
    		<action dev="valdas" type="update">
    			Added few public methods to GroupService
+   			Resized GroupPermissionWindow (Gimmi)
    		</action>
    	</release>
    	<release version="3.1.19" date="2007-12-04">

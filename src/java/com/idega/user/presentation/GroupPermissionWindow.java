@@ -79,7 +79,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	private boolean saveChanges = false;
 
 	protected int width = 750;
-	protected int height = 600;
+	protected int height = 750;
 
 	String selectedGroupId = null;
 
