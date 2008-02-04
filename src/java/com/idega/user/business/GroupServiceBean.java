@@ -450,7 +450,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			properties = helper.getExtractedPropertiesFromString(values[0]);
 		}
 		else {
-			builder.getRenderedComponent(iwc, groups, false);
+			builder.getRenderedComponent(groups, iwc, false);
 			
 			if (groups instanceof GroupInfoViewer) {
 				properties = getGroupPropertiesBean(instanceId);
