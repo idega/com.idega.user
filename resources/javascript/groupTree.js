@@ -130,7 +130,7 @@
 							var parentGroupUniqueId = image.getParent().getLast().getProperty('id');
 							
 							var moodalBox = $('mb_contents');
-							var loadingLayerAboveTree = $(setLoadingLayerForElement(moodalBox.id, false, moodalBox.getSize(), moodalBox.getPosition()));
+							var loadingLayerAboveTree = null;//$(setLoadingLayerForElement(moodalBox.id, false, moodalBox.getSize(), moodalBox.getPosition()));
 							
 							if (SERVER == null && LOGIN == null && PASSWORD == null) {
 								prepareDwr(GroupService, getDefaultDwrPath());
