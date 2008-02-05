@@ -51,6 +51,11 @@
 			Document UserApplicationEngine.getAvailableGroupsForUserPresentationObject(Integer, Integer, String, String);
 			UserDataBean UserApplicationEngine.getUserByPersonalId(String);
 			String UserApplicationEngine.createUser(String, String, String, String, Integer, List<Integer>, List<Integer>);
+			
+			Boolean GroupService.addGroupsIds(String, List<String>);
+			Boolean GroupService.addUniqueIds(String, String, List<String>);
+			Boolean GroupService.addUsersIds(String, List<String>);
+			Boolean GroupService.streamUniqueIds(String, List<String>, String);
   		]]>
 	</signatures>
 </dwr>

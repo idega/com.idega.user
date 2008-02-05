@@ -4,6 +4,12 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  	<release version="3.1.21" date="2008-02-05">
+   		<action dev="valdas" type="update">
+   			Changed few methods' signatures in GroupService
+   			Added signatures in dwr.xml
+   		</action>
+   	</release>
   	<release version="3.1.20" date="2008-01-16">
    		<action dev="valdas" type="update">
    			Added few public methods to GroupService

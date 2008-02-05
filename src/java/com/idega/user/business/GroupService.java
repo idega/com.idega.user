@@ -42,24 +42,24 @@ public interface GroupService extends IBOSession {
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#addGroupsIds
 	 */
-	public boolean addGroupsIds(String instanceId, List ids) throws RemoteException;
+	public Boolean addGroupsIds(String instanceId, List ids) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupServiceBean#addUsersIds
 	 */
-	public boolean addUsersIds(String instanceId, List ids) throws RemoteException;
+	public Boolean addUsersIds(String instanceId, List ids) throws RemoteException;
 	
 	public List getChildrenOfGroup(String uniqueId);
 	
 	public List getChildrenOfGroupWithLogin(String login, String password, String uniqueId);
 	
-	public boolean streamUniqueIds(String instanceId, List uniqueIds, boolean isGroupIds, boolean isTree);
+	public Boolean streamUniqueIds(String instanceId, List uniqueIds, String cacheName);
 	
 	public boolean logInUser(IWContext iwc, String login, String password);
 	
 	public boolean isLoggedUser(IWContext iwc, String userName);
 	
-	public boolean addUniqueIds(String cacheName, String instanceId, List ids);
+	public Boolean addUniqueIds(String cacheName, String instanceId, List ids);
 	
 	public boolean isUserLoggedOn(IWContext iwc, String login, String password);
 	

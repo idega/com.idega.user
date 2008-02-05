@@ -624,34 +624,34 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return clearCache(UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, login, password, instanceId, cacheTime, remoteMode);
 	}
 	
-	public boolean addGroupsIds(String instanceId, List ids) {
+	public Boolean addGroupsIds(String instanceId, List ids) {
 		if (instanceId == null || ids == null) {
-			return false;
+			return Boolean.FALSE;
 		}
 		
 		try {
 			getUniqueIds(groupsCacheName).put(instanceId, ids);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return Boolean.FALSE;
 		}
 		
-		return true;
+		return Boolean.TRUE;
 	}
 	
-	public boolean addUsersIds(String instanceId, List ids) {
+	public Boolean addUsersIds(String instanceId, List ids) {
 		if (instanceId == null || ids == null) {
-			return false;
+			return Boolean.FALSE;
 		}
 		
 		try {
 			getUniqueIds(usersCacheName).put(instanceId, ids);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return Boolean.FALSE;
 		}
 		
-		return true;
+		return Boolean.TRUE;
 	}
 	
 	public Map getUniqueIds(String cacheName) throws NullPointerException {
@@ -670,17 +670,9 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		}
 	}
 	
-	public boolean streamUniqueIds(String instanceId, List uniqueIds, boolean isGroupIds, boolean isTree) {
-		if (instanceId == null || uniqueIds == null) {
-			return false;
-		}
-		
-		String cacheName = usersCacheName;
-		if (isGroupIds) {
-			cacheName = groupsCacheName;
-		}
-		if (isTree) {
-			cacheName = treeCacheName;
+	public Boolean streamUniqueIds(String instanceId, List uniqueIds, String cacheName) {
+		if (instanceId == null || uniqueIds == null || cacheName == null) {
+			return Boolean.FALSE;
 		}
 		
 		List ids = null;
@@ -699,36 +691,29 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			}
 		}
 		
-		if (isGroupIds) {
-			return addGroupsIds(instanceId, ids);
+		try {
+			getUniqueIds(cacheName).put(instanceId, ids);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Boolean.FALSE;
 		}
 		
-		if (isTree) {
-			try {
-				getUniqueIds(treeCacheName).put(instanceId, ids);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-			return true;
-		}
-		
-		return addUsersIds(instanceId, ids);
+		return Boolean.TRUE;
 	}
 	
-	public boolean addUniqueIds(String cacheName, String instanceId, List ids) {
+	public Boolean addUniqueIds(String cacheName, String instanceId, List ids) {
 		if (cacheName == null || instanceId == null || ids == null) {
-			return false;
+			return Boolean.FALSE;
 		}
 		
 		try {
 			getUniqueIds(cacheName).put(instanceId, ids);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			return Boolean.FALSE;
 		}
 		
-		return true;
+		return Boolean.TRUE;
 	}
 	
 	public boolean isUserLoggedOn(IWContext iwc, String login, String password) {
