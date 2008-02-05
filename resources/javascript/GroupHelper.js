@@ -33,7 +33,6 @@ function registerGroupInfoChooserActions(nodeOnClickAction, noGroupsMessage, sel
 			
 			element.addEvent('click', function() {
 				if (element.value) {
-					
 					var inputs = $$('input.groupInfoChooserRadioStyle');
 					for (var i = 0; i < inputs.length; i++){
 						if (element != inputs[i]) {
@@ -480,7 +479,7 @@ function sendPackedUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, 
 			pack.push(uniqueIds[i]);
 		}
 		
-		sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, cacheName);
+		sendPackUniqueIdsToServer(instanceId, pack, server, remoteMode, cacheName);
 		
 		for (var i = 0; i < pack.length; i++) {
 			removeElementFromArray(uniqueIds, pack[i]);
