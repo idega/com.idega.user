@@ -139,11 +139,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		else {
 			function.append(nodeOnClickAction);
 		}
-		function.append(", '");
-		function.append(getResourceBundle(iwc).getLocalizedString("no_groups_found", "Sorry, no groups found on selected server."));
-		function.append("', ").append(idsParameterForFunction).append(", ");
-		function.append(getGroupsTreeStyleClassParameter());
-		function.append(");");
+		function.append(getEndingForMainFunction(iwc, false));
 		
 		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n").append("\t");
 		if (executeScriptOnLoad) {
@@ -154,6 +150,19 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		}
 		scriptString.append(" \n").append("</script> \n");
 		add(scriptString.toString());
+	}
+	
+	private String getEndingForMainFunction(IWContext iwc, boolean addClosure) {
+		StringBuffer actionEnding = new StringBuffer();
+		if (addClosure) {
+			actionEnding.append("'");
+		}
+		actionEnding.append(", '");
+		actionEnding.append(getResourceBundle(iwc).getLocalizedString("no_groups_found", "Sorry, no groups found on selected server."));
+		actionEnding.append("', ").append(idsParameterForFunction).append(", ");
+		actionEnding.append(getGroupsTreeStyleClassParameter()).append(");");
+		
+		return actionEnding.toString();
 	}
 	
 	private void addConnectionTypeField(IWContext iwc, Layer main) {
@@ -168,7 +177,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		Layer localConnection = new Layer();
 		serverContainer.add(localConnection);
 		Text txtLocal = new Text(iwrb.getLocalizedString("localServer", "Local server"));
-		RadioButton btnLocal = new RadioButton("server");
+		RadioButton btnLocal = new RadioButton("localServer");
 		btnLocal.setValue(new StringBuffer("local").append("@").append(groupsTreeContainerId).toString());
 		btnLocal.setStyleClass(RADIO_BUTTON_STYLE);
 		if (specialMarkForRadioButton != null) {
@@ -180,7 +189,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		Layer remoteConnection = new Layer();
 		serverContainer.add(remoteConnection);
 		Text txtRemote = new Text(iwrb.getLocalizedString("remoteServer", "Remote server"));
-		RadioButton btnRemote = new RadioButton("server");
+		RadioButton btnRemote = new RadioButton("remoteServer");
 		btnRemote.setValue(new StringBuffer(ICBuilderConstants.GROUPS_CHOOSER_REMOTE_CONNECTION).append("@").append(groupsTreeContainerId).toString());
 		btnRemote.setStyleClass(RADIO_BUTTON_STYLE);
 		if (specialMarkForRadioButton != null) {
@@ -188,13 +197,6 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		}
 		remoteConnection.add(btnRemote);
 		remoteConnection.add(txtRemote);
-		
-		if (isRemoteMode) {
-			btnRemote.setSelected();
-		}
-		else {
-			btnLocal.setSelected();
-		}
 
 		layer.add(serverContainer);
 		
@@ -204,10 +206,12 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		if (isRemoteMode) {
 			connData.setStyleClass("groupsChooserConnectionVisibleTable");
 			connData.setStyleAttribute("display: block;");
+			btnRemote.setSelected();
 		}
 		else {
 			connData.setStyleClass("groupsChooserConnectionHiddenTable");
 			connData.setStyleAttribute("display: none;");
+			btnLocal.setSelected();
 		}
 		
 		FieldSet connectionContainer = new FieldSet(new Legend(iwrb.getLocalizedString("remote_connection_data", "Connection")));
