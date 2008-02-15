@@ -296,7 +296,7 @@ public class SimpleUserAppViewUsers extends Block {
 		
 		String loadingMessage = iwrb.getLocalizedString("loading", "Loading...");
 		
-		List filteredChildGroups = groupsHelper.getFilteredChildGroups(iwc, parent, getGroupTypesForChildGroups(),
+		List<Group> filteredChildGroups = groupsHelper.getFilteredChildGroups(iwc, parent, getGroupTypesForChildGroups(),
 				getRoleTypesForChildGroups(), ",");
 		
 		String parentGroupChooserId = ids[1];
@@ -339,13 +339,13 @@ public class SimpleUserAppViewUsers extends Block {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		if (getParentGroup() == null) {	//	Group is not set as property
-			Collection topGroups = groupsHelper.getTopGroups(iwc, iwc.getCurrentUser());
+			Collection<Group> topGroups = groupsHelper.getTopGroups(iwc, iwc.getCurrentUser());
 			if (!isGetParentGroupsFromTopNodes()) {
 				topGroups = groupsHelper.getTopAndParentGroups(topGroups);	//	Will get top nodes and parent groups for them
 			}
 			
 			if (topGroups.size() > 0) {
-				List filteredTopGroups = new ArrayList(groupsHelper.getFilteredGroups(topGroups, getGroupTypes(), ",", useChildrenOfTopNodesAsParentGroups));
+				List<Group> filteredTopGroups = new ArrayList<Group>(groupsHelper.getFilteredGroups(topGroups, getGroupTypes(), ",", useChildrenOfTopNodesAsParentGroups));
 				if (filteredTopGroups.size() > 1) {
 					String groupUsersContainerId = ids[0];
 					String childGroupsChooserId = ids[2];

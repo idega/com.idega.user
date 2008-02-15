@@ -185,7 +185,7 @@ public class GroupHelperBusinessBean {
 		}
 		Object o = null;
 		Group group = null;
-		for(Iterator it = groups.iterator(); it.hasNext();) {
+		for (Iterator it = groups.iterator(); it.hasNext();) {
 			o = it.next();
 			if (o instanceof Group) {
 				group = (Group) o;
@@ -310,20 +310,17 @@ public class GroupHelperBusinessBean {
 			e.printStackTrace();
 		}
 		
-		Object o = null;
 		Group group = null;
 		List<Group> checkedFiltered = new ArrayList<Group>();
 		for (int i = 0; i < filtered.size(); i++) {
-			o = filtered.get(i);
-			if (o instanceof Group) {
-				group = (Group) o;
-				if (group.getUniqueId() == null) {
+			group = filtered.get(i);
+				
+			if (group.getUniqueId() == null) {
+				checkedFiltered.add(group);
+			}
+			else {
+				if (!parent.getUniqueId().equals(group.getUniqueId())) {
 					checkedFiltered.add(group);
-				}
-				else {
-					if (!parent.getUniqueId().equals(group.getUniqueId())) {
-						checkedFiltered.add(group);
-					}
 				}
 			}
 		}
@@ -344,13 +341,14 @@ public class GroupHelperBusinessBean {
 		for (int i = 0; i < roles.size(); i++) {
 			roleKey = roles.get(i).toString();
 			for (int j = 0; j < checkedFiltered.size(); j++) {
-				group = (Group) checkedFiltered.get(j);
+				group = checkedFiltered.get(j);
 				if (controler.hasRole(roleKey, group, iwc)) {
 					filteredByRole.add(group);
 				}
 			}
 			
-			if (checkedFiltered.size() > 0) {	//	Removing groups (from basic groups list) that were filtered and added to list
+			if (checkedFiltered.size() > 0) {
+				//	Removing groups (from basic groups list) that were filtered and added to list
 				for (int j = 0; j < filteredByRole.size(); j++) {
 					group = (Group) filteredByRole.get(j);
 					if (checkedFiltered.contains(group)) {
@@ -450,7 +448,7 @@ public class GroupHelperBusinessBean {
 		List<Group> groups = new ArrayList<Group>();
 		Group group = null;
 		for (int i = 0; i < groupsIds.size(); i++) {
-			group = getGroup(iwc, groupsIds.get(i).intValue());
+			group = getGroup(iwc, groupsIds.get(i));
 			if (group != null) {
 				groups.add(group);
 			}

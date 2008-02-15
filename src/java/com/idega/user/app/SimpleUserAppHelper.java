@@ -26,12 +26,11 @@ public class SimpleUserAppHelper {
 			helper = new GroupHelperBusinessBean();
 		}
 		
-		List users = helper.getSortedUsers(iwc, bean);
+		List<User> users = helper.getSortedUsers(iwc, bean);
 		if (users == null) {
 			return valuesContainer;
 		}
 		
-		Object o = null;
 		User user = null;
 		String userValuesLineContainerStyleClass = "userValuesLineContainerStyleClass";
 		String nameContainerStyleClass = "userNameValueContainerStyleClass";
@@ -53,59 +52,57 @@ public class SimpleUserAppHelper {
 		String personalId = null;
 		String userId = null;
 		for (int i = 0; i < users.size(); i++) {
-			o = users.get(i);
-			if (o instanceof User) {
-				user = (User) o;
-				userId = user.getId();
-				name = user.getName();
-				if (CoreConstants.EMPTY.equals(name)) {
-					name = null;
-				}
-				personalId = user.getPersonalID();
-				if (CoreConstants.EMPTY.equals(personalId)) {
-					personalId = null;
-				}
-				
-				lineContainer = new Layer();
-				lineContainer.setStyleClass(userValuesLineContainerStyleClass);
-				valuesContainer.add(lineContainer);
-				
-				nameContainer = new Layer();
-				nameContainer.setStyleClass(nameContainerStyleClass);
-				nameContainer.add(new Text(name == null ? unknown : name));
-				lineContainer.add(nameContainer);
-				
-				personalIdContainer = new Layer();
-				personalIdContainer.setStyleClass(personalIdContainerStyleClass);
-				personalIdContainer.add(new Text(personalId == null ? unknown : personalId));
-				lineContainer.add(personalIdContainer);
-				
-				changeUserContainer = new Layer();
-				changeUserContainer.setStyleClass(changeUserContainerStyleClass);
-				changeUserImage = new Image(image);
-				changeUserImage.setStyleClass(changeUserImageStyleClass);
-				
-				changeUserImage.setOnClick(getActionForAddUserView(bean, userId));
-				changeUserContainer.add(changeUserImage);
-				lineContainer.add(changeUserContainer);
-				
-				removeUserContainer = new Layer();
-				removeUserContainer.setStyleClass(removeUserContainerStyleClass);
-				removeUserCheckbox = new CheckBox();
-				checkBoxAction = new StringBuffer("removeUser('").append(lineContainer.getId());
-				checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(userId);
-				checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getGroupId()).append("', ");
-				checkBoxAction.append(getJavaScriptParameter(removeUserCheckbox.getId())).append(");");
-				removeUserCheckbox.setOnClick(checkBoxAction.toString());
-				removeUserContainer.add(removeUserCheckbox);
-				lineContainer.add(removeUserContainer);
+			user = users.get(i);
+			
+			userId = user.getId();
+			name = user.getName();
+			if (CoreConstants.EMPTY.equals(name)) {
+				name = null;
 			}
+			personalId = user.getPersonalID();
+			if (CoreConstants.EMPTY.equals(personalId)) {
+				personalId = null;
+			}
+			
+			lineContainer = new Layer();
+			lineContainer.setStyleClass(userValuesLineContainerStyleClass);
+			valuesContainer.add(lineContainer);
+			
+			nameContainer = new Layer();
+			nameContainer.setStyleClass(nameContainerStyleClass);
+			nameContainer.add(new Text(name == null ? unknown : name));
+			lineContainer.add(nameContainer);
+			
+			personalIdContainer = new Layer();
+			personalIdContainer.setStyleClass(personalIdContainerStyleClass);
+			personalIdContainer.add(new Text(personalId == null ? unknown : personalId));
+			lineContainer.add(personalIdContainer);
+			
+			changeUserContainer = new Layer();
+			changeUserContainer.setStyleClass(changeUserContainerStyleClass);
+			changeUserImage = new Image(image);
+			changeUserImage.setStyleClass(changeUserImageStyleClass);
+			
+			changeUserImage.setOnClick(getActionForAddUserView(bean, userId));
+			changeUserContainer.add(changeUserImage);
+			lineContainer.add(changeUserContainer);
+			
+			removeUserContainer = new Layer();
+			removeUserContainer.setStyleClass(removeUserContainerStyleClass);
+			removeUserCheckbox = new CheckBox();
+			checkBoxAction = new StringBuffer("removeUser('").append(lineContainer.getId());
+			checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(userId);
+			checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getGroupId()).append("', ");
+			checkBoxAction.append(getJavaScriptParameter(removeUserCheckbox.getId())).append(");");
+			removeUserCheckbox.setOnClick(checkBoxAction.toString());
+			removeUserContainer.add(removeUserCheckbox);
+			lineContainer.add(removeUserContainer);
 		}
 		
 		return valuesContainer;
 	}
 	
-	public Layer getSelectedGroupsByIds(IWContext iwc, User user, GroupHelperBusinessBean helper, List groupsIds, List ids, String selectedGroupId) {
+	public Layer getSelectedGroupsByIds(IWContext iwc, User user, GroupHelperBusinessBean helper, List<Integer> groupsIds, List<String> ids, String selectedGroupId) {
 		Layer selectedGroups = new Layer();
 		
 		if (groupsIds == null) {
@@ -113,11 +110,11 @@ public class SimpleUserAppHelper {
 			return selectedGroups;
 		}
 		
-		List groups = helper.getGroups(iwc, groupsIds);
+		List<Group> groups = helper.getGroups(iwc, groupsIds);
 		return getSelectedGroups(iwc, user, helper, groups, ids, selectedGroupId);
 	}
 	
-	public Layer getSelectedGroups(IWContext iwc, User user, GroupHelperBusinessBean helper, List groups, List ids, String selectedGroupId) {
+	public Layer getSelectedGroups(IWContext iwc, User user, GroupHelperBusinessBean helper, List<Group> groups, List<String> ids, String selectedGroupId) {
 		Layer selectedGroups = new Layer();
 		
 		if (groups == null) {
@@ -134,35 +131,31 @@ public class SimpleUserAppHelper {
 			return selectedGroups;
 		}
 		
-		List userGroups = helper.getUserGroupsIds(iwc, user);
+		List<String> userGroups = helper.getUserGroupsIds(iwc, user);
 		
-		Object o = null;
 		Group group = null;
 		String groupId = null;
 		StringBuffer action = null;
 		for (int i = 0; i < groups.size(); i++) {
-			o = groups.get(i);
-			if (o instanceof Group) {
-				group = (Group) o;
+			group = groups.get(i);
 				
-				//	Layer
-				Layer selectedGroup = new Layer();
-				selectedGroups.add(selectedGroup);
+			//	Layer
+			Layer selectedGroup = new Layer();
+			selectedGroups.add(selectedGroup);
 				
-				//	Checkbox
-				groupId = group.getId() == null ? CoreConstants.EMPTY : group.getId();
-				CheckBox selectGroup = new CheckBox(group.getName(), groupId);
-				if (groupId.equals(selectedGroupId) || userGroups.contains(groupId)) {
-					selectGroup.setChecked(true, true);
-				}
-				action = new StringBuffer("deselectUserFromGroup(").append(getJavaScriptParameter(groupId)).append(");");
-				selectGroup.setOnClick(action.toString());
-				ids.add(selectGroup.getId());
-				selectedGroup.add(selectGroup);
-				
-				//	Label
-				selectedGroup.add(new Text(group.getName() == null ? CoreConstants.EMPTY : group.getName()));
+			//	Checkbox
+			groupId = group.getId() == null ? CoreConstants.EMPTY : group.getId();
+			CheckBox selectGroup = new CheckBox(group.getName(), groupId);
+			if (groupId.equals(selectedGroupId) || userGroups.contains(groupId)) {
+				selectGroup.setChecked(true, true);
 			}
+			action = new StringBuffer("deselectUserFromGroup(").append(getJavaScriptParameter(groupId)).append(");");
+			selectGroup.setOnClick(action.toString());
+			ids.add(selectGroup.getId());
+			selectedGroup.add(selectGroup);
+			
+			//	Label
+			selectedGroup.add(new Text(group.getName() == null ? CoreConstants.EMPTY : group.getName()));
 		}
 		
 		return selectedGroups;

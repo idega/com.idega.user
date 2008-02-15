@@ -1,36 +1,155 @@
-.groupMemberStyleClass {
-	padding-bottom: 7px;
-	height: auto;
+@CHARSET "UTF-8";
+
+.choosersAndDescriptionStyleClass {
 }
 
-.groupMemberPhotoContainerStyleClass {
+.userApplicationChoosersContainer {
 	float: left;
-	width: auto;
-	margin-right: 5px;
+	width: 40%;
 }
 
-.groupMemberInfoContainerStyleClass {
+.userApplicationDescriptionContainerStyleClass {
+	float: left;
+	width: 45%;
+	padding-left: 5%;
+}
+
+.parentGroupLabelContainerStyleClass {
+	float: left;
+	width: 50%;
+}
+
+.parentGroupContainerStyleClass {
+	float: left;
+	width: 50%;
+}
+
+.childGroupsLabelContainerStyleClass {
+	float: left;
+	width: 50%;
+}
+
+.childGroupChooserContainerSyleClass {
+	float: left;
+	width: 50%;
+}
+
+.orderByLabelContainerStyleClass {
+	float: left;
+	width: 50%;
+}
+
+.orderByChooserStyleClass {
+	float: left;
+	width: 50%;
+}
+
+.userAppLowerPartStyleClass {
+	padding-top: 5%;
+	width: 100%;
+}
+
+.userApplicationButtonsContainerStyleClass {
+	padding-top: 1%;
+	float: right;
+}
+
+.membersListContainerStyleClass {
+	width: 100%;
+}
+
+.groupMembersListLabelsStyleClass {
+	width: 100%;
+}
+
+.userNameLabelContainerStyleClass {
+	float: left;
+	width: 40%
+}
+
+.userPersonalIdLabelContainerStyleClass {
+	float: left;
+	width: 30%;
+}
+
+.changeUserLabelContainerStyleClass {
+	float: left;
+	width: 15%;
+	text-align: center;
+}
+
+.removeUserLabelContainerStyleClass {
+	float: left;
+	width: 15%;
+	text-align: center;
+}
+
+.allUsersValuesLinesStyleClass {
+	width: 100%;
+}
+
+.userValuesLineContainerStyleClass {
+	width: 100%;
+}
+
+.userValuesLineContainerStyleClass:HOVER {
+	background-color: #E8F1FC;
+}
+
+.userNameValueContainerStyleClass {
+	float: left;
+	width: 40%;
+}
+
+.userPersonalIdValueContainerStyleClass {
+	float: left;
+	width: 30%;
+}
+
+.changeUserImageContainerStyleClass {
+	float: left;
+	width: 15%;
+	text-align: center;
+}
+
+.removeUserCheckboxContainerStyleClass {
+	float: left;
+	width: 15%;
+	text-align: center;
+}
+
+.membersListContainerStyleClass {
+	margin: 5px;
+}
+
+.addUserlabelContainerStyleClass {
+	width: 100%;
+	padding: 5px;
+}
+
+.userFieldsContainerStyleClass {
+	float: left;
+	width: 75%;
+}
+
+.descriptionContainerStyleClass {
+	float: left;
+	width: 25%;
+}
+
+.userFieldLabelContainerStyleClass {
+	float: left;
+	width: 45%;
+	padding-left: 2px;
+}
+
+.userFieldValueContainerStyleClass {
 	float: left;
 }
 
-.groupMemberStatusContainerStyleClass {
-	font-weight: bold;
-	font-size: 12px;
+.changeUserImageStyleClass {
 }
 
-.groupMemberPhonesAndMailsContainerStyleClass {
-	float: left;
-}
-
-.groupMemberEmailsContainerStyleClass {
-	float: left;
-}
-
-.groupInfoNameContainerStyleClass {
-	font-weight: bold;
-	font-size: 12px;
-}
-
-.groupInfoEntryContainerStyleClass {
-	padding-bottom: 5px;
+.changeUserImageStyleClass:HOVER {
+	cursor: pointer;
 }

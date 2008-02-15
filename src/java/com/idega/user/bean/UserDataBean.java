@@ -7,6 +7,8 @@ public class UserDataBean {
 	private String personalId = null;
 	private String email = null;
 	private String errorMessage = null;
+	private String phone = null;
+	private String address = null;
 	
 	public String getEmail() {
 		return email;
@@ -37,6 +39,18 @@ public class UserDataBean {
 	}
 	public void setPersonalId(String personalId) {
 		this.personalId = personalId;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 }

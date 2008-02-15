@@ -408,6 +408,8 @@ function isValidUserEmailCallback(result, ids, childGroups, message, passwordErr
 	var passwordInputId = ids[3];
 	var groupForUsersWithoutLoginId = ids[4];
 	var emailInputId = ids[5];
+	var phoneInputId = ids[6];
+	var addressInputId = ids[7];
 	
 	var selectedGroups = new Array();
 	if (childGroups == null) {
@@ -435,9 +437,12 @@ function isValidUserEmailCallback(result, ids, childGroups, message, passwordErr
 	}
 	var email = document.getElementById(emailInputId).value;
 	var primaryGroupId = getSelectObjectValue(parentGroupChooserId);
+	var phone = document.getElementById(phoneInputId).value;
+	var address = document.getElementById(addressInputId).value;
 	
 	showLoadingMessage(message);
-	UserApplicationEngine.createUser(userName, personalId, password, email, primaryGroupId, selectedGroups, DESELECTED_GROUPS, {
+	var userInfo = new UserDataBean(userName, password, personalId, email, null, phone, address);
+	UserApplicationEngine.createUser(userInfo, primaryGroupId, selectedGroups, DESELECTED_GROUPS, {
 		callback: function(result) {
 			closeAllLoadingMessages();
 			if (result != null) {
@@ -445,6 +450,16 @@ function isValidUserEmailCallback(result, ids, childGroups, message, passwordErr
 			}
 		}
 	});
+}
+
+function UserDataBean(name, password, personalId, email, errorMessage, phone, address) {
+	this.name = name;
+	this.password = password;
+	this.personalId = personalId;
+	this.email = email;
+	this.errorMessage = errorMessage;
+	this.phone = phone;
+	this.address = address;
 }
 
 function getCheckboxValue(id, checkIfChecked) {

@@ -12,6 +12,7 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+import javax.faces.component.UIComponent;
 
 import org.jdom.Document;
 
@@ -23,6 +24,7 @@ import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.contact.data.Email;
+import com.idega.core.location.data.Address;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
@@ -48,9 +50,9 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 	private GroupHelperBusinessBean groupHelper = new GroupHelperBusinessBean();
 	private SimpleUserAppHelper presentationHelper = new SimpleUserAppHelper();
 	
-	private Map simpleUserApps = new HashMap();
+	private Map<String, SimpleUserAppViewUsers> simpleUserApps = new HashMap<String, SimpleUserAppViewUsers>();
 	
-	public List getChildGroups(String groupId, String groupTypes, String groupRoles) {
+	public List<AdvancedProperty> getChildGroups(String groupId, String groupTypes, String groupRoles) {
 		if (groupId == null) {
 			return null;
 		}
@@ -83,26 +85,23 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 			return null;
 		}
 		
-		Collection childGroups = groupHelper.getFilteredChildGroups(iwc, selected, groupTypes, groupRoles, ",");
+		Collection<Group> childGroups = groupHelper.getFilteredChildGroups(iwc, selected, groupTypes, groupRoles, ",");
 		if (childGroups == null) {
 			return null;
 		}
 		
-		Object o = null;
 		Group group = null;
-		List childGroupsProperties = new ArrayList();
-		for (Iterator it = childGroups.iterator(); it.hasNext();) {
-			o = it.next();
-			if (o instanceof Group) {
-				group = (Group) o;
-				childGroupsProperties.add(new AdvancedProperty(group.getId(), group.getName()));
-			}
+		List<AdvancedProperty> childGroupsProperties = new ArrayList<AdvancedProperty>();
+		for (Iterator<Group> it = childGroups.iterator(); it.hasNext();) {
+			group = it.next();
+			
+			childGroupsProperties.add(new AdvancedProperty(group.getId(), group.getName()));
 		}
 		
 		return childGroupsProperties;
 	}
 	
-	public List removeUsers(List usersIds, Integer groupId) {
+	public List<Integer> removeUsers(List<Integer> usersIds, Integer groupId) {
 		if (usersIds == null || groupId == null) {
 			return null;
 		}
@@ -137,12 +136,12 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 			return null;
 		}
 		
-		List removedUsers = new ArrayList();
+		List<Integer> removedUsers = new ArrayList<Integer>();
 		Integer id = null;
 		for (int i = 0; i < usersIds.size(); i++) {
-			id = (Integer) usersIds.get(i);
+			id = usersIds.get(i);
 			try {
-				userBusiness.removeUserFromGroup(id.intValue(), group, currentUser);
+				userBusiness.removeUserFromGroup(id, group, currentUser);
 				removedUsers.add(id);
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -175,7 +174,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		return builder.getRenderedComponent(iwc, membersList, true);
 	}
 	
-	public Document getAddUserPresentationObject(SimpleUserPropertiesBean bean, List parentGroups, List childGroups, Integer userId) {
+	public Document getAddUserPresentationObject(SimpleUserPropertiesBean bean, List<Integer> parentGroups, List<Integer> childGroups, Integer userId) {
 		if (bean == null) {
 			return null;
 		}
@@ -225,7 +224,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 			}
 			
 			SimpleUserAppViewUsers viewUsers = (SimpleUserAppViewUsers) simpleUserApp;
-			Collection children = viewUsers.getChildren();
+			List<UIComponent> children = viewUsers.getChildren();
 			if (children != null) {
 				viewUsers.removeAll(children);
 			}
@@ -265,8 +264,8 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 			}
 		}
 		
-		List groups = groupHelper.getFilteredChildGroups(iwc, parentGroupId.intValue(), groupTypes, groupRoles, ",");
-		List ids = new ArrayList();
+		List<Group> groups = groupHelper.getFilteredChildGroups(iwc, parentGroupId.intValue(), groupTypes, groupRoles, ",");
+		List<String> ids = new ArrayList<String>();
 		Layer availableGroupsContainer = presentationHelper.getSelectedGroups(iwc, user, groupHelper, groups, ids, null);
 		
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, availableGroupsContainer, true);
@@ -321,7 +320,15 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		return bean;
 	}
 	
-	public String createUser(String name, String personalId, String password, String email, Integer primaryGroupId, List childGroups, List deselectedGroups) {
+	public String createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups) {
+		if (userInfo == null) {
+			return null;
+		}
+		
+		String name = userInfo.getName();
+		String personalId = userInfo.getPersonalId();
+		String password = userInfo.getPassword();
+		
 		if (name == null || personalId == null || password == null || primaryGroupId == null || childGroups == null) {
 			return null;
 		}
@@ -329,6 +336,10 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		if (iwc == null) {
 			return null;
 		}
+		
+		String phone = userInfo.getPhone();
+		String email = userInfo.getEmail();
+		String address = userInfo.getAddress();
 		
 		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
 		String sucessText = iwrb.getLocalizedString("success_saving_user", "Your changes were successfully saved.");
@@ -366,7 +377,10 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		
 		removeUserFromOldGroups(iwc, deselectedGroups, user);
 		
-		//	Email
+		//	Phone
+		//	TODO
+		
+		//	Email (can not be changed)
 		Email mail = null;
 		try {
 			mail = userBusiness.getUserMail(user);
@@ -382,6 +396,21 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 			if (mail == null) {
 				return errorText;
 			}
+		}
+		
+		//	Address
+		Address userAddress = null;
+		try {
+			userAddress = userBusiness.updateUsersMainAddressOrCreateIfDoesNotExist(Integer.valueOf(user.getId()), null, null, null, null, null, null);	//	TODO
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (CreateException e) {
+			e.printStackTrace();
+		}
+		if (userAddress == null) {
+			return errorText;
 		}
 		
 		LoginTable loginTable = null;
@@ -402,17 +431,13 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		}
 		
 		//	Setting new available groups for user
-		Object o = null;
 		for (int i = 0; i < childGroups.size(); i++) {
-			o = childGroups.get(i);
-			if (o instanceof Integer) {
-				try {
-					groupBusiness.addUser(((Integer) o).intValue(), user);
-				} catch (EJBException e) {
-					e.printStackTrace();
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
+			try {
+				groupBusiness.addUser(childGroups.get(i), user);
+			} catch (EJBException e) {
+				e.printStackTrace();
+			} catch (RemoteException e) {
+				e.printStackTrace();
 			}
 		}
 		
@@ -444,7 +469,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		return errorText;	//	Email is invalid
 	}
 	
-	private void removeUserFromOldGroups(IWContext iwc, List deselectedGroups, User user) {
+	private void removeUserFromOldGroups(IWContext iwc, List<Integer> deselectedGroups, User user) {
 		if (iwc == null || deselectedGroups == null || user == null) {
 			return;
 		}
@@ -462,43 +487,37 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		}
 		
 		//	Getting deselected groups
-		Object o = null;
 		Integer groupId = null;
 		Group group = null;
-		List groups = new ArrayList();
+		List<Group> groups = new ArrayList<Group>();
 		for (int i = 0; i < deselectedGroups.size(); i++) {
 			group = null;
-			o = deselectedGroups.get(i);
-			if (o instanceof Integer) {
-				groupId = (Integer) o;
-				try {
-					group = groupBusiness.getGroupByGroupID(groupId.intValue());
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				} catch (FinderException e) {
-					e.printStackTrace();
-				}
-				if (group != null) {
-					groups.add(group);
-				}
+			groupId = deselectedGroups.get(i);
+			
+			try {
+				group = groupBusiness.getGroupByGroupID(groupId.intValue());
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} catch (FinderException e) {
+				e.printStackTrace();
+			}
+			if (group != null) {
+				groups.add(group);
 			}
 		}
 
 		//	Removing user from deselected groups
 		User currentUser = iwc.getCurrentUser();
-		o = null;
 		group = null;
-		for (Iterator it = groups.iterator(); it.hasNext();) {
-			o = it.next();
-			if (o instanceof Group) {
-				group = (Group) o;
-				try {
-					userBusiness.removeUserFromGroup(user, group, currentUser);
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				} catch (RemoveException e) {
-					e.printStackTrace();
-				}
+		for (int i = 0; i < groups.size(); i++) {
+			group = groups.get(i);
+			
+			try {
+				userBusiness.removeUserFromGroup(user, group, currentUser);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} catch (RemoveException e) {
+				e.printStackTrace();
 			}
 		}
 	}

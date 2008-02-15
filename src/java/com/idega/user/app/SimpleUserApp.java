@@ -1,7 +1,7 @@
 package com.idega.user.app;
 
-import org.apache.myfaces.renderkit.html.util.AddResource;
-import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
@@ -13,6 +13,8 @@ import com.idega.presentation.Layer;
 import com.idega.user.business.UserApplicationEngine;
 import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
+import com.idega.util.CoreUtil;
+import com.idega.util.PresentationUtil;
 
 public class SimpleUserApp extends Block {
 	
@@ -39,7 +41,7 @@ public class SimpleUserApp extends Block {
 	/** Properties end **/
 	
 	/**
-	 * Provide instance id of the parent (container, wrapper etc.) module insterted in IBXMLPage or null if this object is inserted
+	 * Provide instance id of the parent (container, wrapper etc.) module inserted in IBXMLPage or null if this object is inserted
 	 */
 	public void setInstanceId(String instanceId) {
 		this.instanceId = instanceId;
@@ -53,9 +55,10 @@ public class SimpleUserApp extends Block {
 			throw new NullPointerException("Provide instanceId for " + SimpleUserApp.class.getName());
 		}
 		
-		addFiles(iwc);
-		
 		Layer container = new Layer();
+		
+		addFiles(iwc, container);
+		
 		add(container);
 		
 		SimpleUserAppViewUsers viewUsers = new SimpleUserAppViewUsers(instanceId, container.getId(), parentGroup,
@@ -74,17 +77,27 @@ public class SimpleUserApp extends Block {
 		}
 	}
 	
-	private void addFiles(IWContext iwc) {
+	private void addFiles(IWContext iwc, Layer container) {
 		IWBundle bundle = getBundle(iwc);
-		AddResource adder = AddResourceFactory.getInstance(iwc);
-	
-		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
-		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/interface/UserApplicationEngine.js");
-		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/util.js");
 		
-		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, bundle.getVirtualPathWithFileNameString("javascript/SimpleUserAppHelper.js"));
+		List<String> files = new ArrayList<String>();
+		files.add("/dwr/engine.js");
+		files.add("/dwr/interface/UserApplicationEngine.js");
+		files.add("/dwr/util.js");
 		
-		adder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, bundle.getVirtualPathWithFileNameString("style/user.css"));
+		files.add(bundle.getVirtualPathWithFileNameString("javascript/SimpleUserAppHelper.js"));
+		
+		List<String> cssFiles = new ArrayList<String>();
+		cssFiles.add(bundle.getVirtualPathWithFileNameString("style/user.css"));
+		cssFiles.add(bundle.getVirtualPathWithFileNameString("style/screen.css"));
+		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
+			container.add(PresentationUtil.getJavaScriptSourceLines(files));
+			container.add(PresentationUtil.getStyleSheetsSourceLines(cssFiles));
+		}
+		else {
+			PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, files);
+			PresentationUtil.addStyleSheetsToHeader(iwc, cssFiles);
+		}
 	}
 	
 	/** Methods for properties start **/

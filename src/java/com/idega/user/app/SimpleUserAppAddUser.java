@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.faces.component.UIComponent;
+
 import com.idega.core.contact.data.Email;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
@@ -24,8 +26,8 @@ import com.idega.util.CoreConstants;
 
 public class SimpleUserAppAddUser extends Block {
 	
-	private List parentGroups = null;
-	private List childGroups = null;
+	private List<Integer> parentGroups = null;
+	private List<Integer> childGroups = null;
 	
 	private String groupTypesForParentGroups = null;
 	private String parentGroupId = null;
@@ -94,7 +96,7 @@ public class SimpleUserAppAddUser extends Block {
 		container.add(addUserlabelContainer);
 		
 		//	Container of available groups for user
-		Layer availableGroupsOfUserContaianer = new Layer();
+		Layer availableGroupsOfUserContaianer = getFieldsContainer();
 		
 		//	Parent groups dropdown
 		Layer parentGroupsContainer = new Layer();
@@ -128,6 +130,13 @@ public class SimpleUserAppAddUser extends Block {
 		}
 		TextInput idValueInput = new TextInput();
 		idValueInput.setMaxlength(12);
+		
+		TextInput phoneInput = new TextInput();
+		String phoneInputId = phoneInput.getId();
+		
+		TextInput addressInput = new TextInput();
+		String addressInputId = addressInput.getId();
+		
 		StringBuffer idAction = new StringBuffer("getUserByPersonalId(");
 		idAction.append(helper.getJavaScriptParameter(idValueInput.getId())).append(", '").append(nameValueInputId);
 		idAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(loginInputId);
@@ -138,7 +147,14 @@ public class SimpleUserAppAddUser extends Block {
 		nameValueInput.setDisabled(true);
 		idValueInput.setContent(personalId == null ? CoreConstants.EMPTY : personalId);
 		nameValueInput.setContent(name == null ? CoreConstants.EMPTY : name);
-		addUserFields(iwc, userFieldsContainer, idValueInput, nameValueInput, loginInputId, emailInpnut);
+		
+		List<TextInput> inputs = new ArrayList<TextInput>();
+		inputs.add(idValueInput);		//	0
+		inputs.add(nameValueInput);		//	1
+		inputs.add(phoneInput);			//	2
+		inputs.add(emailInpnut);		//	3
+		inputs.add(addressInput);		//	4
+		addUserFields(iwc, userFieldsContainer, inputs/*idValueInput, nameValueInput, loginInputId, emailInpnut*/);
 		
 		//	Login information
 		Layer userLoginLabelContainer = new Layer();
@@ -175,19 +191,21 @@ public class SimpleUserAppAddUser extends Block {
 		selectGroupsLabelContainer.add(new Text(iwrb.getLocalizedString("select_sub_group", "Select sub group")));
 		Layer selectedGroupsContainer = new Layer();
 		container.add(selectedGroupsContainer);
-		List childGroups = addSelectedGroups(iwc, user, selectedGroupsContainer, availableGroupsOfUserContaianer);
+		List<String> childGroups = addSelectedGroups(iwc, user, selectedGroupsContainer, availableGroupsOfUserContaianer);
 		
 		//	Buttons
 		Layer buttons = new Layer();
 		container.add(buttons);
 		buttons.setStyleClass("userApplicationButtonsContainerStyleClass");
-		String[] ids = new String[6];
-		ids[0] = parentGroupChooserId;
-		ids[1] = nameValueInputId;
-		ids[2] = loginInputId;
-		ids[3] = passwordInputId;
-		ids[4] = groupForUsersWithoutLoginId;
-		ids[5] = emailInputId;
+		List<String> ids = new ArrayList<String>();
+		ids.add(parentGroupChooserId);			//	0
+		ids.add(nameValueInputId);				//	1
+		ids.add(loginInputId);					//	2
+		ids.add(passwordInputId);				//	3
+		ids.add(groupForUsersWithoutLoginId);	//	4
+		ids.add(emailInputId);					//	5
+		ids.add(phoneInputId);					//	6
+		ids.add(addressInputId);				//	7
 		addButtons(iwc, buttons, ids, childGroups);
 	}
 	
@@ -208,21 +226,15 @@ public class SimpleUserAppAddUser extends Block {
 		return email == null ? null : email.getEmailAddress();
 	}
 	
-	private List addSelectedGroups(IWContext iwc, User user, Layer container, Layer fieldsContainer) {
+	private List<String> addSelectedGroups(IWContext iwc, User user, Layer container, Layer fieldsContainer) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
-		fieldsContainer.setStyleClass("userFieldsContainerStyleClass");
 		container.add(fieldsContainer);
 		
-		Layer descriptionContainer = new Layer();
-		descriptionContainer.setStyleClass("descriptionContainerStyleClass");
-		container.add(descriptionContainer);
-		descriptionContainer.add(new Text(iwrb.getLocalizedString("add_user_checkbox_description", "Select the groups the user should have access to by checking the groups checkbox.")));
-		
+		container.add(getDescriptionContainer(iwrb.getLocalizedString("add_user_checkbox_description", "Select the groups the user should have access to by checking the groups checkbox.")));
 		container.add(getSpacer());
 		
-		List ids = new ArrayList();
-		
+		List<String> ids = new ArrayList<String>();
 		Layer selectedGroupsContainer = helper.getSelectedGroupsByIds(iwc, user, groupsHelper, childGroups, ids, groupId);
 		fieldsContainer.add(selectedGroupsContainer);
 		
@@ -232,120 +244,107 @@ public class SimpleUserAppAddUser extends Block {
 	private void addLoginFields(IWContext iwc, Layer container, TextInput loginValueInput, PasswordInput passwordInput) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
-		Layer fieldsContainer = new Layer();
-		fieldsContainer.setStyleClass("userFieldsContainerStyleClass");
+		Layer fieldsContainer = getFieldsContainer();
 		container.add(fieldsContainer);
 		
-		Layer descriptionContainer = new Layer();
-		descriptionContainer.setStyleClass("descriptionContainerStyleClass");
-		descriptionContainer.add(new Text(iwrb.getLocalizedString("user_login_description", "The user's name is always the user's personal ID and it cannot be changed.")));
-		container.add(descriptionContainer);
-		
+		container.add(getDescriptionContainer(iwrb.getLocalizedString("user_login_description", "The user's name is always the user's personal ID and it cannot be changed.")));
 		container.add(getSpacer());
 		
 		//	Login
-		Layer loginLabelContainer = new Layer();
-		loginLabelContainer.setStyleClass("userFieldLabelContainerStyleClass");
-		loginLabelContainer.add(new Text(iwrb.getLocalizedString("login", "Username")));
-		fieldsContainer.add(loginLabelContainer);
-		Layer loginValueContainer = new Layer();
-		loginValueContainer.setStyleClass("userFieldValueContainerStyleClass");
-		loginValueContainer.add(loginValueInput);
-		fieldsContainer.add(loginValueContainer);
-		
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("login", "Username")));
+		fieldsContainer.add(getComponentContainer(loginValueInput));
 		fieldsContainer.add(getSpacer());
 		
 		//	Password
-		Layer passwordLabelContainer = new Layer();
-		passwordLabelContainer.setStyleClass("userFieldLabelContainerStyleClass");
-		passwordLabelContainer.add(new Text(iwrb.getLocalizedString("password", "Password")));
-		fieldsContainer.add(passwordLabelContainer);
-		Layer passwordValueContainer = new Layer();
-		passwordValueContainer.setStyleClass("userFieldValueContainerStyleClass");
-		passwordValueContainer.add(passwordInput);
-		fieldsContainer.add(passwordValueContainer);
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("password", "Password")));
+		fieldsContainer.add(getComponentContainer(passwordInput));
 	}
 	
-	private void addUserFields(IWContext iwc, Layer container, TextInput idValueInput, TextInput nameValueInput, String loginId, TextInput emailInput) {
-		IWResourceBundle iwrb = getResourceBundle(iwc);
-		
+	private Layer getFieldsContainer() {
 		Layer fieldsContainer = new Layer();
 		fieldsContainer.setStyleClass("userFieldsContainerStyleClass");
-		container.add(fieldsContainer);
-		
+		return fieldsContainer;
+	}
+	
+	private Layer getDescriptionContainer(String description) {
 		Layer descriptionContainer = new Layer();
 		descriptionContainer.setStyleClass("descriptionContainerStyleClass");
-		container.add(descriptionContainer);
-		descriptionContainer.add(new Text(iwrb.getLocalizedString("enter_personal_id_desc", "Please enter the user's personal ID. The system finds the user's name from the national registry.")));
+		descriptionContainer.add(new Text(description));
+		return descriptionContainer;
+	}
 	
+	private Layer getLabelContainer(String localizedText) {
+		Layer labelContainer = new Layer();
+		labelContainer.setStyleClass("userFieldLabelContainerStyleClass");
+		labelContainer.add(new Text(localizedText));
+		return labelContainer;
+	}
+	
+	private Layer getComponentContainer(UIComponent component) {
+		Layer componetContainer = new Layer();
+		componetContainer.setStyleClass("userFieldValueContainerStyleClass");
+		if (component != null) {
+			componetContainer.add(component);
+		}
+		return componetContainer;
+	}
+	
+	private void addUserFields(IWContext iwc, Layer container, List<TextInput> inputs) {
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+		
+		Layer fieldsContainer = getFieldsContainer();
+		container.add(fieldsContainer);
+		
+		container.add(getDescriptionContainer(iwrb.getLocalizedString("enter_personal_id_desc", "Please enter the user's personal ID. The system finds the user's name from the national registry.")));
 		container.add(getSpacer());
 		
 		//	Personal ID
-		Layer idLabelContainer = new Layer();
-		idLabelContainer.setStyleClass("userFieldLabelContainerStyleClass");
-		idLabelContainer.add(new Text(iwrb.getLocalizedString("personal_id", "Personal ID")));
-		fieldsContainer.add(idLabelContainer);
-		Layer idValueContainer = new Layer();
-		idValueContainer.add(idValueInput);
-		idValueContainer.setStyleClass("userFieldValueContainerStyleClass");
-		fieldsContainer.add(idValueContainer);
-		
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("personal_id", "Personal ID")));
+		fieldsContainer.add(getComponentContainer(inputs.get(0)));
 		fieldsContainer.add(getSpacer());
 		
 		//	Name
-		Layer nameLabelContainer = new Layer();
-		nameLabelContainer.setStyleClass("userFieldLabelContainerStyleClass");
-		nameLabelContainer.add(new Text(iwrb.getLocalizedString("user.user_name", "Name")));
-		fieldsContainer.add(nameLabelContainer);
-		Layer nameValueContainer = new Layer();
-		nameValueContainer.setStyleClass("userFieldValueContainerStyleClass");
-		nameValueContainer.add(nameValueInput);
-		fieldsContainer.add(nameValueContainer);
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("user.user_name", "Name")));
+		fieldsContainer.add(getComponentContainer(inputs.get(1)));
+		fieldsContainer.add(getSpacer());
 		
+		//	Phone
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("phone", "Phone")));
+		fieldsContainer.add(getComponentContainer(inputs.get(2)));
 		fieldsContainer.add(getSpacer());
 		
 		//	Email
-		Layer emailLabelContainer = new Layer();
-		emailLabelContainer.setStyleClass("userFieldLabelContainerStyleClass");
-		emailLabelContainer.add(new Text(iwrb.getLocalizedString("email", "Email")));
-		fieldsContainer.add(emailLabelContainer);
-		Layer emailValueContainer = new Layer();
-		emailValueContainer.setStyleClass("userFieldValueContainerStyleClass");
-		emailValueContainer.add(emailInput);
-		fieldsContainer.add(emailValueContainer);
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("email", "Email")));
+		fieldsContainer.add(getComponentContainer(inputs.get(3)));
+		fieldsContainer.add(getSpacer());
+		
+		//	Address
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("address", "Address")));
+		fieldsContainer.add(getComponentContainer(inputs.get(4)));
 	}
 	
 	private void addParentGroups(IWContext iwc, Layer container, DropdownMenu parentGroupsChooser) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
-		Layer fieldsContainer = new Layer();
-		fieldsContainer.setStyleClass("userFieldsContainerStyleClass");
+		Layer fieldsContainer = getFieldsContainer();
 		container.add(fieldsContainer);
 		
-		Layer descriptionContainer = new Layer();
-		descriptionContainer.add(new Text(iwrb.getLocalizedString("add_user_parent_group_description", "Some description text here.")));
-		descriptionContainer.setStyleClass("descriptionContainerStyleClass");
-		container.add(descriptionContainer);
-		
+		container.add(getDescriptionContainer(iwrb.getLocalizedString("add_user_parent_group_description", "Select parent group")));
 		container.add(getSpacer());
 		
-		Layer parentGroupLabelContainer = new Layer();
-		parentGroupLabelContainer.setStyleClass("userFieldLabelContainerStyleClass");
-		parentGroupLabelContainer.add(new Text(iwrb.getLocalizedString("select_parent_group", "Select parent group")));
-		fieldsContainer.add(parentGroupLabelContainer);
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("select_parent_group", "Select parent group")));
 		
-		Layer parentGroupValueContainer = new Layer();
-		parentGroupValueContainer.setStyleClass("userFieldValueContainerStyleClass");
+		Layer parentGroupValueContainer = getComponentContainer(null);
 		fieldsContainer.add(parentGroupValueContainer);
 		if (parentGroups == null) {	//	Normally shouldn't be null
 			Group group = groupsHelper.getGroup(iwc, parentGroupId);
 			if (group == null) {
-				Collection topGroups = groupsHelper.getTopGroups(iwc, iwc.getCurrentUser());
+				Collection<Group> topGroups = groupsHelper.getTopGroups(iwc, iwc.getCurrentUser());
 				if (!getParentGroupsFromTopNodes) {
 					topGroups = groupsHelper.getTopAndParentGroups(topGroups);	//	Will get top nodes and parent groups for them
 				}
 				if (topGroups == null) {
-					addLabelForNoGroups(iwrb, parentGroupValueContainer);	//	No group availabe
+					addLabelForNoGroups(iwrb, parentGroupValueContainer);	//	No group available
 				}
 				else {
 					parentGroupsChooser.addMenuElements(groupsHelper.getFilteredGroups(topGroups, groupTypesForParentGroups, ",", useChildrenOfTopNodesAsParentGroups));
@@ -358,9 +357,9 @@ public class SimpleUserAppAddUser extends Block {
 			}
 		}
 		else {
-			List groups = groupsHelper.getGroups(iwc, parentGroups);
+			List<Group> groups = groupsHelper.getGroups(iwc, parentGroups);
 			if (groups == null) {
-				addLabelForNoGroups(iwrb, parentGroupValueContainer);	//	No group availabe
+				addLabelForNoGroups(iwrb, parentGroupValueContainer);	//	No group available
 			}
 			else {
 				parentGroupsChooser.addMenuElements(groups);
@@ -376,7 +375,7 @@ public class SimpleUserAppAddUser extends Block {
 		container.add(new Text(iwrb.getLocalizedString("no_groups_available", "There are no groups available")));
 	}
 	
-	private void addButtons(IWContext iwc, Layer container, String[] ids, List childGroups) {
+	private void addButtons(IWContext iwc, Layer container, List<String> ids, List<String> childGroups) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		GenericButton back = new GenericButton(iwrb.getLocalizedString("back", "Back"));
@@ -388,15 +387,15 @@ public class SimpleUserAppAddUser extends Block {
 		
 		GenericButton save = new GenericButton(iwrb.getLocalizedString("save", "Save"));
 		StringBuffer saveAction = new StringBuffer("saveUserInSimpleUserApplication([");
-		for (int i = 0; i < ids.length; i++) {
-			saveAction.append(helper.getJavaScriptParameter(ids[i]));
-			if ((i + 1) < ids.length) {
+		for (int i = 0; i < ids.size(); i++) {
+			saveAction.append(helper.getJavaScriptParameter(ids.get(i)));
+			if ((i + 1) < ids.size()) {
 				saveAction.append(SimpleUserApp.COMMA_SEPARATOR);
 			}
 		}
 		saveAction.append("], ['");
 		for (int i = 0; i < childGroups.size(); i++) {
-			saveAction.append(childGroups.get(i).toString());
+			saveAction.append(childGroups.get(i));
 			if ((i + 1) < childGroups.size()) {
 				saveAction.append(SimpleUserApp.PARAMS_SEPARATOR);
 			}
@@ -424,7 +423,7 @@ public class SimpleUserAppAddUser extends Block {
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
 
-	public void setParentGroups(List parentGroups) {
+	public void setParentGroups(List<Integer> parentGroups) {
 		this.parentGroups = parentGroups;
 	}
 
@@ -432,7 +431,7 @@ public class SimpleUserAppAddUser extends Block {
 		this.userId = userId;
 	}
 
-	public void setChildGroups(List childGroups) {
+	public void setChildGroups(List<Integer> childGroups) {
 		this.childGroups = childGroups;
 	}
 	
