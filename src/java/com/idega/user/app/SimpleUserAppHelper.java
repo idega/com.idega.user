@@ -1,5 +1,7 @@
 package com.idega.user.app;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.idega.idegaweb.IWResourceBundle;
@@ -105,12 +107,29 @@ public class SimpleUserAppHelper {
 	public Layer getSelectedGroupsByIds(IWContext iwc, User user, GroupHelperBusinessBean helper, List<Integer> groupsIds, List<String> ids, String selectedGroupId) {
 		Layer selectedGroups = new Layer();
 		
-		if (groupsIds == null) {
-			addLabelForNoGroups(iwc, selectedGroups);
-			return selectedGroups;
+		List<Group> groups = null;
+		if (groupsIds == null || groupsIds.size() == 0) {
+			boolean changedToCurrentUser = false;
+			if (user == null) {
+				user = iwc.getCurrentUser();
+				changedToCurrentUser = true;
+			}
+			Collection<Group> topGroups = helper.getTopGroups(iwc, user);
+			if (changedToCurrentUser) {
+				user = null;
+			}
+			
+			if (topGroups == null || topGroups.size() == 0) {
+				addLabelForNoGroups(iwc, selectedGroups);
+				return selectedGroups;
+			}
+			
+			groups = new ArrayList<Group>(topGroups);
+		}
+		else {
+			groups = helper.getGroups(iwc, groupsIds);
 		}
 		
-		List<Group> groups = helper.getGroups(iwc, groupsIds);
 		return getSelectedGroups(iwc, user, helper, groups, ids, selectedGroupId);
 	}
 	
@@ -122,8 +141,22 @@ public class SimpleUserAppHelper {
 			return selectedGroups;
 		}
 		if (groups.size() == 0) {
-			addLabelForNoGroups(iwc, selectedGroups);
-			return selectedGroups;
+			boolean changedToCurrentUser = false;
+			if (user == null) {
+				user = iwc.getCurrentUser();
+				changedToCurrentUser = true;
+			}
+			Collection<Group> topGroups = helper.getTopGroups(iwc, user);
+			if (changedToCurrentUser) {
+				user = null;
+			}
+			
+			if (topGroups == null || topGroups.size() == 0) {
+				addLabelForNoGroups(iwc, selectedGroups);
+				return selectedGroups;
+			}
+			
+			groups = new ArrayList<Group>(topGroups);
 		}
 		
 		if (ids == null) {
@@ -136,9 +169,11 @@ public class SimpleUserAppHelper {
 		Group group = null;
 		String groupId = null;
 		StringBuffer action = null;
+		boolean checkGroup = false;
 		for (int i = 0; i < groups.size(); i++) {
 			group = groups.get(i);
-				
+			
+			checkGroup = false;
 			//	Layer
 			Layer selectedGroup = new Layer();
 			selectedGroups.add(selectedGroup);
@@ -146,7 +181,15 @@ public class SimpleUserAppHelper {
 			//	Checkbox
 			groupId = group.getId() == null ? CoreConstants.EMPTY : group.getId();
 			CheckBox selectGroup = new CheckBox(group.getName(), groupId);
-			if (groupId.equals(selectedGroupId) || userGroups.contains(groupId)) {
+			if ("-1".equals(selectedGroupId) && userGroups.size() == 0 && i == 0) {
+				checkGroup = true;
+			}
+			else {
+				if (groupId.equals(selectedGroupId) || userGroups.contains(groupId)) {
+					checkGroup = true;
+				}
+			}
+			if (checkGroup) {
 				selectGroup.setChecked(true, true);
 			}
 			action = new StringBuffer("deselectUserFromGroup(").append(getJavaScriptParameter(groupId)).append(");");
@@ -201,8 +244,27 @@ public class SimpleUserAppHelper {
 		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isGetParentGroupsFromTopNodes());
 		action.append(SimpleUserApp.COMMA_SEPARATOR).append(getJavaScriptParameter(bean.getGroupTypesForParentGroups()));
 		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isUseChildrenOfTopNodesAsParentGroups());
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isAllFieldsEditable());
 		action.append(");");
 		return action.toString();
+	}
+	
+	protected String getJavaScriptFunctionParameter(List<String> parameters) {
+		if (parameters == null || parameters.size() == 0) {
+			return "null";
+		}
+		
+		StringBuffer params = new StringBuffer("[");
+	
+		for (int i = 0; i < parameters.size(); i++) {
+			params.append(getJavaScriptParameter(parameters.get(i)));
+			if (i + 1 < parameters.size()) {
+				params.append(SimpleUserApp.COMMA_SEPARATOR);
+			}
+		}
+	
+		params.append("]");
+		return params.toString();
 	}
 	
 }

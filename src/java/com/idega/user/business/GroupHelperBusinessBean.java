@@ -386,7 +386,12 @@ public class GroupHelperBusinessBean {
 		if (bean == null) {
 			return null;
 		}
-		if (bean.getGroupId() < 0) {
+		
+		int groupId = bean.getGroupId();
+		if (groupId < 0) {
+			groupId = bean.getParentGroupId();
+		}
+		if (groupId < 0) {
 			return null;
 		}
 		
@@ -397,7 +402,7 @@ public class GroupHelperBusinessBean {
 		
 		Collection<User> users = null;
 		try {
-			users = userBusiness.getUsersInGroup(bean.getGroupId());
+			users = userBusiness.getUsersInGroup(groupId);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

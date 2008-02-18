@@ -18,15 +18,9 @@ public class SimpleUserPropertiesBean {
 	
 	private boolean getParentGroupsFromTopNodes = true;
 	private boolean useChildrenOfTopNodesAsParentGroups = false;
+	private boolean allFieldsEditable = false;
 	
 	public SimpleUserPropertiesBean() {}
-	
-	public SimpleUserPropertiesBean(int parentGroupId, int groupId, int orderBy) {
-		this();
-		this.parentGroupId = parentGroupId;
-		this.groupId = groupId;
-		this.orderBy = orderBy;
-	}
 	
 	public int getGroupId() {
 		return groupId;
@@ -134,6 +128,14 @@ public class SimpleUserPropertiesBean {
 	public void setUseChildrenOfTopNodesAsParentGroups(
 			boolean useChildrenOfTopNodesAsParentGroups) {
 		this.useChildrenOfTopNodesAsParentGroups = useChildrenOfTopNodesAsParentGroups;
+	}
+
+	public boolean isAllFieldsEditable() {
+		return allFieldsEditable;
+	}
+
+	public void setAllFieldsEditable(boolean allFieldsEditable) {
+		this.allFieldsEditable = allFieldsEditable;
 	}
 	
 }

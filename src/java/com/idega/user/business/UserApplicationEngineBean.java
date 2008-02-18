@@ -19,12 +19,14 @@ import org.jdom.Document;
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
-import com.idega.business.IBOSessionBean;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.contact.data.Email;
+import com.idega.core.contact.data.Phone;
+import com.idega.core.contact.data.PhoneTypeBMPBean;
 import com.idega.core.location.data.Address;
+import com.idega.core.location.data.Country;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
@@ -41,7 +43,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.EmailValidator;
 
-public class UserApplicationEngineBean extends IBOSessionBean implements UserApplicationEngine {
+public class UserApplicationEngineBean implements UserApplicationEngine {
 
 	private static final long serialVersionUID = -7472052374016555081L;
 	
@@ -163,7 +165,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		}
 		
 		String image = null;
-		IWBundle bundle = getBundle();
+		IWBundle bundle = getBundle(iwc);
 		if (bundle != null) {
 			image = bundle.getVirtualPathWithFileNameString(SimpleUserApp.EDIT_IMAGE);
 		}
@@ -195,7 +197,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		
 		BuilderLogic builder = BuilderLogic.getInstance();
 		
-		SimpleUserAppAddUser addUser = new SimpleUserAppAddUser(instanceId, containerId);
+		SimpleUserAppAddUser addUser = new SimpleUserAppAddUser(instanceId, containerId, bean.isAllFieldsEditable());
 		addUser.setParentGroupId(parentGroupId);
 		addUser.setGroupId(groupId);
 		addUser.setGroupForUsersWthouLoginId(groupForUsersWithoutLoginId);
@@ -291,57 +293,102 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		User user = null;
 		try {
 			user = userBusiness.getUser(personalId);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (FinderException e) {
-			e.printStackTrace();
-		}
+		} catch (Exception e) {}
 		
 		if (user == null) {
-			IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
+			IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 			String errorMessage = "Unable to find user by provided personal ID!";
 			errorMessage = iwrb.getLocalizedString("unable_to_find_user_by_personal_id", errorMessage);
 			bean.setErrorMessage(errorMessage);
 		}
 		else {
-			String password = userBusiness.getUserPassword(user);
+			//	Name
+			bean.setName(user.getName());
+			
+			//	Personal ID
 			String personalID = user.getPersonalID();
+			bean.setPersonalId(personalID == null ? personalId : personalID);
+			
+			//	Password
+			String password = userBusiness.getUserPassword(user);
+			bean.setPassword(password == null ? CoreConstants.EMPTY : password);
+			
+			//	Phone
+			Phone phone = null;
+			try {
+				phone = userBusiness.getUserPhone(Integer.valueOf(user.getId()), PhoneTypeBMPBean.HOME_PHONE_ID);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			String phoneNumber = phone == null ? CoreConstants.EMPTY : phone.getNumber();
+			bean.setPhone(phoneNumber == null ? CoreConstants.EMPTY : phoneNumber);
+			
+			//	Email
 			Email email = null;
 			try {
 				email = userBusiness.getUserMail(user);
-			} catch (RemoteException e) {}
+			} catch (Exception e) {}
 			String mail = email == null ? CoreConstants.EMPTY : email.getEmailAddress();
-			bean.setName(user.getName());
-			bean.setPersonalId(personalID == null ? personalId : personalID);
-			bean.setPassword(password == null ? CoreConstants.EMPTY : password);
 			bean.setEmail(mail == null ? CoreConstants.EMPTY : mail);
+			
+			//	Address
+			Address address = null;
+			try {
+				address = userBusiness.getUsersMainAddress(user);
+			} catch (RemoteException e) {}
+			if (address != null) {
+				String streetNameAndNumber = address.getStreetAddress();
+				bean.setStreetNameAndNumber(streetNameAndNumber == null ? CoreConstants.EMPTY : streetNameAndNumber);
+				
+				int postalCodeId = address.getPostalCodeID();
+				bean.setPostalBox(postalCodeId == -1 ? CoreConstants.EMPTY : String.valueOf(postalCodeId));
+				
+				String countryName = CoreConstants.EMPTY;
+				Country country = address.getCountry();
+				if (country != null) {
+					countryName = country.getName();
+				}
+				bean.setCountryName(countryName == null ? CoreConstants.EMPTY : countryName);
+				
+				String city = address.getCity();
+				bean.setCity(city == null ? CoreConstants.EMPTY : city);
+				
+				String province = address.getProvince();
+				bean.setProvince(province == null ? CoreConstants.EMPTY : province);
+				
+				String postalBox = address.getPOBox();
+				bean.setPostalBox(postalBox == null ? CoreConstants.EMPTY : postalBox);
+			}
 		}
 		
 		return bean;
 	}
 	
-	public String createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups) {
+	public String createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups, boolean allFieldsEditable) {
 		if (userInfo == null) {
 			return null;
 		}
 		
 		String name = userInfo.getName();
+		String login = userInfo.getLogin();
 		String personalId = userInfo.getPersonalId();
 		String password = userInfo.getPassword();
 		
 		if (name == null || personalId == null || password == null || primaryGroupId == null || childGroups == null) {
 			return null;
 		}
+		if (login == null) {
+			login = personalId;
+		}
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
 		}
 		
-		String phone = userInfo.getPhone();
+		String phoneNumber = userInfo.getPhone();
 		String email = userInfo.getEmail();
-		String address = userInfo.getAddress();
 		
-		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
+		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 		String sucessText = iwrb.getLocalizedString("success_saving_user", "Your changes were successfully saved.");
 		String errorText = iwrb.getLocalizedString("error_saving_user", "Error occurred while saving your changes.");
 		
@@ -377,15 +424,31 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		
 		removeUserFromOldGroups(iwc, deselectedGroups, user);
 		
-		//	Phone
-		//	TODO
+		//	Name
+		if (allFieldsEditable) {
+			user.setFullName(name);
+		}
 		
-		//	Email (can not be changed)
+		//	Phone
+		Phone phone = null;
+		try {
+			phone = userBusiness.getUserPhone(Integer.valueOf(user.getId()), PhoneTypeBMPBean.HOME_PHONE_ID);
+		} catch (Exception e) {}
+		if (phone == null || allFieldsEditable) {
+			try {
+				userBusiness.updateUserPhone(user, PhoneTypeBMPBean.HOME_PHONE_ID, phoneNumber);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return errorText;
+			}
+		}
+		
+		//	Email
 		Email mail = null;
 		try {
 			mail = userBusiness.getUserMail(user);
 		} catch (RemoteException e) {}
-		if (mail == null) {
+		if (mail == null || allFieldsEditable) {
 			try {
 				mail = userBusiness.updateUserMail(user, email);
 			} catch (RemoteException e) {
@@ -399,26 +462,32 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		}
 		
 		//	Address
-		Address userAddress = null;
+		/*Address userAddress = null;
 		try {
-			userAddress = userBusiness.updateUsersMainAddressOrCreateIfDoesNotExist(Integer.valueOf(user.getId()), null, null, null, null, null, null);	//	TODO
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (CreateException e) {
-			e.printStackTrace();
-		}
-		if (userAddress == null) {
-			return errorText;
-		}
+			userAddress = userBusiness.getUsersMainAddress(user);
+		} catch (RemoteException e) {}
+		if (userAddress == null || allFieldsEditable) {
+			try {
+				userAddress = userBusiness.updateUsersMainAddressOrCreateIfDoesNotExist(Integer.valueOf(user.getId()), userInfo.getStreetNameAndNumber(),
+						Integer.valueOf(userInfo.getPostalCodeId()), userInfo.getCountryName(), userInfo.getCity(), userInfo.getProvince(), userInfo.getPostalBox());
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} catch (CreateException e) {
+				e.printStackTrace();
+			}
+			if (userAddress == null) {
+				return errorText;
+			}
+		}*/
 		
 		LoginTable loginTable = null;
 		loginTable = LoginDBHandler.getUserLogin(user);
 		if (loginTable == null) {
 			//	Creating login
 			try {
-				loginTable = LoginDBHandler.createLogin(user, personalId, password);
+				loginTable = LoginDBHandler.createLogin(user, login, password);
 			} catch (LoginCreateException e) {
 				e.printStackTrace();
 			} catch (RemoteException e) {
@@ -431,6 +500,9 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		}
 		
 		//	Setting new available groups for user
+		if (childGroups.size() == 0) {
+			childGroups.add(primaryGroupId);
+		}
 		for (int i = 0; i < childGroups.size(); i++) {
 			try {
 				groupBusiness.addUser(childGroups.get(i), user);
@@ -455,7 +527,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 			return error;
 		}
 		
-		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
+		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 		String errorText = iwrb.getLocalizedString("invalid_email", error);
 		
 		if (email == null) {
@@ -546,8 +618,15 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		return groupBusiness;
 	}
 	
-	protected String getBundleIdentifier(){
-	  	return UserConstants.IW_BUNDLE_IDENTIFIER;
-	  }
+	protected String getBundleIdentifier() {
+		return UserConstants.IW_BUNDLE_IDENTIFIER;
+	}
 
+	private IWBundle getBundle(IWContext iwc) {
+		return iwc.getIWMainApplication().getBundle(getBundleIdentifier());
+	}
+
+	public String getSimpleUserApplicationClassName() {
+		return SimpleUserApp.class.getName();
+	}
 }

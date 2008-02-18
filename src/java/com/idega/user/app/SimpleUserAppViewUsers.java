@@ -33,6 +33,7 @@ public class SimpleUserAppViewUsers extends Block {
 	
 	private boolean getParentGroupsFromTopNodes = true;
 	private boolean useChildrenOfTopNodesAsParentGroups = false;
+	private boolean allFieldsEditable = false;
 	
 	private GroupHelperBusinessBean groupsHelper = new GroupHelperBusinessBean();
 	SimpleUserAppHelper helper = new SimpleUserAppHelper();
@@ -44,7 +45,7 @@ public class SimpleUserAppViewUsers extends Block {
 	
 	public SimpleUserAppViewUsers(String instanceId, String containerId, Group parentGroup, Group groupForUsersWithoutLogin,
 			String groupTypes, String groupTypesForChildGroups, String roleTypesForChildGroups, boolean getParentGroupsFromTopNodes,
-			boolean useChildrenOfTopNodesAsParentGroups) {
+			boolean useChildrenOfTopNodesAsParentGroups, boolean allFieldsEditable) {
 		this(instanceId, containerId);
 		this.parentGroup = parentGroup;
 		this.groupForUsersWithoutLogin = groupForUsersWithoutLogin;
@@ -53,6 +54,7 @@ public class SimpleUserAppViewUsers extends Block {
 		this.roleTypesForChildGroups = roleTypesForChildGroups;
 		this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
 		this.useChildrenOfTopNodesAsParentGroups = useChildrenOfTopNodesAsParentGroups;
+		this.allFieldsEditable = allFieldsEditable;
 	}
 
 	public void main(IWContext iwc) {
@@ -159,6 +161,7 @@ public class SimpleUserAppViewUsers extends Block {
 		bean.setGetParentGroupsFromTopNodes(getParentGroupsFromTopNodes);
 		bean.setGroupTypesForParentGroups(groupTypes);
 		bean.setUseChildrenOfTopNodesAsParentGroups(useChildrenOfTopNodesAsParentGroups);
+		bean.setAllFieldsEditable(allFieldsEditable);
 		
 		addUser.setOnClick(helper.getActionForAddUserView(bean, null));
 		container.add(addUser);
@@ -273,6 +276,7 @@ public class SimpleUserAppViewUsers extends Block {
 			bean.setGroupId(getParsedId(childGroup.getId()));
 		}
 		bean.setOrderBy(SimpleUserApp.USER_ORDER_BY_NAME);
+		bean.setAllFieldsEditable(allFieldsEditable);
 		
 		return bean;
 	}
@@ -329,7 +333,7 @@ public class SimpleUserAppViewUsers extends Block {
 		params.append(helper.getJavaScriptParameter(message)).append(SimpleUserApp.COMMA_SEPARATOR);
 		params.append(helper.getJavaScriptParameter(parentGroupChooserId)).append(SimpleUserApp.COMMA_SEPARATOR);
 		params.append(helper.getJavaScriptParameter(groupTypes)).append(SimpleUserApp.COMMA_SEPARATOR);
-		params.append(isUseChildrenOfTopNodesAsParentGroups());
+		params.append(isUseChildrenOfTopNodesAsParentGroups()).append(SimpleUserApp.COMMA_SEPARATOR).append(allFieldsEditable);
 		params.append("]");
 		
 		return params.toString();
@@ -353,19 +357,20 @@ public class SimpleUserAppViewUsers extends Block {
 					
 					groupsDropdown.addMenuElements(filteredTopGroups);
 					StringBuffer action = new StringBuffer("reloadComponents('");
-					action.append(iwrb.getLocalizedString("loading", "Loading...")).append(SimpleUserApp.PARAMS_SEPARATOR);
-					action.append(childGroupsChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);
-					action.append(orderByChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);
-					action.append(groupUsersContainerId).append(SimpleUserApp.PARAMS_SEPARATOR);
-					action.append(groupsDropdown.getId()).append("', ");
-					action.append(helper.getJavaScriptParameter(getGroupTypesForChildGroups())).append(SimpleUserApp.COMMA_SEPARATOR);
-					action.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(SimpleUserApp.COMMA_SEPARATOR);
-					action.append(helper.getJavaScriptParameter(instanceId)).append(SimpleUserApp.COMMA_SEPARATOR);
-					action.append(helper.getJavaScriptParameter(containerId)).append(SimpleUserApp.COMMA_SEPARATOR);
-					action.append(helper.getJavaScriptParameter(getGroupForUsersWithoutLogin() == null ? null : getGroupForUsersWithoutLogin().getId()));
-					action.append(SimpleUserApp.COMMA_SEPARATOR).append(helper.getJavaScriptParameter(ids[1]));
-					action.append(SimpleUserApp.COMMA_SEPARATOR).append(helper.getJavaScriptParameter(groupTypes));
-					action.append(SimpleUserApp.COMMA_SEPARATOR).append(isUseChildrenOfTopNodesAsParentGroups());
+					action.append(iwrb.getLocalizedString("loading", "Loading...")).append(SimpleUserApp.PARAMS_SEPARATOR);	//	0
+					action.append(childGroupsChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);								//	1
+					action.append(orderByChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);									//	2
+					action.append(groupUsersContainerId).append(SimpleUserApp.PARAMS_SEPARATOR);							//	3
+					action.append(groupsDropdown.getId()).append("', ");													//	4
+					action.append(helper.getJavaScriptParameter(getGroupTypesForChildGroups())).append(SimpleUserApp.COMMA_SEPARATOR);	//	5
+					action.append(helper.getJavaScriptParameter(getRoleTypesForChildGroups())).append(SimpleUserApp.COMMA_SEPARATOR);		//	6
+					action.append(helper.getJavaScriptParameter(instanceId)).append(SimpleUserApp.COMMA_SEPARATOR);											//	7
+					action.append(helper.getJavaScriptParameter(containerId)).append(SimpleUserApp.COMMA_SEPARATOR);										//	8
+					action.append(helper.getJavaScriptParameter(getGroupForUsersWithoutLogin() == null ? null : getGroupForUsersWithoutLogin().getId()));	//	9
+					action.append(SimpleUserApp.COMMA_SEPARATOR).append(helper.getJavaScriptParameter(ids[1]));		//	10
+					action.append(SimpleUserApp.COMMA_SEPARATOR).append(helper.getJavaScriptParameter(groupTypes));	//	11
+					action.append(SimpleUserApp.COMMA_SEPARATOR).append(isUseChildrenOfTopNodesAsParentGroups());	//	12
+					action.append(SimpleUserApp.COMMA_SEPARATOR).append(allFieldsEditable);							//	13
 					action.append(");");
 					groupsDropdown.setOnChange(action.toString());
 					container.add(groupsDropdown);

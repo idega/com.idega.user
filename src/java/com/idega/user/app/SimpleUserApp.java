@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.idega.builder.business.BuilderLogic;
-import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
+import com.idega.business.SpringBeanLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -38,6 +37,7 @@ public class SimpleUserApp extends Block {
 	
 	private boolean getParentGroupsFromTopNodes = true;
 	private boolean useChildrenOfTopNodesAsParentGroups = false;
+	private boolean allFieldsEditable = false;
 	/** Properties end **/
 	
 	/**
@@ -63,13 +63,13 @@ public class SimpleUserApp extends Block {
 		
 		SimpleUserAppViewUsers viewUsers = new SimpleUserAppViewUsers(instanceId, container.getId(), parentGroup,
 				groupForUsersWithoutLogin, groupTypes, groupTypesForChildGroups, roleTypesForChildGroups,
-				getParentGroupsFromTopNodes, useChildrenOfTopNodesAsParentGroups);
+				getParentGroupsFromTopNodes, useChildrenOfTopNodesAsParentGroups, allFieldsEditable);
 		container.add(viewUsers);
 		
 		UserApplicationEngine userEngine = null;
 		try {
-			userEngine = (UserApplicationEngine) IBOLookup.getSessionInstance(iwc, UserApplicationEngine.class);
-		} catch (IBOLookupException e) {
+			userEngine = SpringBeanLookup.getInstance().getSpringBean(iwc, UserApplicationEngine.class);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		if (userEngine != null) {
@@ -128,6 +128,15 @@ public class SimpleUserApp extends Block {
 	public void setUseChildrenOfTopNodesAsParentGroups(boolean useChildrenOfTopNodesAsParentGroups) {
 		this.useChildrenOfTopNodesAsParentGroups = useChildrenOfTopNodesAsParentGroups;
 	}
+	
+	public boolean isAllFieldsEditable() {
+		return allFieldsEditable;
+	}
+
+	public void setAllFieldsEditable(boolean allFieldsEditable) {
+		this.allFieldsEditable = allFieldsEditable;
+	}
+
 	/** Methods for properties end **/
 
 	public String getBundleIdentifier() {

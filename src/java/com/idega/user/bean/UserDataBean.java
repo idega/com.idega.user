@@ -3,12 +3,20 @@ package com.idega.user.bean;
 public class UserDataBean {
 	
 	private String name = null;
+	private String login = null;
 	private String password = null;
 	private String personalId = null;
 	private String email = null;
 	private String errorMessage = null;
 	private String phone = null;
-	private String address = null;
+
+	//	Address
+	private String streetNameAndNumber = null;
+	private String postalCodeId = null;
+	private String countryName = null;
+	private String city = null;
+	private String province = null;
+	private String postalBox = null;
 	
 	public String getEmail() {
 		return email;
@@ -46,11 +54,47 @@ public class UserDataBean {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
-	public String getAddress() {
-		return address;
+	public String getStreetNameAndNumber() {
+		return streetNameAndNumber;
 	}
-	public void setAddress(String address) {
-		this.address = address;
+	public void setStreetNameAndNumber(String streetNameAndNumber) {
+		this.streetNameAndNumber = streetNameAndNumber;
+	}
+	public String getPostalCodeId() {
+		return postalCodeId;
+	}
+	public void setPostalCodeId(String postalCodeId) {
+		this.postalCodeId = postalCodeId;
+	}
+	public String getCountryName() {
+		return countryName;
+	}
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getProvince() {
+		return province;
+	}
+	public void setProvince(String province) {
+		this.province = province;
+	}
+	public String getPostalBox() {
+		return postalBox;
+	}
+	public void setPostalBox(String postalBox) {
+		this.postalBox = postalBox;
+	}
+	public String getLogin() {
+		return login;
+	}
+	public void setLogin(String login) {
+		this.login = login;
 	}
 
 }

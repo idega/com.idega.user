@@ -40,18 +40,21 @@ public class SimpleUserAppAddUser extends Block {
 	
 	private boolean getParentGroupsFromTopNodes = true;
 	private boolean useChildrenOfTopNodesAsParentGroups = false;
+	private boolean allFieldsEditable = false;
 	
 	private Integer userId = null;
 	
 	private GroupHelperBusinessBean groupsHelper = new GroupHelperBusinessBean();
 	private SimpleUserAppHelper helper = new SimpleUserAppHelper();
 	
-	public SimpleUserAppAddUser(String parentComponentInstanceId, String parentContainerId) {
+	public SimpleUserAppAddUser(String parentComponentInstanceId, String parentContainerId, boolean allFieldsEditable) {
 		if (parentComponentInstanceId == null || parentContainerId == null) {
 			throw new NullPointerException("Provide valid parameters for " + SimpleUserAppAddUser.class.getName());
 		}
 		this.parentComponentInstanceId = parentComponentInstanceId;
 		this.parentContainerId = parentContainerId;
+		
+		this.allFieldsEditable = allFieldsEditable;
 	}
 
 	public void main(IWContext iwc) {
@@ -86,7 +89,9 @@ public class SimpleUserAppAddUser extends Block {
 		
 		//	Login name
 		TextInput loginValueInput = new TextInput();
-		loginValueInput.setDisabled(true);
+		if (!allFieldsEditable) {
+			loginValueInput.setDisabled(true);
+		}
 		String loginInputId = loginValueInput.getId();
 		
 		//	Add user
@@ -126,7 +131,9 @@ public class SimpleUserAppAddUser extends Block {
 		String emailInputId = emailInpnut.getId();
 		if (email != null) {
 			emailInpnut.setContent(email);
-			emailInpnut.setDisabled(true);
+			if (!allFieldsEditable) {
+				emailInpnut.setDisabled(true);
+			}
 		}
 		TextInput idValueInput = new TextInput();
 		idValueInput.setMaxlength(12);
@@ -137,14 +144,19 @@ public class SimpleUserAppAddUser extends Block {
 		TextInput addressInput = new TextInput();
 		String addressInputId = addressInput.getId();
 		
+		List<String> idsForFields = new ArrayList<String>();
+		idsForFields.add(idValueInput.getId());								//	0	ID
+		idsForFields.add(nameValueInputId);									//	1	Name
+		idsForFields.add(loginInputId);										//	2	Login
+		idsForFields.add(passwordInputId);									//	3	Password
+		idsForFields.add(iwrb.getLocalizedString("loading", "Loading..."));	//	4	Message
+		idsForFields.add(emailInputId);										//	5 	Email
+		//	TODO:	add ids for address fields
 		StringBuffer idAction = new StringBuffer("getUserByPersonalId(");
-		idAction.append(helper.getJavaScriptParameter(idValueInput.getId())).append(", '").append(nameValueInputId);
-		idAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(loginInputId);
-		idAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(passwordInputId);
-		idAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(iwrb.getLocalizedString("loading", "Loading...")).append(SimpleUserApp.PARAMS_SEPARATOR);
-		idAction.append(emailInputId).append("');");
-		idValueInput.setOnKeyUp(idAction.toString());
-		nameValueInput.setDisabled(true);
+		idValueInput.setOnKeyUp(idAction.append(helper.getJavaScriptFunctionParameter(idsForFields)).append(");").toString());
+		if (!allFieldsEditable) {
+			nameValueInput.setDisabled(true);
+		}
 		idValueInput.setContent(personalId == null ? CoreConstants.EMPTY : personalId);
 		nameValueInput.setContent(name == null ? CoreConstants.EMPTY : name);
 		
@@ -154,7 +166,7 @@ public class SimpleUserAppAddUser extends Block {
 		inputs.add(phoneInput);			//	2
 		inputs.add(emailInpnut);		//	3
 		inputs.add(addressInput);		//	4
-		addUserFields(iwc, userFieldsContainer, inputs/*idValueInput, nameValueInput, loginInputId, emailInpnut*/);
+		addUserFields(iwc, userFieldsContainer, inputs);
 		
 		//	Login information
 		Layer userLoginLabelContainer = new Layer();
@@ -178,7 +190,9 @@ public class SimpleUserAppAddUser extends Block {
 				String password = userBusiness.getUserPassword(user);
 				if (password != null) {
 					passwordInput.setContent(password);
-					passwordInput.setDisabled(true);
+					if (!allFieldsEditable) {
+						passwordInput.setDisabled(true);
+					}
 				}
 			}
 		}
@@ -206,6 +220,7 @@ public class SimpleUserAppAddUser extends Block {
 		ids.add(emailInputId);					//	5
 		ids.add(phoneInputId);					//	6
 		ids.add(addressInputId);				//	7
+		ids.add(idValueInput.getId());			//	8
 		addButtons(iwc, buttons, ids, childGroups);
 	}
 	
@@ -386,23 +401,13 @@ public class SimpleUserAppAddUser extends Block {
 		container.add(back);
 		
 		GenericButton save = new GenericButton(iwrb.getLocalizedString("save", "Save"));
-		StringBuffer saveAction = new StringBuffer("saveUserInSimpleUserApplication([");
-		for (int i = 0; i < ids.size(); i++) {
-			saveAction.append(helper.getJavaScriptParameter(ids.get(i)));
-			if ((i + 1) < ids.size()) {
-				saveAction.append(SimpleUserApp.COMMA_SEPARATOR);
-			}
-		}
-		saveAction.append("], ['");
-		for (int i = 0; i < childGroups.size(); i++) {
-			saveAction.append(childGroups.get(i));
-			if ((i + 1) < childGroups.size()) {
-				saveAction.append(SimpleUserApp.PARAMS_SEPARATOR);
-			}
-		}
-		saveAction.append("'], '").append(iwrb.getLocalizedString("saving", "Saving..."));
+		StringBuffer saveAction = new StringBuffer("saveUserInSimpleUserApplication(");
+		saveAction.append(helper.getJavaScriptFunctionParameter(ids));
+		saveAction.append(", ");
+		saveAction.append(helper.getJavaScriptFunctionParameter(childGroups));
+		saveAction.append(", '").append(iwrb.getLocalizedString("saving", "Saving..."));
 		saveAction.append(SimpleUserApp.PARAMS_SEPARATOR);
-		saveAction.append(iwrb.getLocalizedString("please_enter_password", "Please, enter password!")).append("');");
+		saveAction.append(iwrb.getLocalizedString("please_enter_password", "Please, enter password!")).append("', ").append(allFieldsEditable).append(");");
 		save.setOnClick(saveAction.toString());
 		container.add(save);
 	}

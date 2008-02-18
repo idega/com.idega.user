@@ -1,17 +1,17 @@
 package com.idega.user.business;
 
-
 import java.util.List;
 
 import org.jdom.Document;
 
 import com.idega.builder.bean.AdvancedProperty;
-import com.idega.business.IBOSession;
+import com.idega.business.SpringBeanName;
 import com.idega.user.app.SimpleUserAppViewUsers;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.bean.UserDataBean;
 
-public interface UserApplicationEngine extends IBOSession {
+@SpringBeanName("userApplicationEngine")
+public interface UserApplicationEngine {
 
 	public List<AdvancedProperty> getChildGroups(String groupId, String groupTypes, String groupRoles);
 	
@@ -29,8 +29,10 @@ public interface UserApplicationEngine extends IBOSession {
 	
 	public UserDataBean getUserByPersonalId(String personalId);
 	
-	public String createUser(UserDataBean userData, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups);
+	public String createUser(UserDataBean userData, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups, boolean allFieldsEditable);
 	
 	public String isValidEmail(String email);
+	
+	public String getSimpleUserApplicationClassName();
 	
 }
