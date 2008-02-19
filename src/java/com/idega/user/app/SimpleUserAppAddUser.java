@@ -7,17 +7,22 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 
+import com.idega.business.SpringBeanLookup;
 import com.idega.core.contact.data.Email;
+import com.idega.core.location.data.Country;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CountryDropdownMenu;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.TextInput;
+import com.idega.user.bean.UserDataBean;
 import com.idega.user.business.GroupHelperBusinessBean;
+import com.idega.user.business.UserApplicationEngine;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
@@ -79,11 +84,11 @@ public class SimpleUserAppAddUser extends Block {
 			}
 		}
 		
-		//	User name input
+		//	User name
 		TextInput nameValueInput = new TextInput();
 		String nameValueInputId = nameValueInput.getId();
 		
-		//	User password input
+		//	User password
 		PasswordInput passwordInput = new PasswordInput();
 		String passwordInputId = passwordInput.getId();
 		
@@ -127,6 +132,8 @@ public class SimpleUserAppAddUser extends Block {
 		//	User fields
 		Layer userFieldsContainer = new Layer();
 		container.add(userFieldsContainer);
+		
+		//	Email
 		TextInput emailInpnut = new TextInput();
 		String emailInputId = emailInpnut.getId();
 		if (email != null) {
@@ -135,37 +142,107 @@ public class SimpleUserAppAddUser extends Block {
 				emailInpnut.setDisabled(true);
 			}
 		}
+		
+		//	Personal ID
 		TextInput idValueInput = new TextInput();
 		idValueInput.setMaxlength(12);
 		
+		//	Phone
 		TextInput phoneInput = new TextInput();
 		String phoneInputId = phoneInput.getId();
 		
-		TextInput addressInput = new TextInput();
-		String addressInputId = addressInput.getId();
+		//	Street name and number
+		TextInput streetNameAndNumberInput = new TextInput();
+		String streetNameAndNumberInputId = streetNameAndNumberInput.getId();
+		
+		//	Postal code id
+		TextInput postalCodeIdInput = new TextInput();
+		String postalCodeIdInputId = postalCodeIdInput.getId();
+		
+		//	Countries
+		CountryDropdownMenu countriesDropdown = new CountryDropdownMenu();
+		String countriesDropdownId = countriesDropdown.getId();
+		
+		//	City
+		TextInput cityInput = new TextInput();
+		String cityInputId = cityInput.getId();
+		
+		//	Province
+		TextInput provinceInput = new TextInput();
+		String provinceInputId = provinceInput.getId();
+		
+		//	Postal box
+		TextInput postalBoxInput = new TextInput();
+		String postalBoxInputId = postalBoxInput.getId();
+		
+		//	Data for inputs
+		UserDataBean userInfo = null;
+		UserApplicationEngine userEngine = null;
+		if (user != null) {
+			userEngine = SpringBeanLookup.getInstance().getSpringBean(iwc, UserApplicationEngine.class);
+			userInfo = userEngine.getUserByPersonalId(user.getPersonalID());
+		}
+		if (userInfo != null && userInfo.getErrorMessage() == null) {
+			streetNameAndNumberInput.setContent(userInfo.getStreetNameAndNumber());
+			postalCodeIdInput.setContent(userInfo.getPostalCodeId());
+			
+			Country country = userEngine.getCountry(userInfo.getCountryName());
+			if (country != null) {
+				countriesDropdown.setSelectedCountry(country);
+			}
+			
+			cityInput.setContent(userInfo.getCity());
+			provinceInput.setContent(userInfo.getProvince());
+			postalBoxInput.setContent(userInfo.getPostalBox());
+			phoneInput.setContent(userInfo.getPhone());
+			
+			loginValueInput.setContent(userInfo.getLogin());
+			if (CoreConstants.EMPTY.equals(userInfo.getPassword())) {
+				passwordInput.setDisabled(false);
+			}
+			else {
+				if (!allFieldsEditable) {
+					passwordInput.setDisabled(true);
+				}
+			}
+			passwordInput.setContent(userInfo.getPassword());
+		}
 		
 		List<String> idsForFields = new ArrayList<String>();
-		idsForFields.add(idValueInput.getId());								//	0	ID
+		idsForFields.add(idValueInput.getId());								//	0	Personal ID
 		idsForFields.add(nameValueInputId);									//	1	Name
 		idsForFields.add(loginInputId);										//	2	Login
 		idsForFields.add(passwordInputId);									//	3	Password
 		idsForFields.add(iwrb.getLocalizedString("loading", "Loading..."));	//	4	Message
 		idsForFields.add(emailInputId);										//	5 	Email
-		//	TODO:	add ids for address fields
+		idsForFields.add(streetNameAndNumberInputId);						//	6	Street name and number
+		idsForFields.add(postalCodeIdInputId);								//	7	Postal code id
+		idsForFields.add(countriesDropdownId);								//	8	Countries
+		idsForFields.add(cityInputId);										//	9	City
+		idsForFields.add(provinceInputId);									//	10	Province
+		idsForFields.add(postalBoxInputId);									//	11	Postal box
+		idsForFields.add(phoneInputId);										//	12	Phone
 		StringBuffer idAction = new StringBuffer("getUserByPersonalId(");
-		idValueInput.setOnKeyUp(idAction.append(helper.getJavaScriptFunctionParameter(idsForFields)).append(");").toString());
+		idAction.append(helper.getJavaScriptFunctionParameter(idsForFields)).append(SimpleUserApp.COMMA_SEPARATOR).append(allFieldsEditable).append(");");
+		idValueInput.setOnKeyUp(idAction.toString());
+		idValueInput.setContent(personalId == null ? CoreConstants.EMPTY : personalId);
+		
 		if (!allFieldsEditable) {
 			nameValueInput.setDisabled(true);
 		}
-		idValueInput.setContent(personalId == null ? CoreConstants.EMPTY : personalId);
 		nameValueInput.setContent(name == null ? CoreConstants.EMPTY : name);
 		
-		List<TextInput> inputs = new ArrayList<TextInput>();
-		inputs.add(idValueInput);		//	0
-		inputs.add(nameValueInput);		//	1
-		inputs.add(phoneInput);			//	2
-		inputs.add(emailInpnut);		//	3
-		inputs.add(addressInput);		//	4
+		List<UIComponent> inputs = new ArrayList<UIComponent>();
+		inputs.add(idValueInput);					//	0	Personal ID
+		inputs.add(nameValueInput);					//	1	Name
+		inputs.add(phoneInput);						//	2	Phone
+		inputs.add(emailInpnut);					//	3	Email
+		inputs.add(streetNameAndNumberInput);		//	4	Street name and number
+		inputs.add(postalCodeIdInput);				//	5	Postal code id
+		inputs.add(countriesDropdown);				//	6	Countries
+		inputs.add(cityInput);						//	7	City
+		inputs.add(provinceInput);					//	8	Province
+		inputs.add(postalBoxInput);					//	9	Postal box
 		addUserFields(iwc, userFieldsContainer, inputs);
 		
 		//	Login information
@@ -177,25 +254,6 @@ public class SimpleUserAppAddUser extends Block {
 		//	Login fields
 		Layer userLoginContainer = new Layer();
 		container.add(userLoginContainer);
-		if (user != null) {
-			UserBusiness userBusiness = groupsHelper.getUserBusiness(iwc);
-			if (userBusiness != null) {
-				String login = userBusiness.getUserLogin(user);
-				if (login == null) {
-					loginValueInput.setContent(personalId == null ? CoreConstants.EMPTY : personalId);
-				}
-				else {
-					loginValueInput.setContent(login);
-				}
-				String password = userBusiness.getUserPassword(user);
-				if (password != null) {
-					passwordInput.setContent(password);
-					if (!allFieldsEditable) {
-						passwordInput.setDisabled(true);
-					}
-				}
-			}
-		}
 		addLoginFields(iwc, userLoginContainer, loginValueInput, passwordInput);
 		
 		//	Selected groups
@@ -213,14 +271,19 @@ public class SimpleUserAppAddUser extends Block {
 		buttons.setStyleClass("userApplicationButtonsContainerStyleClass");
 		List<String> ids = new ArrayList<String>();
 		ids.add(parentGroupChooserId);			//	0
-		ids.add(nameValueInputId);				//	1
-		ids.add(loginInputId);					//	2
-		ids.add(passwordInputId);				//	3
+		ids.add(nameValueInputId);				//	1	Name
+		ids.add(loginInputId);					//	2	Login
+		ids.add(passwordInputId);				//	3	Password
 		ids.add(groupForUsersWithoutLoginId);	//	4
-		ids.add(emailInputId);					//	5
-		ids.add(phoneInputId);					//	6
-		ids.add(addressInputId);				//	7
-		ids.add(idValueInput.getId());			//	8
+		ids.add(emailInputId);					//	5	Email
+		ids.add(phoneInputId);					//	6	Phone
+		ids.add(streetNameAndNumberInputId);	//	7	Street name and number
+		ids.add(idValueInput.getId());			//	8	Personal ID
+		ids.add(postalCodeIdInputId);			//	9	Postal code
+		ids.add(countriesDropdownId);			//	10	Country
+		ids.add(cityInputId);					//	11	City
+		ids.add(provinceInputId);				//	12	Province
+		ids.add(postalBoxInputId);				//	13	Postal box
 		addButtons(iwc, buttons, ids, childGroups);
 	}
 	
@@ -304,7 +367,7 @@ public class SimpleUserAppAddUser extends Block {
 		return componetContainer;
 	}
 	
-	private void addUserFields(IWContext iwc, Layer container, List<TextInput> inputs) {
+	private void addUserFields(IWContext iwc, Layer container, List<UIComponent> inputs) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		Layer fieldsContainer = getFieldsContainer();
@@ -333,9 +396,42 @@ public class SimpleUserAppAddUser extends Block {
 		fieldsContainer.add(getComponentContainer(inputs.get(3)));
 		fieldsContainer.add(getSpacer());
 		
-		//	Address
-		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("address", "Address")));
-		fieldsContainer.add(getComponentContainer(inputs.get(4)));
+		//	Address fields
+		Layer addressFields = getFieldsContainer();
+		container.add(addressFields);
+		
+		container.add(getDescriptionContainer(iwrb.getLocalizedString("user_address_info", "User's address information")));
+		container.add(getSpacer());
+		
+		//	Street name and number
+		addressFields.add(getLabelContainer(iwrb.getLocalizedString("Address.STREET_NAME_AND_NUMBER", "Street name and number")));
+		addressFields.add(inputs.get(4));
+		addressFields.add(getSpacer());
+		
+		//	Postal code
+		addressFields.add(getLabelContainer(iwrb.getLocalizedString("Address.POSTAL_CODE", "Postal code")));
+		addressFields.add(inputs.get(5));
+		addressFields.add(getSpacer());
+		
+		//	Postal box
+		addressFields.add(getLabelContainer(iwrb.getLocalizedString("Address.POSTAL_BOX", "Postal box")));
+		addressFields.add(inputs.get(9));
+		addressFields.add(getSpacer());
+		
+		//	City
+		addressFields.add(getLabelContainer(iwrb.getLocalizedString("Address.CITY", "City")));
+		addressFields.add(inputs.get(7));
+		addressFields.add(getSpacer());
+		
+		//	Province
+		addressFields.add(getLabelContainer(iwrb.getLocalizedString("Address.PROVINCE", "Province")));
+		addressFields.add(inputs.get(8));
+		addressFields.add(getSpacer());
+		
+		//	Country
+		addressFields.add(getLabelContainer(iwrb.getLocalizedString("Address.COUNTRY", "Country")));
+		addressFields.add(inputs.get(6));
+		addressFields.add(getSpacer());
 	}
 	
 	private void addParentGroups(IWContext iwc, Layer container, DropdownMenu parentGroupsChooser) {

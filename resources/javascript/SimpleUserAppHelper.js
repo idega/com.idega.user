@@ -296,7 +296,7 @@ function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters) 
 	});
 }
 
-function getUserByPersonalId(parameters) {
+function getUserByPersonalId(parameters, allFieldsEditable) {
 	if (parameters == null) {
 		return false;
 	}
@@ -327,7 +327,7 @@ function getUserByPersonalId(parameters) {
 	showLoadingMessage(parameters[4]);
 	UserApplicationEngine.getUserByPersonalId(id, {
 		callback: function(info) {
-			getUserByPersonalIdCallback(info, parameters);
+			getUserByPersonalIdCallback(info, parameters, allFieldsEditable);
 		}
 	});
 }
@@ -339,7 +339,7 @@ function userApplicationRemoveSpaces(value) {
 	return value.replace(/^\s+|\s+$/g, '');
 }
 
-function getUserByPersonalIdCallback(bean, parameters) {
+function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 	closeAllLoadingMessages();
 	
 	var nameInput = document.getElementById(parameters[1]);
@@ -359,6 +359,13 @@ function getUserByPersonalIdCallback(bean, parameters) {
 		emailInput.value = '';
 	}
 	nameInput.value = '';
+	document.getElementById(parameters[12]).value = '';
+	document.getElementById(parameters[6]).value = '';
+	document.getElementById(parameters[7]).value = '';
+	document.getElementById(parameters[11]).value = '';
+	document.getElementById(parameters[9]).value = '';
+	document.getElementById(parameters[10]).value = '';
+	DWRUtil.setValue(document.getElementById(parameters[8]), '-1');
 	loginInput.value = '';
 	
 	if (bean == null) {
@@ -371,25 +378,50 @@ function getUserByPersonalIdCallback(bean, parameters) {
 	
 	refreshDeselectedGroups();
 	
-	nameInput.value = bean.name;
-	loginInput.value = bean.personalId;
-	setValueForUserInput(passwordInput, bean.password);
-	setValueForUserInput(emailInput, bean.email);
+	setValueForUserInput(nameInput, bean.name, allFieldsEditable);												//	Name
+	setValueForUserInput(document.getElementById(parameters[12]), bean.phone, allFieldsEditable);				//	Phone
+	setValueForUserInput(emailInput, bean.email, allFieldsEditable);											//	Email
+	setValueForUserInput(document.getElementById(parameters[6]), bean.streetNameAndNumber, allFieldsEditable);	//	Street name and number
+	setValueForUserInput(document.getElementById(parameters[7]), bean.postalCodeId, allFieldsEditable);			//	Postal code
+	setValueForUserInput(document.getElementById(parameters[11]), bean.postalBox, allFieldsEditable);			//	Postal box
+	setValueForUserInput(document.getElementById(parameters[9]), bean.city, allFieldsEditable);					//	City
+	setValueForUserInput(document.getElementById(parameters[10]), bean.province, allFieldsEditable);			//	Province
+
+	setValueForUserInput(loginInput, bean.login, allFieldsEditable);											//	Login
+	setValueForUserInput(passwordInput, bean.password, allFieldsEditable);										//	Password
+	
+	if (allFieldsEditable) {
+		UserApplicationEngine.getCountryIdByCountryName(bean.countryName, {
+			callback: function(id) {
+				if (id == null) {
+					return;
+				}
+				
+				DWRUtil.setValue(document.getElementById(parameters[8]), id);									//	Country
+			}
+		});
+	}
 	
 	return true;
 }
 
-function setValueForUserInput(input, value) {
+function setValueForUserInput(input, value, allFieldsEditable) {
 	if (input == null) {
 		return false;
 	}
 	
-	if (value == null || value == '') {
+	input.value = '';
+	if (value == null || value == '' || value == 'null') {
+		input.removeAttribute('disabled');
+		return false;
+	}
+	
+	input.value = value;
+	if (allFieldsEditable) {
 		input.removeAttribute('disabled');
 	}
 	else {
 		input.setAttribute('disabled', 'true');
-		input.value = value;	
 	}
 }
 
@@ -418,8 +450,13 @@ function isValidUserEmailCallback(result, ids, childGroups, message, passwordErr
 	var groupForUsersWithoutLoginId = ids[4];
 	var emailInputId = ids[5];
 	var phoneInputId = ids[6];
-	var addressInputId = ids[7];
+	var streetNameAndNumberInputId = ids[7];
 	var personalIdInputId = ids[8];
+	var postalCodeIdInputId = ids[9];
+	var countriesDropdownId = ids[10];
+	var cityInputId = ids[11];
+	var provinceInputId = ids[12];
+	var postalBoxInputId = ids[13];
 	
 	var selectedGroups = new Array();
 	if (childGroups == null) {
@@ -451,10 +488,15 @@ function isValidUserEmailCallback(result, ids, childGroups, message, passwordErr
 	var email = document.getElementById(emailInputId).value;
 	var primaryGroupId = getSelectObjectValue(parentGroupChooserId);
 	var phone = document.getElementById(phoneInputId).value;
-	var address = document.getElementById(addressInputId).value;
+	var streetNameAndNumber = document.getElementById(streetNameAndNumberInputId).value;
+	var postalCodeId = document.getElementById(postalCodeIdInputId).value;
+	var countryName = DWRUtil.getValue(document.getElementById(countriesDropdownId));
+	var city = document.getElementById(cityInputId).value;
+	var province = document.getElementById(provinceInputId).value;
+	var postalBox = document.getElementById(postalBoxInputId).value;
 	
 	showLoadingMessage(message);
-	var userInfo = new UserDataBean(userName, login, password, personalId, email, null, phone, address);
+	var userInfo = new UserDataBean(userName, login, password, personalId, email, null, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox);
 	UserApplicationEngine.createUser(userInfo, primaryGroupId, selectedGroups, DESELECTED_GROUPS, allFieldsEditable, {
 		callback: function(result) {
 			closeAllLoadingMessages();
@@ -465,7 +507,7 @@ function isValidUserEmailCallback(result, ids, childGroups, message, passwordErr
 	});
 }
 
-function UserDataBean(name, login, password, personalId, email, errorMessage, phone, address) {
+function UserDataBean(name, login, password, personalId, email, errorMessage, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox) {
 	this.name = name;
 	this.login = login;
 	this.password = password;
@@ -473,7 +515,12 @@ function UserDataBean(name, login, password, personalId, email, errorMessage, ph
 	this.email = email;
 	this.errorMessage = errorMessage;
 	this.phone = phone;
-	this.address = address;
+	this.streetNameAndNumber = streetNameAndNumber;
+	this.postalCodeId = postalCodeId;
+	this.countryName = countryName;
+	this.city = city;
+	this.province = province;
+	this.postalBox = postalBox;
 }
 
 function getCheckboxValue(id, checkIfChecked) {

@@ -342,7 +342,8 @@ public class SimpleUserAppViewUsers extends Block {
 	private Group fillParentGroupChooser(IWContext iwc, DropdownMenu groupsDropdown, Layer container, String[] ids) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
-		if (getParentGroup() == null) {	//	Group is not set as property
+		if (getParentGroup() == null) {
+			//	Group is not set as property
 			Collection<Group> topGroups = groupsHelper.getTopGroups(iwc, iwc.getCurrentUser());
 			if (!isGetParentGroupsFromTopNodes()) {
 				topGroups = groupsHelper.getTopAndParentGroups(topGroups);	//	Will get top nodes and parent groups for them
@@ -398,7 +399,8 @@ public class SimpleUserAppViewUsers extends Block {
 			container.add(new Text(iwrb.getLocalizedString("no_groups_available", "There are no groups available")));
 			return null;
 		}
-		else {	//	Group is set as property
+		else {
+			//	Group is set as property
 			addGroupNameLabel(iwrb, container, getParentGroup());
 			return getParentGroup();
 		}

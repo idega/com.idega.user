@@ -53,6 +53,7 @@ public class SimpleUserAppHelper {
 		String name = null;
 		String personalId = null;
 		String userId = null;
+		int groupId = -1;
 		for (int i = 0; i < users.size(); i++) {
 			user = users.get(i);
 			
@@ -64,6 +65,10 @@ public class SimpleUserAppHelper {
 			personalId = user.getPersonalID();
 			if (CoreConstants.EMPTY.equals(personalId)) {
 				personalId = null;
+			}
+			groupId = bean.getGroupId();
+			if (groupId < 0) {
+				groupId = bean.getParentGroupId();
 			}
 			
 			lineContainer = new Layer();
@@ -94,7 +99,7 @@ public class SimpleUserAppHelper {
 			removeUserCheckbox = new CheckBox();
 			checkBoxAction = new StringBuffer("removeUser('").append(lineContainer.getId());
 			checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(userId);
-			checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getGroupId()).append("', ");
+			checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(groupId).append("', ");
 			checkBoxAction.append(getJavaScriptParameter(removeUserCheckbox.getId())).append(");");
 			removeUserCheckbox.setOnClick(checkBoxAction.toString());
 			removeUserContainer.add(removeUserCheckbox);
@@ -170,6 +175,7 @@ public class SimpleUserAppHelper {
 		String groupId = null;
 		StringBuffer action = null;
 		boolean checkGroup = false;
+		String minusOne = "-1";
 		for (int i = 0; i < groups.size(); i++) {
 			group = groups.get(i);
 			
@@ -181,7 +187,7 @@ public class SimpleUserAppHelper {
 			//	Checkbox
 			groupId = group.getId() == null ? CoreConstants.EMPTY : group.getId();
 			CheckBox selectGroup = new CheckBox(group.getName(), groupId);
-			if ("-1".equals(selectedGroupId) && userGroups.size() == 0 && i == 0) {
+			if (minusOne.equals(selectedGroupId) && userGroups.size() == 0 && i == 0) {
 				checkGroup = true;
 			}
 			else {

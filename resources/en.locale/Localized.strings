@@ -1,5 +1,11 @@
 Add\ to=
-Address.CITY=
+user_address_info=User's address information
+Address.STREET_NAME_AND_NUMBER=Street name and number
+Address.POSTAL_CODE=Postal code
+Address.COUNTRY=Country
+Address.CITY=City
+Address.PROVINCE=Province
+Address.POSTAL_BOX=Postal box
 AddressInfoTab.postalcodewindow.add=
 Close=
 Delete=

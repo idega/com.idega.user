@@ -6,6 +6,7 @@ import org.jdom.Document;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.SpringBeanName;
+import com.idega.core.location.data.Country;
 import com.idega.user.app.SimpleUserAppViewUsers;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.bean.UserDataBean;
@@ -35,4 +36,7 @@ public interface UserApplicationEngine {
 	
 	public String getSimpleUserApplicationClassName();
 	
+	public Country getCountry(String countryName);
+	
+	public String getCountryIdByCountryName(String countryName);
 }

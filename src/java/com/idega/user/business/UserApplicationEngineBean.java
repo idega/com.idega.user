@@ -27,6 +27,12 @@ import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneTypeBMPBean;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.Country;
+import com.idega.core.location.data.CountryHome;
+import com.idega.core.location.data.PostalCode;
+import com.idega.core.location.data.PostalCodeHome;
+import com.idega.data.IDOHome;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
@@ -309,6 +315,10 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			String personalID = user.getPersonalID();
 			bean.setPersonalId(personalID == null ? personalId : personalID);
 			
+			//	Login
+			String login = userBusiness.getUserLogin(user);
+			bean.setLogin(login == null ? CoreConstants.EMPTY : login);
+			
 			//	Password
 			String password = userBusiness.getUserPassword(user);
 			bean.setPassword(password == null ? CoreConstants.EMPTY : password);
@@ -340,8 +350,12 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 				String streetNameAndNumber = address.getStreetAddress();
 				bean.setStreetNameAndNumber(streetNameAndNumber == null ? CoreConstants.EMPTY : streetNameAndNumber);
 				
-				int postalCodeId = address.getPostalCodeID();
-				bean.setPostalBox(postalCodeId == -1 ? CoreConstants.EMPTY : String.valueOf(postalCodeId));
+				String postalCodeValue = null;
+				PostalCode postalCode = address.getPostalCode();
+				if (postalCode != null) {
+					postalCodeValue = postalCode.getPostalCode();
+				}
+				bean.setPostalBox(postalCodeValue == null ? CoreConstants.EMPTY : postalCodeValue);
 				
 				String countryName = CoreConstants.EMPTY;
 				Country country = address.getCountry();
@@ -462,14 +476,16 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		//	Address
-		/*Address userAddress = null;
+		Address userAddress = null;
 		try {
 			userAddress = userBusiness.getUsersMainAddress(user);
 		} catch (RemoteException e) {}
 		if (userAddress == null || allFieldsEditable) {
 			try {
-				userAddress = userBusiness.updateUsersMainAddressOrCreateIfDoesNotExist(Integer.valueOf(user.getId()), userInfo.getStreetNameAndNumber(),
-						Integer.valueOf(userInfo.getPostalCodeId()), userInfo.getCountryName(), userInfo.getCity(), userInfo.getProvince(), userInfo.getPostalBox());
+				Country country = getCountryById(userInfo.getCountryName());
+				PostalCode postalCode = getPostalCode(userInfo.getPostalCodeId());
+				userAddress = userBusiness.updateUsersMainAddressOrCreateIfDoesNotExist(user, userInfo.getStreetNameAndNumber(), postalCode, country, userInfo.getCity(),
+						userInfo.getProvince(), userInfo.getPostalBox(), null);
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			} catch (RemoteException e) {
@@ -480,8 +496,9 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			if (userAddress == null) {
 				return errorText;
 			}
-		}*/
+		}
 		
+		//	Login
 		LoginTable loginTable = null;
 		loginTable = LoginDBHandler.getUserLogin(user);
 		if (loginTable == null) {
@@ -497,6 +514,15 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 				return errorText;
 			}
 			loginTable.store();
+		}
+		else if (allFieldsEditable) {
+			//	Updating login
+			try {
+				LoginDBHandler.updateLogin(Integer.valueOf(user.getId()), login, password);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return errorText;
+			}
 		}
 		
 		//	Setting new available groups for user
@@ -518,6 +544,62 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		user.store();
 		
 		return sucessText;
+	}
+	
+	private Country getCountryById(String countryId) {
+		if (countryId == null) {
+			return null;
+		}
+		
+		try {
+			return ((CountryHome) getIDOHome(Country.class)).findByPrimaryKey(countryId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public Country getCountry(String countryName) {
+		if (countryName == null) {
+			return null;
+		}
+		
+		try {
+			return ((CountryHome) getIDOHome(Country.class)).findByCountryName(countryName);
+		} catch (Exception e) {}
+		
+		return null;
+	}
+	
+	public String getCountryIdByCountryName(String countryName) {
+		Country country = getCountry(countryName);
+		if (country == null) {
+			return null;
+		}
+		
+		return country.getPrimaryKey().toString();
+	}
+	
+	private PostalCode getPostalCode(String postalCode) {
+		if (postalCode == null) {
+			return null;
+		}
+		
+		try {
+			return ((PostalCodeHome) getIDOHome(PostalCode.class)).findByPostalCode(postalCode);
+		} catch (Exception e) {}
+		
+		return null;
+	}
+	
+	private IDOHome getIDOHome(Class<?> beanClass) {
+		try {
+			return IDOLookup.getHome(beanClass);
+		} catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public String isValidEmail(String email) {
@@ -617,13 +699,9 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		return groupBusiness;
 	}
-	
-	protected String getBundleIdentifier() {
-		return UserConstants.IW_BUNDLE_IDENTIFIER;
-	}
 
 	private IWBundle getBundle(IWContext iwc) {
-		return iwc.getIWMainApplication().getBundle(getBundleIdentifier());
+		return iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
 	}
 
 	public String getSimpleUserApplicationClassName() {
