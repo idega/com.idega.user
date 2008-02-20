@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.idega.business.SpringBeanLookup;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -11,7 +12,7 @@ import com.idega.presentation.Layer;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.user.bean.SimpleUserPropertiesBean;
-import com.idega.user.business.GroupHelperBusinessBean;
+import com.idega.user.business.GroupHelper;
 import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
@@ -19,13 +20,13 @@ import com.idega.util.CoreConstants;
 
 public class SimpleUserAppHelper {
 
-	public Layer getMembersList(IWContext iwc, SimpleUserPropertiesBean bean, GroupHelperBusinessBean helper, String image) {
+	public Layer getMembersList(IWContext iwc, SimpleUserPropertiesBean bean, GroupHelper helper, String image) {
 		Layer valuesContainer = new Layer();
 		if (iwc == null || bean == null) {
 			return valuesContainer;
 		}
 		if (helper == null) {
-			helper = new GroupHelperBusinessBean();
+			helper = SpringBeanLookup.getInstance().getSpringBean(iwc, GroupHelper.class);
 		}
 		
 		List<User> users = helper.getSortedUsers(iwc, bean);
@@ -109,7 +110,7 @@ public class SimpleUserAppHelper {
 		return valuesContainer;
 	}
 	
-	public Layer getSelectedGroupsByIds(IWContext iwc, User user, GroupHelperBusinessBean helper, List<Integer> groupsIds, List<String> ids, String selectedGroupId) {
+	public Layer getSelectedGroupsByIds(IWContext iwc, User user, GroupHelper helper, List<Integer> groupsIds, List<String> ids, String selectedGroupId) {
 		Layer selectedGroups = new Layer();
 		
 		List<Group> groups = null;
@@ -119,7 +120,7 @@ public class SimpleUserAppHelper {
 				user = iwc.getCurrentUser();
 				changedToCurrentUser = true;
 			}
-			Collection<Group> topGroups = helper.getTopGroups(iwc, user);
+			Collection<Group> topGroups = helper.getTopGroupsFromDomain(iwc);
 			if (changedToCurrentUser) {
 				user = null;
 			}
@@ -138,7 +139,7 @@ public class SimpleUserAppHelper {
 		return getSelectedGroups(iwc, user, helper, groups, ids, selectedGroupId);
 	}
 	
-	public Layer getSelectedGroups(IWContext iwc, User user, GroupHelperBusinessBean helper, List<Group> groups, List<String> ids, String selectedGroupId) {
+	public Layer getSelectedGroups(IWContext iwc, User user, GroupHelper helper, List<Group> groups, List<String> ids, String selectedGroupId) {
 		Layer selectedGroups = new Layer();
 		
 		if (groups == null) {
@@ -151,7 +152,7 @@ public class SimpleUserAppHelper {
 				user = iwc.getCurrentUser();
 				changedToCurrentUser = true;
 			}
-			Collection<Group> topGroups = helper.getTopGroups(iwc, user);
+			Collection<Group> topGroups = helper.getTopGroupsFromDomain(iwc);
 			if (changedToCurrentUser) {
 				user = null;
 			}

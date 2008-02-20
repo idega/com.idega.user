@@ -8,6 +8,7 @@
             http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
 >
 
+	<bean id="groupHelper" class="com.idega.user.business.GroupHelperBusinessBean" scope="session" />
 	<bean id="userApplicationEngine" class="com.idega.user.business.UserApplicationEngineBean" scope="session" />
 
 </beans>

@@ -21,7 +21,7 @@ import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.bean.UserDataBean;
-import com.idega.user.business.GroupHelperBusinessBean;
+import com.idega.user.business.GroupHelper;
 import com.idega.user.business.UserApplicationEngine;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserConstants;
@@ -49,7 +49,7 @@ public class SimpleUserAppAddUser extends Block {
 	
 	private Integer userId = null;
 	
-	private GroupHelperBusinessBean groupsHelper = new GroupHelperBusinessBean();
+	private GroupHelper groupsHelper = null;
 	private SimpleUserAppHelper helper = new SimpleUserAppHelper();
 	
 	public SimpleUserAppAddUser(String parentComponentInstanceId, String parentContainerId, boolean allFieldsEditable) {
@@ -63,6 +63,8 @@ public class SimpleUserAppAddUser extends Block {
 	}
 
 	public void main(IWContext iwc) {
+		groupsHelper = SpringBeanLookup.getInstance().getSpringBean(iwc, GroupHelper.class);
+		
 		Layer container = new Layer();
 		add(container);
 		
@@ -450,7 +452,7 @@ public class SimpleUserAppAddUser extends Block {
 		if (parentGroups == null) {	//	Normally shouldn't be null
 			Group group = groupsHelper.getGroup(iwc, parentGroupId);
 			if (group == null) {
-				Collection<Group> topGroups = groupsHelper.getTopGroups(iwc, iwc.getCurrentUser());
+				Collection<Group> topGroups = groupsHelper.getTopGroupsFromDomain(iwc);
 				if (!getParentGroupsFromTopNodes) {
 					topGroups = groupsHelper.getTopAndParentGroups(topGroups);	//	Will get top nodes and parent groups for them
 				}

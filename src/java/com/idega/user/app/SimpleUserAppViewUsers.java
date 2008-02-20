@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.idega.business.SpringBeanLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
@@ -15,7 +16,7 @@ import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.SelectOption;
 import com.idega.user.bean.SimpleUserPropertiesBean;
-import com.idega.user.business.GroupHelperBusinessBean;
+import com.idega.user.business.GroupHelper;
 import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 
@@ -35,8 +36,8 @@ public class SimpleUserAppViewUsers extends Block {
 	private boolean useChildrenOfTopNodesAsParentGroups = false;
 	private boolean allFieldsEditable = false;
 	
-	private GroupHelperBusinessBean groupsHelper = new GroupHelperBusinessBean();
-	SimpleUserAppHelper helper = new SimpleUserAppHelper();
+	private GroupHelper groupsHelper = null;
+	private SimpleUserAppHelper helper = new SimpleUserAppHelper();
 
 	public SimpleUserAppViewUsers(String instanceId, String containerId) {
 		this.instanceId = instanceId;
@@ -58,6 +59,8 @@ public class SimpleUserAppViewUsers extends Block {
 	}
 
 	public void main(IWContext iwc) {
+		groupsHelper = SpringBeanLookup.getInstance().getSpringBean(iwc, GroupHelper.class);
+		
 		Layer container = new Layer();
 		add(container);
 		
@@ -344,7 +347,7 @@ public class SimpleUserAppViewUsers extends Block {
 		
 		if (getParentGroup() == null) {
 			//	Group is not set as property
-			Collection<Group> topGroups = groupsHelper.getTopGroups(iwc, iwc.getCurrentUser());
+			Collection<Group> topGroups = groupsHelper.getTopGroupsFromDomain(iwc);
 			if (!isGetParentGroupsFromTopNodes()) {
 				topGroups = groupsHelper.getTopAndParentGroups(topGroups);	//	Will get top nodes and parent groups for them
 			}

@@ -12,6 +12,8 @@ import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
@@ -24,12 +26,12 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.GenericUserComparator;
 
-public class GroupHelperBusinessBean {
+public class GroupHelperBusinessBean implements GroupHelper {
 	
 	private UserBusiness userBusiness = null;
 	private GroupBusiness groupBusiness = null;
 	
-	public List<GroupNode> getTopGroupsAndDirectChildren(){
+	public List<GroupNode> getTopGroupsAndDirectChildren() {
 		List<GroupNode> fake = new ArrayList<GroupNode>();
 		
 		IWContext iwc = CoreUtil.getIWContext();
@@ -80,7 +82,7 @@ public class GroupHelperBusinessBean {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected List<GroupNode> convertGroupsToGroupNodes(Collection groups, IWContext iwc, boolean isFirstLevel, String imageBaseUri) {
+	public List<GroupNode> convertGroupsToGroupNodes(Collection groups, IWContext iwc, boolean isFirstLevel, String imageBaseUri) {
 		List <GroupNode> list = new ArrayList<GroupNode>();
 		if (groups == null || iwc == null) {
 			return list;
@@ -146,7 +148,7 @@ public class GroupHelperBusinessBean {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected GroupNode addChildGroupsToNode(GroupNode parentNode, Collection groups, String image) {
+	public GroupNode addChildGroupsToNode(GroupNode parentNode, Collection groups, String image) {
 		if (groups == null) {
 			parentNode.setHasChildren(false);
 			return parentNode;
@@ -528,6 +530,26 @@ public class GroupHelperBusinessBean {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public Collection<Group> getTopGroupsFromDomain(IWContext iwc) {
+		ICDomain domain = iwc.getDomain();
+		if (domain == null) {
+			return null;
+		}
+		
+		try {
+			return domain.getTopLevelGroupsUnderDomain();
+		} catch (IDORelationshipException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public Collection<Group> getTopGroups(IWContext iwc, User user) {
 		if (iwc == null || user == null) {
 			return new ArrayList();
@@ -569,7 +591,7 @@ public class GroupHelperBusinessBean {
 		return topAndParentGroups;
 	}
 	
-	protected String getGroupImageBaseUri(IWContext iwc) {
+	public String getGroupImageBaseUri(IWContext iwc) {
 		if (iwc == null) {
 			return null;
 		}

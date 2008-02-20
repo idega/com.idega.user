@@ -17,6 +17,7 @@ import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBOSessionBean;
+import com.idega.business.SpringBeanLookup;
 import com.idega.business.chooser.helper.GroupsChooserHelper;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.data.LoginTable;
@@ -44,7 +45,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	
 	private static final long serialVersionUID = 1649699626972508631L;
 	
-	private final GroupHelperBusinessBean helper = new GroupHelperBusinessBean();
+	private GroupHelper helper = null;
 	
 	private LoginTableHome loginHome = null;
 	private LoginBusinessBean loginBean = null;
@@ -56,17 +57,29 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	private String usersCacheName = "groupsUsersInfoViewersUniqueIdsCache";
 	private String treeCacheName = "groupsChooserTreeSelectedGroupsUniqueIdsCache";
 
+	private GroupHelper getGroupHelper(IWContext iwc) {
+		if (helper == null) {
+			helper = SpringBeanLookup.getInstance().getSpringBean(iwc, GroupHelper.class);
+		}
+		return helper;
+	}
+	
 	/**
 	 * Returns tree of Groups
 	 */
 	public List<GroupNode> getTopGroupsAndDirectChildren(List<String> uniqueIds) {
-		List<GroupNode> topGroupsAndDirectChildren = helper.getTopGroupsAndDirectChildren();
-		if (uniqueIds == null) {
-			return topGroupsAndDirectChildren;
-		}
-		
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
+			return new ArrayList<GroupNode>();
+		}
+		
+		GroupHelper helper = getGroupHelper(iwc);
+		if (helper == null) {
+			return new ArrayList<GroupNode>();
+		}
+		
+		List<GroupNode> topGroupsAndDirectChildren = helper.getTopGroupsAndDirectChildren();
+		if (uniqueIds == null) {
 			return topGroupsAndDirectChildren;
 		}
 		
@@ -95,7 +108,8 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 				uniqueId = selectedGroup.getUniqueId();
 				if (uniqueId != null && !uniqueIdsOfTopGroups.contains(uniqueId)) {
 					try {
-						topGroupsAndDirectChildren = appendParentGroupsToList(groupBusiness.getParentGroups(selectedGroup), selectedGroup, topGroupsAndDirectChildren, groupBusiness, image);
+						topGroupsAndDirectChildren = appendParentGroupsToList(groupBusiness.getParentGroups(selectedGroup), selectedGroup, topGroupsAndDirectChildren,
+								groupBusiness, image, iwc);
 					} catch (RemoteException e) {
 						e.printStackTrace();
 					}
@@ -125,8 +139,14 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<GroupNode> appendParentGroupsToList(Collection parentGroups, Group selectedGroup, List<GroupNode> groupNodes, GroupBusiness groupBusiness, String image) {
+	private List<GroupNode> appendParentGroupsToList(Collection parentGroups, Group selectedGroup, List<GroupNode> groupNodes, GroupBusiness groupBusiness,
+														String image, IWContext iwc) {
 		if (parentGroups == null) {
+			return null;
+		}
+		
+		GroupHelper helper = getGroupHelper(iwc);
+		if (helper == null) {
 			return null;
 		}
 		
@@ -187,6 +207,11 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
+			return null;
+		}
+		
+		GroupHelper helper = getGroupHelper(iwc);
+		if (helper == null) {
 			return null;
 		}
 		
