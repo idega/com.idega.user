@@ -1,6 +1,8 @@
 var USERS_TO_REMOVE = new Array();
 var DESELECTED_GROUPS = new Array();
 
+var USER_ID = null;
+
 function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles, instanceId, mainContainerId, defaultGroupId,
 							parentGroupChooserId, groupTypesForParentGroups, useChildrenOfTopNodesAsParentGroups, allFieldsEditable) {
 	showLoadingMessage(message);
@@ -211,6 +213,8 @@ function removeUser(containerId, userId, groupId, checkBoxId) {
 function addUserPresentationObject(instanceId, containerId, parentGroupChooserId, groupChooserId, message, defaultGroupId, userId,
 										groupTypes, roleTypes, getParentGroupsFromTopNodes, groupTypesForParentGroups,
 										useChildrenOfTopNodesAsParentGroups, allFieldsEditable) {
+	USER_ID = userId;
+	
 	refreshDeselectedGroups();
 	showLoadingMessage(message);
 	
@@ -342,6 +346,8 @@ function userApplicationRemoveSpaces(value) {
 function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 	closeAllLoadingMessages();
 	
+	USER_ID = bean.userId;
+	
 	var nameInput = document.getElementById(parameters[1]);
 	if (nameInput == null) {
 		return false;
@@ -425,18 +431,18 @@ function setValueForUserInput(input, value, allFieldsEditable) {
 	}
 }
 
-function saveUserInSimpleUserApplication(ids, childGroups, message, passwordErrorMessage, allFieldsEditable) {
-	showLoadingMessage(message);
+function saveUserInSimpleUserApplication(ids, childGroups, messages, allFieldsEditable, userId) {
+	showLoadingMessage(messages[0]);
 	var emailInputId = ids[5];
 	var email = document.getElementById(emailInputId).value;
 	UserApplicationEngine.isValidEmail(email, {
 		callback: function(result) {
-			isValidUserEmailCallback(result, ids, childGroups, message, passwordErrorMessage, allFieldsEditable);
+			isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsEditable, userId);
 		}
 	});
 }
 
-function isValidUserEmailCallback(result, ids, childGroups, message, passwordErrorMessage, allFieldsEditable) {
+function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsEditable, userId) {
 	closeAllLoadingMessages();
 	if (result != null) {
 		alert(result);
@@ -477,14 +483,32 @@ function isValidUserEmailCallback(result, ids, childGroups, message, passwordErr
 		}
 	}
 	
-	var userName = document.getElementById(nameValueInputId).value;
-	var login = document.getElementById(loginInputId).value;
-	var personalId = document.getElementById(personalIdInputId).value;
-	var password = document.getElementById(passwordInputId).value;
-	if (password == null || password == '') {
-		alert(passwordErrorMessage);
+	//	Name
+	var nameInput = document.getElementById(nameValueInputId);
+	if (!checkIfValidValue(nameInput)) {
+		alert(messages[2]);
 		return false;
 	}
+	var userName = nameInput.value;
+	
+	//	Login
+	var loginInput = document.getElementById(loginInputId);
+	if (!checkIfValidValue(loginInput)) {
+		alert(messages[3]);
+		return false;
+	}
+	var login = loginInput.value;
+	
+	var personalId = document.getElementById(personalIdInputId).value;
+	
+	//	Password
+	var passwordInput = document.getElementById(passwordInputId);
+	if (!checkIfValidValue(passwordInput)) {
+		alert(messages[1]);
+		return false;
+	}
+	var password = passwordInput.value;
+	
 	var email = document.getElementById(emailInputId).value;
 	var primaryGroupId = getSelectObjectValue(parentGroupChooserId);
 	var phone = document.getElementById(phoneInputId).value;
@@ -495,8 +519,15 @@ function isValidUserEmailCallback(result, ids, childGroups, message, passwordErr
 	var province = document.getElementById(provinceInputId).value;
 	var postalBox = document.getElementById(postalBoxInputId).value;
 	
-	showLoadingMessage(message);
-	var userInfo = new UserDataBean(userName, login, password, personalId, email, null, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox);
+	if (USER_ID != null) {
+		if (USER_ID != userId) {
+			userId = USER_ID;
+		}
+	}
+	
+	showLoadingMessage(messages[0]);
+	var userInfo = new UserDataBean(userName, login, password, personalId, email, null, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox,
+									userId);
 	UserApplicationEngine.createUser(userInfo, primaryGroupId, selectedGroups, DESELECTED_GROUPS, allFieldsEditable, {
 		callback: function(result) {
 			closeAllLoadingMessages();
@@ -507,7 +538,19 @@ function isValidUserEmailCallback(result, ids, childGroups, message, passwordErr
 	});
 }
 
-function UserDataBean(name, login, password, personalId, email, errorMessage, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox) {
+function checkIfValidValue(input) {
+	if (input == null) {
+		return false;
+	}
+	
+	if (input.value == null || input.value == '') {
+		return false;
+	}
+	
+	return true;
+}
+
+function UserDataBean(name, login, password, personalId, email, errorMessage, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox, userId) {
 	this.name = name;
 	this.login = login;
 	this.password = password;
@@ -521,6 +564,7 @@ function UserDataBean(name, login, password, personalId, email, errorMessage, ph
 	this.city = city;
 	this.province = province;
 	this.postalBox = postalBox;
+	this.userId = userId;
 }
 
 function getCheckboxValue(id, checkIfChecked) {

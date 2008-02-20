@@ -346,3 +346,6 @@ group_type_user_contact_search.description=Searches for user contact information
 
 user_contact_search.name=Contacts
 user_contact_search.description=Searches for user contact information
+
+please_enter_name=Please, enter name!
+please_enter_login=Please, enter login!

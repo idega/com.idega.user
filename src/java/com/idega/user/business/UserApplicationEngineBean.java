@@ -329,6 +329,13 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			bean.setErrorMessage(errorMessage);
 		}
 		else {
+			//	ID
+			try {
+				bean.setUserId(Integer.valueOf(user.getId()));
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			
 			//	Name
 			bean.setName(user.getName());
 			
@@ -409,12 +416,10 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		String personalId = userInfo.getPersonalId();
 		String password = userInfo.getPassword();
 		
-		if (name == null || personalId == null || password == null || primaryGroupId == null || childGroups == null) {
+		if (name == null || login == null || password == null || primaryGroupId == null || childGroups == null) {
 			return null;
 		}
-		if (login == null) {
-			login = personalId;
-		}
+
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
@@ -427,6 +432,10 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		String sucessText = iwrb.getLocalizedString("success_saving_user", "Your changes were successfully saved.");
 		String errorText = iwrb.getLocalizedString("error_saving_user", "Error occurred while saving your changes.");
 		
+		if (login.equals(CoreConstants.EMPTY)) {
+			return errorText;
+		}
+		
 		UserBusiness userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
 			return errorText;
@@ -437,10 +446,20 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		User user = null;
-		try {
-			user = userBusiness.getUser(personalId);
-		} catch (RemoteException e) {
-		} catch (FinderException e) {
+		if (personalId == null) {
+			personalId = CoreConstants.EMPTY;
+		}
+		if (!personalId.equals(CoreConstants.EMPTY)) {
+			try {
+				user = userBusiness.getUser(personalId);
+			} catch (RemoteException e) {
+			} catch (FinderException e) {
+			}
+		}
+		if (userInfo.getUserId() != null) {
+			try {
+				user = userBusiness.getUser(userInfo.getUserId());
+			} catch (RemoteException e) {}
 		}
 		
 		if (user == null) {
@@ -537,12 +556,19 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			loginTable.store();
 		}
 		else if (allFieldsEditable) {
-			//	Updating login
-			try {
-				LoginDBHandler.updateLogin(Integer.valueOf(user.getId()), login, password);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return errorText;
+			boolean updatePassword = false;
+			String oldPassword = loginTable.getUserPasswordInClearText();
+			if (oldPassword == null || !password.equals(oldPassword)) {
+				updatePassword = true;
+			}
+			 
+			if (updatePassword) {
+				try {
+					LoginDBHandler.changePassword(Integer.valueOf(user.getId()), password);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return errorText;
+				}
 			}
 		}
 		

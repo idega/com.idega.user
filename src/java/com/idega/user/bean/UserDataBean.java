@@ -18,6 +18,8 @@ public class UserDataBean {
 	private String province = null;
 	private String postalBox = null;
 	
+	private Integer userId = null;
+	
 	public String getEmail() {
 		return email;
 	}
@@ -95,6 +97,12 @@ public class UserDataBean {
 	}
 	public void setLogin(String login) {
 		this.login = login;
+	}
+	public Integer getUserId() {
+		return userId;
+	}
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 
 }

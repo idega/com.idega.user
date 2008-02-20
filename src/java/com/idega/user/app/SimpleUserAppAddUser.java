@@ -499,13 +499,23 @@ public class SimpleUserAppAddUser extends Block {
 		container.add(back);
 		
 		GenericButton save = new GenericButton(iwrb.getLocalizedString("save", "Save"));
+		List<String> messages = new ArrayList<String>();
+		messages.add(iwrb.getLocalizedString("saving", "Saving..."));								//	0
+		messages.add(iwrb.getLocalizedString("please_enter_password", "Please, enter password!"));	//	1	Password
+		messages.add(iwrb.getLocalizedString("please_enter_name", "Please, enter name!"));			//	2	Name
+		messages.add(iwrb.getLocalizedString("please_enter_login", "Please, enter login!"));		//	3	Login
 		StringBuffer saveAction = new StringBuffer("saveUserInSimpleUserApplication(");
 		saveAction.append(helper.getJavaScriptFunctionParameter(ids));
 		saveAction.append(", ");
 		saveAction.append(helper.getJavaScriptFunctionParameter(childGroups));
-		saveAction.append(", '").append(iwrb.getLocalizedString("saving", "Saving..."));
-		saveAction.append(SimpleUserApp.PARAMS_SEPARATOR);
-		saveAction.append(iwrb.getLocalizedString("please_enter_password", "Please, enter password!")).append("', ").append(allFieldsEditable).append(");");
+		saveAction.append(", ").append(helper.getJavaScriptFunctionParameter(messages)).append(", ").append(allFieldsEditable).append(", ");
+		if (userId == null) {
+			saveAction.append("null");
+		}
+		else {
+			saveAction.append(helper.getJavaScriptParameter(String.valueOf(userId)));
+		}
+		saveAction.append(");");
 		save.setOnClick(saveAction.toString());
 		container.add(save);
 	}
