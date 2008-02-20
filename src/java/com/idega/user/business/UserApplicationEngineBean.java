@@ -526,9 +526,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		//	Setting new available groups for user
-		if (childGroups.size() == 0) {
-			childGroups.add(primaryGroupId);
-		}
+		checkChildGroups(childGroups, primaryGroupId);
 		for (int i = 0; i < childGroups.size(); i++) {
 			try {
 				groupBusiness.addUser(childGroups.get(i), user);
@@ -544,6 +542,23 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		user.store();
 		
 		return sucessText;
+	}
+	
+	private void checkChildGroups(List<Integer> childGroups, Integer primaryGroupId) {		
+		int existsAnyNull = 0;
+		for (int i = 0; i < childGroups.size(); i++) {
+			if (childGroups.get(i) == null) {
+				existsAnyNull++;
+			}
+		}
+		
+		for (int i = 0; i < existsAnyNull; i++) {
+			childGroups.remove(null);
+		}
+		
+		if (childGroups.size() == 0) {
+			childGroups.add(primaryGroupId);
+		}
 	}
 	
 	private Country getCountryById(String countryId) {
