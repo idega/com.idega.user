@@ -19,6 +19,7 @@ import org.jdom.Document;
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
+import com.idega.business.SpringBeanLookup;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.LoginTable;
@@ -55,10 +56,17 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 	
 	private GroupBusiness groupBusiness = null;
 	private UserBusiness userBusiness = null;
-	private GroupHelperBusinessBean groupHelper = new GroupHelperBusinessBean();
+	private GroupHelper groupHelper = null;
 	private SimpleUserAppHelper presentationHelper = new SimpleUserAppHelper();
 	
 	private Map<String, SimpleUserAppViewUsers> simpleUserApps = new HashMap<String, SimpleUserAppViewUsers>();
+	
+	private GroupHelper getGroupHelper(IWContext iwc) {
+		if (groupHelper == null) {
+			groupHelper = SpringBeanLookup.getInstance().getSpringBean(iwc, GroupHelper.class);
+		}
+		return groupHelper;
+	}
 	
 	public List<AdvancedProperty> getChildGroups(String groupId, String groupTypes, String groupRoles) {
 		if (groupId == null) {
@@ -93,7 +101,12 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			return null;
 		}
 		
-		Collection<Group> childGroups = groupHelper.getFilteredChildGroups(iwc, selected, groupTypes, groupRoles, ",");
+		
+		GroupHelper helper = getGroupHelper(iwc);
+		if (helper == null) {
+			return null;
+		}
+		Collection<Group> childGroups = helper.getFilteredChildGroups(iwc, selected, groupTypes, groupRoles, ",");
 		if (childGroups == null) {
 			return null;
 		}
@@ -176,7 +189,11 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			image = bundle.getVirtualPathWithFileNameString(SimpleUserApp.EDIT_IMAGE);
 		}
 		
-		Layer membersList = presentationHelper.getMembersList(iwc, bean, groupHelper, image);
+		GroupHelper helper = getGroupHelper(iwc);
+		if (helper == null) {
+			return null;
+		}
+		Layer membersList = presentationHelper.getMembersList(iwc, bean, helper, image);
 		
 		BuilderLogic builder = BuilderLogic.getInstance();
 		return builder.getRenderedComponent(iwc, membersList, true);
@@ -272,9 +289,13 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			}
 		}
 		
-		List<Group> groups = groupHelper.getFilteredChildGroups(iwc, parentGroupId.intValue(), groupTypes, groupRoles, ",");
+		GroupHelper helper = getGroupHelper(iwc);
+		if (helper == null) {
+			return null;
+		}
+		List<Group> groups = helper.getFilteredChildGroups(iwc, parentGroupId.intValue(), groupTypes, groupRoles, ",");
 		List<String> ids = new ArrayList<String>();
-		Layer availableGroupsContainer = presentationHelper.getSelectedGroups(iwc, user, groupHelper, groups, ids, null);
+		Layer availableGroupsContainer = presentationHelper.getSelectedGroups(iwc, user, helper, groups, ids, null);
 		
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, availableGroupsContainer, true);
 	}
