@@ -138,12 +138,6 @@ public class SimpleUserAppAddUser extends Block {
 		//	Email
 		TextInput emailInpnut = new TextInput();
 		String emailInputId = emailInpnut.getId();
-		if (email != null) {
-			emailInpnut.setContent(email);
-			if (!allFieldsEditable) {
-				emailInpnut.setDisabled(true);
-			}
-		}
 		
 		//	Personal ID
 		TextInput idValueInput = new TextInput();
@@ -177,39 +171,65 @@ public class SimpleUserAppAddUser extends Block {
 		TextInput postalBoxInput = new TextInput();
 		String postalBoxInputId = postalBoxInput.getId();
 		
-		//	Data for inputs
-		UserDataBean userInfo = null;
+		//	***************************** Data for inputs *****************************
+		UserDataBean userInfo = new UserDataBean();
 		UserApplicationEngine userEngine = null;
 		if (user != null) {
 			userEngine = SpringBeanLookup.getInstance().getSpringBean(iwc, UserApplicationEngine.class);
-			userInfo = userEngine.getUserByPersonalId(user.getPersonalID());
-		}
-		if (userInfo != null && userInfo.getErrorMessage() == null) {
-			streetNameAndNumberInput.setContent(userInfo.getStreetNameAndNumber());
-			postalCodeIdInput.setContent(userInfo.getPostalCodeId());
-			
-			Country country = userEngine.getCountry(userInfo.getCountryName());
-			if (country != null) {
-				countriesDropdown.setSelectedCountry(country);
-			}
-			
-			cityInput.setContent(userInfo.getCity());
-			provinceInput.setContent(userInfo.getProvince());
-			postalBoxInput.setContent(userInfo.getPostalBox());
-			phoneInput.setContent(userInfo.getPhone());
-			
-			loginValueInput.setContent(userInfo.getLogin());
-			if (CoreConstants.EMPTY.equals(userInfo.getPassword())) {
-				passwordInput.setDisabled(false);
-			}
-			else {
-				if (!allFieldsEditable) {
-					passwordInput.setDisabled(true);
-				}
-			}
-			passwordInput.setContent(userInfo.getPassword());
+			userInfo = userEngine.getUserInfo(user);
 		}
 		
+		//	Personal ID
+		idValueInput.setContent(personalId == null ? CoreConstants.EMPTY : personalId);
+		
+		//	Name
+		if (!allFieldsEditable) {
+			nameValueInput.setDisabled(true);
+		}
+		nameValueInput.setContent(name == null ? CoreConstants.EMPTY : name);
+		
+		//	Phone
+		phoneInput.setContent(userInfo.getPhone());
+		
+		//	Email
+		emailInpnut.setContent(email == null ? CoreConstants.EMPTY : email);
+		if (!allFieldsEditable) {
+			emailInpnut.setDisabled(true);
+		}
+		
+		//	Street and number
+		streetNameAndNumberInput.setContent(userInfo.getStreetNameAndNumber());
+		
+		//	Postal code
+		postalCodeIdInput.setContent(userInfo.getPostalCodeId());
+		
+		//	Postal box
+		postalBoxInput.setContent(userInfo.getPostalBox());
+		
+		//	City
+		cityInput.setContent(userInfo.getCity());
+		
+		//	Province
+		provinceInput.setContent(userInfo.getProvince());
+		
+		//	Country
+		Country country = userEngine.getCountry(userInfo.getCountryName());
+		countriesDropdown.setSelectedCountry(country);
+		
+		//	Login
+		loginValueInput.setContent(userInfo.getLogin());
+		
+		//	Password
+		if (CoreConstants.EMPTY.equals(userInfo.getPassword())) {
+			passwordInput.setDisabled(false);
+		}
+		else {
+			if (!allFieldsEditable) {
+				passwordInput.setDisabled(true);
+			}
+		}
+		passwordInput.setContent(userInfo.getPassword());
+	
 		List<String> idsForFields = new ArrayList<String>();
 		idsForFields.add(idValueInput.getId());								//	0	Personal ID
 		idsForFields.add(nameValueInputId);									//	1	Name
@@ -227,12 +247,6 @@ public class SimpleUserAppAddUser extends Block {
 		StringBuffer idAction = new StringBuffer("getUserByPersonalId(");
 		idAction.append(helper.getJavaScriptFunctionParameter(idsForFields)).append(SimpleUserApp.COMMA_SEPARATOR).append(allFieldsEditable).append(");");
 		idValueInput.setOnKeyUp(idAction.toString());
-		idValueInput.setContent(personalId == null ? CoreConstants.EMPTY : personalId);
-		
-		if (!allFieldsEditable) {
-			nameValueInput.setDisabled(true);
-		}
-		nameValueInput.setContent(name == null ? CoreConstants.EMPTY : name);
 		
 		List<UIComponent> inputs = new ArrayList<UIComponent>();
 		inputs.add(idValueInput);					//	0	Personal ID

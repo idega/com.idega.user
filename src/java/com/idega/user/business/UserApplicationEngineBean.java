@@ -61,11 +61,15 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 	
 	private Map<String, SimpleUserAppViewUsers> simpleUserApps = new HashMap<String, SimpleUserAppViewUsers>();
 	
-	private GroupHelper getGroupHelper(IWContext iwc) {
+	public GroupHelper getGroupHelperBean() {
 		if (groupHelper == null) {
-			groupHelper = SpringBeanLookup.getInstance().getSpringBean(iwc, GroupHelper.class);
+			groupHelper = SpringBeanLookup.getInstance().getSpringBean(CoreUtil.getIWContext(), GroupHelper.class);
 		}
 		return groupHelper;
+	}
+	
+	public void setGroupHelperBean(GroupHelper groupHelper) {
+		this.groupHelper = groupHelper;
 	}
 	
 	public List<AdvancedProperty> getChildGroups(String groupId, String groupTypes, String groupRoles) {
@@ -102,7 +106,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		
-		GroupHelper helper = getGroupHelper(iwc);
+		GroupHelper helper = getGroupHelperBean();
 		if (helper == null) {
 			return null;
 		}
@@ -189,7 +193,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			image = bundle.getVirtualPathWithFileNameString(SimpleUserApp.EDIT_IMAGE);
 		}
 		
-		GroupHelper helper = getGroupHelper(iwc);
+		GroupHelper helper = getGroupHelperBean();
 		if (helper == null) {
 			return null;
 		}
@@ -289,7 +293,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			}
 		}
 		
-		GroupHelper helper = getGroupHelper(iwc);
+		GroupHelper helper = getGroupHelperBean();
 		if (helper == null) {
 			return null;
 		}
@@ -300,11 +304,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, availableGroupsContainer, true);
 	}
 	
-	public UserDataBean getUserByPersonalId(String personalId) {
-		if (personalId == null) {
-			return null;
-		}
-		
+	public UserDataBean getUserInfo(User user) {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
@@ -316,12 +316,6 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		UserDataBean bean = new UserDataBean();
-		
-		User user = null;
-		try {
-			user = userBusiness.getUser(personalId);
-		} catch (Exception e) {}
-		
 		if (user == null) {
 			IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 			String errorMessage = "Unable to find user by provided personal ID!";
@@ -341,7 +335,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			
 			//	Personal ID
 			String personalID = user.getPersonalID();
-			bean.setPersonalId(personalID == null ? personalId : personalID);
+			bean.setPersonalId(personalID == null ? CoreConstants.EMPTY : personalID);
 			
 			//	Login
 			String login = userBusiness.getUserLogin(user);
@@ -404,6 +398,28 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		return bean;
+	}
+	
+	public UserDataBean getUserByPersonalId(String personalId) {
+		if (personalId == null) {
+			return null;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		UserBusiness userBusiness = getUserBusiness(iwc);
+		if (userBusiness == null) {
+			return null;
+		}
+		
+		User user = null;
+		try {
+			user = userBusiness.getUser(personalId);
+		} catch (Exception e) {}
+		return getUserInfo(user);
 	}
 	
 	public String createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups, boolean allFieldsEditable) {

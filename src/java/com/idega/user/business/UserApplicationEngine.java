@@ -10,6 +10,7 @@ import com.idega.core.location.data.Country;
 import com.idega.user.app.SimpleUserAppViewUsers;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.bean.UserDataBean;
+import com.idega.user.data.User;
 
 @SpringBeanName("userApplicationEngine")
 public interface UserApplicationEngine {
@@ -39,4 +40,10 @@ public interface UserApplicationEngine {
 	public Country getCountry(String countryName);
 	
 	public String getCountryIdByCountryName(String countryName);
+	
+	public GroupHelper getGroupHelperBean();
+	
+	public void setGroupHelperBean(GroupHelper groupHelper);
+	
+	public UserDataBean getUserInfo(User user);
 }
