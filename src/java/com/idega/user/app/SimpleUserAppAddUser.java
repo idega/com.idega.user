@@ -173,9 +173,8 @@ public class SimpleUserAppAddUser extends Block {
 		
 		//	***************************** Data for inputs *****************************
 		UserDataBean userInfo = new UserDataBean();
-		UserApplicationEngine userEngine = null;
+		UserApplicationEngine userEngine = SpringBeanLookup.getInstance().getSpringBean(iwc, UserApplicationEngine.class);
 		if (user != null) {
-			userEngine = SpringBeanLookup.getInstance().getSpringBean(iwc, UserApplicationEngine.class);
 			userInfo = userEngine.getUserInfo(user);
 		}
 		
