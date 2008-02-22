@@ -302,7 +302,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	 */
 	public boolean canUseRemoteServer(String server) {
 		List<String> scripts = new ArrayList<String>();
-		scripts.add("/dwr/engine.js");
+		scripts.add(CoreConstants.DWR_ENGINE_SCRIPT);
 		scripts.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		
 		return canMakeCallToServerAndScript(server, scripts);

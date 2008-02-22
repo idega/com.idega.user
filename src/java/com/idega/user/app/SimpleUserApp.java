@@ -12,6 +12,7 @@ import com.idega.presentation.Layer;
 import com.idega.user.business.UserApplicationEngine;
 import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.PresentationUtil;
 
@@ -81,7 +82,7 @@ public class SimpleUserApp extends Block {
 		IWBundle bundle = getBundle(iwc);
 		
 		List<String> files = new ArrayList<String>();
-		files.add("/dwr/engine.js");
+		files.add(CoreConstants.DWR_ENGINE_SCRIPT);
 		files.add("/dwr/interface/UserApplicationEngine.js");
 		files.add("/dwr/util.js");
 		
