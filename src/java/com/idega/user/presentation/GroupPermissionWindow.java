@@ -272,7 +272,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		browser.setDefaultNumberOfRows(18);
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
 		browser.setWidth(Table.HUNDRED_PERCENT);
-		int scrollableHeight = (this.height > 250) ? this.height -250 : 20;
+		int scrollableHeight = (this.height > 250) ? this.height -300 : 20;
 		int scrollableWidth =(this.width > 60) ? this.width -60 : 20;
 		browser.setScrollableWithHeightAndWidth(scrollableHeight, scrollableWidth);
 		//disable top set browser
@@ -358,7 +358,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			public PresentationObject getPresentationObject(Object permissions, EntityPath path, EntityBrowser browser, IWContext iwc) {
 
 				Collection col = (Collection) permissions;
-
 				Iterator iterator = col.iterator();
 
 				boolean active = false;
@@ -882,7 +881,9 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		Text filterGroupTypeText = new Text(this.iwrb.getLocalizedString("grouppermissionwindow.filter_group_types","Filter grouptypes"));
 		filterTable.add(filterGroupTypeText, 1, 1);
 		filterTable.add(Text.NON_BREAKING_SPACE, 2, 1);
+		
 		GroupTypeSelectionBoxInputHandler filterGroupTypes = new GroupTypeSelectionBoxInputHandler(PARAM_FILTER_GROUP_TYPES);
+		filterGroupTypes.setHeight(8);
 		StyledButton filterButton = new StyledButton(new SubmitButton(this.iwrb.getLocalizedString("grouppermissionwindow.filter_button","Filter")));
 		filterTable.add(filterGroupTypes, 3, 1);
 		filterTable.add(Text.NON_BREAKING_SPACE, 4, 1);
@@ -892,7 +893,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		table.setRowHeight(1,"20");
 		table.setStyleClass(this.mainStyleClass);
 		table.setWidth(Table.HUNDRED_PERCENT);
-		table.setHeight(440);
 		table.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
 		table.setVerticalAlignment(2, 1, Table.VERTICAL_ALIGN_TOP);
 		table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
