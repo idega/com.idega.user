@@ -272,7 +272,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		browser.setDefaultNumberOfRows(18);
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
 		browser.setWidth(Table.HUNDRED_PERCENT);
-		int scrollableHeight = (this.height > 250) ? this.height -250 : 20;
+		int scrollableHeight = (this.height > 250) ? this.height -300 : 20;
 		int scrollableWidth =(this.width > 60) ? this.width -60 : 20;
 		browser.setScrollableWithHeightAndWidth(scrollableHeight, scrollableWidth);
 		//disable top set browser
@@ -343,8 +343,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 			}
 		};
-		browser.setMandatoryColumn(column++, groupIdColumn);
-		browser.setEntityToPresentationConverter(groupIdColumn, contextValueConverter);
+		browser.setMandatoryColumnWithConverter(column++, groupIdColumn,contextValueConverter);
 		//converter ends
 
 		// define checkbox button converter class
@@ -359,7 +358,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			public PresentationObject getPresentationObject(Object permissions, EntityPath path, EntityBrowser browser, IWContext iwc) {
 
 				Collection col = (Collection) permissions;
-
 				Iterator iterator = col.iterator();
 
 				boolean active = false;
@@ -430,8 +428,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 		while (iter.hasNext()) {
 			String type = (String) iter.next();
-			browser.setMandatoryColumn(column++, type);
-			browser.setEntityToPresentationConverter(type, permissionTypeConverter);
+			browser.setMandatoryColumnWithConverter(column++, type, permissionTypeConverter);
 		}
 		
 		
@@ -884,25 +881,18 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		Text filterGroupTypeText = new Text(this.iwrb.getLocalizedString("grouppermissionwindow.filter_group_types","Filter grouptypes"));
 		filterTable.add(filterGroupTypeText, 1, 1);
 		filterTable.add(Text.NON_BREAKING_SPACE, 2, 1);
+		
 		GroupTypeSelectionBoxInputHandler filterGroupTypes = new GroupTypeSelectionBoxInputHandler(PARAM_FILTER_GROUP_TYPES);
+		filterGroupTypes.setHeight(8);
 		StyledButton filterButton = new StyledButton(new SubmitButton(this.iwrb.getLocalizedString("grouppermissionwindow.filter_button","Filter")));
 		filterTable.add(filterGroupTypes, 3, 1);
 		filterTable.add(Text.NON_BREAKING_SPACE, 4, 1);
 		filterTable.add(filterButton, 5, 1);
 
-		Table filterContainingTable = new Table(1, 1);
-		filterContainingTable.setWidth(Table.HUNDRED_PERCENT);
-		filterContainingTable.setCellpadding(0);
-		filterContainingTable.setCellspacing(5);
-		filterContainingTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
-		filterContainingTable.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_RIGHT);
-		filterContainingTable.add(filterTable);
-		
 		Table table = new Table(2, 3);
 		table.setRowHeight(1,"20");
 		table.setStyleClass(this.mainStyleClass);
 		table.setWidth(Table.HUNDRED_PERCENT);
-		table.setHeight(440);
 		table.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
 		table.setVerticalAlignment(2, 1, Table.VERTICAL_ALIGN_TOP);
 		table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
@@ -924,7 +914,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		
 		
 		table.add(browser, 1, 2);
-		table.add(filterContainingTable, 2, 3);
+		table.add(filterTable, 2, 3);
 		
 		Table bottomButtonTable = new Table();
 		bottomButtonTable.setCellpadding(0);
