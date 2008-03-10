@@ -1,5 +1,5 @@
 /*
- * $Id: BasicUserOverviewEmailSenderWindow.java,v 1.4 2007/12/04 09:58:54 gimmi Exp $
+ * $Id: BasicUserOverviewEmailSenderWindow.java,v 1.5 2008/03/10 22:39:20 gimmi Exp $
  * Created on Nov 28, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -8,6 +8,9 @@
  * Use is subject to license terms.
  */
 package com.idega.user.presentation;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
@@ -22,6 +25,7 @@ import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
+import com.idega.util.text.TextSoap;
 
 public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 	
@@ -159,7 +163,24 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		this.toAddressField.setContent((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS));
 		this.subjectField.setContent((String)iwc.getSessionAttribute(PARAM_SUBJECT));
 		this.mailToLink.setRecipients((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS));
-		this.mailToLink.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
+
+		if (iwc.getUserAgent() != null && iwc.getUserAgent().contains("Windows")) {
+			// Encoding HAX for encoding the 
+			String enc = iwc.getIWMainApplication().getSettings().getProperty("email_subject_char_encoding_for_windows", "iso-8859-1");
+			if (!enc.equals("none")) {
+				try {
+					String sub = URLEncoder.encode((String)iwc.getSessionAttribute(PARAM_SUBJECT), enc);
+					sub = TextSoap.findAndReplace(sub, '+', ' ');
+					this.mailToLink.setSubject(sub);
+				} catch (UnsupportedEncodingException e) {
+					this.mailToLink.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
+				}
+			} else {
+				this.mailToLink.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
+			}
+		} else {
+			this.mailToLink.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
+		}
 		this.mailToLink2.setRecipients(((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS)).replace(';', ','));
 		this.mailToLink2.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
 	}
