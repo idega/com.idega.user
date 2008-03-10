@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  	<release version="3.1.22" date="2008-03-10">
+   		<action dev="gimmi" type="update">
+   			URLEncoding email subject
+   		</action>
+   	</release>
   	<release version="3.1.21" date="2008-02-05">
    		<action dev="valdas" type="update">
    			Changed few methods' signatures in GroupService
