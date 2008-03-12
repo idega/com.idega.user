@@ -266,13 +266,13 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 	private EntityBrowser getEntityBrowser(List permissionTypes, List entityList) {
 		EntityBrowser browser = EntityBrowser.getInstanceUsingExternalForm();
-		
+
 		browser.setEntities("gpw_" + this.selectedGroupId, entityList);
 		//browser.setDefaultNumberOfRows(entityCollection.size() );
 		browser.setDefaultNumberOfRows(18);
 		browser.setAcceptUserSettingsShowUserSettingsButton(false, false);
 		browser.setWidth(Table.HUNDRED_PERCENT);
-		int scrollableHeight = (this.height > 250) ? this.height -300 : 20;
+		int scrollableHeight = (this.height > 250) ? this.height -340 : 20;
 		int scrollableWidth =(this.width > 60) ? this.width -60 : 20;
 		browser.setScrollableWithHeightAndWidth(scrollableHeight, scrollableWidth);
 		//disable top set browser
