@@ -1,17 +1,36 @@
 package com.idega.user.app;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.ejb.FinderException;
+
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.business.SpringBeanLookup;
+import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.accesscontrol.data.ICPermission;
+import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
+import com.idega.presentation.Table2;
+import com.idega.presentation.TableCell2;
+import com.idega.presentation.TableRow;
+import com.idega.presentation.TableRowGroup;
+import com.idega.presentation.text.Heading1;
+import com.idega.presentation.text.Heading3;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
+import com.idega.presentation.ui.Label;
+import com.idega.presentation.ui.TextInput;
 import com.idega.user.bean.SimpleUserPropertiesBean;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupHelper;
 import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
@@ -272,6 +291,167 @@ public class SimpleUserAppHelper {
 	
 		params.append("]");
 		return params.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput) {
+		if (iwc == null) {
+			return null;
+		}
+		Group group = null;
+		try {
+			group = ((GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class)).getGroupByGroupID(groupId);
+		} catch (IBOLookupException e) {
+		} catch (RemoteException e) {
+		} catch (FinderException e) {
+		}
+		if (group == null) {
+			return null;
+		}
+		
+		Layer container = new Layer();
+		container.setStyleClass("groupRolesStyleClass");
+		Layer rolesContainer = new Layer();
+		container.add(rolesContainer);
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+		
+		AccessController accessControler = iwc.getAccessController();
+		List<ICRole> allRoles = getAllRolesWithoutMasterRole(accessControler);
+		boolean addTable = true;
+		if (allRoles == null || allRoles.isEmpty()) {
+			rolesContainer.add(new Heading1(iwrb.getLocalizedString("no_roles", "There are no roles...")));
+			addTable = false;
+		}
+		
+		rolesContainer.add(new Heading3(iwrb.getLocalizedString("groupownerswindow.setting_roles_for_group", "Setting roles for ") + group.getName()));
+		
+		Collection<ICPermission> permissionsForCurrentGroup = accessControler.getAllRolesWithRolePermissionsForGroup(group);
+		List<String> permissions = Arrays.asList(new String[] {AccessController.PERMISSION_KEY_VIEW, AccessController.PERMISSION_KEY_EDIT,
+				AccessController.PERMISSION_KEY_CREATE, AccessController.PERMISSION_KEY_DELETE, AccessController.PERMISSION_KEY_ROLE});
+		List<String> roles = getRolesNotIncludedOriginaly(permissionsForCurrentGroup, allRoles);
+		
+		Table2 rolesTable = new Table2();
+		if (addTable) {
+			rolesContainer.add(rolesTable);
+		}
+		
+		TableRowGroup headerGroup = rolesTable.createHeaderRowGroup();
+		TableRow headerRow = headerGroup.createRow();
+		TableCell2 cell = headerRow.createHeaderCell();
+		cell.add(new Text(iwrb.getLocalizedString("role", "Role")));
+		for (String permission: permissions) {
+			cell = headerRow.createHeaderCell();
+			cell.add(new Text(iwrb.getLocalizedString(permission, permission)));
+		}
+		
+		String message = iwrb.getLocalizedString("saving", "Saving...");
+		
+		TableRowGroup bodyRows = rolesTable.createBodyRowGroup();
+		for (ICRole role: allRoles) {
+			addRowAndCellsForRole(groupId, role.getNodeName(), role.getRoleKey(), bodyRows, iwrb, permissions, permissionsForCurrentGroup, message);
+		}
+		for (String role: roles) {
+			addRowAndCellsForRole(groupId, role, role, bodyRows, iwrb, permissions, permissionsForCurrentGroup, message);
+		}
+		
+		if (addInput) {
+			Layer newRoleContainer = new Layer();
+			container.add(newRoleContainer);
+			TextInput newRoleInput = new TextInput();
+			newRoleInput.setMarkupAttribute("groupid", groupId);
+			StringBuilder action = new StringBuilder("addNewRoleKey(event, '").append(newRoleInput.getId()).append(SimpleUserApp.PARAMS_SEPARATOR);
+			action.append(rolesContainer.getId()).append(SimpleUserApp.PARAMS_SEPARATOR).append(message).append("');");
+			newRoleInput.setOnKeyUp(action.toString());
+			Label newRoleLabel = new Label(iwrb.getLocalizedString("groupownerswindow.new_role", "New role key:"), newRoleInput);
+			newRoleContainer.add(newRoleLabel);
+			newRoleContainer.add(newRoleInput);
+		}
+		
+		return container;
+	}
+	
+	private void addRowAndCellsForRole(int groupId, String roleName, String roleKey, TableRowGroup bodyRows, IWResourceBundle iwrb, List<String> permissions,
+			Collection<ICPermission> permissionsForCurrentGroup, String message) {
+		TableRow bodyRow = bodyRows.createRow();
+		
+		TableCell2 cell = bodyRow.createCell();
+		cell.add(new Text(iwrb.getLocalizedString(roleName, roleName)));
+		
+		StringBuilder action = null;
+		String attribute = "groupid";
+		String checkBoxStyle = "changePermissionForRoleCheckboxStyle";
+		for (String permissionKey: permissions) {
+			cell = bodyRow.createHeaderCell();
+			CheckBox checkBox = new CheckBox(permissionKey, roleKey);
+			checkBox.setChecked(isRoleChecked(permissionKey, roleKey, permissionsForCurrentGroup));
+			checkBox.setStyleClass(checkBoxStyle);
+			checkBox.setMarkupAttribute(attribute, groupId);
+			action = new StringBuilder("changePermissionValueForRole('").append(checkBox.getId()).append(SimpleUserApp.PARAMS_SEPARATOR).append(message).append("');");
+			checkBox.setOnClick(action.toString());
+			cell.add(checkBox);
+		}
+	}
+	
+	private List<String> getRolesNotIncludedOriginaly(Collection<ICPermission> permissionsForGroup, List<ICRole> originalRoles) {
+		List<String> roles = new ArrayList<String>();
+		
+		if (permissionsForGroup == null || permissionsForGroup.isEmpty()) {
+			return roles;
+		}
+		
+		List<String> originalRolesKeys = new ArrayList<String>();
+		for (ICRole role: originalRoles) {
+			originalRolesKeys.add(role.getRoleKey());
+		}
+		
+		String roleKey = null;
+		for (ICPermission permission: permissionsForGroup) {
+			roleKey = permission.getPermissionString();
+			if (roleKey != null && !originalRolesKeys.contains(roleKey)) {
+				roles.add(roleKey);
+			}
+		}
+		
+		return roles;
+	}
+	
+	private boolean isRoleChecked(String permissionKey, String roleKey, Collection<ICPermission> allPermissions) {
+		if (permissionKey == null || roleKey == null ||allPermissions == null || allPermissions.isEmpty()) {
+			return false;
+		}
+		
+		ICPermission permission = null;
+		String permissionType = null;
+		String roleType = null;
+		for (Iterator<ICPermission> it = allPermissions.iterator(); it.hasNext();) {
+			permission = it.next();
+			
+			permissionType = permission.getContextValue();
+			roleType = permission.getPermissionString();
+			if (permissionKey.equals(permissionType) && roleKey.equals(roleType)) {
+				return permission.getPermissionValue();
+			}
+		}
+		
+		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<ICRole> getAllRolesWithoutMasterRole(AccessController accessControler) {
+		Collection<ICRole> allRoles = accessControler.getAllRoles();
+        if (allRoles == null || allRoles.isEmpty()) {
+        	return null;
+        }
+
+        List<ICRole> roles = new ArrayList<ICRole>();
+        ICRole role = null;
+        for (Iterator<ICRole> it = allRoles.iterator(); it.hasNext();) {
+        	role = it.next();
+        	if (!role.getRoleKey().equals(AccessController.PERMISSION_KEY_ROLE_MASTER)) {
+        		roles.add(role);
+        	}
+        }
+        return roles;
 	}
 	
 }

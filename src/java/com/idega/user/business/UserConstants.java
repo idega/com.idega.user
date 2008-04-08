@@ -19,6 +19,7 @@ public class UserConstants implements ConstantsPlaceholder {
 
 	public static final String GROUP_VIEWER_CONTAINER_ID_ENDING = "_realChildComponent";
 	
-	public static final String HELP_BUNDLE_IDENTFIER = "com.idega.user";
+	public static final String GROUPS_TO_RELOAD_IN_MENU_DROPDOWN_ID_IN_SIMPLE_USER_APPLICATION = "groupsToReloadInMenuDropdownIdInSimpleUserApplication";
+	public static final String EDITED_GROUP_MENU_DROPDOWN_ID_IN_SIMPLE_USER_APPLICATION = "eidtedGroupMenuDropdownIdInSimpleUserApplication";
 	
 }

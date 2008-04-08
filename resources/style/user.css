@@ -16,32 +16,32 @@
 
 .parentGroupLabelContainerStyleClass {
 	float: left;
-	width: 50%;
+	width: 35%;
 }
 
 .parentGroupContainerStyleClass {
 	float: left;
-	width: 50%;
+	width: 65%;
 }
 
 .childGroupsLabelContainerStyleClass {
 	float: left;
-	width: 50%;
+	width: 35%;
 }
 
 .childGroupChooserContainerSyleClass {
 	float: left;
-	width: 50%;
+	width: 65%;
 }
 
 .orderByLabelContainerStyleClass {
 	float: left;
-	width: 50%;
+	width: 35%;
 }
 
 .orderByChooserStyleClass {
 	float: left;
-	width: 50%;
+	width: 65%;
 }
 
 .userAppLowerPartStyleClass {
@@ -152,4 +152,46 @@
 
 .changeUserImageStyleClass:HOVER {
 	cursor: pointer;
+}
+
+.webfaceFormItem {
+	margin: 0 !important;
+	padding: 0 !important;
+	overflow: hidden;
+	margin-bottom: 6px !important;
+}
+
+.webfaceFormItem label {
+	display: block;
+	float: left;
+	width: 120px;
+	line-height: 19px;
+	font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #1f1f1f;
+}
+
+.webfaceFormItem input {
+	float: left;
+	width: 100px;
+	margin: 0 !important;
+	padding: 2px 4px;
+	font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	color: #1f1f1f;
+}
+
+.webfaceButtonLayer {
+	margin: 0 !important;
+	text-align: left;
+	padding: 0 12px 12px 6px !important;
+	overflow: hidden;
+}
+
+.webfaceButtonLayer input {
+	font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif !important;
+	margin: 0 !important;
+	font-size: 12px !important;
+	text-transform: capitalize !important;
+	padding: 3px 5px;
 }

@@ -39,6 +39,8 @@ public class SimpleUserApp extends Block {
 	private boolean getParentGroupsFromTopNodes = true;
 	private boolean useChildrenOfTopNodesAsParentGroups = false;
 	private boolean allFieldsEditable = false;
+	private boolean addGroupCreateButton = false;
+	private boolean addGroupEditButton = false;
 	/** Properties end **/
 	
 	/**
@@ -62,9 +64,9 @@ public class SimpleUserApp extends Block {
 		
 		add(container);
 		
-		SimpleUserAppViewUsers viewUsers = new SimpleUserAppViewUsers(instanceId, container.getId(), parentGroup,
-				groupForUsersWithoutLogin, groupTypes, groupTypesForChildGroups, roleTypesForChildGroups,
-				getParentGroupsFromTopNodes, useChildrenOfTopNodesAsParentGroups, allFieldsEditable);
+		SimpleUserAppViewUsers viewUsers = new SimpleUserAppViewUsers(instanceId, container.getId(), parentGroup, groupForUsersWithoutLogin, groupTypes,
+				groupTypesForChildGroups, roleTypesForChildGroups, getParentGroupsFromTopNodes, useChildrenOfTopNodesAsParentGroups, allFieldsEditable,
+				addGroupCreateButton, addGroupEditButton);
 		container.add(viewUsers);
 		
 		UserApplicationEngine userEngine = null;
@@ -84,7 +86,7 @@ public class SimpleUserApp extends Block {
 		List<String> files = new ArrayList<String>();
 		files.add(CoreConstants.DWR_ENGINE_SCRIPT);
 		files.add("/dwr/interface/UserApplicationEngine.js");
-		files.add("/dwr/util.js");
+		files.add(CoreConstants.DWR_UTIL_SCRIPT);
 		
 		files.add(bundle.getVirtualPathWithFileNameString("javascript/SimpleUserAppHelper.js"));
 		
@@ -136,6 +138,22 @@ public class SimpleUserApp extends Block {
 
 	public void setAllFieldsEditable(boolean allFieldsEditable) {
 		this.allFieldsEditable = allFieldsEditable;
+	}
+
+	public boolean isAddGroupCreateButton() {
+		return addGroupCreateButton;
+	}
+
+	public void setAddGroupCreateButton(boolean addGroupCreateButton) {
+		this.addGroupCreateButton = addGroupCreateButton;
+	}
+
+	public boolean isAddGroupEditButton() {
+		return addGroupEditButton;
+	}
+
+	public void setAddGroupEditButton(boolean addGroupEditButton) {
+		this.addGroupEditButton = addGroupEditButton;
 	}
 
 	/** Methods for properties end **/

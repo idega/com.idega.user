@@ -3,6 +3,7 @@ package com.idega.user.business;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,12 +18,18 @@ import javax.faces.component.UIComponent;
 import org.jdom.Document;
 
 import com.idega.builder.bean.AdvancedProperty;
+import com.idega.builder.business.AdvancedPropertyComparator;
 import com.idega.builder.business.BuilderLogic;
+import com.idega.builder.data.IBPageName;
+import com.idega.builder.data.IBPageNameHome;
 import com.idega.business.IBOLookup;
 import com.idega.business.SpringBeanLookup;
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.builder.data.ICPage;
+import com.idega.core.builder.data.ICPageHome;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneTypeBMPBean;
@@ -35,6 +42,7 @@ import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
@@ -81,7 +89,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		if (iwc == null) {
 			return null;
 		}
-		GroupBusiness groupBusiness = getGroupBusiness(iwc);
+		GroupBusiness groupBusiness = getGroupBusiness();
 		if (groupBusiness == null) {
 			return null;
 		}
@@ -111,12 +119,13 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			return null;
 		}
 		Collection<Group> childGroups = helper.getFilteredChildGroups(iwc, selected, groupTypes, groupRoles, ",");
-		if (childGroups == null) {
+		if (childGroups == null || childGroups.isEmpty()) {
 			return null;
 		}
 		
 		Group group = null;
 		List<AdvancedProperty> childGroupsProperties = new ArrayList<AdvancedProperty>();
+		childGroupsProperties.add(new AdvancedProperty("-1", CoreConstants.MINUS));
 		for (Iterator<Group> it = childGroups.iterator(); it.hasNext();) {
 			group = it.next();
 			
@@ -136,7 +145,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			return null;
 		}
 		
-		GroupBusiness groupBusiness = getGroupBusiness(iwc);
+		GroupBusiness groupBusiness = getGroupBusiness();
 		if (groupBusiness == null) {
 			return null;
 		}
@@ -456,7 +465,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		if (userBusiness == null) {
 			return errorText;
 		}
-		GroupBusiness groupBusiness = getGroupBusiness(iwc);
+		GroupBusiness groupBusiness = getGroupBusiness();
 		if (groupBusiness == null) {
 			return errorText;
 		}
@@ -713,7 +722,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		if (userBusiness == null) {
 			return;
 		}
-		GroupBusiness groupBusiness = getGroupBusiness(iwc);
+		GroupBusiness groupBusiness = getGroupBusiness();
 		if (groupBusiness == null) {
 			return;
 		}
@@ -766,10 +775,10 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return userBusiness;
 	}
 	
-	private GroupBusiness getGroupBusiness(IWContext iwc) {
+	private GroupBusiness getGroupBusiness() {
 		if (groupBusiness == null) {
 			try {
-				groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), GroupBusiness.class);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -784,5 +793,323 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 
 	public String getSimpleUserApplicationClassName() {
 		return SimpleUserApp.class.getName();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String saveGroup(String name, String homePageId, String type, String description, String parentGroupId, String groupId) {
+		String sucessMessage = "Your changes were successfully saved.";
+		String errorMessage = "Error occurred while saving your changes.";
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return errorMessage;
+		}
+		
+		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+		sucessMessage = iwrb.getLocalizedString("success_saving_group", sucessMessage); 
+		errorMessage = iwrb.getLocalizedString("error_saving_group", errorMessage);
+		if (name == null) {
+			return errorMessage;
+		}
+		
+		GroupBusiness groupBusiness = getGroupBusiness();
+		if (groupBusiness == null) {
+			return errorMessage;
+		}
+		
+		Group parentGroup = null;
+		try {
+			parentGroup = groupBusiness.getGroupByGroupID(Integer.valueOf(parentGroupId));
+		} catch(Exception e) {
+		}
+		
+		int homePageIdInt = -1;
+		try {
+			homePageIdInt = homePageId == null ? -1 : Integer.valueOf(homePageId);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		Group group = null;
+		try {
+			group = groupBusiness.getGroupByGroupID(Integer.valueOf(groupId));
+		} catch(Exception e) {}
+		
+		if (group == null) {
+			//	Create group
+			if (parentGroup == null) {
+				try {
+					group = groupBusiness.createGroup(name, description, type, homePageIdInt);
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+			else {
+				try {
+					group = groupBusiness.createGroupUnder(name, description, type, homePageIdInt, -1, parentGroup);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (CreateException e) {
+					e.printStackTrace();
+				}
+			}
+		
+			if (group == null) {
+				return errorMessage;
+			}
+		}
+		else {
+			//	Modify group
+			group.setName(name);
+			group.setHomePageID(homePageIdInt);
+			group.setGroupType(type);
+			group.setDescription(description);
+			
+			group.store();
+			
+			try {
+				List<Group> currentParentGroups = group.getParentGroups();
+				if (currentParentGroups == null || currentParentGroups.isEmpty() && parentGroup != null) {
+					//	There were no parent groups until now - setting the first one
+					parentGroup.addGroup(group);
+				}
+				else if (currentParentGroups != null && !currentParentGroups.isEmpty()) {
+					if (parentGroup == null) {
+						//	Removing all parent groups
+						User currentUser = iwc.getCurrentUser();
+						for (Group oneOfParentGroup: currentParentGroups) {
+							oneOfParentGroup.removeGroup(group, currentUser);
+						}
+					}
+					else if (!currentParentGroups.contains(parentGroup)) {
+						//	Adding parent group
+						parentGroup.addGroup(group);
+					}
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName()) ? sucessMessage : errorMessage;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<AdvancedProperty> findAvailablePages(String phrase) {
+		if (phrase == null || CoreConstants.EMPTY.equals(phrase)) {
+			return null;
+		}
+		
+		ICPageHome pagesHome = null;
+		try {
+			pagesHome = (ICPageHome) IDOLookup.getHome(ICPage.class);
+		} catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
+		if (pagesHome == null) {
+			return null;
+		}
+		
+		List<AdvancedProperty> pages = new ArrayList<AdvancedProperty>();
+		
+		//	Getting pages by localized name
+		Collection<IBPageName> pagesWithName = null;
+		try {
+			pagesWithName = ((IBPageNameHome) IDOLookup.getHome(IBPageName.class)).findAllByPhrase(phrase, CoreUtil.getIWContext().getCurrentLocale());
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		Map<String, String> pagesIdAndName = new HashMap<String, String>();
+		if (pagesWithName != null && !pagesWithName.isEmpty()) {
+			IBPageName pageName = null;
+			for (Iterator<IBPageName> it = pagesWithName.iterator(); it.hasNext();) {
+				pageName = it.next();
+				
+				pagesIdAndName.put(String.valueOf(pageName.getPageId()), pageName.getPageName());
+			}
+		}
+		List<String> ids = null;
+		if (pagesIdAndName.isEmpty()) {
+			ids = new ArrayList<String>();
+		}
+		else {
+			ids = new ArrayList<String>(pagesIdAndName.keySet());
+			
+			Collection<ICPage> pagesByLocalizedName = null;
+			try {
+				pagesByLocalizedName = pagesHome.findAllByPrimaryKeys(ids);
+			} catch (FinderException e) {
+				e.printStackTrace();
+			}
+			pages = new ArrayList<AdvancedProperty>(getFilteredPages(pagesByLocalizedName, pagesIdAndName));
+			ids = new ArrayList<String>();
+			for (AdvancedProperty page : pages) {
+				ids.add(page.getId());
+			}
+		}
+		
+		//	Getting the rest of pages without localized name
+		Collection<ICPage> pagesWithoutLocalizedName = null;
+		try {
+			pagesWithoutLocalizedName = pagesHome.findAllByPhrase(phrase, ids);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		pages.addAll(getFilteredPages(pagesWithoutLocalizedName, null));
+		
+		if (!pages.isEmpty()) {
+			Collections.sort(pages, new AdvancedPropertyComparator());
+		}
+		return pages;
+	}
+	
+	private List<AdvancedProperty> getFilteredPages(Collection<ICPage> pages, Map<String, String> pagesIdAndName) {
+		List<AdvancedProperty> filteredPages = new ArrayList<AdvancedProperty>();
+		if (pages == null || pages.isEmpty()) {
+			return filteredPages;
+		}
+		
+		ICPage page = null;
+		String id = null;
+		String name = null;
+		for (Iterator<ICPage> it = pages.iterator(); it.hasNext();) {
+			page = it.next();
+			id = null;
+			name = null;
+			
+			if (page != null && page.isPage() && !page.getDeleted()) {
+				id = page.getId();
+				
+				if (pagesIdAndName != null) {
+					name = pagesIdAndName.get(id);
+				}
+				if (name == null) {
+					name = page.getName();
+				}
+				
+				filteredPages.add(new AdvancedProperty(id, name));
+			}
+		}
+		
+		return filteredPages;
+	}
+	
+	private List<Group> getTopGroups(IWContext iwc, String groupTypes, boolean getTopAndParentGroups, boolean useChildrenOfTopNodesAsParentGroups) {
+		Collection<Group> topGroups = getGroupHelperBean().getTopGroupsFromDomain(iwc);
+		if (!getTopAndParentGroups) {
+			topGroups = getGroupHelperBean().getTopAndParentGroups(topGroups);
+		}
+		
+		return new ArrayList<Group>(getGroupHelperBean().getFilteredGroups(topGroups, groupTypes, ",", useChildrenOfTopNodesAsParentGroups));
+	}
+	
+	public List<AdvancedProperty> getAvailableGroups(String groupTypes, String groupTypesForChildrenGroups, String roleTypes, int groupId, int groupsType,
+			boolean getTopAndParentGroups, boolean useChildrenOfTopNodesAsParentGroups) {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		
+		List<Group> groups = null;
+		switch (groupsType) {
+			case 0:
+				//	Top groups
+				groups = getTopGroups(iwc, groupTypes, getTopAndParentGroups, useChildrenOfTopNodesAsParentGroups);
+				break;
+			case 1:
+				//	Child groups
+				return getChildGroups(String.valueOf(groupId), groupTypesForChildrenGroups, roleTypes);
+			default:
+				break;
+		}
+		
+		if (groups == null || groups.size() == 0) {
+			return null;
+		}
+		List<AdvancedProperty> result = new ArrayList<AdvancedProperty>();
+		for (Group group: groups) {
+			result.add(new AdvancedProperty(group.getId(), group.getName()));
+		}
+		return result;
+	}
+
+	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput) {
+		return presentationHelper.getRolesEditor(iwc, groupId, addInput);
+	}
+
+	@SuppressWarnings("unchecked")
+	public boolean changePermissionValueForRole(int groupId, String permissionKey, String roleKey, boolean value) {
+		if (permissionKey == null || roleKey == null) {
+			return false;
+		}
+		
+		GroupBusiness groupBusiness = getGroupBusiness();
+		if (groupBusiness == null) {
+			return false;
+		}
+		
+		Group group = null;
+		try {
+			group = groupBusiness.getGroupByGroupID(groupId);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		if (group == null) {
+			return false;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return false;
+		}
+		
+		AccessController accessController = iwc.getAccessController();
+		if (accessController == null) {
+			return false;
+		}
+		
+		boolean result = setRoleByPermissionForGroup(iwc, accessController, groupId, value, roleKey, permissionKey);
+		if (result) {
+			try {
+				Collection<Group> groups = groupBusiness.getChildGroupsRecursive(group);
+				if (groups != null && !groups.isEmpty()) {
+					for (Group childGroup: groups) {
+						setRoleByPermissionForGroup(iwc, accessController, Integer.valueOf(childGroup.getId()), value, roleKey, permissionKey);
+					}
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private boolean setRoleByPermissionForGroup(IWContext iwc, AccessController accessController, int groupId, boolean value, String roleKey, String permissionKey) {
+		if (value) {
+			return accessController.addRoleToGroup(roleKey, permissionKey, groupId, iwc);
+		}
+		
+		return accessController.removeRoleFromGroup(roleKey, permissionKey, groupId, iwc);
+	}
+
+	public Document addNewRole(String roleKey, int groupId) {
+		if (roleKey == null) {
+			return null;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		try {
+			iwc.getAccessController().createRoleWithRoleKey(roleKey);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return BuilderLogic.getInstance().getRenderedComponent(iwc, getRolesEditor(iwc, groupId, false), false);
 	}
 }

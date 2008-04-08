@@ -2,6 +2,7 @@ var USERS_TO_REMOVE = new Array();
 var DESELECTED_GROUPS = new Array();
 
 var USER_ID = null;
+var SAVE_GROUP_RESULT_IN_HIDDEN_INPUT_ID = 'saveGroupResultInHiddenInputIdForSimpleUserApplication';
 
 function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles, instanceId, mainContainerId, defaultGroupId,
 							parentGroupChooserId, groupTypesForParentGroups, useChildrenOfTopNodesAsParentGroups, allFieldsEditable) {
@@ -35,17 +36,14 @@ function reloadComponents(message, childGroupsChooserId, orderByChooserId, conta
 
 function getChildGroupsCallback(childGroups, childGroupsChooserId, orderByChooserId, containerId, chooserId, message, params) {
 	closeAllLoadingMessages();
-	if (childGroups == null) {
-		return false;
-	}
 	
-	var chooser = document.getElementById(childGroupsChooserId);
+	var chooser = $(childGroupsChooserId);
 	if (chooser == null) {
 		return false;
 	}
-	chooser.removeAttribute('disabled');
+	chooser.removeProperty('disabled');
 	if (childGroups == null) {
-		chooser.setAttribute('disabled', true);
+		chooser.setProperty('disabled', true);
 	}
 	else {
 		DWRUtil.addOptions(childGroupsChooserId, childGroups, 'id', 'value');
@@ -647,4 +645,297 @@ function deselectUserFromGroup(groupId) {
 		return;
 	}
 	DESELECTED_GROUPS.push(groupId);
+}
+
+function createTabsWithMootabs(id) {
+	var widthForTabs = Math.round(window.getWidth() * 0.5);
+	var heightForTabs = Math.round(window.getHeight() * 0.5);
+	var tabs = new mootabs(id, {width: widthForTabs + 'px', height: (heightForTabs - 50) + 'px', changeTransition: 'none'});
+}
+
+function createOrModifyGroup(parameters, getTopAndParentGroups, useChildrenOfTopNodesAsParentGroups, isEditAction) {
+	var uri = parameters[0];
+	var chooserId = parameters[1];
+	var groupsType = parameters[2];
+	
+	var groupTypes = parameters[3];
+	var groupTypesForChildrenGroups = parameters[4];
+	var roleTypes = parameters[5];
+	var message = parameters[6];
+	
+	var groupId = -1;
+	if (isEditAction || groupsType > 0) {
+		groupId = getSelectObjectValue(chooserId);
+	}
+	if (isEditAction && groupId == -1) {
+		return false;
+	}
+	if (groupId != -1) {
+		uri += '&' + parameters[7] + '=' + groupId;
+	}
+	
+	var parentGroupId = -1;
+	var parentGroupChooserId = parameters[9];
+	if (parentGroupChooserId != null) {
+		parentGroupId = getSelectObjectValue(parentGroupChooserId);
+		if (parentGroupId != -1) {
+			uri += '&' + parameters[8] + '=' + parentGroupId;
+		}
+	}
+	
+	//	To avoid stupid caching in IE
+	var date = new Date();
+	uri += '&openTime=' + date.getTime();
+	
+	var width = Math.round(window.getWidth() * 0.5);
+	var height = Math.round(window.getHeight() * 0.5);
+	MOOdalBox.init({resizeDuration: 0, evalScripts: true, animateCaption: false, defContentsWidth: width, defContentsHeight: height});
+	var actionOnCLose = function() {
+		var hiddenInput = $(SAVE_GROUP_RESULT_IN_HIDDEN_INPUT_ID);
+		var needToReloadGroups = false;
+		if (hiddenInput != null) {
+			needToReloadGroups = hiddenInput.getProperty('value') == '1';
+			hiddenInput.setProperty('value', '0');
+		}
+		if (needToReloadGroups) {
+			showLoadingMessage(message);
+			UserApplicationEngine.getAvailableGroups(groupTypes, groupTypesForChildrenGroups, roleTypes, parentGroupId, groupsType, getTopAndParentGroups,
+			 useChildrenOfTopNodesAsParentGroups, {
+				callback: function(groups) {
+					closeAllLoadingMessages();
+					
+					var menu = $(chooserId);
+					if (menu == null) {
+						return false;
+					}
+					menu.removeProperty('disabled');
+					var selectedIndex = menu.selectedIndex;
+					menu.empty();
+					
+					if (groups == null || groups.length == 0) {
+						menu.setProperty('disabled', true);
+						return false;
+					}
+					
+					for (var i = 0; i < groups.length; i++) {
+						var option = new Element('option');
+						option.setProperty('value', groups[i].id);
+						option.setText(groups[i].value);
+						// TODO: generate ids?
+						option.injectInside(menu);
+					}
+					if (selectedIndex != null && selectedIndex >= 0) {
+						menu.selectedIndex = selectedIndex;
+					}
+					else {
+						menu.selectedIndex = 0;
+					}
+				}
+			});
+		}
+	}
+	MOOdalBox.addEventToCloseAction(actionOnCLose);
+	MOOdalBox.open(uri, '', '');
+}
+
+function saveGroupInSimpleUserApplication(ids) {
+	var nameId = ids[0];
+	var homePageId = ids[1];
+	var groupTypeId = ids[2];
+	var descriptionId = ids[3];
+	var groupId = ids[4];
+	var parentGroupId = ids[5];
+	var containerId = ids[6];
+	
+	var name = DWRUtil.getValue(nameId);
+	var homePage = DWRUtil.getValue(homePageId);
+	homePage = homePage == '-1' ? null : homePage;
+	var groupType = DWRUtil.getValue(groupTypeId);
+	var description = DWRUtil.getValue(descriptionId);
+	var group = DWRUtil.getValue(groupId);
+	group = group == '-1' ? null : group;
+	var parentGroup = DWRUtil.getValue(parentGroupId);
+	parentGroup = parentGroup == '-1' ? null : parentGroup;
+	
+	UserApplicationEngine.saveGroup(name, homePage, groupType, description, parentGroup, group, {
+		callback: function(result) {
+			var container = $(containerId);
+			if (container == null) {
+				return false;
+			}
+			
+			var hiddenInput = $(SAVE_GROUP_RESULT_IN_HIDDEN_INPUT_ID);
+			if (hiddenInput == null) {
+				hiddenInput = new Element('input');
+				hiddenInput.setProperty('type', 'hidden');
+				hiddenInput.setProperty('id', SAVE_GROUP_RESULT_IN_HIDDEN_INPUT_ID);
+				hiddenInput.injectInside(container);
+			}
+			hiddenInput.setProperty('value', result != null ? '1' : '0');
+			
+			alert(result);
+		}
+	});
+}
+
+var LAST_PHRASE_FOR_PAGE_SEARCH = null;
+var SEARCH_IN_PROGRESS = false;
+function findAvailablePages(inputId, parameterName, message) {
+	if (inputId == null) {
+		return false;
+	}
+	var input = $(inputId);
+	var phrase = input == null ? null : input.getProperty('value');
+	if (phrase == null) {
+		$(parameterName).setProperty('value', '-1');
+		return false;
+	}
+	if (phrase == '' && LAST_PHRASE_FOR_PAGE_SEARCH == null) {
+		return false;
+	}
+	if (LAST_PHRASE_FOR_PAGE_SEARCH == phrase) {
+		return false;
+	}
+	else {
+		LAST_PHRASE_FOR_PAGE_SEARCH = phrase;
+	}
+	if (SEARCH_IN_PROGRESS) {
+		return false;
+	}
+	
+	if (phrase == '') {
+		$(parameterName).setProperty('value', '-1');
+	}
+	
+	SEARCH_IN_PROGRESS = true;
+	UserApplicationEngine.findAvailablePages(phrase, {
+		callback: function(pages) {
+			SEARCH_IN_PROGRESS = false;
+			
+			var id = 'dynamicPopUpBoxStyleInSimpleUserApplicationForCreateGroup';
+			var pagesContainer = $(id);
+			var useShowEfect = false;
+			if (pagesContainer == null) {
+				useShowEfect = true;
+				var fromTop = getAbsoluteTop(inputId);
+				var fromLeft = getAbsoluteLeft(inputId);
+				var pagesContainer = new Element('div');
+				pagesContainer.setProperty('id', id);
+				pagesContainer.setStyle('top', (fromTop + 23) + 'px');
+				pagesContainer.setStyle('left', fromLeft + 'px');
+				pagesContainer.setStyle('position', 'absolute');
+				pagesContainer.setStyle('z-index', 999999);
+				pagesContainer.setStyle('background-color', '#fff');
+				pagesContainer.setStyle('opacity', 0);
+				pagesContainer.addClass('dynamicPopUpBoxStyleInSimpleUserApplicationStyle');
+				pagesContainer.addEvent('click', function() {
+					pagesContainer.remove();
+				});
+			}
+			else {
+				pagesContainer.empty();
+			}
+			
+			$(document).addEvent('click', function() {
+				var boxToHide = $(id);
+				if (boxToHide != null) {
+					boxToHide.remove();
+				}
+				return;
+			});
+			pagesContainer.injectInside($(document.body));
+			
+			if (pages == null || pages.length == 0) {
+				pagesContainer.setText(message + ' \"'+phrase + '\"');
+			}
+			else {
+				for (var i = 0; i < pages.length; i++) {
+					var linkContainer = new Element('div');
+					linkContainer.addEvent('click', function() {
+						pagesContainer.remove();
+					});
+					
+					var link = new Element('a');
+					link.addEvent('click', function(event) {
+						var event = new Event(event);
+						
+						input.setProperty('value', $(event.target).getProperty('pagevalue'));
+						$(parameterName).setProperty('value', ($(event.target).getProperty('pageid')));
+						
+						pagesContainer.remove();
+						event.stop();
+					});
+					link.setText(pages[i].value);
+					link.setProperty('href', 'javascript:void(0)');
+					link.setProperty('pageid', pages[i].id);
+					link.setProperty('pagevalue', pages[i].value);
+					link.injectInside(linkContainer);
+					linkContainer.injectInside(pagesContainer);
+				}
+			}
+			
+			if (useShowEfect) {
+				var showBoxEffect = new Fx.Style(pagesContainer, 'opacity', {duration: 150});
+				showBoxEffect.start(0, 1);
+			}
+		}
+	});
+}
+
+function changePermissionValueForRole(id, message) {
+	var checkbox = $(id);
+	if (checkbox == null) {
+		return false;
+	}
+	
+	var groupId = checkbox.getProperty('groupid');
+	var permissionKey = checkbox.getProperty('name');
+	var roleKey = checkbox.getProperty('value');
+	showLoadingMessage(message);
+	UserApplicationEngine.changePermissionValueForRole(groupId, permissionKey, roleKey, checkbox.checked, {
+		callback: function(result) {
+			closeAllLoadingMessages();
+		}
+	});
+}
+
+function addNewRoleKey(event, id, containerId, message) {
+	if (event == null) {
+		return false;
+	}
+	
+	var event = new Event(event);
+	if (event.key != 'enter') {
+		return false;
+	}
+	
+	var input = $(id);
+	if (input == null) {
+		return false;
+	}
+	
+	var newRoleKey = input.getProperty('value');
+	if (newRoleKey == null || newRoleKey == '') {
+		return false;
+	}
+	
+	showLoadingMessage(message);
+	input.setProperty('value', '');
+	UserApplicationEngine.addNewRole(newRoleKey, input.getProperty('groupid'), {
+		callback: function(component) {
+			closeAllLoadingMessages();
+			event.stop();
+			
+			if (component == null) {
+				return false;
+			}
+			
+			var container = $(containerId);
+			if (container == null) {
+				return false;
+			}
+			container.empty();
+			insertNodesToContainer(component, container);
+		}
+	});
 }

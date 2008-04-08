@@ -1,9 +1,12 @@
 package com.idega.user.app;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.idega.block.web2.business.Web2Business;
+import com.idega.builder.business.BuilderLogic;
 import com.idega.business.SpringBeanLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
@@ -19,6 +22,9 @@ import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.business.GroupHelper;
 import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
+import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
+import com.idega.util.PresentationUtil;
 
 public class SimpleUserAppViewUsers extends Block {
 
@@ -35,6 +41,8 @@ public class SimpleUserAppViewUsers extends Block {
 	private boolean getParentGroupsFromTopNodes = true;
 	private boolean useChildrenOfTopNodesAsParentGroups = false;
 	private boolean allFieldsEditable = false;
+	private boolean addGroupCreateButton = false;
+	private boolean addGroupEditButton = false;
 	
 	private GroupHelper groupsHelper = null;
 	private SimpleUserAppHelper helper = new SimpleUserAppHelper();
@@ -46,7 +54,7 @@ public class SimpleUserAppViewUsers extends Block {
 	
 	public SimpleUserAppViewUsers(String instanceId, String containerId, Group parentGroup, Group groupForUsersWithoutLogin,
 			String groupTypes, String groupTypesForChildGroups, String roleTypesForChildGroups, boolean getParentGroupsFromTopNodes,
-			boolean useChildrenOfTopNodesAsParentGroups, boolean allFieldsEditable) {
+			boolean useChildrenOfTopNodesAsParentGroups, boolean allFieldsEditable, boolean addGroupCreateButton, boolean addGroupEditButton) {
 		this(instanceId, containerId);
 		this.parentGroup = parentGroup;
 		this.groupForUsersWithoutLogin = groupForUsersWithoutLogin;
@@ -56,6 +64,8 @@ public class SimpleUserAppViewUsers extends Block {
 		this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
 		this.useChildrenOfTopNodesAsParentGroups = useChildrenOfTopNodesAsParentGroups;
 		this.allFieldsEditable = allFieldsEditable;
+		this.addGroupCreateButton = addGroupCreateButton;
+		this.addGroupEditButton = addGroupEditButton;
 	}
 
 	public void main(IWContext iwc) {
@@ -207,6 +217,81 @@ public class SimpleUserAppViewUsers extends Block {
 		valuesContainer.add(helper.getMembersList(iwc, bean, groupsHelper, image));
 	}
 	
+	private void addGroupButtons(IWContext iwc, String chooserId, String parentGroupChooserId, Layer container, int groupsType) {
+		if (addGroupCreateButton || addGroupEditButton) {
+			Web2Business web2 = SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+			List<String> jsSources = new ArrayList<String>();
+			List<String> css = new ArrayList<String>();
+			try {
+				jsSources.add(web2.getBundleURIToMootoolsLib());
+				jsSources.add(web2.getMoodalboxScriptFilePath(false));
+				jsSources.add(web2.getBundleUriToMootabsScript());
+				css.add(web2.getMoodalboxStyleFilePath());
+				css.add(web2.getBundleUriToMootabsStyle());
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
+				container.add(PresentationUtil.getJavaScriptSourceLines(jsSources));
+				container.add(PresentationUtil.getStyleSheetsSourceLines(css));
+			}
+			else {
+				PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, jsSources);
+				PresentationUtil.addStyleSheetsToHeader(iwc, css);
+			}
+		}
+		
+		StringBuffer parameters = new StringBuffer("['").append(BuilderLogic.getInstance().getUriToObject(SimpleGroupCreator.class));
+		parameters.append(SimpleUserApp.PARAMS_SEPARATOR).append(chooserId).append(SimpleUserApp.PARAMS_SEPARATOR).append(groupsType).append("', ");
+		if (getGroupTypes() == null) {
+			parameters.append("null, ");
+		}
+		else {
+			parameters.append("'").append(getGroupTypes()).append("', ");
+		}
+		if (getGroupTypesForChildGroups() == null) {
+			parameters.append("null, ");
+		}
+		else {
+			parameters.append("'").append(getGroupTypesForChildGroups()).append("', ");
+		}
+		if (getRoleTypesForChildGroups() == null) {
+			parameters.append("null, ");
+		}
+		else {
+			parameters.append("'").append(getRoleTypesForChildGroups()).append("', ");
+		}
+		parameters.append("'").append(getResourceBundle(iwc).getLocalizedString("creating", "Creating...")).append(SimpleUserApp.PARAMS_SEPARATOR);
+		parameters.append(UserConstants.EDITED_GROUP_MENU_DROPDOWN_ID_IN_SIMPLE_USER_APPLICATION).append(SimpleUserApp.PARAMS_SEPARATOR);
+		parameters.append(UserConstants.GROUPS_TO_RELOAD_IN_MENU_DROPDOWN_ID_IN_SIMPLE_USER_APPLICATION).append("', ");
+		if (parentGroupChooserId == null) {
+			parameters.append("null");
+		}
+		else {
+			parameters.append("'").append(parentGroupChooserId).append("'");
+		}
+		parameters.append("]");
+		StringBuffer action = new StringBuffer("createOrModifyGroup(").append(parameters.toString()).append(", ").append(isGetParentGroupsFromTopNodes()).append(", ");
+		action.append(useChildrenOfTopNodesAsParentGroups).append(", ");
+		
+		if (addGroupCreateButton) {
+			StringBuffer createAction = new StringBuffer(action.toString()).append(Boolean.FALSE.toString()).append(");");
+			GenericButton createGroup = getSimpleButton(getResourceBundle(iwc).getLocalizedString("create_new_group", "Create group"), createAction.toString());
+			container.add(createGroup);
+		}
+		if (addGroupEditButton) {
+			StringBuffer editAction = new StringBuffer(action.toString()).append(Boolean.TRUE.toString()).append(");");
+			GenericButton editGroup = getSimpleButton(getResourceBundle(iwc).getLocalizedString("edit.group", "Edit group"), editAction.toString());
+			container.add(editGroup);
+		}
+	}
+	
+	private GenericButton getSimpleButton(String name, String action) {
+		GenericButton button = new GenericButton(name);
+		button.setOnClick(action);
+		return button;
+	}
+	
 	private SimpleUserPropertiesBean addChooserContainer(IWContext iwc, Layer choosers, DropdownMenu[] dropDowns, String[] ids) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
@@ -230,6 +315,7 @@ public class SimpleUserAppViewUsers extends Block {
 		parentGroupChooserContainer.setStyleClass("parentGroupContainerStyleClass");
 		choosers.add(parentGroupChooserContainer);
 		Group parentGroup = fillParentGroupChooser(iwc, groupsDropdown, parentGroupChooserContainer, ids);
+		addGroupButtons(iwc, parentGroupsChooserId, null, parentGroupChooserContainer, 0);
 		choosers.add(getSpacer());
 		
 		//	Child groups
@@ -241,6 +327,7 @@ public class SimpleUserAppViewUsers extends Block {
 		childGroupChooserContainer.setStyleClass("childGroupChooserContainerSyleClass");
 		choosers.add(childGroupChooserContainer);
 		Group childGroup = fillChildGroupsChooser(iwc, childGroupChooserContainer, parentGroup, childGroupsChooser, ids);
+		addGroupButtons(iwc, childGroupsChooserId, parentGroupsChooserId, childGroupChooserContainer, 1);
 		choosers.add(getSpacer());
 		
 		//	Order
@@ -310,7 +397,13 @@ public class SimpleUserAppViewUsers extends Block {
 		String groupUsersContainerId = ids[0];
 		String orderByChooserId = ids[3];
 		
+		if (!filteredChildGroups.isEmpty()) {
+			childGroups.addMenuElement("-1", CoreConstants.MINUS);
+		}
 		childGroups.addMenuElements(filteredChildGroups);
+		if (!filteredChildGroups.isEmpty()) {
+			childGroups.setSelectedElement(filteredChildGroups.get(0).getId());
+		}
 		StringBuffer onChangeChildGroupsChooserAction = new StringBuffer("selectChildGroup(");
 		onChangeChildGroupsChooserAction.append(helper.getJavaScriptParameter(ids[2])).append(", '");
 		onChangeChildGroupsChooserAction.append(groupUsersContainerId).append(SimpleUserApp.PARAMS_SEPARATOR);
