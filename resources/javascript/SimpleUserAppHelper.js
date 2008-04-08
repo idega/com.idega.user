@@ -664,7 +664,7 @@ function createOrModifyGroup(parameters, getTopAndParentGroups, useChildrenOfTop
 	var message = parameters[6];
 	
 	var groupId = -1;
-	if (isEditAction || groupsType > 0) {
+	if (isEditAction) {
 		groupId = getSelectObjectValue(chooserId);
 	}
 	if (isEditAction && groupId == -1) {
