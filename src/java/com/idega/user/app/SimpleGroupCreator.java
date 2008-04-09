@@ -51,8 +51,6 @@ public class SimpleGroupCreator extends Block {
 	private String parentGroupId = null;
 	private String editedGroupId = null;
 	
-	//	TODO:	roles
-	
 	private String sep = "', '";
 	private String groupTab = "groupTab";
 	private String rolesTab = "rolesTab";
@@ -186,18 +184,16 @@ public class SimpleGroupCreator extends Block {
 		groupTabContent.add(parentGroupInput);
 		
 		//	Roles
-		if (editedGroupId != null) {
-			ListItem rolesTab = new ListItem();
-			titlesForTabs.add(rolesTab);
-			rolesTab.setMarkupAttribute("title", this.rolesTab);
-			rolesTab.addText(iwrb.getLocalizedString("roles", "Roles"));
-			
-			Layer rolesTabContent = new Layer();
-			container.add(rolesTabContent);
-			rolesTabContent.setId(this.rolesTab);
-			rolesTabContent.setStyleClass(mootabsPanel);
-			rolesTabContent.add(SpringBeanLookup.getInstance().getSpringBean(iwc, UserApplicationEngine.class).getRolesEditor(iwc, Integer.valueOf(editedGroupId), true));
-		}
+		ListItem rolesTab = new ListItem();
+		titlesForTabs.add(rolesTab);
+		rolesTab.setMarkupAttribute("title", this.rolesTab);
+		rolesTab.addText(iwrb.getLocalizedString("roles", "Roles"));
+		
+		Layer rolesTabContent = new Layer();
+		container.add(rolesTabContent);
+		rolesTabContent.setId(this.rolesTab);
+		rolesTabContent.setStyleClass(mootabsPanel);
+		rolesTabContent.add(SpringBeanLookup.getInstance().getSpringBean(iwc, UserApplicationEngine.class).getRolesEditor(iwc, editedGroupId == null ? -1 :Integer.valueOf(editedGroupId), true));
 		
 		//	Save button
 		Layer buttonsContainer = new Layer();
@@ -206,7 +202,7 @@ public class SimpleGroupCreator extends Block {
 		GenericButton saveButton = new GenericButton(iwrb.getLocalizedString("save", "Save"));
 		StringBuilder idsExpression = new StringBuilder("'").append(nameInput.getId()).append(sep).append(homePageInputId).append(sep).append(groupTypes.getId());
 		idsExpression.append(sep).append(descriptionArea.getId()).append(sep).append(groupInput.getId()).append(sep).append(parentGroupInput.getId()).append(sep);
-		idsExpression.append(mainId).append("'");
+		idsExpression.append(mainId).append(sep).append(iwrb.getLocalizedString("saving", "Saving...")).append("'");
 		action = new StringBuilder("saveGroupInSimpleUserApplication([").append(idsExpression.toString()).append("]);");
 		saveButton.setOnClick(action.toString());
 		buttonsContainer.add(saveButton);

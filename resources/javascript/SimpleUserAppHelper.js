@@ -747,6 +747,8 @@ function saveGroupInSimpleUserApplication(ids) {
 	var parentGroupId = ids[5];
 	var containerId = ids[6];
 	
+	var message = ids[7];
+	
 	var name = DWRUtil.getValue(nameId);
 	var homePage = DWRUtil.getValue(homePageId);
 	homePage = homePage == '-1' ? null : homePage;
@@ -757,10 +759,12 @@ function saveGroupInSimpleUserApplication(ids) {
 	var parentGroup = DWRUtil.getValue(parentGroupId);
 	parentGroup = parentGroup == '-1' ? null : parentGroup;
 	
+	showLoadingMessage(message);
 	UserApplicationEngine.saveGroup(name, homePage, groupType, description, parentGroup, group, {
-		callback: function(result) {
+		callback: function(savedGroupId) {
 			var container = $(containerId);
 			if (container == null) {
+				closeAllLoadingMessages();
 				return false;
 			}
 			
@@ -771,9 +775,39 @@ function saveGroupInSimpleUserApplication(ids) {
 				hiddenInput.setProperty('id', SAVE_GROUP_RESULT_IN_HIDDEN_INPUT_ID);
 				hiddenInput.injectInside(container);
 			}
-			hiddenInput.setProperty('value', result != null ? '1' : '0');
+			hiddenInput.setProperty('value', savedGroupId != null ? '1' : '0');
 			
-			alert(result);
+			UserApplicationEngine.getGroupSaveStatus(savedGroupId == null, {
+				callback: function(message) {
+					closeAllLoadingMessages();
+					alert(message);
+					
+					if (savedGroupId != null) {
+						UserApplicationEngine.getRenderedRolesEditor(savedGroupId, {
+							callback: function(component) {
+								if (component == null) {
+									return false;
+								}
+								
+								var inputs = getElementsByClassName(document.body, 'input', 'addNewRoleInputStyleClass');
+								if (inputs == null || inputs.length == 0) {
+									return false;
+								}
+								var input = $(inputs[0]);
+								input.setProperty('groupid', savedGroupId);
+								
+								var containers = getElementsByClassName(document.body, 'div', 'checkboxesForGroupRoleEditorStyleClass');
+								if (containers == null || containers.length == 0) {
+									return false;
+								}
+								var rolesEditorContainer = $(containers[0]);
+								rolesEditorContainer.empty();
+								insertNodesToContainer(component, rolesEditorContainer);
+							}
+						});
+					}
+				}
+			});
 		}
 	});
 }

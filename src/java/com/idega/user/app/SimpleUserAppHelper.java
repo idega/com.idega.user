@@ -299,21 +299,22 @@ public class SimpleUserAppHelper {
 			return null;
 		}
 		Group group = null;
-		try {
-			group = ((GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class)).getGroupByGroupID(groupId);
-		} catch (IBOLookupException e) {
-		} catch (RemoteException e) {
-		} catch (FinderException e) {
-		}
-		if (group == null) {
-			return null;
+		if (groupId != -1) {
+			try {
+				group = ((GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class)).getGroupByGroupID(groupId);
+			} catch (IBOLookupException e) {
+			} catch (RemoteException e) {
+			} catch (FinderException e) {}
 		}
 		
 		Layer container = new Layer();
 		container.setStyleClass("groupRolesStyleClass");
 		Layer rolesContainer = new Layer();
 		container.add(rolesContainer);
+		rolesContainer.setStyleClass("checkboxesForGroupRoleEditorStyleClass");
+		
 		IWResourceBundle iwrb = getResourceBundle(iwc);
+		String message = iwrb.getLocalizedString("saving", "Saving...");
 		
 		AccessController accessControler = iwc.getAccessController();
 		List<ICRole> allRoles = getAllRolesWithoutMasterRole(accessControler);
@@ -323,41 +324,45 @@ public class SimpleUserAppHelper {
 			addTable = false;
 		}
 		
-		rolesContainer.add(new Heading3(iwrb.getLocalizedString("groupownerswindow.setting_roles_for_group", "Setting roles for ") + group.getName()));
-		
-		Collection<ICPermission> permissionsForCurrentGroup = accessControler.getAllRolesWithRolePermissionsForGroup(group);
-		List<String> permissions = Arrays.asList(new String[] {AccessController.PERMISSION_KEY_VIEW, AccessController.PERMISSION_KEY_EDIT,
-				AccessController.PERMISSION_KEY_CREATE, AccessController.PERMISSION_KEY_DELETE, AccessController.PERMISSION_KEY_ROLE});
-		List<String> roles = getRolesNotIncludedOriginaly(permissionsForCurrentGroup, allRoles);
-		
-		Table2 rolesTable = new Table2();
-		if (addTable) {
-			rolesContainer.add(rolesTable);
+		if (group == null) {
+			rolesContainer.add(new Heading3(iwrb.getLocalizedString("create_new_group", "Create new group")));
 		}
-		
-		TableRowGroup headerGroup = rolesTable.createHeaderRowGroup();
-		TableRow headerRow = headerGroup.createRow();
-		TableCell2 cell = headerRow.createHeaderCell();
-		cell.add(new Text(iwrb.getLocalizedString("role", "Role")));
-		for (String permission: permissions) {
-			cell = headerRow.createHeaderCell();
-			cell.add(new Text(iwrb.getLocalizedString(permission, permission)));
-		}
-		
-		String message = iwrb.getLocalizedString("saving", "Saving...");
-		
-		TableRowGroup bodyRows = rolesTable.createBodyRowGroup();
-		for (ICRole role: allRoles) {
-			addRowAndCellsForRole(groupId, role.getNodeName(), role.getRoleKey(), bodyRows, iwrb, permissions, permissionsForCurrentGroup, message);
-		}
-		for (String role: roles) {
-			addRowAndCellsForRole(groupId, role, role, bodyRows, iwrb, permissions, permissionsForCurrentGroup, message);
+		else {
+			rolesContainer.add(new Heading3(iwrb.getLocalizedString("groupownerswindow.setting_roles_for_group", "Setting roles for ") + group.getName()));
+			
+			Collection<ICPermission> permissionsForCurrentGroup = accessControler.getAllRolesWithRolePermissionsForGroup(group);
+			List<String> permissions = Arrays.asList(new String[] {AccessController.PERMISSION_KEY_VIEW, AccessController.PERMISSION_KEY_EDIT,
+					AccessController.PERMISSION_KEY_CREATE, AccessController.PERMISSION_KEY_DELETE, AccessController.PERMISSION_KEY_ROLE});
+			List<String> roles = getRolesNotIncludedOriginaly(permissionsForCurrentGroup, allRoles);
+			
+			Table2 rolesTable = new Table2();
+			if (addTable) {
+				rolesContainer.add(rolesTable);
+			}
+			
+			TableRowGroup headerGroup = rolesTable.createHeaderRowGroup();
+			TableRow headerRow = headerGroup.createRow();
+			TableCell2 cell = headerRow.createHeaderCell();
+			cell.add(new Text(iwrb.getLocalizedString("role", "Role")));
+			for (String permission: permissions) {
+				cell = headerRow.createHeaderCell();
+				cell.add(new Text(iwrb.getLocalizedString(permission, permission)));
+			}
+			
+			TableRowGroup bodyRows = rolesTable.createBodyRowGroup();
+			for (ICRole role: allRoles) {
+				addRowAndCellsForRole(groupId, role.getNodeName(), role.getRoleKey(), bodyRows, iwrb, permissions, permissionsForCurrentGroup, message);
+			}
+			for (String role: roles) {
+				addRowAndCellsForRole(groupId, role, role, bodyRows, iwrb, permissions, permissionsForCurrentGroup, message);
+			}
 		}
 		
 		if (addInput) {
 			Layer newRoleContainer = new Layer();
 			container.add(newRoleContainer);
 			TextInput newRoleInput = new TextInput();
+			newRoleInput.setStyleClass("addNewRoleInputStyleClass");
 			newRoleInput.setMarkupAttribute("groupid", groupId);
 			StringBuilder action = new StringBuilder("addNewRoleKey(event, '").append(newRoleInput.getId()).append(SimpleUserApp.PARAMS_SEPARATOR);
 			action.append(rolesContainer.getId()).append(SimpleUserApp.PARAMS_SEPARATOR).append(message).append("');");

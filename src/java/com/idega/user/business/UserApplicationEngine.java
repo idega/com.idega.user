@@ -58,7 +58,11 @@ public interface UserApplicationEngine {
 	
 	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput);
 	
+	public Document getRenderedRolesEditor(int groupId);
+	
 	public boolean changePermissionValueForRole(int groupId, String permissionKey, String roleKey, boolean value);
 	
 	public Document addNewRole(String roleKey, int groupId);
+	
+	public String getGroupSaveStatus(boolean needErrorMessage);
 }

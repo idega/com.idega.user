@@ -795,8 +795,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return SimpleUserApp.class.getName();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public String saveGroup(String name, String homePageId, String type, String description, String parentGroupId, String groupId) {
+	public String getGroupSaveStatus(boolean needErrorMessage) {
 		String sucessMessage = "Your changes were successfully saved.";
 		String errorMessage = "Error occurred while saving your changes.";
 		IWContext iwc = CoreUtil.getIWContext();
@@ -807,13 +806,24 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
 		sucessMessage = iwrb.getLocalizedString("success_saving_group", sucessMessage); 
 		errorMessage = iwrb.getLocalizedString("error_saving_group", errorMessage);
+		
+		return needErrorMessage ? errorMessage : sucessMessage;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String saveGroup(String name, String homePageId, String type, String description, String parentGroupId, String groupId) {
 		if (name == null) {
-			return errorMessage;
+			return null;
 		}
 		
 		GroupBusiness groupBusiness = getGroupBusiness();
 		if (groupBusiness == null) {
-			return errorMessage;
+			return null;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
 		}
 		
 		Group parentGroup = null;
@@ -854,7 +864,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			}
 		
 			if (group == null) {
-				return errorMessage;
+				return null;
 			}
 		}
 		else {
@@ -890,7 +900,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			}
 		}
 		
-		return BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName()) ? sucessMessage : errorMessage;
+		return BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName()) ? group.getId() : null;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -1107,6 +1117,15 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			iwc.getAccessController().createRoleWithRoleKey(roleKey);
 		} catch(Exception e) {
 			e.printStackTrace();
+			return null;
+		}
+		
+		return BuilderLogic.getInstance().getRenderedComponent(iwc, getRolesEditor(iwc, groupId, false), false);
+	}
+
+	public Document getRenderedRolesEditor(int groupId) {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
 			return null;
 		}
 		
