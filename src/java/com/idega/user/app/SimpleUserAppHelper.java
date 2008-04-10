@@ -331,8 +331,8 @@ public class SimpleUserAppHelper {
 			rolesContainer.add(new Heading3(iwrb.getLocalizedString("groupownerswindow.setting_roles_for_group", "Setting roles for ") + group.getName()));
 			
 			Collection<ICPermission> permissionsForCurrentGroup = accessControler.getAllRolesWithRolePermissionsForGroup(group);
-			List<String> permissions = Arrays.asList(new String[] {AccessController.PERMISSION_KEY_VIEW, AccessController.PERMISSION_KEY_EDIT,
-					AccessController.PERMISSION_KEY_CREATE, AccessController.PERMISSION_KEY_DELETE, AccessController.PERMISSION_KEY_ROLE});
+			List<String> permissions = Arrays.asList(new String[] {/*AccessController.PERMISSION_KEY_VIEW, AccessController.PERMISSION_KEY_EDIT,
+					AccessController.PERMISSION_KEY_CREATE, AccessController.PERMISSION_KEY_DELETE, */AccessController.PERMISSION_KEY_ROLE});
 			List<String> roles = getRolesNotIncludedOriginaly(permissionsForCurrentGroup, allRoles);
 			
 			Table2 rolesTable = new Table2();
@@ -380,7 +380,7 @@ public class SimpleUserAppHelper {
 		TableRow bodyRow = bodyRows.createRow();
 		
 		TableCell2 cell = bodyRow.createCell();
-		cell.add(new Text(iwrb.getLocalizedString(roleName, roleName)));
+		cell.add(new Text(iwrb.getLocalizedString(roleKey, roleName)));
 		
 		StringBuilder action = null;
 		String attribute = "groupid";
