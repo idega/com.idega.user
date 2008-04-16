@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
+import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.builder.data.ICDomain;
@@ -536,8 +537,9 @@ public class GroupHelperBusinessBean implements GroupHelper {
 			return null;
 		}
 		
+		Collection topLevelGroups = null;
 		try {
-			return domain.getTopLevelGroupsUnderDomain();
+			topLevelGroups = domain.getTopLevelGroupsUnderDomain();
 		} catch (IDORelationshipException e) {
 			e.printStackTrace();
 		} catch (RemoteException e) {
@@ -546,7 +548,21 @@ public class GroupHelperBusinessBean implements GroupHelper {
 			e.printStackTrace();
 		}
 		
-		return null;
+		if (topLevelGroups == null || topLevelGroups.isEmpty()) {
+			if (BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName())) {
+				try {
+					topLevelGroups = domain.getTopLevelGroupsUnderDomain();
+				} catch (IDORelationshipException e) {
+					e.printStackTrace();
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (FinderException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return topLevelGroups;
 	}
 	
 	@SuppressWarnings("unchecked")
