@@ -22,6 +22,7 @@ import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.business.GroupHelper;
 import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
+import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.PresentationUtil;
@@ -214,10 +215,17 @@ public class SimpleUserAppViewUsers extends Block {
 		container.add(valuesContainer);
 		
 		String image = bundle.getVirtualPathWithFileNameString(SimpleUserApp.EDIT_IMAGE);
-		valuesContainer.add(helper.getMembersList(iwc, bean, groupsHelper, image));
+		GroupMembersListViewer list = new GroupMembersListViewer();
+		list.setBean(bean);
+		list.setImage(image);
+		valuesContainer.add(list);
 	}
 	
 	private void addGroupButtons(IWContext iwc, String chooserId, String parentGroupChooserId, Layer container, int groupsType) {
+		if (!addGroupCreateButton && !addGroupEditButton) {
+			return;
+		}
+		
 		if (addGroupCreateButton || addGroupEditButton) {
 			Web2Business web2 = SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
 			List<String> jsSources = new ArrayList<String>();
@@ -274,15 +282,17 @@ public class SimpleUserAppViewUsers extends Block {
 		StringBuffer action = new StringBuffer("createOrModifyGroup(").append(parameters.toString()).append(", ").append(isGetParentGroupsFromTopNodes()).append(", ");
 		action.append(useChildrenOfTopNodesAsParentGroups).append(", ");
 		
+		Layer buttonsContainer = new Layer();
+		container.add(buttonsContainer);
 		if (addGroupCreateButton) {
 			StringBuffer createAction = new StringBuffer(action.toString()).append(Boolean.FALSE.toString()).append(");");
 			GenericButton createGroup = getSimpleButton(getResourceBundle(iwc).getLocalizedString("create_new_group", "Create group"), createAction.toString());
-			container.add(createGroup);
+			buttonsContainer.add(createGroup);
 		}
 		if (addGroupEditButton) {
 			StringBuffer editAction = new StringBuffer(action.toString()).append(Boolean.TRUE.toString()).append(");");
 			GenericButton editGroup = getSimpleButton(getResourceBundle(iwc).getLocalizedString("edit.group", "Edit group"), editAction.toString());
-			container.add(editGroup);
+			buttonsContainer.add(editGroup);
 		}
 	}
 	

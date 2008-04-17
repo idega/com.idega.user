@@ -15,9 +15,9 @@ import com.idega.business.SpringBeanLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICRole;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.Table2;
 import com.idega.presentation.TableCell2;
@@ -35,98 +35,17 @@ import com.idega.user.business.GroupHelper;
 import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
 
 public class SimpleUserAppHelper {
 
-	public Layer getMembersList(IWContext iwc, SimpleUserPropertiesBean bean, GroupHelper helper, String image) {
-		Layer valuesContainer = new Layer();
-		if (iwc == null || bean == null) {
-			return valuesContainer;
-		}
-		if (helper == null) {
-			helper = SpringBeanLookup.getInstance().getSpringBean(iwc, GroupHelper.class);
-		}
-		
-		List<User> users = helper.getSortedUsers(iwc, bean);
-		if (users == null) {
-			return valuesContainer;
-		}
-		
-		User user = null;
-		String userValuesLineContainerStyleClass = "userValuesLineContainerStyleClass";
-		String nameContainerStyleClass = "userNameValueContainerStyleClass";
-		String personalIdContainerStyleClass = "userPersonalIdValueContainerStyleClass";
-		String changeUserContainerStyleClass = "changeUserImageContainerStyleClass";
-		String removeUserContainerStyleClass = "removeUserCheckboxContainerStyleClass";
-		String changeUserImageStyleClass = "changeUserImageStyleClass";
-		Layer lineContainer = null;
-		Layer nameContainer = null;
-		Layer personalIdContainer = null;
-		Layer changeUserContainer = null;
-		Layer removeUserContainer = null;
-		Image changeUserImage = null;
-		CheckBox removeUserCheckbox = null;
-		StringBuffer checkBoxAction = null;
-		
-		String unknown = getResourceBundle(iwc).getLocalizedString("unknown", "Unknown");
-		String name = null;
-		String personalId = null;
-		String userId = null;
-		int groupId = -1;
-		for (int i = 0; i < users.size(); i++) {
-			user = users.get(i);
-			
-			userId = user.getId();
-			name = user.getName();
-			if (CoreConstants.EMPTY.equals(name)) {
-				name = null;
-			}
-			personalId = user.getPersonalID();
-			if (CoreConstants.EMPTY.equals(personalId)) {
-				personalId = null;
-			}
-			groupId = bean.getGroupId();
-			if (groupId < 0) {
-				groupId = bean.getParentGroupId();
-			}
-			
-			lineContainer = new Layer();
-			lineContainer.setStyleClass(userValuesLineContainerStyleClass);
-			valuesContainer.add(lineContainer);
-			
-			nameContainer = new Layer();
-			nameContainer.setStyleClass(nameContainerStyleClass);
-			nameContainer.add(new Text(name == null ? unknown : name));
-			lineContainer.add(nameContainer);
-			
-			personalIdContainer = new Layer();
-			personalIdContainer.setStyleClass(personalIdContainerStyleClass);
-			personalIdContainer.add(new Text(personalId == null ? unknown : personalId));
-			lineContainer.add(personalIdContainer);
-			
-			changeUserContainer = new Layer();
-			changeUserContainer.setStyleClass(changeUserContainerStyleClass);
-			changeUserImage = new Image(image);
-			changeUserImage.setStyleClass(changeUserImageStyleClass);
-			
-			changeUserImage.setOnClick(getActionForAddUserView(bean, userId));
-			changeUserContainer.add(changeUserImage);
-			lineContainer.add(changeUserContainer);
-			
-			removeUserContainer = new Layer();
-			removeUserContainer.setStyleClass(removeUserContainerStyleClass);
-			removeUserCheckbox = new CheckBox();
-			checkBoxAction = new StringBuffer("removeUser('").append(lineContainer.getId());
-			checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(userId);
-			checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(groupId).append("', ");
-			checkBoxAction.append(getJavaScriptParameter(removeUserCheckbox.getId())).append(");");
-			removeUserCheckbox.setOnClick(checkBoxAction.toString());
-			removeUserContainer.add(removeUserCheckbox);
-			lineContainer.add(removeUserContainer);
-		}
-		
-		return valuesContainer;
+	public GroupMembersListViewer getMembersList(SimpleUserPropertiesBean bean, String image, boolean checkIds) {
+		GroupMembersListViewer list = new GroupMembersListViewer();
+		list.setBean(bean);
+		list.setImage(image);
+		list.setCheckIds(checkIds);
+		return list;
 	}
 	
 	public Layer getSelectedGroupsByIds(IWContext iwc, User user, GroupHelper helper, List<Integer> groupsIds, List<String> ids, String selectedGroupId) {
@@ -251,28 +170,11 @@ public class SimpleUserAppHelper {
 	}
 	
 	protected String getJavaScriptParameter(String parameter) {
-		if (parameter == null) {
-			return "null";
-		}
-		return new StringBuffer("'").append(parameter).append("'").toString();
+		return SpringBeanLookup.getInstance().getSpringBean(IWMainApplication.getDefaultIWApplicationContext(), GroupHelper.class).getJavaScriptParameter(parameter);
 	}
 	
 	protected String getActionForAddUserView(SimpleUserPropertiesBean bean, String userId) {
-		StringBuffer action = new StringBuffer("addUserPresentationObject('").append(bean.getInstanceId());
-		action.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getContainerId());
-		action.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getParentGroupChooserId());
-		action.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getGroupChooserId());
-		action.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getMessage()).append("', ");
-		action.append(getJavaScriptParameter(bean.getDefaultGroupId())).append(SimpleUserApp.COMMA_SEPARATOR);
-		action.append(getJavaScriptParameter(userId)).append(SimpleUserApp.COMMA_SEPARATOR);
-		action.append(getJavaScriptParameter(bean.getGroupTypes()));
-		action.append(SimpleUserApp.COMMA_SEPARATOR).append(getJavaScriptParameter(bean.getRoleTypes()));
-		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isGetParentGroupsFromTopNodes());
-		action.append(SimpleUserApp.COMMA_SEPARATOR).append(getJavaScriptParameter(bean.getGroupTypesForParentGroups()));
-		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isUseChildrenOfTopNodesAsParentGroups());
-		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isAllFieldsEditable());
-		action.append(");");
-		return action.toString();
+		return SpringBeanLookup.getInstance().getSpringBean(IWMainApplication.getDefaultIWApplicationContext(), GroupHelper.class).getActionForAddUserView(bean, userId);
 	}
 	
 	protected String getJavaScriptFunctionParameter(List<String> parameters) {

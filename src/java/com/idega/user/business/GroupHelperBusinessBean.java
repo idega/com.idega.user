@@ -625,4 +625,29 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		
 		return uri.toString();
 	}
+
+	public String getActionForAddUserView(SimpleUserPropertiesBean bean, String userId) {
+		StringBuffer action = new StringBuffer("addUserPresentationObject('").append(bean.getInstanceId());
+		action.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getContainerId());
+		action.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getParentGroupChooserId());
+		action.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getGroupChooserId());
+		action.append(SimpleUserApp.PARAMS_SEPARATOR).append(bean.getMessage()).append("', ");
+		action.append(getJavaScriptParameter(bean.getDefaultGroupId())).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(getJavaScriptParameter(userId)).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(getJavaScriptParameter(bean.getGroupTypes()));
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(getJavaScriptParameter(bean.getRoleTypes()));
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isGetParentGroupsFromTopNodes());
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(getJavaScriptParameter(bean.getGroupTypesForParentGroups()));
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isUseChildrenOfTopNodesAsParentGroups());
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isAllFieldsEditable());
+		action.append(");");
+		return action.toString();
+	}
+
+	public String getJavaScriptParameter(String parameter) {
+		if (parameter == null) {
+			return "null";
+		}
+		return new StringBuffer("'").append(parameter).append("'").toString();
+	}
 }

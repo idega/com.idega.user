@@ -21,8 +21,8 @@ public class SimpleUserApp extends Block {
 	public static final int USER_ORDER_BY_NAME = 0;
 	public static final int USER_ORDER_BY_ID = 1;
 	
-	protected static final String PARAMS_SEPARATOR = "', '";
-	protected static final String COMMA_SEPARATOR = ", ";
+	public static final String PARAMS_SEPARATOR = "', '";
+	public static final String COMMA_SEPARATOR = ", ";
 	
 	private String instanceId = null;
 	

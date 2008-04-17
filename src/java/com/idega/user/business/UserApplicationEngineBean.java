@@ -54,6 +54,7 @@ import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.bean.UserDataBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.EmailValidator;
@@ -202,11 +203,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			image = bundle.getVirtualPathWithFileNameString(SimpleUserApp.EDIT_IMAGE);
 		}
 		
-		GroupHelper helper = getGroupHelperBean();
-		if (helper == null) {
-			return null;
-		}
-		Layer membersList = presentationHelper.getMembersList(iwc, bean, helper, image);
+		GroupMembersListViewer membersList = presentationHelper.getMembersList(bean, image, false);
 		
 		BuilderLogic builder = BuilderLogic.getInstance();
 		return builder.getRenderedComponent(iwc, membersList, true);

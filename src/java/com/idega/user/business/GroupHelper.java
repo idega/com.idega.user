@@ -56,4 +56,8 @@ public interface GroupHelper {
 	
 	public String getGroupImageBaseUri(IWContext iwc);
 	
+	public String getActionForAddUserView(SimpleUserPropertiesBean bean, String userId);
+	
+	public String getJavaScriptParameter(String parameter);
+	
 }
