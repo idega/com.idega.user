@@ -1,70 +1,105 @@
 @CHARSET "UTF-8";
 
 .choosersAndDescriptionStyleClass {
+	font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	line-height: 20px;
+	padding: 15px;
 }
 
 .userApplicationChoosersContainer {
 	float: left;
-	width: 40%;
+	width: 50%;
+}
+
+.users select {
+	border: 1px #aaa solid !important;
+	margin: 0 !important;
 }
 
 .userApplicationDescriptionContainerStyleClass {
-	float: left;
+	float: right;
 	width: 45%;
 	padding-left: 5%;
+	font-size: 11px;
+	line-height: 14px;
 }
 
 .parentGroupLabelContainerStyleClass {
 	float: left;
-	width: 35%;
+	width: 50%;
+	font-weight: bold;
+	margin-bottom: 15px;
 }
 
 .parentGroupContainerStyleClass {
 	float: left;
-	width: 65%;
+	width: 50%;
 }
 
 .childGroupsLabelContainerStyleClass {
 	float: left;
-	width: 35%;
+	width: 50%;
+	font-weight: bold;
+	margin-bottom: 15px;
 }
 
-.childGroupChooserContainerSyleClass {
+.childGroupChooserContainerStyleClass {
 	float: left;
-	width: 65%;
+	width: 50%;
 }
 
 .orderByLabelContainerStyleClass {
 	float: left;
-	width: 35%;
+	width: 50%;
+	font-weight: bold;
 }
 
 .orderByChooserStyleClass {
 	float: left;
-	width: 65%;
+	width: 50%;
 }
 
-.userAppLowerPartStyleClass {
-	padding-top: 5%;
-	width: 100%;
+.users .userAppLowerPartStyleClass {
+	padding-top: 15px;
+	width: 100% !important;
+	font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+	font-size: 13px;
 }
 
 .userApplicationButtonsContainerStyleClass {
-	padding-top: 1%;
+	padding-top: 10px;
+	padding-right: 10px;
 	float: right;
 }
 
+.users input {
+	font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif !important;
+	font-size: 14px !important;
+	background-color: #cef3cf;
+	border: 1px #b5e1b7 solid !important;
+	border-right-color: #80b082 !important;
+	border-bottom-color: #6e9870 !important;
+	border-left-color: #a9dcac !important;
+	padding: 4px 12px;
+}
+
 .membersListContainerStyleClass {
-	width: 100%;
+	font-weight: bold;
+	border-bottom: 1px #aaa solid;
+	background: #d7d7d7;
+	margin: 0 !important;
 }
 
 .groupMembersListLabelsStyleClass {
 	width: 100%;
+	margin: 3px 8px;
 }
 
 .userNameLabelContainerStyleClass {
 	float: left;
-	width: 40%
+	width: 38%;
+	margin-left: 8px;
 }
 
 .userPersonalIdLabelContainerStyleClass {
@@ -98,7 +133,8 @@
 
 .userNameValueContainerStyleClass {
 	float: left;
-	width: 40%;
+	width: 38%;
+	margin-left: 8px;
 }
 
 .userPersonalIdValueContainerStyleClass {
@@ -154,44 +190,26 @@
 	cursor: pointer;
 }
 
-.webfaceFormItem {
-	margin: 0 !important;
-	padding: 0 !important;
-	overflow: hidden;
-	margin-bottom: 6px !important;
+/* Workspace override */
+.users .ws_main .wf_block {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: auto;
+	width: auto;
 }
 
-.webfaceFormItem label {
-	display: block;
-	float: left;
-	width: 120px;
-	line-height: 19px;
-	font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	color: #1f1f1f;
-}
-
-.webfaceFormItem input {
-	float: left;
-	width: 100px;
-	margin: 0 !important;
-	padding: 2px 4px;
-	font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	color: #1f1f1f;
-}
-
-.webfaceButtonLayer {
-	margin: 0 !important;
-	text-align: left;
-	padding: 0 12px 12px 6px !important;
-	overflow: hidden;
-}
-
-.webfaceButtonLayer input {
-	font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif !important;
-	margin: 0 !important;
-	font-size: 12px !important;
-	text-transform: capitalize !important;
-	padding: 3px 5px;
+.users .ws_main .wf_block .wf_blockmainarea {
+	background-color: #fff;
+	padding: 0;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 23px;
+	height: auto;
+	width: auto;
+	overflow: auto;
 }

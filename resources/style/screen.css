@@ -6,6 +6,11 @@
 	margin-bottom: 8px;
 }
 
+.choosersAndDescriptionStyleClass .userApplicationChoosersContainer input {
+	margin-top: 6px;
+	margin-left: 0;
+}
+
 .parentGroupLabelContainerStyleClass,
 .childGroupsLabelContainerStyleClass,
 .orderByLabelContainerStyleClass,
@@ -25,8 +30,9 @@
 
 .choosersAndDescriptionStyleClass .userApplicationChoosersContainer div select,
 .userFieldsContainerStyleClass .userFieldValueContainerStyleClass select{
-	font-size: 11px;
-	width: 150px;
+	font-size: 14px;
+	width: 200px;
+	margin-bottom: 8px;
 }
 
 .userFieldsContainerStyleClass div div{
@@ -35,7 +41,8 @@
 }
 
 .userApplicationButtonsContainerStyleClass{
-	margin-right: 40px;
+	margin-right: 0px;
+	padding-bottom: 10px;
 }
 
 .userApplicationButtonsContainerStyleClass input{
