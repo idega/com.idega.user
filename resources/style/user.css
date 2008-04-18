@@ -125,6 +125,12 @@
 
 .userValuesLineContainerStyleClass {
 	width: 100%;
+	overflow: hidden;
+	background-color: #fff;
+}
+
+.userValuesLineContainerStyleClass.odd {
+	background-color: #efefef;
 }
 
 .userValuesLineContainerStyleClass:HOVER {
