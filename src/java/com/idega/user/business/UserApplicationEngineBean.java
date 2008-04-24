@@ -807,7 +807,6 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return needErrorMessage ? errorMessage : sucessMessage;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public String saveGroup(String name, String homePageId, String type, String description, String parentGroupId, String groupId) {
 		if (name == null) {
 			return null;
@@ -900,7 +899,6 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName()) ? group.getId() : null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<AdvancedProperty> findAvailablePages(String phrase) {
 		if (phrase == null || CoreConstants.EMPTY.equals(phrase)) {
 			return null;
@@ -1043,7 +1041,6 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return presentationHelper.getRolesEditor(iwc, groupId, addInput);
 	}
 
-	@SuppressWarnings("unchecked")
 	public boolean changePermissionValueForRole(int groupId, String permissionKey, String roleKey, boolean value) {
 		if (permissionKey == null || roleKey == null) {
 			return false;

@@ -95,7 +95,6 @@ public class GroupsManagerBean implements Serializable {
 		return removeProperties(instanceId, userProperties);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private boolean removeProperties(String key, Map properties) {
 		if (key == null) {
 			return false;

@@ -56,6 +56,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 	
 	private UIComponent middlePartOfChooser = null;
 	
+	@Override
 	public void main(IWContext iwc) {
 		Layer main = new Layer();
 		
@@ -290,7 +291,6 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		return ids.toString();
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void addRowToConnectionTable(TableBodyRowGroup body, String value, String content, String inputId, String name, boolean isPassword) {
 		TableRow tableRow = body.createRow();
 		
@@ -314,6 +314,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		inputCell.add(input);
 	}
 	
+	@Override
 	public String getBundleIdentifier()	{
 		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}

@@ -61,7 +61,6 @@ public class SimpleGroupCreator extends Block {
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void initializeLocalVariables(IWContext iwc) {
 		bundle = getBundle(iwc);
 		iwrb = bundle.getResourceBundle(iwc);

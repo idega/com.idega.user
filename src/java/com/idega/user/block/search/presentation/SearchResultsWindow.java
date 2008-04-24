@@ -24,15 +24,13 @@ import com.idega.user.presentation.StyledBasicUserOverViewToolbar;
 
 public class SearchResultsWindow extends BasicUserOverview {
   
-  private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-
   public SearchResultsWindow() {
   }
-  
 	 
 	/* (non-Javadoc)
 	 * @see com.idega.user.presentation.BasicUserOverview#getEntries(com.idega.presentation.IWContext)
 	 */
+	@Override
 	protected Collection getEntries(IWContext iwc) {
 		SearchResultsWindowPS sPs = (SearchResultsWindowPS)this.ps;
 		 try {
@@ -55,6 +53,7 @@ public class SearchResultsWindow extends BasicUserOverview {
 		return identifier;
 	}
 	
+	@Override
 	protected PresentationObject getEmptyListPresentationObject() {
 		Text text = new Text(this.iwrb.getLocalizedString("searchresultswindow.search_had_no_match", "The search did not return any results"));
 		
@@ -74,6 +73,7 @@ public class SearchResultsWindow extends BasicUserOverview {
 		return business;
 	}
 	
+	@Override
 	public Class getPresentationStateClass() {
 		return SearchResultsWindowPS.class;
 	}
@@ -82,6 +82,7 @@ public class SearchResultsWindow extends BasicUserOverview {
 	/* (non-Javadoc)
 	 * @see com.idega.user.presentation.BasicUserOverview#getToolbar()
 	 */
+	@Override
 	protected StyledBasicUserOverViewToolbar getToolbar() {
 		StyledBasicUserOverViewToolbar toolbar = super.getToolbar();
 		SearchResultsWindowPS sPs = (SearchResultsWindowPS)this.ps;

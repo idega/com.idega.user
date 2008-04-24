@@ -138,7 +138,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return ids;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private List<GroupNode> appendParentGroupsToList(Collection parentGroups, Group selectedGroup, List<GroupNode> groupNodes, GroupBusiness groupBusiness,
 														String image, IWContext iwc) {
 		if (parentGroups == null) {
@@ -346,7 +345,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return getBasicUserPropertiesBean(instanceId);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Map getCache(IWContext iwc, String cacheKey, int minutes) {
 		IWCacheManager2 cache = IWCacheManager2.getInstance(iwc.getIWMainApplication());
 		if (cache == null) {
@@ -357,7 +355,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return cache.getCache(cacheKey, 1000, true, false, time, time);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private List<GroupDataBean> getGroupInfoFromCache(IWContext iwc, String id, int minutes) {
 		Map cache = getCache(iwc, UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, minutes);
 		if (cache == null) {
@@ -393,7 +390,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void addGroupInfoToCache(IWContext iwc, String id, int minutes, List<GroupDataBean> info) {
 		Map cache = getCache(iwc, UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, minutes);
 		if (cache == null) {
@@ -501,7 +497,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return true;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private List<GroupMemberDataBean> getUsersInfoFromCache(IWContext iwc, String id, int minutes) {
 		Map cache = getCache(iwc, UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, minutes);
 		if (cache == null) {
@@ -537,7 +532,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void addUsersInfoToCache(IWContext iwc, String id, int minutes, List<GroupMemberDataBean> info) {
 		Map cache = getCache(iwc, UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, minutes);
 		if (cache == null) {
@@ -636,6 +630,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return statusLocalization;
 	}
 	
+	@Override
 	protected String getBundleIdentifier() {
 		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
@@ -832,7 +827,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return bean.getUserProperties(instanceId);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private boolean clearCache(String cacheKey, String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
 		if (cacheKey == null || instanceId == null) {
 			return false;
@@ -961,7 +955,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return addUniqueIds(usersCacheName, instanceId, ids);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Map<String, List<String>> getUniqueIds(String cacheName) throws NullPointerException {
 		IWCacheManager2 cache = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
 		

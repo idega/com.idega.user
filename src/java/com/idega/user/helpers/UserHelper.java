@@ -35,7 +35,6 @@ public class UserHelper {
 	
 	private UserBusiness userBusiness = null;
 	
-	@SuppressWarnings("unchecked")
 	public GroupTreeView getGroupTree(IWContext iwc) {
 		GroupTreeView viewer = new GroupTreeView();
 		try {			

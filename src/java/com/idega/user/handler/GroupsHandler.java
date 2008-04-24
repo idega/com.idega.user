@@ -16,7 +16,6 @@ import com.idega.util.CoreConstants;
 
 public class GroupsHandler implements ICPropertyHandler {
 
-	@SuppressWarnings("unchecked")
 	public List getDefaultHandlerTypes() {
 		return null;
 	}

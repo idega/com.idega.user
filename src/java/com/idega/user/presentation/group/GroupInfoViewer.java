@@ -22,6 +22,7 @@ public class GroupInfoViewer extends GroupViewer {
 	private boolean showFax = true;
 	private boolean showEmptyFields = false;
 	
+	@Override
 	public void main(IWContext iwc) {
 		super.main(iwc);
 		
@@ -44,7 +45,6 @@ public class GroupInfoViewer extends GroupViewer {
 		setPropertiesBean(instanceId);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void setPropertiesBean(String instanceId) {
 		GroupPropertiesBean properties = new GroupPropertiesBean();
 		setBasicProperties(properties, instanceId);
@@ -126,6 +126,7 @@ public class GroupInfoViewer extends GroupViewer {
 		this.showShortName = showShortName;
 	}
 
+	@Override
 	public String getBundleIdentifier()	{
 		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}

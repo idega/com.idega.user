@@ -69,6 +69,7 @@ public class SimpleUserAppViewUsers extends Block {
 		this.addGroupEditButton = addGroupEditButton;
 	}
 
+	@Override
 	public void main(IWContext iwc) {
 		groupsHelper = SpringBeanLookup.getInstance().getSpringBean(iwc, GroupHelper.class);
 		
@@ -426,7 +427,7 @@ public class SimpleUserAppViewUsers extends Block {
 		if (filteredChildGroups.size() == 0) {
 			return null;
 		}
-		return (Group) filteredChildGroups.get(0);
+		return filteredChildGroups.get(0);
 	}
 	
 	private String getDefaultParameters(String parentGroupChooserId, String childGroupChooserId, String message) {
@@ -481,7 +482,7 @@ public class SimpleUserAppViewUsers extends Block {
 					action.append(");");
 					groupsDropdown.setOnChange(action.toString());
 					container.add(groupsDropdown);
-					return (Group) filteredTopGroups.get(0);
+					return filteredTopGroups.get(0);
 				}
 				else if (filteredTopGroups.size() == 1) {
 					//	Only one group available
@@ -571,6 +572,7 @@ public class SimpleUserAppViewUsers extends Block {
 		return roleTypesForChildGroups;
 	}
 	
+	@Override
 	public String getBundleIdentifier() {
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
