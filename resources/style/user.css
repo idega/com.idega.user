@@ -244,3 +244,82 @@
 	height: auto;
 	width: auto;
 	overflow: auto;
+}
+
+/* MooTabs override */
+#simpleUserApplication .mootabs_panel {
+	padding-top: 25px;
+}
+
+#simpleUserApplication .webfaceFormItem {
+	padding-left: 25px !important;
+	overflow: hidden !important;
+	margin-bottom: 15px !important;
+}
+
+#simpleUserApplication .webfaceFormItem label {
+	font-weight: bold;
+	font-size: 12px;
+}
+
+#simpleUserApplication .webfaceFormItem input {
+	border: 1px #a8a8a8 solid !important;
+	background-color: #fff;
+	width: 200px;
+}
+
+#simpleUserApplication .webfaceFormItem select, #simpleUserApplication .webfaceFormItem textarea {
+	border: 1px #a8a8a8 solid !important;
+	background-color: #fff;
+	font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif !important;
+	font-size: 14px;
+	margin: 0;
+}
+
+#simpleUserApplication .webfaceFormItem textarea {
+	width: 300px !important;
+	height: 100px;
+	padding: 3px 5px;
+}
+
+#simpleUserApplication .webfaceButtonLayer {
+	padding-left: 25px !important;
+}
+
+#simpleUserApplication .webfaceButtonLayer input {
+	font-size: 14px !important;
+	padding: 4px 12px;
+}
+
+#simpleUserApplication .groupRolesStyleClass h3 {
+	margin: 0;
+	padding-left: 25px;
+	margin-bottom: 15px;
+	font-size: 14px;
+}
+
+#simpleUserApplication .groupRolesStyleClass label {
+	padding-left: 25px;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+#simpleUserApplication .groupRolesStyleClass input {
+	border: 1px #a8a8a8 solid !important;
+	background-color: #fff;
+	width: 200px;
+}
+
+#simpleUserApplication .groupRolesStyleClass table {
+	margin-left: 25px;
+	margin-bottom: 15px;
+}
+
+#simpleUserApplication .groupRolesStyleClass table td {
+	padding-right: 12px;
+}
+
+#simpleUserApplication .groupRolesStyleClass table input {
+	width: 14px;
+	height: 14px;
+}
