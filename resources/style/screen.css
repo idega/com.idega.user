@@ -15,11 +15,12 @@
 .childGroupsLabelContainerStyleClass,
 .orderByLabelContainerStyleClass,
 .userFiledsContainerStyleClass,
-.addUserlabelContainerStyleClass,
 .userFieldLabelContainerStyleClass{
 	padding-left: 10px;
-	margin-right: -10px;
+	margin-right: -50px;
 	font-weight: bold;
+	font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+	font-size: 12px;
 }
 
 .removeUserCheckboxContainerStyleClass {
@@ -37,7 +38,18 @@
 
 .userFieldsContainerStyleClass div div{
 	padding-left: 10px;
-	margin-right: -10px;
+	clear: both;
+	font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+.userFieldsContainerStyleClass div div input {
+	padding-left: 10px;
+	border: 0 !important;
+	width: 16px !important;
+	height: 16px !important;
+	float: left;
+	margin-right: 6px !important;
 }
 
 .userApplicationButtonsContainerStyleClass{
