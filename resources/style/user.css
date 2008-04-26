@@ -323,3 +323,31 @@
 	width: 14px;
 	height: 14px;
 }
+
+/* User group viewer */
+.groupsMembersInfoList {
+	overflow: hidden;
+	width: 100%;
+}
+
+.groupMemberStyleClass {
+	margin-bottom: 8px;
+	padding-bottom: 8px;
+	border-bottom: 1px #a8a8a8 solid;
+	width: 100%;
+	overflow: hidden;
+}
+
+.groupMemberPhotoContainerStyleClass {
+	float: left;
+	margin-right: 8px;
+}
+
+.groupMemberInfoContainerStyleClass {
+	float: left;
+	line-height: 18px;
+}
+
+.groupMemberStatusContainerStyleClass {
+	font-weight: bold;
+}
