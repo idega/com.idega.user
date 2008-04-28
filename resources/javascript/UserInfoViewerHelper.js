@@ -63,8 +63,6 @@ function getSelectedUsers(instanceId, containerId, message) {
 		return;
 	}
 
-	showLoadingMessage(message);
-
 	prepareDwr(GroupService, getDefaultDwrPath());
 	GroupService.getUserStatusLocalization({
 		callback: function(list) {
@@ -106,6 +104,11 @@ function getUserPropertiesCallback(properties, containerId) {
 			callback: function(result) {
 				getGroupsUsersData(result, properties, containerId);
 			},
+			errorHandler: function(message) {
+				closeAllLoadingMessages();
+				return false;
+			},
+			timeout: 10000,
 			rpcType:dwr.engine.XMLHttpRequest
 		});
 	}
@@ -230,7 +233,7 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 				image.injectInside(imageContainer);
 				
 				//	Add reflecion?
-				if (properties.addReflection) {
+				if (properties.addReflection && image != null) {
 					image.addReflection({height: '0.16', opacity: '0.55'});
 				}
 			}
@@ -242,15 +245,9 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 				
 		//	Status
 		if (properties.showStatus) {
-			getGroupInfoEntryPO(localizedText[11], getLocalizationForUserStatus(members[j].status), true, properties.showLabels, 'groupMemberStatusContainerStyleClass').injectInside(infoContainer);
-		
-			if (members[j].status != null && members[j].status != '') {
-				//	Empty line
-				var emptyLine = new Element('div');
-				emptyLine.addClass('emptyLineContainerStyleClass');
-				new Element('br').injectInside(emptyLine);
-				emptyLine.injectInside(infoContainer);
-			}
+			var userStatusKey = members[j].status;
+			var localizedUserStatus = getLocalizationForUserStatus(userStatusKey);
+			addUserStatusLine(localizedText, localizedUserStatus, properties, infoContainer, userStatusKey);
 		}
 		
 		//	Name and age
@@ -347,6 +344,43 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 	closeAllLoadingMessages();	
 }
 
+function addUserStatusLine(localizedText, localizedUserStatus, properties, infoContainer, userStatusKey) {
+	if (localizedUserStatus == null) {
+		if (userStatusKey == null || userStatusKey == '') {
+			localizedUserStatus = '';
+		}
+		else {
+			GroupService.getUserStatusLocalizationByKey(userStatusKey, {
+				callback: function(statusByKey) {
+					localizedUserStatus = statusByKey;
+					
+					if (localizedUserStatus == null) {
+						localizedUserStatus = userStatusKey;
+					}
+					
+					addUserStatusLineWithNotEmptyLocalizedStatus(localizedText, localizedUserStatus, properties, infoContainer, userStatusKey);
+				},
+				rpcType:dwr.engine.XMLHttpRequest
+			});
+		}
+	}
+	else {
+		addUserStatusLineWithNotEmptyLocalizedStatus(localizedText, localizedUserStatus, properties, infoContainer, userStatusKey);
+	}
+}
+
+function addUserStatusLineWithNotEmptyLocalizedStatus(localizedText, localizedUserStatus, properties, infoContainer, userStatusKey) {
+	getGroupInfoEntryPO(localizedText[11], localizedUserStatus, true, properties.showLabels, 'groupMemberStatusContainerStyleClass').injectInside(infoContainer);
+	
+	if (userStatusKey != null && userStatusKey != '') {
+		//	Empty line
+		var emptyLine = new Element('div');
+		emptyLine.addClass('emptyLineContainerStyleClass');
+		new Element('br').injectInside(emptyLine);
+		emptyLine.injectInside(infoContainer);
+	}
+}
+
 function getUserNameAndAgeContainer(name, age, properties, localizedText) {
 	var container = new Element('div');
 	container.addClass('groupMemberNameAndAgeContainerStyleClass');
@@ -439,20 +473,23 @@ function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, 
 }
 
 function getLocalizationForUserStatus(key) {
-	if (LOCALIZATIONS == null || key == null) {
+	if (key == null) {
 		return null;
 	}
 	
 	var localization = null;
 	var found = false;
-	for (var i = 0; i < LOCALIZATIONS.length; i++) {
-		if (LOCALIZATIONS[i].id == key) {
-			localization = LOCALIZATIONS[i].value;
-			found = true;
+	if (LOCALIZATIONS != null) {
+		for (var i = 0; i < LOCALIZATIONS.length; i++) {
+			if (LOCALIZATIONS[i].id == key) {
+				localization = LOCALIZATIONS[i].value;
+				found = true;
+			}
 		}
 	}
 	if (found) {
 		return localization;
 	}
-	return 'Unknown';
+	
+	return null;
 }

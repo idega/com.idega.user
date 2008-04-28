@@ -116,4 +116,6 @@ public interface GroupService extends IBOSession {
 	public Map<String, List<String>> getUniqueIds(String cacheName) throws NullPointerException;
 	
 	public boolean isUserLoggedOn(IWContext iwc, String login, String password);
+	
+	public String getUserStatusLocalizationByKey(String key);
 }

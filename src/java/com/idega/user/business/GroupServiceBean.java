@@ -39,6 +39,7 @@ import com.idega.user.data.User;
 import com.idega.user.presentation.group.GroupInfoViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.IWTimestamp;
 import com.idega.webface.WFUtil;
 
 public class GroupServiceBean extends IBOSessionBean implements GroupService {
@@ -626,8 +627,30 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		addStatusLocalization(statusLocalization, "STAT_PHYSIOTHERAPIST", iwrb.getLocalizedString("STAT_PHYSIOTHERAPIST", "Physio Therapist"));
 		addStatusLocalization(statusLocalization, "STAT_GUIDE", iwrb.getLocalizedString("STAT_GUIDE", "Tour Guide"));
 		addStatusLocalization(statusLocalization, "STAT_REGION_MANAGER", iwrb.getLocalizedString("STAT_REGION_MANAGER", "Regional Manager"));
+		addStatusLocalization(statusLocalization, "SPORTS_REPRESENTATIVE", iwrb.getLocalizedString("SPORTS_REPRESENTATIVE", "Sports Representative"));
 		
 		return statusLocalization;
+	}
+	
+	public String getUserStatusLocalizationByKey(String key) {
+		if (key == null) {
+			return CoreConstants.EMPTY;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return CoreConstants.EMPTY;
+		}
+		
+		IWResourceBundle iwrb = null;
+		try {
+			iwrb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CoreConstants.EMPTY;
+		}
+		
+		return iwrb.getLocalizedString(key, key);
 	}
 	
 	@Override
@@ -658,12 +681,26 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	private boolean existsFileOnRemoteServer(String urlToFile) {
 		InputStream streamToFile = null;
 		
-		try {
-			URL dwr = new URL(urlToFile);
-			streamToFile = dwr.openStream();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
+		boolean opening = false;
+		boolean gotAnyResponse = false;
+		IWTimestamp timeToWaitForConnection = new IWTimestamp(System.currentTimeMillis() + 10000);	//	10 seconds to open connection
+		IWTimestamp now = IWTimestamp.RightNow();
+		while(!gotAnyResponse && timeToWaitForConnection.isLaterThan(now)) {
+			if (opening) {
+				//	Do nothing
+			}
+			else {
+				opening = true;
+				try {
+					URL dwr = new URL(urlToFile);
+					streamToFile = dwr.openStream();
+					gotAnyResponse = true;
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+			now = IWTimestamp.RightNow();
 		}
 		
 		if (streamToFile == null) {
