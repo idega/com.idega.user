@@ -63,8 +63,6 @@ function getSelectedUsers(instanceId, containerId, message) {
 		return;
 	}
 
-	showLoadingMessage(message);
-
 	prepareDwr(GroupService, getDefaultDwrPath());
 	GroupService.getUserStatusLocalization({
 		callback: function(list) {

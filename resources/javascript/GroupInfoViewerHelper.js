@@ -61,8 +61,6 @@ function getSelectedGroups(instanceId, containerId, message) {
 		return;
 	}
 
-	showLoadingMessage(message);
-
 	//	To be sure we'll call to 'local' server
 	prepareDwr(GroupService, getDefaultDwrPath());
 	GroupService.getGroupPropertiesBean(instanceId, {

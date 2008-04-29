@@ -80,7 +80,6 @@ function selectChildGroup(groupChooserId, containerId, parentGroupChooserId, ord
 	
 	var bean = new SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy, parameters);
 	
-	showLoadingMessage(message);
 	UserApplicationEngine.getMembersList(bean, {
 		callback: function(component) {
 			getMembersListCallback(component, containerId);
