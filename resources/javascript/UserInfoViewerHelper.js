@@ -107,7 +107,6 @@ function getUserPropertiesCallback(properties, containerId) {
 				getGroupsUsersData(result, properties, containerId);
 			},
 			errorHandler: function(message) {
-				alert('Unable to contact server!');
 				closeAllLoadingMessages();
 				return false;
 			},
