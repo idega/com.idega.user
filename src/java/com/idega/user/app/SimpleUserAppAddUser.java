@@ -8,6 +8,7 @@ import java.util.List;
 import javax.faces.component.UIComponent;
 
 import com.idega.business.SpringBeanLookup;
+import com.idega.content.business.ContentConstants;
 import com.idega.core.contact.data.Email;
 import com.idega.core.location.data.Country;
 import com.idega.idegaweb.IWResourceBundle;
@@ -328,7 +329,11 @@ public class SimpleUserAppAddUser extends Block {
 		container.add(getSpacer());
 		
 		List<String> ids = new ArrayList<String>();
-		Layer selectedGroupsContainer = helper.getSelectedGroupsByIds(iwc, user, groupsHelper, childGroups, ids, groupId);
+		String selectedGroupId = groupId;
+		if (selectedGroupId == null || ContentConstants.MINUS_ONE.equals(selectedGroupId)) {
+			selectedGroupId = parentGroupId;
+		}
+		Layer selectedGroupsContainer = helper.getSelectedGroupsByIds(iwc, user, groupsHelper, childGroups, ids, selectedGroupId);
 		fieldsContainer.add(selectedGroupsContainer);
 		
 		return ids;
@@ -507,7 +512,7 @@ public class SimpleUserAppAddUser extends Block {
 		GenericButton back = new GenericButton(iwrb.getLocalizedString("back", "Back"));
 		StringBuffer backAction = new StringBuffer("goBackToSimpleUserApp('").append(parentComponentInstanceId);
 		backAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(parentContainerId).append(SimpleUserApp.PARAMS_SEPARATOR);
-		backAction.append(iwrb.getLocalizedString("loading", "Loading...")).append("')");
+		backAction.append(iwrb.getLocalizedString("loading", "Loading...")).append(SimpleUserApp.PARAMS_SEPARATOR).append(ids.get(0)).append("');");
 		back.setOnClick(backAction.toString());
 		container.add(back);
 		

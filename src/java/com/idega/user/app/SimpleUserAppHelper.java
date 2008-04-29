@@ -115,6 +115,7 @@ public class SimpleUserAppHelper {
 		StringBuffer action = null;
 		boolean checkGroup = false;
 		String minusOne = "-1";
+		String styleClass = "selectSubGroupInSimpleUserAppCheckBoxStyle";
 		for (int i = 0; i < groups.size(); i++) {
 			group = groups.get(i);
 			
@@ -126,6 +127,7 @@ public class SimpleUserAppHelper {
 			//	Checkbox
 			groupId = group.getId() == null ? CoreConstants.EMPTY : group.getId();
 			CheckBox selectGroup = new CheckBox(group.getName(), groupId);
+			selectGroup.setStyleClass(styleClass);
 			if (minusOne.equals(selectedGroupId) && userGroups.size() == 0 && i == 0) {
 				checkGroup = true;
 			}

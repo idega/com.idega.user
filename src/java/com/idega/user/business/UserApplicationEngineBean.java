@@ -246,7 +246,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return builder.getRenderedComponent(iwc, addUser, true);
 	}
 	
-	public Document getSimpleUserApplication(String instanceId) {
+	public Document getSimpleUserApplication(String instanceId, Integer parentGroupId) {
 		if (instanceId == null) {
 			return null;
 		}
@@ -263,6 +263,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			if (children != null) {
 				viewUsers.removeAll(children);
 			}
+			viewUsers.setSelectedParentGroupId(parentGroupId);
 			
 			return BuilderLogic.getInstance().getRenderedComponent(iwc, viewUsers, true);
 		}
@@ -305,7 +306,11 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		List<Group> groups = helper.getFilteredChildGroups(iwc, parentGroupId.intValue(), groupTypes, groupRoles, ",");
 		List<String> ids = new ArrayList<String>();
-		Layer availableGroupsContainer = presentationHelper.getSelectedGroups(iwc, user, helper, groups, ids, null);
+		String selectedGroupId = null;
+		if (groups == null || groups.isEmpty()) {
+			selectedGroupId = String.valueOf(parentGroupId);
+		}
+		Layer availableGroupsContainer = presentationHelper.getSelectedGroups(iwc, user, helper, groups, ids, selectedGroupId);
 		
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, availableGroupsContainer, true);
 	}

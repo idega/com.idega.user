@@ -25,7 +25,7 @@ public interface UserApplicationEngine {
 	
 	public Document getAddUserPresentationObject(SimpleUserPropertiesBean bean, List<Integer> parentGroups, List<Integer> childGroups, Integer userId);
 	
-	public Document getSimpleUserApplication(String instanceId);
+	public Document getSimpleUserApplication(String instanceId, Integer parentGroupId);
 	
 	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, Integer userId, String groupTypes, String groupRoles);
 	

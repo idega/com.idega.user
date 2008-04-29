@@ -272,10 +272,13 @@ function getAddUserPresentationObjectCallback(component, containerId) {
 	return true;
 }
 
-function goBackToSimpleUserApp(instanceId, containerId, message) {
+function goBackToSimpleUserApp(instanceId, containerId, message, parentGroupChooserId) {
 	refreshDeselectedGroups();
+	
+	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
+	
 	showLoadingMessage(message);
-	UserApplicationEngine.getSimpleUserApplication(instanceId, {
+	UserApplicationEngine.getSimpleUserApplication(instanceId, parentGroupId, {
 		callback: function(component) {
 			getAddUserPresentationObjectCallback(component, containerId);
 		} 
@@ -475,6 +478,19 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 				selectedGroups.push(checkboxValue);
 			}
 		}
+		
+		if (selectedGroups.length == 0 && DESELECTED_GROUPS.length == 0) {
+			//	Mostly ids changed
+			var checkBoxesInSUA = getElementsByClassName(document.body, 'input', 'selectSubGroupInSimpleUserAppCheckBoxStyle');
+			if (checkBoxesInSUA != null) {
+				for (var i = 0; i < checkBoxesInSUA.length; i++) {
+					checkboxValue = getCheckboxValueFromCheckBox(checkBoxesInSUA[i], true);
+					if (checkboxValue != null) {
+						selectedGroups.push(checkboxValue);
+					}
+				}
+			}
+		}
 		if (selectedGroups.length == 0 && DESELECTED_GROUPS.length == 0) {
 			selectedGroups.push(getCheckboxValue(childGroups[0], false));	// Nothing selected, adding the first group
 		}
@@ -568,7 +584,11 @@ function getCheckboxValue(id, checkIfChecked) {
 	if (id == null) {
 		return null;
 	}
-	var checkbox = document.getElementById(id);
+
+	return getCheckboxValueFromCheckBox(document.getElementById(id), checkIfChecked);
+}
+
+function getCheckboxValueFromCheckBox(checkbox, checkIfChecked) {
 	if (checkbox == null) {
 		return null;
 	}

@@ -39,6 +39,8 @@ public class SimpleUserAppViewUsers extends Block {
 	private String groupTypesForChildGroups = null;
 	private String roleTypesForChildGroups = null;
 	
+	private Integer selectedParentGroupId = null;
+	
 	private boolean getParentGroupsFromTopNodes = true;
 	private boolean useChildrenOfTopNodesAsParentGroups = false;
 	private boolean allFieldsEditable = false;
@@ -482,7 +484,20 @@ public class SimpleUserAppViewUsers extends Block {
 					action.append(");");
 					groupsDropdown.setOnChange(action.toString());
 					container.add(groupsDropdown);
-					return filteredTopGroups.get(0);
+					
+					if (selectedParentGroupId == null) {
+						return filteredTopGroups.get(0);
+					}
+					groupsDropdown.setSelectedElement(selectedParentGroupId);
+					Group selectedGroup = null;
+					String groupID = String.valueOf(selectedParentGroupId);
+					for (int i = 0; (i < filteredTopGroups.size() && selectedGroup == null); i++) {
+						selectedGroup = filteredTopGroups.get(i);
+						if (!selectedGroup.getId().equals(groupID)) {
+							selectedGroup = null;
+						}
+					}
+					return selectedGroup;
 				}
 				else if (filteredTopGroups.size() == 1) {
 					//	Only one group available
@@ -580,5 +595,8 @@ public class SimpleUserAppViewUsers extends Block {
 	public boolean isUseChildrenOfTopNodesAsParentGroups() {
 		return useChildrenOfTopNodesAsParentGroups;
 	}
-	
+
+	public void setSelectedParentGroupId(Integer selectedParentGroupId) {
+		this.selectedParentGroupId = selectedParentGroupId;
+	}
 }
