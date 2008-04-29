@@ -63,6 +63,8 @@ function getSelectedUsers(instanceId, containerId, message) {
 		return;
 	}
 
+	showLoadingMessage(message);
+
 	prepareDwr(GroupService, getDefaultDwrPath());
 	GroupService.getUserStatusLocalization({
 		callback: function(list) {
@@ -105,6 +107,7 @@ function getUserPropertiesCallback(properties, containerId) {
 				getGroupsUsersData(result, properties, containerId);
 			},
 			errorHandler: function(message) {
+				alert('Unable to contact server!');
 				closeAllLoadingMessages();
 				return false;
 			},
@@ -233,7 +236,7 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 				image.injectInside(imageContainer);
 				
 				//	Add reflecion?
-				if (properties.addReflection && image != null) {
+				if (properties.addReflection) {
 					image.addReflection({height: '0.16', opacity: '0.55'});
 				}
 			}
@@ -245,9 +248,15 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 				
 		//	Status
 		if (properties.showStatus) {
-			var userStatusKey = members[j].status;
-			var localizedUserStatus = getLocalizationForUserStatus(userStatusKey);
-			addUserStatusLine(localizedText, localizedUserStatus, properties, infoContainer, userStatusKey);
+			getGroupInfoEntryPO(localizedText[11], getLocalizationForUserStatus(members[j].status), true, properties.showLabels, 'groupMemberStatusContainerStyleClass').injectInside(infoContainer);
+		
+			if (members[j].status != null && members[j].status != '') {
+				//	Empty line
+				var emptyLine = new Element('div');
+				emptyLine.addClass('emptyLineContainerStyleClass');
+				new Element('br').injectInside(emptyLine);
+				emptyLine.injectInside(infoContainer);
+			}
 		}
 		
 		//	Name and age
@@ -344,43 +353,6 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 	closeAllLoadingMessages();	
 }
 
-function addUserStatusLine(localizedText, localizedUserStatus, properties, infoContainer, userStatusKey) {
-	if (localizedUserStatus == null) {
-		if (userStatusKey == null || userStatusKey == '') {
-			localizedUserStatus = '';
-		}
-		else {
-			GroupService.getUserStatusLocalizationByKey(userStatusKey, {
-				callback: function(statusByKey) {
-					localizedUserStatus = statusByKey;
-					
-					if (localizedUserStatus == null) {
-						localizedUserStatus = userStatusKey;
-					}
-					
-					addUserStatusLineWithNotEmptyLocalizedStatus(localizedText, localizedUserStatus, properties, infoContainer, userStatusKey);
-				},
-				rpcType:dwr.engine.XMLHttpRequest
-			});
-		}
-	}
-	else {
-		addUserStatusLineWithNotEmptyLocalizedStatus(localizedText, localizedUserStatus, properties, infoContainer, userStatusKey);
-	}
-}
-
-function addUserStatusLineWithNotEmptyLocalizedStatus(localizedText, localizedUserStatus, properties, infoContainer, userStatusKey) {
-	getGroupInfoEntryPO(localizedText[11], localizedUserStatus, true, properties.showLabels, 'groupMemberStatusContainerStyleClass').injectInside(infoContainer);
-	
-	if (userStatusKey != null && userStatusKey != '') {
-		//	Empty line
-		var emptyLine = new Element('div');
-		emptyLine.addClass('emptyLineContainerStyleClass');
-		new Element('br').injectInside(emptyLine);
-		emptyLine.injectInside(infoContainer);
-	}
-}
-
 function getUserNameAndAgeContainer(name, age, properties, localizedText) {
 	var container = new Element('div');
 	container.addClass('groupMemberNameAndAgeContainerStyleClass');
@@ -473,23 +445,20 @@ function getPhonesAndEmailsContainer(homePhone, workPhone, mobilePhone, emails, 
 }
 
 function getLocalizationForUserStatus(key) {
-	if (key == null) {
+	if (LOCALIZATIONS == null || key == null) {
 		return null;
 	}
 	
 	var localization = null;
 	var found = false;
-	if (LOCALIZATIONS != null) {
-		for (var i = 0; i < LOCALIZATIONS.length; i++) {
-			if (LOCALIZATIONS[i].id == key) {
-				localization = LOCALIZATIONS[i].value;
-				found = true;
-			}
+	for (var i = 0; i < LOCALIZATIONS.length; i++) {
+		if (LOCALIZATIONS[i].id == key) {
+			localization = LOCALIZATIONS[i].value;
+			found = true;
 		}
 	}
 	if (found) {
 		return localization;
 	}
-	
-	return null;
+	return 'Unknown';
 }

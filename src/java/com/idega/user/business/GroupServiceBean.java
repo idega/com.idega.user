@@ -627,30 +627,8 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		addStatusLocalization(statusLocalization, "STAT_PHYSIOTHERAPIST", iwrb.getLocalizedString("STAT_PHYSIOTHERAPIST", "Physio Therapist"));
 		addStatusLocalization(statusLocalization, "STAT_GUIDE", iwrb.getLocalizedString("STAT_GUIDE", "Tour Guide"));
 		addStatusLocalization(statusLocalization, "STAT_REGION_MANAGER", iwrb.getLocalizedString("STAT_REGION_MANAGER", "Regional Manager"));
-		addStatusLocalization(statusLocalization, "SPORTS_REPRESENTATIVE", iwrb.getLocalizedString("SPORTS_REPRESENTATIVE", "Sports Representative"));
 		
 		return statusLocalization;
-	}
-	
-	public String getUserStatusLocalizationByKey(String key) {
-		if (key == null) {
-			return CoreConstants.EMPTY;
-		}
-		
-		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
-			return CoreConstants.EMPTY;
-		}
-		
-		IWResourceBundle iwrb = null;
-		try {
-			iwrb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return CoreConstants.EMPTY;
-		}
-		
-		return iwrb.getLocalizedString(key, key);
 	}
 	
 	@Override

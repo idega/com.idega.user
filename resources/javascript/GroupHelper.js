@@ -262,7 +262,13 @@ function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConn
 		callback: function(result) {
 			canUseRemoteCallback(result, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, selectedGroups, styleClass);
 		},
-		rpcType:dwr.engine.XMLHttpRequest
+		errorHandler: function(message) {
+			alert('Unable to contact server!');
+			closeAllLoadingMessages();
+			return false;
+		},
+		timeout: 10000,
+		rpcType: dwr.engine.XMLHttpRequest
 	});
 }
 

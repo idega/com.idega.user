@@ -92,6 +92,12 @@ function getGroupPropertiesCallback(properties, containerId) {
 			callback: function(result) {
 				getGroupsData(result, properties, containerId);
 			},
+			errorHandler: function(message) {
+				alert('Unable to contact server!');
+				closeAllLoadingMessages();
+				return false;
+			},
+			timeout: 10000,
 			rpcType:dwr.engine.XMLHttpRequest
 		});
 	}
