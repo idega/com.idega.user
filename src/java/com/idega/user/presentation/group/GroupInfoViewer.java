@@ -60,7 +60,7 @@ public class GroupInfoViewer extends GroupViewer {
 		parameters[0] = instanceId;
 		parameters[1] = properties;
 		
-		Class[] classes = new Class[2];
+		Class<?>[] classes = new Class[2];
 		classes[0] = String.class;
 		classes[1] = GroupPropertiesBean.class;
 		
