@@ -41,7 +41,7 @@
 			List<Integer> UserApplicationEngine.removeUsers(List<Integer>, Integer);
 			Document UserApplicationEngine.getMembersList(SimpleUserPropertiesBean);
 			Document UserApplicationEngine.getAddUserPresentationObject(SimpleUserPropertiesBean, List<Integer>, List<Integer>, Integer);
-			Document UserApplicationEngine.getSimpleUserApplication(String);
+			Document UserApplicationEngine.getSimpleUserApplication(String, Integer);
 			Document UserApplicationEngine.getAvailableGroupsForUserPresentationObject(Integer, Integer, String, String);
 			UserDataBean UserApplicationEngine.getUserByPersonalId(String);
 			String UserApplicationEngine.createUser(UserDataBean, Integer, List<Integer>, List<Integer>, boolean);
