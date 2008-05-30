@@ -388,7 +388,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 				if (postalCode != null) {
 					postalCodeValue = postalCode.getPostalCode();
 				}
-				bean.setPostalBox(postalCodeValue == null ? CoreConstants.EMPTY : postalCodeValue);
+				bean.setPostalCodeId(postalCodeValue == null ? CoreConstants.EMPTY : postalCodeValue);
 				
 				String countryName = CoreConstants.EMPTY;
 				Country country = address.getCountry();
@@ -551,8 +551,15 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			try {
 				Country country = getCountryById(userInfo.getCountryName());
 				PostalCode postalCode = getPostalCode(userInfo.getPostalCodeId());
-				userAddress = userBusiness.updateUsersMainAddressOrCreateIfDoesNotExist(user, userInfo.getStreetNameAndNumber(), postalCode, country, userInfo.getCity(),
-						userInfo.getProvince(), userInfo.getPostalBox(), null);
+				if (postalCode == null) {
+					postalCode = createPostalCode(userInfo.getPostalCodeId());
+				}
+				else {
+					postalCode.setPostalCode(userInfo.getPostalCodeId());
+					postalCode.store();
+				}
+				userAddress = userBusiness.updateUsersMainAddressOrCreateIfDoesNotExist(user, userInfo.getStreetNameAndNumber(), postalCode, country,
+						userInfo.getCity(), userInfo.getProvince(), userInfo.getPostalBox(), null);
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			} catch (RemoteException e) {
@@ -616,6 +623,19 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		user.store();
 		
 		return sucessText;
+	}
+	
+	private PostalCode createPostalCode(String postalCodeValue) {
+		PostalCode postalCode = null;
+		try {
+			PostalCodeHome postalCodeHome = (PostalCodeHome) getIDOHome(PostalCode.class);
+			postalCode = postalCodeHome.create();
+			postalCode.setPostalCode(postalCodeValue);
+			postalCode.store();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return postalCode;
 	}
 	
 	private void checkChildGroups(List<Integer> childGroups, Integer primaryGroupId) {		
@@ -812,6 +832,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return needErrorMessage ? errorMessage : sucessMessage;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String saveGroup(String name, String homePageId, String type, String description, String parentGroupId, String groupId) {
 		if (name == null) {
 			return null;
@@ -904,6 +925,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName()) ? group.getId() : null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<AdvancedProperty> findAvailablePages(String phrase) {
 		if (phrase == null || CoreConstants.EMPTY.equals(phrase)) {
 			return null;
@@ -1046,6 +1068,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return presentationHelper.getRolesEditor(iwc, groupId, addInput);
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean changePermissionValueForRole(int groupId, String permissionKey, String roleKey, boolean value) {
 		if (permissionKey == null || roleKey == null) {
 			return false;
