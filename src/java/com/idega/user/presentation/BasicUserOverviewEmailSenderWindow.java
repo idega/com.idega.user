@@ -1,5 +1,5 @@
 /*
- * $Id: BasicUserOverviewEmailSenderWindow.java,v 1.2.2.4 2008/03/10 22:42:41 gimmi Exp $
+ * $Id: BasicUserOverviewEmailSenderWindow.java,v 1.2.2.5 2008/06/02 14:05:18 valdas Exp $
  * Created on Nov 28, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -164,7 +164,7 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		this.subjectField.setContent((String)iwc.getSessionAttribute(PARAM_SUBJECT));
 		this.mailToLink.setRecipients((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS));
 
-		if (iwc.getUserAgent() != null && iwc.getUserAgent().contains("Windows")) {
+		if (iwc.getUserAgent() != null && iwc.getUserAgent().indexOf("Windows") != -1) {
 			// Encoding HAX for encoding the 
 			String enc = iwc.getIWMainApplication().getSettings().getProperty("email_subject_char_encoding_for_windows", "iso-8859-1");
 			if (!enc.equals("none")) {
