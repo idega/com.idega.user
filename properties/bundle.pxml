@@ -180,12 +180,12 @@
               <map>
                 <key>
                   <name>component_property_file</name>
-	              <type>java.lang.String</type>
-	              <value>com.idega.user.presentation.UserDetailPreferences.pxml</value>
-	            </key>
-	          </map>
-	        </value>
-	        <type>map</type>
+                  <type>java.lang.String</type>
+                  <value>com.idega.user.presentation.UserDetailPreferences.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
           </key>
           <key>
             <name>com.idega.user.presentation.UserImage</name>
@@ -193,12 +193,38 @@
               <map>
                 <key>
                   <name>component_property_file</name>
-	              <type>java.lang.String</type>
-	              <value>com.idega.user.presentation.UserImage.pxml</value>
-	            </key>
-	          </map>
-	        </value>
-	        <type>map</type>
+                  <type>java.lang.String</type>
+                  <value>com.idega.user.presentation.UserImage.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
+            <name>com.idega.user.data.UserGroupPlugIn</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.user.data.UserGroupPlugIn.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
+            <name>com.idega.user.data.TopNodeGroup</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.user.data.TopNodeGroup.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
           </key>
         </map>
       </value>
