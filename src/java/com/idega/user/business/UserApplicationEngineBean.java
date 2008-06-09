@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.ejb.CreateException;
@@ -989,7 +990,12 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		pages.addAll(getFilteredPages(pagesWithoutLocalizedName, null));
 		
 		if (!pages.isEmpty()) {
-			Collections.sort(pages, new AdvancedPropertyComparator());
+			Locale locale = null;
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc != null) {
+				locale = iwc.getCurrentLocale();
+			}
+			Collections.sort(pages, new AdvancedPropertyComparator(locale == null ? Locale.ENGLISH : locale));
 		}
 		return pages;
 	}
