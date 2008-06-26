@@ -7,7 +7,6 @@ import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.block.web2.business.Web2Business;
-import com.idega.business.SpringBeanLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -16,6 +15,7 @@ import com.idega.user.business.UserConstants;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.PresentationUtil;
+import com.idega.webface.WFUtil;
 
 public class GroupViewer extends Block {
 	
@@ -137,7 +137,7 @@ public class GroupViewer extends Block {
 		
 		if (!addDirectly) {
 			//	MooTools and reflection
-			Web2Business web2 = SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+			Web2Business web2 = WFUtil.getBeanInstance(iwc, Web2Business.SPRING_BEAN_IDENTIFIER);
 			if (web2 != null) {
 				try {
 					files.add(web2.getBundleURIToMootoolsLib());
@@ -149,15 +149,10 @@ public class GroupViewer extends Block {
 		}
 		
 		if (addDirectly) {
-			for (int i = 0; i < files.size(); i++) {
-				add(new StringBuffer("<script type=\"text/javascript\" src=\"").append(files.get(i)).append("\"><!--//--></script>").toString());
-			}
+			add(PresentationUtil.getJavaScriptSourceLines(files));
 		}
 		else {
-			AddResource resource = AddResourceFactory.getInstance(iwc);
-			for (int i = 0; i < files.size(); i++) {
-				resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, files.get(i));
-			}
+			PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, files);
 		}
 	}
 

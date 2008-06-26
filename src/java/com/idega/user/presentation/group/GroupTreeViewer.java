@@ -1,17 +1,17 @@
 package com.idega.user.presentation.group;
 
 import java.rmi.RemoteException;
-
-import org.apache.myfaces.renderkit.html.util.AddResource;
-import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.idega.block.web2.business.Web2Business;
-import com.idega.business.SpringBeanLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.util.CoreConstants;
+import com.idega.util.PresentationUtil;
+import com.idega.webface.WFUtil;
 
 public class GroupTreeViewer extends Block {
 	
@@ -50,26 +50,27 @@ public class GroupTreeViewer extends Block {
 		if (addExtraJavaScript) {
 			IWBundle iwb = getBundle(iwc);
 			
-			AddResource resource = AddResourceFactory.getInstance(iwc);
+			List<String> files = new ArrayList<String>();
 			
 			//	"Helpers"
-			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
-			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN,iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
+			files.add(iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
+			files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
 			
 			//	DWR
-			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
-			resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CoreConstants.DWR_ENGINE_SCRIPT);
+			files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+			files.add(CoreConstants.DWR_ENGINE_SCRIPT);
 			
-			//	Mootools
-			Web2Business web2 = SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
-			
+			//	MooTools
+			Web2Business web2 = WFUtil.getBeanInstance(iwc, Web2Business.SPRING_BEAN_IDENTIFIER);
 			if (web2 != null) {
 				try {
-					resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, web2.getBundleURIToMootoolsLib());
+					files.add(web2.getBundleURIToMootoolsLib());
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
 			}
+		
+			PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, files);
 		}
 		
 		//	Actions to be performed on page loaded event

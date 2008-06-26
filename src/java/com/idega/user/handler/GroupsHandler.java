@@ -16,7 +16,7 @@ import com.idega.util.CoreConstants;
 
 public class GroupsHandler implements ICPropertyHandler {
 
-	public List getDefaultHandlerTypes() {
+	public List<?> getDefaultHandlerTypes() {
 		return null;
 	}
 

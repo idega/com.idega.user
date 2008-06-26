@@ -5,11 +5,7 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 
-import org.apache.myfaces.renderkit.html.util.AddResource;
-import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
-
 import com.idega.block.web2.business.Web2Business;
-import com.idega.business.SpringBeanLookup;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
@@ -29,6 +25,8 @@ import com.idega.presentation.ui.util.AbstractChooserBlock;
 import com.idega.user.bean.PropertiesBean;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.PresentationUtil;
+import com.idega.webface.WFUtil;
 
 public class GroupsChooserBlock extends AbstractChooserBlock {
 	
@@ -119,13 +117,11 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 	
 	private void addJavaScript(IWContext iwc) {		
 		if (addExtraJavaScript) {
-			//	MooTools
-			Web2Business web2Bean = SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+			Web2Business web2Bean = WFUtil.getBeanInstance(iwc, Web2Business.SPRING_BEAN_IDENTIFIER);
 			
 			if (web2Bean != null) {
 				try {
-					AddResource resource = AddResourceFactory.getInstance(iwc);
-					resource.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, web2Bean.getBundleURIToMootoolsLib());
+					PresentationUtil.addJavaScriptSourceLineToHeader(iwc, web2Bean.getBundleURIToMootoolsLib());
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
