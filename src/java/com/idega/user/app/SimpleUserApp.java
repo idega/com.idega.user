@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.idega.builder.business.BuilderLogic;
-import com.idega.business.SpringBeanLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -15,6 +14,7 @@ import com.idega.user.data.Group;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.PresentationUtil;
+import com.idega.util.expression.ELUtil;
 
 public class SimpleUserApp extends Block {
 	
@@ -69,12 +69,8 @@ public class SimpleUserApp extends Block {
 				addGroupCreateButton, addGroupEditButton);
 		container.add(viewUsers);
 		
-		UserApplicationEngine userEngine = null;
-		try {
-			userEngine = SpringBeanLookup.getInstance().getSpringBean(iwc, UserApplicationEngine.class);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		UserApplicationEngine userEngine = ELUtil.getInstance().getBean(UserApplicationEngine.class);
+		
 		if (userEngine != null) {
 			userEngine.addViewUsersCase(instanceId, viewUsers);
 		}

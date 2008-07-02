@@ -11,11 +11,9 @@ import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
-import com.idega.business.SpringBeanLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICRole;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
@@ -37,6 +35,7 @@ import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
+import com.idega.util.expression.ELUtil;
 
 public class SimpleUserAppHelper {
 
@@ -172,11 +171,11 @@ public class SimpleUserAppHelper {
 	}
 	
 	protected String getJavaScriptParameter(String parameter) {
-		return SpringBeanLookup.getInstance().getSpringBean(IWMainApplication.getDefaultIWApplicationContext(), GroupHelper.class).getJavaScriptParameter(parameter);
+		return ELUtil.getInstance().getBean(GroupHelper.class).getJavaScriptParameter(parameter);
 	}
 	
 	protected String getActionForAddUserView(SimpleUserPropertiesBean bean, String userId) {
-		return SpringBeanLookup.getInstance().getSpringBean(IWMainApplication.getDefaultIWApplicationContext(), GroupHelper.class).getActionForAddUserView(bean, userId);
+		return ELUtil.getInstance().getBean(GroupHelper.class).getActionForAddUserView(bean, userId);
 	}
 	
 	protected String getJavaScriptFunctionParameter(List<String> parameters) {

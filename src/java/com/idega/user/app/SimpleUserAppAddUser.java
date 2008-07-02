@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 
-import com.idega.business.SpringBeanLookup;
 import com.idega.content.business.ContentConstants;
 import com.idega.core.contact.data.Email;
 import com.idega.core.location.data.Country;
@@ -29,6 +28,7 @@ import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.expression.ELUtil;
 
 public class SimpleUserAppAddUser extends Block {
 	
@@ -64,7 +64,7 @@ public class SimpleUserAppAddUser extends Block {
 	}
 
 	public void main(IWContext iwc) {
-		groupsHelper = SpringBeanLookup.getInstance().getSpringBean(iwc, GroupHelper.class);
+		groupsHelper = ELUtil.getInstance().getBean(GroupHelper.class);
 		
 		Layer container = new Layer();
 		add(container);
@@ -174,7 +174,7 @@ public class SimpleUserAppAddUser extends Block {
 		
 		//	***************************** Data for inputs *****************************
 		UserDataBean userInfo = new UserDataBean();
-		UserApplicationEngine userEngine = SpringBeanLookup.getInstance().getSpringBean(iwc, UserApplicationEngine.class);
+		UserApplicationEngine userEngine = ELUtil.getInstance().getBean(UserApplicationEngine.class);
 		if (user != null) {
 			userInfo = userEngine.getUserInfo(user);
 		}

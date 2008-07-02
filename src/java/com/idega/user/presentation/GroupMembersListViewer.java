@@ -3,7 +3,6 @@ package com.idega.user.presentation;
 import java.util.List;
 import java.util.Random;
 
-import com.idega.business.SpringBeanLookup;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -16,6 +15,7 @@ import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.business.GroupHelper;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.expression.ELUtil;
 
 public class GroupMembersListViewer extends Block {
 	
@@ -31,7 +31,7 @@ public class GroupMembersListViewer extends Block {
 		if (bean == null || image == null) {
 			return;
 		}
-		GroupHelper helper = SpringBeanLookup.getInstance().getSpringBean(iwc, GroupHelper.class);
+		GroupHelper helper = ELUtil.getInstance().getBean(GroupHelper.class);
 		if (helper == null) {
 			return;
 		}

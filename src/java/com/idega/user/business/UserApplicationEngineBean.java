@@ -24,7 +24,6 @@ import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBPageName;
 import com.idega.builder.data.IBPageNameHome;
 import com.idega.business.IBOLookup;
-import com.idega.business.SpringBeanLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
@@ -59,6 +58,7 @@ import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.EmailValidator;
+import com.idega.util.expression.ELUtil;
 
 public class UserApplicationEngineBean implements UserApplicationEngine {
 
@@ -73,7 +73,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 	
 	public GroupHelper getGroupHelperBean() {
 		if (groupHelper == null) {
-			groupHelper = SpringBeanLookup.getInstance().getSpringBean(CoreUtil.getIWContext(), GroupHelper.class);
+			groupHelper = ELUtil.getInstance().getBean(GroupHelper.class);
 		}
 		return groupHelper;
 	}

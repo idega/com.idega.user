@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.idega.block.web2.business.Web2Business;
 import com.idega.builder.business.BuilderLogic;
-import com.idega.business.SpringBeanLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
@@ -26,6 +25,7 @@ import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.PresentationUtil;
+import com.idega.util.expression.ELUtil;
 
 public class SimpleUserAppViewUsers extends Block {
 
@@ -73,7 +73,7 @@ public class SimpleUserAppViewUsers extends Block {
 
 	@Override
 	public void main(IWContext iwc) {
-		groupsHelper = SpringBeanLookup.getInstance().getSpringBean(iwc, GroupHelper.class);
+		groupsHelper = ELUtil.getInstance().getBean(GroupHelper.class);
 		
 		Layer container = new Layer();
 		add(container);
@@ -230,7 +230,7 @@ public class SimpleUserAppViewUsers extends Block {
 		}
 		
 		if (addGroupCreateButton || addGroupEditButton) {
-			Web2Business web2 = SpringBeanLookup.getInstance().getSpringBean(iwc, Web2Business.class);
+			Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.class);
 			List<String> jsSources = new ArrayList<String>();
 			List<String> css = new ArrayList<String>();
 			try {

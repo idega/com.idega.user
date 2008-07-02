@@ -17,7 +17,6 @@ import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBOSessionBean;
-import com.idega.business.SpringBeanLookup;
 import com.idega.business.chooser.helper.GroupsChooserHelper;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.data.LoginTable;
@@ -40,6 +39,7 @@ import com.idega.user.presentation.group.GroupInfoViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.expression.ELUtil;
 import com.idega.webface.WFUtil;
 
 public class GroupServiceBean extends IBOSessionBean implements GroupService {
@@ -60,7 +60,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 
 	private GroupHelper getGroupHelper(IWContext iwc) {
 		if (helper == null) {
-			helper = SpringBeanLookup.getInstance().getSpringBean(iwc, GroupHelper.class);
+			helper = ELUtil.getInstance().getBean(GroupHelper.class);
 		}
 		return helper;
 	}
@@ -627,8 +627,30 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		addStatusLocalization(statusLocalization, "STAT_PHYSIOTHERAPIST", iwrb.getLocalizedString("STAT_PHYSIOTHERAPIST", "Physio Therapist"));
 		addStatusLocalization(statusLocalization, "STAT_GUIDE", iwrb.getLocalizedString("STAT_GUIDE", "Tour Guide"));
 		addStatusLocalization(statusLocalization, "STAT_REGION_MANAGER", iwrb.getLocalizedString("STAT_REGION_MANAGER", "Regional Manager"));
+		addStatusLocalization(statusLocalization, "SPORTS_REPRESENTATIVE", iwrb.getLocalizedString("SPORTS_REPRESENTATIVE", "Sports Representative"));
 		
 		return statusLocalization;
+	}
+	
+	public String getUserStatusLocalizationByKey(String key) {
+		if (key == null) {
+			return CoreConstants.EMPTY;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return CoreConstants.EMPTY;
+		}
+		
+		IWResourceBundle iwrb = null;
+		try {
+			iwrb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return CoreConstants.EMPTY;
+		}
+		
+		return iwrb.getLocalizedString(key, key);
 	}
 	
 	@Override

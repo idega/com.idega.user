@@ -11,7 +11,6 @@ import javax.ejb.FinderException;
 import com.idega.builder.data.IBPageName;
 import com.idega.builder.data.IBPageNameHome;
 import com.idega.business.IBOLookup;
-import com.idega.business.SpringBeanLookup;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.IDOLookup;
@@ -37,6 +36,7 @@ import com.idega.user.data.GroupTypeBMPBean;
 import com.idega.user.data.GroupTypeHome;
 import com.idega.util.CoreConstants;
 import com.idega.util.PresentationUtil;
+import com.idega.util.expression.ELUtil;
 
 public class SimpleGroupCreator extends Block {
 
@@ -192,7 +192,7 @@ public class SimpleGroupCreator extends Block {
 		container.add(rolesTabContent);
 		rolesTabContent.setId(this.rolesTab);
 		rolesTabContent.setStyleClass(mootabsPanel);
-		rolesTabContent.add(SpringBeanLookup.getInstance().getSpringBean(iwc, UserApplicationEngine.class).getRolesEditor(iwc, editedGroupId == null ? -1 :Integer.valueOf(editedGroupId), true));
+		rolesTabContent.add(ELUtil.getInstance().getBean(UserApplicationEngine.class).getRolesEditor(iwc, editedGroupId == null ? -1 :Integer.valueOf(editedGroupId), true));
 		
 		//	Save button
 		Layer buttonsContainer = new Layer();
