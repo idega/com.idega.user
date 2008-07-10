@@ -1106,7 +1106,9 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		boolean result = setRoleByPermissionForGroup(iwc, accessController, groupId, value, roleKey, permissionKey);
-		if (result) {
+
+		//removed by Eiki, roles should not be written to sub groups as well by default, an be added again if the interface has the option to do a recursive add and the user is notified.
+		/*if (result) {
 			try {
 				Collection<Group> groups = groupBusiness.getChildGroupsRecursive(group);
 				if (groups != null && !groups.isEmpty()) {
@@ -1119,9 +1121,9 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			}
 			
 			return true;
-		}
+		}*/
 		
-		return false;
+		return result;
 	}
 	
 	private boolean setRoleByPermissionForGroup(IWContext iwc, AccessController accessController, int groupId, boolean value, String roleKey, String permissionKey) {
