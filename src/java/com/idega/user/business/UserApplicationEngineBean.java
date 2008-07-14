@@ -33,6 +33,7 @@ import com.idega.core.builder.data.ICPageHome;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneTypeBMPBean;
+import com.idega.core.data.ICTreeNode;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
@@ -125,16 +126,39 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			return null;
 		}
 		
+		Locale locale = iwc.getCurrentLocale();
+		if (locale == null) {
+			locale = Locale.ENGLISH;
+		}
+		
 		Group group = null;
 		List<AdvancedProperty> childGroupsProperties = new ArrayList<AdvancedProperty>();
-		childGroupsProperties.add(new AdvancedProperty("-1", CoreConstants.MINUS));
 		for (Iterator<Group> it = childGroups.iterator(); it.hasNext();) {
 			group = it.next();
 			
-			childGroupsProperties.add(new AdvancedProperty(group.getId(), group.getName()));
+			childGroupsProperties.add(new AdvancedProperty(group.getId(), getGroupNameInTreeOrientedWay(group, locale)));
 		}
 		
+		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
+		childGroupsProperties.add(0, new AdvancedProperty("-1", iwrb.getLocalizedString("select_group", "Select group")));
+		
 		return childGroupsProperties;
+	}
+	
+	private String getGroupNameInTreeOrientedWay(Group group, Locale locale) {
+		ICTreeNode parentGroup = group.getParentNode();
+		StringBuilder name = new StringBuilder();
+		while (parentGroup != null) {
+			name.append(CoreConstants.MINUS);
+			parentGroup = parentGroup.getParentNode();
+		}
+		
+		String levels = name.toString();
+		levels = levels.replaceFirst(CoreConstants.MINUS, CoreConstants.EMPTY);
+		
+		String groupName = group.getNodeName(locale);
+		
+		return levels.equals(CoreConstants.EMPTY) ? groupName : new StringBuilder(levels).append(CoreConstants.SPACE).append(groupName).toString();
 	}
 	
 	public List<Integer> removeUsers(List<Integer> usersIds, Integer groupId) {
@@ -1067,6 +1091,9 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		for (Group group: groups) {
 			result.add(new AdvancedProperty(group.getId(), group.getName()));
 		}
+		
+		Collections.sort(result, new AdvancedPropertyComparator(iwc.getCurrentLocale()));
+		
 		return result;
 	}
 
@@ -1074,7 +1101,6 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return presentationHelper.getRolesEditor(iwc, groupId, addInput);
 	}
 
-	@SuppressWarnings("unchecked")
 	public boolean changePermissionValueForRole(int groupId, String permissionKey, String roleKey, boolean value) {
 		if (permissionKey == null || roleKey == null) {
 			return false;
