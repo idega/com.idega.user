@@ -14,6 +14,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
+import com.idega.presentation.Span;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CountryDropdownMenu;
 import com.idega.presentation.ui.DropdownMenu;
@@ -28,6 +29,7 @@ import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 public class SimpleUserAppAddUser extends Block {
@@ -53,6 +55,11 @@ public class SimpleUserAppAddUser extends Block {
 	private GroupHelper groupsHelper = null;
 	private SimpleUserAppHelper helper = new SimpleUserAppHelper();
 	
+	private IWResourceBundle iwrb = null;
+	
+	private String requiredFieldLocalizationKey = "this_field_is_required";
+	private String requiredFieldLocalizationValue = "This field is required!";
+	
 	public SimpleUserAppAddUser(String parentComponentInstanceId, String parentContainerId, boolean allFieldsEditable) {
 		if (parentComponentInstanceId == null || parentContainerId == null) {
 			throw new NullPointerException("Provide valid parameters for " + SimpleUserAppAddUser.class.getName());
@@ -69,7 +76,7 @@ public class SimpleUserAppAddUser extends Block {
 		Layer container = new Layer();
 		add(container);
 		
-		IWResourceBundle iwrb = getResourceBundle(iwc);
+		iwrb = getResourceBundle(iwc);
 		
 		//	User
 		String id = null;
@@ -180,7 +187,10 @@ public class SimpleUserAppAddUser extends Block {
 		}
 		
 		//	Personal ID
-		idValueInput.setContent(personalId == null ? CoreConstants.EMPTY : personalId);
+		if (!StringUtil.isEmpty(personalId)) {
+			idValueInput.setContent(personalId);
+			idValueInput.setDisabled(true);
+		}
 		
 		//	Name
 		if (!allFieldsEditable) {
@@ -277,9 +287,16 @@ public class SimpleUserAppAddUser extends Block {
 		selectGroupsLabelContainer.setStyleClass("addUserlabelContainerStyleClass");
 		container.add(selectGroupsLabelContainer);
 		selectGroupsLabelContainer.add(new Text(iwrb.getLocalizedString("select_sub_group", "Select sub group")));
+		addRequiredFieldMark(selectGroupsLabelContainer);
 		Layer selectedGroupsContainer = new Layer();
 		container.add(selectedGroupsContainer);
 		List<String> childGroups = addSelectedGroups(iwc, user, selectedGroupsContainer, availableGroupsOfUserContaianer);
+		
+		//	Explanation text
+		Layer explanationContainer = getLabelContainer(null, true);
+		container.add(explanationContainer);
+		explanationContainer.add(new Text("&nbsp;"));
+		explanationContainer.add(new Text(iwrb.getLocalizedString(requiredFieldLocalizationKey, requiredFieldLocalizationValue)));
 		
 		//	Buttons
 		Layer buttons = new Layer();
@@ -349,12 +366,12 @@ public class SimpleUserAppAddUser extends Block {
 		container.add(getSpacer());
 		
 		//	Login
-		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("login", "Username")));
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("login", "Username"), true));
 		fieldsContainer.add(getComponentContainer(loginValueInput));
 		fieldsContainer.add(getSpacer());
 		
 		//	Password
-		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("password", "Password")));
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("password", "Password"), true));
 		fieldsContainer.add(getComponentContainer(passwordInput));
 	}
 	
@@ -372,10 +389,29 @@ public class SimpleUserAppAddUser extends Block {
 	}
 	
 	private Layer getLabelContainer(String localizedText) {
+		return getLabelContainer(localizedText, false);
+	}
+	
+	private Layer getLabelContainer(String localizedText, boolean required) {
 		Layer labelContainer = new Layer();
 		labelContainer.setStyleClass("userFieldLabelContainerStyleClass");
-		labelContainer.add(new Text(localizedText));
+		
+		if (!StringUtil.isEmpty(localizedText)) {
+			labelContainer.add(new Text(localizedText));
+		}
+		
+		if (required) {
+			addRequiredFieldMark(labelContainer);
+		}
+		
 		return labelContainer;
+	}
+	
+	private void addRequiredFieldMark(Layer container) {
+		Span requiredText = new Span(new Text("*"));
+		requiredText.setStyleClass("requiredFieldUserApp");
+		requiredText.setToolTip(iwrb.getLocalizedString(requiredFieldLocalizationKey, requiredFieldLocalizationValue));
+		container.add(requiredText);
 	}
 	
 	private Layer getComponentContainer(UIComponent component) {
@@ -402,7 +438,7 @@ public class SimpleUserAppAddUser extends Block {
 		fieldsContainer.add(getSpacer());
 		
 		//	Name
-		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("user.user_name", "Name")));
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("user.user_name", "Name"), true));
 		fieldsContainer.add(getComponentContainer(inputs.get(1)));
 		fieldsContainer.add(getSpacer());
 		
@@ -412,7 +448,7 @@ public class SimpleUserAppAddUser extends Block {
 		fieldsContainer.add(getSpacer());
 		
 		//	Email
-		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("email", "Email")));
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("email", "Email"), true));
 		fieldsContainer.add(getComponentContainer(inputs.get(3)));
 		fieldsContainer.add(getSpacer());
 		
@@ -463,7 +499,7 @@ public class SimpleUserAppAddUser extends Block {
 		container.add(getDescriptionContainer(iwrb.getLocalizedString("add_user_parent_group_description", "Select parent group")));
 		container.add(getSpacer());
 		
-		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("select_parent_group", "Select parent group")));
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("select_parent_group", "Select parent group"), true));
 		
 		Layer parentGroupValueContainer = getComponentContainer(null);
 		fieldsContainer.add(parentGroupValueContainer);

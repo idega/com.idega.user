@@ -581,3 +581,4 @@ role=Role
 saving=Saving...
 error_saving_group=Error occurred while saving your changes.
 success_saving_group=Your changes were successfully saved.
+this_field_is_required=This field is required!

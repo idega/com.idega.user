@@ -349,3 +349,6 @@ user_contact_search.description=Searches for user contact information
 
 please_enter_name=Please, enter name!
 please_enter_login=Please, enter login!
+
+this_field_is_required=This field is required!
+user_application_view_users_descripton=To view users in the groups first select the parent group and then the desired sub group. You can remove a user from a group by checking the checkboxes here down below and by clicking the "Remove" button. To add new users to a group click the "Add User" button.

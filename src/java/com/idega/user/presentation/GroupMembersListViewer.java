@@ -3,6 +3,7 @@ package com.idega.user.presentation;
 import java.util.List;
 import java.util.Random;
 
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -13,6 +14,7 @@ import com.idega.presentation.ui.CheckBox;
 import com.idega.user.app.SimpleUserApp;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.business.GroupHelper;
+import com.idega.user.business.UserConstants;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.expression.ELUtil;
@@ -41,6 +43,8 @@ public class GroupMembersListViewer extends Block {
 			return;
 		}
 		
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+		
 		Layer container = new Layer();
 		fixId(container);
 		add(container);
@@ -56,7 +60,7 @@ public class GroupMembersListViewer extends Block {
 		
 		String odd = "odd";
 		String even = "even";
-		String unknown = getResourceBundle(iwc).getLocalizedString("unknown", "Unknown");
+		String unknown = iwrb.getLocalizedString("unknown", "Unknown");
 		String name = null;
 		String personalId = null;
 		String userId = null;
@@ -111,7 +115,7 @@ public class GroupMembersListViewer extends Block {
 			Image changeUserImage = new Image(image);
 			fixId(changeUserImage);
 			changeUserImage.setStyleClass(changeUserImageStyleClass);
-			
+			changeUserImage.setToolTip(iwrb.getLocalizedString("change_user", "Change user"));
 			changeUserImage.setOnClick(helper.getActionForAddUserView(bean, userId));
 			changeUserContainer.add(changeUserImage);
 			lineContainer.add(changeUserContainer);
@@ -120,6 +124,7 @@ public class GroupMembersListViewer extends Block {
 			fixId(removeUserContainer);
 			removeUserContainer.setStyleClass(removeUserContainerStyleClass);
 			CheckBox removeUserCheckbox = new CheckBox();
+			removeUserCheckbox.setToolTip(iwrb.getLocalizedString("remove_user", "Remove user"));
 			fixId(removeUserCheckbox);
 			checkBoxAction = new StringBuffer("removeUser('").append(lineContainer.getId());
 			checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(userId);
@@ -129,6 +134,11 @@ public class GroupMembersListViewer extends Block {
 			removeUserContainer.add(removeUserCheckbox);
 			lineContainer.add(removeUserContainer);
 		}
+	}
+	
+	@Override
+	public String getBundleIdentifier() {
+		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
 	
 	private void fixId(PresentationObject component) {

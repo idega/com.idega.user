@@ -121,7 +121,7 @@ public class SimpleUserAppViewUsers extends Block {
 		Layer descriptionContainer = new Layer();
 		choosersAndDescription.add(descriptionContainer);
 		descriptionContainer.setStyleClass("userApplicationDescriptionContainerStyleClass");
-		descriptionContainer.add(new Text(getResourceBundle(iwc).getLocalizedString("user_application_view_users_descripton", "To view users in the groups first select the parent group and then the desired sub group. You can remove a user from a group by checking the checkboxes here down below and by clicking the \"Remove\" button. To add new users to a group click the \"Add Users\" button.")));
+		descriptionContainer.add(new Text(getResourceBundle(iwc).getLocalizedString("user_application_view_users_descripton", "To view users in the groups first select the parent group and then the desired sub group. You can remove a user from a group by checking the checkboxes here down below and by clicking the \"Remove\" button. To add new users to a group click the \"Add User\" button.")));
 		
 		//	Spacer
 		choosersAndDescription.add(getSpacer());

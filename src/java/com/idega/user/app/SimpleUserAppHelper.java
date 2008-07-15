@@ -196,6 +196,7 @@ public class SimpleUserAppHelper {
 		return params.toString();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput) {
 		if (iwc == null) {
 			return null;
@@ -343,6 +344,7 @@ public class SimpleUserAppHelper {
 		return false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<ICRole> getAllRolesWithoutMasterRole(AccessController accessControler) {
 		Collection<ICRole> allRoles = accessControler.getAllRoles();
         if (allRoles == null || allRoles.isEmpty()) {

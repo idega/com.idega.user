@@ -3,6 +3,8 @@ package com.idega.user.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.idega.block.web2.business.JQueryUIType;
+import com.idega.block.web2.business.Web2Business;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
@@ -86,9 +88,16 @@ public class SimpleUserApp extends Block {
 		
 		files.add(bundle.getVirtualPathWithFileNameString("javascript/SimpleUserAppHelper.js"));
 		
+		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.class);
+		files.add(web2.getBundleURIToJQueryLib());
+		files.add(web2.getBundleURIToJQueryUILib(JQueryUIType.UI_EASING));
+		files.add(web2.getBundleUriToHumanizedMessagesScript());	
+		
 		List<String> cssFiles = new ArrayList<String>();
 		cssFiles.add(bundle.getVirtualPathWithFileNameString("style/user.css"));
 		cssFiles.add(bundle.getVirtualPathWithFileNameString("style/screen.css"));
+		cssFiles.add(web2.getBundleUriToHumanizedMessagesStyleSheet());
+		
 		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
 			container.add(PresentationUtil.getJavaScriptSourceLines(files));
 			container.add(PresentationUtil.getStyleSheetsSourceLines(cssFiles));

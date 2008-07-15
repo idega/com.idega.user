@@ -195,7 +195,7 @@
 
 .userFieldsContainerStyleClass {
 	float: left;
-	width: 75%;
+	width: 73%;
 }
 
 .descriptionContainerStyleClass {
@@ -350,4 +350,9 @@
 
 .groupMemberStatusContainerStyleClass {
 	font-weight: bold;
+}
+
+span.requiredFieldUserApp {
+	color: #FF2700;
+	font-size: 1.4em;
 }

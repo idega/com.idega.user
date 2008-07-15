@@ -113,7 +113,7 @@ function MarkedUsers(containerId, userId, groupId) {
 
 function removeSelectedUsers(message, areYouSure, nothingSelected) {
 	if (USERS_TO_REMOVE.length == 0) {
-		alert(nothingSelected);
+		showHumanizedMessage(nothingSelected, null);
 		return false;
 	}
 	
@@ -378,7 +378,7 @@ function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 		return false;
 	}
 	if (bean.errorMessage != null) {
-		alert(bean.errorMessage);
+		showHumanizedMessage(bean.errorMessage, null);
 		return false;
 	}
 	
@@ -445,7 +445,7 @@ function saveUserInSimpleUserApplication(ids, childGroups, messages, allFieldsEd
 function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsEditable, userId) {
 	closeAllLoadingMessages();
 	if (result != null) {
-		alert(result);
+		showHumanizedMessage(result, ids[5]);
 		return false;
 	}
 	
@@ -499,7 +499,7 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 	//	Name
 	var nameInput = document.getElementById(nameValueInputId);
 	if (!checkIfValidValue(nameInput)) {
-		alert(messages[2]);
+		showHumanizedMessage(messages[2], nameValueInputId);
 		return false;
 	}
 	var userName = nameInput.value;
@@ -507,7 +507,7 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 	//	Login
 	var loginInput = document.getElementById(loginInputId);
 	if (!checkIfValidValue(loginInput)) {
-		alert(messages[3]);
+		showHumanizedMessage(messages[3], loginInputId);
 		return false;
 	}
 	var login = loginInput.value;
@@ -517,7 +517,7 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 	//	Password
 	var passwordInput = document.getElementById(passwordInputId);
 	if (!checkIfValidValue(passwordInput)) {
-		alert(messages[1]);
+		showHumanizedMessage(messages[1], passwordInputId);
 		return false;
 	}
 	var password = passwordInput.value;
@@ -545,10 +545,17 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 		callback: function(result) {
 			closeAllLoadingMessages();
 			if (result != null) {
-				alert(result);
+				showHumanizedMessage(result, null);
 			}
 		}
 	});
+}
+
+function showHumanizedMessage(message, inputId) {
+	if (inputId != null) {
+		document.getElementById(inputId).focus();
+	}
+	humanMsg.displayMsg(message);
 }
 
 function checkIfValidValue(input) {
@@ -799,7 +806,7 @@ function saveGroupInSimpleUserApplication(ids) {
 			UserApplicationEngine.getGroupSaveStatus(savedGroupId == null, {
 				callback: function(message) {
 					closeAllLoadingMessages();
-					alert(message);
+					showHumanizedMessage(message, null);
 					
 					if (savedGroupId != null) {
 						UserApplicationEngine.getRenderedRolesEditor(savedGroupId, {
