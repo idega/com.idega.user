@@ -48,7 +48,6 @@ public class GroupChooserBlock extends AbstractChooserBlock {
 		viewer.setAddIdAttribute(true);
 		
 		Link link = new Link();
-		link = new Link();
 		link.setURL("javascript:void(0)");
 		link.setNoTextObject(true);
 		

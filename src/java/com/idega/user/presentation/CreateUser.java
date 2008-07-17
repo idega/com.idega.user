@@ -191,12 +191,12 @@ public class CreateUser extends StyledIWAdminWindow {
 		User newUser = null;
 		Group group = null;
 		Integer primaryGroupId = null;
-		if (this.primaryGroup != null && !this.primaryGroup.equals("")) {
+		if (this.selectedGroupId != null && !this.selectedGroupId.equals("")) {
 			TransactionManager transaction = IdegaTransactionManager.getInstance();
 			try {
 				// START A TRANSACTION!
 				transaction.begin();
-				primaryGroupId = new Integer(this.primaryGroup);
+				primaryGroupId = new Integer(this.selectedGroupId);
 				if ((this.ssn != null || !this.ssn.equals("")) && (this.fullName == null || this.fullName.equals(""))) {
 					try {
 						newUser = getUserBusiness(iwc).getUser(this.ssn);
