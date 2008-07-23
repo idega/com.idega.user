@@ -6,12 +6,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.idegaweb.IWResourceBundle;
@@ -21,7 +23,6 @@ import com.idega.presentation.Table2;
 import com.idega.presentation.TableCell2;
 import com.idega.presentation.TableRow;
 import com.idega.presentation.TableRowGroup;
-import com.idega.presentation.text.Heading1;
 import com.idega.presentation.text.Heading3;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
@@ -35,6 +36,7 @@ import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
+import com.idega.util.ListUtil;
 import com.idega.util.expression.ELUtil;
 
 public class SimpleUserAppHelper {
@@ -220,11 +222,11 @@ public class SimpleUserAppHelper {
 		String message = iwrb.getLocalizedString("saving", "Saving...");
 		
 		AccessController accessControler = iwc.getAccessController();
-		List<ICRole> allRoles = getAllRolesWithoutMasterRole(accessControler);
+		List<ICRole> allRoles = getAllRolesWithoutMasterRole(iwc, accessControler);
 		boolean addTable = true;
-		if (allRoles == null || allRoles.isEmpty()) {
-			rolesContainer.add(new Heading1(iwrb.getLocalizedString("no_roles", "There are no roles...")));
-			addTable = false;
+		if (ListUtil.isEmpty(allRoles)) {
+			rolesContainer.add(new Heading3(iwrb.getLocalizedString("no_roles", "There are no roles...")));
+			return container;
 		}
 		
 		if (group == null) {
@@ -345,21 +347,52 @@ public class SimpleUserAppHelper {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<ICRole> getAllRolesWithoutMasterRole(AccessController accessControler) {
+	private List<ICRole> getAllRolesWithoutMasterRole(IWContext iwc, AccessController accessControler) {
 		Collection<ICRole> allRoles = accessControler.getAllRoles();
-        if (allRoles == null || allRoles.isEmpty()) {
+		if (ListUtil.isEmpty(allRoles)) {
         	return null;
         }
-
-        List<ICRole> roles = new ArrayList<ICRole>();
-        ICRole role = null;
-        for (Iterator<ICRole> it = allRoles.iterator(); it.hasNext();) {
-        	role = it.next();
-        	if (!role.getRoleKey().equals(AccessController.PERMISSION_KEY_ROLE_MASTER)) {
-        		roles.add(role);
+		
+		if (iwc.isSuperAdmin()) {
+	        List<ICRole> roles = new ArrayList<ICRole>();
+	        ICRole role = null;
+	        for (Iterator<ICRole> it = allRoles.iterator(); it.hasNext();) {
+	        	role = it.next();
+	        	if (!role.getRoleKey().equals(AccessController.PERMISSION_KEY_ROLE_MASTER)) {
+	        		roles.add(role);
+	        	}
+	        }
+        
+        	return roles;
+        }
+        
+        User user = null;
+        try {
+        	user = iwc.getCurrentUser();
+        } catch(NotLoggedOnException e) {}
+        if (user == null) {
+        	return null;
+        }
+        
+        Set userRoles = accessControler.getAllRolesForUser(user);
+        if (ListUtil.isEmpty(userRoles)) {
+        	return null;
+        }
+        
+		Collection<String> rolesKeys = new ArrayList<String>();
+        for (Iterator it = userRoles.iterator(); it.hasNext();) {
+        	rolesKeys.add(it.next().toString());
+        }
+        List<ICRole> filteredRoles = new ArrayList<ICRole>();
+        for (String roleKey: rolesKeys) {
+        	for (ICRole generalRole: allRoles) {
+        		if (roleKey.equals(generalRole.getRoleKey()) && !filteredRoles.contains(generalRole)) {        			
+        			filteredRoles.add(generalRole);
+        		}
         	}
         }
-        return roles;
+        
+        return filteredRoles;
 	}
 	
 }
