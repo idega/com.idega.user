@@ -349,11 +349,14 @@ public class SimpleUserAppHelper {
 	@SuppressWarnings("unchecked")
 	private List<ICRole> getAllRolesWithoutMasterRole(IWContext iwc, AccessController accessControler) {
 		Collection<ICRole> allRoles = accessControler.getAllRoles();
+		
+		System.out.println("____ALL ROLES="+allRoles);
 		if (ListUtil.isEmpty(allRoles)) {
         	return null;
         }
 		
 		if (iwc.isSuperAdmin()) {
+			System.out.println("_____IS SUPER ADMIN");
 	        List<ICRole> roles = new ArrayList<ICRole>();
 	        ICRole role = null;
 	        for (Iterator<ICRole> it = allRoles.iterator(); it.hasNext();) {
@@ -362,6 +365,8 @@ public class SimpleUserAppHelper {
 	        		roles.add(role);
 	        	}
 	        }
+	        
+	        System.out.println("_____RET ROLES="+roles);
         
         	return roles;
         }
@@ -375,6 +380,9 @@ public class SimpleUserAppHelper {
         }
         
         Set userRoles = accessControler.getAllRolesForUser(user);
+        
+        System.out.println("____USER ROLES="+userRoles);
+        
         if (ListUtil.isEmpty(userRoles)) {
         	return null;
         }
@@ -383,6 +391,8 @@ public class SimpleUserAppHelper {
         for (Iterator it = userRoles.iterator(); it.hasNext();) {
         	rolesKeys.add(it.next().toString());
         }
+        
+        System.out.println("____ROLES KEYS="+rolesKeys);
         List<ICRole> filteredRoles = new ArrayList<ICRole>();
         for (String roleKey: rolesKeys) {
         	for (ICRole generalRole: allRoles) {
@@ -391,6 +401,8 @@ public class SimpleUserAppHelper {
         		}
         	}
         }
+        
+        System.out.println("_____RET ROLES="+filteredRoles);
         
         return filteredRoles;
 	}
