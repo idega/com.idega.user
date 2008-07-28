@@ -26,6 +26,7 @@ import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.GenericUserComparator;
+import com.idega.util.ListUtil;
 
 public class GroupHelperBusinessBean implements GroupHelper {
 	
@@ -82,6 +83,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return userBusiness;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<GroupNode> convertGroupsToGroupNodes(Collection groups, IWContext iwc, boolean isFirstLevel, String imageBaseUri) {
 		List <GroupNode> list = new ArrayList<GroupNode>();
 		if (groups == null || iwc == null) {
@@ -147,6 +149,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return node;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public GroupNode addChildGroupsToNode(GroupNode parentNode, Collection groups, String image) {
 		if (groups == null) {
 			parentNode.setHasChildren(false);
@@ -178,6 +181,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return parentNode;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<Group> getChilrenfOfGroups(Collection groups) {
 		List<Group> children = new ArrayList<Group>();
 		if (groups == null) {
@@ -231,6 +235,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return getFilteredGroups(groups, types);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Collection<Group> getFilteredGroups(Collection groups, List<String> types) {
 		Collection<Group> filtered = new ArrayList<Group>();
 		
@@ -290,6 +295,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return getFilteredChildGroups(iwc, parent, groupTypes, groupRoles, splitter);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<Group> getFilteredChildGroups(IWContext iwc, Group parent, String groupTypes, String groupRoles, String splitter) {
 		List<Group> filtered = new ArrayList<Group>();
 		if (parent == null) {
@@ -379,6 +385,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return typesList;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<User> getSortedUsers(IWContext iwc, SimpleUserPropertiesBean bean) {
 		if (bean == null) {
 			return null;
@@ -489,6 +496,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return -1;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<String> getUserGroupsIds(IWContext iwc, User user) {
 		List<String> ids = new ArrayList<String>();
 		if (user == null) {
@@ -523,6 +531,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return ids;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Collection<Group> getTopGroupsFromDomain(IWContext iwc) {
 		ICDomain domain = iwc.getDomain();
 		if (domain == null) {
@@ -540,7 +549,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 			e.printStackTrace();
 		}
 		
-		if (topLevelGroups == null || topLevelGroups.isEmpty()) {
+		if (ListUtil.isEmpty(topLevelGroups)) {
 			if (BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName())) {
 				try {
 					topLevelGroups = domain.getTopLevelGroupsUnderDomain();
@@ -553,27 +562,43 @@ public class GroupHelperBusinessBean implements GroupHelper {
 				}
 			}
 		}
-		
-		return topLevelGroups;
+
+		return getSortedGroups(topLevelGroups, iwc);
 	}
 	
+	@SuppressWarnings("unchecked")
+	private List<Group> getSortedGroups(Collection<Group> groups, IWContext iwc) {
+		if (ListUtil.isEmpty(groups) || iwc == null) {
+			return new ArrayList<Group>();
+		}
+		
+		List<Group> groupsInList = new ArrayList<Group>(groups);
+		GroupComparator comparator = new GroupComparator(iwc);
+		comparator.setSortByParents(true);
+		comparator.setGroupBusiness(getGroupBusiness(iwc));
+		Collections.sort(groupsInList, comparator);
+		return groupsInList;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public Collection<Group> getTopGroups(IWContext iwc, User user) {
 		if (iwc == null || user == null) {
-			return new ArrayList();
+			return new ArrayList<Group>();
 		}
 		userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
-			return new ArrayList();
+			return new ArrayList<Group>();
 		}
 		
 		try {
 			return userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwc);
 		} catch (RemoteException e) {
 			e.printStackTrace();
-			return new ArrayList();
+			return new ArrayList<Group>();
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Collection<Group> getTopAndParentGroups(Collection topGroups) {
 		if (topGroups == null) {
 			return null;
@@ -594,7 +619,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 			}
 		}
 		
-		return topAndParentGroups;
+		return getSortedGroups(topAndParentGroups, CoreUtil.getIWContext());
 	}
 	
 	public String getGroupImageBaseUri(IWContext iwc) {
