@@ -133,7 +133,12 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		node.setUniqueId(uniqueId);
 		node.setName(group.getName());
 		node.setHasChildren(group.getChildCount() > 0);
+		node.setImage(getGroupIcon(group, imageBaseUri, nodeIsOpened));
 		
+		return node;
+	}
+	
+	public String getGroupIcon(Group group, String imageBaseUri, boolean nodeIsOpened) {
 		StringBuffer imageUri = new StringBuffer(imageBaseUri);
 		if (!imageBaseUri.endsWith(CoreConstants.SLASH)) {
 			imageUri.append(CoreConstants.SLASH);
@@ -144,9 +149,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 			imageEnd = "_node_open.gif";
 		}
 		imageUri.append(imageEnd);
-		node.setImage(imageUri.toString());
-		
-		return node;
+		return imageUri.toString();
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -29,6 +29,7 @@ public interface GroupHelper {
 	
 	public List<User> getSortedUsers(IWContext iwc, SimpleUserPropertiesBean bean);
 	
+	@SuppressWarnings("unchecked")
 	public Collection<Group> getTopAndParentGroups(Collection topGroups);
 	
 	public Collection<Group> getTopGroups(IWContext iwc, User user);
@@ -47,8 +48,10 @@ public interface GroupHelper {
 	
 	public List<String> getUserGroupsIds(IWContext iwc, User user);
 	
+	@SuppressWarnings("unchecked")
 	public GroupNode addChildGroupsToNode(GroupNode parentNode, Collection groups, String image);
 	
+	@SuppressWarnings("unchecked")
 	public List<GroupNode> convertGroupsToGroupNodes(Collection groups, IWContext iwc, boolean isFirstLevel, String imageBaseUri);
 	
 	public String getGroupImageBaseUri(IWContext iwc);
@@ -56,5 +59,7 @@ public interface GroupHelper {
 	public String getActionForAddUserView(SimpleUserPropertiesBean bean, String userId);
 	
 	public String getJavaScriptParameter(String parameter);
+	
+	public String getGroupIcon(Group group, String imageBaseUri, boolean nodeIsOpened);
 	
 }
