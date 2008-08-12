@@ -4,6 +4,30 @@ var DESELECTED_GROUPS = new Array();
 var USER_ID = null;
 var SAVE_GROUP_RESULT_IN_HIDDEN_INPUT_ID = 'saveGroupResultInHiddenInputIdForSimpleUserApplication';
 
+function setErrorHandlerForSimpleUserApplication(errorExplanations) {
+	var errorHandler = function(e) {
+		closeAllLoadingMessages();
+		
+		var errorFromDwr = null;
+		var errorExplanation = errorExplanations[0];
+		if (e) {
+			if (typeof(e) == 'string') {
+				errorFromDwr = e;
+			}
+			else if (e.message) {
+				errorFromDwr = e.message;
+			}
+		}
+		
+		if (errorFromDwr != null && errorFromDwr != '') {
+			errorExplanation += ' ' + errorExplanations[1] + ': ' + errorFromDwr
+		}
+		showHumanizedMessage(errorExplanation, null);
+	}
+	
+	DWREngine.setErrorHandler(errorHandler);
+}
+
 function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles, instanceId, mainContainerId, defaultGroupId,
 							parentGroupChooserId, groupTypesForParentGroups, useChildrenOfTopNodesAsParentGroups, allFieldsEditable) {
 	showLoadingMessage(message);

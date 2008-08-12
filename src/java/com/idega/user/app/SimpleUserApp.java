@@ -7,6 +7,7 @@ import com.idega.block.web2.business.JQueryUIType;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
@@ -98,6 +99,10 @@ public class SimpleUserApp extends Block {
 		cssFiles.add(bundle.getVirtualPathWithFileNameString("style/screen.css"));
 		cssFiles.add(web2.getBundleUriToHumanizedMessagesStyleSheet());
 		
+		IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
+		String initAction = new StringBuilder("setErrorHandlerForSimpleUserApplication(['")
+						.append(iwrb.getLocalizedString("error_in_simple_user_app", "Oopps, some error occured...")).append("', '")
+						.append(iwrb.getLocalizedString("error_message_from_server", "Error message from server")).append("']);").toString();
 		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
 			container.add(PresentationUtil.getJavaScriptSourceLines(files));
 			container.add(PresentationUtil.getStyleSheetsSourceLines(cssFiles));
@@ -105,7 +110,9 @@ public class SimpleUserApp extends Block {
 		else {
 			PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, files);
 			PresentationUtil.addStyleSheetsToHeader(iwc, cssFiles);
+			initAction = new StringBuilder("jQuery(window).load(function() {").append(initAction).append("});").toString();
 		}
+		PresentationUtil.addJavaScriptActionToBody(iwc, initAction);
 	}
 	
 	/** Methods for properties start **/
@@ -163,6 +170,7 @@ public class SimpleUserApp extends Block {
 
 	/** Methods for properties end **/
 
+	@Override
 	public String getBundleIdentifier() {
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
