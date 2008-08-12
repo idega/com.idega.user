@@ -27,6 +27,13 @@
     	</create>
 		<convert converter="bean" match="com.idega.user.bean.SimpleUserPropertiesBean" />
 		<convert converter="bean" match="com.idega.user.bean.UserDataBean" />
+		
+		<create creator="jsf" javascript="GroupsFilterEngine">
+			<param name="managedBeanName" value="groupsFilterEngine"></param>
+			<param name="class" value="com.idega.user.business.group.GroupsFilterEngine"></param>
+			<include method="getFilteredGroups" />
+			<include method="getChildGroups" />
+		</create>
 	</allow>
 	<signatures>
 		<![CDATA[
