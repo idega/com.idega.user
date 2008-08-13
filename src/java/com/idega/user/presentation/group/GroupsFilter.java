@@ -33,7 +33,7 @@ public class GroupsFilter extends Block {
 	
 	private List<String> selectedGroups;
 	
-	private int levelsToOpen = 2;
+	private int levelsToOpen = 1;
 	private boolean displayAllLevels;
 	
 	@Override

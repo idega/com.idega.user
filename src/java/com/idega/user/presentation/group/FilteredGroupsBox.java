@@ -24,7 +24,7 @@ import com.idega.util.expression.ELUtil;
 
 public class FilteredGroupsBox extends Block {
 	
-	private int levelsToOpen = 2;
+	private int levelsToOpen = 1;
 	
 	private Collection<Group> groups;
 	
