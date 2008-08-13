@@ -171,4 +171,12 @@ public class FilteredGroupsBox extends Block {
 		this.levelsToOpen = levelsToOpen;
 	}
 
+	public boolean isDisplayAllLevels() {
+		return displayAllLevels;
+	}
+
+	public void setDisplayAllLevels(boolean displayAllLevels) {
+		this.displayAllLevels = displayAllLevels;
+	}
+
 }

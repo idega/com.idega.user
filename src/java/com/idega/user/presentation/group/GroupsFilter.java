@@ -33,6 +33,9 @@ public class GroupsFilter extends Block {
 	
 	private List<String> selectedGroups;
 	
+	private int levelsToOpen = 2;
+	private boolean displayAllLevels;
+	
 	@Override
 	public void main(IWContext iwc) {
 		IWBundle bundle = getBundle(iwc);
@@ -106,6 +109,8 @@ public class GroupsFilter extends Block {
 	private FilteredGroupsBox getFilteredGroupsBox(IWContext iwc) {
 		FilteredGroupsBox filteredGroups = new FilteredGroupsBox();
 		filteredGroups.setGroups(getUserGroups(iwc));
+		filteredGroups.setLevelsToOpen(levelsToOpen);
+		filteredGroups.setDisplayAllLevels(displayAllLevels);
 		
 		String[] selectedInForm = iwc.getParameterValues(selectedGroupParameterName);
 		if (selectedInForm != null) {
@@ -155,6 +160,22 @@ public class GroupsFilter extends Block {
 
 	public void setSelectedGroupParameterName(String selectedGroupParameterName) {
 		this.selectedGroupParameterName = selectedGroupParameterName;
+	}
+
+	public int getLevelsToOpen() {
+		return levelsToOpen;
+	}
+
+	public void setLevelsToOpen(int levelsToOpen) {
+		this.levelsToOpen = levelsToOpen;
+	}
+
+	public boolean isDisplayAllLevels() {
+		return displayAllLevels;
+	}
+
+	public void setDisplayAllLevels(boolean displayAllLevels) {
+		this.displayAllLevels = displayAllLevels;
 	}
 
 }
