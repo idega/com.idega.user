@@ -2,6 +2,7 @@ package com.idega.user.business;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import com.idega.business.SpringBeanName;
 import com.idega.idegaweb.IWApplicationContext;
@@ -27,7 +28,7 @@ public interface GroupHelper {
 	
 	public List<Group> getGroups(IWContext iwc, List<Integer> groupsIds);
 	
-	public List<User> getSortedUsers(IWContext iwc, SimpleUserPropertiesBean bean);
+	public List<User> getUsersInGroup(IWContext iwc, SimpleUserPropertiesBean bean, boolean sort);
 	
 	@SuppressWarnings("unchecked")
 	public Collection<Group> getTopAndParentGroups(Collection topGroups);
@@ -62,4 +63,9 @@ public interface GroupHelper {
 	
 	public String getGroupIcon(Group group, String imageBaseUri, boolean nodeIsOpened);
 	
+	public List<User> getSortedUsers(Collection<User> users, Locale locale, boolean sortByPersonalId);
+
+	public List<User> getSortedUsers(Collection<User> users, Locale locale, SimpleUserPropertiesBean bean);
+	
+	public String getJavaScriptFunctionParameter(List<String> parameters);
 }

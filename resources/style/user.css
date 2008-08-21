@@ -391,3 +391,39 @@ input.checkBoxForFilteredGroupSelectionStyle {
 img.groupsFilterOpenOrCloseGroupsImageStyle {
 	visibility: hidden !important;
 }
+
+div.simpleUserApplicationGroupMembersPagerStyle {
+	color: #303030;
+	font-weight: bold;
+}
+
+div.simpleUserApplicationGroupMembersPreviousPagePagerStyle {
+	float: left;
+	margin-left: 10px;
+	margin-top: 8px;
+}
+
+img.simpleUserApplicationGroupMembersPreviousPageImageStyle {
+	cursor: pointer;
+	margin-right: 5px;
+}
+
+div.simpleUserApplicationGroupMembersNextPagePagerStyle {
+	float: right;
+	margin-right: 10px;
+	margin-top: 8px;
+}
+
+img.simpleUserApplicationGroupMembersNextPageImageStyle {
+	cursor: pointer;
+	margin-left: 5px;
+}
+
+div.simpleUserApplicationGroupMembersPageSizeStyle {
+	float: left;
+	padding-left: 27%;
+}
+
+input.simpleUserApplicationGroupMembersPagerPageSizeInputStyle {
+	width: 50px;
+}

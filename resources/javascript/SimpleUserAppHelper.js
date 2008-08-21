@@ -104,11 +104,11 @@ function selectChildGroup(groupChooserId, containerId, parentGroupChooserId, ord
 	
 	var bean = new SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy, parameters);
 	
-	UserApplicationEngine.getMembersList(bean, {
+	UserApplicationEngine.getMembersList(bean, containerId, {
 		callback: function(component) {
 			getMembersListCallback(component, containerId);
 		}
-	})
+	});
 }
 
 function getMembersListCallback(component, containerId) {
@@ -656,6 +656,7 @@ function SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy,
 	this.defaultGroupId = null;
 	this.groupTypes = null;
 	this.roleTypes = null;
+	this.count = 20;
 	
 	this.parentGroupId = parentGroupId;
 	this.groupId = groupId;
@@ -1020,6 +1021,27 @@ function addNewRoleKey(event, id, containerId, message) {
 			}
 			container.empty();
 			insertNodesToContainer(component, container);
+		}
+	});
+}
+
+function navigateInUsersList(params, beanParameters, orderBy, index, moveToLeft) {
+	var containerId = params[0];
+	var message = params[1];
+	var pageSize = DWRUtil.getValue(params[2]);
+	if (pageSize == null || pageSize == '' || isNaN(pageSize) || pageSize <= 0) {
+		showHumanizedMessage(params[3], params[2]);
+		return false;
+	}
+	var parentGroupId = getSelectObjectValue(params[4]);
+	var bean = new SimpleUserPropertiesBeanWithParameters(parentGroupId, params[5], orderBy, beanParameters);
+	bean.count = pageSize;
+	bean.from = moveToLeft ? index - pageSize : index;
+	
+	showLoadingMessage(message);
+	UserApplicationEngine.getMembersList(bean, containerId, {
+		callback: function(component) {
+			getMembersListCallback(component, containerId);
 		}
 	});
 }

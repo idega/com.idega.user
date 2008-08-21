@@ -46,7 +46,7 @@
 			
 			List<AdvancedProperty> UserApplicationEngine.getChildGroups(String, String, String);
 			List<Integer> UserApplicationEngine.removeUsers(List<Integer>, Integer);
-			Document UserApplicationEngine.getMembersList(SimpleUserPropertiesBean);
+			Document UserApplicationEngine.getMembersList(SimpleUserPropertiesBean, String);
 			Document UserApplicationEngine.getAddUserPresentationObject(SimpleUserPropertiesBean, List<Integer>, List<Integer>, Integer);
 			Document UserApplicationEngine.getSimpleUserApplication(String, Integer);
 			Document UserApplicationEngine.getAvailableGroupsForUserPresentationObject(Integer, Integer, String, String);

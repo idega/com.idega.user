@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -27,6 +28,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.GenericUserComparator;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 
 public class GroupHelperBusinessBean implements GroupHelper {
 	
@@ -389,7 +391,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<User> getSortedUsers(IWContext iwc, SimpleUserPropertiesBean bean) {
+	public List<User> getUsersInGroup(IWContext iwc, SimpleUserPropertiesBean bean, boolean sort) {
 		if (bean == null) {
 			return null;
 		}
@@ -413,18 +415,30 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		if (users == null) {
+		if (ListUtil.isEmpty(users)) {
+			return null;
+		}
+		
+		if (sort) {
+			return getSortedUsers(users, iwc.getCurrentLocale(), bean);
+		}
+		
+		return new ArrayList<User>(users);
+	}
+	
+	public List<User> getSortedUsers(Collection<User> users, Locale locale, SimpleUserPropertiesBean bean) {
+		return getSortedUsers(users, locale, bean.getOrderBy() == SimpleUserApp.USER_ORDER_BY_ID);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<User> getSortedUsers(Collection<User> users, Locale locale, boolean sortByPersonalId) {
+		if (ListUtil.isEmpty(users)) {
 			return null;
 		}
 		
 		List<User> sortedUsers = new ArrayList<User>(users);
-		if (bean.getOrderBy() == SimpleUserApp.USER_ORDER_BY_ID) {
-			Collections.sort(sortedUsers, new GenericUserComparator(iwc.getCurrentLocale(), GenericUserComparator.PERSONALID));
-		}
-		else if (bean.getOrderBy() == SimpleUserApp.USER_ORDER_BY_NAME) {
-			Collections.sort(sortedUsers, new GenericUserComparator(iwc.getCurrentLocale(), GenericUserComparator.FIRSTLASTMIDDLE));
-		}
-		
+		int comparatorId = sortByPersonalId ? GenericUserComparator.PERSONALID : GenericUserComparator.FIRSTLASTMIDDLE;
+		Collections.sort(sortedUsers, new GenericUserComparator(locale, comparatorId));
 		return sortedUsers;
 	}
 	
@@ -663,9 +677,27 @@ public class GroupHelperBusinessBean implements GroupHelper {
 	}
 
 	public String getJavaScriptParameter(String parameter) {
-		if (parameter == null) {
+		if (StringUtil.isEmpty(parameter) || parameter.equals("null")) {
 			return "null";
 		}
 		return new StringBuffer("'").append(parameter).append("'").toString();
+	}
+
+	public String getJavaScriptFunctionParameter(List<String> parameters) {
+		if (ListUtil.isEmpty(parameters)) {
+			return "null";
+		}
+		
+		StringBuffer params = new StringBuffer("[");
+	
+		for (int i = 0; i < parameters.size(); i++) {
+			params.append(getJavaScriptParameter(parameters.get(i)));
+			if (i + 1 < parameters.size()) {
+				params.append(SimpleUserApp.COMMA_SEPARATOR);
+			}
+		}
+	
+		params.append("]");
+		return params.toString();
 	}
 }

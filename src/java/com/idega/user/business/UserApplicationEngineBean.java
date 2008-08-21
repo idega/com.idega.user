@@ -59,6 +59,8 @@ import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.EmailValidator;
+import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 public class UserApplicationEngineBean implements UserApplicationEngine {
@@ -71,6 +73,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 	private SimpleUserAppHelper presentationHelper = new SimpleUserAppHelper();
 	
 	private Map<String, SimpleUserAppViewUsers> simpleUserApps = new HashMap<String, SimpleUserAppViewUsers>();
+	private Map<String, List<Integer>> pagerProperties = new HashMap<String, List<Integer>>();
 	
 	public GroupHelper getGroupHelperBean() {
 		if (groupHelper == null) {
@@ -213,7 +216,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return removedUsers;
 	}
 	
-	public Document getMembersList(SimpleUserPropertiesBean bean) {
+	public Document getMembersList(SimpleUserPropertiesBean bean, String containerId) {
 		if (bean == null) {
 			return null;
 		}
@@ -228,7 +231,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			image = bundle.getVirtualPathWithFileNameString(SimpleUserApp.EDIT_IMAGE);
 		}
 		
-		GroupMembersListViewer membersList = presentationHelper.getMembersList(bean, image, false);
+		GroupMembersListViewer membersList = presentationHelper.getMembersList(bean, image, containerId, false);
 		
 		BuilderLogic builder = BuilderLogic.getInstance();
 		return builder.getRenderedComponent(iwc, membersList, true);
@@ -285,7 +288,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			
 			SimpleUserAppViewUsers viewUsers = (SimpleUserAppViewUsers) simpleUserApp;
 			List<UIComponent> children = viewUsers.getChildren();
-			if (children != null) {
+			if (!ListUtil.isEmpty(children)) {
 				viewUsers.removeAll(children);
 			}
 			viewUsers.setSelectedParentGroupId(parentGroupId);
@@ -1186,5 +1189,29 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, getRolesEditor(iwc, groupId, false), false);
+	}
+
+	public List<Integer> getPagerProperties(String id) {
+		if (StringUtil.isEmpty(id) || pagerProperties == null) {
+			return null;
+		}
+		
+		try {
+			return pagerProperties.get(id);
+		} catch(ClassCastException e) {
+			e.printStackTrace();
+		} catch(NullPointerException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	public void setPagerProperties(String id, List<Integer> properties) {
+		if (StringUtil.isEmpty(id) || ListUtil.isEmpty(properties)) {
+			return;
+		}
+		
+		pagerProperties.put(id, properties);
 	}
 }

@@ -6,6 +6,9 @@ public class SimpleUserPropertiesBean {
 	private int groupId = -1;
 	private int orderBy = -1;
 	
+	private int from = 0;
+	private int count = 20;
+	
 	private String instanceId = null;
 	private String containerId = null;
 	private String parentGroupChooserId = null;
@@ -136,6 +139,22 @@ public class SimpleUserPropertiesBean {
 
 	public void setAllFieldsEditable(boolean allFieldsEditable) {
 		this.allFieldsEditable = allFieldsEditable;
+	}
+
+	public int getFrom() {
+		return from;
+	}
+
+	public void setFrom(int from) {
+		this.from = from;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
 	}
 	
 }

@@ -21,7 +21,7 @@ public interface UserApplicationEngine {
 	
 	public List<Integer> removeUsers(List<Integer> usersIds, Integer groupId);
 	
-	public Document getMembersList(SimpleUserPropertiesBean bean);
+	public Document getMembersList(SimpleUserPropertiesBean bean, String containerId);
 	
 	public Document getAddUserPresentationObject(SimpleUserPropertiesBean bean, List<Integer> parentGroups, List<Integer> childGroups, Integer userId);
 	
@@ -65,4 +65,8 @@ public interface UserApplicationEngine {
 	public Document addNewRole(String roleKey, int groupId);
 	
 	public String getGroupSaveStatus(boolean needErrorMessage);
+	
+	public void setPagerProperties(String id, List<Integer> properties);
+	
+	public List<Integer> getPagerProperties(String id);
 }

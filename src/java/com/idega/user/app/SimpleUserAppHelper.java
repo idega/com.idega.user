@@ -41,8 +41,9 @@ import com.idega.util.expression.ELUtil;
 
 public class SimpleUserAppHelper {
 
-	public GroupMembersListViewer getMembersList(SimpleUserPropertiesBean bean, String image, boolean checkIds) {
+	public GroupMembersListViewer getMembersList(SimpleUserPropertiesBean bean, String image, String containerId, boolean checkIds) {
 		GroupMembersListViewer list = new GroupMembersListViewer();
+		list.setContainerId(containerId);
 		list.setBean(bean);
 		list.setImage(image);
 		list.setCheckIds(checkIds);
@@ -181,21 +182,7 @@ public class SimpleUserAppHelper {
 	}
 	
 	protected String getJavaScriptFunctionParameter(List<String> parameters) {
-		if (parameters == null || parameters.size() == 0) {
-			return "null";
-		}
-		
-		StringBuffer params = new StringBuffer("[");
-	
-		for (int i = 0; i < parameters.size(); i++) {
-			params.append(getJavaScriptParameter(parameters.get(i)));
-			if (i + 1 < parameters.size()) {
-				params.append(SimpleUserApp.COMMA_SEPARATOR);
-			}
-		}
-	
-		params.append("]");
-		return params.toString();
+		return ELUtil.getInstance().getBean(GroupHelper.class).getJavaScriptFunctionParameter(parameters);
 	}
 	
 	@SuppressWarnings("unchecked")

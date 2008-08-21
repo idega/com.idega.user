@@ -19,11 +19,13 @@ import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.SelectOption;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.business.GroupHelper;
+import com.idega.user.business.UserApplicationEngine;
 import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.ListUtil;
 import com.idega.util.PresentationUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -184,8 +186,7 @@ public class SimpleUserAppViewUsers extends Block {
 		container.add(addUser);
 	}
 	
-	private void addMembersList(IWContext iwc, SimpleUserPropertiesBean bean, Layer container, Layer valuesContainer,
-			String mainContainerId) {
+	private void addMembersList(IWContext iwc, SimpleUserPropertiesBean bean, Layer container, Layer valuesContainer, String mainContainerId) {
 		IWBundle bundle = getBundle(iwc);
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
@@ -219,6 +220,15 @@ public class SimpleUserAppViewUsers extends Block {
 		
 		String image = bundle.getVirtualPathWithFileNameString(SimpleUserApp.EDIT_IMAGE);
 		GroupMembersListViewer list = new GroupMembersListViewer();
+		List<Integer> pagerProperties = null;
+		UserApplicationEngine userAppEngine = ELUtil.getInstance().getBean(UserApplicationEngine.class);
+		pagerProperties = userAppEngine.getPagerProperties(bean.getInstanceId());
+		if (!ListUtil.isEmpty(pagerProperties)) {
+			list.setLeftIndex(pagerProperties.get(0));
+			list.setRightIndex(pagerProperties.get(1));
+			list.setCount(pagerProperties.get(2));
+		}
+		list.setContainerId(valuesContainer.getId());
 		list.setBean(bean);
 		list.setImage(image);
 		valuesContainer.add(list);
