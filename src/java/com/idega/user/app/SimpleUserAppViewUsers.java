@@ -48,6 +48,7 @@ public class SimpleUserAppViewUsers extends Block {
 	private boolean allFieldsEditable = false;
 	private boolean addGroupCreateButton = false;
 	private boolean addGroupEditButton = false;
+	private boolean checkPagerProperties = false;
 	
 	private GroupHelper groupsHelper = null;
 	private SimpleUserAppHelper helper = new SimpleUserAppHelper();
@@ -220,13 +221,15 @@ public class SimpleUserAppViewUsers extends Block {
 		
 		String image = bundle.getVirtualPathWithFileNameString(SimpleUserApp.EDIT_IMAGE);
 		GroupMembersListViewer list = new GroupMembersListViewer();
-		List<Integer> pagerProperties = null;
-		UserApplicationEngine userAppEngine = ELUtil.getInstance().getBean(UserApplicationEngine.class);
-		pagerProperties = userAppEngine.getPagerProperties(bean.getInstanceId());
-		if (!ListUtil.isEmpty(pagerProperties)) {
-			list.setLeftIndex(pagerProperties.get(0));
-			list.setRightIndex(pagerProperties.get(1));
-			list.setCount(pagerProperties.get(2));
+		if (isCheckPagerProperties()) {
+			List<Integer> pagerProperties = null;
+			UserApplicationEngine userAppEngine = ELUtil.getInstance().getBean(UserApplicationEngine.class);
+			pagerProperties = userAppEngine.getPagerProperties(userAppEngine.getIdForPagerProperties(bean));
+			if (!ListUtil.isEmpty(pagerProperties)) {
+				list.setLeftIndex(pagerProperties.get(0));
+				list.setRightIndex(pagerProperties.get(1));
+				list.setCount(pagerProperties.get(2));
+			}
 		}
 		list.setContainerId(valuesContainer.getId());
 		list.setBean(bean);
@@ -609,4 +612,13 @@ public class SimpleUserAppViewUsers extends Block {
 	public void setSelectedParentGroupId(Integer selectedParentGroupId) {
 		this.selectedParentGroupId = selectedParentGroupId;
 	}
+
+	public boolean isCheckPagerProperties() {
+		return checkPagerProperties;
+	}
+
+	public void setCheckPagerProperties(boolean checkPagerProperties) {
+		this.checkPagerProperties = checkPagerProperties;
+	}
+	
 }

@@ -169,7 +169,7 @@ public class GroupMembersListViewer extends Block {
 			properties.add(getCount());
 			
 			UserApplicationEngine userAppEngine = ELUtil.getInstance().getBean(UserApplicationEngine.class);
-			userAppEngine.setPagerProperties(bean.getInstanceId(), properties);
+			userAppEngine.setPagerProperties(userAppEngine.getIdForPagerProperties(bean), properties);
 		}
 	}
 	

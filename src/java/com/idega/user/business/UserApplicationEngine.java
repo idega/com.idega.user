@@ -69,4 +69,6 @@ public interface UserApplicationEngine {
 	public void setPagerProperties(String id, List<Integer> properties);
 	
 	public List<Integer> getPagerProperties(String id);
+	
+	public String getIdForPagerProperties(SimpleUserPropertiesBean bean);
 }

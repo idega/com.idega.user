@@ -292,6 +292,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 				viewUsers.removeAll(children);
 			}
 			viewUsers.setSelectedParentGroupId(parentGroupId);
+			viewUsers.setCheckPagerProperties(true);
 			
 			return BuilderLogic.getInstance().getRenderedComponent(iwc, viewUsers, true);
 		}
@@ -1213,5 +1214,13 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		pagerProperties.put(id, properties);
+	}
+
+	public String getIdForPagerProperties(SimpleUserPropertiesBean bean) {
+		if (bean == null) {
+			return null;
+		}
+		
+		return new StringBuilder(bean.getInstanceId()).append(bean.getParentGroupId()).append(bean.getGroupId()).append(bean.getOrderBy()).toString();
 	}
 }
