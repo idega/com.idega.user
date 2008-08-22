@@ -44,6 +44,7 @@ public class SimpleUserApp extends Block {
 	private boolean allFieldsEditable = false;
 	private boolean addGroupCreateButton = false;
 	private boolean addGroupEditButton = false;
+	private boolean juridicalPerson = false;
 	/** Properties end **/
 	
 	/**
@@ -166,6 +167,14 @@ public class SimpleUserApp extends Block {
 
 	public void setAddGroupEditButton(boolean addGroupEditButton) {
 		this.addGroupEditButton = addGroupEditButton;
+	}
+
+	public boolean isJuridicalPerson() {
+		return juridicalPerson;
+	}
+
+	public void setJuridicalPerson(boolean juridicalPerson) {
+		this.juridicalPerson = juridicalPerson;
 	}
 
 	/** Methods for properties end **/
