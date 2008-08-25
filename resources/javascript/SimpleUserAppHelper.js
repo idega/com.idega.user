@@ -725,13 +725,22 @@ function createOrModifyGroup(parameters, getTopAndParentGroups, useChildrenOfTop
 		uri += '&' + parameters[7] + '=' + groupId;
 	}
 	
+	var availableGroupTypes = groupTypes;
 	var parentGroupId = -1;
 	var parentGroupChooserId = parameters[9];
 	if (parentGroupChooserId != null) {
 		parentGroupId = getSelectObjectValue(parentGroupChooserId);
 		if (parentGroupId != -1) {
+			//	Child group!
 			uri += '&' + parameters[8] + '=' + parentGroupId;
+			availableGroupTypes = groupTypesForChildrenGroups;
 		}
+	}
+	if (availableGroupTypes != null && availableGroupTypes != '') {
+		uri += '&' + parameters[10] + '=' + availableGroupTypes;
+	}
+	if (roleTypes != null && roleTypes != '') {
+		uri += '&' + parameters[11] + '=' + roleTypes;
 	}
 	
 	//	To avoid stupid caching in IE
@@ -789,7 +798,7 @@ function createOrModifyGroup(parameters, getTopAndParentGroups, useChildrenOfTop
 	MOOdalBox.open(uri, '', '');
 }
 
-function saveGroupInSimpleUserApplication(ids) {
+function saveGroupInSimpleUserApplication(ids, selectedRoles) {
 	var nameId = ids[0];
 	var homePageId = ids[1];
 	var groupTypeId = ids[2];
@@ -834,7 +843,7 @@ function saveGroupInSimpleUserApplication(ids) {
 					showHumanizedMessage(message, null);
 					
 					if (savedGroupId != null) {
-						UserApplicationEngine.getRenderedRolesEditor(savedGroupId, {
+						UserApplicationEngine.getRenderedRolesEditor(savedGroupId, selectedRoles, {
 							callback: function(component) {
 								if (component == null) {
 									return false;
@@ -984,7 +993,7 @@ function changePermissionValueForRole(id, message) {
 	});
 }
 
-function addNewRoleKey(event, id, containerId, message) {
+function addNewRoleKey(event, id, containerId, message, selectedRoles) {
 	if (event == null) {
 		return false;
 	}
@@ -1006,7 +1015,7 @@ function addNewRoleKey(event, id, containerId, message) {
 	
 	showLoadingMessage(message);
 	input.setProperty('value', '');
-	UserApplicationEngine.addNewRole(newRoleKey, input.getProperty('groupid'), {
+	UserApplicationEngine.addNewRole(newRoleKey, input.getProperty('groupid'), selectedRoles, {
 		callback: function(component) {
 			closeAllLoadingMessages();
 			event.stop();

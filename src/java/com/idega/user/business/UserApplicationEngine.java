@@ -56,13 +56,13 @@ public interface UserApplicationEngine {
 	public List<AdvancedProperty> getAvailableGroups(String groupTypes, String groupTypesForChildrenGroups, String roleTypes, int groupId, int groupsType,
 			boolean getTopAndParentGroups, boolean useChildrenOfTopNodesAsParentGroups);
 	
-	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput);
+	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput, List<String> selectedRoles);
 	
-	public Document getRenderedRolesEditor(int groupId);
+	public Document getRenderedRolesEditor(int groupId, List<String> selectedRoles);
 	
 	public boolean changePermissionValueForRole(int groupId, String permissionKey, String roleKey, boolean value);
 	
-	public Document addNewRole(String roleKey, int groupId);
+	public Document addNewRole(String roleKey, int groupId, List<String> selectedRoles);
 	
 	public String getGroupSaveStatus(boolean needErrorMessage);
 	

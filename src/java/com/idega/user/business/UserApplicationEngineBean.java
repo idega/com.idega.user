@@ -1101,8 +1101,8 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return result;
 	}
 
-	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput) {
-		return presentationHelper.getRolesEditor(iwc, groupId, addInput);
+	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput, List<String> selectedRoles) {
+		return presentationHelper.getRolesEditor(iwc, groupId, addInput, selectedRoles);
 	}
 
 	public boolean changePermissionValueForRole(int groupId, String permissionKey, String roleKey, boolean value) {
@@ -1164,7 +1164,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return accessController.removeRoleFromGroup(roleKey, permissionKey, groupId, iwc);
 	}
 
-	public Document addNewRole(String roleKey, int groupId) {
+	public Document addNewRole(String roleKey, int groupId, List<String> selectedRoles) {
 		if (roleKey == null) {
 			return null;
 		}
@@ -1180,16 +1180,16 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			return null;
 		}
 		
-		return BuilderLogic.getInstance().getRenderedComponent(iwc, getRolesEditor(iwc, groupId, false), false);
+		return BuilderLogic.getInstance().getRenderedComponent(iwc, getRolesEditor(iwc, groupId, false, selectedRoles), false);
 	}
 
-	public Document getRenderedRolesEditor(int groupId) {
+	public Document getRenderedRolesEditor(int groupId, List<String> selectedRoles) {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
 		}
 		
-		return BuilderLogic.getInstance().getRenderedComponent(iwc, getRolesEditor(iwc, groupId, false), false);
+		return BuilderLogic.getInstance().getRenderedComponent(iwc, getRolesEditor(iwc, groupId, false, selectedRoles), false);
 	}
 
 	public List<Integer> getPagerProperties(String id) {

@@ -294,9 +294,10 @@ public class SimpleUserAppViewUsers extends Block {
 		else {
 			parameters.append("'").append(parentGroupChooserId).append("'");
 		}
-		parameters.append("]");
-		StringBuffer action = new StringBuffer("createOrModifyGroup(").append(parameters.toString()).append(", ").append(isGetParentGroupsFromTopNodes()).append(", ");
-		action.append(useChildrenOfTopNodesAsParentGroups).append(", ");
+		parameters.append(", ").append(groupsHelper.getJavaScriptParameter(UserConstants.AVAILABLE_GROUP_TYPES_IN_SIMPLE_USER_APPLICATION)).append(", ");
+		parameters.append(groupsHelper.getJavaScriptParameter(UserConstants.AVAILABLE_ROLE_TYPES_IN_SIMPLE_USER_APPLICATION)).append("]");
+		StringBuffer action = new StringBuffer("createOrModifyGroup(").append(parameters.toString()).append(", ").append(isGetParentGroupsFromTopNodes())
+																	.append(", ").append(useChildrenOfTopNodesAsParentGroups).append(", ");
 		
 		Layer buttonsContainer = new Layer();
 		container.add(buttonsContainer);

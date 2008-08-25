@@ -347,11 +347,15 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		List<Group> filteredByRole = new ArrayList<Group>();
 		String roleKey = null;
 		group = null;
+		Collection<?> allRoles = null;
 		for (int i = 0; i < roles.size(); i++) {
 			roleKey = roles.get(i).toString();
 			for (int j = 0; j < checkedFiltered.size(); j++) {
 				group = checkedFiltered.get(j);
-				if (controler.hasRole(roleKey, group, iwc)) {
+				allRoles = controler.getAllRolesForGroup(group);
+				
+				//	Group has NO ROLES set or group has role
+				if (ListUtil.isEmpty(allRoles) || controler.hasRole(roleKey, group, iwc)) {
 					filteredByRole.add(group);
 				}
 			}

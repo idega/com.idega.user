@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.FinderException;
-
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.AccessController;
@@ -186,7 +185,7 @@ public class SimpleUserAppHelper {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput) {
+	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput, List<String> selectedRoles) {
 		if (iwc == null) {
 			return null;
 		}
@@ -209,7 +208,7 @@ public class SimpleUserAppHelper {
 		String message = iwrb.getLocalizedString("saving", "Saving...");
 		
 		AccessController accessControler = iwc.getAccessController();
-		List<ICRole> allRoles = getAllRolesWithoutMasterRole(iwc, accessControler);
+		List<ICRole> allRoles = getFilteredRoles(getFilteredRolesByUser(iwc, accessControler), selectedRoles);
 		boolean addTable = true;
 		if (ListUtil.isEmpty(allRoles)) {
 			rolesContainer.add(new Heading3(iwrb.getLocalizedString("no_roles", "There are no roles...")));
@@ -225,7 +224,7 @@ public class SimpleUserAppHelper {
 			Collection<ICPermission> permissionsForCurrentGroup = accessControler.getAllRolesWithRolePermissionsForGroup(group);
 			List<String> permissions = Arrays.asList(new String[] {/*AccessController.PERMISSION_KEY_VIEW, AccessController.PERMISSION_KEY_EDIT,
 					AccessController.PERMISSION_KEY_CREATE, AccessController.PERMISSION_KEY_DELETE, */AccessController.PERMISSION_KEY_ROLE});
-			List<String> roles = getRolesNotIncludedOriginaly(permissionsForCurrentGroup, allRoles);
+			List<String> roles = getRolesNotIncludedOriginaly(permissionsForCurrentGroup, allRoles, selectedRoles);
 			
 			Table2 rolesTable = new Table2();
 			if (addTable) {
@@ -257,7 +256,8 @@ public class SimpleUserAppHelper {
 			newRoleInput.setStyleClass("addNewRoleInputStyleClass");
 			newRoleInput.setMarkupAttribute("groupid", groupId);
 			StringBuilder action = new StringBuilder("addNewRoleKey(event, '").append(newRoleInput.getId()).append(SimpleUserApp.PARAMS_SEPARATOR);
-			action.append(rolesContainer.getId()).append(SimpleUserApp.PARAMS_SEPARATOR).append(message).append("');");
+			action.append(rolesContainer.getId()).append(SimpleUserApp.PARAMS_SEPARATOR).append(message).append("', ");
+			action.append(getJavaScriptFunctionParameter(selectedRoles)).append(");");
 			newRoleInput.setOnKeyUp(action.toString());
 			Label newRoleLabel = new Label(iwrb.getLocalizedString("groupownerswindow.new_role", "New role key:"), newRoleInput);
 			newRoleContainer.add(newRoleLabel);
@@ -265,6 +265,24 @@ public class SimpleUserAppHelper {
 		}
 		
 		return container;
+	}
+	
+	private List<ICRole> getFilteredRoles(List<ICRole> allRoles, List<String> selectedRoles) {
+		if (ListUtil.isEmpty(allRoles)) {
+			return null;
+		}
+		if (ListUtil.isEmpty(selectedRoles)) {
+			return allRoles;
+		}
+		
+		List<ICRole> roles = new ArrayList<ICRole>();
+		for (ICRole role: allRoles) {
+			if (selectedRoles.contains(role.getRoleKey())) {
+				roles.add(role);
+			}
+		}
+		
+		return roles;
 	}
 	
 	private void addRowAndCellsForRole(int groupId, String roleName, String roleKey, TableRowGroup bodyRows, IWResourceBundle iwrb, List<String> permissions,
@@ -289,23 +307,29 @@ public class SimpleUserAppHelper {
 		}
 	}
 	
-	private List<String> getRolesNotIncludedOriginaly(Collection<ICPermission> permissionsForGroup, List<ICRole> originalRoles) {
+	private List<String> getRolesNotIncludedOriginaly(Collection<ICPermission> permissionsForGroup, List<ICRole> originalRoles, List<String> selectedRoles) {
 		List<String> roles = new ArrayList<String>();
-		
-		if (permissionsForGroup == null || permissionsForGroup.isEmpty()) {
-			return roles;
-		}
 		
 		List<String> originalRolesKeys = new ArrayList<String>();
 		for (ICRole role: originalRoles) {
 			originalRolesKeys.add(role.getRoleKey());
 		}
 		
-		String roleKey = null;
-		for (ICPermission permission: permissionsForGroup) {
-			roleKey = permission.getPermissionString();
-			if (roleKey != null && !originalRolesKeys.contains(roleKey)) {
-				roles.add(roleKey);
+		if (!ListUtil.isEmpty(permissionsForGroup)) {
+			String roleKey = null;
+			for (ICPermission permission: permissionsForGroup) {
+				roleKey = permission.getPermissionString();
+				if (roleKey != null && !originalRolesKeys.contains(roleKey)) {
+					roles.add(roleKey);
+				}
+			}
+		}
+		
+		if (!ListUtil.isEmpty(selectedRoles)) {
+			for (String selectedRole: selectedRoles) {
+				if (!roles.contains(selectedRole) && !originalRolesKeys.contains(selectedRole)) {
+					roles.add(selectedRole);
+				}
 			}
 		}
 		
@@ -334,7 +358,7 @@ public class SimpleUserAppHelper {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<ICRole> getAllRolesWithoutMasterRole(IWContext iwc, AccessController accessControler) {
+	private List<ICRole> getFilteredRolesByUser(IWContext iwc, AccessController accessControler) {
 		Collection<ICRole> allRoles = accessControler.getAllRoles();
 		if (ListUtil.isEmpty(allRoles)) {
         	return null;
