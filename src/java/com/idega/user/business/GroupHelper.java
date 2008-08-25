@@ -20,7 +20,7 @@ public interface GroupHelper {
 	
 	public Collection<Group> getFilteredGroups(Collection<Group> groups, List<String> types, boolean useChildrenAsTopNodes);
 	
-	public Collection<Group> getFilteredGroups(Collection<Group> groups, String typesValue, String splitter, boolean useChildrenAsTopNodes);
+	public Collection<Group> getFilteredGroups(IWContext iwc, Collection<Group> groups, String typesValue, String splitter, boolean useChildrenAsTopNodes);
 	
 	public Group getGroup(IWContext iwc, int id);
 	

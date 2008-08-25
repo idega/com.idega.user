@@ -214,24 +214,15 @@ public class GroupHelperBusinessBean implements GroupHelper {
 	 */
 	public Collection<Group> getFilteredGroups(Collection<Group> groups, List<String> types, boolean useChildrenAsTopNodes) {
 		Collection<Group> filtered = new ArrayList<Group>();
-		if (groups == null) {
-			return filtered;
-		}
-		if (groups.size() == 0) {
+		if (ListUtil.isEmpty(groups)) {
 			return filtered;
 		}
 		
-		if (types == null) {
+		if (ListUtil.isEmpty(types)) {
 			if (useChildrenAsTopNodes) {
 				return getChilrenfOfGroups(groups);
 			}
  			return groups;
-		}
-		if (types.size() == 0) {
-			if (useChildrenAsTopNodes) {
-				return getChilrenfOfGroups(groups);
-			}
-			return groups;
 		}
 		
 		if (useChildrenAsTopNodes) {
@@ -268,8 +259,8 @@ public class GroupHelperBusinessBean implements GroupHelper {
 	 * @param splitter - typesValue separator
 	 * @return
 	 */
-	public Collection<Group> getFilteredGroups(Collection<Group> groups, String typesValue, String splitter, boolean useChildrenAsTopNodes) {
-		return getFilteredGroups(groups, getExtractedTypesList(typesValue, splitter), useChildrenAsTopNodes);
+	public Collection<Group> getFilteredGroups(IWContext iwc, Collection<Group> groups, String typesValue, String splitter, boolean useChildrenAsTopNodes) {
+		return getSortedGroups(getFilteredGroups(groups, getExtractedTypesList(typesValue, splitter), useChildrenAsTopNodes), iwc);
 	}
 	
 	private synchronized GroupBusiness getGroupBusiness(IWApplicationContext iwac) {

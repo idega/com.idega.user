@@ -473,7 +473,8 @@ public class SimpleUserAppViewUsers extends Block {
 			}
 			
 			if (topGroups.size() > 0) {
-				List<Group> filteredTopGroups = new ArrayList<Group>(groupsHelper.getFilteredGroups(topGroups, getGroupTypes(), ",", useChildrenOfTopNodesAsParentGroups));
+				List<Group> filteredTopGroups = new ArrayList<Group>(groupsHelper.getFilteredGroups(iwc, topGroups, getGroupTypes(), CoreConstants.COMMA,
+						useChildrenOfTopNodesAsParentGroups));
 				if (filteredTopGroups.size() > 1) {
 					String groupUsersContainerId = ids[0];
 					String childGroupsChooserId = ids[2];

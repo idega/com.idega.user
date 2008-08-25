@@ -514,7 +514,8 @@ public class SimpleUserAppAddUser extends Block {
 					addLabelForNoGroups(iwrb, parentGroupValueContainer);	//	No group available
 				}
 				else {
-					parentGroupsChooser.addMenuElements(groupsHelper.getFilteredGroups(topGroups, groupTypesForParentGroups, ",", useChildrenOfTopNodesAsParentGroups));
+					parentGroupsChooser.addMenuElements(groupsHelper.getFilteredGroups(iwc, topGroups, groupTypesForParentGroups, CoreConstants.COMMA,
+							useChildrenOfTopNodesAsParentGroups));
 					parentGroupValueContainer.add(parentGroupsChooser);
 				}
 			}

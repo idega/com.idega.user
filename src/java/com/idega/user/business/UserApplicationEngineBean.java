@@ -1065,7 +1065,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			topGroups = getGroupHelperBean().getTopAndParentGroups(topGroups);
 		}
 		
-		return new ArrayList<Group>(getGroupHelperBean().getFilteredGroups(topGroups, groupTypes, ",", useChildrenOfTopNodesAsParentGroups));
+		return new ArrayList<Group>(getGroupHelperBean().getFilteredGroups(iwc, topGroups, groupTypes, CoreConstants.COMMA, useChildrenOfTopNodesAsParentGroups));
 	}
 	
 	public List<AdvancedProperty> getAvailableGroups(String groupTypes, String groupTypesForChildrenGroups, String roleTypes, int groupId, int groupsType,
