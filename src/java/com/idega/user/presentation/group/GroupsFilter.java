@@ -21,10 +21,12 @@ import com.idega.presentation.ui.Label;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserConstants;
+import com.idega.user.business.group.GroupsFilterEngine;
 import com.idega.user.data.Group;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.PresentationUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 public class GroupsFilter extends Block {
@@ -34,7 +36,11 @@ public class GroupsFilter extends Block {
 	private List<String> selectedGroups;
 	
 	private int levelsToOpen = 1;
+	
 	private boolean displayAllLevels;
+	private boolean useRadioBox = false;
+	
+	private String onClickAction = null;
 	
 	@Override
 	public void main(IWContext iwc) {
@@ -82,10 +88,16 @@ public class GroupsFilter extends Block {
 			selectedGroupsExpression.append("]");
 		}
 		
+		String changedOnClickAction = null;
+		if (!StringUtil.isEmpty(onClickAction)) {
+			GroupsFilterEngine filterEngine = ELUtil.getInstance().getBean(GroupsFilterEngine.SPRING_BEAN_IDENTIFIER);
+			changedOnClickAction = filterEngine.getActionAppliedToBeParameter(onClickAction);
+		}
 		String filterAction = new StringBuilder("GroupsFilter.filterGroupsByNewInfo(['").append(filterInput.getId()).append("', '")
 												.append(iwrb.getLocalizedString("searching", "Searching...")).append("', '").append(body.getId())
 												.append("', '").append(selectedGroupParameterName).append("'], ").append(selectedGroupsExpression.toString())
-												.append(");").toString();
+												.append(", ").append(StringUtil.isEmpty(changedOnClickAction) ? "null" : new StringBuilder("'")
+												.append(changedOnClickAction).append("'").toString()).append(", ").append(useRadioBox).append(");").toString();
 		filterInput.setOnKeyPress(new StringBuilder("if (isEnterEvent(event)) {").append(filterAction).append(" return false;}").toString());
 		Label filterInputLabel = new Label(iwrb.getLocalizedString("groups_filter", "Groups filter") + ":", filterInput);
 		header.add(filterInputLabel);
@@ -111,6 +123,8 @@ public class GroupsFilter extends Block {
 		filteredGroups.setGroups(getUserGroups(iwc));
 		filteredGroups.setLevelsToOpen(levelsToOpen);
 		filteredGroups.setDisplayAllLevels(displayAllLevels);
+		filteredGroups.setOnClickAction(onClickAction);
+		filteredGroups.setUseRadioBox(useRadioBox);
 		
 		String[] selectedInForm = iwc.getParameterValues(selectedGroupParameterName);
 		if (selectedInForm != null) {
@@ -176,6 +190,22 @@ public class GroupsFilter extends Block {
 
 	public void setDisplayAllLevels(boolean displayAllLevels) {
 		this.displayAllLevels = displayAllLevels;
+	}
+
+	public String getOnClickAction() {
+		return onClickAction;
+	}
+
+	public void setOnClickAction(String onClickAction) {
+		this.onClickAction = onClickAction;
+	}
+
+	public boolean isUseRadioBox() {
+		return useRadioBox;
+	}
+
+	public void setUseRadioBox(boolean useRadioBox) {
+		this.useRadioBox = useRadioBox;
 	}
 
 }

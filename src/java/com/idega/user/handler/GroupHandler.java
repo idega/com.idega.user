@@ -1,5 +1,5 @@
 /*
- * $Id: GroupHandler.java,v 1.7 2007/05/24 11:31:03 valdas Exp $
+ * $Id: GroupHandler.java,v 1.8 2008/08/27 13:34:42 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -18,6 +18,7 @@ import com.idega.user.business.GroupTreeNode;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 import com.idega.user.presentation.GroupChooser;
+import com.idega.util.StringUtil;
 
 /**
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
@@ -33,7 +34,7 @@ public class GroupHandler implements ICPropertyHandler {
   /**
    *
    */
-  public List getDefaultHandlerTypes() {
+  public List<?> getDefaultHandlerTypes() {
     return(null);
   }
 
@@ -43,12 +44,12 @@ public class GroupHandler implements ICPropertyHandler {
   public PresentationObject getHandlerObject(String name, String value, IWContext iwc, boolean oldGenerationHandler, String instanceId, String method) {
     GroupChooser chooser = new GroupChooser(name, oldGenerationHandler, instanceId, method);
     try {
-      if (value != null && !value.equals("")) {
-      	Group group = getGroupHome().findByPrimaryKey(new Integer(value));
-		 		GroupTreeNode node = new GroupTreeNode(group,iwc.getApplicationContext());
-			  if (node != null) {
-					chooser.setSelectedNode(node);
-				}
+      if (!StringUtil.isEmpty(value)) {
+    	  Group group = getGroupHome().findByPrimaryKey(new Integer(value));
+    	  GroupTreeNode node = new GroupTreeNode(group,iwc.getApplicationContext());
+    	  	if (node != null) {
+    	  		chooser.setSelectedNode(node);
+    	  	}
       }
     }
     catch(NumberFormatException e) {

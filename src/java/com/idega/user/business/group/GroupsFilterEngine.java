@@ -18,6 +18,7 @@ import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
@@ -29,6 +30,9 @@ import com.idega.presentation.text.ListItem;
 import com.idega.presentation.text.Lists;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
+import com.idega.presentation.ui.GenericInput;
+import com.idega.presentation.ui.RadioButton;
+import com.idega.presentation.ui.util.AbstractChooserBlock;
 import com.idega.repository.data.Singleton;
 import com.idega.user.bean.group.GroupFilterResult;
 import com.idega.user.business.GroupBusiness;
@@ -40,6 +44,7 @@ import com.idega.user.data.User;
 import com.idega.user.presentation.group.FilteredGroupsBox;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
+import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -61,9 +66,10 @@ public class GroupsFilterEngine implements Singleton {
 	
 	private String groupsListStyle = "filteredGroupsListStyle";
 	
+	//	It's a Spring bean!
 	private GroupsFilterEngine() {}
 	
-	public Document getFilteredGroups(String searchKey, String selectedGroupName, List<String> selectedGroups) {
+	public Document getFilteredGroups(String searchKey, String selectedGroupName, List<String> selectedGroups, String onClickAction, boolean useRadioBox) {
 		if (StringUtil.isEmpty(searchKey)) {
 			return null;
 		}
@@ -87,12 +93,14 @@ public class GroupsFilterEngine implements Singleton {
 		filteredGroups.setSearchResult(Boolean.TRUE);
 		filteredGroups.setSelectedGroups(selectedGroups);
 		filteredGroups.setSelectedGroupParameterName(selectedGroupName);
+		filteredGroups.setOnClickAction(onClickAction);
+		filteredGroups.setUseRadioBox(useRadioBox);
 		
 		BuilderService builderService = getBuilderService(iwc);
 		if (builderService == null) {
 			return null;
 		}
-		return builderService.getRenderedComponent(iwc, filteredGroups, false);
+		return builderService.getRenderedComponent(iwc, filteredGroups, true);
 	}
 	
 	private List<GroupFilterResult> getUserGroupsBySearchKey(IWContext iwc, User user, String searchKey) {
@@ -145,7 +153,7 @@ public class GroupsFilterEngine implements Singleton {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Document getChildGroups(Integer groupId, String selectedGroupParameterName) {
+	public Document getChildGroups(Integer groupId, String selectedGroupParameterName, String onClickAction, boolean useRadioBox) {
 		if (groupId == null) {
 			return null;
 		}
@@ -198,13 +206,14 @@ public class GroupsFilterEngine implements Singleton {
 		}
 		
 		Lists groupsList = new Lists();
-		addGroups(iwc, groupsList, children, null, null, iwc.getCurrentLocale(), groupsList.getId(), selectedGroupParameterName, 0, 1, false);
+		addGroups(iwc, groupsList, children, null, null, iwc.getCurrentLocale(), groupsList.getId(), selectedGroupParameterName, 0, 1, false,
+				onClickAction, useRadioBox);
 	
 		BuilderService builderService = getBuilderService(iwc);
 		if (builderService == null) {
 			return null;
 		}
-		return builderService.getRenderedComponent(iwc, groupsList, false);
+		return builderService.getRenderedComponent(iwc, groupsList, true);
 	}
 	
 	private GroupBusiness getGroupBusiness(IWApplicationContext iwac) {
@@ -227,7 +236,8 @@ public class GroupsFilterEngine implements Singleton {
 	
 	@SuppressWarnings("unchecked")
 	public void addGroups(IWContext iwc, Lists container, Collection<Group> groups, List<String> selectedGroups, List<GroupFilterResult> filteredGroups,
-							Locale locale, String mainContainerId, String selectedGroupParameterName, int level, int levelsToOpen, boolean displayAllLevels) {
+							Locale locale, String mainContainerId, String selectedGroupParameterName, int level, int levelsToOpen, boolean displayAllLevels,
+							String onClickAction, boolean useRadioBox) {
 		IWBundle bundle = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
 		IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
 		GroupHelper groupHelper = ELUtil.getInstance().getBean(GroupHelper.class);
@@ -236,16 +246,20 @@ public class GroupsFilterEngine implements Singleton {
 		
 		ListItem item = null;
 		String groupId = null;
+		String inputId = null;
 		Image groupIcon = null;
 		String groupName = null;
 		Text groupNameText = null;
 		String groupIconBase = null;
 		Lists childrenGroups = null;
-		CheckBox groupSelection = null;
+		StringBuilder action = null;
 		Layer groupNodeContainer = null;
 		boolean addOneMoreLevel = false;
 		Collection<Group> children = null;
+		GenericInput groupSelection = null;
+		String changedOnClickAction = null;
 		Layer childrenGroupsContainer = null;
+		boolean onClickActionSet = !StringUtil.isEmpty(onClickAction);
 		String checkBoxStyleClass = "checkBoxForFilteredGroupSelectionStyle";
 		String loadingMessage = iwrb.getLocalizedString("loading", "Loading...");
 		String imageOpenUri = bundle.getVirtualPathWithFileNameString("images/nav-plus.gif");
@@ -281,18 +295,32 @@ public class GroupsFilterEngine implements Singleton {
 			groupNodeContainer.add(groupIcon);
 			groupIcon.setToolTip(groupName);
 			
-			groupSelection = new CheckBox(selectedGroupParameterName, groupId);
+			groupSelection = useRadioBox ? new RadioButton(selectedGroupParameterName, groupId) : new CheckBox(selectedGroupParameterName, groupId);
 			groupSelection.setStyleClass(checkBoxStyleClass);
 			groupSelection.setToolTip(selectOrDeselectGroupTooltip);
 			groupNodeContainer.add(groupSelection);
 			if (!ListUtil.isEmpty(selectedGroups)) {
 				if (selectedGroups.contains(groupId)) {
 					selectedGroups.remove(groupId);
-					groupSelection.setChecked(true, true);
+					if (useRadioBox) {
+						((RadioButton) groupSelection).setSelected();
+					}
+					else {
+						((CheckBox) groupSelection).setChecked(true, true);
+					}
 				}
 			}
-			groupSelection.setOnClick(new StringBuilder("GroupsFilter.manageCheckedGroupsInOtherContainers(['").append(groupSelection.getId())
-										.append("', '").append(mainContainerId).append("', '").append(checkBoxStyleClass).append("']);").toString());
+			inputId = groupSelection.getId();
+			action = new StringBuilder("GroupsFilter.manageCheckedGroupsInOtherContainers(['").append(inputId).append("', '")
+			.append(mainContainerId).append("', '").append(checkBoxStyleClass).append("']);");
+			if (onClickActionSet) {
+				action.append(AbstractChooserBlock.getNormalizedAction(onClickAction, inputId));
+				changedOnClickAction = getActionAppliedToBeParameter(onClickAction);
+			}
+			groupSelection.setOnClick(action.toString());
+			
+			groupSelection.setMarkupAttribute(ICBuilderConstants.GROUP_ID_ATTRIBUTE, groupId);
+			groupSelection.setMarkupAttribute(ICBuilderConstants.GROUP_NAME_ATTRIBUTE, groupName);
 			
 			groupNameText = new Text(groupName);
 			groupNameText.setStyleClass(getStyleAttributeForGroupName(group, filteredGroups));
@@ -302,8 +330,9 @@ public class GroupsFilterEngine implements Singleton {
 			item.add(childrenGroupsContainer);
 			openOrCloseImage.setOnClick(new StringBuilder("GroupsFilter.openOrCloseNodes(['").append(openOrCloseImage.getId()).append("', '")
 							.append(childrenGroupsContainer.getId()).append("', '").append(imageOpenUri).append("', '").append(imageCloseUri)
-							.append("', '").append(selectedGroupParameterName).append("', '").append(loadingMessage).append("']);").toString());
-			
+							.append("', '").append(selectedGroupParameterName).append("', '").append(loadingMessage).append("'], ")
+							.append(onClickActionSet ? new StringBuilder("'").append(changedOnClickAction).append("'").toString() : "null").append(", ")
+							.append(useRadioBox).append(");").toString());
 			if (addOneMoreLevel) {
 				children = group.getChildren();
 				if (!ListUtil.isEmpty(children)) {
@@ -315,7 +344,7 @@ public class GroupsFilterEngine implements Singleton {
 					childrenGroups = new Lists();
 					childrenGroupsContainer.add(childrenGroups);
 					addGroups(iwc, childrenGroups, children, selectedGroups, filteredGroups, locale, mainContainerId, selectedGroupParameterName, level + 1,
-							levelsToOpen, displayAllLevels);
+							levelsToOpen, displayAllLevels, onClickAction, useRadioBox);
 				}
 			}
 			else {
@@ -401,6 +430,14 @@ public class GroupsFilterEngine implements Singleton {
 	@Autowired
 	public void setBuilder(BuilderLogicWrapper builder) {
 		this.builder = builder;
+	}
+	
+	public String getActionAppliedToBeParameter(String action) {
+		if (StringUtil.isEmpty(action)) {
+			return null;
+		}
+		action = StringHandler.replace(action, "'", "\\'");
+		return action;
 	}
 	
 }

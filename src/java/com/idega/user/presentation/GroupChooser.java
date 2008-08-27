@@ -62,7 +62,7 @@ public class GroupChooser extends AbstractChooser {
     	
   }
 
-  public Class getChooserWindowClass() {
+  public Class<?> getChooserWindowClass() {
 	  if (isUseOldLogic()) {
 		  return GroupChooserWindow.class;
 	  }
@@ -70,7 +70,7 @@ public class GroupChooser extends AbstractChooser {
   }
 
   public void setSelectedNode(GroupTreeNode groupNode) {
-      super.setChooserValue(groupNode.getNodeName(),groupNode.getNodeType()+"_"+groupNode.getNodeID());
+      super.setChooserValue(groupNode.getNodeName(), groupNode.getNodeID());
   }
   
   public void setSelectedGroup(String userId, String userName) {

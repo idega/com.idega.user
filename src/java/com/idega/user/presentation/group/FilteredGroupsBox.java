@@ -32,9 +32,11 @@ public class FilteredGroupsBox extends Block {
 	private List<String> selectedGroups;
 	
 	private String selectedGroupParameterName = "selectedGroup";
+	private String onClickAction;
 	
 	private boolean searchResult;
 	private boolean displayAllLevels;
+	private boolean useRadioBox;
 	
 	private IWBundle bundle;
 	private IWResourceBundle iwrb;
@@ -68,7 +70,7 @@ public class FilteredGroupsBox extends Block {
 			selectedGroups = new ArrayList<String>(selectedGroups);
 		}
 		filterEngine.addGroups(iwc, groupsList, groups, selectedGroups, filteredGroups, iwc.getCurrentLocale(), container.getId(), selectedGroupParameterName, 0,
-				levelsToOpen, displayAllLevels);
+				levelsToOpen, displayAllLevels, onClickAction, useRadioBox);
 	}
 	
 	private void convertSearchResultsToGroups(IWApplicationContext iwac) {
@@ -177,6 +179,22 @@ public class FilteredGroupsBox extends Block {
 
 	public void setDisplayAllLevels(boolean displayAllLevels) {
 		this.displayAllLevels = displayAllLevels;
+	}
+
+	public String getOnClickAction() {
+		return onClickAction;
+	}
+
+	public void setOnClickAction(String onClickAction) {
+		this.onClickAction = onClickAction;
+	}
+
+	public boolean isUseRadioBox() {
+		return useRadioBox;
+	}
+
+	public void setUseRadioBox(boolean useRadioBox) {
+		this.useRadioBox = useRadioBox;
 	}
 
 }

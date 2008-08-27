@@ -4,14 +4,14 @@ GroupsFilter.constants = {
 	SEARCH_RESULT_PARAM: 'searchresult'
 }
 
-GroupsFilter.filterGroupsByNewInfo = function(params, selectedGroups) {
+GroupsFilter.filterGroupsByNewInfo = function(params, selectedGroups, onClickAction, useRadioBox) {
 	var id = params[0];
 	var message = params[1];
 	var containerId = params[2];
 	var selectedGroupName = params[3];
 	
 	showLoadingMessage(message);
-	GroupsFilterEngine.getFilteredGroups(jQuery('#' + id).attr('value'), selectedGroupName, selectedGroups, {
+	GroupsFilterEngine.getFilteredGroups(jQuery('#' + id).attr('value'), selectedGroupName, selectedGroups, onClickAction, useRadioBox, {
 		callback: function(html) {
 			closeAllLoadingMessages();
 			
@@ -58,7 +58,7 @@ GroupsFilter.clearSearchResults = function(params) {
 	}
 }
 
-GroupsFilter.openOrCloseNodes = function(params) {
+GroupsFilter.openOrCloseNodes = function(params, onClickAction, useRadioBox) {
 	var image = jQuery('#' + params[0]);
 	if (image == null) {
 		return false;
@@ -84,7 +84,7 @@ GroupsFilter.openOrCloseNodes = function(params) {
 		}
 		else {
 			showLoadingMessage(params[5]);
-			GroupsFilterEngine.getChildGroups(image.attr('groupid'), params[4], {
+			GroupsFilterEngine.getChildGroups(image.attr('groupid'), params[4], onClickAction, useRadioBox, {
 				callback: function(component) {
 					closeAllLoadingMessages();
 					
