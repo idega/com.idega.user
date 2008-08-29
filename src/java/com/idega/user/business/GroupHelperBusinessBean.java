@@ -14,6 +14,7 @@ import javax.ejb.FinderException;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWApplicationContext;
@@ -413,6 +414,15 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		if (ListUtil.isEmpty(users)) {
 			return null;
 		}
+		if (bean.isJuridicalPerson()) {
+			List<User> juridicalUsers = new ArrayList<User>();
+			for (User user: users) {
+				if (iwc.hasRole(StandardRoles.ROLE_KEY_COMPANY)) {
+					juridicalUsers.add(user);
+				}
+			}
+			users = juridicalUsers;
+		}
 		
 		if (sort) {
 			return getSortedUsers(users, iwc.getCurrentLocale(), bean);
@@ -667,6 +677,12 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		action.append(SimpleUserApp.COMMA_SEPARATOR).append(getJavaScriptParameter(bean.getGroupTypesForParentGroups()));
 		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isUseChildrenOfTopNodesAsParentGroups());
 		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isAllFieldsEditable());
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isJuridicalPerson());
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isChangePasswordNextTime());
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isSendMailToUser());
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isAllowEnableDisableAccount());
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.getParentGroupId() == -1 ? "null" : 
+																								getJavaScriptParameter(String.valueOf(bean.getParentGroupId())));
 		action.append(");");
 		return action.toString();
 	}

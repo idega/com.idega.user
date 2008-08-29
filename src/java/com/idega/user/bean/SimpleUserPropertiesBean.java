@@ -5,7 +5,6 @@ public class SimpleUserPropertiesBean {
 	private int parentGroupId = -1;
 	private int groupId = -1;
 	private int orderBy = -1;
-	
 	private int from = 0;
 	private int count = 20;
 	
@@ -22,8 +21,40 @@ public class SimpleUserPropertiesBean {
 	private boolean getParentGroupsFromTopNodes = true;
 	private boolean useChildrenOfTopNodesAsParentGroups = false;
 	private boolean allFieldsEditable = false;
+	private boolean juridicalPerson = false;
+	private boolean addGroupCreateButton = false;
+	private boolean addGroupEditButton = false;
+	private boolean sendMailToUser = false;
+	private boolean changePasswordNextTime = false;
+	private boolean allowEnableDisableAccount = false;
+	private boolean addChildGroupCreateButton = true;
+	private boolean addChildGroupEditButton = true;
 	
 	public SimpleUserPropertiesBean() {}
+	
+	public SimpleUserPropertiesBean(String instanceId, String containerId, String groupTypesForParentGroups, String groupTypes,String roleTypes,
+			boolean getParentGroupsFromTopNodes, boolean useChildrenOfTopNodesAsParentGroups, boolean allFieldsEditable, boolean juridicalPerson,
+			boolean addGroupCreateButton, boolean addGroupEditButton, boolean sendMailToUser, boolean changePasswordNextTime, boolean allowEnableDisableAccount,
+			boolean addChildGroupCreateButton, boolean addChildGroupEditButton) {
+		this();
+		
+		this.instanceId = instanceId;
+		this.containerId = containerId;
+		this.groupTypesForParentGroups = groupTypesForParentGroups;
+		this.groupTypes = groupTypes;
+		this.roleTypes = roleTypes;
+		this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
+		this.useChildrenOfTopNodesAsParentGroups = useChildrenOfTopNodesAsParentGroups;
+		this.allFieldsEditable = allFieldsEditable;
+		this.juridicalPerson = juridicalPerson;
+		this.addGroupCreateButton = addGroupCreateButton;
+		this.addGroupEditButton = addGroupEditButton;
+		this.sendMailToUser = sendMailToUser;
+		this.changePasswordNextTime = changePasswordNextTime;
+		this.allowEnableDisableAccount = allowEnableDisableAccount;
+		this.addChildGroupCreateButton = addChildGroupCreateButton;
+		this.addChildGroupEditButton = addChildGroupEditButton;
+	}
 	
 	public int getGroupId() {
 		return groupId;
@@ -155,6 +186,70 @@ public class SimpleUserPropertiesBean {
 
 	public void setCount(int count) {
 		this.count = count;
+	}
+
+	public boolean isJuridicalPerson() {
+		return juridicalPerson;
+	}
+
+	public void setJuridicalPerson(boolean juridicalPerson) {
+		this.juridicalPerson = juridicalPerson;
+	}
+
+	public boolean isAddGroupCreateButton() {
+		return addGroupCreateButton;
+	}
+
+	public void setAddGroupCreateButton(boolean addGroupCreateButton) {
+		this.addGroupCreateButton = addGroupCreateButton;
+	}
+
+	public boolean isAddGroupEditButton() {
+		return addGroupEditButton;
+	}
+
+	public void setAddGroupEditButton(boolean addGroupEditButton) {
+		this.addGroupEditButton = addGroupEditButton;
+	}
+
+	public boolean isSendMailToUser() {
+		return sendMailToUser;
+	}
+
+	public void setSendMailToUser(boolean sendMailToUser) {
+		this.sendMailToUser = sendMailToUser;
+	}
+
+	public boolean isChangePasswordNextTime() {
+		return changePasswordNextTime;
+	}
+
+	public void setChangePasswordNextTime(boolean changePasswordNextTime) {
+		this.changePasswordNextTime = changePasswordNextTime;
+	}
+
+	public boolean isAllowEnableDisableAccount() {
+		return allowEnableDisableAccount;
+	}
+
+	public void setAllowEnableDisableAccount(boolean allowEnableDisableAccount) {
+		this.allowEnableDisableAccount = allowEnableDisableAccount;
+	}
+
+	public boolean isAddChildGroupCreateButton() {
+		return addChildGroupCreateButton;
+	}
+
+	public void setAddChildGroupCreateButton(boolean addChildGroupCreateButton) {
+		this.addChildGroupCreateButton = addChildGroupCreateButton;
+	}
+
+	public boolean isAddChildGroupEditButton() {
+		return addChildGroupEditButton;
+	}
+
+	public void setAddChildGroupEditButton(boolean addChildGroupEditButton) {
+		this.addChildGroupEditButton = addChildGroupEditButton;
 	}
 	
 }

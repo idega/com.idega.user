@@ -12,15 +12,19 @@ import com.idega.core.contact.data.Email;
 import com.idega.core.location.data.Country;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
+import com.idega.presentation.CSSSpacer;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.Span;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.CountryDropdownMenu;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.GenericButton;
+import com.idega.presentation.ui.GenericInput;
 import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.TextInput;
+import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.bean.UserDataBean;
 import com.idega.user.business.GroupHelper;
 import com.idega.user.business.UserApplicationEngine;
@@ -29,6 +33,7 @@ import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -37,18 +42,7 @@ public class SimpleUserAppAddUser extends Block {
 	private List<Integer> parentGroups = null;
 	private List<Integer> childGroups = null;
 	
-	private String groupTypesForParentGroups = null;
-	private String parentGroupId = null;
-	private String groupId = null;
-	private String groupForUsersWithoutLoginId = null;
-	private String parentComponentInstanceId = null;
-	private String parentContainerId = null;
-	private String groupTypes = null;
-	private String roleTypes = null;
-	
-	private boolean getParentGroupsFromTopNodes = true;
-	private boolean useChildrenOfTopNodesAsParentGroups = false;
-	private boolean allFieldsEditable = false;
+	private SimpleUserPropertiesBean properties = null;
 	
 	private Integer userId = null;
 	
@@ -60,14 +54,14 @@ public class SimpleUserAppAddUser extends Block {
 	private String requiredFieldLocalizationKey = "this_field_is_required";
 	private String requiredFieldLocalizationValue = "This field is required!";
 	
-	public SimpleUserAppAddUser(String parentComponentInstanceId, String parentContainerId, boolean allFieldsEditable) {
-		if (parentComponentInstanceId == null || parentContainerId == null) {
+	public SimpleUserAppAddUser(SimpleUserPropertiesBean properties) {
+		this.properties = properties;
+		
+		String parentComponentInstanceId = properties.getInstanceId();
+		String parentContainerId = properties.getContainerId();
+		if (StringUtil.isEmpty(parentComponentInstanceId) || StringUtil.isEmpty(parentContainerId)) {
 			throw new NullPointerException("Provide valid parameters for " + SimpleUserAppAddUser.class.getName());
 		}
-		this.parentComponentInstanceId = parentComponentInstanceId;
-		this.parentContainerId = parentContainerId;
-		
-		this.allFieldsEditable = allFieldsEditable;
 	}
 
 	public void main(IWContext iwc) {
@@ -104,7 +98,7 @@ public class SimpleUserAppAddUser extends Block {
 		
 		//	Login name
 		TextInput loginValueInput = new TextInput();
-		if (!allFieldsEditable) {
+		if (!properties.isAllFieldsEditable()) {
 			loginValueInput.setDisabled(true);
 		}
 		String loginInputId = loginValueInput.getId();
@@ -128,8 +122,8 @@ public class SimpleUserAppAddUser extends Block {
 		action.append(helper.getJavaScriptParameter(id)).append(SimpleUserApp.COMMA_SEPARATOR).append("['");
 		action.append(availableGroupsOfUserContaianer.getId()).append(SimpleUserApp.PARAMS_SEPARATOR);
 		action.append(iwrb.getLocalizedString("loading", "Loading...")).append("', ");
-		action.append(helper.getJavaScriptParameter(groupTypes)).append(SimpleUserApp.COMMA_SEPARATOR);
-		action.append(helper.getJavaScriptParameter(roleTypes)).append("]);");
+		action.append(helper.getJavaScriptParameter(properties.getGroupTypes())).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(helper.getJavaScriptParameter(properties.getRoleTypes())).append("]);");
 		parentGroupsChooser.setOnChange(action.toString());
 		addParentGroups(iwc, parentGroupsContainer, parentGroupsChooser);
 		
@@ -193,7 +187,7 @@ public class SimpleUserAppAddUser extends Block {
 		}
 		
 		//	Name
-		if (!allFieldsEditable) {
+		if (!properties.isAllFieldsEditable()) {
 			nameValueInput.setDisabled(true);
 		}
 		nameValueInput.setContent(name == null ? CoreConstants.EMPTY : name);
@@ -203,7 +197,7 @@ public class SimpleUserAppAddUser extends Block {
 		
 		//	Email
 		emailInpnut.setContent(email == null ? CoreConstants.EMPTY : email);
-		if (!allFieldsEditable) {
+		if (!properties.isAllFieldsEditable()) {
 			emailInpnut.setDisabled(true);
 		}
 		
@@ -234,11 +228,22 @@ public class SimpleUserAppAddUser extends Block {
 			passwordInput.setDisabled(false);
 		}
 		else {
-			if (!allFieldsEditable) {
+			if (!properties.isAllFieldsEditable()) {
 				passwordInput.setDisabled(true);
 			}
 		}
 		passwordInput.setContent(userInfo.getPassword());
+		
+		//	Enable/disable account
+		CheckBox manageAccountAvailability = getCheckBox(userInfo.isDisableAccount() ? 
+				iwrb.getLocalizedString("account_is_disabled_check_to_enable", "Account is disabled, check to enable it") :
+				iwrb.getLocalizedString("account_is_enabled_check_to_disable_it", "Account is enabled, check to disable it"), false);
+		String accountManagerId = manageAccountAvailability.getId();
+		
+		//	Change password next time
+		CheckBox changePasswordNextTime = getCheckBox(iwrb.getLocalizedString("user_will_have_to_change_password_next_time",
+				"User will have to change password on next login"), false);	//	TODO
+		String changePasswordNextTimeId = changePasswordNextTime.getId();
 	
 		List<String> idsForFields = new ArrayList<String>();
 		idsForFields.add(idValueInput.getId());								//	0	Personal ID
@@ -254,8 +259,8 @@ public class SimpleUserAppAddUser extends Block {
 		idsForFields.add(provinceInputId);									//	10	Province
 		idsForFields.add(postalBoxInputId);									//	11	Postal box
 		idsForFields.add(phoneInputId);										//	12	Phone
-		StringBuffer idAction = new StringBuffer("getUserByPersonalId(");
-		idAction.append(helper.getJavaScriptFunctionParameter(idsForFields)).append(SimpleUserApp.COMMA_SEPARATOR).append(allFieldsEditable).append(");");
+		StringBuffer idAction = new StringBuffer("getUserByPersonalId(event, ").append(helper.getJavaScriptFunctionParameter(idsForFields))
+								.append(SimpleUserApp.COMMA_SEPARATOR).append(properties.isAllFieldsEditable()).append(");");
 		idValueInput.setOnKeyUp(idAction.toString());
 		
 		List<UIComponent> inputs = new ArrayList<UIComponent>();
@@ -269,6 +274,8 @@ public class SimpleUserAppAddUser extends Block {
 		inputs.add(cityInput);						//	7	City
 		inputs.add(provinceInput);					//	8	Province
 		inputs.add(postalBoxInput);					//	9	Postal box
+		inputs.add(manageAccountAvailability);		//	10	Enable/disable account
+		inputs.add(changePasswordNextTime);			//	11	Change password next time
 		addUserFields(iwc, userFieldsContainer, inputs);
 		
 		//	Login information
@@ -280,7 +287,12 @@ public class SimpleUserAppAddUser extends Block {
 		//	Login fields
 		Layer userLoginContainer = new Layer();
 		container.add(userLoginContainer);
-		addLoginFields(iwc, userLoginContainer, loginValueInput, passwordInput);
+		List<GenericInput> loginInputs = new ArrayList<GenericInput>();
+		loginInputs.add(loginValueInput);
+		loginInputs.add(passwordInput);
+		loginInputs.add(manageAccountAvailability);
+		loginInputs.add(changePasswordNextTime);
+		addLoginFields(iwc, userLoginContainer, loginInputs);
 		
 		//	Selected groups
 		Layer selectGroupsLabelContainer = new Layer();
@@ -307,7 +319,7 @@ public class SimpleUserAppAddUser extends Block {
 		ids.add(nameValueInputId);				//	1	Name
 		ids.add(loginInputId);					//	2	Login
 		ids.add(passwordInputId);				//	3	Password
-		ids.add(groupForUsersWithoutLoginId);	//	4
+		ids.add(properties.getDefaultGroupId() == null ? "null" : properties.getDefaultGroupId());				//	4
 		ids.add(emailInputId);					//	5	Email
 		ids.add(phoneInputId);					//	6	Phone
 		ids.add(streetNameAndNumberInputId);	//	7	Street name and number
@@ -317,7 +329,20 @@ public class SimpleUserAppAddUser extends Block {
 		ids.add(cityInputId);					//	11	City
 		ids.add(provinceInputId);				//	12	Province
 		ids.add(postalBoxInputId);				//	13	Postal box
-		addButtons(iwc, buttons, ids, childGroups);
+		ids.add(properties.isAllowEnableDisableAccount() ? accountManagerId : "-1");							//	14 Enable/disable account
+		ids.add(properties.isChangePasswordNextTime() ? changePasswordNextTimeId : "-1");						//	15 Change password next time
+		ids.add(properties.getParentGroupId() == -1 ? "-1" : String.valueOf(properties.getParentGroupId()));	//	16 Selected group ID
+		addButtons(iwc, buttons, ids, childGroups, userInfo.isAccountExists());
+	}
+	
+	private CheckBox getCheckBox(String toolTip, boolean checked) {
+		CheckBox checkBox = new CheckBox();
+		checkBox.setChecked(checked, true);
+		checkBox.setToolTip(toolTip);
+		checkBox.setOnClick(new StringBuilder("if (!window.confirm('").append(iwrb.getLocalizedString("are_you_sure", "Are you sure?"))
+						.append("')) { var checkBox = document.getElementById('").append(checkBox.getId()).append("'); checkBox.checked = !checkBox.checked; }")
+						.toString());
+		return checkBox;
 	}
 	
 	private String getEmail(IWContext iwc, User user) {
@@ -342,13 +367,14 @@ public class SimpleUserAppAddUser extends Block {
 		
 		container.add(fieldsContainer);
 		
-		container.add(getDescriptionContainer(iwrb.getLocalizedString("add_user_checkbox_description", "Select the groups the user should have access to by checking the groups checkbox.")));
+		container.add(getDescriptionContainer(iwrb.getLocalizedString("add_user_checkbox_description",
+				"Select the groups the user should have access to by checking the groups checkbox.")));
 		container.add(getSpacer());
 		
 		List<String> ids = new ArrayList<String>();
-		String selectedGroupId = groupId;
+		String selectedGroupId = String.valueOf(properties.getGroupId());
 		if (selectedGroupId == null || ContentConstants.MINUS_ONE.equals(selectedGroupId)) {
-			selectedGroupId = parentGroupId;
+			selectedGroupId = String.valueOf(properties.getParentGroupId());
 		}
 		Layer selectedGroupsContainer = helper.getSelectedGroupsByIds(iwc, user, groupsHelper, childGroups, ids, selectedGroupId);
 		fieldsContainer.add(selectedGroupsContainer);
@@ -356,23 +382,38 @@ public class SimpleUserAppAddUser extends Block {
 		return ids;
 	}
 	
-	private void addLoginFields(IWContext iwc, Layer container, TextInput loginValueInput, PasswordInput passwordInput) {
+	private void addLoginFields(IWContext iwc, Layer container, List<GenericInput> inputs) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		Layer fieldsContainer = getFieldsContainer();
 		container.add(fieldsContainer);
 		
-		container.add(getDescriptionContainer(iwrb.getLocalizedString("user_login_description", "The user's name is always the user's personal ID and it cannot be changed.")));
+		container.add(getDescriptionContainer(iwrb.getLocalizedString("user_login_description",
+				"The user's name is always the user's personal ID and it cannot be changed.")));
 		container.add(getSpacer());
 		
 		//	Login
 		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("login", "Username"), true));
-		fieldsContainer.add(getComponentContainer(loginValueInput));
+		fieldsContainer.add(getComponentContainer(inputs.get(0)));
 		fieldsContainer.add(getSpacer());
 		
 		//	Password
 		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("password", "Password"), true));
-		fieldsContainer.add(getComponentContainer(passwordInput));
+		fieldsContainer.add(getComponentContainer(inputs.get(1)));
+		
+		//	Enable/disable account
+		if (properties.isAllowEnableDisableAccount()) {
+			fieldsContainer.add(getSpacer());
+			fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("enable_disable_account", "Enable/disable account")));
+			fieldsContainer.add(getComponentContainer(inputs.get(2)));
+		}
+		
+		//	Change password next time
+		if (properties.isChangePasswordNextTime()) {
+			fieldsContainer.add(getSpacer());
+			fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("set_to_change_password_next_time", "Change password next time")));
+			fieldsContainer.add(getComponentContainer(inputs.get(3)));
+		}
 	}
 	
 	private Layer getFieldsContainer() {
@@ -429,7 +470,8 @@ public class SimpleUserAppAddUser extends Block {
 		Layer fieldsContainer = getFieldsContainer();
 		container.add(fieldsContainer);
 		
-		container.add(getDescriptionContainer(iwrb.getLocalizedString("enter_personal_id_desc", "Please enter the user's personal ID. The system finds the user's name from the national registry.")));
+		container.add(getDescriptionContainer(iwrb.getLocalizedString("enter_personal_id_desc",
+				"Please enter the user's personal ID. The system finds the user's name from the national registry.")));
 		container.add(getSpacer());
 		
 		//	Personal ID
@@ -503,19 +545,20 @@ public class SimpleUserAppAddUser extends Block {
 		
 		Layer parentGroupValueContainer = getComponentContainer(null);
 		fieldsContainer.add(parentGroupValueContainer);
-		if (parentGroups == null) {	//	Normally shouldn't be null
+		String parentGroupId = properties.getParentGroupId() < 0 ? null : String.valueOf(properties.getParentGroupId());
+		if (ListUtil.isEmpty(parentGroups)) {									//	Normally shouldn't be empty
 			Group group = groupsHelper.getGroup(iwc, parentGroupId);
 			if (group == null) {
 				Collection<Group> topGroups = groupsHelper.getTopGroupsFromDomain(iwc);
-				if (!getParentGroupsFromTopNodes) {
+				if (!properties.isGetParentGroupsFromTopNodes()) {
 					topGroups = groupsHelper.getTopAndParentGroups(topGroups);	//	Will get top nodes and parent groups for them
 				}
 				if (topGroups == null) {
-					addLabelForNoGroups(iwrb, parentGroupValueContainer);	//	No group available
+					addLabelForNoGroups(iwrb, parentGroupValueContainer);		//	No group available
 				}
 				else {
-					parentGroupsChooser.addMenuElements(groupsHelper.getFilteredGroups(iwc, topGroups, groupTypesForParentGroups, CoreConstants.COMMA,
-							useChildrenOfTopNodesAsParentGroups));
+					parentGroupsChooser.addMenuElements(groupsHelper.getFilteredGroups(iwc, topGroups, properties.getGroupTypesForParentGroups(),
+							CoreConstants.COMMA, properties.isUseChildrenOfTopNodesAsParentGroups()));
 					parentGroupValueContainer.add(parentGroupsChooser);
 				}
 			}
@@ -543,13 +586,15 @@ public class SimpleUserAppAddUser extends Block {
 		container.add(new Text(iwrb.getLocalizedString("no_groups_available", "There are no groups available")));
 	}
 	
-	private void addButtons(IWContext iwc, Layer container, List<String> ids, List<String> childGroups) {
+	private void addButtons(IWContext iwc, Layer container, List<String> ids, List<String> childGroups, boolean accountExists) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		GenericButton back = new GenericButton(iwrb.getLocalizedString("back", "Back"));
-		StringBuffer backAction = new StringBuffer("goBackToSimpleUserApp('").append(parentComponentInstanceId);
-		backAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(parentContainerId).append(SimpleUserApp.PARAMS_SEPARATOR);
-		backAction.append(iwrb.getLocalizedString("loading", "Loading...")).append(SimpleUserApp.PARAMS_SEPARATOR).append(ids.get(0)).append("');");
+		StringBuffer backAction = new StringBuffer("goBackToSimpleUserApp('").append(properties.getInstanceId());
+		backAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(properties.getContainerId()).append(SimpleUserApp.PARAMS_SEPARATOR)
+					.append(iwrb.getLocalizedString("loading", "Loading...")).append(SimpleUserApp.PARAMS_SEPARATOR).append(ids.get(0)).append("', ")
+					.append(helper.getJavaScriptParameter(properties.getParentGroupId() == -1 ? null : String.valueOf(properties.getParentGroupId())))
+					.append(");");
 		back.setOnClick(backAction.toString());
 		container.add(back);
 		
@@ -560,31 +605,14 @@ public class SimpleUserAppAddUser extends Block {
 		messages.add(iwrb.getLocalizedString("please_enter_name", "Please, enter name!"));			//	2	Name
 		messages.add(iwrb.getLocalizedString("please_enter_login", "Please, enter login!"));		//	3	Login
 		StringBuffer saveAction = new StringBuffer("saveUserInSimpleUserApplication(");
-		saveAction.append(helper.getJavaScriptFunctionParameter(ids));
-		saveAction.append(", ");
-		saveAction.append(helper.getJavaScriptFunctionParameter(childGroups));
-		saveAction.append(", ").append(helper.getJavaScriptFunctionParameter(messages)).append(", ").append(allFieldsEditable).append(", ");
-		if (userId == null) {
-			saveAction.append("null");
-		}
-		else {
-			saveAction.append(helper.getJavaScriptParameter(String.valueOf(userId)));
-		}
-		saveAction.append(");");
+		saveAction.append(helper.getJavaScriptFunctionParameter(ids)).append(SimpleUserApp.COMMA_SEPARATOR);
+		saveAction.append(helper.getJavaScriptFunctionParameter(childGroups)).append(SimpleUserApp.COMMA_SEPARATOR);
+		saveAction.append(helper.getJavaScriptFunctionParameter(messages)).append(SimpleUserApp.COMMA_SEPARATOR).append(properties.isAllFieldsEditable());
+		saveAction.append(SimpleUserApp.COMMA_SEPARATOR).append(helper.getJavaScriptParameter(userId == null ? null : String.valueOf(userId)));
+		saveAction.append(SimpleUserApp.COMMA_SEPARATOR).append(accountExists ? false : properties.isSendMailToUser()).append(SimpleUserApp.COMMA_SEPARATOR);
+		saveAction.append(properties.isJuridicalPerson()).append(");");
 		save.setOnClick(saveAction.toString());
 		container.add(save);
-	}
-
-	public void setGroupForUsersWthouLoginId(String groupForUsersWithoutLoginId) {
-		this.groupForUsersWithoutLoginId = groupForUsersWithoutLoginId;
-	}
-
-	public void setGroupId(String groupId) {
-		this.groupId = groupId;
-	}
-
-	public void setParentGroupId(String parentGroupId) {
-		this.parentGroupId = parentGroupId;
 	}
 	
 	public String getBundleIdentifier() {
@@ -602,32 +630,9 @@ public class SimpleUserAppAddUser extends Block {
 	public void setChildGroups(List<Integer> childGroups) {
 		this.childGroups = childGroups;
 	}
-	
-	public void setGroupTypes(String groupTypes) {
-		this.groupTypes = groupTypes;
-	}
-
-	public void setRoleTypes(String roleTypes) {
-		this.roleTypes = roleTypes;
-	}
-
-	public void setGetParentGroupsFromTopNodes(boolean getParentGroupsFromTopNodes) {
-		this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
-	}
 
 	private Layer getSpacer() {
-		Layer spacer = new Layer();
-		spacer.setStyleClass("spacer");
-		return spacer;
-	}
-
-	public void setGroupTypesForParentGroups(String groupTypesForParentGroups) {
-		this.groupTypesForParentGroups = groupTypesForParentGroups;
-	}
-
-	public void setUseChildrenOfTopNodesAsParentGroups(
-			boolean useChildrenOfTopNodesAsParentGroups) {
-		this.useChildrenOfTopNodesAsParentGroups = useChildrenOfTopNodesAsParentGroups;
+		return new CSSSpacer();
 	}
 
 }

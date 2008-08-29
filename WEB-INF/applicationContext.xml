@@ -7,8 +7,6 @@
 >
 
 	<bean id="groupHelper" class="com.idega.user.business.GroupHelperBusinessBean" scope="session" />
-	<bean id="userApplicationEngine" class="com.idega.user.business.UserApplicationEngineBean" scope="session" >
-		<property name="groupHelperBean" ref="groupHelper"></property>
-	</bean>
+	<bean id="userApplicationEngine" class="com.idega.user.business.UserApplicationEngineBean" scope="session" />
 
 </beans>

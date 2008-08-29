@@ -11,6 +11,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
+import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.business.UserApplicationEngine;
 import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
@@ -44,7 +45,12 @@ public class SimpleUserApp extends Block {
 	private boolean allFieldsEditable = false;
 	private boolean addGroupCreateButton = false;
 	private boolean addGroupEditButton = false;
+	private boolean addChildGroupCreateButton = true;
+	private boolean addChildGroupEditButton = true;
 	private boolean juridicalPerson = false;
+	private boolean sendMailToUser = false;
+	private boolean changePasswordNextTime = false;
+	private boolean allowEnableDisableAccount = false;
 	/** Properties end **/
 	
 	/**
@@ -68,9 +74,18 @@ public class SimpleUserApp extends Block {
 		
 		add(container);
 		
-		SimpleUserAppViewUsers viewUsers = new SimpleUserAppViewUsers(instanceId, container.getId(), parentGroup, groupForUsersWithoutLogin, groupTypes,
-				groupTypesForChildGroups, roleTypesForChildGroups, getParentGroupsFromTopNodes, useChildrenOfTopNodesAsParentGroups, allFieldsEditable,
-				addGroupCreateButton, addGroupEditButton);
+		SimpleUserPropertiesBean properties = new SimpleUserPropertiesBean(instanceId, container.getId(), groupTypes, groupTypesForChildGroups,
+				roleTypesForChildGroups, getParentGroupsFromTopNodes, useChildrenOfTopNodesAsParentGroups, allFieldsEditable, juridicalPerson,
+				addGroupCreateButton, addGroupEditButton, sendMailToUser, changePasswordNextTime, allowEnableDisableAccount, addChildGroupCreateButton,
+				addChildGroupEditButton);
+		if (parentGroup != null) {
+			properties.setParentGroupId(Integer.valueOf(parentGroup.getId()));
+		}
+		if (groupForUsersWithoutLogin != null) {
+			properties.setDefaultGroupId(groupForUsersWithoutLogin.getId());
+		}
+		
+		SimpleUserAppViewUsers viewUsers = new SimpleUserAppViewUsers(properties, parentGroup, groupForUsersWithoutLogin);
 		container.add(viewUsers);
 		
 		UserApplicationEngine userEngine = ELUtil.getInstance().getBean(UserApplicationEngine.class);
@@ -175,6 +190,46 @@ public class SimpleUserApp extends Block {
 
 	public void setJuridicalPerson(boolean juridicalPerson) {
 		this.juridicalPerson = juridicalPerson;
+	}
+
+	public boolean isSendMailToUser() {
+		return sendMailToUser;
+	}
+
+	public void setSendMailToUser(boolean sendMailToUser) {
+		this.sendMailToUser = sendMailToUser;
+	}
+
+	public boolean isChangePasswordNextTime() {
+		return changePasswordNextTime;
+	}
+
+	public void setChangePasswordNextTime(boolean changePasswordNextTime) {
+		this.changePasswordNextTime = changePasswordNextTime;
+	}
+
+	public boolean isAllowEnableDisableAccount() {
+		return allowEnableDisableAccount;
+	}
+
+	public void setAllowEnableDisableAccount(boolean allowEnableDisableAccount) {
+		this.allowEnableDisableAccount = allowEnableDisableAccount;
+	}
+
+	public boolean isAddChildGroupCreateButton() {
+		return addChildGroupCreateButton;
+	}
+
+	public void setAddChildGroupCreateButton(boolean addChildGroupCreateButton) {
+		this.addChildGroupCreateButton = addChildGroupCreateButton;
+	}
+
+	public boolean isAddChildGroupEditButton() {
+		return addChildGroupEditButton;
+	}
+
+	public void setAddChildGroupEditButton(boolean addChildGroupEditButton) {
+		this.addChildGroupEditButton = addChildGroupEditButton;
 	}
 
 	/** Methods for properties end **/

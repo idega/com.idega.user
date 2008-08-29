@@ -28,28 +28,22 @@ function setErrorHandlerForSimpleUserApplication(errorExplanations) {
 	DWREngine.setErrorHandler(errorHandler);
 }
 
-function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles, instanceId, mainContainerId, defaultGroupId,
-							parentGroupChooserId, groupTypesForParentGroups, useChildrenOfTopNodesAsParentGroups, allFieldsEditable) {
+function getParentGroupIdInSUA(chooserId, selectedId) {
+	var parentGroupId = getSelectObjectValue(chooserId);
+	if (parentGroupId == -1 && selectedId != null && selectedId != '') {
+		parentGroupId = selectedId;
+	}
+	return parentGroupId;
+}
+
+function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles, params) {
 	showLoadingMessage(message);
 	var chooser = document.getElementById(childGroupsChooserId);
 	if (chooser != null) {
 		DWRUtil.removeAllOptions(childGroupsChooserId);
 	}
 	
-	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
-	
-	var params = new Array();
-	params.push(instanceId);							//	0
-	params.push(mainContainerId);						//	1
-	params.push(childGroupsChooserId);					//	2
-	params.push(defaultGroupId);						//	3
-	params.push(groupTypes);							//	4
-	params.push(groupRoles);							//	5
-	params.push(message);								//	6
-	params.push(parentGroupChooserId);					//	7
-	params.push(groupTypesForParentGroups);				//	8
-	params.push(useChildrenOfTopNodesAsParentGroups);	//	9
-	params.push(allFieldsEditable);						//	10
+	var parentGroupId = getParentGroupIdInSUA(chooserId, params[16]);
 	
 	UserApplicationEngine.getChildGroups(parentGroupId, groupTypes, groupRoles, {
 		callback: function(childGroups) {
@@ -98,7 +92,7 @@ function reOrderGroupUsers(parentGroupChooserId, childGroupChooserId, orderByCho
 
 function selectChildGroup(groupChooserId, containerId, parentGroupChooserId, orderByChooserId, message, parameters) {
 	showLoadingMessage(message);
-	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
+	var parentGroupId = getParentGroupIdInSUA(parentGroupChooserId, parameters[16]);
 	var groupId = getSelectObjectValue(groupChooserId);
 	var orderBy = getSelectObjectValue(orderByChooserId);
 	
@@ -233,18 +227,20 @@ function removeUser(containerId, userId, groupId, checkBoxId) {
 
 function addUserPresentationObject(instanceId, containerId, parentGroupChooserId, groupChooserId, message, defaultGroupId, userId,
 										groupTypes, roleTypes, getParentGroupsFromTopNodes, groupTypesForParentGroups,
-										useChildrenOfTopNodesAsParentGroups, allFieldsEditable) {
+										useChildrenOfTopNodesAsParentGroups, allFieldsEditable, juridicalPerson, changePasswordNextTime, sendMailToUser,
+										allowEnableDisableAccount, selectedParentGroupId) {
 	USER_ID = userId;
 	
 	refreshDeselectedGroups();
 	showLoadingMessage(message);
 	
-	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
+	var parentGroupId = getParentGroupIdInSUA(parentGroupChooserId, selectedParentGroupId);
 	var groupId = getSelectObjectValue(groupChooserId);
 	
 	//	Properties bean
 	var bean = new SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes, getParentGroupsFromTopNodes,
-											groupTypesForParentGroups, useChildrenOfTopNodesAsParentGroups, allFieldsEditable);
+											groupTypesForParentGroups, useChildrenOfTopNodesAsParentGroups, allFieldsEditable, juridicalPerson,
+											changePasswordNextTime, sendMailToUser, allowEnableDisableAccount);
 	
 	//	Parent groups
 	var parentGroups = getSelectObjectValues(parentGroupChooserId);
@@ -296,10 +292,10 @@ function getAddUserPresentationObjectCallback(component, containerId) {
 	return true;
 }
 
-function goBackToSimpleUserApp(instanceId, containerId, message, parentGroupChooserId) {
+function goBackToSimpleUserApp(instanceId, containerId, message, parentGroupChooserId, selectedParentGroupId) {
 	refreshDeselectedGroups();
 	
-	var parentGroupId = getSelectObjectValue(parentGroupChooserId);
+	var parentGroupId = getParentGroupIdInSUA(parentGroupChooserId, selectedParentGroupId);
 	
 	showLoadingMessage(message);
 	UserApplicationEngine.getSimpleUserApplication(instanceId, parentGroupId, {
@@ -324,11 +320,11 @@ function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters) 
 	});
 }
 
-function getUserByPersonalId(parameters, allFieldsEditable) {
+function getUserByPersonalId(event, parameters, allFieldsEditable) {
 	if (parameters == null) {
 		return false;
 	}
-	
+
 	var valueInputId = parameters[0];
 	if (valueInputId == null) {
 		return false;
@@ -341,7 +337,7 @@ function getUserByPersonalId(parameters, allFieldsEditable) {
 	if (personalId == null) {
 		return false;
 	}
-	if (personalId.length < 10) {
+	if (!isEnterEvent(event) && personalId.length < 10) {
 		return false;
 	}
 	
@@ -369,6 +365,13 @@ function userApplicationRemoveSpaces(value) {
 
 function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 	closeAllLoadingMessages();
+	if (bean == null) {
+		return false;
+	}
+	if (bean.errorMessage != null) {
+		showHumanizedMessage(bean.errorMessage, null);
+		return false;
+	}
 	
 	USER_ID = bean.userId;
 	
@@ -397,14 +400,6 @@ function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 	document.getElementById(parameters[10]).value = '';
 	DWRUtil.setValue(document.getElementById(parameters[8]), '-1');
 	loginInput.value = '';
-	
-	if (bean == null) {
-		return false;
-	}
-	if (bean.errorMessage != null) {
-		showHumanizedMessage(bean.errorMessage, null);
-		return false;
-	}
 	
 	refreshDeselectedGroups();
 	
@@ -455,18 +450,18 @@ function setValueForUserInput(input, value, allFieldsEditable) {
 	}
 }
 
-function saveUserInSimpleUserApplication(ids, childGroups, messages, allFieldsEditable, userId) {
+function saveUserInSimpleUserApplication(ids, childGroups, messages, allFieldsEditable, userId, sendEmailWithLoginInfo, juridicalPerson) {
 	showLoadingMessage(messages[0]);
 	var emailInputId = ids[5];
 	var email = document.getElementById(emailInputId).value;
 	UserApplicationEngine.isValidEmail(email, {
 		callback: function(result) {
-			isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsEditable, userId);
+			isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsEditable, userId, sendEmailWithLoginInfo, juridicalPerson);
 		}
 	});
 }
 
-function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsEditable, userId) {
+function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsEditable, userId, sendEmailWithLoginInfo, juridicalPerson) {
 	closeAllLoadingMessages();
 	if (result != null) {
 		showHumanizedMessage(result, ids[5]);
@@ -487,6 +482,9 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 	var cityInputId = ids[11];
 	var provinceInputId = ids[12];
 	var postalBoxInputId = ids[13];
+	
+	var changePasswordNextTime = isCheckboxChecked(ids[15]);
+	var disableAccount = isCheckboxChecked(ids[14]);
 	
 	var selectedGroups = new Array();
 	if (childGroups == null) {
@@ -540,14 +538,14 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 	
 	//	Password
 	var passwordInput = document.getElementById(passwordInputId);
-	if (!checkIfValidValue(passwordInput)) {
+	if (!checkIfValidValue(passwordInput) && !juridicalPerson) {
 		showHumanizedMessage(messages[1], passwordInputId);
 		return false;
 	}
 	var password = passwordInput.value;
 	
 	var email = document.getElementById(emailInputId).value;
-	var primaryGroupId = getSelectObjectValue(parentGroupChooserId);
+	var primaryGroupId = getParentGroupIdInSUA(parentGroupChooserId, ids[16]);
 	var phone = document.getElementById(phoneInputId).value;
 	var streetNameAndNumber = document.getElementById(streetNameAndNumberInputId).value;
 	var postalCodeId = document.getElementById(postalCodeIdInputId).value;
@@ -563,9 +561,9 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 	}
 	
 	showLoadingMessage(messages[0]);
-	var userInfo = new UserDataBean(userName, login, password, personalId, email, null, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox,
-									userId);
-	UserApplicationEngine.createUser(userInfo, primaryGroupId, selectedGroups, DESELECTED_GROUPS, allFieldsEditable, {
+	var userInfo = new UserDataBean(userName, login, password, personalId, email, null, phone, streetNameAndNumber, postalCodeId, countryName, city, province,
+									postalBox, userId, juridicalPerson, changePasswordNextTime, disableAccount);
+	UserApplicationEngine.createUser(userInfo, primaryGroupId, selectedGroups, DESELECTED_GROUPS, allFieldsEditable, sendEmailWithLoginInfo, {
 		callback: function(result) {
 			closeAllLoadingMessages();
 			if (result != null) {
@@ -594,7 +592,8 @@ function checkIfValidValue(input) {
 	return true;
 }
 
-function UserDataBean(name, login, password, personalId, email, errorMessage, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox, userId) {
+function UserDataBean(name, login, password, personalId, email, errorMessage, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox,
+					 userId, juridicalPerson, changePasswordNextTime, disableAccount) {
 	this.name = name;
 	this.login = login;
 	this.password = password;
@@ -609,6 +608,22 @@ function UserDataBean(name, login, password, personalId, email, errorMessage, ph
 	this.province = province;
 	this.postalBox = postalBox;
 	this.userId = userId;
+	this.juridicalPerson = juridicalPerson;
+	this.changePasswordNextTime = changePasswordNextTime;
+	this.disableAccount = disableAccount;
+}
+
+function isCheckboxChecked(id) {
+	if (id == null) {
+		return null;
+	}
+	
+	var checkBox = document.getElementById(id);
+	if (checkBox == null) {
+		return false;
+	}
+	
+	return checkBox.checked;
 }
 
 function getCheckboxValue(id, checkIfChecked) {
@@ -633,18 +648,28 @@ function getCheckboxValueFromCheckBox(checkbox, checkIfChecked) {
 }
 
 function SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes, getParentGroupsFromTopNodes,
-									groupTypesForParentGroups, useChildrenOfTopNodesAsParentGroups, allFieldsEditable) {
-	this.instanceId = instanceId;
+									groupTypesForParentGroups, useChildrenOfTopNodesAsParentGroups, allFieldsEditable, juridicalPerson, changePasswordNextTime,
+									sendMailToUser, allowEnableDisableAccount) {
+	
 	this.parentGroupId = parentGroupId;
 	this.groupId = groupId;
-	this.defaultGroupId = defaultGroupId;
+	
+	this.instanceId = instanceId;
 	this.containerId = containerId;
+
+	this.defaultGroupId = defaultGroupId;
 	this.groupTypes = groupTypes;
 	this.roleTypes = roleTypes;
-	this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
+	
 	this.groupTypesForParentGroups = groupTypesForParentGroups;
+	
+	this.getParentGroupsFromTopNodes = getParentGroupsFromTopNodes;
 	this.useChildrenOfTopNodesAsParentGroups = useChildrenOfTopNodesAsParentGroups;
 	this.allFieldsEditable = allFieldsEditable;
+	this.juridicalPerson = juridicalPerson;
+	this.sendMailToUser = sendMailToUser;
+	this.changePasswordNextTime = changePasswordNextTime;
+	this.allowEnableDisableAccount = allowEnableDisableAccount;
 }
 
 function SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy, parameters) {
@@ -656,16 +681,21 @@ function SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy,
 	this.defaultGroupId = null;
 	this.groupTypes = null;
 	this.roleTypes = null;
+	
 	this.count = 20;
+	this.orderBy = orderBy;
+	
+	this.groupTypesForParentGroups = null;
+	this.useChildrenOfTopNodesAsParentGroups = false;
+	this.allFieldsEditable = false;
 	
 	this.parentGroupId = parentGroupId;
 	this.groupId = groupId;
-	this.orderBy = orderBy;
 	
 	if (parameters == null) {
 		return;
 	}
-	if (parameters.length < 11) {
+	if (parameters.length < 16) {
 		return;
 	}
 	this.instanceId = parameters[0];
@@ -679,6 +709,10 @@ function SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy,
 	this.groupTypesForParentGroups = parameters[8];
 	this.useChildrenOfTopNodesAsParentGroups = parameters[9];
 	this.allFieldsEditable = parameters[10];
+	this.juridicalPerson = parameters[12];
+	this.sendMailToUser = parameters[13];
+	this.changePasswordNextTime = parameters[14];
+	this.allowEnableDisableAccount = parameters[15];
 }
 
 function refreshDeselectedGroups() {
@@ -729,12 +763,12 @@ function createOrModifyGroup(parameters, getTopAndParentGroups, useChildrenOfTop
 	var parentGroupId = -1;
 	var parentGroupChooserId = parameters[9];
 	if (parentGroupChooserId != null) {
-		parentGroupId = getSelectObjectValue(parentGroupChooserId);
-		if (parentGroupId != -1) {
-			//	Child group!
-			uri += '&' + parameters[8] + '=' + parentGroupId;
-			availableGroupTypes = groupTypesForChildrenGroups;
-		}
+		parentGroupId = getParentGroupIdInSUA(parentGroupChooserId, parameters[12]);
+	}
+	if (parentGroupId != -1) {
+		//	Working with child group!
+		uri += '&' + parameters[8] + '=' + parentGroupId;
+		availableGroupTypes = groupTypesForChildrenGroups;
 	}
 	if (availableGroupTypes != null && availableGroupTypes != '') {
 		uri += '&' + parameters[10] + '=' + availableGroupTypes;
@@ -1042,7 +1076,8 @@ function navigateInUsersList(params, beanParameters, orderBy, index, moveToLeft)
 		showHumanizedMessage(params[3], params[2]);
 		return false;
 	}
-	var parentGroupId = getSelectObjectValue(params[4]);
+	
+	var parentGroupId = getParentGroupIdInSUA(params[4], beanParameters[11]);
 	var bean = new SimpleUserPropertiesBeanWithParameters(parentGroupId, params[5], orderBy, beanParameters);
 	bean.count = pageSize;
 	bean.from = moveToLeft ? index - pageSize : index;

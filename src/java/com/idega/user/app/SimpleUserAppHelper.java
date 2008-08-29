@@ -36,6 +36,7 @@ import com.idega.user.data.User;
 import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 public class SimpleUserAppHelper {
@@ -267,6 +268,34 @@ public class SimpleUserAppHelper {
 		return container;
 	}
 	
+	public String getBeanAsParameters(SimpleUserPropertiesBean bean, String parentGroupChooserId, String childGroupChooserId, String message) {
+		List<String> parameters = new ArrayList<String>();
+		
+		addParamaterToList(parameters, bean.getInstanceId());							//	0
+		addParamaterToList(parameters, bean.getContainerId());							//	1
+		addParamaterToList(parameters, StringUtil.isEmpty(childGroupChooserId) ? bean.getGroupChooserId() : childGroupChooserId);													//	2
+		addParamaterToList(parameters, bean.getDefaultGroupId());						//	3
+		addParamaterToList(parameters, bean.getGroupTypes());							//	4
+		addParamaterToList(parameters, bean.getRoleTypes());							//	5
+		addParamaterToList(parameters, StringUtil.isEmpty(message) ? bean.getMessage() : message);																						//	6
+		addParamaterToList(parameters, StringUtil.isEmpty(parentGroupChooserId) ? bean.getParentGroupChooserId() : parentGroupChooserId);					//	7
+		addParamaterToList(parameters, bean.getGroupTypesForParentGroups());			//	8
+		parameters.add(String.valueOf(bean.isUseChildrenOfTopNodesAsParentGroups()));	//	9
+		parameters.add(String.valueOf(bean.isAllFieldsEditable()));						//	10
+		addParamaterToList(parameters, String.valueOf(bean.getParentGroupId()));		//	11
+		parameters.add(String.valueOf(bean.isJuridicalPerson()));						//	12
+		parameters.add(String.valueOf(bean.isSendMailToUser()));						//	13
+		parameters.add(String.valueOf(bean.isChangePasswordNextTime()));				//	14
+		parameters.add(String.valueOf(bean.isAllowEnableDisableAccount()));				//	15
+		addParamaterToList(parameters, bean.getParentGroupId() == -1 ? null : String.valueOf(bean.getParentGroupId()));																	//	16
+		
+		return getJavaScriptFunctionParameter(parameters);
+	}
+	
+	private void addParamaterToList(List<String> parameters, String parameter) {
+		parameters.add(StringUtil.isEmpty(parameter) ? "null" : parameter);
+	}
+	
 	private List<ICRole> getFilteredRoles(List<ICRole> allRoles, List<String> selectedRoles) {
 		if (ListUtil.isEmpty(allRoles)) {
 			return null;
@@ -301,7 +330,8 @@ public class SimpleUserAppHelper {
 			checkBox.setChecked(isRoleChecked(permissionKey, roleKey, permissionsForCurrentGroup));
 			checkBox.setStyleClass(checkBoxStyle);
 			checkBox.setMarkupAttribute(attribute, groupId);
-			action = new StringBuilder("changePermissionValueForRole('").append(checkBox.getId()).append(SimpleUserApp.PARAMS_SEPARATOR).append(message).append("');");
+			action = new StringBuilder("changePermissionValueForRole('").append(checkBox.getId()).append(SimpleUserApp.PARAMS_SEPARATOR).append(message)
+			.append("');");
 			checkBox.setOnClick(action.toString());
 			cell.add(checkBox);
 		}

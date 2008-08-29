@@ -19,6 +19,7 @@ import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.IntegerInput;
 import com.idega.presentation.ui.Label;
 import com.idega.user.app.SimpleUserApp;
+import com.idega.user.app.SimpleUserAppHelper;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.business.GroupHelper;
 import com.idega.user.business.UserApplicationEngine;
@@ -244,36 +245,15 @@ public class GroupMembersListViewer extends Block {
 	
 	private String getPagerAction(IWResourceBundle iwrb, String pageSizeInputId) {
 		String message = iwrb.getLocalizedString("loading", "Loading...");
+		SimpleUserAppHelper helper = new SimpleUserAppHelper();
 		
 		StringBuilder action = new StringBuilder("navigateInUsersList(['").append(containerId).append("', '").append(message).append("', '")
 			.append(pageSizeInputId).append("', '")
 			.append(iwrb.getLocalizedString("enter_valid_page_size_greater_than_zero", "Please, enter valid page size value (greater than zero)!"))
-			.append("', '").append(bean.getParentGroupChooserId()).append("', '").append(bean.getGroupId()).append("'], ").append(getBeanAsParameters(message))
-			.append(", ").append(bean.getOrderBy());
+			.append("', '").append(bean.getParentGroupChooserId()).append("', '").append(bean.getGroupId()).append("'], ")
+			.append(helper.getBeanAsParameters(bean, null, null, message)).append(", ").append(bean.getOrderBy());
 		
 		return action.toString();
-	}
-	
-	private String getBeanAsParameters(String message) {
-		List<String> parameters = new ArrayList<String>(11);
-		
-		addParamaterToList(parameters, bean.getInstanceId());
-		addParamaterToList(parameters, bean.getContainerId());
-		addParamaterToList(parameters, bean.getGroupChooserId());
-		addParamaterToList(parameters, bean.getDefaultGroupId());
-		addParamaterToList(parameters, bean.getGroupTypes());
-		addParamaterToList(parameters, bean.getRoleTypes());
-		addParamaterToList(parameters, message);
-		addParamaterToList(parameters, bean.getParentGroupChooserId());
-		addParamaterToList(parameters, bean.getGroupTypesForParentGroups());
-		parameters.add(String.valueOf(bean.isUseChildrenOfTopNodesAsParentGroups()));
-		parameters.add(String.valueOf(bean.isAllFieldsEditable()));
-		
-		return ELUtil.getInstance().getBean(GroupHelper.class).getJavaScriptFunctionParameter(parameters);
-	}
-	
-	private void addParamaterToList(List<String> parameters, String parameter) {
-		parameters.add(StringUtil.isEmpty(parameter) ? "null" : parameter);
 	}
 	
 	@Override

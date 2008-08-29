@@ -9,14 +9,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.faces.component.UIComponent;
-
 import org.jdom.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.builder.business.AdvancedPropertyComparator;
@@ -27,6 +29,8 @@ import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
+import com.idega.core.accesscontrol.business.StandardRoles;
+import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.builder.data.ICPageHome;
@@ -44,6 +48,7 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
@@ -60,32 +65,46 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.EmailValidator;
 import com.idega.util.ListUtil;
+import com.idega.util.SendMail;
 import com.idega.util.StringUtil;
-import com.idega.util.expression.ELUtil;
 
 public class UserApplicationEngineBean implements UserApplicationEngine {
 
 	private static final long serialVersionUID = -7472052374016555081L;
+	private static final Logger logger = Logger.getLogger(UserApplicationEngineBean.class.getName());
 	
 	private GroupBusiness groupBusiness = null;
 	private UserBusiness userBusiness = null;
+	
 	private GroupHelper groupHelper = null;
+	private CompanyHelper companyHelper = null;
+	
 	private SimpleUserAppHelper presentationHelper = new SimpleUserAppHelper();
 	
 	private Map<String, SimpleUserAppViewUsers> simpleUserApps = new HashMap<String, SimpleUserAppViewUsers>();
 	private Map<String, List<Integer>> pagerProperties = new HashMap<String, List<Integer>>();
 	
-	public GroupHelper getGroupHelperBean() {
-		if (groupHelper == null) {
-			groupHelper = ELUtil.getInstance().getBean(GroupHelper.class);
-		}
+	//	It's a Spring bean!
+	private UserApplicationEngineBean() {}
+	
+	public GroupHelper getGroupHelper() {
 		return groupHelper;
 	}
 	
-	public void setGroupHelperBean(GroupHelper groupHelper) {
+	@Autowired
+	public void setGroupHelper(GroupHelper groupHelper) {
 		this.groupHelper = groupHelper;
 	}
 	
+	public CompanyHelper getCompanyHelper() {
+		return companyHelper;
+	}
+
+	@Autowired
+	public void setCompanyHelper(CompanyHelper companyHelper) {
+		this.companyHelper = companyHelper;
+	}
+
 	public List<AdvancedProperty> getChildGroups(String groupId, String groupTypes, String groupRoles) {
 		if (groupId == null) {
 			return null;
@@ -120,7 +139,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		
-		GroupHelper helper = getGroupHelperBean();
+		GroupHelper helper = getGroupHelper();
 		if (helper == null) {
 			return null;
 		}
@@ -242,14 +261,11 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			return null;
 		}
 		
-		String instanceId = bean.getInstanceId();
-		if (instanceId == null) {
+		if (StringUtil.isEmpty(bean.getInstanceId()) || StringUtil.isEmpty(bean.getContainerId())) {
+			logger.log(Level.WARNING, "Can not generate form for creating/editing form, missing properties: instance ID: " + bean.getInstanceId() +
+					", container ID: " + bean.getContainerId());
 			return null;
 		}
-		String parentGroupId = String.valueOf(bean.getParentGroupId());
-		String groupId = String.valueOf(bean.getGroupId());
-		String groupForUsersWithoutLoginId = bean.getDefaultGroupId();
-		String containerId = bean.getContainerId();
 		
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
@@ -258,18 +274,10 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		
 		BuilderLogic builder = BuilderLogic.getInstance();
 		
-		SimpleUserAppAddUser addUser = new SimpleUserAppAddUser(instanceId, containerId, bean.isAllFieldsEditable());
-		addUser.setParentGroupId(parentGroupId);
-		addUser.setGroupId(groupId);
-		addUser.setGroupForUsersWthouLoginId(groupForUsersWithoutLoginId);
+		SimpleUserAppAddUser addUser = new SimpleUserAppAddUser(bean);
 		addUser.setParentGroups(parentGroups);
 		addUser.setChildGroups(childGroups);
 		addUser.setUserId(userId);
-		addUser.setGroupTypes(bean.getGroupTypes());
-		addUser.setRoleTypes(bean.getRoleTypes());
-		addUser.setGetParentGroupsFromTopNodes(bean.isGetParentGroupsFromTopNodes());
-		addUser.setGroupTypesForParentGroups(bean.getGroupTypesForParentGroups());
-		addUser.setUseChildrenOfTopNodesAsParentGroups(bean.isUseChildrenOfTopNodesAsParentGroups());
 		
 		return builder.getRenderedComponent(iwc, addUser, true);
 	}
@@ -329,7 +337,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			}
 		}
 		
-		GroupHelper helper = getGroupHelperBean();
+		GroupHelper helper = getGroupHelper();
 		if (helper == null) {
 			return null;
 		}
@@ -385,63 +393,79 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			String password = userBusiness.getUserPassword(user);
 			bean.setPassword(password == null ? CoreConstants.EMPTY : password);
 			
+			//	Disabled account?
+			LoginInfo loginInfo = null;
+			try {
+				loginInfo = LoginDBHandler.getLoginInfo(LoginDBHandler.getUserLogin(user));
+			} catch(Exception e) {}
+			if (loginInfo != null) {
+				bean.setAccountExists(true);
+				bean.setDisableAccount(!loginInfo.getAccountEnabled());
+			}
+			
 			//	Phone
 			Phone phone = null;
 			try {
 				phone = userBusiness.getUserPhone(Integer.valueOf(user.getId()), PhoneTypeBMPBean.HOME_PHONE_ID);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			String phoneNumber = phone == null ? CoreConstants.EMPTY : phone.getNumber();
-			bean.setPhone(phoneNumber == null ? CoreConstants.EMPTY : phoneNumber);
+			} catch (Exception e) {}
 			
 			//	Email
 			Email email = null;
 			try {
 				email = userBusiness.getUserMail(user);
 			} catch (Exception e) {}
-			String mail = email == null ? CoreConstants.EMPTY : email.getEmailAddress();
-			bean.setEmail(mail == null ? CoreConstants.EMPTY : mail);
 			
 			//	Address
 			Address address = null;
 			try {
 				address = userBusiness.getUsersMainAddress(user);
 			} catch (RemoteException e) {}
-			if (address != null) {
-				String streetNameAndNumber = address.getStreetAddress();
-				bean.setStreetNameAndNumber(streetNameAndNumber == null ? CoreConstants.EMPTY : streetNameAndNumber);
-				
-				String postalCodeValue = null;
-				PostalCode postalCode = address.getPostalCode();
-				if (postalCode != null) {
-					postalCodeValue = postalCode.getPostalCode();
-				}
-				bean.setPostalCodeId(postalCodeValue == null ? CoreConstants.EMPTY : postalCodeValue);
-				
-				String countryName = CoreConstants.EMPTY;
-				Country country = address.getCountry();
-				if (country != null) {
-					countryName = country.getName();
-				}
-				bean.setCountryName(countryName == null ? CoreConstants.EMPTY : countryName);
-				
-				String city = address.getCity();
-				bean.setCity(city == null ? CoreConstants.EMPTY : city);
-				
-				String province = address.getProvince();
-				bean.setProvince(province == null ? CoreConstants.EMPTY : province);
-				
-				String postalBox = address.getPOBox();
-				bean.setPostalBox(postalBox == null ? CoreConstants.EMPTY : postalBox);
-			}
+			fillUserInfo(bean, phone, email, address);
 		}
 		
 		return bean;
 	}
 	
+	public void fillUserInfo(UserDataBean info, Phone phone, Email email, Address address) {
+		if (phone != null) {
+			info.setPhone(phone.getNumber());
+		}
+		
+		if (email != null) {
+			info.setEmail(email.getEmailAddress());
+		}
+		
+		if (address != null) {
+			String streetNameAndNumber = address.getStreetAddress();
+			info.setStreetNameAndNumber(streetNameAndNumber == null ? CoreConstants.EMPTY : streetNameAndNumber);
+			
+			String postalCodeValue = null;
+			PostalCode postalCode = address.getPostalCode();
+			if (postalCode != null) {
+				postalCodeValue = postalCode.getPostalCode();
+			}
+			info.setPostalCodeId(postalCodeValue == null ? CoreConstants.EMPTY : postalCodeValue);
+			
+			String countryName = CoreConstants.EMPTY;
+			Country country = address.getCountry();
+			if (country != null) {
+				countryName = country.getName();
+			}
+			info.setCountryName(countryName == null ? CoreConstants.EMPTY : countryName);
+			
+			String city = address.getCity();
+			info.setCity(city == null ? CoreConstants.EMPTY : city);
+			
+			String province = address.getProvince();
+			info.setProvince(province == null ? CoreConstants.EMPTY : province);
+			
+			String postalBox = address.getPOBox();
+			info.setPostalBox(postalBox == null ? CoreConstants.EMPTY : postalBox);
+		}
+	}
+	
 	public UserDataBean getUserByPersonalId(String personalId) {
-		if (personalId == null) {
+		if (StringUtil.isEmpty(personalId)) {
 			return null;
 		}
 		
@@ -455,14 +479,36 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			return null;
 		}
 		
+		UserDataBean info = null;
+		
 		User user = null;
 		try {
 			user = userBusiness.getUser(personalId);
 		} catch (Exception e) {}
-		return getUserInfo(user);
+		if (user == null) {
+			logger.log(Level.WARNING, "User by was not found by provided personal ID ('" + personalId + "'), trying to find company");
+		}
+		else {
+			info = getUserInfo(user);
+		}
+		
+		if (info == null && getCompanyHelper() != null) {
+			info = getCompanyHelper().getCompanyInfo(personalId);
+		}
+		
+		if (info == null) {
+			IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+			info = new UserDataBean();
+			String errorMessage = new StringBuilder(iwrb.getLocalizedString("no_user_found_by_provided_personal_id", "No user found by provided ID"))
+													.append(": ").append(personalId).toString();
+			info.setErrorMessage(errorMessage);
+		}
+		
+		return info;
 	}
 	
-	public String createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups, boolean allFieldsEditable) {
+	public String createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
+			boolean allFieldsEditable, boolean sendEmailWithLoginInfo) {
 		if (userInfo == null) {
 			return null;
 		}
@@ -472,8 +518,12 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		String personalId = userInfo.getPersonalId();
 		String password = userInfo.getPassword();
 		
-		if (name == null || login == null || password == null || primaryGroupId == null || childGroups == null) {
+		if (name == null || login == null || (!userInfo.isJuridicalPerson() && StringUtil.isEmpty(password)) || primaryGroupId == null || childGroups == null) {
 			return null;
+		}
+		if (StringUtil.isEmpty(password)) {
+			password = LoginDBHandler.getGeneratedPasswordForUser();
+			userInfo.setChangePasswordNextTime(true);
 		}
 
 		IWContext iwc = CoreUtil.getIWContext();
@@ -634,6 +684,15 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 				}
 			}
 		}
+		LoginInfo loginInfo = LoginDBHandler.getLoginInfo(loginTable);
+		if (loginInfo == null) {
+			return errorText;
+		}
+		loginInfo.setChangeNextTime(userInfo.isChangePasswordNextTime());
+		if (userInfo.isDisableAccount()) {
+			loginInfo.setAccountEnabled(!loginInfo.getAccountEnabled());
+		}
+		loginInfo.store();
 		
 		//	Setting new available groups for user
 		checkChildGroups(childGroups, primaryGroupId);
@@ -651,7 +710,46 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		user.setPrimaryGroupID(primaryGroupId);
 		user.store();
 		
+		//	Marking as juridical user (adding role)
+		if (userInfo.isJuridicalPerson()) {
+			AccessController accessController = iwc.getAccessController();
+			accessController.addRoleToGroup(StandardRoles.ROLE_KEY_COMPANY, primaryGroupId, iwc);
+		}
+		
+		//	Sending mail
+		if (sendEmailWithLoginInfo) {
+			String subject = iwrb.getLocalizedString("account_was_created", "Account was created");
+			String text = new StringBuilder(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(iwc.getServerURL()).append("\n\r")
+							.append(iwrb.getLocalizedString("your_user_name", "Your user name")).append(": ").append(login).append(", ")
+							.append(iwrb.getLocalizedString("your_password", "your password")).append(": ").append(password).append(". ")
+							.append(iwrb.getLocalizedString("we_recommend_to_change_password_after_login", "We recommend to change password after login!"))
+							.toString();
+			sendEmail(userInfo.getEmail(), null, null, subject, text);
+		}
+		
 		return sucessText;
+	}
+	
+	private boolean sendEmail(String emailTo, String emailCc, String emailBcc, String subject, String text) {
+		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+		if (settings == null) {
+			return false;
+		}
+		
+		String from = settings.getProperty(CoreConstants.PROP_SYSTEM_MAIL_FROM_ADDRESS);
+		String host = settings.getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
+		if (StringUtil.isEmpty(from) || StringUtil.isEmpty(host)) {
+			logger.log(Level.WARNING, "Cann't send email from: " + from + " via: " + host + ". Set properties for application!");
+			return false;
+		}
+		try {
+			SendMail.send(from, emailTo, emailCc, emailBcc, host, subject, text);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Error sending mail!", e);
+			return false;
+		}
+		
+		return true;
 	}
 	
 	private PostalCode createPostalCode(String postalCodeValue) {
@@ -863,7 +961,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 	
 	@SuppressWarnings("unchecked")
 	public String saveGroup(String name, String homePageId, String type, String description, String parentGroupId, String groupId) {
-		if (name == null) {
+		if (StringUtil.isEmpty(name)) {
 			return null;
 		}
 		
@@ -1060,12 +1158,12 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 	}
 	
 	private List<Group> getTopGroups(IWContext iwc, String groupTypes, boolean getTopAndParentGroups, boolean useChildrenOfTopNodesAsParentGroups) {
-		Collection<Group> topGroups = getGroupHelperBean().getTopGroupsFromDomain(iwc);
+		Collection<Group> topGroups = getGroupHelper().getTopGroupsFromDomain(iwc);
 		if (!getTopAndParentGroups) {
-			topGroups = getGroupHelperBean().getTopAndParentGroups(topGroups);
+			topGroups = getGroupHelper().getTopAndParentGroups(topGroups);
 		}
 		
-		return new ArrayList<Group>(getGroupHelperBean().getFilteredGroups(iwc, topGroups, groupTypes, CoreConstants.COMMA, useChildrenOfTopNodesAsParentGroups));
+		return new ArrayList<Group>(getGroupHelper().getFilteredGroups(iwc, topGroups, groupTypes, CoreConstants.COMMA, useChildrenOfTopNodesAsParentGroups));
 	}
 	
 	public List<AdvancedProperty> getAvailableGroups(String groupTypes, String groupTypesForChildrenGroups, String roleTypes, int groupId, int groupsType,
