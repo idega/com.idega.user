@@ -10,6 +10,7 @@ import com.idega.builder.business.BuilderLogic;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
+import com.idega.presentation.CSSSpacer;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.text.Text;
@@ -386,90 +387,90 @@ public class SimpleUserAppViewUsers extends Block {
 		return filteredChildGroups.get(0);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Group fillParentGroupChooser(IWContext iwc, DropdownMenu groupsDropdown, Layer container, String[] ids) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
+		Collection<Group> topGroups = null;
 		if (getParentGroup() == null) {
 			//	Group is not set as property
-			Collection<Group> topGroups = groupsHelper.getTopGroupsFromDomain(iwc);
-			if (!properties.isGetParentGroupsFromTopNodes()) {
-				topGroups = groupsHelper.getTopAndParentGroups(topGroups);	//	Will get top nodes and parent groups for them
+			topGroups = groupsHelper.getTopGroupsFromDomain(iwc);
+		}
+		else {
+			//	Group is set as property
+			if (properties.isUseChildrenOfTopNodesAsParentGroups()) {
+				topGroups = getParentGroup().getChildren();
 			}
-			
-			if (topGroups.size() > 0) {
-				List<Group> filteredTopGroups = new ArrayList<Group>(groupsHelper.getFilteredGroups(iwc, topGroups, properties.getGroupTypesForParentGroups(),
-						CoreConstants.COMMA, properties.isUseChildrenOfTopNodesAsParentGroups()));
-				if (filteredTopGroups.size() > 1) {
-					Group groupToReturn = null;
-					
-					String groupUsersContainerId = ids[0];
-					String childGroupsChooserId = ids[2];
-					String orderByChooserId = ids[3];
-					
-					groupsDropdown.addMenuElements(filteredTopGroups);
-					if (selectedParentGroupId == null) {
-						groupToReturn = filteredTopGroups.get(0);
-					}
-					else {
-						String groupID = String.valueOf(selectedParentGroupId);
-						for (int i = 0; (i < filteredTopGroups.size() && groupToReturn == null); i++) {
-							groupToReturn = filteredTopGroups.get(i);
-							if (!groupToReturn.getId().equals(groupID)) {
-								groupToReturn = null;
-							}
-						}
-					}
-					if (groupToReturn != null) {
-						properties.setParentGroupId(Integer.valueOf(groupToReturn.getId()));
-					}
-					
-					StringBuffer action = new StringBuffer("reloadComponents('");
-					action.append(iwrb.getLocalizedString("loading", "Loading...")).append(SimpleUserApp.PARAMS_SEPARATOR);						//	0
-					action.append(childGroupsChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);													//	1
-					action.append(orderByChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);														//	2
-					action.append(groupUsersContainerId).append(SimpleUserApp.PARAMS_SEPARATOR);												//	3
-					action.append(groupsDropdown.getId()).append("', ");																		//	4
-					action.append(helper.getJavaScriptParameter(properties.getGroupTypes())).append(SimpleUserApp.COMMA_SEPARATOR);	//	5
-					action.append(helper.getJavaScriptParameter(properties.getRoleTypes())).append(SimpleUserApp.COMMA_SEPARATOR);		//	6
-					action.append(helper.getBeanAsParameters(properties, null, childGroupsChooserId, null));
-					action.append(");");
-					groupsDropdown.setOnChange(action.toString());
-					container.add(groupsDropdown);
-					
-					if (selectedParentGroupId == null) {
-						return groupToReturn;
-					}
-					
-					groupsDropdown.setSelectedElement(selectedParentGroupId);
-					return groupToReturn;
-				}
-				else if (filteredTopGroups.size() == 1) {
-					//	Only one group available
-					Object o = filteredTopGroups.get(0);
-					if (o instanceof Group) {
-						Group group = (Group) o;
-						addGroupNameLabel(iwrb, container, group);
-						return group;
-					}
-					container.add(new Text(iwrb.getLocalizedString("no_groups_available", "There are no groups available")));
-
-					return null;
-				}
-				else {
-					container.add(new Text(iwrb.getLocalizedString("no_groups_available", "There are no groups available")));
-
-					return null;
-				}
+			else {
+				addGroupNameLabel(iwrb, container, getParentGroup());
+				return getParentGroup();
 			}
+		}
+		if (!properties.isGetParentGroupsFromTopNodes()) {
+			topGroups = groupsHelper.getTopAndParentGroups(topGroups);	//	Will get top nodes and parent groups for them
+		}
+		if (ListUtil.isEmpty(topGroups)) {
 			//	No groups found for current user
 			container.add(new Text(iwrb.getLocalizedString("no_groups_available", "There are no groups available")));
 			return null;
 		}
-		else {
-			//	Group is set as property
-			addGroupNameLabel(iwrb, container, getParentGroup());
-			return getParentGroup();
+		
+		List<Group> filteredTopGroups = new ArrayList<Group>(groupsHelper.getFilteredGroups(iwc, topGroups, properties.getGroupTypesForParentGroups(),
+														CoreConstants.COMMA, (getParentGroup() == null && properties.isUseChildrenOfTopNodesAsParentGroups())));
+		if (filteredTopGroups.size() > 1) {
+			Group groupToReturn = null;
+			
+			String groupUsersContainerId = ids[0];
+			String childGroupsChooserId = ids[2];
+			String orderByChooserId = ids[3];
+			
+			groupsDropdown.addMenuElements(filteredTopGroups);
+			if (selectedParentGroupId == null) {
+				groupToReturn = filteredTopGroups.get(0);
+			}
+			else {
+				String groupID = String.valueOf(selectedParentGroupId);
+				for (int i = 0; (i < filteredTopGroups.size() && groupToReturn == null); i++) {
+					groupToReturn = filteredTopGroups.get(i);
+					if (!groupToReturn.getId().equals(groupID)) {
+						groupToReturn = null;
+					}
+				}
+			}
+			if (groupToReturn != null) {
+				properties.setParentGroupId(Integer.valueOf(groupToReturn.getId()));
+			}
+			
+			StringBuffer action = new StringBuffer("reloadComponents('");
+			action.append(iwrb.getLocalizedString("loading", "Loading...")).append(SimpleUserApp.PARAMS_SEPARATOR);			//	0
+			action.append(childGroupsChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);										//	1
+			action.append(orderByChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);											//	2
+			action.append(groupUsersContainerId).append(SimpleUserApp.PARAMS_SEPARATOR);									//	3
+			action.append(groupsDropdown.getId()).append("', ");															//	4
+			action.append(helper.getJavaScriptParameter(properties.getGroupTypes())).append(SimpleUserApp.COMMA_SEPARATOR);	//	5
+			action.append(helper.getJavaScriptParameter(properties.getRoleTypes())).append(SimpleUserApp.COMMA_SEPARATOR);	//	6
+			action.append(helper.getBeanAsParameters(properties, null, childGroupsChooserId, null));
+			action.append(");");
+			groupsDropdown.setOnChange(action.toString());
+			container.add(groupsDropdown);
+			
+			if (selectedParentGroupId == null) {
+				return groupToReturn;
+			}
+			
+			groupsDropdown.setSelectedElement(selectedParentGroupId);
+			return groupToReturn;
 		}
+		else if (filteredTopGroups.size() == 1) {
+			//	Only one group available
+			Group group = filteredTopGroups.get(0);
+			addGroupNameLabel(iwrb, container, group);
+			return group;
+		}
+		
+		//	No groups found for current user
+		container.add(new Text(iwrb.getLocalizedString("no_groups_available", "There are no groups available")));
+		return null;
 	}
 	
 	private void addGroupNameLabel(IWResourceBundle iwrb, Layer container, Group group) {
@@ -478,9 +479,7 @@ public class SimpleUserAppViewUsers extends Block {
 	}
 	
 	private Layer getSpacer() {
-		Layer spacer = new Layer();
-		spacer.setStyleClass("spacer");
-		return spacer;
+		return new CSSSpacer();
 	}
 
 	public void setGroupForUsersWithoutLogin(Group groupForUsersWithoutLogin) {

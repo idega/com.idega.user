@@ -123,7 +123,8 @@ public class SimpleUserAppAddUser extends Block {
 		action.append(availableGroupsOfUserContaianer.getId()).append(SimpleUserApp.PARAMS_SEPARATOR);
 		action.append(iwrb.getLocalizedString("loading", "Loading...")).append("', ");
 		action.append(helper.getJavaScriptParameter(properties.getGroupTypes())).append(SimpleUserApp.COMMA_SEPARATOR);
-		action.append(helper.getJavaScriptParameter(properties.getRoleTypes())).append("]);");
+		action.append(helper.getJavaScriptParameter(properties.getRoleTypes())).append("], ")
+		.append(helper.getJavaScriptParameter(properties.getParentGroupId() == -1 ? null : String.valueOf(properties.getParentGroupId()))).append(");");
 		parentGroupsChooser.setOnChange(action.toString());
 		addParentGroups(iwc, parentGroupsContainer, parentGroupsChooser);
 		

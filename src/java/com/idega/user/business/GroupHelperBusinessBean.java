@@ -416,8 +416,9 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		}
 		if (bean.isJuridicalPerson()) {
 			List<User> juridicalUsers = new ArrayList<User>();
+			AccessController accessController = iwc.getAccessController();
 			for (User user: users) {
-				if (iwc.hasRole(StandardRoles.ROLE_KEY_COMPANY)) {
+				if (accessController.hasRole(user, StandardRoles.ROLE_KEY_COMPANY)) {
 					juridicalUsers.add(user);
 				}
 			}
@@ -622,7 +623,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 	
 	@SuppressWarnings("unchecked")
 	public Collection<Group> getTopAndParentGroups(Collection topGroups) {
-		if (topGroups == null) {
+		if (ListUtil.isEmpty(topGroups)) {
 			return null;
 		}
 		

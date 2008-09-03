@@ -66,6 +66,7 @@ import com.idega.util.CoreUtil;
 import com.idega.util.EmailValidator;
 import com.idega.util.ListUtil;
 import com.idega.util.SendMail;
+import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 
 public class UserApplicationEngineBean implements UserApplicationEngine {
@@ -718,8 +719,10 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		
 		//	Sending mail
 		if (sendEmailWithLoginInfo) {
+			String portNumber = new StringBuilder(":").append(String.valueOf(iwc.getServerPort())).toString();
+			String serverLink = StringHandler.replace(iwc.getServerURL(), portNumber, CoreConstants.EMPTY);
 			String subject = iwrb.getLocalizedString("account_was_created", "Account was created");
-			String text = new StringBuilder(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(iwc.getServerURL()).append("\n\r")
+			String text = new StringBuilder(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink).append("\n\r")
 							.append(iwrb.getLocalizedString("your_user_name", "Your user name")).append(": ").append(login).append(", ")
 							.append(iwrb.getLocalizedString("your_password", "your password")).append(": ").append(password).append(". ")
 							.append(iwrb.getLocalizedString("we_recommend_to_change_password_after_login", "We recommend to change password after login!"))

@@ -305,9 +305,9 @@ function goBackToSimpleUserApp(instanceId, containerId, message, parentGroupChoo
 	});
 }
 
-function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters) {
+function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters, selectedGroupId) {
 	refreshDeselectedGroups();
-	var groupId = getSelectObjectValue(parentGroupChooserId);
+	var groupId = getParentGroupIdInSUA(parentGroupChooserId, selectedGroupId);
 	var containerId = parameters[0];
 	var message = parameters[1];
 	var groupTypes = parameters[2];
@@ -750,7 +750,7 @@ function createOrModifyGroup(parameters, getTopAndParentGroups, useChildrenOfTop
 	
 	var groupId = -1;
 	if (isEditAction) {
-		groupId = getSelectObjectValue(chooserId);
+		groupId = getParentGroupIdInSUA(chooserId, parameters[12]);
 	}
 	if (isEditAction && groupId == -1) {
 		return false;
