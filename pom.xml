@@ -12,12 +12,14 @@
   <name>idegaWeb User</name>
   <description>User Application</description>
   <scm>
-    <!--
+    
     <connection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</connection>
     <developerConnection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection> 
-    -->
+    
+    <!--
     <connection>scm:cvs:ext:civilis@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.user/</connection>
     <developerConnection>scm:cvs:ext:civilis@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.user/</developerConnection>
+    -->
   </scm>
 
   <developers>
