@@ -17,6 +17,7 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.faces.component.UIComponent;
+
 import org.jdom.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,7 +30,6 @@ import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
-import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.builder.data.ICPage;
@@ -707,15 +707,9 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			}
 		}
 		
-		//	Setting primary group
 		user.setPrimaryGroupID(primaryGroupId);
+		user.setJuridicalPerson(userInfo.isJuridicalPerson());
 		user.store();
-		
-		//	Marking as juridical user (adding role)
-		if (userInfo.isJuridicalPerson()) {
-			AccessController accessController = iwc.getAccessController();
-			accessController.addRoleToGroup(StandardRoles.ROLE_KEY_COMPANY, primaryGroupId, iwc);
-		}
 		
 		//	Sending mail
 		if (sendEmailWithLoginInfo) {

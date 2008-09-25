@@ -14,7 +14,6 @@ import javax.ejb.FinderException;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
-import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWApplicationContext;
@@ -416,9 +415,8 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		}
 		if (bean.isJuridicalPerson()) {
 			List<User> juridicalUsers = new ArrayList<User>();
-			AccessController accessController = iwc.getAccessController();
 			for (User user: users) {
-				if (accessController.hasRole(user, StandardRoles.ROLE_KEY_COMPANY)) {
+				if (user.isJuridicalPerson()) {
 					juridicalUsers.add(user);
 				}
 			}
