@@ -78,7 +78,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 	private UserBusiness userBusiness = null;
 	
 	private GroupHelper groupHelper = null;
-	private CompanyHelper companyHelper = null;
+	@Autowired(required = false) private CompanyHelper companyHelper = null;
 	
 	private SimpleUserAppHelper presentationHelper = new SimpleUserAppHelper();
 	
@@ -101,7 +101,6 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return companyHelper;
 	}
 
-	@Autowired
 	public void setCompanyHelper(CompanyHelper companyHelper) {
 		this.companyHelper = companyHelper;
 	}
