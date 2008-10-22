@@ -1,16 +1,10 @@
 package com.idega.user.presentation.group;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-import javax.ejb.EJBException;
-
 import com.idega.block.web2.business.Web2Business;
-import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
@@ -19,10 +13,8 @@ import com.idega.presentation.Layer;
 import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.Label;
 import com.idega.presentation.ui.TextInput;
-import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserConstants;
 import com.idega.user.business.group.GroupsFilterEngine;
-import com.idega.user.data.Group;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.PresentationUtil;
@@ -120,7 +112,10 @@ public class GroupsFilter extends Block {
 	
 	private FilteredGroupsBox getFilteredGroupsBox(IWContext iwc) {
 		FilteredGroupsBox filteredGroups = new FilteredGroupsBox();
-		filteredGroups.setGroups(getUserGroups(iwc));
+		
+		GroupsFilterEngine groupsFilter = ELUtil.getInstance().getBean(GroupsFilterEngine.SPRING_BEAN_IDENTIFIER);
+		filteredGroups.setGroups(groupsFilter.getUserGroups(iwc));
+		
 		filteredGroups.setLevelsToOpen(levelsToOpen);
 		filteredGroups.setDisplayAllLevels(displayAllLevels);
 		filteredGroups.setOnClickAction(onClickAction);
@@ -134,25 +129,6 @@ public class GroupsFilter extends Block {
 		filteredGroups.setSelectedGroups(selectedGroups);
 		filteredGroups.setSelectedGroupParameterName(selectedGroupParameterName);
 		return filteredGroups;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private Collection<Group> getUserGroups(IWContext iwc) {
-		UserBusiness userBusiness = null;
-		try {
-			userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-		} catch (IBOLookupException e) {
-			e.printStackTrace();
-		}
-		try {
-			return userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
-		} catch (EJBException e) {
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		
-		return null;
 	}
 	
 	@Override

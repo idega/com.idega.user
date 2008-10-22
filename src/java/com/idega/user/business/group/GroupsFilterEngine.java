@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
+import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
 import org.jdom.Document;
@@ -187,18 +188,6 @@ public class GroupsFilterEngine implements Singleton {
 		if (currentUser == null) {
 			return null;
 		}
-		UserBusiness userBusiness = getUserBusiness(iwc);
-		if (userBusiness == null) {
-			return null;
-		}
-		try {
-			if (!userBusiness.isGroupUnderUsersTopGroupNode(iwc, group, currentUser)) {
-				return null;
-			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
-			return null;
-		}
 		
 		Collection<Group> children = group.getChildren();
 		if (ListUtil.isEmpty(children)) {
@@ -219,15 +208,6 @@ public class GroupsFilterEngine implements Singleton {
 	private GroupBusiness getGroupBusiness(IWApplicationContext iwac) {
 		try {
 			return (GroupBusiness) IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
-		} catch (IBOLookupException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	private UserBusiness getUserBusiness(IWApplicationContext iwac) {
-		try {
-			return (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
 		} catch (IBOLookupException e) {
 			e.printStackTrace();
 		}
@@ -438,6 +418,62 @@ public class GroupsFilterEngine implements Singleton {
 		}
 		action = StringHandler.replace(action, "'", "\\'");
 		return action;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Collection<Group> getUserGroups(IWContext iwc) {
+		User currentUser = null;
+		try {
+			currentUser = iwc.getCurrentUser();
+		} catch(NotLoggedOnException e) {
+			e.printStackTrace();
+		}
+		if (currentUser == null) {
+			return null;
+		}
+		
+		UserBusiness userBusiness = null;
+		try {
+			userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+		} catch (IBOLookupException e) {
+			e.printStackTrace();
+		}
+		
+		Collection<Group> groupsByPermissions = null;
+		try {
+			groupsByPermissions = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(currentUser, iwc);
+		} catch (EJBException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		Collection<Group> directGroups = null;
+		try {
+			directGroups = userBusiness.getUserGroups(currentUser);
+		} catch (EJBException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		if (ListUtil.isEmpty(groupsByPermissions) && ListUtil.isEmpty(directGroups)) {
+			return null;
+		}
+		if (ListUtil.isEmpty(groupsByPermissions)) {
+			return directGroups;
+		}
+		if (ListUtil.isEmpty(directGroups)) {
+			return groupsByPermissions;
+		}
+		
+		List<Group> userGroups = new ArrayList<Group>(directGroups);
+		for (Group group: groupsByPermissions) {
+			if (!userGroups.contains(group)) {
+				userGroups.add(group);
+			}
+		}
+		return userGroups;
 	}
 	
 }
