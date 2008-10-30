@@ -4,12 +4,17 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
+import java.util.logging.Level;
 
 import javax.faces.component.UIComponent;
 
 import com.idega.content.business.ContentConstants;
 import com.idega.core.contact.data.Email;
 import com.idega.core.location.data.Country;
+import com.idega.core.location.data.CountryHome;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.CSSSpacer;
@@ -23,6 +28,7 @@ import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.GenericInput;
 import com.idega.presentation.ui.PasswordInput;
+import com.idega.presentation.ui.SelectOption;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.bean.UserDataBean;
@@ -161,6 +167,7 @@ public class SimpleUserAppAddUser extends Block {
 		
 		//	Countries
 		CountryDropdownMenu countriesDropdown = new CountryDropdownMenu();
+		countriesDropdown.setFirstSelectOption(new SelectOption(iwrb.getLocalizedString("simple_user_application.select_country", "Select country"), -1));
 		String countriesDropdownId = countriesDropdown.getId();
 		
 		//	City
@@ -220,6 +227,22 @@ public class SimpleUserAppAddUser extends Block {
 		
 		//	Country
 		Country country = userEngine.getCountry(userInfo.getCountryName());
+		if (country == null) {
+			CountryHome countryHome = null;
+			try {
+				countryHome = (CountryHome) IDOLookup.getHome(Country.class);
+			} catch (IDOLookupException e) {
+				e.printStackTrace();
+			}
+			if (countryHome != null) {
+				Locale locale = iwc.getCurrentLocale();
+				try {
+					country = countryHome.findByIsoAbbreviation(locale.getCountry());
+				} catch (Exception e) {
+					log(Level.INFO, SimpleUserAppAddUser.class.getName() + ": country was not found by locale: " + locale);
+				}
+			}
+		}
 		countriesDropdown.setSelectedCountry(country);
 		
 		//	Login
