@@ -64,6 +64,7 @@ public class SimpleUserAppAddUser extends Block {
 		}
 	}
 
+	@Override
 	public void main(IWContext iwc) {
 		groupsHelper = ELUtil.getInstance().getBean(GroupHelper.class);
 		
@@ -616,6 +617,7 @@ public class SimpleUserAppAddUser extends Block {
 		container.add(save);
 	}
 	
+	@Override
 	public String getBundleIdentifier() {
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}

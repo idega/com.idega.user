@@ -49,7 +49,7 @@ public class SimpleUserApp extends Block {
 	private boolean addChildGroupEditButton = true;
 	private boolean juridicalPerson = false;
 	private boolean sendMailToUser = false;
-	private boolean changePasswordNextTime = false;
+	private boolean changePasswordNextTime = true;
 	private boolean allowEnableDisableAccount = false;
 	/** Properties end **/
 	
@@ -60,6 +60,7 @@ public class SimpleUserApp extends Block {
 		this.instanceId = instanceId;
 	}
 	
+	@Override
 	public void main(IWContext iwc) {
 		if (instanceId == null)	{
 			instanceId = BuilderLogic.getInstance().getInstanceId(this);
