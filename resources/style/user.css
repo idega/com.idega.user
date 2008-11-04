@@ -359,12 +359,46 @@ span.requiredFieldUserApp {
 
 div.groupsChooserBoxBodyStyle {
 	height: 150px;
-	width: 100%;
+	width: auto;
 	overflow: auto;
+	border: 1px #a0a0a0 solid;
 }
 
 ul.filteredGroupsListStyle {
 	list-style: none;
+	padding: 4px;
+	margin: 0;
+	padding-left: 0 !important;
+}
+
+ul.filteredGroupsListStyle li.filteredGroupNodeStyle {
+	padding: 0;
+	margin: 0;
+	clear: both;
+}
+
+ul.filteredGroupsListStyle li.filteredGroupNodeStyle ul {
+	padding: 0;
+	margin-left: 35px;
+	clear: both;
+}
+
+ul.filteredGroupsListStyle li.filteredGroupNodeStyle img {
+	float: left;
+}
+
+ul.filteredGroupsListStyle li.filteredGroupNodeStyle input {
+	margin: 0 !important;
+	margin-left: 3px !important;
+	margin-right: 3px !important;
+	float: left !important;
+}
+
+ul.filteredGroupsListStyle li.filteredGroupNodeStyle span {
+	display: inline;
+	padding: 0;
+	line-height: 16px;
+	float: left !important;
 }
 
 span.directSearchResultElementStyle {

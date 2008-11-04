@@ -114,7 +114,7 @@ public class GroupsFilter extends Block {
 		FilteredGroupsBox filteredGroups = new FilteredGroupsBox();
 		
 		GroupsFilterEngine groupsFilter = ELUtil.getInstance().getBean(GroupsFilterEngine.SPRING_BEAN_IDENTIFIER);
-		filteredGroups.setGroups(groupsFilter.getUserGroups(iwc));
+		filteredGroups.setGroups(groupsFilter.getUserGroups(iwc, true));
 		
 		filteredGroups.setLevelsToOpen(levelsToOpen);
 		filteredGroups.setDisplayAllLevels(displayAllLevels);

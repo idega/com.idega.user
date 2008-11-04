@@ -421,7 +421,7 @@ public class GroupsFilterEngine implements Singleton {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Collection<Group> getUserGroups(IWContext iwc) {
+	public Collection<Group> getUserGroups(IWContext iwc, boolean onlyTopGroups) {
 		User currentUser = null;
 		try {
 			currentUser = iwc.getCurrentUser();
@@ -461,10 +461,10 @@ public class GroupsFilterEngine implements Singleton {
 			return null;
 		}
 		if (ListUtil.isEmpty(groupsByPermissions)) {
-			return directGroups;
+			return onlyTopGroups ? getOnlyTopGroups(iwc, directGroups) : directGroups;
 		}
 		if (ListUtil.isEmpty(directGroups)) {
-			return groupsByPermissions;
+			return onlyTopGroups ? getOnlyTopGroups(iwc, groupsByPermissions) : groupsByPermissions;
 		}
 		
 		List<Group> userGroups = new ArrayList<Group>(directGroups);
@@ -473,7 +473,28 @@ public class GroupsFilterEngine implements Singleton {
 				userGroups.add(group);
 			}
 		}
-		return userGroups;
+		return onlyTopGroups ? getOnlyTopGroups(iwc, userGroups) : userGroups;
+	}
+	
+	private Collection<Group> getOnlyTopGroups(IWContext iwc, Collection<Group> userGroups) {
+		if (ListUtil.isEmpty(userGroups)) {
+			return null;
+		}
+		
+		GroupHelper helper = ELUtil.getInstance().getBean(GroupHelper.class);
+		Collection<Group> topGroups = helper.getTopGroupsFromDomain(iwc);
+		if (ListUtil.isEmpty(topGroups)) {
+			return userGroups;
+		}
+		
+		List<Group> onlyTopGroupsForUser = new ArrayList<Group>();
+		for (Group group: userGroups) {
+			if (topGroups.contains(group) && !onlyTopGroupsForUser.contains(group)) {
+				onlyTopGroupsForUser.add(group);
+			}
+		}
+		
+		return ListUtil.isEmpty(onlyTopGroupsForUser) ? userGroups : onlyTopGroupsForUser;
 	}
 	
 }
