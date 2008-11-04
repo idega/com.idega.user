@@ -335,7 +335,7 @@ public class GroupsFilterEngine implements Singleton {
 	
 	@SuppressWarnings("unchecked")
 	private boolean forceToOpenNode(IWContext iwc, Group group, List<String> selectedGroups, List<GroupFilterResult> filteredGroups) {
-		if (ListUtil.isEmpty(selectedGroups) && ListUtil.isEmpty(filteredGroups)) {
+		if (ListUtil.isEmpty(selectedGroups)) {
 			return false;
 		}
 		
