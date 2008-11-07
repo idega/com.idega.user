@@ -259,15 +259,15 @@ public class SimpleUserAppAddUser extends Block {
 		}
 		passwordInput.setContent(userInfo.getPassword());
 		
-		//	Enable/disable account
+		//	Account enabled/disabled
 		CheckBox manageAccountAvailability = getCheckBox(userInfo.isDisableAccount() ? 
 				iwrb.getLocalizedString("account_is_disabled_check_to_enable", "Account is disabled, check to enable it") :
-				iwrb.getLocalizedString("account_is_enabled_check_to_disable_it", "Account is enabled, check to disable it"), false);
+				iwrb.getLocalizedString("account_is_enabled_un_check_to_disable_it", "Account is enabled, uncheck to disable it"), !userInfo.isDisableAccount());
 		String accountManagerId = manageAccountAvailability.getId();
 		
 		//	Change password next time
 		CheckBox changePasswordNextTime = getCheckBox(iwrb.getLocalizedString("user_will_have_to_change_password_next_time",
-				"User will have to change password on next login"), false);	//	TODO
+				"User will have to change password on next login"), userInfo.isChangePasswordNextTime());
 		String changePasswordNextTimeId = changePasswordNextTime.getId();
 	
 		List<String> idsForFields = new ArrayList<String>();
@@ -429,7 +429,7 @@ public class SimpleUserAppAddUser extends Block {
 		//	Enable/disable account
 		if (properties.isAllowEnableDisableAccount()) {
 			fieldsContainer.add(getSpacer());
-			fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("enable_disable_account", "Enable/disable account")));
+			fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("account_enabled_disabled", "Account enabled/disabled")));
 			fieldsContainer.add(getComponentContainer(inputs.get(2)));
 		}
 		

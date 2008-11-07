@@ -1,5 +1,6 @@
 package com.idega.user.app;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,6 +108,11 @@ public class SimpleUserApp extends Block {
 		files.add(bundle.getVirtualPathWithFileNameString("javascript/SimpleUserAppHelper.js"));
 		
 		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.class);
+		try {
+			files.add(web2.getBundleURIToMootoolsLib());
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		files.add(web2.getBundleURIToJQueryLib());
 		files.add(web2.getBundleURIToJQueryUILib(JQueryUIType.UI_EASING));
 		files.add(web2.getBundleUriToHumanizedMessagesScript());	

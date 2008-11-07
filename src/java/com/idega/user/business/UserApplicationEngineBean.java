@@ -401,6 +401,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			if (loginInfo != null) {
 				bean.setAccountExists(true);
 				bean.setDisableAccount(!loginInfo.getAccountEnabled());
+				bean.setChangePasswordNextTime(loginInfo.getChangeNextTime());
 			}
 			
 			//	Phone
@@ -652,6 +653,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		//	Login
+		boolean newLogin = false;
 		LoginTable loginTable = null;
 		loginTable = LoginDBHandler.getUserLogin(user);
 		if (loginTable == null) {
@@ -667,6 +669,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 				return errorText;
 			}
 			loginTable.store();
+			newLogin = true;
 		}
 		else if (allFieldsEditable) {
 			boolean updatePassword = false;
@@ -689,9 +692,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			return errorText;
 		}
 		loginInfo.setChangeNextTime(userInfo.isChangePasswordNextTime());
-		if (userInfo.isDisableAccount()) {
-			loginInfo.setAccountEnabled(!loginInfo.getAccountEnabled());
-		}
+		loginInfo.setAccountEnabled(userInfo.isDisableAccount());
 		loginInfo.store();
 		
 		//	Setting new available groups for user
@@ -714,13 +715,21 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		if (sendEmailWithLoginInfo) {
 			String portNumber = new StringBuilder(":").append(String.valueOf(iwc.getServerPort())).toString();
 			String serverLink = StringHandler.replace(iwc.getServerURL(), portNumber, CoreConstants.EMPTY);
-			String subject = iwrb.getLocalizedString("account_was_created", "Account was created");
-			String text = new StringBuilder(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink).append("\n\r")
-							.append(iwrb.getLocalizedString("your_user_name", "Your user name")).append(": ").append(login).append(", ")
-							.append(iwrb.getLocalizedString("your_password", "your password")).append(": ").append(password).append(". ")
-							.append(iwrb.getLocalizedString("we_recommend_to_change_password_after_login", "We recommend to change password after login!"))
-							.toString();
-			sendEmail(userInfo.getEmail(), null, null, subject, text);
+			String subject = newLogin ? iwrb.getLocalizedString("account_was_created", "Account was created") :
+										iwrb.getLocalizedString("account_information_was_changed", "Account was modified");
+			StringBuilder text = null;
+			if (newLogin) {
+				text = new StringBuilder(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink).append("\n\r")
+					.append(iwrb.getLocalizedString("your_user_name", "Your user name")).append(": ").append(login).append(", ")
+					.append(iwrb.getLocalizedString("your_password", "your password")).append(": ").append(password).append(". ")
+					.append(iwrb.getLocalizedString("we_recommend_to_change_password_after_login", "We recommend to change password after login!"));
+			}
+			else {
+				text = new StringBuilder(
+						iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified. Please, login in to review changes"))
+						.append("\n\r").append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink);
+			}
+			sendEmail(userInfo.getEmail(), null, null, subject, text.toString());
 		}
 		
 		return sucessText;
@@ -786,7 +795,6 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		try {
 			return ((CountryHome) getIDOHome(Country.class)).findByPrimaryKey(countryId);
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		
 		return null;
