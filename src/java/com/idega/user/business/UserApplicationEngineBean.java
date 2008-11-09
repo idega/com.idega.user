@@ -400,7 +400,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			} catch(Exception e) {}
 			if (loginInfo != null) {
 				bean.setAccountExists(true);
-				bean.setDisableAccount(!loginInfo.getAccountEnabled());
+				bean.setAccountEnabled(loginInfo.getAccountEnabled());
 				bean.setChangePasswordNextTime(loginInfo.getChangeNextTime());
 			}
 			
@@ -691,8 +691,12 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		if (loginInfo == null) {
 			return errorText;
 		}
-		loginInfo.setChangeNextTime(userInfo.isChangePasswordNextTime());
-		loginInfo.setAccountEnabled(userInfo.isDisableAccount());
+		if (userInfo.getChangePasswordNextTime() != null) {
+			loginInfo.setChangeNextTime(userInfo.getChangePasswordNextTime());
+		}
+		if (userInfo.getAccountEnabled() != null) {
+			loginInfo.setAccountEnabled(userInfo.getAccountEnabled());
+		}
 		loginInfo.store();
 		
 		//	Setting new available groups for user

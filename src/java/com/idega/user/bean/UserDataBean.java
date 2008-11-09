@@ -21,8 +21,8 @@ public class UserDataBean {
 	private Integer userId = null;
 	
 	private boolean juridicalPerson = false;
-	private boolean changePasswordNextTime = false;
-	private boolean disableAccount = false;
+	private Boolean changePasswordNextTime = Boolean.FALSE;
+	private Boolean accountEnabled = Boolean.FALSE;
 	private boolean accountExists = false;
 	
 	public String getEmail() {
@@ -115,23 +115,24 @@ public class UserDataBean {
 	public void setJuridicalPerson(boolean juridicalPerson) {
 		this.juridicalPerson = juridicalPerson;
 	}
-	public boolean isChangePasswordNextTime() {
-		return changePasswordNextTime;
-	}
-	public void setChangePasswordNextTime(boolean changePasswordNextTime) {
-		this.changePasswordNextTime = changePasswordNextTime;
-	}
-	public boolean isDisableAccount() {
-		return disableAccount;
-	}
-	public void setDisableAccount(boolean disableAccount) {
-		this.disableAccount = disableAccount;
-	}
 	public boolean isAccountExists() {
 		return accountExists;
 	}
 	public void setAccountExists(boolean accountExists) {
 		this.accountExists = accountExists;
 	}
+	public Boolean getChangePasswordNextTime() {
+		return changePasswordNextTime;
+	}
+	public void setChangePasswordNextTime(Boolean changePasswordNextTime) {
+		this.changePasswordNextTime = changePasswordNextTime;
+	}
+	public Boolean getAccountEnabled() {
+		return accountEnabled;
+	}
+	public void setAccountEnabled(Boolean accountEnabled) {
+		this.accountEnabled = accountEnabled;
+	}
+
 
 }

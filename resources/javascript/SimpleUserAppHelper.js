@@ -484,7 +484,7 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 	var postalBoxInputId = ids[13];
 	
 	var changePasswordNextTime = isCheckboxChecked(ids[15]);
-	var disableAccount = isCheckboxChecked(ids[14]);
+	var accountEnabled = isCheckboxChecked(ids[14]);
 	
 	var selectedGroups = new Array();
 	if (childGroups == null) {
@@ -562,7 +562,7 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 	
 	showLoadingMessage(messages[0]);
 	var userInfo = new UserDataBean(userName, login, password, personalId, email, null, phone, streetNameAndNumber, postalCodeId, countryName, city, province,
-									postalBox, userId, juridicalPerson, changePasswordNextTime, disableAccount);
+									postalBox, userId, juridicalPerson, changePasswordNextTime, accountEnabled);
 	UserApplicationEngine.createUser(userInfo, primaryGroupId, selectedGroups, DESELECTED_GROUPS, allFieldsEditable, sendEmailWithLoginInfo, {
 		callback: function(result) {
 			closeAllLoadingMessages();
@@ -593,7 +593,7 @@ function checkIfValidValue(input) {
 }
 
 function UserDataBean(name, login, password, personalId, email, errorMessage, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox,
-					 userId, juridicalPerson, changePasswordNextTime, disableAccount) {
+					 userId, juridicalPerson, changePasswordNextTime, accountEnabled) {
 	this.name = name;
 	this.login = login;
 	this.password = password;
@@ -610,7 +610,7 @@ function UserDataBean(name, login, password, personalId, email, errorMessage, ph
 	this.userId = userId;
 	this.juridicalPerson = juridicalPerson;
 	this.changePasswordNextTime = changePasswordNextTime;
-	this.disableAccount = disableAccount;
+	this.accountEnabled = accountEnabled;
 }
 
 function isCheckboxChecked(id) {
@@ -620,7 +620,7 @@ function isCheckboxChecked(id) {
 	
 	var checkBox = document.getElementById(id);
 	if (checkBox == null) {
-		return false;
+		return null;
 	}
 	
 	return checkBox.checked;
