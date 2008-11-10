@@ -398,7 +398,10 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			try {
 				loginInfo = LoginDBHandler.getLoginInfo(LoginDBHandler.getUserLogin(user));
 			} catch(Exception e) {}
-			if (loginInfo != null) {
+			if (loginInfo == null) {
+				bean.setAccountEnabled(Boolean.TRUE);
+			}
+			else {
 				bean.setAccountExists(true);
 				bean.setAccountEnabled(loginInfo.getAccountEnabled());
 				bean.setChangePasswordNextTime(loginInfo.getChangeNextTime());
