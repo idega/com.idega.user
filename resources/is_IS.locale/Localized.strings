@@ -529,6 +529,6 @@ please_enter_login=Please, enter login\!
 please_enter_name=Please, enter name\!
 simple_user_application.select_country=Select country
 user_address_info=User's address information
-account_enabled_disabled=Account enabled/disabled
+account_enabled=Account enabled
 account_is_enabled_un_check_to_disable_it=Account is enabled, uncheck to disable it
 searching=Searching...

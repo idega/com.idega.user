@@ -430,7 +430,7 @@ public class SimpleUserAppAddUser extends Block {
 		//	Enable/disable account
 		if (properties.isAllowEnableDisableAccount()) {
 			fieldsContainer.add(getSpacer());
-			fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("account_enabled_disabled", "Account enabled/disabled")));
+			fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("account_enabled", "Account enabled")));
 			fieldsContainer.add(getComponentContainer(inputs.get(2)));
 		}
 		
