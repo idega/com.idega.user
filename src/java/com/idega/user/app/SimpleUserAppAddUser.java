@@ -285,6 +285,8 @@ public class SimpleUserAppAddUser extends Block {
 		idsForFields.add(provinceInputId);									//	10	Province
 		idsForFields.add(postalBoxInputId);									//	11	Postal box
 		idsForFields.add(phoneInputId);										//	12	Phone
+		idsForFields.add(accountManagerId);									//	13	Account enabled
+		idsForFields.add(changePasswordNextTimeId);							//	14	Change password
 		StringBuffer idAction = new StringBuffer("getUserByPersonalId(event, ").append(helper.getJavaScriptFunctionParameter(idsForFields))
 								.append(SimpleUserApp.COMMA_SEPARATOR).append(properties.isAllFieldsEditable()).append(");");
 		idValueInput.setOnKeyUp(idAction.toString());

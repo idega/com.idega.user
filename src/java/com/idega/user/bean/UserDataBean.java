@@ -22,7 +22,7 @@ public class UserDataBean {
 	
 	private boolean juridicalPerson = false;
 	private Boolean changePasswordNextTime = Boolean.FALSE;
-	private Boolean accountEnabled = Boolean.FALSE;
+	private Boolean accountEnabled = Boolean.TRUE;
 	private boolean accountExists = false;
 	
 	public String getEmail() {

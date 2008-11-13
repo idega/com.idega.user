@@ -427,6 +427,15 @@ function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 		});
 	}
 	
+	var enableAccount = document.getElementById(parameters[13]);												//	Account enabled
+	if (enableAccount != null) {
+		enableAccount.checked = bean.accountEnabled ? true : false;
+	}
+	var changePassword = document.getElementById(parameters[14]);												//	Change password
+	if (changePassword != null) {
+		changePassword.checked = bean.changePasswordNextTime ? true : false;
+	}
+	
 	return true;
 }
 
