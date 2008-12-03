@@ -56,6 +56,8 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 	
 	@Override
 	public void main(IWContext iwc) {
+		PresentationUtil.addStyleSheetToHeader(iwc, getBundle(iwc).getVirtualPathWithFileNameString("style/user.css"));
+
 		Layer main = new Layer();
 		
 		idsParameterForFunction = getIdsString(uniqueIds);

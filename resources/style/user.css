@@ -324,10 +324,29 @@
 	height: 14px;
 }
 
+/* Groups and Groups members info classes */
+.groupsChooserConnectionDataTableStyle {
+	width: 100%; 
+}
+
+.groupConnectionChooserInputStyle {
+	width: 100%;
+}
+
+.groupsInfoList ul {
+	list-style: none;
+	list-style-position: inside;
+}
+
 /* User group viewer */
 .groupsMembersInfoList {
 	overflow: hidden;
 	width: 100%;
+}
+
+.groupsMembersInfoList ul {
+	list-style: none;
+	list-style-position: inside;
 }
 
 .groupMemberStyleClass {

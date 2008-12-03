@@ -2,6 +2,7 @@ package com.idega.user.presentation.group;
 
 import java.util.List;
 
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -14,6 +15,7 @@ import com.idega.presentation.text.Text;
 import com.idega.user.bean.GroupMemberDataBean;
 import com.idega.user.bean.GroupMembersDataBean;
 import com.idega.util.CoreConstants;
+import com.idega.util.PresentationUtil;
 
 public class GroupUsersViewerBlock extends Block {
 
@@ -40,12 +42,15 @@ public class GroupUsersViewerBlock extends Block {
 	
 	private String server = null;
 	
+	@Override
 	public void main(IWContext iwc) {
 		if (membersData == null) {
 			return;
 		}
 		
 		IWResourceBundle iwrb = getResourceBundle(iwc);
+		IWBundle iwb = getBundle(iwc);
+		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/user.css"));
 		
 		Layer container = new Layer();
 		if (styleClass != null) {
@@ -222,6 +227,7 @@ public class GroupUsersViewerBlock extends Block {
 		add(container);
 	}
 	
+	@Override
 	public String getBundleIdentifier()	{
 		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
@@ -330,10 +336,12 @@ public class GroupUsersViewerBlock extends Block {
 		this.showLabels = showLabels;
 	}
 
+	@Override
 	public String getStyleClass() {
 		return styleClass;
 	}
 
+	@Override
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
 	}
