@@ -51,7 +51,7 @@ public class SimpleUserApp extends Block {
 	private boolean juridicalPerson = false;
 	private boolean sendMailToUser = false;
 	private boolean changePasswordNextTime = true;
-	private boolean allowEnableDisableAccount = false;
+	private boolean allowEnableDisableAccount = true;
 	/** Properties end **/
 	
 	/**
