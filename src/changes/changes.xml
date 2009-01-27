@@ -1,0 +1,175 @@
+    <document>
+  <properties>
+    <title>Core User changes</title>
+    <author email='tryggvi@idega.com'>Tryggvi Larusson</author>
+  </properties>
+  <body>
+  	<release date='2009-01-27' description='First 4.1.x Release' version='4.1.0'>
+          <action type='add' dev='tryggvil'>First 4.1.x Release</action>
+        </release>
+        <release date='2008-03-10' version='3.1.22'>
+   		<action type='update' dev='gimmi'>
+   			URLEncoding email subject
+   		</action>
+   	</release>
+  	<release date='2008-02-05' version='3.1.21'>
+   		<action type='update' dev='valdas'>
+   			Changed few methods' signatures in GroupService
+   			Added signatures in dwr.xml
+   		</action>
+   	</release>
+  	<release date='2008-01-16' version='3.1.20'>
+   		<action type='update' dev='valdas'>
+   			Added few public methods to GroupService
+   			Resized GroupPermissionWindow (Gimmi)
+   		</action>
+   	</release>
+   	<release date='2007-12-04' version='3.1.19'>
+   		<action type='update' dev='gimmi'>
+   			EmailFormFix
+   		</action>
+   	</release>
+  	<release date='2007-11-22' version='3.1.18'>
+     	<action type='update' dev='valdas'>
+			Changes for groups tree, groups and users info viewers.
+    	</action>
+    </release>
+  
+  	<release date='2007-11-13' version='3.1.17'>
+     	<action type='update' dev='valdas'>
+			Changed GroupService bean - now session scope, added new methods, updated existing (because of IE + DWR cross domain).
+    	</action>
+    </release>
+  
+ 	 <release date='2007-08-07' version='3.1.16'>
+     	<action type='update' dev='valdas'>
+			Added validation if instanceId is known for Simple User Application
+    	</action>
+    </release>
+  
+  	<release date='2007-08-01' version='3.1.15'>
+     	<action type='update' dev='sigtryggur'>
+			Refectored CitizenImage and CitizenAccountPreferences to UserImage and UserDetailPreferences from the citizen bundle
+    	</action>
+    </release>
+  	
+  	<release date='2007-07-22' version='3.1.14'>
+     	<action type='update' dev='valdas'>
+			Now forcing to choose group when saving user (if any groups exist) in Simple User Application
+			Now before saving user, removing user from de-selected groups in Simple User Application
+    	</action>
+    </release>
+  
+  	<release date='2007-07-19' version='3.1.13'>
+     	<action type='update' dev='valdas'>
+			Added email field for Simple User Application
+    	</action>
+    </release>
+  
+  	<release date='2007-07-12' version='3.1.12'>
+     	<action type='update' dev='valdas'>
+			Passing parameter true to clean rendered UIComponent for Simple User Application
+    	</action>
+    </release>
+  
+  	<release date='2007-07-11' version='3.1.11'>
+      <action type='update' dev='valdas'>
+		Backed DWR to 1.1
+      </action>
+    </release>
+
+	<release date='2007-07-04' version='3.1.10'>
+      <action type='add' dev='valdas'>
+		Added Simple User application component.
+		Built logic for 'view users' case. 
+      </action>
+    </release>
+
+	<release date='2007-06-16' version='3.1.9'>
+      <action type='update' dev='eiki'>
+		Updated DWR to 2.0.1 and added some dwr beans.
+		Removed the welcome message and logo in the user app.
+      </action>
+    </release>
+    
+    <release date='2007-06-11' version='3.1.8'>
+      <action type='update' dev='palli'>
+      		Added node icons for msi.
+      </action>       
+    </release>
+
+    <release date='2007-06-01' version='3.1.7'>
+      <action type='update' dev='eiki'>
+      		Added bundlestarter for viewnode and custom permission code, merged with missing stuff from HEAD and "fixed" Scrolltable style and button layout.
+      </action>       
+    </release>
+    
+    <release date='2007-05-29' version='3.1.6'>
+      <action type='update' dev='sigtryggur'>
+      		Added some icons to the treeview in the userapplication
+      </action>       
+    </release>
+    
+    <release date='2007-04-23' version='3.1.5'>
+      <action type='update' dev='eiki'>
+      		Merged changes made in v.2.0 to v3.1, added Felix icelandic locale variant and changed bundle properties to application properties.
+      </action>       
+    </release>
+    
+    <release date='2007-02-16' version='3.1.4'>
+      <action type='update' dev='eiki'>
+      		Change the UserLoginTab in com.idega.user to fix a security hole along with Login and user classes in core.
+			Now only the user himself, admin or the first person or the persons group that changes the users password for the first time can change it again. 
+      </action>       
+    </release>
+    
+    <release date='2007-01-26' version='3.1.3'>
+      <action type='update' dev='sigtryggur'>
+      	Added new email sending function to BasicUserOverview
+      </action>       
+    </release>
+
+	<release date='2005-06-22' version='3.1.2'>
+      <action type='update' dev='tryggvil'>
+      	Bufgix version. Removing method from LinkToUserStats.
+      </action>       
+    </release>
+
+	<release date='2005-06-16' version='3.1.0'>
+      <action type='update' dev='tryggvil'>
+      	Declaration of version for including in ePlatform release 3.1
+      </action>
+      <action type='update' dev='tryggvil'>
+      	Small UI updates to conform better with the ePlatform 3 workspace
+      </action>            
+    </release>
+
+	<release date='2005-09-15' version='1.1.3'>
+      <action type='update' dev='tryggvil'>
+		depends now on core 3.0.6
+      </action>              
+    </release>
+       <release date='2005-05-25' version='1.1.2'>
+      <action type='update' dev='tryggvil'>
+		depends now on core 3.0.5
+      </action>
+    </release>
+     <release date='2005-04-06' version='1.1.1'>
+      <action type='update' dev='tryggvil'>
+		depends now on core 3.0.4
+      </action>              
+    </release>
+      <release date='2005-03-11' version='1.1.0'>
+      <action type='update' dev='tryggvil'>
+		depends now on log 1.1.1
+      </action>              
+    </release>
+    <release date='2005-03-10' version='1.0.0'>
+      <action type='update' dev='tryggvil'>
+        Declaration of version for use in new systems based on JSF.
+      </action>              
+    </release>
+
+  </body>
+</document>
+
