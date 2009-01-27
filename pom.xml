@@ -3,11 +3,11 @@
   <parent>
   	<groupId>com.idega.block.platform</groupId>
   	<artifactId>com.idega.block.platform</artifactId>
-  	<version>4.1.1-SNAPSHOT</version>
+  	<version>4.1.0</version>
   </parent>
   <groupId>com.idega.block.platform</groupId>
   <artifactId>com.idega.user</artifactId>
-  <version>4.1.1-SNAPSHOT</version>
+  <version>4.1.0</version>
   <packaging>jar</packaging>
   <name>idegaWeb User</name>
   <description>User Application</description>
@@ -20,6 +20,7 @@
     <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.user/</connection>
     <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.user/</developerConnection>
     -->
+    <tag>com_idega_block_platform-4_1_0</tag>
   </scm>
 
   <developers>
