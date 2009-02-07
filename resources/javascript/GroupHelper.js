@@ -10,10 +10,7 @@ var LOGIN = null;
 var PASSWORD = null;
 var NODE_ON_CLICK_ACTION = null;
 
-var groups_chooser_helper = null;
-try {
-	groups_chooser_helper = new ChooserHelper();
-} catch(e) {}
+if (!groups_chooser_helper) var groups_chooser_helper = new ChooserHelper();
 
 function getGroupTreeListElementStyleClass(){
 	return GROUPS_TREE_LIST_ELEMENT_STYLE_CLASS;
