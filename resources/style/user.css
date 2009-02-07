@@ -115,13 +115,23 @@
 
 .userNameLabelContainerStyleClass {
 	float: left;
-	width: 38%;
+	width: 23%;
 	margin-left: 8px;
 }
 
 .userPersonalIdLabelContainerStyleClass {
 	float: left;
-	width: 30%;
+	width: 15%;
+}
+
+.userEmailLabelContainerStyleClass {
+	float: left;
+	width: 15%;
+}
+
+.userPhoneLabelContainerStyleClass {
+	float: left;
+	width: 15%;
 }
 
 .changeUserLabelContainerStyleClass {
@@ -156,13 +166,23 @@
 
 .userNameValueContainerStyleClass {
 	float: left;
-	width: 38%;
+	width: 23%;
 	margin-left: 8px;
 }
 
 .userPersonalIdValueContainerStyleClass {
 	float: left;
-	width: 30%;
+	width: 15%;
+}
+
+.userEmailValueContainerStyleClass {
+	float: left;
+	width: 15%;
+}
+
+.userPhoneValueContainerStyleClass {
+	float: left;
+	width: 15%;
 }
 
 .changeUserImageContainerStyleClass {

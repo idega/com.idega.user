@@ -170,6 +170,16 @@ public class SimpleUserAppViewUsers extends Block {
 		userPersonalIdLabelContainer.add(new Text(iwrb.getLocalizedString("personal_id", "Personlal ID")));
 		labels.add(userPersonalIdLabelContainer);
 		
+		Layer userEmailLabelContainer = new Layer();
+		userEmailLabelContainer.setStyleClass("userEmailLabelContainerStyleClass");
+		userEmailLabelContainer.add(new Text(iwrb.getLocalizedString("email", "E-mail")));
+		labels.add(userEmailLabelContainer);
+		
+		Layer userPhoneLabelContainer = new Layer();
+		userPhoneLabelContainer.setStyleClass("userPhoneLabelContainerStyleClass");
+		userPhoneLabelContainer.add(new Text(iwrb.getLocalizedString("phone_number", "Phone number")));
+		labels.add(userPhoneLabelContainer);
+		
 		Layer changeUserLabelContainer = new Layer();
 		changeUserLabelContainer.setStyleClass("changeUserLabelContainerStyleClass");
 		changeUserLabelContainer.add(new Text(iwrb.getLocalizedString("change_user", "Change user")));

@@ -1,11 +1,17 @@
 package com.idega.user.presentation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
+import com.idega.core.contact.data.Email;
+import com.idega.core.contact.data.Phone;
+import com.idega.core.contact.data.PhoneTypeBMPBean;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
@@ -14,6 +20,8 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.text.Break;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.IntegerInput;
@@ -23,8 +31,10 @@ import com.idega.user.app.SimpleUserAppHelper;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.business.GroupHelper;
 import com.idega.user.business.UserApplicationEngine;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserConstants;
 import com.idega.user.data.User;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
@@ -76,6 +86,8 @@ public class GroupMembersListViewer extends Block {
 		String userValuesLineContainerStyleClass = "userValuesLineContainerStyleClass";
 		String nameContainerStyleClass = "userNameValueContainerStyleClass";
 		String personalIdContainerStyleClass = "userPersonalIdValueContainerStyleClass";
+		String emailContainerStyleClass = "userEmailValueContainerStyleClass";
+		String phoneContainerStyleClass = "userPhoneValueContainerStyleClass";
 		String changeUserContainerStyleClass = "changeUserImageContainerStyleClass";
 		String removeUserContainerStyleClass = "removeUserCheckboxContainerStyleClass";
 		String changeUserImageStyleClass = "changeUserImageStyleClass";
@@ -87,6 +99,8 @@ public class GroupMembersListViewer extends Block {
 		String name = null;
 		String personalId = null;
 		String userId = null;
+		String email = null;
+		List<String> phoneNumbers = null;
 		int groupId = -1;
 		int from = getLeftIndex() + 1;
 		for (int i = 0; i < users.size(); i++) {
@@ -101,6 +115,9 @@ public class GroupMembersListViewer extends Block {
 			if (CoreConstants.EMPTY.equals(personalId)) {
 				personalId = null;
 			}
+			email = getUserEmail(iwc, user);
+			phoneNumbers = getUserPhonesNumbers(iwc, user);
+			
 			groupId = bean.getGroupId();
 			if (groupId < 0) {
 				groupId = bean.getParentGroupId();
@@ -134,13 +151,27 @@ public class GroupMembersListViewer extends Block {
 			personalIdContainer.add(personalIdText);
 			lineContainer.add(personalIdContainer);
 			
+			Layer emailContainer = new Layer();
+			fixId(emailContainer);
+			emailContainer.setStyleClass(emailContainerStyleClass);
+			Text emailText = StringUtil.isEmpty(email) ? new Text(CoreConstants.MINUS) : new Link(email);
+			fixId(emailText);
+			emailContainer.add(emailText);
+			lineContainer.add(emailContainer);
+			
+			Layer phonesContainer = new Layer();
+			fixId(phonesContainer);
+			phonesContainer.setStyleClass(phoneContainerStyleClass);
+			fillPhonesSection(phonesContainer, phoneNumbers);
+			lineContainer.add(phonesContainer);
+			
 			Layer changeUserContainer = new Layer();
 			fixId(changeUserContainer);
 			changeUserContainer.setStyleClass(changeUserContainerStyleClass);
 			Image changeUserImage = new Image(image);
 			fixId(changeUserImage);
 			changeUserImage.setStyleClass(changeUserImageStyleClass);
-			changeUserImage.setToolTip(iwrb.getLocalizedString("change_user", "Change user"));
+			changeUserImage.setTitle(iwrb.getLocalizedString("change_user", "Change user"));
 			changeUserImage.setOnClick(helper.getActionForAddUserView(bean, userId));
 			changeUserContainer.add(changeUserImage);
 			lineContainer.add(changeUserContainer);
@@ -149,7 +180,7 @@ public class GroupMembersListViewer extends Block {
 			fixId(removeUserContainer);
 			removeUserContainer.setStyleClass(removeUserContainerStyleClass);
 			CheckBox removeUserCheckbox = new CheckBox();
-			removeUserCheckbox.setToolTip(iwrb.getLocalizedString("remove_user", "Remove user"));
+			removeUserCheckbox.setTitle(iwrb.getLocalizedString("remove_user", "Remove user"));
 			fixId(removeUserCheckbox);
 			checkBoxAction = new StringBuffer("removeUser('").append(lineContainer.getId());
 			checkBoxAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(userId);
@@ -172,6 +203,100 @@ public class GroupMembersListViewer extends Block {
 			UserApplicationEngine userAppEngine = ELUtil.getInstance().getBean(UserApplicationEngine.class);
 			userAppEngine.setPagerProperties(userAppEngine.getIdForPagerProperties(bean), properties);
 		}
+	}
+	
+	private void fillPhonesSection(Layer container, List<String> numbers) {
+		if (ListUtil.isEmpty(numbers)) {
+			Text noNumbers = new Text(CoreConstants.MINUS);
+			fixId(noNumbers);
+			container.add(noNumbers);
+			return;
+		}
+		
+		for (Iterator<String> numbersIter = numbers.iterator(); numbersIter.hasNext();) {
+			Text numberLine = new Text(numbersIter.next());
+			fixId(numberLine);
+			container.add(numberLine);
+			
+			if (numbersIter.hasNext()) {
+				container.add(new Break());
+			}
+		}
+	}
+	
+	private UserBusiness getUserBusiness(IWContext iwc) {
+		try {
+			return (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+		} catch (IBOLookupException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private String getUserEmail(IWContext iwc, User user) {
+		Email email = null;;
+		try {
+			email = getUserBusiness(iwc).getUsersMainEmail(user);
+		} catch (Exception e) {}
+		if (email == null) {
+			return null;
+		}
+		
+		return email.getEmailAddressMailtoFormatted();
+	}
+	
+	private List<String> getUserPhonesNumbers(IWContext iwc, User user) {
+		Phone[] phones = null;
+		try {
+			phones = getUserBusiness(iwc).getUserPhones(user);
+		} catch(Exception e) {}
+		if (ArrayUtil.isEmpty(phones)) {
+			return null;
+		}
+
+		String number = null;
+		List<String> numbers = new ArrayList<String>();
+		List<Phone> filteredPhones = new ArrayList<Phone>();
+		for (Phone phone: phones) {
+			number = phone.getNumber();
+			if (!StringUtil.isEmpty(number) && !numbers.contains(number)) {
+				numbers.add(number);
+				filteredPhones.add(phone);
+			}
+		}
+		
+		if (ListUtil.isEmpty(filteredPhones)) {
+			return null;
+		}
+		
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+		List<String> phoneNumbers = new ArrayList<String>(filteredPhones.size());
+		for (Phone phone: filteredPhones) {
+			switch(phone.getPhoneTypeId()) {
+			case PhoneTypeBMPBean.HOME_PHONE_ID: {
+				phoneNumbers.add(new StringBuilder(iwrb.getLocalizedString("home_phone_number", "Home")).append(CoreConstants.COLON)
+						.append(CoreConstants.SPACE).append(phone.getNumber()).toString());
+				break;
+			}
+			case PhoneTypeBMPBean.MOBILE_PHONE_ID: {
+				phoneNumbers.add(new StringBuilder(iwrb.getLocalizedString("mobile_phone_number", "Mobile")).append(CoreConstants.COLON)
+						.append(CoreConstants.SPACE).append(phone.getNumber()).toString());
+				break;
+			}
+			case PhoneTypeBMPBean.WORK_PHONE_ID: {
+				phoneNumbers.add(new StringBuilder(iwrb.getLocalizedString("work_phone_number", "Work")).append(CoreConstants.COLON)
+						.append(CoreConstants.SPACE).append(phone.getNumber()).toString());
+				break;
+			}
+			case PhoneTypeBMPBean.FAX_NUMBER_ID: {
+				phoneNumbers.add(new StringBuilder(iwrb.getLocalizedString("fax_number", "Fax")).append(CoreConstants.COLON)
+						.append(CoreConstants.SPACE).append(phone.getNumber()).toString());
+				break;
+			}
+			}
+		}
+		
+		return phoneNumbers;
 	}
 	
 	private Layer getPagingContainer(IWContext iwc, List<User> users, int totalUsers) {
@@ -204,7 +329,7 @@ public class GroupMembersListViewer extends Block {
 			Image previous = new Image(bundle.getVirtualPathWithFileNameString("images/previous.png"));
 			previousContainer.add(previous);
 			previous.setStyleClass("simpleUserApplicationGroupMembersPreviousPageImageStyle");
-			previous.setToolTip(iwrb.getLocalizedString("go_to_previous_page", "Go to previous page"));
+			previous.setTitle(iwrb.getLocalizedString("go_to_previous_page", "Go to previous page"));
 			previous.setOnClick(getFullPagerAction(action, getLeftIndex(), true));
 			Text previousPage = new Text(iwrb.getLocalizedString("previous_page", "Previous page"));
 			previousContainer.add(previousPage);
@@ -231,7 +356,7 @@ public class GroupMembersListViewer extends Block {
 			Image next = new Image(bundle.getVirtualPathWithFileNameString("images/next.png"));
 			nextContainer.add(next);
 			next.setStyleClass("simpleUserApplicationGroupMembersNextPageImageStyle");
-			next.setToolTip(iwrb.getLocalizedString("go_to_next_page", "Go to next page"));
+			next.setTitle(iwrb.getLocalizedString("go_to_next_page", "Go to next page"));
 			next.setOnClick(getFullPagerAction(action, getRightIndex(), false));
 		}
 		
