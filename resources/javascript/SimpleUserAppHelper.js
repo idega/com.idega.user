@@ -1104,9 +1104,12 @@ function navigateInUsersList(params, beanParameters, orderBy, index, moveToLeft)
 }
 
 SimpleUserApplication.togglePictureChanger = function(pictureId, pictureBoxId) {
+	var mouseYCoordinate = getAbsoluteTop(pictureId) - 107;
+	var mouseXCoordinate = getAbsoluteLeft(pictureId) + 120;
+	
 	jQuery('#' + pictureBoxId).css({
-		top: jQuery('#' + pictureId).position().top + 'px',
-		left: (jQuery('#' + pictureId).position().left + jQuery('#' + pictureId).width() + 15) + 'px'
+		top: (mouseYCoordinate == null ? jQuery('#' + pictureId).position().top : mouseYCoordinate) + 'px',
+		left: (mouseXCoordinate == null ? (jQuery('#' + pictureId).position().left + jQuery('#' + pictureId).width() + 15) : mouseXCoordinate) + 'px'
 	});
 	jQuery('#' + pictureBoxId).toggle('fast');
 }

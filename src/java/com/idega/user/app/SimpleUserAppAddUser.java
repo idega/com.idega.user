@@ -23,6 +23,8 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.Span;
+import com.idega.presentation.text.Break;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.CountryDropdownMenu;
@@ -319,7 +321,7 @@ public class SimpleUserAppAddUser extends Block {
 		inputs.add(manageAccountAvailability);		//	10	Enable/disable account
 		inputs.add(changePasswordNextTime);			//	11	Change password next time
 		inputs.add(picture);						//	12	Picture
-		addUserFields(iwc, userFieldsContainer, inputs);
+		addUserFields(iwc, userFieldsContainer, inputs, userInfo, pictureChangerId);
 		
 		//	Login information
 		Layer userLoginLabelContainer = new Layer();
@@ -556,7 +558,7 @@ public class SimpleUserAppAddUser extends Block {
 		return componetContainer;
 	}
 	
-	private void addUserFields(IWContext iwc, Layer container, List<UIComponent> inputs) {
+	private void addUserFields(IWContext iwc, Layer container, List<UIComponent> inputs, UserDataBean userInfo, String pictureChangerBoxId) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		Layer fieldsContainer = getFieldsContainer();
@@ -588,7 +590,13 @@ public class SimpleUserAppAddUser extends Block {
 		
 		//	Picture
 		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("picture", "Picture")));
-		fieldsContainer.add(getComponentContainer(inputs.get(12)));
+		Layer imageContainer = getComponentContainer(inputs.get(12));
+		imageContainer.add(new Break());
+		Link pictureEditor = new Link(iwrb.getLocalizedString("sua.edit_user_picture", "Edit picture"), "javascript:void(0)");
+		pictureEditor.setOnClick(getPictureChangerAction(inputs.get(12).getId(), pictureChangerBoxId));
+		pictureEditor.setStyleClass("simpleUserApplicationLinkToPictureEditor");
+		imageContainer.add(pictureEditor);
+		fieldsContainer.add(imageContainer);
 		fieldsContainer.add(getSpacer());
 		
 		//	Address fields
