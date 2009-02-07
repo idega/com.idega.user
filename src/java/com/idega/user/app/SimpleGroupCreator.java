@@ -173,7 +173,7 @@ public class SimpleGroupCreator extends Block {
 		StringBuilder action = new StringBuilder("findAvailablePages('").append(homePageInput.getId()).append(sep).append(homePageInputId).append(sep);
 		action.append(iwrb.getLocalizedString("no_pages_found_by_name", "No pages found by name")).append("');");
 		homePageInput.setOnKeyUp(action.toString());
-		homePageInput.setToolTip(iwrb.getLocalizedString("enter_page_name", "Enter page name"));
+		homePageInput.setTitle(iwrb.getLocalizedString("enter_page_name", "Enter page name"));
 		Label homePageLabel = new Label(iwrb.getLocalizedString("homepage", "Home page"), homePageInput);
 		homePageContainer.add(homePageLabel);
 		homePageContainer.add(homePageInput);
