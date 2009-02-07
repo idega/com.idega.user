@@ -1,3 +1,6 @@
+if (SimpleUserApplication == null) var SimpleUserApplication = {}
+SimpleUserApplication.userPicture = null;
+
 var USERS_TO_REMOVE = new Array();
 var DESELECTED_GROUPS = new Array();
 
@@ -620,6 +623,7 @@ function UserDataBean(name, login, password, personalId, email, errorMessage, ph
 	this.juridicalPerson = juridicalPerson;
 	this.changePasswordNextTime = changePasswordNextTime;
 	this.accountEnabled = accountEnabled;
+	this.pictureUri = SimpleUserApplication.userPicture;
 }
 
 function isCheckboxChecked(id) {
@@ -1096,5 +1100,62 @@ function navigateInUsersList(params, beanParameters, orderBy, index, moveToLeft)
 		callback: function(component) {
 			getMembersListCallback(component, containerId);
 		}
+	});
+}
+
+SimpleUserApplication.togglePictureChanger = function(pictureId, pictureBoxId) {
+	jQuery('#' + pictureBoxId).css({
+		top: jQuery('#' + pictureId).position().top + 'px',
+		left: (jQuery('#' + pictureId).position().left + jQuery('#' + pictureId).width() + 15) + 'px'
+	});
+	jQuery('#' + pictureBoxId).toggle('fast');
+}
+
+SimpleUserApplication.toggleUserPicture = function(pictureId, pictureUri, pictureBoxId) {
+	var deletingImage = false;
+	if (pictureUri.indexOf('.') == -1) {
+		if (FileUploadHelper.uploadedFiles == null || FileUploadHelper.uploadedFiles.length == 0) {
+			SimpleUserApplication.userPicture = null;
+			return;
+		}
+		
+		var uploadedFileName = FileUploadHelper.uploadedFiles[0];
+		var dotIndex = uploadedFileName.indexOf('.');
+		if (dotIndex == -1) {
+			SimpleUserApplication.userPicture = null;
+			return;
+		}
+		var fileEnd = uploadedFileName.substring(dotIndex + 1);
+		fileEnd = fileEnd.toLowerCase();
+		if (!(fileEnd == 'jpeg' || fileEnd == 'jpg' || fileEnd == 'png' || fileEnd == 'gif')) {
+			SimpleUserApplication.userPicture = null;
+			return;
+		}
+		
+		var separator = '/';
+		if (IE) {
+			separator = '\\';	//	TODO: test
+		}
+		var fileUriParts = uploadedFileName.split(separator);
+		uploadedFileName = fileUriParts[fileUriParts.length -1];
+		
+		pictureUri += uploadedFileName;
+	} else {
+		deletingImage = true;
+	}
+	
+	if (pictureUri == null || pictureUri == '' || pictureUri.indexOf('.') == -1) {
+		SimpleUserApplication.userPicture = null;
+		return;
+	}
+	
+	jQuery('#' + pictureId).load(pictureUri, function() {
+		jQuery(this).fadeOut('fast', function() {
+			SimpleUserApplication.userPicture = deletingImage ? null : pictureUri;
+			jQuery('#' + pictureId).attr('src', pictureUri);
+			jQuery('#' + pictureId).fadeIn('fast');
+			
+			SimpleUserApplication.togglePictureChanger(pictureId, pictureBoxId);
+		});
 	});
 }

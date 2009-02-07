@@ -18,6 +18,7 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.faces.component.UIComponent;
 
+import org.apache.webdav.lib.WebdavResource;
 import org.jdom.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -27,6 +28,7 @@ import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBPageName;
 import com.idega.builder.data.IBPageNameHome;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
@@ -38,6 +40,8 @@ import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneTypeBMPBean;
 import com.idega.core.data.ICTreeNode;
+import com.idega.core.file.data.ICFile;
+import com.idega.core.file.data.ICFileHome;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
@@ -51,7 +55,9 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
+import com.idega.slide.business.IWSlideService;
 import com.idega.user.app.SimpleUserApp;
 import com.idega.user.app.SimpleUserAppAddUser;
 import com.idega.user.app.SimpleUserAppHelper;
@@ -363,9 +369,10 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			return null;
 		}
 		
+		IWBundle bundle = getBundle(iwc);
 		UserDataBean bean = new UserDataBean();
 		if (user == null) {
-			IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
+			IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
 			String errorMessage = "Unable to find user by provided personal ID!";
 			errorMessage = iwrb.getLocalizedString("unable_to_find_user_by_personal_id", errorMessage);
 			bean.setErrorMessage(errorMessage);
@@ -384,6 +391,24 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			//	Personal ID
 			String personalID = user.getPersonalID();
 			bean.setPersonalId(personalID == null ? CoreConstants.EMPTY : personalID);
+			
+			//	Picture
+			String pictureUri = null;
+			Image image = userBusiness.getUserImage(user);
+			if (image == null) {
+				//	Default image
+				boolean male = true;
+				try {
+					male = userBusiness.isMale(user.getGenderID());
+				} catch (Exception e) {}
+				pictureUri = new StringBuilder(bundle.getVirtualPathWithFileNameString("images/")).append(male ? "user_male" : "user_female").append(".png")
+					.toString();
+			}
+			else {
+				pictureUri = image.getMediaURL(iwc);
+				bean.setImageSet(true);
+			}
+			bean.setPictureUri(pictureUri);
 			
 			//	Login
 			String login = userBusiness.getUserLogin(user);
@@ -535,6 +560,16 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			return null;
 		}
 		
+		IWSlideService slideService = null;
+		try {
+			slideService = (IWSlideService) IBOLookup.getServiceInstance(iwc, IWSlideService.class);
+		} catch (IBOLookupException e) {
+			logger.log(Level.SEVERE, "Error getting IWSlideService", e);
+		}
+		if (slideService == null) {
+			return null;
+		}
+		
 		String phoneNumber = userInfo.getPhone();
 		String email = userInfo.getEmail();
 		
@@ -622,6 +657,28 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			}
 			if (mail == null) {
 				return errorText;
+			}
+		}
+		
+		//	Picture
+		if (StringUtil.isEmpty(userInfo.getPictureUri())) {
+			user.setSystemImageID(null);	//	Deleting
+		}
+		else {
+			try {
+				ICFile picture = ((ICFileHome) IDOLookup.getHome(ICFile.class)).create();
+				picture.setFileValue(slideService.getInputStream(userInfo.getPictureUri().replace(CoreConstants.WEBDAV_SERVLET_URI, CoreConstants.EMPTY)));
+				picture.setFileUri(userInfo.getPictureUri());
+				picture.setName(userInfo.getPictureUri().substring(userInfo.getPictureUri().lastIndexOf(CoreConstants.SLASH) + 1));
+				picture.store();
+				
+				user.setSystemImageID(Integer.valueOf(picture.getId()));
+				
+				WebdavResource resource =slideService.getWebdavResourceAuthenticatedAsRoot(userInfo.getPictureUri().replace(CoreConstants.WEBDAV_SERVLET_URI,
+						CoreConstants.EMPTY));
+				resource.deleteMethod();
+			} catch(Exception e) {
+				logger.log(Level.WARNING, "Error setting image for user: " + userInfo.getPictureUri());
 			}
 		}
 		

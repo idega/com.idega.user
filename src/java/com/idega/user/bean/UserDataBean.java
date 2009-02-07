@@ -9,6 +9,7 @@ public class UserDataBean {
 	private String email = null;
 	private String errorMessage = null;
 	private String phone = null;
+	private String pictureUri;
 
 	//	Address
 	private String streetNameAndNumber = null;
@@ -24,6 +25,7 @@ public class UserDataBean {
 	private Boolean changePasswordNextTime = Boolean.FALSE;
 	private Boolean accountEnabled = Boolean.TRUE;
 	private boolean accountExists = false;
+	private boolean imageSet;
 	
 	public String getEmail() {
 		return email;
@@ -133,6 +135,17 @@ public class UserDataBean {
 	public void setAccountEnabled(Boolean accountEnabled) {
 		this.accountEnabled = accountEnabled;
 	}
-
+	public String getPictureUri() {
+		return pictureUri;
+	}
+	public void setPictureUri(String pictureUri) {
+		this.pictureUri = pictureUri;
+	}
+	public boolean isImageSet() {
+		return imageSet;
+	}
+	public void setImageSet(boolean imageSet) {
+		this.imageSet = imageSet;
+	}
 
 }

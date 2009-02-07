@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import javax.faces.component.UIComponent;
 
 import com.idega.content.business.ContentConstants;
+import com.idega.content.upload.presentation.FileUploadViewer;
 import com.idega.core.contact.data.Email;
 import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
@@ -19,6 +20,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.CSSSpacer;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.Span;
 import com.idega.presentation.text.Text;
@@ -138,7 +140,7 @@ public class SimpleUserAppAddUser extends Block {
 		//	Choose user
 		Layer chooseUserLabelContainer = new Layer();
 		chooseUserLabelContainer.setStyleClass("addUserlabelContainerStyleClass");
-		chooseUserLabelContainer.add(new Text(iwrb.getLocalizedString("choose_user", "Choose user")));
+		chooseUserLabelContainer.add(new Text(iwrb.getLocalizedString("sua.personal_information", "Personal information")));
 		container.add(chooseUserLabelContainer);
 		
 		//	User fields
@@ -151,6 +153,7 @@ public class SimpleUserAppAddUser extends Block {
 		
 		//	Personal ID
 		TextInput idValueInput = new TextInput();
+		idValueInput.setTitle(iwrb.getLocalizedString("sua.enter_personal_id_to_search_for_user", "Enter personal ID to search for a person"));
 		idValueInput.setMaxlength(12);
 		
 		//	Phone
@@ -209,6 +212,16 @@ public class SimpleUserAppAddUser extends Block {
 		if (!properties.isAllFieldsEditable()) {
 			emailInpnut.setDisabled(true);
 		}
+		
+		//	Picture
+		Image picture = new Image();
+		picture.setStyleClass("simpleUserApplicationUserPicture");
+		picture.setTitle(iwrb.getLocalizedString("sua.click_to_add_or_modify_picture", "Click to add or modify picture"));
+		String pictureId = picture.getId();
+		String pictureChangerId = getPictureChanger(iwc, container, pictureId, userInfo.isImageSet());
+		picture.setOnClick(getPictureChangerAction(pictureId, pictureChangerId));
+		picture.setURL(StringUtil.isEmpty(userInfo.getPictureUri()) ? getBundle(iwc).getVirtualPathWithFileNameString("images/user_default.png") :
+			userInfo.getPictureUri());
 		
 		//	Street and number
 		streetNameAndNumberInput.setContent(userInfo.getStreetNameAndNumber());
@@ -287,6 +300,7 @@ public class SimpleUserAppAddUser extends Block {
 		idsForFields.add(phoneInputId);										//	12	Phone
 		idsForFields.add(accountManagerId);									//	13	Account enabled
 		idsForFields.add(changePasswordNextTimeId);							//	14	Change password
+		idsForFields.add(pictureId);										//	15	Picture
 		StringBuffer idAction = new StringBuffer("getUserByPersonalId(event, ").append(helper.getJavaScriptFunctionParameter(idsForFields))
 								.append(SimpleUserApp.COMMA_SEPARATOR).append(properties.isAllFieldsEditable()).append(");");
 		idValueInput.setOnKeyUp(idAction.toString());
@@ -304,6 +318,7 @@ public class SimpleUserAppAddUser extends Block {
 		inputs.add(postalBoxInput);					//	9	Postal box
 		inputs.add(manageAccountAvailability);		//	10	Enable/disable account
 		inputs.add(changePasswordNextTime);			//	11	Change password next time
+		inputs.add(picture);						//	12	Picture
 		addUserFields(iwc, userFieldsContainer, inputs);
 		
 		//	Login information
@@ -360,13 +375,62 @@ public class SimpleUserAppAddUser extends Block {
 		ids.add(properties.isAllowEnableDisableAccount() ? accountManagerId : "-1");							//	14 Enable/disable account
 		ids.add(properties.isChangePasswordNextTime() ? changePasswordNextTimeId : "-1");						//	15 Change password next time
 		ids.add(properties.getParentGroupId() == -1 ? "-1" : String.valueOf(properties.getParentGroupId()));	//	16 Selected group ID
+		ids.add(pictureId);						//	17	Picture
 		addButtons(iwc, buttons, ids, childGroups, userInfo.isAccountExists());
+	}
+	
+	private String getPictureChangerAction(String id, String boxId) {
+		return new StringBuilder("SimpleUserApplication.togglePictureChanger('").append(id).append("', '").append(boxId).append("');").toString();
+	}
+	
+	private String getPictureChanger(IWContext iwc, Layer container, String pictureId, boolean hasImage) {
+		Layer pictureChangerContainer = new Layer();
+		container.add(pictureChangerContainer);
+		pictureChangerContainer.setStyleClass("simpleUserApplicationPictureChangerBox");
+		pictureChangerContainer.setStyleAttribute("display: none");
+		
+		Layer explantationContainer = new Layer();
+		explantationContainer.setStyleClass("simpleUserApplicationPictureChangerBoxExplanationText");
+		Text explanation = new Text(new StringBuilder(
+				iwrb.getLocalizedString("sua.select_picture_and_upload_note_about_alowed_files", "Select profile picture and upload it. Available files: "))
+				.append("PNG, JPEG, GIF").toString());
+		explantationContainer.add(explanation);
+		pictureChangerContainer.add(explantationContainer);
+		
+		FileUploadViewer pictureUploader = new FileUploadViewer();
+		pictureUploader.setAllowMultipleFiles(false);
+		pictureUploader.setAutoAddFileInput(false);
+		String uploadPath = CoreConstants.CONTENT_PATH + "/users/temp/";
+		pictureUploader.setUploadPath(uploadPath);
+		pictureUploader.setActionAfterUpload(new StringBuilder("SimpleUserApplication.toggleUserPicture('").append(pictureId).append("', '")
+			.append(CoreConstants.WEBDAV_SERVLET_URI).append(uploadPath).append("', '").append(pictureChangerContainer.getId()).append("');").toString());
+		pictureChangerContainer.add(pictureUploader);
+		
+		Layer buttons = new Layer();
+		pictureChangerContainer.add(buttons);
+		
+		if (hasImage) {
+			GenericButton delete = new GenericButton(iwrb.getLocalizedString("delete", "Delete"));
+			delete.setOnClick(new StringBuilder("SimpleUserApplication.toggleUserPicture('").append(pictureId).append("', '")
+					.append(getBundle(iwc).getVirtualPathWithFileNameString("images/user_default.png")).append("', '").append(pictureChangerContainer.getId())
+					.append("');").toString());
+			delete.setStyleClass("simpleUserApplicationPictureDeleter");
+			buttons.add(delete);
+		}
+		
+		GenericButton close = new GenericButton(iwrb.getLocalizedString("close", "Close"));
+		close.setTitle(iwrb.getLocalizedString("sua.close_picture_changer", "Close"));
+		close.setOnClick(getPictureChangerAction(pictureId, pictureChangerContainer.getId()));
+		close.setStyleClass("simpleUserApplicationPictureChangerBoxCloser");
+		buttons.add(close);
+		
+		return pictureChangerContainer.getId();
 	}
 	
 	private CheckBox getCheckBox(String toolTip, boolean checked) {
 		CheckBox checkBox = new CheckBox();
 		checkBox.setChecked(checked, true);
-		checkBox.setToolTip(toolTip);
+		checkBox.setTitle(toolTip);
 		checkBox.setOnClick(new StringBuilder("if (!window.confirm('").append(iwrb.getLocalizedString("are_you_sure", "Are you sure?"))
 						.append("')) { var checkBox = document.getElementById('").append(checkBox.getId()).append("'); checkBox.checked = !checkBox.checked; }")
 						.toString());
@@ -479,7 +543,7 @@ public class SimpleUserAppAddUser extends Block {
 	private void addRequiredFieldMark(Layer container) {
 		Span requiredText = new Span(new Text("*"));
 		requiredText.setStyleClass("requiredFieldUserApp");
-		requiredText.setToolTip(iwrb.getLocalizedString(requiredFieldLocalizationKey, requiredFieldLocalizationValue));
+		requiredText.setTitle(iwrb.getLocalizedString(requiredFieldLocalizationKey, requiredFieldLocalizationValue));
 		container.add(requiredText);
 	}
 	
@@ -520,6 +584,11 @@ public class SimpleUserAppAddUser extends Block {
 		//	Email
 		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("email", "Email"), true));
 		fieldsContainer.add(getComponentContainer(inputs.get(3)));
+		fieldsContainer.add(getSpacer());
+		
+		//	Picture
+		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("picture", "Picture")));
+		fieldsContainer.add(getComponentContainer(inputs.get(12)));
 		fieldsContainer.add(getSpacer());
 		
 		//	Address fields

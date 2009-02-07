@@ -92,6 +92,15 @@
 	padding: 3px 5px;
 }
 
+.users .userFieldsContainerStyleClass img {
+	border: 1px #a8a8a8 solid !important;
+	background-color: #fff;
+	margin: 0;
+	margin-bottom: 8px;
+	padding: 3px 5px;
+	cursor: pointer;
+}
+
 .users .userFieldsContainerStyleClass select {
 	font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Arial, Helvetica, sans-serif !important;
 	font-size: 14px;
@@ -499,4 +508,35 @@ div.simpleUserApplicationGroupMembersPageSizeStyle {
 
 input.simpleUserApplicationGroupMembersPagerPageSizeInputStyle {
 	width: 50px;
+}
+
+div.simpleUserApplicationPictureChangerBox {
+	position: absolute;
+	height: 100px;
+	width: 400px;
+	border: 1px #a8a8a8 solid !important;
+	z-index: 10;
+	background-color: #fff;
+}
+
+.simpleUserApplicationPictureChangerBoxCloser {
+	float: right;
+}
+
+.simpleUserApplicationPictureDeleter {
+	float: right;
+}
+
+.fileUploadButtonsContainerStyle {
+	float: right;
+}
+
+img.simpleUserApplicationUserPicture {
+	width: 107px;
+	height: 134px;
+}
+
+.simpleUserApplicationPictureChangerBoxExplanationText {
+	font-family: "Lucida Grande","Lucida Sans","Lucida Sans Unicode",Arial,Helvetica,sans-serif;
+	font-size: 12px;
 }
