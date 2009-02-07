@@ -10,6 +10,7 @@ import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.PresentationUtil;
 import com.idega.webface.WFUtil;
 
@@ -32,6 +33,7 @@ public class GroupTreeViewer extends Block {
 		this.executeScriptOnLoad = executeScriptOnLoad;
 	}
 	
+	@Override
 	public void main(IWContext iwc) {
 		Layer main = new Layer();
 		
@@ -53,6 +55,8 @@ public class GroupTreeViewer extends Block {
 			List<String> files = new ArrayList<String>();
 			
 			//	"Helpers"
+			files.add(CoreUtil.getCoreBundle().getVirtualPathWithFileNameString("javascript/ChooserHelper.js"));
+			files.add("/dwr/interface/ChooserService.js");
 			files.add(iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
 			files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
 			
@@ -111,6 +115,7 @@ public class GroupTreeViewer extends Block {
 		add(scriptString.toString());
 	}
 
+	@Override
 	public String getBundleIdentifier()	{
 		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
@@ -143,10 +148,12 @@ public class GroupTreeViewer extends Block {
 		this.groupsTreeViewerId = groupsTreeViewerId;
 	}
 
+	@Override
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
 	}
 
+	@Override
 	public String getStyleClass() {
 		return styleClass;
 	}

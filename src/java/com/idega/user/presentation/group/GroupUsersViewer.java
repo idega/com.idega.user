@@ -39,6 +39,7 @@ public class GroupUsersViewer extends GroupViewer {
 	private String imageWidth = "70";
 	private String imageHeight = "90";
 	
+	@Override
 	public void main(IWContext iwc) {
 		super.main(iwc);
 		
@@ -110,7 +111,7 @@ public class GroupUsersViewer extends GroupViewer {
 		boolean singleRenderingProcess = CoreUtil.isSingleComponentRenderingProcess(iwc);
 		
 		List<String> files = new ArrayList<String>();
-		//	"Helpers"
+		//	"Helpers"		
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/UserInfoViewerHelper.js"));
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
 		//	DWR
@@ -187,6 +188,7 @@ public class GroupUsersViewer extends GroupViewer {
 		this.imageWidth = imageWidth;
 	}
 	
+	@Override
 	public String getBundleIdentifier()	{
 		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}

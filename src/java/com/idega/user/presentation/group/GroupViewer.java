@@ -36,6 +36,7 @@ public class GroupViewer extends Block {
 	
 	private Integer cacheTime = 10;
 	
+	@Override
 	public void main(IWContext iwc) {
 		String css = getBundle(iwc).getVirtualPathWithFileNameString("style/user.css");
 		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
@@ -126,7 +127,15 @@ public class GroupViewer extends Block {
 			return;
 		}
 		
+		if (!files.contains(CoreUtil.getCoreBundle().getVirtualPathWithFileNameString("javascript/ChooserHelper.js"))) {
+			files.add(0, CoreUtil.getCoreBundle().getVirtualPathWithFileNameString("javascript/ChooserHelper.js"));
+		}
+		if (!files.contains("/dwr/interface/ChooserService.js")) {
+			files.add("/dwr/interface/ChooserService.js");
+		}
+		
 		IWBundle bundle = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
+		files.add(bundle.getVirtualPathWithFileNameString("javascript/groupTree.js"));
 		String groupHelper = bundle.getVirtualPathWithFileNameString("javascript/GroupHelper.js");
 		if (!(files.contains(groupHelper))) {
 			files.add(groupHelper);
