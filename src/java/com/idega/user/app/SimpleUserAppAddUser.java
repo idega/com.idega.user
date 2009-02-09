@@ -218,7 +218,8 @@ public class SimpleUserAppAddUser extends Block {
 		//	Picture
 		Image picture = new Image();
 		picture.setStyleClass("simpleUserApplicationUserPicture");
-		picture.setTitle(iwrb.getLocalizedString("sua.click_to_add_or_modify_picture", "Click to add or modify picture"));
+		picture.setTitle(userInfo.isImageSet() ? iwrb.getLocalizedString("sua.click_to_delete_or_change_picture", "Click to change or delete picture") :
+			iwrb.getLocalizedString("sua.click_to_add_picture", "Click to add picture"));
 		String pictureId = picture.getId();
 		String pictureChangerId = getPictureChanger(iwc, container, pictureId, userInfo.isImageSet());
 		picture.setOnClick(getPictureChangerAction(pictureId, pictureChangerId));
@@ -592,7 +593,8 @@ public class SimpleUserAppAddUser extends Block {
 		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("picture", "Picture")));
 		Layer imageContainer = getComponentContainer(inputs.get(12));
 		imageContainer.add(new Break());
-		Link pictureEditor = new Link(iwrb.getLocalizedString("sua.edit_user_picture", "Edit picture"), "javascript:void(0)");
+		Link pictureEditor = new Link(userInfo.isImageSet() ? iwrb.getLocalizedString("sua.edit_user_picture", "Edit picture") :
+			iwrb.getLocalizedString("sua.add_user_picture", "Add picture"), "javascript:void(0)");
 		pictureEditor.setOnClick(getPictureChangerAction(inputs.get(12).getId(), pictureChangerBoxId));
 		pictureEditor.setStyleClass("simpleUserApplicationLinkToPictureEditor");
 		imageContainer.add(pictureEditor);
