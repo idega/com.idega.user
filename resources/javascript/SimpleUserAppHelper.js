@@ -28,7 +28,7 @@ function setErrorHandlerForSimpleUserApplication(errorExplanations) {
 		showHumanizedMessage(errorExplanation, null);
 	}
 	
-	DWREngine.setErrorHandler(errorHandler);
+	dwr.engine.setErrorHandler(errorHandler);
 }
 
 function getParentGroupIdInSUA(chooserId, selectedId) {
@@ -43,7 +43,7 @@ function reloadComponents(message, childGroupsChooserId, orderByChooserId, conta
 	showLoadingMessage(message);
 	var chooser = document.getElementById(childGroupsChooserId);
 	if (chooser != null) {
-		DWRUtil.removeAllOptions(childGroupsChooserId);
+		dwr.util.removeAllOptions(childGroupsChooserId);
 	}
 	
 	var parentGroupId = getParentGroupIdInSUA(chooserId, params[16]);
@@ -67,7 +67,7 @@ function getChildGroupsCallback(childGroups, childGroupsChooserId, orderByChoose
 		chooser.setProperty('disabled', true);
 	}
 	else {
-		DWRUtil.addOptions(childGroupsChooserId, childGroups, 'id', 'value');
+		dwr.util.addOptions(childGroupsChooserId, childGroups, 'id', 'value');
 	}
 	
 	var groupId = getSelectObjectValue(childGroupsChooserId);
@@ -401,7 +401,7 @@ function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 	document.getElementById(parameters[11]).value = '';
 	document.getElementById(parameters[9]).value = '';
 	document.getElementById(parameters[10]).value = '';
-	DWRUtil.setValue(document.getElementById(parameters[8]), '-1');
+	dwr.util.setValue(document.getElementById(parameters[8]), '-1');
 	loginInput.value = '';
 	
 	refreshDeselectedGroups();
@@ -425,7 +425,7 @@ function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 					return;
 				}
 				
-				DWRUtil.setValue(document.getElementById(parameters[8]), id);									//	Country
+				dwr.util.setValue(document.getElementById(parameters[8]), id);									//	Country
 			}
 		});
 	}
@@ -561,7 +561,7 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 	var phone = document.getElementById(phoneInputId).value;
 	var streetNameAndNumber = document.getElementById(streetNameAndNumberInputId).value;
 	var postalCodeId = document.getElementById(postalCodeIdInputId).value;
-	var countryName = DWRUtil.getValue(document.getElementById(countriesDropdownId));
+	var countryName = dwr.util.getValue(document.getElementById(countriesDropdownId));
 	var city = document.getElementById(cityInputId).value;
 	var province = document.getElementById(provinceInputId).value;
 	var postalBox = document.getElementById(postalBoxInputId).value;
@@ -856,14 +856,14 @@ function saveGroupInSimpleUserApplication(ids, selectedRoles) {
 	
 	var message = ids[7];
 	
-	var name = DWRUtil.getValue(nameId);
-	var homePage = DWRUtil.getValue(homePageId);
+	var name = dwr.util.getValue(nameId);
+	var homePage = dwr.util.getValue(homePageId);
 	homePage = homePage == '-1' ? null : homePage;
-	var groupType = DWRUtil.getValue(groupTypeId);
-	var description = DWRUtil.getValue(descriptionId);
-	var group = DWRUtil.getValue(groupId);
+	var groupType = dwr.util.getValue(groupTypeId);
+	var description = dwr.util.getValue(descriptionId);
+	var group = dwr.util.getValue(groupId);
 	group = group == '-1' ? null : group;
-	var parentGroup = DWRUtil.getValue(parentGroupId);
+	var parentGroup = dwr.util.getValue(parentGroupId);
 	parentGroup = parentGroup == '-1' ? null : parentGroup;
 	
 	showLoadingMessage(message);
@@ -1084,7 +1084,7 @@ function addNewRoleKey(event, id, containerId, message, selectedRoles) {
 function navigateInUsersList(params, beanParameters, orderBy, index, moveToLeft) {
 	var containerId = params[0];
 	var message = params[1];
-	var pageSize = DWRUtil.getValue(params[2]);
+	var pageSize = dwr.util.getValue(params[2]);
 	if (pageSize == null || pageSize == '' || isNaN(pageSize) || pageSize <= 0) {
 		showHumanizedMessage(params[3], params[2]);
 		return false;
