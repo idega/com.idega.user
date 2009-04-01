@@ -480,7 +480,7 @@ workplace=Vinnusta\u00F0ur
 yes=J\u00E1
 
 this_field_is_required=This field is required!
-user_application_view_users_descripton=To view users in the groups first select the parent group and then the desired sub group. You can remove a user from a group by checking the checkboxes here down below and by clicking the "Remove" button. To add new users to a group click the "Add User" button.
+user_application_view_users_descripton=Til a\u00F0 sko\u00F0a notendur innan h\u00F3pa velur\u00F0u fyrst yfirh\u00F3p og svo, ef vill, undirh\u00F3p. \u00DE\u00FA getur fjarl\u00E6gt notendur \u00FAr v\u00F6ldum h\u00F3pi me\u00F0 \u00FEv\u00ED a\u00F0 haka \u00ED valreitinn fyrir aftan nafni\u00F0 \u00FEeirra og smella \u00E1 'Fjarl\u00E6gja \u00FAr h\u00F3pi'. Til a\u00F0 b\u00E6ta vi\u00F0 n\u00FDjum notendum smellir\u00F0u \u00E1 'B\u00E6ta vi\u00F0 notanda'.
 clear=Clear
 clear_search_results=Clear search results
 enter_group_name=Enter group's name
