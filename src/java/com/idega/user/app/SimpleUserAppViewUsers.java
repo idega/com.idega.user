@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.block.web2.business.Web2Business;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.idegaweb.IWBundle;
@@ -41,8 +43,10 @@ public class SimpleUserAppViewUsers extends Block {
 	
 	private SimpleUserPropertiesBean properties = null;
 	
-	private GroupHelper groupsHelper = null;
-	private SimpleUserAppHelper helper = new SimpleUserAppHelper();
+	@Autowired
+	private GroupHelper groupsHelper;
+	@Autowired
+	private SimpleUserAppHelper helper;
 	
 	public SimpleUserAppViewUsers(SimpleUserPropertiesBean properties, Group parentGroup, Group groupForUsersWithoutLogin) {
 		this.properties = properties;
@@ -53,7 +57,7 @@ public class SimpleUserAppViewUsers extends Block {
 
 	@Override
 	public void main(IWContext iwc) {
-		groupsHelper = ELUtil.getInstance().getBean(GroupHelper.class);
+		ELUtil.getInstance().autowire(this);
 		
 		Layer container = new Layer();
 		add(container);

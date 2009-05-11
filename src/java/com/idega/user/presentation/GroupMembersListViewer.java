@@ -7,6 +7,8 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.contact.data.Email;
@@ -15,11 +17,12 @@ import com.idega.core.contact.data.PhoneTypeBMPBean;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
-import com.idega.presentation.CSSSpacer;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table2;
+import com.idega.presentation.TableRow;
 import com.idega.presentation.text.Break;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -54,8 +57,13 @@ public class GroupMembersListViewer extends Block {
 	private Integer rightIndex;
 	private Integer count;
 	
+	@Autowired
+	private SimpleUserAppHelper helper;
+	
 	@Override
 	public void main(IWContext iwc) {
+		ELUtil.getInstance().autowire(this);
+		
 		if (bean == null || image == null || StringUtil.isEmpty(containerId)) {
 			return;
 		}
@@ -315,28 +323,35 @@ public class GroupMembersListViewer extends Block {
 		int currentPage = previousPages + 1;
 		int totalPages = totalUsers / pageSize + (totalUsers % pageSize > 0 ? 1 : 0);
 		IntegerInput pageSizeInput = new IntegerInput("usersListPageSize", pageSize);
+		String pageSizeInputId = pageSizeInput.getId();
 		pageSizeInput.setStyleClass("simpleUserApplicationGroupMembersPagerPageSizeInputStyle");
+		pageSizeInput.setOnKeyUp(new StringBuilder("SimpleUserApplication.navigateThruUsers(event, ")
+			.append(getPagerActionParameters(iwrb, pageSizeInputId, bean.getOrderBy(), getRightIndex(), true)).append(");")
+		.toString());
 		
 		Layer pager = new Layer();
 		pager.setStyleClass("simpleUserApplicationGroupMembersPagerStyle");
-
-		String action = getPagerAction(iwrb, pageSizeInput.getId());
+		
+		Table2 pagerTable = new Table2();
+		pagerTable.setStyleClass("simpleUserApplicationGroupMembersPagerTableStyle");
+		pager.add(pagerTable);
+		TableRow row = pagerTable.createHeaderRowGroup().createRow();
 		
 		Layer previousContainer = new Layer();
-		pager.add(previousContainer);
+		row.createHeaderCell().add(previousContainer);
 		previousContainer.setStyleClass("simpleUserApplicationGroupMembersPreviousPagePagerStyle");
 		if (previousPages > 0) {
 			Image previous = new Image(bundle.getVirtualPathWithFileNameString("images/previous.png"));
 			previousContainer.add(previous);
 			previous.setStyleClass("simpleUserApplicationGroupMembersPreviousPageImageStyle");
 			previous.setTitle(iwrb.getLocalizedString("go_to_previous_page", "Go to previous page"));
-			previous.setOnClick(getFullPagerAction(action, getLeftIndex(), true));
+			previous.setOnClick(getPagerAction(iwrb, pageSizeInputId, getLeftIndex(), true));
 			Text previousPage = new Text(iwrb.getLocalizedString("previous_page", "Previous page"));
 			previousContainer.add(previousPage);
 		}
 		
 		Layer pageSizeContainer = new Layer();
-		pager.add(pageSizeContainer);
+		row.createHeaderCell().add(pageSizeContainer);
 		pageSizeContainer.setStyleClass("simpleUserApplicationGroupMembersPageSizeStyle");
 		Label pageSizeInfo = new Label(new StringBuilder(iwrb.getLocalizedString("showing_users", "Showing users")).append(CoreConstants.SPACE)
 			.append(getLeftIndex() + 1).append(CoreConstants.MINUS).append(getRightIndex()).append(CoreConstants.SPACE).append(ofLocalized)
@@ -348,7 +363,7 @@ public class GroupMembersListViewer extends Block {
 		pageSizeContainer.add(pageSizeInput);
 		
 		Layer nextContainer = new Layer();
-		pager.add(nextContainer);
+		row.createHeaderCell().add(nextContainer);
 		nextContainer.setStyleClass("simpleUserApplicationGroupMembersNextPagePagerStyle");
 		if (nextPages > 0) {
 			Text nextPage = new Text(iwrb.getLocalizedString("next_page", "Next page"));
@@ -357,28 +372,27 @@ public class GroupMembersListViewer extends Block {
 			nextContainer.add(next);
 			next.setStyleClass("simpleUserApplicationGroupMembersNextPageImageStyle");
 			next.setTitle(iwrb.getLocalizedString("go_to_next_page", "Go to next page"));
-			next.setOnClick(getFullPagerAction(action, getRightIndex(), false));
+			next.setOnClick(getPagerAction(iwrb, pageSizeInputId, getRightIndex(), false));
 		}
 		
-		pager.add(new CSSSpacer());
+//		pager.add(new CSSSpacer());
 		return pager;
 	}
 	
-	private String getFullPagerAction(String action, int index, boolean moveToLeft) {
-		return new StringBuilder(action).append(", ").append(index).append(", ").append(moveToLeft).append(");").toString();
+	private String getPagerAction(IWResourceBundle iwrb, String pageSizeInputId, int index, boolean moveToLeft) {
+		return new StringBuilder("navigateInUsersList(").append(getPagerActionParameters(iwrb, pageSizeInputId, bean.getOrderBy(), index, moveToLeft))
+			.append(");").toString();
 	}
 	
-	private String getPagerAction(IWResourceBundle iwrb, String pageSizeInputId) {
+	private String getPagerActionParameters(IWResourceBundle iwrb, String pageSizeInputId, int orderBy, int index, boolean moveToLeft) {
 		String message = iwrb.getLocalizedString("loading", "Loading...");
-		SimpleUserAppHelper helper = new SimpleUserAppHelper();
-		
-		StringBuilder action = new StringBuilder("navigateInUsersList(['").append(containerId).append("', '").append(message).append("', '")
+		return new StringBuilder("['").append(containerId).append("', '").append(message).append("', '")
 			.append(pageSizeInputId).append("', '")
 			.append(iwrb.getLocalizedString("enter_valid_page_size_greater_than_zero", "Please, enter valid page size value (greater than zero)!"))
 			.append("', '").append(bean.getParentGroupChooserId()).append("', '").append(bean.getGroupId()).append("'], ")
-			.append(helper.getBeanAsParameters(bean, null, null, message)).append(", ").append(bean.getOrderBy());
-		
-		return action.toString();
+			.append(helper.getBeanAsParameters(bean, null, null, message)).append(", ").append(orderBy).append(", ")
+			.append(index).append(", ").append(moveToLeft)
+		.toString();
 	}
 	
 	@Override

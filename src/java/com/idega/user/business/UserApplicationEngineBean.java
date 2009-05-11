@@ -83,22 +83,22 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 	private GroupBusiness groupBusiness = null;
 	private UserBusiness userBusiness = null;
 	
-	private GroupHelper groupHelper = null;
-	@Autowired(required = false) private CompanyHelper companyHelper = null;
+	@Autowired
+	private GroupHelper groupHelper;
 	
-	private SimpleUserAppHelper presentationHelper = new SimpleUserAppHelper();
+	@Autowired(required = false)
+	private CompanyHelper companyHelper;
+	
+	@Autowired
+	private SimpleUserAppHelper presentationHelper;
 	
 	private Map<String, SimpleUserAppViewUsers> simpleUserApps = new HashMap<String, SimpleUserAppViewUsers>();
 	private Map<String, List<Integer>> pagerProperties = new HashMap<String, List<Integer>>();
-	
-	//	It's a Spring bean!
-	private UserApplicationEngineBean() {}
 	
 	public GroupHelper getGroupHelper() {
 		return groupHelper;
 	}
 	
-	@Autowired
 	public void setGroupHelper(GroupHelper groupHelper) {
 		this.groupHelper = groupHelper;
 	}
@@ -256,7 +256,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			image = bundle.getVirtualPathWithFileNameString(SimpleUserApp.EDIT_IMAGE);
 		}
 		
-		GroupMembersListViewer membersList = presentationHelper.getMembersList(bean, image, containerId, false);
+		GroupMembersListViewer membersList = getPresentationHelper().getMembersList(bean, image, containerId, false);
 		
 		BuilderLogic builder = BuilderLogic.getInstance();
 		return builder.getRenderedComponent(iwc, membersList, true);
@@ -353,7 +353,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		if (groups == null || groups.isEmpty()) {
 			selectedGroupId = String.valueOf(parentGroupId);
 		}
-		Layer availableGroupsContainer = presentationHelper.getSelectedGroups(iwc, user, helper, groups, ids, selectedGroupId);
+		Layer availableGroupsContainer = getPresentationHelper().getSelectedGroups(iwc, user, helper, groups, ids, selectedGroupId);
 		
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, availableGroupsContainer, true);
 	}
@@ -1268,7 +1268,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 	}
 
 	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput, List<String> selectedRoles) {
-		return presentationHelper.getRolesEditor(iwc, groupId, addInput, selectedRoles);
+		return getPresentationHelper().getRolesEditor(iwc, groupId, addInput, selectedRoles);
 	}
 
 	public boolean changePermissionValueForRole(int groupId, String permissionKey, String roleKey, boolean value) {
@@ -1388,5 +1388,13 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		return new StringBuilder(bean.getInstanceId()).append(bean.getParentGroupId()).append(bean.getGroupId()).append(bean.getOrderBy()).toString();
+	}
+
+	public SimpleUserAppHelper getPresentationHelper() {
+		return presentationHelper;
+	}
+
+	public void setPresentationHelper(SimpleUserAppHelper presentationHelper) {
+		this.presentationHelper = presentationHelper;
 	}
 }

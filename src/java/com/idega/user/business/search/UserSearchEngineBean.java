@@ -3,6 +3,7 @@ package com.idega.user.business.search;
 import java.util.Collection;
 
 import org.jdom.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.builder.business.BuilderLogic;
 import com.idega.business.IBOServiceBean;
@@ -11,18 +12,21 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.text.Break;
 import com.idega.presentation.text.Text;
+import com.idega.user.data.User;
 import com.idega.user.helpers.UserHelper;
 import com.idega.util.CoreUtil;
+import com.idega.util.expression.ELUtil;
 
 public class UserSearchEngineBean extends IBOServiceBean implements UserSearchEngine {
 
 	private static final long serialVersionUID = -4520130366076513478L;
 	
-	private UserHelper helper = new UserHelper();
+	@Autowired
+	private UserHelper helper;
 	
-	public Collection getSearchResults(String searchKey) {
+	public Collection<User> getSearchResults(String searchKey) {
 		try {
-			return helper.getUserEntities(searchKey);
+			return getHelper().getUserEntities(searchKey);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -36,7 +40,7 @@ public class UserSearchEngineBean extends IBOServiceBean implements UserSearchEn
 		}
 
 		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
-		Collection entities = getSearchResults(searchKey);
+		Collection<User> entities = getSearchResults(searchKey);
 		Layer container = new Layer();
 		String message = iwrb.getLocalizedString("uc_no_results_were_found", "Sorry, no results were found");
 		if (entities == null) {
@@ -53,9 +57,19 @@ public class UserSearchEngineBean extends IBOServiceBean implements UserSearchEn
 		container.add(new Text(message));
 		container.add(new Break());
 		
-		container.add(helper.getUserBrowser(entities, searchKey, iwc, 8));
+		container.add(getHelper().getUserBrowser(entities, searchKey, iwc, 8));
 		
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, container, false);
 	}
 
+	public UserHelper getHelper() {
+		if (helper == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+		return helper;
+	}
+
+	public void setHelper(UserHelper helper) {
+		this.helper = helper;
+	}
 }

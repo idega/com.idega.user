@@ -11,6 +11,8 @@ package com.idega.user.presentation;
 
 import java.util.Collection;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
@@ -23,8 +25,10 @@ import com.idega.presentation.ui.StyledAbstractChooserWindow;
 import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
+import com.idega.user.data.User;
 import com.idega.user.helpers.UserHelper;
 import com.idega.util.CoreConstants;
+import com.idega.util.expression.ELUtil;
 
 public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
   
@@ -38,8 +42,12 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
   
   private String searchString = "";
   
+  @Autowired
+  private UserHelper helper;
   
   public UserChooserBrowserWindow() {
+	  ELUtil.getInstance().autowire(this);
+	  
     setWidth(600);
     setHeight(400);
     setScrollbar(true);
@@ -49,6 +57,7 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.ui.AbstractChooserWindow#displaySelection(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void displaySelection(IWContext iwc) {
     IWResourceBundle resourceBundle = getResourceBundle(iwc);
     // set title
@@ -78,9 +87,8 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
     inputTable.setWidth(Table.HUNDRED_PERCENT);
     String message; 
     
-    UserHelper helper = new UserHelper();
     if (SHOW_LIST_ACTION.equals(action))  {
-      Collection entities = helper.getUserEntities(this.searchString);
+      Collection<User> entities = helper.getUserEntities(this.searchString);
       if (entities.isEmpty()) {
         message = resourceBundle.getLocalizedString("uc_no_results_were_found", "Sorry, no results were found");
       }
@@ -147,7 +155,8 @@ public class UserChooserBrowserWindow extends StyledAbstractChooserWindow {
     return table;
   }
   
-  public String getBundleIdentifier(){
+  @Override
+public String getBundleIdentifier(){
     return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
   }
 }

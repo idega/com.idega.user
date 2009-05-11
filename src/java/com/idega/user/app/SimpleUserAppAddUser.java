@@ -9,6 +9,8 @@ import java.util.logging.Level;
 
 import javax.faces.component.UIComponent;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.content.business.ContentConstants;
 import com.idega.content.upload.presentation.FileUploadViewer;
 import com.idega.core.contact.data.Email;
@@ -56,8 +58,10 @@ public class SimpleUserAppAddUser extends Block {
 	
 	private Integer userId = null;
 	
-	private GroupHelper groupsHelper = null;
-	private SimpleUserAppHelper helper = new SimpleUserAppHelper();
+	@Autowired
+	private GroupHelper groupsHelper;
+	@Autowired
+	private SimpleUserAppHelper helper;
 	
 	private IWResourceBundle iwrb = null;
 	
@@ -76,7 +80,7 @@ public class SimpleUserAppAddUser extends Block {
 
 	@Override
 	public void main(IWContext iwc) {
-		groupsHelper = ELUtil.getInstance().getBean(GroupHelper.class);
+		ELUtil.getInstance().autowire(this);
 		
 		Layer container = new Layer();
 		add(container);

@@ -264,7 +264,7 @@ public class GroupsFilterEngine implements Singleton {
 				openOrCloseImage.setStyleClass("groupsFilterOpenOrCloseGroupsImageStyle");
 			}
 			else {
-				openOrCloseImage.setToolTip(openOrCloseGroupsTooltip);
+				openOrCloseImage.setTitle(openOrCloseGroupsTooltip);
 				openOrCloseImage.setMarkupAttribute("groupid", groupId);
 			}
 			
@@ -273,11 +273,11 @@ public class GroupsFilterEngine implements Singleton {
 			}
 			groupIcon = new Image(groupHelper.getGroupIcon(group, groupIconBase, addOneMoreLevel));
 			groupNodeContainer.add(groupIcon);
-			groupIcon.setToolTip(groupName);
+			groupIcon.setTitle(groupName);
 			
 			groupSelection = useRadioBox ? new RadioButton(selectedGroupParameterName, groupId) : new CheckBox(selectedGroupParameterName, groupId);
 			groupSelection.setStyleClass(checkBoxStyleClass);
-			groupSelection.setToolTip(selectOrDeselectGroupTooltip);
+			groupSelection.setTitle(selectOrDeselectGroupTooltip);
 			groupNodeContainer.add(groupSelection);
 			if (!ListUtil.isEmpty(selectedGroups)) {
 				if (selectedGroups.contains(groupId)) {

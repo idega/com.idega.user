@@ -4,6 +4,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.idega.block.web2.business.JQuery;
 import com.idega.block.web2.business.JQueryUIType;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.builder.business.BuilderLogic;
@@ -54,6 +57,11 @@ public class SimpleUserApp extends Block {
 	private boolean allowEnableDisableAccount = true;
 	/** Properties end **/
 	
+	@Autowired
+	private JQuery jQuery;
+	@Autowired
+	private Web2Business web2;
+	
 	/**
 	 * Provide instance id of the parent (container, wrapper etc.) module inserted in IBXMLPage or null if this object is inserted
 	 */
@@ -63,6 +71,8 @@ public class SimpleUserApp extends Block {
 	
 	@Override
 	public void main(IWContext iwc) {
+		ELUtil.getInstance().autowire(this);
+		
 		if (instanceId == null)	{
 			instanceId = BuilderLogic.getInstance().getInstanceId(this);
 		}
@@ -106,15 +116,13 @@ public class SimpleUserApp extends Block {
 		files.add(CoreConstants.DWR_UTIL_SCRIPT);
 		
 		files.add(bundle.getVirtualPathWithFileNameString("javascript/SimpleUserAppHelper.js"));
-		
-		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.class);
 		try {
 			files.add(web2.getBundleURIToMootoolsLib());
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		files.add(web2.getBundleURIToJQueryLib());
-		files.add(web2.getBundleURIToJQueryUILib(JQueryUIType.UI_EASING));
+		files.add(jQuery.getBundleURIToJQueryLib());
+		files.add(jQuery.getBundleURIToJQueryUILib(JQueryUIType.UI_EASING));
 		files.add(web2.getBundleUriToHumanizedMessagesScript());	
 		
 		List<String> cssFiles = new ArrayList<String>();

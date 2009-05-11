@@ -95,7 +95,7 @@ public class GroupsManagerBean implements Serializable {
 		return removeProperties(instanceId, userProperties);
 	}
 	
-	private boolean removeProperties(String key, Map properties) {
+	private boolean removeProperties(String key, Map<String, ? extends PropertiesBean> properties) {
 		if (key == null) {
 			return false;
 		}

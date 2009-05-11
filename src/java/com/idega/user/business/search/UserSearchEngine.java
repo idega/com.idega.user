@@ -5,10 +5,11 @@ import java.util.Collection;
 import org.jdom.Document;
 
 import com.idega.business.IBOService;
+import com.idega.user.data.User;
 
 public interface UserSearchEngine extends IBOService {
 	
-	public Collection getSearchResults(String searchKey);
+	public Collection<User> getSearchResults(String searchKey);
 	
 	public Document getUserBrowser(String searchKey);
 	

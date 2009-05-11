@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.FinderException;
+
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.AccessController;
@@ -39,6 +44,8 @@ import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
+@Service
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 public class SimpleUserAppHelper {
 
 	public GroupMembersListViewer getMembersList(SimpleUserPropertiesBean bean, String image, String containerId, boolean checkIds) {

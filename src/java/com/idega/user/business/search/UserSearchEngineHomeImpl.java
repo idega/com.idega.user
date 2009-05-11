@@ -8,7 +8,8 @@ public class UserSearchEngineHomeImpl extends IBOHomeImpl implements UserSearchE
 
 	private static final long serialVersionUID = 6014950840925710030L;
 
-	public Class getBeanInterfaceClass() {
+	@Override
+	public Class<UserSearchEngine> getBeanInterfaceClass() {
 		return UserSearchEngine.class;
 	}
 

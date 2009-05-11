@@ -1,4 +1,4 @@
-if (SimpleUserApplication == null) var SimpleUserApplication = {}
+var SimpleUserApplication = {}
 SimpleUserApplication.userPicture = null;
 
 var USERS_TO_REMOVE = new Array();
@@ -1081,7 +1081,10 @@ function addNewRoleKey(event, id, containerId, message, selectedRoles) {
 	});
 }
 
-function navigateInUsersList(params, beanParameters, orderBy, index, moveToLeft) {
+function navigateInUsersList(params, beanParameters, orderBy, index, moveToLeft, stayOnTheSamePage) {
+	if (!stayOnTheSamePage) {
+		stayOnTheSamePage = false;
+	}
 	var containerId = params[0];
 	var message = params[1];
 	var pageSize = dwr.util.getValue(params[2]);
@@ -1093,7 +1096,7 @@ function navigateInUsersList(params, beanParameters, orderBy, index, moveToLeft)
 	var parentGroupId = getParentGroupIdInSUA(params[4], beanParameters[11]);
 	var bean = new SimpleUserPropertiesBeanWithParameters(parentGroupId, params[5], orderBy, beanParameters);
 	bean.count = pageSize;
-	bean.from = moveToLeft ? index - pageSize : index;
+	bean.from = (stayOnTheSamePage || moveToLeft) ? index - pageSize : index;
 	
 	showLoadingMessage(message);
 	UserApplicationEngine.getMembersList(bean, containerId, {
@@ -1161,4 +1164,12 @@ SimpleUserApplication.toggleUserPicture = function(pictureId, pictureUri, pictur
 			SimpleUserApplication.togglePictureChanger(pictureId, pictureBoxId);
 		});
 	});
+}
+
+SimpleUserApplication.navigateThruUsers = function(event, params, beanParameters, orderBy, index, moveToLeft) {
+	if (!isEnterEvent(event)) {
+		return false;
+	}
+	
+	navigateInUsersList(params, beanParameters, orderBy, index, moveToLeft, true);
 }

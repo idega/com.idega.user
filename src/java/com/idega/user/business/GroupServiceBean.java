@@ -5,7 +5,6 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +67,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	/**
 	 * Returns tree of Groups
 	 */
+	@SuppressWarnings("unchecked")
 	public List<GroupNode> getTopGroupsAndDirectChildren(List<String> uniqueIds) {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
@@ -109,8 +109,8 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 				uniqueId = selectedGroup.getUniqueId();
 				if (uniqueId != null && !uniqueIdsOfTopGroups.contains(uniqueId)) {
 					try {
-						topGroupsAndDirectChildren = appendParentGroupsToList(groupBusiness.getParentGroups(selectedGroup), selectedGroup, topGroupsAndDirectChildren,
-								groupBusiness, image, iwc);
+						topGroupsAndDirectChildren = appendParentGroupsToList(groupBusiness.getParentGroups(selectedGroup), selectedGroup,
+								topGroupsAndDirectChildren, groupBusiness, image, iwc);
 					} catch (RemoteException e) {
 						e.printStackTrace();
 					}
@@ -139,7 +139,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return ids;
 	}
 	
-	private List<GroupNode> appendParentGroupsToList(Collection parentGroups, Group selectedGroup, List<GroupNode> groupNodes, GroupBusiness groupBusiness,
+	private List<GroupNode> appendParentGroupsToList(Collection<Group> parentGroups, Group selectedGroup, List<GroupNode> groupNodes, GroupBusiness groupBusiness,
 														String image, IWContext iwc) {
 		if (parentGroups == null) {
 			return null;
@@ -150,19 +150,13 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return null;
 		}
 		
-		Object o = null;
-		Group parentGroup = null;
-		for (Iterator it = parentGroups.iterator(); it.hasNext();) {
-			o = it.next();
-			if (o instanceof Group) {
-				parentGroup = (Group) o;
-				GroupNode parentNode = findParentNode(parentGroup, groupNodes);
-				if (parentNode != null) {
-					try {
-						helper.addChildGroupsToNode(parentNode, groupBusiness.getChildGroups(parentGroup), image);
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
+		for (Group parentGroup: parentGroups) {
+			GroupNode parentNode = findParentNode(parentGroup, groupNodes);
+			if (parentNode != null) {
+				try {
+					helper.addChildGroupsToNode(parentNode, groupBusiness.getChildGroups(parentGroup), image);
+				} catch (RemoteException e) {
+					e.printStackTrace();
 				}
 			}
 		}

@@ -1,5 +1,7 @@
 package com.idega.user.presentation;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWResourceBundle;
@@ -10,6 +12,7 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.StyledAbstractChooserWindow;
 import com.idega.user.helpers.UserHelper;
 import com.idega.util.CoreConstants;
+import com.idega.util.expression.ELUtil;
 
 /**
  * <p>Title: GroupChooserWindow</p>
@@ -27,10 +30,16 @@ public class GroupChooserWindow extends StyledAbstractChooserWindow {
 	private static final int _height = 400;
 	private static final String _linkStyle = "font-family:Arial,Helvetica,sans-serif;font-size:8pt;color:#000000;text-decoration:none;";
 	private String mainStyleClass = "main";
+	
+	@Autowired
+	private UserHelper helper;
+	
 	/**
 	 *
 	 */
 	public GroupChooserWindow() {
+		ELUtil.getInstance().autowire(this);
+		
 		setTitle("Group chooser");
 		setWidth(_width);
 		setHeight(_height);
@@ -40,11 +49,10 @@ public class GroupChooserWindow extends StyledAbstractChooserWindow {
 		this.getLocation().isInPopUpWindow(true);
 	}
 	
-	
-	
 	/**
 	 *
 	 */
+	@Override
 	public void displaySelection(IWContext iwc) {
 		IWResourceBundle iwrb = this.getResourceBundle(iwc);
 		addTitle(iwrb.getLocalizedString("select_group","Select group"), TITLE_STYLECLASS);
@@ -59,7 +67,6 @@ public class GroupChooserWindow extends StyledAbstractChooserWindow {
 		text.setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
 		table.add(text,1,1);
 		
-		UserHelper helper = new UserHelper();
 		GroupTreeView viewer = helper.getGroupTree(iwc);
 		viewer.setLocation((IWLocation)this.getLocation().clone());
 		viewer.getLocation().setSubID(1);
@@ -87,6 +94,7 @@ public class GroupChooserWindow extends StyledAbstractChooserWindow {
 		viewer.setLinkPrototype(link);
 	}
 	
+	@Override
 	protected String getPerformAfterSelectScriptString(IWContext iwc){
 		boolean submitParentFormAfterChange = iwc.isParameterSet(SUBMIT_PARENT_FORM_AFTER_CHANGE);
 		String script = null;
@@ -121,6 +129,7 @@ public class GroupChooserWindow extends StyledAbstractChooserWindow {
 		}
 	}
 	
+	@Override
 	public String getBundleIdentifier() {
 		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}

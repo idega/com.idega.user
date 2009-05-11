@@ -3,8 +3,13 @@ package com.idega.user.helpers;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
@@ -30,11 +35,17 @@ import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.GroupTreeView;
 import com.idega.user.presentation.UserChooserBrowserWindow;
 import com.idega.util.IWColor;
+import com.idega.util.ListUtil;
 
+@Service
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 public class UserHelper {
+	
+	private static final Logger LOGGER = Logger.getLogger(UserHelper.class.getName());
 	
 	private UserBusiness userBusiness = null;
 	
+	@SuppressWarnings("unchecked")
 	public GroupTreeView getGroupTree(IWContext iwc) {
 		GroupTreeView viewer = new GroupTreeView();
 		try {			
@@ -44,7 +55,7 @@ public class UserHelper {
 			}
 			else{
 				UserBusiness biz = getUserBusiness(iwc);
-				Collection allGroups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
+				Collection<Group> allGroups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
 				
 				//	Filter groups
 				List<String> allowedGroupTypes = null;
@@ -55,24 +66,23 @@ public class UserHelper {
 					}
 				}
 				
-				Collection groups = new ArrayList();
+				Collection<Group> groups = new ArrayList<Group>();
 				if (allowedGroupTypes == null)  {
 					groups = allGroups;
 				}
 				else {
-					for (Iterator it = allGroups.iterator(); it.hasNext(); )  {
-						Group group = (Group) it.next();
+					for (Group group: allGroups) {
 						if (checkGroupType(group, allowedGroupTypes))  {
 							groups.add(group);
 						}
 					}
 				}
-				Collection groupNodes = convertGroupCollectionToGroupNodeCollection(groups, iwc.getApplicationContext());
+				Collection<GroupTreeNode> groupNodes = convertGroupCollectionToGroupNodeCollection(groups, iwc.getApplicationContext());
 				viewer.setFirstLevelNodes(groupNodes.iterator());
 			}
 		}
-		catch(Exception e){
-			e.printStackTrace();
+		catch(Exception e) {
+			 LOGGER.log(Level.WARNING, "Error getting GroupTreeView", e);
 		}
 		
 		return viewer;
@@ -90,42 +100,50 @@ public class UserHelper {
 		return this.userBusiness;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<String> getGroupTypes(String selectedGroup, IWContext iwc)  {
-		List<String> groupTypes = new ArrayList<String>();
 		Group group = null;
-		// get group types
 		GroupBusiness groupBusiness = null;
 		try {
-			groupBusiness =(GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
-			if (! CreateGroupWindow.NO_GROUP_SELECTED.equals(selectedGroup))  {
-				group = groupBusiness.getGroupByGroupID((new Integer(selectedGroup)).intValue());
+			groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+			if (!(CreateGroupWindow.NO_GROUP_SELECTED.equals(selectedGroup)))  {
+				group = groupBusiness.getGroupByGroupID(Integer.valueOf(selectedGroup));
 			}
 		}
-		// Remote and FinderException
-		catch (Exception ex)  {
-			throw new RuntimeException(ex.getMessage());
+		catch (Exception e)  {
+			LOGGER.log(Level.WARNING, "Error getting group by: " + selectedGroup, e);
+			return null;
 		}
-		Iterator iterator = null;
-		try {
-			iterator = groupBusiness.getAllAllowedGroupTypesForChildren(group, iwc).iterator();
-		}
-		catch (RemoteException e) {
-			e.printStackTrace();
+		if (group == null) {
+			return null;
 		}
 		
-		for (Iterator it = iterator; it.hasNext();)  {
-			GroupType item = (GroupType) it.next();
-			String value = item.getType();
-			groupTypes.add(value);
+		Collection<GroupType> groupsTypes = null;
+		try {
+			groupsTypes = groupBusiness.getAllAllowedGroupTypesForChildren(group, iwc);
 		}
+		catch (Exception e) {
+			
+		}
+		if (ListUtil.isEmpty(groupsTypes)) {
+			return null;
+		}
+		
+		List<String> groupTypes = new ArrayList<String>();
+		for (GroupType groupType: groupsTypes)  {
+			groupTypes.add(groupType.getType());
+		}
+		
 		return groupTypes;
 	}
 
-	private boolean checkGroupType(Group group, Collection allowedGroupTypes) {
+	private boolean checkGroupType(Group group, Collection<String> allowedGroupTypes) {
+		if (group == null || ListUtil.isEmpty(allowedGroupTypes)) {
+			return false;
+		}
+		
 		String groupType = group.getGroupTypeValue();
-		Iterator iterator = allowedGroupTypes.iterator();
-		while (iterator.hasNext())  {
-			String type = (String) iterator.next();
+		for (String type: allowedGroupTypes)  {
 			if (type.equals(groupType)) {
 				return true;
 			}
@@ -133,17 +151,16 @@ public class UserHelper {
 		return false;
 	}
 	
-	private Collection<GroupTreeNode> convertGroupCollectionToGroupNodeCollection(Collection col, IWApplicationContext iwac){
+	private Collection<GroupTreeNode> convertGroupCollectionToGroupNodeCollection(Collection<Group> groups, IWApplicationContext iwac){
 		List<GroupTreeNode> list = new ArrayList<GroupTreeNode>();
-		for (Iterator it = col.iterator(); it.hasNext();) {
-			Group group = (Group) it.next();
+		for (Group group: groups) {
 			GroupTreeNode node = new GroupTreeNode(group, iwac);
 			list.add(node);
 		}		
 		return list;
 	}
 	
-	public EntityBrowser getUserBrowser(Collection entities, String searchKey, IWContext iwc, int rows)  {
+	public EntityBrowser getUserBrowser(Collection<User> entities, String searchKey, IWContext iwc, int rows)  {
 	    // define checkbox button converter class
 	    EntityToPresentationObjectConverter converterToChooseButton = new EntityToPresentationObjectConverter() {
 
@@ -194,15 +211,14 @@ public class UserHelper {
 	    return browser;
 	}
 	
-	public Collection getUserEntities(String searchKey)  {
+	public Collection<User> getUserEntities(String searchKey)  {
 	    if (searchKey == null) {
-			return new ArrayList();
+			return new ArrayList<User>();
 		}
 	    try {
 	    	UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
 	    	String modifiedSearch = getModifiedSearchString(searchKey);
-	    	Collection entities = userHome.findUsersBySearchCondition(modifiedSearch, false);
-	    	return entities;
+	    	return userHome.findUsersBySearchCondition(modifiedSearch, false);
 	    }
 	    // Remote and FinderException
 	    catch (Exception ex)  {
