@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.idega.block.web2.business.Web2Business;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.idega.block.web2.business.JQuery;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
@@ -34,12 +36,16 @@ public class GroupsFilter extends Block {
 	
 	private String onClickAction = null;
 	
+	@Autowired
+	private JQuery jQuery;
+	
 	@Override
 	public void main(IWContext iwc) {
+		ELUtil.getInstance().autowire(this);
+		
 		IWBundle bundle = getBundle(iwc);
 		List<String> files = new ArrayList<String>(4);
-		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.class);
-		files.add(web2.getBundleURIToJQueryLib());
+		files.add(jQuery.getBundleURIToJQueryLib());
 		files.add(CoreConstants.DWR_ENGINE_SCRIPT);
 		files.add("/dwr/interface/GroupsFilterEngine.js");
 		files.add(bundle.getVirtualPathWithFileNameString("javascript/GroupsFilter.js"));
@@ -65,7 +71,7 @@ public class GroupsFilter extends Block {
 		body.setStyleClass("groupsChooserBoxBodyStyle");
 		
 		TextInput filterInput = new TextInput();
-		filterInput.setToolTip(iwrb.getLocalizedString("enter_group_name", "Enter group's name"));
+		filterInput.setTitle(iwrb.getLocalizedString("enter_group_name", "Enter group's name"));
 		
 		boolean selectedAnything = !ListUtil.isEmpty(selectedGroups);
 		StringBuilder selectedGroupsExpression = selectedAnything ? new StringBuilder("[") : new StringBuilder("null");
@@ -97,12 +103,12 @@ public class GroupsFilter extends Block {
 		
 		GenericButton searchButton = new GenericButton(iwrb.getLocalizedString("search", "Search"));
 		searchButton.setStyleClass("applicationButton");
-		searchButton.setToolTip(iwrb.getLocalizedString("search_for_groups", "Search for groups"));
+		searchButton.setTitle(iwrb.getLocalizedString("search_for_groups", "Search for groups"));
 		searchButton.setOnClick(filterAction);
 		header.add(searchButton);
 		GenericButton clearResults = new GenericButton(iwrb.getLocalizedString("clear", "Clear"));
 		clearResults.setStyleClass("applicationButton");
-		clearResults.setToolTip(iwrb.getLocalizedString("clear_search_results", "Clear search results"));
+		clearResults.setTitle(iwrb.getLocalizedString("clear_search_results", "Clear search results"));
 		header.add(clearResults);
 		clearResults.setOnClick(new StringBuilder("GroupsFilter.clearSearchResults(['").append(body.getId()).append("', '").append(filterInput.getId())
 													.append("']);").toString());
