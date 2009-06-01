@@ -30,6 +30,8 @@ public interface GroupHelper {
 	
 	public List<User> getUsersInGroup(IWContext iwc, SimpleUserPropertiesBean bean, boolean sort);
 	
+	public List<User> getUsersByIds(IWContext iwc, List<String> usersIds, boolean sort);
+	
 	@SuppressWarnings("unchecked")
 	public Collection<Group> getTopAndParentGroups(Collection topGroups);
 	
@@ -38,6 +40,8 @@ public interface GroupHelper {
 	public List<GroupNode> getTopGroupsAndDirectChildren();
 	
 	public List<GroupNode> getTopGroupsAndDirectChildren(User user, IWContext iwc);
+	
+	public List<GroupNode> getTopGroupsAndDirectChildren(User user, IWContext iwc, boolean basicInformationOnly);
 	
 	public Collection<Group> getTopGroupsFromDomain(IWContext iwc);
 	

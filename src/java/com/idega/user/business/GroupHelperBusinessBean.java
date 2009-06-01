@@ -24,6 +24,7 @@ import com.idega.user.app.SimpleUserApp;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.GenericUserComparator;
@@ -54,6 +55,11 @@ public class GroupHelperBusinessBean implements GroupHelper {
 	}
 	
 	public List<GroupNode> getTopGroupsAndDirectChildren(User user, IWContext iwc) {
+		return getTopGroupsAndDirectChildren(user, iwc, false);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<GroupNode> getTopGroupsAndDirectChildren(User user, IWContext iwc, boolean basicInformationOnly) {
 		List<GroupNode> fake = new ArrayList<GroupNode>();
 		
 		if (user == null || iwc == null) {
@@ -66,7 +72,8 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		}
 		
 		try {
-			return convertGroupsToGroupNodes(userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwc), iwc, true, getGroupImageBaseUri(iwc));
+			return convertGroupsToGroupNodes(userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwc), iwc, true, getGroupImageBaseUri(iwc),
+					basicInformationOnly);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			return fake;
@@ -84,9 +91,15 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		}
 		return userBusiness;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<GroupNode> convertGroupsToGroupNodes(Collection groups, IWContext iwc, boolean isFirstLevel, String imageBaseUri) {
+		return convertGroupsToGroupNodes(groups, iwc, isFirstLevel, imageBaseUri, false);
+	}
+		
+	@SuppressWarnings("unchecked")
+	private List<GroupNode> convertGroupsToGroupNodes(Collection<Group> groups, IWContext iwc, boolean isFirstLevel, String imageBaseUri,
+			boolean basicInformationOnly) {
 		List <GroupNode> list = new ArrayList<GroupNode>();
 		if (groups == null || iwc == null) {
 			return list;
@@ -94,34 +107,28 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		
 		GroupBusiness groupBusiness = getGroupBusiness(iwc);
 		
-		Object o = null;
-		Group group = null;
 		GroupNode groupNode = null;
-		for (Iterator it = groups.iterator(); it.hasNext();) {
-			o = it.next();
-			if (o instanceof Group) {
-				group = (Group) o;
-				groupNode = createGroupNodeFromGroup(group, imageBaseUri, false);
-				if (groupNode != null) {
-					if (isFirstLevel) {
-						if (groupBusiness != null) {
-							try {
-								groupNode.setChildren(convertGroupsToGroupNodes(groupBusiness.getChildGroups(group), iwc, false, imageBaseUri));
-							} catch (RemoteException e) {
-								e.printStackTrace();
-							}
+		for (Group group: groups) {
+			groupNode = createGroupNodeFromGroup(group, imageBaseUri, false, basicInformationOnly);
+			if (groupNode != null) {
+				if (isFirstLevel) {
+					if (groupBusiness != null) {
+						try {
+							groupNode.setChildren(convertGroupsToGroupNodes(groupBusiness.getChildGroups(group), iwc, false, imageBaseUri, basicInformationOnly));
+						} catch (RemoteException e) {
+							e.printStackTrace();
 						}
 					}
-					
-					list.add(groupNode);
 				}
+				
+				list.add(groupNode);
 			}
 		}
 
 		return list;
 	}
 	
-	private GroupNode createGroupNodeFromGroup(Group group, String imageBaseUri, boolean nodeIsOpened) {
+	private GroupNode createGroupNodeFromGroup(Group group, String imageBaseUri, boolean nodeIsOpened, boolean basicInformationOnly) {
 		if (group == null) {
 			return null;
 		}
@@ -134,8 +141,12 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		GroupNode node = new GroupNode();
 		node.setUniqueId(uniqueId);
 		node.setName(group.getName());
+		node.setId(group.getId());
 		node.setHasChildren(group.getChildCount() > 0);
-		node.setImage(getGroupIcon(group, imageBaseUri, nodeIsOpened));
+		
+		if (!basicInformationOnly) {
+			node.setImage(getGroupIcon(group, imageBaseUri, nodeIsOpened));
+		}
 		
 		return node;
 	}
@@ -172,7 +183,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 			o = it.next();
 			if (o instanceof Group) {
 				group = (Group) o;
-				childNode = createGroupNodeFromGroup(group, image, false);
+				childNode = createGroupNodeFromGroup(group, image, false, false);
 				
 				children.add(childNode);
 			}
@@ -425,6 +436,34 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		
 		if (sort) {
 			return getSortedUsers(users, iwc.getCurrentLocale(), bean);
+		}
+		
+		return new ArrayList<User>(users);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<User> getUsersByIds(IWContext iwc, List<String> usersIds, boolean sort) {
+		if (ListUtil.isEmpty(usersIds)) {
+			return null;
+		}
+		
+		UserBusiness userBusiness = getUserBusiness(iwc);
+		if (userBusiness == null) {
+			return null;
+		}
+		
+		Collection<User> users = null;
+		try {
+			users = userBusiness.getUsers(ArrayUtil.convertListToArray(usersIds));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (ListUtil.isEmpty(users)) {
+			return null;
+		}
+		
+		if (sort) {
+			return getSortedUsers(users, iwc.getCurrentLocale(), false);
 		}
 		
 		return new ArrayList<User>(users);
