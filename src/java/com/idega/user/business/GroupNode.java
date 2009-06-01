@@ -4,6 +4,7 @@ import java.util.List;
 
 public class GroupNode {
 	
+	private String id;
 	private String name = null;
 	private String uniqueId = null;
 	private String image = null;
@@ -51,6 +52,14 @@ public class GroupNode {
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 	
 }
