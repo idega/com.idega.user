@@ -27,10 +27,11 @@ public class UsersFilterHelper implements DWRAnnotationPersistance {
 	public static final String DWR_OBJECT = "UsersFilter";
 	
 	@RemoteMethod
-	public RenderedComponent getUsersInGroup(String groupId, List<String> selectedUsers) {
+	public RenderedComponent getUsersInGroup(String groupId, List<String> selectedUsers, String selectedInputName) {
 		UsersFilterList component = new UsersFilterList();
 		component.setSelectedUsers(selectedUsers);
 		component.setGroupId(groupId);
+		component.setSelectedUserInputName(selectedInputName);
 		return BuilderLogic.getInstance().getRenderedComponent(component, null);
 	}
 }

@@ -1,8 +1,8 @@
 var UsersFilterHelper = {};
 
-UsersFilterHelper.getUsers = function(dropdownId, selectedUsers, loadingMessage, containerId) {
+UsersFilterHelper.getUsers = function(dropdownId, selectedUsers, loadingMessage, containerId, selectedUserInputName) {
 	showLoadingMessage(loadingMessage);
-	UsersFilter.getUsersInGroup(dwr.util.getValue(dropdownId), selectedUsers, {
+	UsersFilter.getUsersInGroup(dwr.util.getValue(dropdownId), selectedUsers, selectedUserInputName, {
 		callback: function(component) {
 			closeAllLoadingMessages();
 			

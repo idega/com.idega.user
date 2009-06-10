@@ -27,6 +27,8 @@ public class UsersFilterList extends Block {
 	public static final String USERS_FILTER_SELECTED_USERS = "usersFilterSelectedUsers";
 	
 	private String groupId;
+	
+	private String selectedUserInputName;
 	private List<String> selectedUsers;
 
 	@Autowired
@@ -69,7 +71,7 @@ public class UsersFilterList extends Block {
 			
 			String id = user.getId();
 			
-			CheckBox select = new CheckBox(USERS_FILTER_SELECTED_USERS, id);
+			CheckBox select = new CheckBox(getSelectedUserInputName(), id);
 			select.setChecked(selectedUsers.contains(id), true);
 			userEntry.add(select);
 			
@@ -100,5 +102,15 @@ public class UsersFilterList extends Block {
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
 	}
-	
+
+	public String getSelectedUserInputName() {
+		if (selectedUserInputName == null) {
+			selectedUserInputName = USERS_FILTER_SELECTED_USERS;
+		}
+		return selectedUserInputName;
+	}
+
+	public void setSelectedUserInputName(String selectedUserInputName) {
+		this.selectedUserInputName = selectedUserInputName;
+	}
 }

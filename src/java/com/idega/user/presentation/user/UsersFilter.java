@@ -29,6 +29,8 @@ public class UsersFilter extends InterfaceObject {
 	private GroupHelper groupHelper;
 	
 	private String groupId;
+	
+	private String selectedUserInputName;
 	private List<String> selectedUsers;
 	
 	private boolean addLabel = true;
@@ -149,7 +151,8 @@ public class UsersFilter extends InterfaceObject {
 		
 		groupChooser.setOnChange(new StringBuilder("UsersFilterHelper.getUsers('").append(groupChooser.getId()).append("', ")
 				.append(groupHelper.getJavaScriptFunctionParameter(selectedUsers)).append(", '")
-				.append(getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("', '").append(usersListId).append("');")
+				.append(getResourceBundle(iwc).getLocalizedString("loading", "Loading...")).append("', '").append(usersListId)
+				.append("', '").append(getSelectedUserInputName()).append("');")
 		.toString());
 	}
 	
@@ -157,6 +160,7 @@ public class UsersFilter extends InterfaceObject {
 		UsersFilterList list = new UsersFilterList();
 		list.setSelectedUsers(selectedUsers);
 		list.setGroupId(groupId);
+		list.setSelectedUserInputName(getSelectedUserInputName());
 		return list;
 	}
 	
@@ -188,6 +192,17 @@ public class UsersFilter extends InterfaceObject {
 
 	public void setAddLabel(boolean addLabel) {
 		this.addLabel = addLabel;
+	}
+
+	public String getSelectedUserInputName() {
+		if (selectedUserInputName == null) {
+			selectedUserInputName = UsersFilterList.USERS_FILTER_SELECTED_USERS;
+		}
+		return selectedUserInputName;
+	}
+
+	public void setSelectedUserInputName(String selectedUserInputName) {
+		this.selectedUserInputName = selectedUserInputName;
 	}
 	
 }
