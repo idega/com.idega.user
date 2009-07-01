@@ -161,7 +161,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 				bservice = getBuilderService(iwc);
 				ICTreeNode node = bservice.getPageTree(pageId);
 				if (node != null) {
-					this.homepageField.setSelectedPage(node.getNodeID(), node.getNodeName());
+					this.homepageField.setSelectedPage(node.getId(), node.getNodeName());
 				}
 			}
 			catch (RemoteException e) {

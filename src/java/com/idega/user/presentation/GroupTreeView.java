@@ -132,16 +132,16 @@ public class GroupTreeView extends IWTreeControl {
 		
 	    switch (node.getNodeType()) {
 			case GroupTreeNode.TYPE_DOMAIN :
-				dmSelect.setDomainToSelect(node.getNodeID());
+				dmSelect.setDomainToSelect(Integer.parseInt(node.getId()));
 				break;
 			case GroupTreeNode.TYPE_GROUP :
 				grSelect.setGroupToSelect(node.getNodeID());
 				if (node.getParentNode() != null) {
 					if (((GroupTreeNode) node.getParentNode()).getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
-						grSelect.setParentDomainOfSelection(node.getParentNode().getNodeID());
+						grSelect.setParentDomainOfSelection(Integer.parseInt(node.getParentNode().getId()));
 					}
 					else {
-						grSelect.setParentGroupOfSelection(node.getParentNode().getNodeID());
+						grSelect.setParentGroupOfSelection(Integer.parseInt(node.getParentNode().getId()));
 					}
 				}
 				break;
