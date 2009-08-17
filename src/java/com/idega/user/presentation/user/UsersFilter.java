@@ -34,6 +34,7 @@ public class UsersFilter extends InterfaceObject {
 	private List<String> selectedUsers;
 	
 	private boolean addLabel = true;
+	private boolean showGroupChooser = true;
 	
 	private List<String> visibleGroups;
 	
@@ -54,7 +55,9 @@ public class UsersFilter extends InterfaceObject {
 		container.setStyleClass("usersFilterStyle");
 		
 		Layer userListContainer = new Layer();
-		container.add(getGroupChooser(iwc, userListContainer.getId()));
+		if (isShowGroupChooser()) {
+			container.add(getGroupChooser(iwc, userListContainer.getId()));
+		}
 		container.add(new CSSSpacer());
 		container.add(userListContainer);
 		userListContainer.add(getUsersList(iwc));
@@ -203,6 +206,14 @@ public class UsersFilter extends InterfaceObject {
 
 	public void setSelectedUserInputName(String selectedUserInputName) {
 		this.selectedUserInputName = selectedUserInputName;
+	}
+
+	public boolean isShowGroupChooser() {
+		return showGroupChooser;
+	}
+
+	public void setShowGroupChooser(boolean showGroupChooser) {
+		this.showGroupChooser = showGroupChooser;
 	}
 	
 }

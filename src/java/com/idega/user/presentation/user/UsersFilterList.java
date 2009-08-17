@@ -1,10 +1,12 @@
 package com.idega.user.presentation.user;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.idega.business.IBOLookup;
 import com.idega.presentation.Block;
 import com.idega.presentation.CSSSpacer;
 import com.idega.presentation.IWContext;
@@ -15,8 +17,10 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.business.GroupHelper;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserConstants;
 import com.idega.user.data.User;
+import com.idega.util.ArrayUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.PresentationUtil;
 import com.idega.util.StringUtil;
@@ -52,17 +56,18 @@ public class UsersFilterList extends Block {
 		container.setStyleClass("usersFilterUsersListStyle");
 		add(container);
 		
-		if (StringUtil.isEmpty(groupId)) {
+		if (StringUtil.isEmpty(groupId) && ListUtil.isEmpty(selectedUsers)) {
 			return;
 		}
 		
 		List<User> users = getUsersFromSelectedGroup(iwc);
-		if (ListUtil.isEmpty(users)) {
+		if (ListUtil.isEmpty(users) && ListUtil.isEmpty(selectedUsers)) {
 			container.add(new Heading3(getResourceBundle(iwc).getLocalizedString("users_filter.no_users_found", "There are no users")));
 			return;
 		}
 		
 		selectedUsers = selectedUsers == null ? new ArrayList<String>(0) : selectedUsers;
+		users = users == null ? getUsersByIds(selectedUsers) : users;
 		
 		for (User user: users) {
 			Layer userEntry = new Layer();
@@ -78,6 +83,22 @@ public class UsersFilterList extends Block {
 			Span name = new Span(new Text(user.getName()));
 			userEntry.add(name);
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<User> getUsersByIds(List<String> ids) {
+		if (ListUtil.isEmpty(ids)) {
+			return null;
+		}
+		
+		try {
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(getIWApplicationContext(), UserBusiness.class);
+			Collection<User> users = userBusiness.getUsers(ArrayUtil.convertListToArray(ids));
+			return ListUtil.isEmpty(users) ? null : new ArrayList<User>(users);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	private List<User> getUsersFromSelectedGroup(IWContext iwc) {
