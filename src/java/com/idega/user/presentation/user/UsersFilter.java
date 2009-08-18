@@ -19,6 +19,7 @@ import com.idega.user.business.UserConstants;
 import com.idega.user.business.UsersFilterHelper;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.PresentationUtil;
 import com.idega.util.expression.ELUtil;
@@ -27,6 +28,8 @@ public class UsersFilter extends InterfaceObject {
 
 	@Autowired
 	private GroupHelper groupHelper;
+	
+	private List<String> roles;
 	
 	private String groupId;
 	
@@ -49,13 +52,19 @@ public class UsersFilter extends InterfaceObject {
 				"/dwr/interface/" + UsersFilterHelper.DWR_OBJECT + ".js",
 				getBundle(iwc).getVirtualPathWithFileNameString("javascript/UsersFilterHelper.js")
 		));
+		String action = new StringBuilder("UsersFilterHelper.assignActionToForm('").append(getSelectedUserInputName()).append("', [")
+			.append(ListUtil.convertListOfStringsToCommaseparatedString(selectedUsers)).append("]);").toString();
+		if (!CoreUtil.isSingleComponentRenderingProcess(iwc)) {
+			action = "registerEvent(window, 'load', function() {"+action+"});";
+		}
+		PresentationUtil.addJavaScriptActionToBody(iwc, action);
 		
 		Layer container = new Layer();
 		add(container);
 		container.setStyleClass("usersFilterStyle");
 		
 		Layer userListContainer = new Layer();
-		if (isShowGroupChooser()) {
+		if (ListUtil.isEmpty(roles) || isShowGroupChooser()) {
 			container.add(getGroupChooser(iwc, userListContainer.getId()));
 		}
 		container.add(new CSSSpacer());
@@ -163,6 +172,7 @@ public class UsersFilter extends InterfaceObject {
 		UsersFilterList list = new UsersFilterList();
 		list.setSelectedUsers(selectedUsers);
 		list.setGroupId(groupId);
+		list.setRoles(roles);
 		list.setSelectedUserInputName(getSelectedUserInputName());
 		return list;
 	}
@@ -214,6 +224,14 @@ public class UsersFilter extends InterfaceObject {
 
 	public void setShowGroupChooser(boolean showGroupChooser) {
 		this.showGroupChooser = showGroupChooser;
+	}
+
+	public List<String> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<String> roles) {
+		this.roles = roles;
 	}
 	
 }
