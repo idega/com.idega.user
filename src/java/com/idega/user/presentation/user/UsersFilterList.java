@@ -117,6 +117,15 @@ public class UsersFilterList extends Block {
 		if (groupBusiness == null) {
 			return null;
 		}
+		UserBusiness userBusiness = null;
+		try {
+			userBusiness = IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+		} catch (IBOLookupException e) {
+			e.printStackTrace();
+		}
+		if (userBusiness == null) {
+			return null;
+		}
 		
 		AccessController accessController = iwc.getAccessController();
 		for (String roleKey: roles) {
@@ -126,6 +135,18 @@ public class UsersFilterList extends Block {
 			}
 			
 			for (Group group: groupsByRole) {
+				if (StringUtil.isEmpty(group.getName())) {
+					try {
+						User user = userBusiness.getUser(Integer.valueOf(group.getId()));
+						if (accessController.hasRole(user, roleKey) && !users.contains(user)) {
+							users.add(user);
+						}
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+					} catch (Exception e) {
+					}
+				}
+				
 				Collection<User> usersInGroup = null;
 				try {
 					usersInGroup = groupBusiness.getUsers(group);
