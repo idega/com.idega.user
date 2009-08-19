@@ -55,7 +55,7 @@ public class UsersFilter extends InterfaceObject {
 		String action = new StringBuilder("UsersFilterHelper.assignActionToForm('").append(getSelectedUserInputName()).append("', [")
 			.append(ListUtil.convertListOfStringsToCommaseparatedString(selectedUsers)).append("]);").toString();
 		if (!CoreUtil.isSingleComponentRenderingProcess(iwc)) {
-			action = "registerEvent(window, 'load', function() {"+action+"});";
+			action = new StringBuilder("registerEvent(window, 'load', function() {").append(action).append("});").toString();
 		}
 		PresentationUtil.addJavaScriptActionToBody(iwc, action);
 		
