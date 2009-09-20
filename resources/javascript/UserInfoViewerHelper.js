@@ -14,15 +14,15 @@ function reloadGroupMemberProperties(instanceId, containerId, message) {
 		callback: function(bean) {
 			getBasicUserPropertiesBeanCallback(bean, strings);
 		},
-		rpcType:dwr.engine.XMLHttpRequest
+		rpcType: dwr.engine.XMLHttpRequest,
+		transport: dwr.engine.transport.xhr
 	});
 }
 
 function getBasicUserPropertiesBeanCallback(bean, strings) {
-	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrCallType = getDwrCallType(bean.remoteMode);
 	if (bean.remoteMode) {
 		prepareDwr(GroupService, bean.server + getDefaultDwrPath());
-		dwrCallType = dwr.engine.ScriptTag;
 	}
 	else {
 		prepareDwr(GroupService, getDefaultDwrPath());
@@ -33,7 +33,8 @@ function getBasicUserPropertiesBeanCallback(bean, strings) {
 		callback: function(result) {
 			clearUsersInfoCacheCallback(strings);
 		},
-		rpcType:dwrCallType
+		rpcType: dwrCallType,
+		transport: dwrCallType
 	});
 }
 
@@ -45,7 +46,8 @@ function clearUsersInfoCacheCallback(strings) {
 		callback: function(result) {
 			reloadGroupMemberPropertiesCallback(result, strings[0], strings[1], strings[2]);
 		},
-		rpcType:dwr.engine.XMLHttpRequest
+		rpcType: dwr.engine.XMLHttpRequest,
+		transport: dwr.engine.transport.xhr
 	});
 }
 
@@ -68,7 +70,8 @@ function getSelectedUsers(instanceId, containerId, message) {
 		callback: function(list) {
 			getUserStatusLocalizationCallback(list, instanceId, containerId);
 		},
-		rpcType:dwr.engine.XMLHttpRequest
+		rpcType: dwr.engine.XMLHttpRequest,
+		transport: dwr.engine.transport.xhr
 	});
 }
 
@@ -80,7 +83,8 @@ function getUserStatusLocalizationCallback(list, instanceId, containerId) {
 		callback: function(properties) {
 			getUserPropertiesCallback(properties, containerId);
 		},
-		rpcType:dwr.engine.XMLHttpRequest
+		rpcType: dwr.engine.XMLHttpRequest,
+		transport: dwr.engine.transport.xhr
 	});
 }
 
@@ -109,7 +113,8 @@ function getUserPropertiesCallback(properties, containerId) {
 				return false;
 			},
 			timeout: 10000,
-			rpcType:dwr.engine.XMLHttpRequest
+			rpcType: dwr.engine.XMLHttpRequest,
+			transport: dwr.engine.transport.xhr
 		});
 	}
 	else {
@@ -125,12 +130,11 @@ function getGroupsUsersData(result, properties, containerId) {
 		return false;
 	}
 	
-	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrCallType = getDwrCallType(properties.remoteMode);
 	var dwrPath = getDefaultDwrPath();
 	if (properties.remoteMode) {
 		//	Preparing DWR for remote call
 		dwrPath = properties.server + getDefaultDwrPath();
-		dwrCallType = dwr.engine.ScriptTag;
 	}
 	prepareDwr(GroupService, dwrPath);
 	
@@ -148,7 +152,8 @@ function getGroupsUsersData(result, properties, containerId) {
 		callback:function(result) {
 			getUsersInfoAfterIdsAreAdded(result, properties, containerId)
 		},
-		rpcType:dwrCallType
+		rpcType: dwrCallType,
+		transport: dwrCallType
 	});
 }
 
@@ -158,11 +163,10 @@ function getUsersInfoAfterIdsAreAdded(result, properties, containerId) {
 		return false;
 	}
 	
-	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrCallType = getDwrCallType(properties.remoteMode);
 	var dwrPath = getDefaultDwrPath();
 	if (properties.remoteMode) {
 		dwrPath = properties.server + getDefaultDwrPath();	
-		dwrCallType = dwr.engine.ScriptTag;
 	}
 	prepareDwr(GroupService, dwrPath);
 	
@@ -170,7 +174,8 @@ function getUsersInfoAfterIdsAreAdded(result, properties, containerId) {
 		callback: function(usersInfo) {
 			getUsersInfoCallback(usersInfo, properties, containerId);
 		},
-		rpcType:dwrCallType
+		rpcType: dwrCallType,
+		transport: dwrCallType
 	});
 }
 
@@ -185,7 +190,8 @@ function getUsersInfoCallback(members, properties, containerId) {
 		callback: function(localizedText) {
 			renderGroupUserInfoViewerWithAllData(members, properties, containerId, localizedText)
 		},
-		rpcType:dwr.engine.XMLHttpRequest
+		rpcType: dwr.engine.XMLHttpRequest,
+		transport: dwr.engine.transport.xhr
 	});
 }
 	

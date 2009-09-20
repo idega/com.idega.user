@@ -1,11 +1,12 @@
 package com.idega.user.presentation.group;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.List;
 
-import org.apache.myfaces.renderkit.html.util.AddResource;
-import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.idega.block.web2.business.JQuery;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
@@ -15,6 +16,7 @@ import com.idega.user.business.UserConstants;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.PresentationUtil;
+import com.idega.util.expression.ELUtil;
 import com.idega.webface.WFUtil;
 
 public class GroupViewer extends Block {
@@ -36,16 +38,33 @@ public class GroupViewer extends Block {
 	
 	private Integer cacheTime = 10;
 	
+	@Autowired
+	private Web2Business web2;
+	
+	@Autowired
+	private JQuery jQuery;
+	
 	@Override
 	public void main(IWContext iwc) {
-		String css = getBundle(iwc).getVirtualPathWithFileNameString("style/user.css");
+		ELUtil.getInstance().autowire(this);
+		
+		List<String> styleFiles = Arrays.asList(
+				web2.getBundleUriToHumanizedMessagesStyleSheet(),
+				getBundle(iwc).getVirtualPathWithFileNameString("style/user.css")
+		);
+		
+		List<String> scripts = Arrays.asList(
+				jQuery.getBundleURIToJQueryLib(),
+				web2.getBundleUriToHumanizedMessagesScript()
+		);
+		
 		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
-			add(PresentationUtil.getStyleSheetSourceLine(css));
+			add(PresentationUtil.getStyleSheetsSourceLines(styleFiles));
+			add(PresentationUtil.getJavaScriptSourceLines(scripts));
 		}
 		else {
-			AddResource adder = AddResourceFactory.getInstance(iwc);
-			
-			adder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, css);
+			PresentationUtil.addStyleSheetsToHeader(iwc, styleFiles);
+			PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scripts);
 		}
 	}
 	
@@ -127,6 +146,10 @@ public class GroupViewer extends Block {
 			return;
 		}
 		
+		//	DWR
+		files.add(0, CoreConstants.DWR_ENGINE_SCRIPT);
+		files.add(0, CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+		
 		if (!files.contains(CoreUtil.getCoreBundle().getVirtualPathWithFileNameString("javascript/ChooserHelper.js"))) {
 			files.add(0, CoreUtil.getCoreBundle().getVirtualPathWithFileNameString("javascript/ChooserHelper.js"));
 		}
@@ -139,9 +162,6 @@ public class GroupViewer extends Block {
 		String groupHelper = bundle.getVirtualPathWithFileNameString("javascript/GroupHelper.js");
 		if (!(files.contains(groupHelper))) {
 			files.add(groupHelper);
-		}
-		if (!(files.contains(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT))) {
-			files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		}
 		
 		if (!addDirectly) {

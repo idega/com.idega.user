@@ -1,3 +1,6 @@
+dwr.engine.XMLHttpRequest = 1;
+dwr.engine.ScriptTag = 3;
+
 var SERVER_START = 'http://';
 
 var UNIQUE_IDS_ID = 'uniqueids';
@@ -209,25 +212,25 @@ function getGroupsTree(serverId, loginId, passwordId, id, messages, selectedGrou
 	var loginInput = $(loginId);
 	var passwordInput = $(passwordId);
 	if (serverInput == null || loginInput == null || passwordInput == null) {
-		alert(messages[0]);
+		humanMsg.displayMsg(messages[0]);
 		return false;
 	}
 	
 	var server = serverInput.value;
 	if (server == '') {
-		alert(messages[1]);
+		humanMsg.displayMsg(messages[1]);
 		return false;
 	}
 	
 	var login = loginInput.value;
 	if (login == '') {
-		alert(messages[2]);
+		humanMsg.displayMsg(messages[2]);
 		return false;
 	}
 	
 	var password = passwordInput.value;
 	if (password == '') {
-		alert(messages[3]);
+		humanMsg.displayMsg(messages[3]);
 		return false;
 	}
 	
@@ -259,13 +262,14 @@ function getGroupsWithValues(loadingMsg, server, login, password, id, canNotConn
 		callback: function(result) {
 			canUseRemoteCallback(result, server, login, password, id, canNotConnectMsg, failedLoginMsg, noGroupsMsg, selectedGroups, styleClass);
 		},
-		errorHandler: function(message) {
-			alert('Unable to contact server!');
+		errorHandler: function(message, exeption) {
+			humanMsg.displayMsg(canNotConnectMsg);
 			closeAllLoadingMessages();
 			return false;
 		},
 		timeout: 10000,
-		rpcType: dwr.engine.XMLHttpRequest
+		rpcType: dwr.engine.XMLHttpRequest,
+		transport: dwr.engine.transport.xhr
 	});
 }
 
@@ -276,24 +280,27 @@ function canUseRemoteCallback(result, server, login, password, id, severErrorMes
 		if (IE && selectedGroups != null) {
 			if (selectedGroups.length > 20) {
 				if (streamUniqueIdsToServer(id, selectedGroups, server, true, GROUPS_CHOOSER_TREE_SELECTED_GROUPS_CACHE_NAME)) {
-					addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass, true);
+					addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups,
+						styleClass, true);
 				}
 				
 				return false;
 			}
 		}
 		
-		addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass, false);
+		addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass,
+			false);
 	}
 	else {
 		//	Cannot use remote server
 		closeAllLoadingMessages();
-		alert(severErrorMessage + ' ' + server);
+		humanMsg.displayMsg(severErrorMessage + ' ' + server);
 		return false;
 	}
 }
 
-function addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass, fake) {
+function addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, severErrorMessage, logInErrorMessage, noGroupsMessage, selectedGroups, styleClass,
+	fake) {
 	if (!result) {
 		closeAllLoadingMessages();
 		return false;
@@ -312,7 +319,7 @@ function addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, s
 			prepareDwr(GroupService, getDefaultDwrPath());
 			if (groups == null) {
 				//	Login failed
-				alert(logInErrorMessage + ' ' + server);
+				humanMsg.displayMsg(logInErrorMessage + ' ' + server);
 				return false;
 			}
 			SERVER = server;
@@ -320,8 +327,21 @@ function addGroupsTreeAfterIdsAreStreamed(result, server, login, password, id, s
 			PASSWORD = password;
 			addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass);
 		},
-		rpcType:dwr.engine.ScriptTag
+		errorHandler: function(message, exeption) {
+			closeAllLoadingMessages();
+			humanMsg.displayMsg(severErrorMessage + ' ' + server);
+			return false;
+		},
+		rpcType: dwr.engine.ScriptTag,
+		transport: dwr.engine.transport.scriptTag
 	});
+}
+
+/**
+ * This function is a bridge between DWR 2.* and DWR 3.*
+ */
+dwr.engine._remoteHandleCallback = function(batchId, callId, reply) {
+	dwr.engine.remote.handleCallback(batchId, callId, reply);
 }
 
 function loadLocalTree(id, noGroupsMessage, selectedGroups, styleClass) {
@@ -338,7 +358,8 @@ function loadLocalTree(id, noGroupsMessage, selectedGroups, styleClass) {
 			}
 			addGroupsTree(groups, id, noGroupsMessage, selectedGroups, styleClass);
 		},
-		rpcType:dwr.engine.XMLHttpRequest
+		rpcType: dwr.engine.XMLHttpRequest,
+		transport: dwr.engine.transport.xhr
 	});
 }
 
@@ -499,11 +520,10 @@ function sendPackedUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, 
 }
 
 function sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, cacheName) {
-	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrCallType = getDwrCallType(remoteMode);
 	var dwrPath = getDefaultDwrPath();
 	if (remoteMode) {
 		dwrPath = server + getDefaultDwrPath();	
-		dwrCallType = dwr.engine.ScriptTag;
 	}
 	prepareDwr(GroupService, dwrPath);
 	
@@ -511,7 +531,8 @@ function sendPackUniqueIdsToServer(instanceId, uniqueIds, server, remoteMode, ca
 		callback: function(result) {
 			return result;
 		},
-		rpcType:dwrCallType
+		rpcType: dwrCallType,
+		transport: dwrCallType
 	});
 }
 
@@ -545,4 +566,19 @@ function removeElementValueForAdvancedProperty(ids, key, value) {
 		}
 	}
 	groups_chooser_helper.addAdvancedProperty(key, newValues);
+}
+
+function getDwrCallType(remote) {
+	var dwrCallType = dwr.engine.XMLHttpRequest;
+	if (!dwrCallType) {
+		dwrCallType = dwr.engine.transport.xhr;
+	}
+	if (remote) {
+		dwrCallType = dwr.engine.ScriptTag;
+		if (!dwrCallType) {
+			dwrCallType = dwr.engine.transport.scriptTag;
+		}
+	}
+	
+	return dwrCallType;
 }

@@ -76,13 +76,10 @@ public class GroupInfoViewer extends GroupViewer {
 		
 		boolean singleRenderingProcess = CoreUtil.isSingleComponentRenderingProcess(iwc);
 		
-		List<String> files = new ArrayList<String>();
+		List<String> files = new ArrayList<String>();		
 		//	"Helpers"
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
-		//	DWR
-		files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
-		files.add(CoreConstants.DWR_ENGINE_SCRIPT);
 		addScriptFiles(iwc, files, singleRenderingProcess);
 
 		//	Actions to be performed on page loaded event

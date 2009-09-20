@@ -13,15 +13,15 @@ function reloadGroupProperties(instanceId, containerId, message) {
 		callback: function(bean) {
 			getBasicGroupPropertiesBeanCallback(bean, strings);
 		},
-		rpcType:dwr.engine.XMLHttpRequest
+		rpcType: dwr.engine.XMLHttpRequest,
+		transport: dwr.engine.transport.xhr
 	});
 }
 
 function getBasicGroupPropertiesBeanCallback(bean, strings) {
-	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrCallType = getDwrCallType(bean.remoteMode);
 	if (bean.remoteMode) {
 		prepareDwr(GroupService, bean.server + getDefaultDwrPath());
-		dwrCallType = dwr.engine.ScriptTag;
 	}
 	else {
 		prepareDwr(GroupService, getDefaultDwrPath());
@@ -32,7 +32,8 @@ function getBasicGroupPropertiesBeanCallback(bean, strings) {
 		callback: function(result) {
 			clearGroupInfoCacheCallback(strings);
 		},
-		rpcType:dwrCallType
+		rpcType: dwrCallType,
+		transport: dwrCallType
 	});
 }
 
@@ -44,7 +45,8 @@ function clearGroupInfoCacheCallback(strings) {
 		callback: function(result) {
 			reloadGroupPropertiesCallback(result, strings[0], strings[1], strings[2]);
 		},
-		rpcType:dwr.engine.XMLHttpRequest
+		rpcType: dwr.engine.XMLHttpRequest,
+		transport: dwr.engine.transport.xhr
 	});
 }
 
@@ -67,7 +69,8 @@ function getSelectedGroups(instanceId, containerId, message) {
 		callback: function(properties) {
 			getGroupPropertiesCallback(properties, containerId);
 		},
-		rpcType:dwr.engine.XMLHttpRequest
+		rpcType: dwr.engine.XMLHttpRequest,
+		transport: dwr.engine.transport.xhr
 	});
 }
 
@@ -95,7 +98,8 @@ function getGroupPropertiesCallback(properties, containerId) {
 				return false;
 			},
 			timeout: 10000,
-			rpcType:dwr.engine.XMLHttpRequest
+			rpcType: dwr.engine.XMLHttpRequest,
+			transport: dwr.engine.transport.xhr
 		});
 	}
 	else {
@@ -111,17 +115,17 @@ function getGroupsData(result, properties, containerId) {
 		return false;
 	}
 	
-	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrCallType = getDwrCallType(properties.remoteMode);
 	var dwrPath = getDefaultDwrPath();
 	if (properties.remoteMode) {
 		dwrPath = properties.server + getDefaultDwrPath();	
-		dwrCallType = dwr.engine.ScriptTag;
 	}
 	prepareDwr(GroupService, dwrPath);
 	
 	if (IE && properties.uniqueIds != null) { 
 		if (properties.uniqueIds.length > 20) {
-			if (streamUniqueIdsToServer(properties.instanceId, properties.uniqueIds, properties.server, properties.remoteMode, GROUPS_INFO_VIEWER_UNIQUE_IDS_CACHE_NAME)) {
+			if (streamUniqueIdsToServer(properties.instanceId, properties.uniqueIds, properties.server, properties.remoteMode,
+				GROUPS_INFO_VIEWER_UNIQUE_IDS_CACHE_NAME)) {
 				getGroupsInfoAfterIdsAreAdded(true, properties, containerId);
 			}
 			
@@ -133,7 +137,13 @@ function getGroupsData(result, properties, containerId) {
 		callback: function(result) {
 			getGroupsInfoAfterIdsAreAdded(result, properties, containerId);
 		},
-		rpcType:dwrCallType
+		errorHandler: function(message, exeption) {
+			closeAllLoadingMessages();
+			humanMsg.displayMsg(message);
+			return false;
+		},
+		rpcType: dwrCallType,
+		transport: dwrCallType
 	});
 }
 
@@ -143,11 +153,10 @@ function getGroupsInfoAfterIdsAreAdded(successfullyAdded, properties, containerI
 		return false;
 	}
 	
-	var dwrCallType = dwr.engine.XMLHttpRequest;
+	var dwrCallType = getDwrCallType(properties.remoteMode);
 	var dwrPath = getDefaultDwrPath();
 	if (properties.remoteMode) {
 		dwrPath = properties.server + getDefaultDwrPath();	
-		dwrCallType = dwr.engine.ScriptTag;
 	}
 	prepareDwr(GroupService, dwrPath);
 	
@@ -155,7 +164,12 @@ function getGroupsInfoAfterIdsAreAdded(successfullyAdded, properties, containerI
 		callback: function(groupsInfo) {
 			getGroupsInfoCallback(groupsInfo, properties, containerId);
 		},
-		rpcType:dwrCallType
+		errorHandler: function(message, exeption) {
+			closeAllLoadingMessages();
+			humanMsg.displayMsg(message);
+			return false;
+		},
+		rpcType: dwrCallType
 	});
 }
 
@@ -170,7 +184,8 @@ function getGroupsInfoCallback(groupsInfo, properties, containerId) {
 		callback: function(localizedText) {
 			renderGroupsInfoViewerWithAllData(groupsInfo, properties, containerId, localizedText);
 		},
-		rpcType:dwr.engine.XMLHttpRequest
+		rpcType: dwr.engine.XMLHttpRequest,
+		transport: dwr.engine.transport.xhr
 	});
 }
 

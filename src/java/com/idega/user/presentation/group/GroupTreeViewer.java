@@ -53,16 +53,11 @@ public class GroupTreeViewer extends Block {
 			IWBundle iwb = getBundle(iwc);
 			
 			List<String> files = new ArrayList<String>();
-			
 			//	"Helpers"
 			files.add(CoreUtil.getCoreBundle().getVirtualPathWithFileNameString("javascript/ChooserHelper.js"));
 			files.add("/dwr/interface/ChooserService.js");
 			files.add(iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
 			files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
-			
-			//	DWR
-			files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
-			files.add(CoreConstants.DWR_ENGINE_SCRIPT);
 			
 			//	MooTools
 			Web2Business web2 = WFUtil.getBeanInstance(iwc, Web2Business.SPRING_BEAN_IDENTIFIER);

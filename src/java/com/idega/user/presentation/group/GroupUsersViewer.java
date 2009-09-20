@@ -114,9 +114,6 @@ public class GroupUsersViewer extends GroupViewer {
 		//	"Helpers"		
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/UserInfoViewerHelper.js"));
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
-		//	DWR
-		files.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
-		files.add(CoreConstants.DWR_ENGINE_SCRIPT);
 		addScriptFiles(iwc, files, singleRenderingProcess);
 		
 		//	Actions to be performed on page loaded event

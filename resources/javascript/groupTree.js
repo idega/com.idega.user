@@ -138,7 +138,8 @@
 									callback: function(nodes) {
 										appendChildrenOfGroup(listRoot, nodes, image, lastElement, selectedGroups, styleClassName, loadingLayerAboveTree);
 									},
-									rpcType:dwr.engine.XMLHttpRequest
+									rpcType: dwr.engine.XMLHttpRequest,
+									transport: dwr.engine.transport.xhr
 								});
 							}
 							else {
@@ -147,7 +148,8 @@
 									callback: function(nodes) {
 										appendChildrenOfGroup(listRoot, nodes, image, lastElement, selectedGroups, styleClassName, loadingLayerAboveTree);
 									},
-									rpcType:dwr.engine.ScriptTag
+									rpcType: dwr.engine.ScriptTag,
+									transport: dwr.engine.transport.scriptTag
 								});
 							}
 						}
