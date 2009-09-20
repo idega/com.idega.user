@@ -126,7 +126,6 @@ GroupsFilter.manageCheckedGroupsInOtherContainers = function(params) {
 		if (list.attr('id') != currentListId) {
 			var otherCheckboxes = jQuery('input.' + params[2], list);
 			for (var j = 0; j < otherCheckboxes.length; j++) {
-				console.log(otherCheckboxes[j]);
 				otherCheckboxes[j].checked = false;
 			}
 		}
