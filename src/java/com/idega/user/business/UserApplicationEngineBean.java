@@ -547,7 +547,8 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		String personalId = userInfo.getPersonalId();
 		String password = userInfo.getPassword();
 		
-		if (name == null || login == null || (!userInfo.isJuridicalPerson() && StringUtil.isEmpty(password)) || primaryGroupId == null || childGroups == null) {
+		if (StringUtil.isEmpty(name) || StringUtil.isEmpty(login) || (!userInfo.isJuridicalPerson() && StringUtil.isEmpty(password)) || primaryGroupId == null ||
+				childGroups == null) {
 			return null;
 		}
 		if (StringUtil.isEmpty(password)) {
@@ -629,16 +630,18 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		//	Phone
-		Phone phone = null;
-		try {
-			phone = userBusiness.getUserPhone(Integer.valueOf(user.getId()), PhoneTypeBMPBean.HOME_PHONE_ID);
-		} catch (Exception e) {}
-		if (phone == null || allFieldsEditable) {
+		if (!StringUtil.isEmpty(phoneNumber)) {
+			Phone phone = null;
 			try {
-				userBusiness.updateUserPhone(user, PhoneTypeBMPBean.HOME_PHONE_ID, phoneNumber);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return errorText;
+				phone = userBusiness.getUserPhone(Integer.valueOf(user.getId()), PhoneTypeBMPBean.HOME_PHONE_ID);
+			} catch (Exception e) {}
+			if (phone == null || allFieldsEditable) {
+				try {
+					userBusiness.updateUserPhone(user, PhoneTypeBMPBean.HOME_PHONE_ID, phoneNumber);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return errorText;
+				}
 			}
 		}
 		

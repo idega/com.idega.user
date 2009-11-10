@@ -612,7 +612,7 @@ function UserDataBean(name, login, password, personalId, email, errorMessage, ph
 	this.personalId = personalId;
 	this.email = email;
 	this.errorMessage = errorMessage;
-	this.phone = phone;
+	this.phone = phone == null ? null : phone.trim();
 	this.streetNameAndNumber = streetNameAndNumber;
 	this.postalCodeId = postalCodeId;
 	this.countryName = countryName;
