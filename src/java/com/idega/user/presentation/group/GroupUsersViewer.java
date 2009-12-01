@@ -28,6 +28,7 @@ public class GroupUsersViewer extends GroupViewer {
 	private boolean showImage = true;	
 	private boolean showCompanyAddress = false;
 	private boolean showDateOfBirth = false;
+	private boolean showYearOfBirth = false;
 	private boolean showJob = false;
 	private boolean showWorkplace = false;
 	private boolean showStatus = true;
@@ -78,6 +79,7 @@ public class GroupUsersViewer extends GroupViewer {
 		properties.setShowBeganWork(showBeganWork);
 		properties.setShowImage(showImage);
 		properties.setShowDateOfBirth(showDateOfBirth);
+		properties.setShowYearOfBirth(showYearOfBirth);
 		properties.setShowJob(showJob);
 		properties.setShowCompanyAddress(showCompanyAddress);
 		properties.setShowWorkplace(showWorkplace);
@@ -196,6 +198,10 @@ public class GroupUsersViewer extends GroupViewer {
 
 	public void setShowDateOfBirth(boolean showDateOfBirth) {
 		this.showDateOfBirth = showDateOfBirth;
+	}
+
+	public void setShowYearOfBirth(boolean showYearOfBirth) {
+		this.showYearOfBirth = showYearOfBirth;
 	}
 
 	public void setShowJob(boolean showJob) {

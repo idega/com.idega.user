@@ -203,6 +203,9 @@ function renderGroupsInfoViewerWithAllData(groupsInfo, properties, containerId, 
 	for (var i = 0; i < groupsInfo.length; i++) {
 		var group = new Element('div');
 		group.addClass('groupInfoEntryContainerStyleClass');
+		if (i + 1 == groupsInfo.length) {
+			group.addClass("groupInfoEntryContainerLast");
+		}
 		
 		//	Name
 		if (properties.showName) {

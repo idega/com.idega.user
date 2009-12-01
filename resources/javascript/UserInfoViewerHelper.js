@@ -263,7 +263,7 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 		}
 		
 		//	Name and age
-		getUserNameAndAgeContainer(members[j].name, members[j].age, properties, localizedText).injectInside(infoContainer);
+		getUserNameAndAgeContainer(members[j].name, members[j].age, members[j].yearOfBirth, properties, localizedText).injectInside(infoContainer);
 		
 		// Address
 		if (properties.showAddress) {
@@ -347,6 +347,9 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 		
 		infoContainer.injectInside(user);
 		user.addClass('groupMemberStyleClass');
+		if (j + 1 == maxElements.length) {
+			user.addClass("groupMemberLast");
+		}
 		getDivsSpacer().injectInside(user);
 		user.injectInside(container);		
 	}
@@ -356,7 +359,7 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 	closeAllLoadingMessages();	
 }
 
-function getUserNameAndAgeContainer(name, age, properties, localizedText) {
+function getUserNameAndAgeContainer(name, age, yearOfBirth, properties, localizedText) {
 	var container = new Element('div');
 	container.addClass('groupMemberNameAndAgeContainerStyleClass');
 	
@@ -377,6 +380,13 @@ function getUserNameAndAgeContainer(name, age, properties, localizedText) {
 			}
 		}
 	}
+	
+	// Year of birth
+	if (yearOfBirth != null && yearOfBirth != '') {
+		if (properties.showYearOfBirth) {
+			container.appendText(' (' + yearOfBirth + ')');
+		}
+	}	
 	
 	return container;
 }
