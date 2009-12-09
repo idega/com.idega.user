@@ -38,6 +38,7 @@ import com.idega.user.presentation.group.GroupInfoViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
 import com.idega.util.expression.ELUtil;
 import com.idega.webface.WFUtil;
 
@@ -340,8 +341,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return getBasicUserPropertiesBean(instanceId);
 	}
 	
-	@SuppressWarnings("unchecked")
-	private Map<Object, Object> getCache(IWContext iwc, String cacheKey, int minutes) {
+	private <T> Map<String, List<T>> getCache(IWContext iwc, String cacheKey, int minutes) {
 		IWCacheManager2 cache = IWCacheManager2.getInstance(iwc.getIWMainApplication());
 		if (cache == null) {
 			return null;
@@ -351,45 +351,27 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return cache.getCache(cacheKey, 1000, true, false, time, time);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private List<GroupDataBean> getGroupInfoFromCache(IWContext iwc, String id, int minutes) {
-		Map cache = getCache(iwc, UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, minutes);
+		Map<String, List<GroupDataBean>> cache = getCache(iwc, UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, minutes);
 		if (cache == null) {
 			return null;
 		}
 		
-		Object cachedList = null;
+		List<GroupDataBean> cachedList = null;
 		try {
 			cachedList = cache.get(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (cachedList == null) {
+		if (ListUtil.isEmpty(cachedList)) {
 			return null;
 		}
 		
-		if (cachedList instanceof List) {
-			List abstractList = (List) cachedList;
-			List<GroupDataBean> extractedData = new ArrayList<GroupDataBean>();
-			Object o = null;
-			for (int i = 0; i < abstractList.size(); i++) {
-				o = abstractList.get(i);
-				if (o instanceof GroupDataBean) {
-					extractedData.add((GroupDataBean) o);
-				}
-				else {
-					return null;
-				}
-			}
-			return extractedData;
-		}
-		
-		return null;
+		return cachedList;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void addGroupInfoToCache(IWContext iwc, String id, int minutes, List<GroupDataBean> info) {
-		Map cache = getCache(iwc, UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, minutes);
+		Map<String, List<GroupDataBean>> cache = getCache(iwc, UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, minutes);
 		if (cache == null) {
 			return;
 		}
@@ -495,45 +477,27 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return true;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private List<GroupMemberDataBean> getUsersInfoFromCache(IWContext iwc, String id, int minutes) {
-		Map cache = getCache(iwc, UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, minutes);
+		Map<String, List<GroupMemberDataBean>> cache = getCache(iwc, UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, minutes);
 		if (cache == null) {
 			return null;
 		}
 		
-		Object cachedList = null;
+		List<GroupMemberDataBean> cachedList = null;
 		try {
 			cachedList = cache.get(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (cachedList == null) {
+		if (ListUtil.isEmpty(cachedList)) {
 			return null;
 		}
 		
-		if (cachedList instanceof List) {
-			List abstractList = (List) cachedList;
-			List<GroupMemberDataBean> extractedData = new ArrayList<GroupMemberDataBean>();
-			Object o = null;
-			for (int i = 0; i < abstractList.size(); i++) {
-				o = abstractList.get(i);
-				if (o instanceof GroupMemberDataBean) {
-					extractedData.add((GroupMemberDataBean) o);
-				}
-				else {
-					return null;
-				}
-			}
-			return extractedData;
-		}
-		
-		return null;
+		return cachedList;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void addUsersInfoToCache(IWContext iwc, String id, int minutes, List<GroupMemberDataBean> info) {
-		Map cache = getCache(iwc, UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, minutes);
+		Map<String, List<GroupMemberDataBean>> cache = getCache(iwc, UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, minutes);
 		if (cache == null) {
 			return;
 		}
@@ -992,7 +956,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return addUniqueIds(usersCacheName, instanceId, ids);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Map<String, List<String>> getUniqueIds(String cacheName) throws NullPointerException {
 		IWCacheManager2 cache = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
 		
