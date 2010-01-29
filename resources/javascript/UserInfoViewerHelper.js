@@ -206,10 +206,7 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 	var container = new Element('div');
 	container.addClass('groupsMembersInfoList');
 				
-	var maxElements = members.length;	//	TODO: make paging
-	if (members.length > 40) {
-		maxElements = 40;
-	}
+	var maxElements = members.length;
 	for (var j = 0; j < maxElements; j++) {
 		var user = new Element('div');
 		
