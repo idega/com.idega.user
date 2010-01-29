@@ -400,8 +400,12 @@ function getGroupInfoEntryPO(text, value, showEmptyFields, showLabel, styleClass
 function getEmptyValueIfNull(value) {
 	if (value == null) {
 		return '';
+	} else if (typeof value == 'object') {
+		try {
+			return value.toLocaleDateString();
+		} catch (e) {}
 	}
-	return value;
+	return value + '';
 }
 
 function getEmailsContainer(text, emailAddresses, styleClass) {	

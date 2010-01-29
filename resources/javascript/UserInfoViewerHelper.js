@@ -263,7 +263,7 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 		}
 		
 		//	Name and age
-		getUserNameAndAgeContainer(members[j].name, members[j].age, members[j].yearOfBirth, properties, localizedText).injectInside(infoContainer);
+		getUserNameAndAgeContainer(members[j].name, members[j].age, members[j].yearOfBirth, properties, localizedText, members[j].dateOfBirth).injectInside(infoContainer);
 		
 		// Address
 		if (properties.showAddress) {
@@ -359,7 +359,7 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 	closeAllLoadingMessages();	
 }
 
-function getUserNameAndAgeContainer(name, age, yearOfBirth, properties, localizedText) {
+function getUserNameAndAgeContainer(name, age, yearOfBirth, properties, localizedText, dateOfBirth) {
 	var container = new Element('div');
 	container.addClass('groupMemberNameAndAgeContainerStyleClass');
 	
@@ -382,8 +382,16 @@ function getUserNameAndAgeContainer(name, age, yearOfBirth, properties, localize
 	}
 	
 	// Year of birth
-	if (yearOfBirth != null && yearOfBirth != '') {
-		if (properties.showYearOfBirth) {
+	if (properties.showYearOfBirth) {
+		if ((yearOfBirth == null || yearOfBirth == '') && dateOfBirth != null) {
+			// Trying to extract year of birth from the date of birth
+			try {
+				yearOfBirth = dateOfBirth.getFullYear();
+				yearOfBirth = yearOfBirth + '';
+			} catch (e) {}
+		}
+		
+		if (yearOfBirth != null && yearOfBirth != '') {
 			container.appendText(' (' + yearOfBirth + ')');
 		}
 	}	
