@@ -446,6 +446,7 @@ function getAddressContainer(address, styleClass, showEmptyFields, showLabels, l
 	}
 	else {
 		var addedAnything = false;
+		var addedPostalName = false;
 		var allAddress = '';
 		if (address.streetAddress != null && address.streetAddress != '') {
 			allAddress = address.streetAddress;
@@ -456,13 +457,31 @@ function getAddressContainer(address, styleClass, showEmptyFields, showLabels, l
 				allAddress += ', ';
 			}
 			allAddress += address.postalCode;
+			
+			if (address.postalName != null && address.postalName != '') {
+				allAddress += ' ' + address.postalName;
+				addedPostalName = true;
+			}
+			
 			addedAnything = true;
 		}
 		if (address.city != null && address.city != '') {
-			if (addedAnything) {
-				allAddress += ' ';
+			var addCity = true;
+			if (addedPostalName) {
+				if (address.city == address.postalName) {
+					addCity = false;
+				}
 			}
-			allAddress += address.city;
+			
+			if (addCity) {
+				if (addedAnything) {
+					if (addedPostalName) {
+						allAddress += ',';
+					}
+					allAddress += ' ';
+				}
+				allAddress += address.city;
+			}
 		}
 		if (allAddress != '') {
 			if (showLabels) {
