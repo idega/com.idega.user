@@ -591,6 +591,8 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		addStatusLocalization(statusLocalization, "STAT_GUIDE", iwrb.getLocalizedString("STAT_GUIDE", "Tour Guide"));
 		addStatusLocalization(statusLocalization, "STAT_REGION_MANAGER", iwrb.getLocalizedString("STAT_REGION_MANAGER", "Regional Manager"));
 		addStatusLocalization(statusLocalization, "SPORTS_REPRESENTATIVE", iwrb.getLocalizedString("SPORTS_REPRESENTATIVE", "Sports Representative"));
+		addStatusLocalization(statusLocalization, "STAT_OFFICE_MANAGER", iwrb.getLocalizedString("STAT_OFFICE_MANAGER", "Office Manager"));
+		addStatusLocalization(statusLocalization, "STAT_PROJECT_MANGAGER", iwrb.getLocalizedString("STAT_PROJECT_MANGAGER", "Project Manager"));
 		
 		return statusLocalization;
 	}
@@ -778,10 +780,10 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return userBusiness;
 	}
 	
-	private void addStatusLocalization(List<AdvancedProperty> list, String key, String defaultValue) {
+	private void addStatusLocalization(List<AdvancedProperty> list, String key, String value) {
 		AdvancedProperty localizedStatus = new AdvancedProperty();
 		localizedStatus.setId(key);
-		localizedStatus.setValue(defaultValue);
+		localizedStatus.setValue(value);
 		list.add(localizedStatus);
 	}
 	
