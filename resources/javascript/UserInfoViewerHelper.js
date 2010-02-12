@@ -188,7 +188,34 @@ function getUsersInfoCallback(members, properties, containerId) {
 
 	GroupService.getLocalizationForGroupUsersInfo({
 		callback: function(localizedText) {
-			renderGroupUserInfoViewerWithAllData(members, properties, containerId, localizedText)
+			var missingLocalizations = [];
+			for (var i = 0; i < members.length; i++) {
+				var localizedStatus = getLocalizationForUserStatus(members[i].status);
+				if (localizedStatus == null) {
+					missingLocalizations.push({id: members[i].status, value: 'Unknown'});
+				}
+			}
+			
+			if (missingLocalizations.length == 0) {
+				renderGroupUserInfoViewerWithAllData(members, properties, containerId, localizedText);
+			} else {
+				LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/WebUtil.js'], function() {
+					prepareDwr(WebUtil, getDefaultDwrPath());
+					WebUtil.getMultipleLocalizedStrings('com.idega.user', missingLocalizations, {
+						callback: function(localizedStrings) {
+							if (localizedStrings != null) {
+								for (var j = 0; j < missingLocalizations.length; j++) {
+									var localizedString = localizedStrings[j];
+									LOCALIZATIONS.push({id: missingLocalizations[j].id, value: localizedString});
+								}
+							}
+							renderGroupUserInfoViewerWithAllData(members, properties, containerId, localizedText);
+						},
+						rpcType: dwr.engine.XMLHttpRequest,
+						transport: dwr.engine.transport.xhr
+					});
+				}, null);
+			}
 		},
 		rpcType: dwr.engine.XMLHttpRequest,
 		transport: dwr.engine.transport.xhr
@@ -469,14 +496,11 @@ function getLocalizationForUserStatus(key) {
 	
 	var localization = null;
 	var found = false;
-	for (var i = 0; i < LOCALIZATIONS.length; i++) {
+	for (var i = 0; (i < LOCALIZATIONS.length && !found); i++) {
 		if (LOCALIZATIONS[i].id == key) {
 			localization = LOCALIZATIONS[i].value;
 			found = true;
 		}
 	}
-	if (found) {
-		return localization;
-	}
-	return 'Unknown';
+	return found ? localization : 'Unknown';
 }
