@@ -212,7 +212,10 @@ function getUsersInfoCallback(members, properties, containerId) {
 							renderGroupUserInfoViewerWithAllData(members, properties, containerId, localizedText);
 						},
 						rpcType: dwr.engine.XMLHttpRequest,
-						transport: dwr.engine.transport.xhr
+						transport: dwr.engine.transport.xhr,
+						errorHandler: function(o1, o2) {
+							renderGroupUserInfoViewerWithAllData(members, properties, containerId, localizedText);
+						}
 					});
 				}, null);
 			}
