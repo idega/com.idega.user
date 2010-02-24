@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  	<release version="3.1.23" date="2009-07-13">
+   		<action dev="palli" type="update">
+   			Fixing localizations
+   		</action>
+   	</release>
   	<release version="3.1.22" date="2008-03-10">
    		<action dev="gimmi" type="update">
    			URLEncoding email subject
