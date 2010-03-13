@@ -522,7 +522,11 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		if (info == null && getCompanyHelper() != null) {
-			info = getCompanyHelper().getCompanyInfo(personalId);
+			try {
+				info = getCompanyHelper().getCompanyInfo(personalId);
+			} catch (Exception e) {
+				logger.log(Level.WARNING, "Error getting company information by ID: " + personalId, e);
+			}
 		}
 		
 		if (info == null) {
