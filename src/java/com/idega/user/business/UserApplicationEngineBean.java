@@ -1424,7 +1424,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		try {
-			LoginTableHome loginInfo = (LoginTableHome) IDOLookup.getHome(LoginTableHome.class);
+			LoginTableHome loginInfo = (LoginTableHome) IDOLookup.getHome(LoginTable.class);
 			LoginTable login = loginInfo.findByLogin(userName);
 			
 			if (login != null && userName.equals(login.getUserLogin())) {
