@@ -480,6 +480,22 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 		return false;
 	}
 	
+	var loginInputId = ids[2];
+	var userName = document.getElementById(loginInputId).value;
+	UserApplicationEngine.isValidUserName(userName, {
+		callback: function(userNameCheckResult) {
+			isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages, allFieldsEditable, userId, sendEmailWithLoginInfo, juridicalPerson);
+		}
+	});
+}
+
+function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages, allFieldsEditable, userId, sendEmailWithLoginInfo, juridicalPerson) {
+	closeAllLoadingMessages();
+	if (userNameCheckResult != null && userNameCheckResult.id == 'false') {
+		showHumanizedMessage(userNameCheckResult.value, ids[2]);
+		return false;
+	}
+	
 	var parentGroupChooserId = ids[0];
 	var nameValueInputId = ids[1];
 	var loginInputId = ids[2];

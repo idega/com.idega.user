@@ -17,7 +17,6 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.faces.component.UIComponent;
-
 import org.apache.webdav.lib.WebdavResource;
 import org.jdom.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +33,7 @@ import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.builder.data.ICPageHome;
 import com.idega.core.contact.data.Email;
@@ -1403,5 +1403,43 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 
 	public void setPresentationHelper(SimpleUserAppHelper presentationHelper) {
 		this.presentationHelper = presentationHelper;
+	}
+
+	public AdvancedProperty isValidUserName(String userName) {
+		AdvancedProperty result = new AdvancedProperty(Boolean.FALSE.toString(), "Sorry, some error occurred...");
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return result;
+		}
+		
+		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
+		if (iwrb == null) {
+			return result;
+		}
+		
+		if (StringUtil.isEmpty(userName)) {
+			result.setValue(iwrb.getLocalizedString("empty_user_name", "User name can not be empty!"));
+			return result;
+		}
+		
+		try {
+			LoginTableHome loginInfo = (LoginTableHome) IDOLookup.getHome(LoginTableHome.class);
+			LoginTable login = loginInfo.findByLogin(userName);
+			
+			if (login != null && userName.equals(login.getUserLogin())) {
+				result.setValue(iwrb.getLocalizedString("user_name_exists", "Such user name already exists!"));
+			} else {
+				result.setId(Boolean.TRUE.toString());
+				result.setValue(null);
+			}
+		} catch (FinderException e) {
+			result.setId(Boolean.TRUE.toString());
+			result.setValue(null);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Error while checking if user name is valid: " + userName, e);
+		}
+		
+		return result;
 	}
 }
