@@ -32,7 +32,7 @@ public class GroupUsersViewer extends GroupViewer {
 	private boolean showJob = false;
 	private boolean showWorkplace = false;
 	private boolean showStatus = true;
-	private boolean addReflection = true;
+	private boolean addReflection = false;
 	private boolean showUserInfoOne = false;
 	private boolean showUserInfoTwo = false;
 	private boolean showUserInfoThree = false;
