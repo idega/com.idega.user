@@ -11,13 +11,19 @@ package com.idega.user.block.search.presentation;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
+import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.business.IBOLookup;
+import com.idega.core.contact.data.Email;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.StyledButton;
+import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.block.search.business.SearchEngine;
+import com.idega.user.data.User;
 import com.idega.user.presentation.BasicUserOverview;
+import com.idega.user.presentation.BasicUserOverviewEmailSenderWindow;
 import com.idega.user.presentation.StyledBasicUserOverViewToolbar;
 
 public class SearchResultsWindow extends BasicUserOverview {
@@ -99,6 +105,30 @@ public class SearchResultsWindow extends BasicUserOverview {
 		}
 
 		return toolbar;
+	}
+
+	protected void addEmailButton(EntityBrowser entityBrowser, IWContext iwc) {
+		//add emailing option
+		if (this.hasEditPermissionForRealGroup) {
+			SubmitButton emailButton = new SubmitButton(this.iwrb.getLocalizedString("Email selection", "Email selection"), BasicUserOverview.EMAIL_USERS_KEY, BasicUserOverview.EMAIL_USERS_KEY);
+			StyledButton styledEmailButton = new StyledButton(emailButton);
+			entityBrowser.addPresentationObjectToBottom(styledEmailButton);
+			User currentUser = iwc.getCurrentUser();
+			String fromAddress = null;
+			Collection emails = currentUser.getEmails();
+			if (emails != null && !emails.isEmpty()) {
+				Email email = (Email) emails.iterator().next();
+				if (email != null && email.getEmailAddress() != "") {
+					fromAddress = currentUser.getName() + " <" + email.getEmailAddress() + ">";
+				}
+			}
+			if (fromAddress == null) {
+				fromAddress = currentUser.getName() + " <>";
+			}
+			iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_MAIL_SERVER, iwc.getApplicationSettings().getProperty(PROP_SYSTEM_SMTP_MAILSERVER));
+			iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_FROM_ADDRESS, fromAddress);
+			iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_SUBJECT, this.iwrb.getLocalizedString("to_search_result", "To search result"));
+		}
 	}
 
 }

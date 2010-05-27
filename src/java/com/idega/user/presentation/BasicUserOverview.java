@@ -110,7 +110,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	private String topTableStyle = "topTable";
 	private String middleTableStyle = "middleTable";
 	private boolean hasViewPermissionForRealGroup = false;
-	private boolean hasEditPermissionForRealGroup = false;
+	protected boolean hasEditPermissionForRealGroup = false;
 	private boolean hasDeletePermissionForRealGroup = false;
 	private boolean hasOwnerPermissionForRealGroup = false;
 	private boolean hasPermitPermissionForRealGroup = false;
@@ -245,7 +245,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
 	}
 
-	private void addEmailButton(EntityBrowser entityBrowser, IWContext iwc) {
+	protected void addEmailButton(EntityBrowser entityBrowser, IWContext iwc) {
 		//add emailing option
 		if (this.hasEditPermissionForRealGroup && this.selectedGroup != null) {
 			SubmitButton emailButton = new SubmitButton(this.iwrb.getLocalizedString("Email selection", "Email selection"), BasicUserOverview.EMAIL_USERS_KEY, BasicUserOverview.EMAIL_USERS_KEY);

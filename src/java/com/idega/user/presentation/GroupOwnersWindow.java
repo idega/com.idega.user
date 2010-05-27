@@ -48,7 +48,7 @@ import com.idega.util.ListUtil;
 public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWindow {//implements StatefullPresentation{
 
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-	private static final String PARAM_SELECTED_GROUP_ID = SelectGroupEvent.PRM_GROUP_ID; //todo remove when using event system
+	public static final String PARAM_SELECTED_GROUP_ID = SelectGroupEvent.PRM_GROUP_ID; //todo remove when using event system
 	private static final String PARAM_SAVING = "gpw_save";
 	private static final String PARAM_USER_CHOOSER_USER_ID = "us_ch_us_id";
 	private static final String RECURSE_PERMISSIONS_TO_CHILDREN_KEY = "gpw_recurse_ch_of_gr";
@@ -117,16 +117,12 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 		this.iwrb = this.getResourceBundle(iwc);
 		addTitle(this.iwrb.getLocalizedString("gpow.group_owners_window", "Group Owners Window"), TITLE_STYLECLASS);
 
-
-
 		parseAction(iwc);
 
 		if (this.saveChanges) {
-
 			AccessController access = iwc.getAccessController();
 
 			try {
-
 				//delete owners
 				List deleteOwnersIds = null;
 				if (iwc.isParameterSet(DELETE_PERMISSIONS_KEY)) {
@@ -170,6 +166,8 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 								}
 							}
 							else {
+								
+								
 								//add owner recursively
 								Group parent = this.selectedGroup;
 								Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(parent);

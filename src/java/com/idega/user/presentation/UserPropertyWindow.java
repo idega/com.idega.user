@@ -49,12 +49,6 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		setTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"));
 	}
 
-	// public UserBusiness getUserBusiness(IWApplicationContext iwac) throws
-	// RemoteException {
-	// return (UserBusiness)
-	// com.idega.business.IBOLookup.getServiceInstance(iwac,
-	// UserBusiness.class);
-	// }
 	/**
 	 * @see com.idega.presentation.TabbedPropertyWindow#disposeOfPanel(com.idega.presentation.IWContext)
 	 */

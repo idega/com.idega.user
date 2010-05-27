@@ -34,10 +34,10 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 	private static final String HELP_TEXT_KEY = "send_email_from_basic_user_overview";
 	private static final String linkStyleUnderline = "styledLinkUnderline";
 	
-	protected static final String PARAM_MAIL_SERVER = "mail_server";
-	protected static final String PARAM_FROM_ADDRESS = "from_address";
+	public static final String PARAM_MAIL_SERVER = "mail_server";
+	public static final String PARAM_FROM_ADDRESS = "from_address";
 	protected static final String PARAM_TO_ADDRESS = "to_address";
-	protected static final String PARAM_SUBJECT = "subject";
+	public static final String PARAM_SUBJECT = "subject";
 	protected static final String PARAM_BODY = "body";
 	private static final String PARAM_SEND = "send_mail";
 	
@@ -105,7 +105,7 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 				this.sendingResultsMessageText.setBold(false);
 			}
 			else {
-				com.idega.util.SendMail.send(fromAddress,toAddress,"","",mailServer,subject,body);
+				com.idega.util.SendMail.send(fromAddress,fromAddress,"",toAddress,mailServer,subject,body);
 				this.sendingResultsText = new Text(iwrb.getLocalizedString("successful_sending_mail","Sending mail was successful"));
 			}
 		} catch (Exception e) {
@@ -162,7 +162,8 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		this.fromAddressField.setContent((String)iwc.getSessionAttribute(PARAM_FROM_ADDRESS));
 		this.toAddressField.setContent((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS));
 		this.subjectField.setContent((String)iwc.getSessionAttribute(PARAM_SUBJECT));
-		this.mailToLink.setRecipients((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS));
+		this.mailToLink.setRecipients((String)iwc.getSessionAttribute(PARAM_FROM_ADDRESS));
+		this.mailToLink.setBCC((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS));
 
 		if (iwc.getUserAgent() != null && iwc.getUserAgent().indexOf("Windows") != -1) {
 			// Encoding HAX for encoding the 
@@ -181,7 +182,8 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		} else {
 			this.mailToLink.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
 		}
-		this.mailToLink2.setRecipients(((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS)).replace(';', ','));
+		this.mailToLink2.setRecipients((String)iwc.getSessionAttribute(PARAM_FROM_ADDRESS));
+		this.mailToLink2.setBCC(((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS)).replace(';', ','));
 		this.mailToLink2.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
 	}
 	
