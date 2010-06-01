@@ -17,6 +17,7 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.faces.component.UIComponent;
+
 import org.apache.webdav.lib.WebdavResource;
 import org.jdom.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -540,11 +541,13 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		return info;
 	}
 	
-	public String createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
+	public AdvancedProperty createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
 			boolean allFieldsEditable, boolean sendEmailWithLoginInfo) {
 		if (userInfo == null) {
 			return null;
 		}
+		
+		AdvancedProperty result = new AdvancedProperty(userInfo.getUserId() == null ? null : String.valueOf(userInfo.getUserId()));
 		
 		String name = userInfo.getName();
 		String login = userInfo.getLogin();
@@ -553,7 +556,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		
 		if (StringUtil.isEmpty(name) || StringUtil.isEmpty(login) || (!userInfo.isJuridicalPerson() && StringUtil.isEmpty(password)) || primaryGroupId == null ||
 				childGroups == null) {
-			return null;
+			return result;
 		}
 		if (StringUtil.isEmpty(password)) {
 			password = LoginDBHandler.getGeneratedPasswordForUser();
@@ -562,7 +565,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
-			return null;
+			return result;
 		}
 		
 		IWSlideService slideService = null;
@@ -572,27 +575,26 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			logger.log(Level.SEVERE, "Error getting IWSlideService", e);
 		}
 		if (slideService == null) {
-			return null;
+			return result;
 		}
 		
 		String phoneNumber = userInfo.getPhone();
 		String email = userInfo.getEmail();
 		
 		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
-		String sucessText = iwrb.getLocalizedString("success_saving_user", "Your changes were successfully saved.");
-		String errorText = iwrb.getLocalizedString("error_saving_user", "Error occurred while saving your changes.");
+		result.setValue(iwrb.getLocalizedString("error_saving_user", "Error occurred while saving your changes."));
 		
 		if (login.equals(CoreConstants.EMPTY)) {
-			return errorText;
+			return result;
 		}
 		
 		UserBusiness userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
-			return errorText;
+			return result;
 		}
 		GroupBusiness groupBusiness = getGroupBusiness();
 		if (groupBusiness == null) {
-			return errorText;
+			return result;
 		}
 		
 		User user = null;
@@ -622,9 +624,11 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 				e.printStackTrace();
 			}
 			if (user == null) {
-				return errorText;
+				return result;
 			}
 		}
+		
+		result.setId(user.getId());
 		
 		removeUserFromOldGroups(iwc, deselectedGroups, user);
 		
@@ -644,7 +648,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 					userBusiness.updateUserPhone(user, PhoneTypeBMPBean.HOME_PHONE_ID, phoneNumber);
 				} catch (Exception e) {
 					e.printStackTrace();
-					return errorText;
+					return result;
 				}
 			}
 		}
@@ -663,7 +667,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 				e.printStackTrace();
 			}
 			if (mail == null) {
-				return errorText;
+				return result;
 			}
 		}
 		
@@ -715,7 +719,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 				e.printStackTrace();
 			}
 			if (userAddress == null) {
-				return errorText;
+				return result;
 			}
 		}
 		
@@ -733,7 +737,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 				e.printStackTrace();
 			}
 			if (loginTable == null) {
-				return errorText;
+				return result;
 			}
 			loginTable.store();
 			newLogin = true;
@@ -750,13 +754,13 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 					LoginDBHandler.changePassword(Integer.valueOf(user.getId()), password);
 				} catch (Exception e) {
 					e.printStackTrace();
-					return errorText;
+					return result;
 				}
 			}
 		}
 		LoginInfo loginInfo = LoginDBHandler.getLoginInfo(loginTable);
 		if (loginInfo == null) {
-			return errorText;
+			return result;
 		}
 		if (userInfo.getChangePasswordNextTime() != null) {
 			loginInfo.setChangeNextTime(userInfo.getChangePasswordNextTime());
@@ -803,7 +807,8 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			sendEmail(userInfo.getEmail(), null, null, subject, text.toString());
 		}
 		
-		return sucessText;
+		result.setValue(iwrb.getLocalizedString("success_saving_user", "Your changes were successfully saved."));
+		return result;
 	}
 	
 	private boolean sendEmail(String emailTo, String emailCc, String emailBcc, String subject, String text) {

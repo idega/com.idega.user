@@ -480,13 +480,17 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 		return false;
 	}
 	
-	var loginInputId = ids[2];
-	var userName = document.getElementById(loginInputId).value;
-	UserApplicationEngine.isValidUserName(userName, {
-		callback: function(userNameCheckResult) {
-			isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages, allFieldsEditable, userId, sendEmailWithLoginInfo, juridicalPerson);
-		}
-	});
+	if (USER_ID == null) {
+		var loginInputId = ids[2];
+		var userName = document.getElementById(loginInputId).value;
+		UserApplicationEngine.isValidUserName(userName, {
+			callback: function(userNameCheckResult) {
+				isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages, allFieldsEditable, userId, sendEmailWithLoginInfo, juridicalPerson);
+			}
+		});
+	} else {
+		isValidUserNameCallback({id: 'true', value: null}, ids, childGroups, messages, allFieldsEditable, userId, sendEmailWithLoginInfo, juridicalPerson);
+	}
 }
 
 function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages, allFieldsEditable, userId, sendEmailWithLoginInfo, juridicalPerson) {
@@ -595,7 +599,11 @@ function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages
 		callback: function(result) {
 			closeAllLoadingMessages();
 			if (result != null) {
-				showHumanizedMessage(result, null);
+				USER_ID = result.id;
+				
+				if (result.value != null) {
+					showHumanizedMessage(result.value, null);
+				}
 			}
 		}
 	});

@@ -38,8 +38,8 @@ public interface UserApplicationEngine {
 	
 	public UserDataBean getUserByPersonalId(String personalId);
 	
-	public String createUser(UserDataBean userData, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups, boolean allFieldsEditable,
-			boolean sendEmailWithLoginInfo);
+	public AdvancedProperty createUser(UserDataBean userData, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
+			boolean allFieldsEditable, boolean sendEmailWithLoginInfo);
 	
 	public String isValidEmail(String email);
 	
