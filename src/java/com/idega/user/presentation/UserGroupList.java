@@ -267,7 +267,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
 	private Collection getFilteredGroups(IWContext iwc, Collection groups, User user, Collection topGroupNodes) {
 		boolean isAdmin = iwc.isSuperAdmin();
-		boolean isSameUser = iwc.getUser().getPrimaryKey().equals(user.getPrimaryKey());
+		boolean isSameUser = iwc.getCurrentUser().getPrimaryKey().equals(user.getPrimaryKey());
 		if (isAdmin || isSameUser) {
 			return groups;
 		}
