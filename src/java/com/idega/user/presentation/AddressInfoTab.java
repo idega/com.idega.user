@@ -299,7 +299,7 @@ public class AddressInfoTab extends UserTab {
 		
 		this.user = iwc.getCurrentUser();
 		try {
-			this.adminUser = iwc.getAccessController().getAdministratorUser();
+			this.adminUser = iwc.getAccessController().getAdministratorUserLegacy();
 			
 		}
 		catch (Exception ex){

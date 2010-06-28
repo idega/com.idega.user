@@ -25,7 +25,7 @@ public class UserAppDWREventListener implements DWREventListener{
 	             IWStateMachine stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(IWContext.getInstance(), IWStateMachine.class);
 	             BasicUserOverviewPS business = (BasicUserOverviewPS) stateMachine.getStateFor("basicuseroverview", BasicUserOverviewPS.class);
 	             UserBusiness buz = getUserBusiness(IWMainApplication.getDefaultIWApplicationContext());
-	             business.setSelectedGroup(buz.getGroupBusiness().getGroupByUniqueId((String)event.getEventData().get("selectedGroup")));
+	             business.setSelectedGroup(buz.getGroupBusiness().getGroupByUniqueId(event.getEventData().get("selectedGroup")));
 	             
 	             //piggybackevent
 //	             DWREvent gimmiEvent = new DWREvent(this.getClass().toString(),"gimmiAwesome",null);

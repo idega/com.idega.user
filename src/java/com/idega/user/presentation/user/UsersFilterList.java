@@ -129,7 +129,7 @@ public class UsersFilterList extends Block {
 		
 		AccessController accessController = iwc.getAccessController();
 		for (String roleKey: roles) {
-			Collection<Group> groupsByRole = accessController.getAllGroupsForRoleKey(roleKey, iwc);
+			Collection<Group> groupsByRole = accessController.getAllGroupsForRoleKeyLegacy(roleKey, iwc);
 			if (ListUtil.isEmpty(groupsByRole)) {
 				continue;
 			}

@@ -1107,7 +1107,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     com.idega.core.user.data.User getSuperAdmin(IWContext iwc) {
         if (this.administratorUser == null) {
             try {
-                this.administratorUser = iwc.getAccessController().getAdministratorUser();
+                this.administratorUser = iwc.getAccessController().getAdministratorUserLegacy();
             }
             catch (Exception ex) {
                 System.err.println("[BasicUserOverview] access controller failed " + ex.getMessage());

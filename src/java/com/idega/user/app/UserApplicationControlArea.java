@@ -222,46 +222,19 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	 * @return
 	 */
 	public Table displayTable(IWContext iwc) {
-		Table table = new Table(1, 2);
-		table.setCellpadding(7);
-		table.setCellpaddingTop(1, 2, 0);
+		Table table = new Table(1, 1);
+		table.setCellpadding(0);
+		table.setCellspacing(0);
+		table.setStyleClass("userAppMenuArea");
 		table.setWidth(Table.HUNDRED_PERCENT);
 		table.setHeight(Table.HUNDRED_PERCENT);
 		table.setHeight(1, Table.HUNDRED_PERCENT);
-		table.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_CENTER);
-		
-		Table borderTable = new Table(1, 1);
-		borderTable.setCellpadding(0);
-		borderTable.setCellspacing(0);
-		borderTable.setWidth(Table.HUNDRED_PERCENT);
-		borderTable.setHeight(Table.HUNDRED_PERCENT);
-		borderTable.setCellBorder(1, 1, 1, "#cccccc", "solid");
-		borderTable.setColor(1, 1, "#FFFFFF");
 		
 		Layer layer = new Layer(Layer.DIV);
-		layer.setWidth(208);
-		layer.setHeight("100%");
-		//layer.setStyleAttribute("border", "1px #cccccc solid");
-		//layer.setStyleAttribute("background-color", "#ffffff");
-		//layer.setStyleClass("main");
-		//layer.setPadding(0);
-		//layer.add(groupTree);
-		layer.setOverflow("auto");
-		borderTable.add(layer);
+		layer.setStyleClass("userAppMenu");
+		layer.add(this.groupTree);
+		table.add(layer);
 		
-		Table treeTable = new Table(1, 1);
-		treeTable.setCellpadding(4);
-		treeTable.add(this.groupTree, 1, 1);
-		treeTable.setWidth(Table.HUNDRED_PERCENT);
-		treeTable.setHeight(Table.HUNDRED_PERCENT);
-		treeTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
-		layer.add(treeTable);
-		
-		table.add(borderTable, 1, 1);
-		
-		Image image = getBundle(iwc).getImage("banner.gif");
-		table.add(image, 1, 2);
-
 		return table;
 	}
 

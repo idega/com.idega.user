@@ -254,7 +254,7 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 
 					if (this.administrator == null) {
 						try {
-							this.administrator = iwc.getAccessController().getAdministratorUser();
+							this.administrator = iwc.getAccessController().getAdministratorUserLegacy();
 						}
 						catch (Exception ex) {
 							System.err.println("[BasicUserOverview] access controller failed " + ex.getMessage());
