@@ -551,30 +551,27 @@ function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages
 	}
 	
 	//	Name
-	var nameInput = document.getElementById(nameValueInputId);
-	if (!checkIfValidValue(nameInput)) {
+	var userName = getElementValue(nameValueInputId);
+	if (userName == null) {
 		showHumanizedMessage(messages[2], nameValueInputId);
 		return false;
 	}
-	var userName = nameInput.value;
 	
 	//	Login
-	var loginInput = document.getElementById(loginInputId);
-	if (!checkIfValidValue(loginInput)) {
+	var login = getElementValue(loginInputId);
+	if (login == null) {
 		showHumanizedMessage(messages[3], loginInputId);
 		return false;
 	}
-	var login = loginInput.value;
 	
-	var personalId = document.getElementById(personalIdInputId).value;
+	var personalId = getElementValue(personalIdInputId);
 	
 	//	Password
-	var passwordInput = document.getElementById(passwordInputId);
-	if (!checkIfValidValue(passwordInput) && !juridicalPerson) {
+	var password = getElementValue(passwordInputId);
+	if (password == null && !juridicalPerson) {
 		showHumanizedMessage(messages[1], passwordInputId);
 		return false;
 	}
-	var password = passwordInput.value;
 	
 	var email = document.getElementById(emailInputId).value;
 	var primaryGroupId = getParentGroupIdInSUA(parentGroupChooserId, ids[16]);
@@ -611,21 +608,21 @@ function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages
 
 function showHumanizedMessage(message, inputId) {
 	if (inputId != null) {
-		document.getElementById(inputId).focus();
+		var element = jQuery('#' + inputId);
+		if (element != null) {
+			var disabledAttr = element.attr('disabled');
+			if (disabledAttr == null || disabledAttr == false || disabledAttr == 'false') {
+				element.focus();
+			}
+		}
 	}
 	humanMsg.displayMsg(message);
 }
 
-function checkIfValidValue(input) {
-	if (input == null) {
-		return false;
-	}
-	
-	if (input.value == null || input.value == '') {
-		return false;
-	}
-	
-	return true;
+function getElementValue(id) {
+	var element = jQuery('#' + id);
+	var value = element == null ? null : element.attr('value');
+	return value == '' ? null : value;
 }
 
 function UserDataBean(name, login, password, personalId, email, errorMessage, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox,
