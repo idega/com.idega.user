@@ -153,8 +153,5 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
 		catch (java.rmi.RemoteException rme) {
 			throw new RuntimeException(rme.getMessage());
 		}
-	}      
-	
-	
-	
+	}      	
 }

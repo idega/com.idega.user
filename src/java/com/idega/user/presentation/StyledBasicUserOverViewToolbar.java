@@ -238,7 +238,13 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 
                 owners.add(link, 1, 1);
                 link.setWindowToOpen(MoveGroupWindow.class);
-        		link.addParameter(MoveGroupWindow.PARAM_SELECTED_GROUP_ID, this.selectedGroup.getNodeID());
+                if (this.selectedGroup != null) {
+					link.addParameter(MoveGroupWindow.GROUP_ID_KEY, ((Integer) this.selectedGroup.getPrimaryKey()).toString());
+				}
+                if (this.parentGroup != null) {
+					link.addParameter(MoveGroupWindow.OLD_PARENT_GROUP_ID_KEY, ((Integer) this.parentGroup.getPrimaryKey()).toString());
+				}
+        		//link.addParameter(MoveGroupWindow.PARAM_SELECTED_GROUP_ID, this.selectedGroup.getNodeID());
                 
                 toolbar1.add(owners, toolbarXpos, 1);
                 toolbar1.setAlignment(toolbarXpos++,1,"center");

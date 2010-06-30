@@ -5,34 +5,39 @@ import java.rmi.RemoteException;
 import javax.ejb.FinderException;
 
 import com.idega.business.IBOLookup;
+import com.idega.event.IWPresentationState;
+import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
-import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.data.Group;
+import com.idega.user.event.MoveGroupEvent;
 import com.idega.user.event.SelectGroupEvent;
 
-public class MoveGroupWindow extends StyledIWAdminWindow { // GroupPermissionWindow
-															// {//implements
-															// StatefullPresentation{
+public class MoveGroupWindow extends StyledIWAdminWindow implements
+		StatefullPresentation {
 
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-	public static final String PARAM_SELECTED_GROUP_ID = SelectGroupEvent.PRM_GROUP_ID; // todo
-																						// remove
-																						// when
-																						// using
-																						// event
-																						// system
+	public static final String PARAM_SELECTED_GROUP_ID = SelectGroupEvent.PRM_GROUP_ID;
+
+	private IWPresentationState presentationState = null;
+
+	public static final String GROUP_ID_KEY = "group_id_key";
+	public static final String OLD_PARENT_GROUP_ID_KEY = "old_parent_group_id";
+	public static final String NEW_PARENT_GROUP_ID_KEY = "new_parent_group_id";
+
 	private static final String PARAM_SAVING = "gpw_save";
 	private static final String SELECTED_TARGET_GROUP_KEY = "grp_ch_grp_id";
 
@@ -56,13 +61,10 @@ public class MoveGroupWindow extends StyledIWAdminWindow { // GroupPermissionWin
 	 * Constructor for GroupOwnersWindow.
 	 */
 	public MoveGroupWindow() {
-		super();
-
 		setWidth(this.width);
 		setHeight(this.height);
 		setScrollbar(true);
 		setResizable(true);
-
 	}
 
 	/**
@@ -96,6 +98,20 @@ public class MoveGroupWindow extends StyledIWAdminWindow { // GroupPermissionWin
 	}
 
 	public void main(IWContext iwc) throws Exception {
+		getPresentationState(iwc);
+		// get groupid
+		Integer groupId = new Integer(-1);
+		if (iwc.isParameterSet(GROUP_ID_KEY)) {
+			String groupIdString = iwc.getParameter(GROUP_ID_KEY);
+			groupId = new Integer(groupIdString);
+		}
+
+		Integer oldParentGroupId = new Integer(-1);
+		if (iwc.isParameterSet(OLD_PARENT_GROUP_ID_KEY)) {
+			String groupIdString = iwc.getParameter(OLD_PARENT_GROUP_ID_KEY);
+			oldParentGroupId = new Integer(groupIdString);
+		}
+
 		this.iwrb = this.getResourceBundle(iwc);
 		addTitle(this.iwrb.getLocalizedString("gmov.move_group_window",
 				"Move Group Window"), TITLE_STYLECLASS);
@@ -120,28 +136,34 @@ public class MoveGroupWindow extends StyledIWAdminWindow { // GroupPermissionWin
 
 			Group parent = (Group) this.selectedGroup.getParentGroups()
 					.iterator().next();
-			/*if (this.selectedGroup.isAlias()) {
-				parent = (Group) this.selectedGroup.getAlias()
-						.getParentGroups().iterator().next();
-			}*/
+			/*
+			 * if (this.selectedGroup.isAlias()) { parent = (Group)
+			 * this.selectedGroup.getAlias()
+			 * .getParentGroups().iterator().next(); }
+			 */
 
 			parent.removeGroup(this.selectedGroup, iwc.getCurrentUser());
 			target.addGroup(this.selectedGroup);
 
-			//TODO fix this what is it doing? some caching stuff?
-			iwc.getApplicationContext().removeApplicationAttribute("domain_group_tree");
-			iwc.getApplicationContext().removeApplicationAttribute("group_tree");
+			// TODO fix this what is it doing? some caching stuff?
+			iwc.getApplicationContext().removeApplicationAttribute(
+					"domain_group_tree");
+			iwc.getApplicationContext()
+					.removeApplicationAttribute("group_tree");
+
+			this.getParentPage().setParentToReload();
 		}
 
+		MoveGroupEvent moveEvent = new MoveGroupEvent();
+		moveEvent.setSource(this);
+		moveEvent.setOldParentGroupId(oldParentGroupId);
+		//moveEvent.setNewParentGroupId(primaryKey)
+		moveEvent.setGroupId(groupId);
+		
 		Form form = getMoveGroupForm();
-		form
-				.add(new HiddenInput(PARAM_SELECTED_GROUP_ID,
-						this.selectedGroupId));
-		form.add(new HiddenInput(PARAM_SAVING, "TRUE"));// cannot use this if we
-														// put in a navigator in
-														// the entitybrowser,
-														// change submit button
-														// to same value
+		form.addEventModel(moveEvent, iwc);
+		form.addParameter(MoveGroupEvent.OKAY_KEY,"w");
+		
 		add(form, iwc);
 
 	}
@@ -179,7 +201,7 @@ public class MoveGroupWindow extends StyledIWAdminWindow { // GroupPermissionWin
 				+ this.selectedGroup.getName(), true, false, false), 1, 1);
 
 		GroupChooser targetGroupChooser = new GroupChooser(
-				SELECTED_TARGET_GROUP_KEY);
+				MoveGroupEvent.NEW_PARENT_GROUP_ID);
 		targetGroupChooser
 				.setInputStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
 		if (this.selectedGroup != null) {
@@ -250,4 +272,29 @@ public class MoveGroupWindow extends StyledIWAdminWindow { // GroupPermissionWin
 	public String getName() {
 		return "Move group";
 	}
+
+	/**
+	 * @see com.idega.presentation.StatefullPresentation#getPresentationStateClass()
+	 */
+	public Class getPresentationStateClass() {
+		return DeleteGroupConfirmWindowPS.class;
+	}
+
+	/**
+	 * @see com.idega.presentation.StatefullPresentation#getPresentationState(com.idega.idegaweb.IWUserContext)
+	 */
+	public IWPresentationState getPresentationState(IWUserContext iwuc) {
+		if (this.presentationState == null) {
+			try {
+				IWStateMachine stateMachine = (IWStateMachine) IBOLookup
+						.getSessionInstance(iwuc, IWStateMachine.class);
+				this.presentationState = stateMachine.getStateFor(
+						getCompoundId(), DeleteGroupConfirmWindowPS.class);
+			} catch (RemoteException re) {
+				throw new RuntimeException(re.getMessage());
+			}
+		}
+		return this.presentationState;
+	}
+
 }
