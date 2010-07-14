@@ -152,7 +152,8 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 			    	
 			    	userIds = mainIwc.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
 			        // email users (if something has been chosen)
-			        String toAddresses = "";
+			        StringBuffer toAddresses = new StringBuffer("");
+			        boolean first = true;
 		        	for (int i=0; i < userIds.length; i++) {
 		        		String userID = userIds[i];
 		        		try {
@@ -160,17 +161,21 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 		        			Collection emails = user.getEmails();
 		        			if (emails != null && !emails.isEmpty()) {
 		        				Email email = (Email) emails.iterator().next();
-		        				if (!toAddresses.equals("") && (email.getEmailAddress() == null && !"".equals(email.getEmailAddress()))) {
-				        			toAddresses = toAddresses + ";";
-				        		}
-		        				toAddresses = toAddresses + email.getEmailAddress();
+		        				if (email.getEmailAddress() != null && !"".equals(email.getEmailAddress())) {
+		        					if (!first) {
+					        			toAddresses.append(";");		        						
+		        					} else {
+		        						first = false;
+		        					}
+			        				toAddresses.append(email.getEmailAddress());
+		        				}
 		        			}
 		        		}
 		        		catch (Exception ex) {
 		        			ex.printStackTrace();
 		        		}
 		        	}
-		        	mainIwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_TO_ADDRESS, toAddresses);
+		        	mainIwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_TO_ADDRESS, toAddresses.toString());
 		        	mainIwc.setSessionAttribute(BasicUserOverview.OPEN_SEND_MAIL_WINDOW, "true");
 		        	
 			    } else {
