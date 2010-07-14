@@ -43,7 +43,7 @@ import com.idega.user.event.SelectGroupEvent;
  * Company: idega Software
  * </p>
  * 
- * @author <a href="gummi@idega.is">Gu�mundur �g�st S�mundsson </a>
+ * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson </a>
  * @version 1.0
  */
 
@@ -159,10 +159,11 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 		        			User user = getGroupBusiness(mainIwc).getUserByID(Integer.parseInt(userID));
 		        			Collection emails = user.getEmails();
 		        			if (emails != null && !emails.isEmpty()) {
-		        				if (!toAddresses.equals("")) {
+		        				Email email = (Email) emails.iterator().next();
+		        				if (!toAddresses.equals("") && (email.getEmailAddress() == null && !"".equals(email.getEmailAddress()))) {
 				        			toAddresses = toAddresses + ";";
 				        		}
-		        				toAddresses = toAddresses + ((Email) emails.iterator().next()).getEmailAddress();
+		        				toAddresses = toAddresses + email.getEmailAddress();
 		        			}
 		        		}
 		        		catch (Exception ex) {
