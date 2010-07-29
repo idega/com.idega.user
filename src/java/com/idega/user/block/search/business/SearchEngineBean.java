@@ -13,14 +13,16 @@ import com.idega.util.text.TextSoap;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
-	public SearchEngineBean() {
-	}
+
+	private static final long serialVersionUID = -7463985154162610031L;
+
+	public SearchEngineBean() {}
 	
-	public Collection getResult(UserSearchEvent e) throws RemoteException {
+	public Collection<User> getResult(UserSearchEvent e) throws RemoteException {
 		switch (e.getSearchType()) {
 			case UserSearchEvent.SEARCHTYPE_SIMPLE :
 				return getSimpleSearchResults(e.getSearchString());
@@ -29,18 +31,17 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 			default :
 				throw new UnsupportedOperationException("SearchType not known");
 		}
-		
 	}
 	
 	/**
 	 * @param usersearchevent
 	 * @return the results of the search
 	 */
-	private Collection getAdvancedSearchResults(UserSearchEvent e) {
+	private Collection<User> getAdvancedSearchResults(UserSearchEvent e) {
 		try {
 			UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
 						
-			Collection entities = userHome.findUsersByConditions(e.getFirstName(),e.getMiddleName(),e.getLastName(),e.getPersonalId()
+			Collection<User> entities = userHome.findUsersByConditions(e.getFirstName(),e.getMiddleName(),e.getLastName(),e.getPersonalId()
 				,e.getAddress(),null,e.getGenderId(),e.getStatusId()
 				,e.getAgeFloor(),e.getAgeCeil(),e.getGroups(),null,true, false);
 			
@@ -53,22 +54,22 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 		return null;
 	}
 
-	public Class getResultType(UserSearchEvent e) {
+	public Class<User> getResultType(UserSearchEvent e) {
 		return User.class;
 	}
 	
-	public Collection getSimpleSearchResults(String searchString) throws RemoteException {
+	public Collection<User> getSimpleSearchResults(String searchString) throws RemoteException {
 		return doSimpleSearch(searchString);
 	}
 	
-	private Collection doSimpleSearch(String searchString) {
+	private Collection<User> doSimpleSearch(String searchString) {
 		if (searchString == null || searchString.length() <2) {
 			return null;
 		}
 		try {
 			searchString = TextSoap.removeWhiteSpaceFromBeginningAndEndOfString(searchString);
 			UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
-			Collection entities = userHome.findUsersBySearchCondition(searchString, false);
+			Collection<User> entities = userHome.findUsersBySearchCondition(searchString, false);
 			return entities;
 		}
 		// Remote and FinderException
@@ -76,13 +77,5 @@ public class SearchEngineBean extends IBOServiceBean implements SearchEngine{
 			ex.printStackTrace();
 		}
 		return null;
-	}
-
-	
-	
-	
-	
-	
-	
-	
+	}	
 }

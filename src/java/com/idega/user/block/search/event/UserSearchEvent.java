@@ -13,9 +13,9 @@ import com.idega.event.*;
  * @version 1.1
  */
 
-public class UserSearchEvent extends IWPresentationEvent
-{
+public class UserSearchEvent extends IWPresentationEvent {
 
+	private static final long serialVersionUID = 4045345287265772753L;
 
 	public static final String SEARCH_FIELD_SEARCH_TYPE = "usr_search_type";
 	
@@ -34,8 +34,6 @@ public class UserSearchEvent extends IWPresentationEvent
 	public static final int SEARCHTYPE_SIMPLE = 0;
 	public static final int SEARCHTYPE_ADVANCED = 1;
 	
-	
-
 	private String searchString = null;
 	private int searchType = 0;
 	private String[] groups = null;
@@ -49,8 +47,7 @@ public class UserSearchEvent extends IWPresentationEvent
 	private String middleName = null;
 	private String lastName = null;
 
-  public UserSearchEvent(){
-  }
+	public UserSearchEvent() {}
 
 	public String getSearchString(){
 	    return this.searchString;
@@ -60,59 +57,45 @@ public class UserSearchEvent extends IWPresentationEvent
 	    return this.searchType;
 	}
 
-
-    public boolean initializeEvent(IWContext iwc){
+    @Override
+	public boolean initializeEvent(IWContext iwc){
+    	String type = iwc.getParameter(SEARCH_FIELD_SEARCH_TYPE);
+		if (type == null){
+		    type = iwc.getParameter(SEARCH_FIELD_SEARCH_TYPE+".x");
+		}
 	
-			String type = iwc.getParameter(SEARCH_FIELD_SEARCH_TYPE);
-			if(type == null){
-			    type = iwc.getParameter(SEARCH_FIELD_SEARCH_TYPE+".x");
-			}
-	
-			try
-			{
-				this.searchType = Integer.parseInt(type);
+		try {
+			this.searchType = Integer.parseInt(type);
+			if (this.searchType == UserSearchEvent.SEARCHTYPE_SIMPLE){// simple search
+				this.searchString = iwc.getParameter(SEARCH_FIELD_SIMPLE_SEARCH_STRING);
+				return iwc.isParameterSet(SEARCH_FIELD_SIMPLE_SEARCH_STRING);
+			} else if (this.searchType == UserSearchEvent.SEARCHTYPE_ADVANCED){// advanced search
+				this.firstName = iwc.getParameter(SEARCH_FIELD_FIRST_NAME);
+				this.middleName = iwc.getParameter(SEARCH_FIELD_MIDDLE_NAME);
+				this.lastName = iwc.getParameter(SEARCH_FIELD_LAST_NAME);
+				this.groups = iwc.getParameterValues(UserSearchEvent.SEARCH_FIELD_GROUPS);
+				this.genderId = iwc.isParameterSet(SEARCH_FIELD_GENDER_ID) ? Integer.parseInt(iwc.getParameter(SEARCH_FIELD_GENDER_ID)) : 0;
+				this.personalId = iwc.getParameter(SEARCH_FIELD_PERSONAL_ID);
+				this.address = iwc.getParameter(SEARCH_FIELD_ADDRESS);
 				
-				if(this.searchType == UserSearchEvent.SEARCHTYPE_SIMPLE){// simple search
-					this.searchString = iwc.getParameter(SEARCH_FIELD_SIMPLE_SEARCH_STRING);
-					return iwc.isParameterSet(SEARCH_FIELD_SIMPLE_SEARCH_STRING);
-					
+				if (iwc.isParameterSet(SEARCH_FIELD_AGE_FLOOR)) {
+					this.ageFloor = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_AGE_FLOOR));
 				}
-				else if( this.searchType == UserSearchEvent.SEARCHTYPE_ADVANCED ){// advanced search
-					
-					this.firstName = iwc.getParameter(SEARCH_FIELD_FIRST_NAME);
-					this.middleName = iwc.getParameter(SEARCH_FIELD_MIDDLE_NAME);
-					this.lastName = iwc.getParameter(SEARCH_FIELD_LAST_NAME);
-					this.groups = iwc.getParameterValues(UserSearchEvent.SEARCH_FIELD_GROUPS);
-					this.genderId = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_GENDER_ID));
-					this.personalId = iwc.getParameter(SEARCH_FIELD_PERSONAL_ID);
-					this.address = iwc.getParameter(SEARCH_FIELD_ADDRESS);
-					
-					if( iwc.isParameterSet(SEARCH_FIELD_AGE_FLOOR)){
-						this.ageFloor = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_AGE_FLOOR));
-					}
-					if( iwc.isParameterSet(SEARCH_FIELD_AGE_CEILING)){
-						this.ageCeil = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_AGE_CEILING));
-					}	
-					if( iwc.isParameterSet(SEARCH_FIELD_STATUS_ID)){
-						this.statusId = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_STATUS_ID));
-					}
-					
+				if (iwc.isParameterSet(SEARCH_FIELD_AGE_CEILING)) {
+					this.ageCeil = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_AGE_CEILING));
+				}	
+				if (iwc.isParameterSet(SEARCH_FIELD_STATUS_ID)) {
+					this.statusId = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_STATUS_ID));
 				}
-				else {
-					return false;//NO TYPE
-				}
-				
-				
-				
+			} else {
+				return false;//NO TYPE
 			}
-			catch (NumberFormatException ex)
-			{
-				System.err.println("["+this.getClass()+"] :No searchType or error in advances search");
-				return false;
-			}
-
-
-			return true;
+		} catch (NumberFormatException ex) {
+			System.err.println("["+this.getClass()+"] :No searchType or error in advances search");
+			return false;
+		}
+		
+		return true;
     }
 	/**
 	 * @return

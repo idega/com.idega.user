@@ -1,11 +1,15 @@
 package com.idega.user.block.search.presentation;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.idega.block.web2.business.JQuery;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWStateMachine;
@@ -21,10 +25,10 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SelectionBox;
 import com.idega.presentation.ui.StyledButton;
-import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.app.ToolbarElement;
 import com.idega.user.app.UserApplicationMainArea;
@@ -36,6 +40,9 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.data.CachedGroup;
 import com.idega.user.data.Group;
 import com.idega.user.presentation.UserStatusDropdown;
+import com.idega.util.CoreConstants;
+import com.idega.util.PresentationUtil;
+import com.idega.util.expression.ELUtil;
 
 
 /**
@@ -55,10 +62,12 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 	private static final String HELP_TEXT_KEY = "search_window";
   
 	private UserSearchEvent searchEvent;
-  private String userApplicationMainAreaPSId = null; 
-  private String mainTableStyle = "main";
-
-
+	private String userApplicationMainAreaPSId = null;
+	private String mainTableStyle = "main";
+	
+	@Autowired
+	private JQuery jQuery;
+	
 	public SearchWindow() {
 		setWidth(500);
 		setHeight(370);
@@ -66,6 +75,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		setResizable(true);
 	}
 
+	@Override
 	public void initializeInMain(IWContext iwc) {    
 		this.userApplicationMainAreaPSId = iwc.getParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY);
 		
@@ -85,8 +95,15 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 	}
 	
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
-		//this.debugParameters(iwc);
+		ELUtil.getInstance().autowire(this);
+		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, Arrays.asList(
+				jQuery.getBundleURIToJQueryLib(),
+				getBundle(iwc).getVirtualPathWithFileNameString("javascript/UserApplication.js"),
+				CoreConstants.DWR_UTIL_SCRIPT
+		));
+		
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		this.searchEvent = new UserSearchEvent();
 		this.searchEvent.setSource(this);
@@ -235,11 +252,12 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 
 		//buttons
 		Help help = getHelp(HELP_TEXT_KEY);
-		StyledButton save = new StyledButton(new SubmitButton(iwrb.getLocalizedString("user.search.window.search", "Search")));
-   	StyledButton close = new StyledButton(new CloseButton(iwrb.getLocalizedString("user.search.window.close", "Close")));
+		GenericButton gSearch = new GenericButton(iwrb.getLocalizedString("user.search.window.search", "Search"));
+		gSearch.setOnClick("UserApplication.search(event, '" + form.getId() + "');");
+		StyledButton search = new StyledButton(gSearch);
+		StyledButton close = new StyledButton(new CloseButton(iwrb.getLocalizedString("user.search.window.close", "Close")));
     
 		HiddenInput type = new HiddenInput(UserSearchEvent.SEARCH_FIELD_SEARCH_TYPE, Integer.toString(UserSearchEvent.SEARCHTYPE_ADVANCED));
-		
 		
 		Table bottomTable = new Table();
 		bottomTable.setCellpadding(0);
@@ -253,7 +271,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		buttonTable.setCellpadding(0);
 		buttonTable.setCellspacing(0);
 		buttonTable.setWidth(2, "5");
-		buttonTable.add(save, 1, 1);
+		buttonTable.add(search, 1, 1);
 		buttonTable.add(type, 2, 1);
 		buttonTable.add(close, 3, 1);			
 		bottomTable.add(buttonTable,2,1);
@@ -270,6 +288,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		return bundle.getImage("create_group.gif", "Create group");
 	}
 	
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
@@ -280,7 +299,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		return rBundle.getLocalizedString("searchwindow.name", "Search");
 	}
 
-	public Class  getPresentationObjectClass(IWContext iwc) {
+	public Class<? extends SearchWindow> getPresentationObjectClass(IWContext iwc) {
 		return this.getClass();
 	}
 	
@@ -288,7 +307,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		return true;
 	}
 	
-	public Map  getParameterMap(IWContext iwc) {
+	public Map getParameterMap(IWContext iwc) {
 		return null;
 	}
 	

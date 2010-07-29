@@ -21,7 +21,10 @@ import com.idega.business.IBOHomeImpl;
  */
 public class SearchEngineHomeImpl extends IBOHomeImpl implements SearchEngineHome {
 
-	protected Class getBeanInterfaceClass() {
+	private static final long serialVersionUID = -8914544558936115979L;
+
+	@Override
+	protected Class<SearchEngine> getBeanInterfaceClass() {
 		return SearchEngine.class;
 	}
 

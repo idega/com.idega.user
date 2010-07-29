@@ -24,6 +24,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.presentation.Table;
 import com.idega.user.business.UserBusiness;
+import com.idega.util.PresentationUtil;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -39,7 +40,6 @@ public class UserApplication extends IWBrowser {
 
   private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
   
-  //userBusiness to access the stylesheet (which is a bundle property)
 	UserBusiness userBusiness = null;
   
 	/**
@@ -62,8 +62,7 @@ public class UserApplication extends IWBrowser {
     		//Not add the top for new versions
         this.addToTop(new Top());
         this.setSpanPixels(POS_TOP,0); 
-    }
-    else{
+    } else {
         this.addToTop(new Top());
         this.setSpanPixels(POS_TOP,50); 
     }
@@ -74,29 +73,21 @@ public class UserApplication extends IWBrowser {
     this.setSpanPixels(POS_EVENT,1);
 
     UserApplicationMenuArea menuArea = new UserApplicationMenuArea();
-		UserApplicationControlArea treeArea = new UserApplicationControlArea();
-		UserApplicationMainArea mainArea = new UserApplicationMainArea();
-		UserApplicationBottomArea bottomArea = new UserApplicationBottomArea();
+	UserApplicationControlArea treeArea = new UserApplicationControlArea();
+	UserApplicationMainArea mainArea = new UserApplicationMainArea();
+	UserApplicationBottomArea bottomArea = new UserApplicationBottomArea();
 		
-		this.addToMenu(menuArea);
+	this.addToMenu(menuArea);
     this.showMenuFrame(true);
     this.showEventFrame(true); //MUST BE TRUE!
-		this.addToLeftMain(treeArea);
+	this.addToLeftMain(treeArea);
     this.addToMain(mainArea);
     this.addToBottom(bottomArea);
     
-		menuArea.setUserApplicationMainAreaStateId(mainArea.getCompoundId());
+	menuArea.setUserApplicationMainAreaStateId(mainArea.getCompoundId());
     
-
-    //this.addToBottom(new Bottom());
-   // System.out.println("SERVLET URL : "+getIWApplicationContext().getApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));
-    //this.setEventURL(getIWApplicationContext().getIWMainApplication().getTranslatedURIWithContext(IWPresentationEvent.IW_EVENT_HANDLER_URL));
-		this.setEventURL(IWPresentationEvent.getEventHandlerFrameURL(IWContext.getInstance()));
+	this.setEventURL(IWPresentationEvent.getEventHandlerFrameURL(IWContext.getInstance()));
     
-//    this.setBorder(20);
-//    this.getMiddleFrameset().setBorder(10);
-//    this.getLeftMainFrame().setBorder(10);
-//    this.getMainFrame().setBorder(10);
     this.getTopFrame().setNoresize(true);
     this.getTopFrame().setScrolling(false);
     this.getMenuFrame().setScrolling(false);
@@ -110,32 +101,30 @@ public class UserApplication extends IWBrowser {
     this.getLeftMainFrame().setScrollingAuto();
   }
 
-  public String getBundleIdentifier(){
+  @Override
+public String getBundleIdentifier(){
     return IW_BUNDLE_IDENTIFIER;
   }
 
-  public void main(IWContext iwc) throws Exception {
-  		setTitle(getResourceBundle(iwc).getLocalizedString("user_application.title", "User Application"));
+  @Override
+public void main(IWContext iwc) throws Exception {
+  	setTitle(getResourceBundle(iwc).getLocalizedString("user_application.title", "User Application"));
 
-    Frame f = this.getFrame(this.getFrameName(POS_MAIN));
-
-    PresentationObject buo = f.getPresentationObject();
+    Frame mainFrame = this.getFrame(this.getFrameName(POS_MAIN));
+    PresentationObject buo = mainFrame.getPresentationObject();
     IWActionListener l = (IWActionListener)((StatefullPresentation)buo).getPresentationState(iwc);
 
     this.addActionListener(POS_LEFTMAIN,l);
     this.addActionListener(POS_MENU,l);
     this.addActionListener(POS_MAIN,l); 
 
-
-    Frame left = this.getFrame(this.getFrameName(POS_LEFTMAIN));
-
-    PresentationObject bgo = left.getPresentationObject();
+    Frame leftFrame = this.getFrame(this.getFrameName(POS_LEFTMAIN));
+    PresentationObject bgo = leftFrame.getPresentationObject();
     IWActionListener listener = (IWActionListener)((StatefullPresentation)bgo).getPresentationState(iwc);
 
     this.addActionListener(POS_LEFTMAIN,listener);
     this.addActionListener(POS_MENU,listener);
   }
-
 
  public class Top extends Page implements IWBrowseControl, StatefullPresentation {
     private boolean initialized = false;
@@ -153,7 +142,8 @@ public class UserApplication extends IWBrowser {
       }
     }
 
-    public String getBundleIdentifier(){
+    @Override
+	public String getBundleIdentifier(){
       return "com.idega.user";
     }
 
@@ -174,15 +164,12 @@ public class UserApplication extends IWBrowser {
       return this._presentationState;
     }
 
-    public Class getPresentationStateClass(){
+    public Class<IWControlFramePresentationState> getPresentationStateClass(){
       return IWControlFramePresentationState.class;
     }
 
-
-
-    public void main(IWContext iwc) throws Exception{
-    	//IWBundle iwb = getBundle(iwc);
-		
+    @Override
+	public void main(IWContext iwc) throws Exception{
       IWControlFramePresentationState state = (IWControlFramePresentationState)this.getPresentationState(iwc);
       if(state != null){
         Set onLoadSet = state.getOnLoadSet();
@@ -196,8 +183,7 @@ public class UserApplication extends IWBrowser {
 
       if(!this.initialized){
         Table headerTable = new Table(1,1);
-        //added for isi styles 7/10/03 - birna
-				headerTable.setStyleClass(UserApplication.this.bannerTableStyle);
+		headerTable.setStyleClass(UserApplication.this.bannerTableStyle);
         headerTable.setCellpadding(0);
         headerTable.setCellspacing(0);
         headerTable.setWidth("100%");
@@ -208,27 +194,8 @@ public class UserApplication extends IWBrowser {
 		UserApplication.this.styleSrc = UserApplication.this.userBusiness.getUserApplicationStyleSheetURL();
 		UserApplication.this.parentPage = getParentPage();
 		UserApplication.this.parentPage.addStyleSheetURL(UserApplication.this.styleSrc);
-
-        /** @todo setja inn mynd i header**/
-//        headerTable.add(this.getBundle(iwc).getImage("/top.gif","idegaWeb Member"),1,1);
-//				headerTable.add(this.getBundle(iwc).getImage("top.gif","idegaWeb Member"),1,1);
-
-        /*Text adminTitle = new Text("F�lagakerfi �S� & UMF�");
-        adminTitle.setBold();
-        adminTitle.setFontColor("#FFFFFF");
-        adminTitle.setFontSize(Text.FONT_SIZE_12_HTML_3);
-        adminTitle.setFontFace(Text.FONT_FACE_ARIAL);
-		headerTable.add(adminTitle,1,1);
-
-        Text adminTitle = new Text("Users & Groups &nbsp;&nbsp;");
-          adminTitle.setBold();
-          adminTitle.setFontColor("#FFFFFF");
-          adminTitle.setFontSize("3");
-          adminTitle.setFontFace(Text.FONT_FACE_ARIAL);
-
-        headerTable.add(adminTitle,2,1);*/
-
-
+		PresentationUtil.addJavaScriptSourceLineToHeader(iwc, getBundle(iwc).getVirtualPathWithFileNameString("javascript/UserApplication.js"));
+		
         headerTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_LEFT);
         headerTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
 
@@ -239,42 +206,6 @@ public class UserApplication extends IWBrowser {
 
   }
 
-
-//  public class Bottom extends Page implements IWBrowserCompliant {
-//
-//    public Bottom(){
-//      if(this.isChildOfOtherPage()){
-//        Page parent = this.getParentPage();
-//        parent.setAllMargins(0);
-//        parent.setBackgroundColor("#ffffff");//new IWColor(207,208,210).getHexColorString());
-//      } else {
-//        setAllMargins(0);
-//        setBackgroundColor("#ffffff");//new IWColor(207,208,210).getHexColorString());
-//      }
-//
-//    }
-//
-//   public void main(IWContext iwc) throws Exception{
-//    Table toolbarTable = new Table(1,1);
-//    
-//    toolbarTable.setCellpadding(0);
-//    toolbarTable.setCellspacing(0);
-//    toolbarTable.setWidth("100%");
-//    toolbarTable.setHeight("100%");
-////    toolbarTable.setHeight(1,1);
-////    toolbarTable.setHeight(3,1);
-//
-////    IWColor color = new IWColor(0,0,0);//new IWColor(207,208,210);//jonni color
-////
-////    toolbarTable.setColor(color);
-////    toolbarTable.setColor(1,1,color.brighter());
-////    toolbarTable.setColor(1,3,color.darker());
-//
-//    add(toolbarTable);
-//   }
-//
-//
-//  }
 	protected UserBusiness getUserBusiness(IWApplicationContext iwc) {
 			if (this.userBusiness == null) {
 				try {

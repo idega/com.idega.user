@@ -1,7 +1,6 @@
 package com.idega.user.app;
 
 import java.util.Collection;
-import java.util.Iterator;
 import javax.swing.event.ChangeListener;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
@@ -71,7 +70,7 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 		this.search.setControlTarget(controlTarget);
 	}
 
-	public Class getPresentationStateClass() {
+	public Class<? extends IWPresentationState> getPresentationStateClass() {
 		return this._stateHandler.getPresentationStateClass();
 	}
 
@@ -83,6 +82,7 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 		return this._stateHandler;
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
 		IWBundle iwb = getBundle(iwc);
@@ -91,53 +91,50 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 		parentPage.addStyleSheetURL(styleSrc);
 		UserApplicationMainAreaPS ps = (UserApplicationMainAreaPS) this.getPresentationState(iwc);
 		String className = ps.getClassNameToShow();
-		Collection plugins = ps.getUserGroupPlugins();
+		Collection<UserGroupPlugInBusiness> plugins = ps.getUserGroupPlugins();
 		if (className != null) {
 			PresentationObject obj = (PresentationObject) RefactorClassRegistry.forName(className).newInstance();
 			add(obj);
 			ps.setClassNameToShow(null);
-		}
-		else if (ps.isSearch()) {
+		} else if (ps.isSearch()) {
 			add(this.search);
-		}
-		else if (plugins != null && !plugins.isEmpty()) {
-			Iterator iter = plugins.iterator();
+		} else if (plugins != null && !plugins.isEmpty()) {
 			boolean buoHasBeenAdded = false;
-			while (iter.hasNext()) {
-				UserGroupPlugInBusiness biz = (UserGroupPlugInBusiness) iter.next();
+			for (UserGroupPlugInBusiness biz: plugins) {
 				PresentationObject obj = biz.instanciateViewer(ps.getSelectedGroup());
 				if (obj == null && !buoHasBeenAdded) {
 					add(this._buo);
 					buoHasBeenAdded = true;
-				}
-				else {
+				} else {
 					add(obj);
 				}
 			}
-		}
-		else {
+		} else {
 			this.add(this._buo);
 		}
 	}
 
+	@Override
 	public void initializeInMain(IWContext iwc) {
-//		System.out.println("in initializeInMain getClassToShow:"
-//				+ ((UserApplicationMainAreaPS) this.getPresentationState(iwc)).getClassNameToShow());
 		IWLocation location = (IWLocation) this.getLocation().clone();
-		location.setSubID(1);//bara eitthva? id...herma eftir instance id
+		location.setSubID(1);
+		
 		this._buo.setLocation(location, iwc);
 		this._buo.setArtificialCompoundId(getCompoundId(), iwc);
+		
 		this.search.setLocation(location, iwc);
 		this.search.setArtificialCompoundId(getCompoundId(), iwc);
-		//this.setIWUserContext(iwc);
+
 		IWPresentationState buoState = this._buo.getPresentationState(iwc);
 		if (buoState instanceof IWActionListener) {
 			((UserApplicationMainAreaPS) this.getPresentationState(iwc)).addIWActionListener((IWActionListener) buoState);
 		}
+		
 		IWPresentationState searchState = this.search.getPresentationState(iwc);
 		if (searchState instanceof IWActionListener) {
 			((UserApplicationMainAreaPS) this.getPresentationState(iwc)).addIWActionListener((IWActionListener) searchState);
 		}
+		
 		ChangeListener[] chListeners = this.getPresentationState(iwc).getChangeListener();
 		if (chListeners != null) {
 			for (int i = 0; i < chListeners.length; i++) {
@@ -145,18 +142,14 @@ public class UserApplicationMainArea extends Window implements IWBrowserView, St
 				searchState.addChangeListener(chListeners[i]);
 			}
 		}
-		//    this.getParentPage().setBackgroundColor(IWColor.getHexColorString(250,245,240));
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.idega.presentation.ui.Window#isFocusAllowedOnLoad()
-	 */
+	@Override
 	protected boolean isFocusAllowedOnLoad() {
 		return false;
 	}

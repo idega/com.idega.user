@@ -68,6 +68,7 @@ import com.idega.user.data.UserInfoColumns;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWColor;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
 import com.idega.util.text.TextSoap;
 /**
  * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
@@ -132,26 +133,21 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         this.toolbar.setControlTarget(controlTarget);
     }
     
-    protected Collection getEntries(IWContext iwc) {
-        Collection users = null;
+    protected Collection<User> getEntries(IWContext iwc) {
+        Collection<User> users = null;
         try {
             if (this.selectedGroup != null) {
                 if (this.aliasGroup != null) {
                     users = getUserBusiness(iwc).getUsersInGroup(this.aliasGroup);
-                }
-                else {
+                } else {
                     users = getUserBusiness(iwc).getUsersInGroup(this.selectedGroup);
                 }
+            } else if (this.selectedDomain != null) {
+            	users = getUserBusiness(iwc).getAllUsersOrderedByFirstName();
             }
-            else
-                if (this.selectedDomain != null) {
-                    users = getUserBusiness(iwc).getAllUsersOrderedByFirstName();
-                }
-        }
-        catch (RemoteException e) {
+        } catch (RemoteException e) {
             e.printStackTrace();
-        }
-        catch (FinderException e) {
+        } catch (FinderException e) {
             e.printStackTrace();
         }
         
@@ -179,7 +175,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         //get the data
         //this must be called here because classes that extend this class such as the searchwindow class
         //do not necesserely need a selectedGroup to work
-        Collection users = getEntries(iwc);
+        Collection<User> users = getEntries(iwc);
         
         if(this.selectedGroup != null) {
 //          adds the name of the group (or alias group)
@@ -188,8 +184,16 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
         
         //fill the returnTable
-        if (users != null && !users.isEmpty()) {
+        if (ListUtil.isEmpty(users)) {
+        	//this can give inhereting classes a way to add something when there are no users to display
+            PresentationObject po = getEmptyListPresentationObject();
             
+            if (po != null) {
+                //why a print button!??
+                returnTable.add(new PrintButton(this.iwb.getImage("print.gif")), 1, 4);
+                returnTable.add(po, 2, 4);
+            }
+        } else {
             EntityBrowser entityBrowser = getEntityBrowser(users, iwc);
             // put print button to bottom
     		LinkToUserStats linkToUserStats = (LinkToUserStats)ImplementorRepository.getInstance().newInstanceOrNull(LinkToUserStats.class, this.getClass());
@@ -224,31 +228,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 //          add delete option
             addDeleteButton(entityBrowser);
             
-            
             //add move to group option
             addMoveOrAddButton(entityBrowser);
             
-            
             returnTable.add(form, 2, 4);
-            
-            
-        }
-        else {
-            //this can give inhereting classes a way to add something when there are no users to display
-            
-            PresentationObject po = getEmptyListPresentationObject();
-            
-            if (po != null) {
-                //why a print button!??
-                returnTable.add(new PrintButton(this.iwb.getImage("print.gif")), 1, 4);
-                returnTable.add(po, 2, 4);
-            }
-            
-            
         }
         
         return returnTable;
-        
     }
     
     private void addEmailButton(EntityBrowser entityBrowser, IWContext iwc) {
@@ -962,7 +948,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         return entityBrowser;
     }
     
-    public void main(IWContext iwc) throws Exception {
+    @Override
+	public void main(IWContext iwc) throws Exception {
         this.empty();
         this.iwb = this.getBundle(iwc);
         this.iwrb = this.getResourceBundle(iwc);
@@ -1247,7 +1234,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     public Class getPresentationStateClass() {
         return BasicUserOverviewPS.class;
     }
-    public String getBundleIdentifier() {
+    @Override
+	public String getBundleIdentifier() {
         return "com.idega.user";
     }
     

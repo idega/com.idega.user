@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import com.idega.business.IBOService;
 import com.idega.user.block.search.event.UserSearchEvent;
+import com.idega.user.data.User;
 
 
 /**
@@ -27,15 +28,15 @@ public interface SearchEngine extends IBOService {
 	/**
 	 * @see com.idega.user.block.search.business.SearchEngineBean#getResult
 	 */
-	public Collection getResult(UserSearchEvent e) throws RemoteException;
+	public Collection<User> getResult(UserSearchEvent e) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.block.search.business.SearchEngineBean#getResultType
 	 */
-	public Class getResultType(UserSearchEvent e) throws java.rmi.RemoteException;
+	public Class<User> getResultType(UserSearchEvent e) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.block.search.business.SearchEngineBean#getSimpleSearchResults
 	 */
-	public Collection getSimpleSearchResults(String searchString) throws RemoteException;
+	public Collection<User> getSimpleSearchResults(String searchString) throws RemoteException;
 }
