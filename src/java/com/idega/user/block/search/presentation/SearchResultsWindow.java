@@ -119,11 +119,11 @@ public class SearchResultsWindow extends BasicUserOverview {
 			if (emails != null && !emails.isEmpty()) {
 				Email email = (Email) emails.iterator().next();
 				if (email != null && email.getEmailAddress() != "") {
-					fromAddress = currentUser.getName() + " <" + email.getEmailAddress() + ">";
+					fromAddress = email.getEmailAddress();
 				}
 			}
 			if (fromAddress == null) {
-				fromAddress = currentUser.getName() + " <>";
+				fromAddress = "no_from_address_set";
 			}
 			iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_MAIL_SERVER, iwc.getApplicationSettings().getProperty(PROP_SYSTEM_SMTP_MAILSERVER));
 			iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_FROM_ADDRESS, fromAddress);
