@@ -1,10 +1,15 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.ejb.FinderException;
+import javax.swing.event.ChangeListener;
 
 import com.idega.business.IBOLookup;
+import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWConstants;
@@ -56,6 +61,7 @@ public class MoveGroupWindow extends StyledIWAdminWindow implements
 
 	private String mainStyleClass = "main";
 	private Group selectedGroup;
+	private Group currentGroup = null;
 
 	/**
 	 * Constructor for GroupOwnersWindow.
@@ -104,6 +110,9 @@ public class MoveGroupWindow extends StyledIWAdminWindow implements
 		if (iwc.isParameterSet(GROUP_ID_KEY)) {
 			String groupIdString = iwc.getParameter(GROUP_ID_KEY);
 			groupId = new Integer(groupIdString);
+
+			this.currentGroup = getGroupBusiness(iwc)
+					.getGroupByGroupID(groupId);
 		}
 
 		Integer oldParentGroupId = new Integer(-1);
@@ -118,52 +127,17 @@ public class MoveGroupWindow extends StyledIWAdminWindow implements
 
 		parseAction(iwc);
 
-		if (this.saveChanges) {
-			String targetGroupNodeString = iwc
-					.getParameter(SELECTED_TARGET_GROUP_KEY);
-			// cut it down because it is in the form "domain_id"_"group_id"
-			targetGroupNodeString = targetGroupNodeString.substring(Math.max(
-					targetGroupNodeString.indexOf("_") + 1, 0),
-					targetGroupNodeString.length());
-			int targetGroupId = Integer.parseInt(targetGroupNodeString);
-
-			// move to the real group not the alias!
-			Group target = getGroupBusiness(iwc).getGroupByGroupID(
-					targetGroupId);
-			if (target.isAlias()) {
-				target = target.getAlias();
-			}
-
-			Group parent = (Group) this.selectedGroup.getParentGroups()
-					.iterator().next();
-			/*
-			 * if (this.selectedGroup.isAlias()) { parent = (Group)
-			 * this.selectedGroup.getAlias()
-			 * .getParentGroups().iterator().next(); }
-			 */
-
-			parent.removeGroup(this.selectedGroup, iwc.getCurrentUser());
-			target.addGroup(this.selectedGroup);
-
-			// TODO fix this what is it doing? some caching stuff?
-			iwc.getApplicationContext().removeApplicationAttribute(
-					"domain_group_tree");
-			iwc.getApplicationContext()
-					.removeApplicationAttribute("group_tree");
-
-			this.getParentPage().setParentToReload();
-		}
-
 		MoveGroupEvent moveEvent = new MoveGroupEvent();
 		moveEvent.setSource(this);
 		moveEvent.setOldParentGroupId(oldParentGroupId);
-		//moveEvent.setNewParentGroupId(primaryKey)
+		// moveEvent.setNewParentGroupId(primaryKey)
 		moveEvent.setGroupId(groupId);
-		
+		moveEvent.setPerformer((Integer) iwc.getCurrentUser().getPrimaryKey());
+
 		Form form = getMoveGroupForm();
 		form.addEventModel(moveEvent, iwc);
-		form.addParameter(MoveGroupEvent.OKAY_KEY,"w");
-		
+		form.addParameter(MoveGroupEvent.OKAY_KEY, "w");
+
 		add(form, iwc);
 
 	}
@@ -172,8 +146,8 @@ public class MoveGroupWindow extends StyledIWAdminWindow implements
 
 		Help help = getHelp(HELP_TEXT_KEY);
 
-		SubmitButton saveButton = new SubmitButton(this.iwrb
-				.getLocalizedString("save", "Save"));
+		SubmitButton saveButton = new SubmitButton(
+				this.iwrb.getLocalizedString("save", "Save"));
 		saveButton
 				.setSubmitConfirm(this.iwrb.getLocalizedString(
 						"gmov.move_group?",
@@ -196,9 +170,10 @@ public class MoveGroupWindow extends StyledIWAdminWindow implements
 		table.setStyleClass(this.mainStyleClass);
 		table.mergeCells(1, 2, 2, 2);
 
-		table.add(new Text(this.iwrb.getLocalizedString("gmov.table_heading",
-				"Move group: ")
-				+ this.selectedGroup.getName(), true, false, false), 1, 1);
+		table.add(
+				new Text(this.iwrb.getLocalizedString("gmov.table_heading",
+						"Move group: ") + this.currentGroup.getName(), true,
+						false, false), 1, 1);
 
 		GroupChooser targetGroupChooser = new GroupChooser(
 				MoveGroupEvent.NEW_PARENT_GROUP_ID);
@@ -235,9 +210,7 @@ public class MoveGroupWindow extends StyledIWAdminWindow implements
 			this.selectedGroup = getGroupBusiness(iwc).getGroupByGroupID(
 					Integer.parseInt(this.selectedGroupId));
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
 		} catch (FinderException e) {
-			e.printStackTrace();
 		}
 
 	}
@@ -273,11 +246,32 @@ public class MoveGroupWindow extends StyledIWAdminWindow implements
 		return "Move group";
 	}
 
+	public void initializeInMain(IWContext iwc) {
+		IWPresentationState state = this.getPresentationState(iwc);
+		// add action listener
+		addActionListener((IWActionListener) state);
+		IWStateMachine stateMachine;
+		// IWPresentationState changeListenerState = null;
+		// add all changelisteners
+		Collection changeListeners;
+		try {
+			stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc,
+					IWStateMachine.class);
+			changeListeners = stateMachine.getAllChangeListeners();
+		} catch (RemoteException e) {
+			changeListeners = new ArrayList();
+		}
+		Iterator iterator = changeListeners.iterator();
+		while (iterator.hasNext()) {
+			state.addChangeListener((ChangeListener) iterator.next());
+		}
+	}
+
 	/**
 	 * @see com.idega.presentation.StatefullPresentation#getPresentationStateClass()
 	 */
 	public Class getPresentationStateClass() {
-		return DeleteGroupConfirmWindowPS.class;
+		return MoveGroupConfirmWindowPS.class;
 	}
 
 	/**
@@ -289,7 +283,7 @@ public class MoveGroupWindow extends StyledIWAdminWindow implements
 				IWStateMachine stateMachine = (IWStateMachine) IBOLookup
 						.getSessionInstance(iwuc, IWStateMachine.class);
 				this.presentationState = stateMachine.getStateFor(
-						getCompoundId(), DeleteGroupConfirmWindowPS.class);
+						getCompoundId(), MoveGroupConfirmWindowPS.class);
 			} catch (RemoteException re) {
 				throw new RuntimeException(re.getMessage());
 			}
