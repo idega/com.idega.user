@@ -109,7 +109,7 @@ public class SearchResultsWindow extends BasicUserOverview {
 
 	protected void addEmailButton(EntityBrowser entityBrowser, IWContext iwc) {
 		//add emailing option
-		if (this.hasEditPermissionForRealGroup || iwc.getAccessController().hasRole("email_search", iwc)) {
+		if (this.hasEditPermissionForRealGroup) {// || iwc.getAccessController().hasRole("email_search", iwc)) {
 			SubmitButton emailButton = new SubmitButton(this.iwrb.getLocalizedString("Email selection", "Email selection"), BasicUserOverview.EMAIL_USERS_KEY, BasicUserOverview.EMAIL_USERS_KEY);
 			StyledButton styledEmailButton = new StyledButton(emailButton);
 			entityBrowser.addPresentationObjectToBottom(styledEmailButton);

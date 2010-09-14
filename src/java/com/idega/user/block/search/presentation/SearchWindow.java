@@ -144,6 +144,7 @@ public class SearchWindow extends StyledIWAdminWindow implements ToolbarElement 
 		SelectionBox groupSel = new SelectionBox(UserSearchEvent.SEARCH_FIELD_GROUPS);
 		groupSel.setHeight(15); 
 		groupSel.setWidth(Table.HUNDRED_PERCENT);
+		groupSel.selectAllOnSubmitIfNoneSelected();
 
 		List groupsCol = (List)getUserBusiness(iwc).getAllGroupsWithViewPermission(iwc.getCurrentUser(),iwc);
 		GroupComparator groupComparator = new GroupComparator(iwc);
