@@ -18,6 +18,7 @@ public class UserDataBean {
 	private String city = null;
 	private String province = null;
 	private String postalBox = null;
+	private String addressId;
 	
 	private Integer userId = null;
 	
@@ -147,5 +148,11 @@ public class UserDataBean {
 	public void setImageSet(boolean imageSet) {
 		this.imageSet = imageSet;
 	}
-
+	public String getAddressId() {
+		return addressId;
+	}
+	public void setAddressId(String addressId) {
+		this.addressId = addressId;
+	}
+	
 }

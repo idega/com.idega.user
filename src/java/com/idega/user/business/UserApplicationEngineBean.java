@@ -466,6 +466,8 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 		}
 		
 		if (address != null) {
+			info.setAddressId(address.getPrimaryKey().toString());
+			
 			String streetNameAndNumber = address.getStreetAddress();
 			info.setStreetNameAndNumber(streetNameAndNumber == null ? CoreConstants.EMPTY : streetNameAndNumber);
 			
