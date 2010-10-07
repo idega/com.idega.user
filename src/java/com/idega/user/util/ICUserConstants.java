@@ -14,6 +14,9 @@ public class ICUserConstants extends GroupTypeConstants implements ConstantsPlac
 	
 	//gives you the right to change a users personal id
 	public static final String ROLE_KEY_EDIT_PERSONAL_ID = "PINEdit";
+
+	//gives you the right to change a users personal id
+	public static final String ROLE_KEY_EDIT_FULL_NAME = "NameEdit";
 	
 	// do not set this variable to final
 	// the help bundle identfier might be changed by bundle starters

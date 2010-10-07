@@ -809,7 +809,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 		while (iter.hasNext()) {
 			ICPermission perm = (ICPermission) iter.next();
-			
+			if (perm.getPermissionValue()) {
 			
 			groupId = perm.getContextValue();
 			
@@ -822,6 +822,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			
 			
 			map.put(groupId, list);
+			}
 
 		}
 
