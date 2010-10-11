@@ -1,5 +1,9 @@
 package com.idega.user.bean;
 
+/**
+ * @author valdas
+ *
+ */
 public class UserDataBean {
 	
 	private String name = null;
@@ -19,6 +23,7 @@ public class UserDataBean {
 	private String province = null;
 	private String postalBox = null;
 	private String addressId;
+	private String commune;
 	
 	private Integer userId = null;
 	
@@ -153,6 +158,12 @@ public class UserDataBean {
 	}
 	public void setAddressId(String addressId) {
 		this.addressId = addressId;
+	}
+	public String getCommune() {
+		return commune;
+	}
+	public void setCommune(String commune) {
+		this.commune = commune;
 	}
 	
 }

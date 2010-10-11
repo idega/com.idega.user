@@ -44,6 +44,7 @@ import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.core.location.data.Address;
+import com.idega.core.location.data.Commune;
 import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
@@ -493,6 +494,12 @@ public class UserApplicationEngineBean implements UserApplicationEngine {
 			
 			String postalBox = address.getPOBox();
 			info.setPostalBox(postalBox == null ? CoreConstants.EMPTY : postalBox);
+			
+			Commune commune = address.getCommune();
+			if (commune != null) {
+				String communeName = commune.getCommuneName();
+				info.setCommune(communeName == null ? CoreConstants.EMPTY : communeName);
+			}
 		}
 	}
 	
