@@ -20,7 +20,6 @@ public class MoveGroupEvent extends IWPresentationEvent {
 	public static final String OLD_PARENT_GROUP_ID = "old_parent_group_id";
 	private boolean okay = false;
 
-	@Override
 	public boolean initializeEvent(IWContext iwc) {
 		this.okay = iwc.isParameterSet(OKAY_KEY);
 
