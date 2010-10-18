@@ -111,8 +111,7 @@ public class MoveGroupWindow extends StyledIWAdminWindow implements
 			String groupIdString = iwc.getParameter(GROUP_ID_KEY);
 			groupId = new Integer(groupIdString);
 
-			this.currentGroup = getGroupBusiness(iwc)
-					.getGroupByGroupID(groupId);
+			this.currentGroup = getGroupBusiness(iwc).getGroupByGroupID(groupId.intValue());
 		}
 
 		Integer oldParentGroupId = new Integer(-1);
