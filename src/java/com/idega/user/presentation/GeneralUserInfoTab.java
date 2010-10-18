@@ -143,9 +143,14 @@ public class GeneralUserInfoTab extends UserTab {
 
 		IWContext iwc = IWContext.getInstance();
 		boolean unlockPersonalIDField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_PERSONAL_ID,iwc);
+		boolean unlockFullNameField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_FULL_NAME,iwc);
 		
 		if (!unlockPersonalIDField){
 			this.personalIDField.setDisabled(true);
+		}
+		
+		if (!unlockFullNameField) {
+			this.fullNameField.setDisabled(true);
 		}
 		
 		StringTokenizer created = new StringTokenizer((String) this.fieldValues.get(this.createdFieldName), " -");
@@ -170,6 +175,8 @@ public class GeneralUserInfoTab extends UserTab {
 		this.fullNameField = new TextInput(this.fullNameFieldName);
 		this.fullNameField.setLength(20);
 
+		this.fullNameField.setDisabled(true);
+		
 		this.displayNameField = new TextInput(this.displayNameFieldName);
 		this.displayNameField.setLength(20);//changed from 12 - birna
 		this.displayNameField.setMaxlength(20);

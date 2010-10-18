@@ -41,6 +41,7 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 	protected static final String PARAM_BODY = "body";
 	private static final String PARAM_SEND = "send_mail";
 	
+	private boolean allowSend;
 	
 	//texts
 	private Text fromAddressText;
@@ -155,9 +156,12 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 
 		this.closeButton = new CloseButton(iwrb.getLocalizedString("close","Close"));
 		this.styledCloseButton = new StyledButton(this.closeButton);
+		
+		this.allowSend = true;
 	}
 	
 	protected void initializeContent(IWContext iwc) {
+		IWResourceBundle iwrb = getResourceBundle(iwc);
 		this.mailServerField.setContent((String)iwc.getSessionAttribute(PARAM_MAIL_SERVER));
 		this.fromAddressField.setContent((String)iwc.getSessionAttribute(PARAM_FROM_ADDRESS));
 		this.toAddressField.setContent((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS));
@@ -165,6 +169,11 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		this.mailToLink.setRecipients((String)iwc.getSessionAttribute(PARAM_FROM_ADDRESS));
 		this.mailToLink.setBCC((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS));
 
+		if (this.fromAddressField.getContent() == null || "".equals(this.fromAddressField.getContent()) || "no_from_address_set".equals(this.fromAddressField.getContent())) {
+			this.allowSend = false;
+			this.fromAddressField.setContent(iwrb.getLocalizedString("emailSenderWindow.not_allowed_to_send", "You can't send emails from the system if you haven't set your own email."));
+		}
+	
 		if (iwc.getUserAgent() != null && iwc.getUserAgent().indexOf("Windows") != -1) {
 			// Encoding HAX for encoding the 
 			String enc = iwc.getIWMainApplication().getSettings().getProperty("email_subject_char_encoding_for_windows", "iso-8859-1");
@@ -222,7 +231,7 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		buttonTable.setCellspacing(0);
 		buttonTable.setCellpadding(0);
 		buttonTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
-		if (iwc.getParameter(PARAM_SEND) == null) {
+		if (iwc.getParameter(PARAM_SEND) == null && this.allowSend) {
 			buttonTable.add(this.styledSendButton,1,1);
 		}
 		buttonTable.setWidth(2, "5");
