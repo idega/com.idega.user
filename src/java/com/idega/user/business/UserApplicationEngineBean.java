@@ -1,5 +1,6 @@
 package com.idega.user.business;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,7 +78,7 @@ import com.idega.util.SendMail;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 
-public class UserApplicationEngineBean implements UserApplicationEngine {
+public class UserApplicationEngineBean implements UserApplicationEngine, Serializable {
 
 	private static final long serialVersionUID = -7472052374016555081L;
 	private static final Logger logger = Logger.getLogger(UserApplicationEngineBean.class.getName());
