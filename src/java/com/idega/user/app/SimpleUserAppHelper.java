@@ -396,7 +396,7 @@ public class SimpleUserAppHelper {
 	
 	@SuppressWarnings("unchecked")
 	private List<ICRole> getFilteredRolesByUser(IWContext iwc, AccessController accessControler) {
-		Collection<ICRole> allRoles = accessControler.getAllRoles();
+		Collection<ICRole> allRoles = accessControler.getAllRolesLegacy();
 		if (ListUtil.isEmpty(allRoles)) {
         	return null;
         }

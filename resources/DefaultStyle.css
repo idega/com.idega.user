@@ -9,6 +9,7 @@ body{
 	margin-right: 0px;
 	margin-bottom: 0px;
 	margin-left: 0px;
+	height: 100%;
 }
 body, p, h1, h2, h3, table, td, th, textarea, input{
 	font-family: verdana,helvetica,arial,sans-serif;
@@ -252,4 +253,21 @@ select {
 	font-weight: normal;
 	text-transform: lowercase;
 	color: #FFFFFF;
+}
+
+table.userAppMenuArea {
+	position: relative;
+}
+
+table.userAppMenuArea div.userAppMenu {
+	position: absolute;
+	top: 7px;
+	left: 7px;
+	right: 7px;
+	bottom: 7px;
+	width: auto;
+	height: auto;
+	border: 1px #ccc solid;
+	background-color: #fff;
+	padding: 4px;
 }

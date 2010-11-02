@@ -242,7 +242,7 @@ public class GroupMembersListViewer extends Block {
 	}
 	
 	private String getUserEmail(IWContext iwc, User user) {
-		Email email = null;;
+		Email email = null;
 		try {
 			email = getUserBusiness(iwc).getUsersMainEmail(user);
 		} catch (Exception e) {}

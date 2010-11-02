@@ -17,10 +17,11 @@ import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.block.entity.presentation.converter.CheckBoxConverter;
 import com.idega.business.IBOLookup;
-import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.data.ICPermission;
+import com.idega.core.accesscontrol.data.ICPermissionHome;
 import com.idega.core.accesscontrol.data.ICRole;
+import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
@@ -318,7 +319,7 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
     }
     
     protected Collection getAllRolesWithoutRoleMasterRole(AccessController access) {
-        Collection allRoles = access.getAllRoles();
+        Collection allRoles = access.getAllRolesLegacy();
         if(allRoles!=null && !allRoles.isEmpty()){
             List roles = new Vector();
             
@@ -706,7 +707,8 @@ public class GroupRolesWindow extends StyledIWAdminWindow {
                 ICRole role = (ICRole) iterator.next();
                 List rolesList = new ArrayList();
                 try {
-                    ICPermission perm = AccessControl.getPermissionHome().create();
+        			ICPermissionHome home = (ICPermissionHome) IDOLookup.getHome(ICPermission.class);
+                    ICPermission perm = home.create();
                     perm.setPermissionString(role.getRoleKey());
                     //could not do this because of entitybrowser bug,rolesList.add(role.getRoleKey());
                     rolesList.add(perm);
