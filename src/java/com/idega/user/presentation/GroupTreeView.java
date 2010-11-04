@@ -375,7 +375,7 @@ public class GroupTreeView extends IWTreeControl {
 	public Layer getNoWrapLayer() {
 		if (this._nowrapLayer == null) {
 			this._nowrapLayer = new Layer();
-			this._nowrapLayer.setNoWrap();
+			this._nowrapLayer.setStyleAttribute("white-space", "nowrap");
 		}
 		return this._nowrapLayer;
 	}

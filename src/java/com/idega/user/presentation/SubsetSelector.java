@@ -60,7 +60,7 @@ public class SubsetSelector extends PresentationObjectContainer implements IWBro
 	{
 		Layer partitionSelection = new Layer();
 		partitionSelection.setHorizontalAlignment("center");
-                partitionSelection.setBackgroundColor(new IWColor(230,230,230).getHexColorString());
+                partitionSelection.setStyleAttribute("background-color", new IWColor(230,230,230).getHexColorString());
 
 
 		if (this._size > this._subsetSize){

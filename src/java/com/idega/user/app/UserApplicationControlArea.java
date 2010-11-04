@@ -239,14 +239,14 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		borderTable.setColor(1, 1, "#FFFFFF");
 		
 		Layer layer = new Layer(Layer.DIV);
-		layer.setWidth(208);
-		layer.setHeight("100%");
+		layer.setStyleAttribute("width", "208px");
+		layer.setStyleAttribute("height", "100%");
 		//layer.setStyleAttribute("border", "1px #cccccc solid");
 		//layer.setStyleAttribute("background-color", "#ffffff");
 		//layer.setStyleClass("main");
 		//layer.setPadding(0);
 		//layer.add(groupTree);
-		layer.setOverflow("auto");
+		layer.setStyleAttribute("overflow", "auto");
 		borderTable.add(layer);
 		
 		Table treeTable = new Table(1, 1);

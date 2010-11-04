@@ -1015,9 +1015,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         				frameTable.setRightCellBorderWidth(1, 2, 0);
         
         				Layer layer = new Layer(Layer.DIV);
-        				layer.setWidth("100%");
-        				layer.setHeight("100%");
-        				layer.setOverflow("auto");
+        				layer.setStyleAttribute("width", "100%");
+        				layer.setStyleAttribute("height", "100%");
+        				layer.setStyleAttribute("overflow", "auto");
                 frameTable.add(layer, 1, 2);
         				
         String frontPageIdOrURI = iwc.getApplicationSettings().getProperty(USER_APP_START_PAGE,"-1");
