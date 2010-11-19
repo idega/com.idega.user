@@ -51,14 +51,14 @@ public class GroupTreeView extends IWTreeControl {
 	public static final String ONCLICK_DEFAULT_NODE_NAME_PARAMETER_NAME = "iw_node_name";
 
 	private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-  
+
   private int selectedGroupId;
   private int selectedDomainId;
-	
+
 	private IWBundle bundle;
-	
+
 	private boolean isModelSet = false;
-	
+
 	private boolean addIdAttribute = false;
 	private boolean addGroupNameAttribute = false;
 
@@ -76,10 +76,12 @@ public class GroupTreeView extends IWTreeControl {
 		return viewer;
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 
+	@Override
 	protected void updateIconDimensions() {
 		super.updateIconDimensions();
 		for (int j = 0; j < this.folderAndFileIcons.length; j++) {
@@ -95,6 +97,7 @@ public class GroupTreeView extends IWTreeControl {
 		}
 	}
 
+	@Override
 	public void initIcons(IWContext iwc) {
 		super.initIcons(iwc);
 
@@ -112,24 +115,25 @@ public class GroupTreeView extends IWTreeControl {
 
 	/*
 	  public void addParameters(Link l, ICTreeNode node, IWContext iwc){
-	
+
 	  }
 	*/
 
+	@Override
 	public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
 		return getObjectToAddToColumn(colIndex, (GroupTreeNode) node, iwc, nodeIsOpen, nodeHasChild, isRootNode);
 	}
-	
+
 	public PresentationObject getObjectToAddToColumn(int colIndex, GroupTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
 		//System.out.println("adding into column "+ colIndex + " for node " + node);
 		String image = "treeviewer";
 		if (node.getGroupType() != null) {
 			image = node.getGroupType();
 		}
-		
+
 	    SelectDomainEvent dmSelect = new SelectDomainEvent();
         SelectGroupEvent grSelect = new SelectGroupEvent();
-		
+
 	    switch (node.getNodeType()) {
 			case GroupTreeNode.TYPE_DOMAIN :
 				dmSelect.setDomainToSelect(Integer.parseInt(node.getId()));
@@ -160,7 +164,7 @@ public class GroupTreeView extends IWTreeControl {
 						}
 					}
 				}
-				
+
 
 				if (!node.isLeaf()) {
 					if (nodeIsOpen) {
@@ -310,14 +314,14 @@ public class GroupTreeView extends IWTreeControl {
 				/*if(_nowrap){
 				  return getNoWrapLayerClone(l);
 				} else {*/
-				
+
 				if (isAddGroupNameAttribute()) {
 					l.setMarkupAttribute(ICBuilderConstants.GROUP_NAME_ATTRIBUTE, nodeName);
 				}
 				if (isAddIdAttribute()) {
 					l.setMarkupAttribute(ICBuilderConstants.GROUP_ID_ATTRIBUTE, node.getNodeID());
 				}
-				
+
 				return l;
 				//}
 		}
@@ -375,7 +379,7 @@ public class GroupTreeView extends IWTreeControl {
 	public Layer getNoWrapLayer() {
 		if (this._nowrapLayer == null) {
 			this._nowrapLayer = new Layer();
-			this._nowrapLayer.setNoWrap();
+			this._nowrapLayer.setStyleAttribute("white-space", "nowrap");
 		}
 		return this._nowrapLayer;
 	}
@@ -409,10 +413,12 @@ public class GroupTreeView extends IWTreeControl {
 
 	}
 
+	@Override
 	public void setOnClick(String action) {
 		this.getAssociatedScript().addToFunction(ONCLICK_FUNCTION_NAME, action);
 	}
 
+	@Override
 	public void setControlTarget(String controlTarget) {
 		super.setControlTarget(controlTarget);
 		this.nodeNameTarget = null;
@@ -439,11 +445,11 @@ public class GroupTreeView extends IWTreeControl {
 	public void setAddGroupNameAttribute(boolean addGroupNameAttribute) {
 		this.addGroupNameAttribute = addGroupNameAttribute;
 	}
-	
+
 	public boolean isAddIdAttribute() {
 		return addIdAttribute;
 	}
-	
+
 	public void setAddIdAttribute(boolean addIdAttribute) {
 		this.addIdAttribute = addIdAttribute;
 	}

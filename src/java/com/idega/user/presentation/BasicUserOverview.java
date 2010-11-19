@@ -72,13 +72,13 @@ import com.idega.util.ListUtil;
 import com.idega.util.text.TextSoap;
 /**
  * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
- * 
+ *
  * @author 2000 - idega team -<a href="mailto:gummi@idega.is">Gudmundur Agust
  *         Saemundsson</a>
  * @version 1.0
  */
 public class BasicUserOverview extends Page implements IWBrowserView, StatefullPresentation {
-    
+
     public static final String SELECTED_USERS_KEY = "selected_users";
     public static final String SELECTED_TARGET_GROUP_KEY = "selected_target_group";
     public static final String SELECTED_GROUP_KEY = "selected_group_key";
@@ -91,20 +91,20 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     protected static final String PHONE_TYPE_PATH = PhoneType.class.getName() + ".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME";
     protected static final String USER_APPLICATION_FRONT_PAGE_ID = "USER_APPLICATION_FRONT_PAGE_ID";
     protected static final String USER_APP_START_PAGE = "USER_APP_START_PAGE";
-    
+
     protected IWResourceBundle iwrb = null;
     private IWBundle iwb = null;
     protected BasicUserOverviewPS _presentationState = null;
     private StyledBasicUserOverViewToolbar toolbar = null;
     private com.idega.core.user.data.User administratorUser = null; //TODO convert to new USER SYSTEM
-    
+
     boolean isCurrentUserSuperAdmin = false;
     protected BasicUserOverviewPS ps;
     Group selectedGroup;
     protected ICDomain selectedDomain;
     private Group aliasGroup;
     protected AccessController accessController;
-    
+
     String styledLinkUnderline = "styledLinkUnderline";
     private String styleTable = "borderAll";
     private String topTableStyle = "topTable";
@@ -114,25 +114,27 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     private boolean hasDeletePermissionForRealGroup = false;
     private boolean hasOwnerPermissionForRealGroup = false;
 	private boolean hasPermitPermissionForRealGroup = false;
-    
+
     public BasicUserOverview() {
         super();
     }
-    
-    public void setControlEventModel(IWPresentationEvent model) {
+
+    @Override
+	public void setControlEventModel(IWPresentationEvent model) {
         if (this.toolbar == null) {
 					this.toolbar = getToolbar();
 				}
         this.toolbar.setControlEventModel(model);
     }
-    
-    public void setControlTarget(String controlTarget) {
+
+    @Override
+	public void setControlTarget(String controlTarget) {
         if (this.toolbar == null) {
 					this.toolbar = getToolbar();
 				}
         this.toolbar.setControlTarget(controlTarget);
     }
-    
+
     protected Collection<User> getEntries(IWContext iwc) {
         Collection<User> users = null;
         try {
@@ -150,44 +152,44 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         } catch (FinderException e) {
             e.printStackTrace();
         }
-        
+
         return users;
     }
-    
+
     protected Table getToolbarTable() {
         Table toolbarTable = new Table();
         return toolbarTable;
     }
     protected Table getList(IWContext iwc) {
-        
-    
-        
-        
+
+
+
+
 //      create tables and toolbar
-        this.toolbar = getToolbar();	
+        this.toolbar = getToolbar();
         Table topTable = topTable();
         Table middleTable = middleTable();
         Table returnTable = returnTable();
         returnTable.add(this.toolbar, 1, 1);
         returnTable.add(middleTable,1,2);
         returnTable.add(topTable,2,3);
-        
+
         //get the data
         //this must be called here because classes that extend this class such as the searchwindow class
         //do not necesserely need a selectedGroup to work
         Collection<User> users = getEntries(iwc);
-        
+
         if(this.selectedGroup != null) {
 //          adds the name of the group (or alias group)
             //todo add the alias name and an explanation to what real group it points to
             topTable.add(this.selectedGroup.getName() + Text.NON_BREAKING_SPACE,1,1);
         }
-        
+
         //fill the returnTable
         if (ListUtil.isEmpty(users)) {
         	//this can give inhereting classes a way to add something when there are no users to display
             PresentationObject po = getEmptyListPresentationObject();
-            
+
             if (po != null) {
                 //why a print button!??
                 returnTable.add(new PrintButton(this.iwb.getImage("print.gif")), 1, 4);
@@ -221,22 +223,22 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             form.add(entityBrowser);
             IWPresentationEvent event = (entityBrowser.getPresentationEvent());
             form.addEventModel(event, iwc);
-            
+
 //          add email option
             addEmailButton(entityBrowser, iwc);
 
 //          add delete option
             addDeleteButton(entityBrowser);
-            
+
             //add move to group option
             addMoveOrAddButton(entityBrowser);
-            
+
             returnTable.add(form, 2, 4);
         }
-        
+
         return returnTable;
     }
-    
+
     private void addEmailButton(EntityBrowser entityBrowser, IWContext iwc) {
         //add emailing option
         if (this.hasEditPermissionForRealGroup && this.selectedGroup != null) {
@@ -264,7 +266,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             iwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_SUBJECT, this.iwrb.getLocalizedString("to_members_in_group","To members in group:")+" "+this.selectedGroup.getName());
         }
     }
-    
+
     private void addDeleteButton(EntityBrowser entityBrowser) {
         //add delete option
         if (this.hasDeletePermissionForRealGroup) {
@@ -280,7 +282,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             //form.add(deleteButton);
             //form.add(Text.getNonBrakingSpace());
             entityBrowser.addPresentationObjectToBottom(styledDeleteButton);
-            
+
         }
     }
 
@@ -301,10 +303,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             buttonMoving = this.iwrb.getLocalizedString("Move to", "Move to");
             confirmCopying = this.iwrb.getLocalizedString("buo_copy_selected_users", "Copy selected users");
             buttonCopying = this.iwrb.getLocalizedString("Copy to", "Copy to");
-        
+
         }
         confirmMoving += " ?";
-        
+
         if(addMoveOrAddButton) {
             StyledButton styledCopyToButton = null;
             if (this.selectedGroup != null) {
@@ -315,14 +317,14 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             SubmitButton moveToButton = new SubmitButton(buttonMoving, BasicUserOverview.MOVE_USERS_KEY, BasicUserOverview.MOVE_USERS_KEY);
             moveToButton.setSubmitConfirm(confirmMoving);
             StyledButton styledMoveToButton = new StyledButton(moveToButton);
-            
-       
+
+
             GroupChooser targetGroupChooser = new GroupChooser(SELECTED_TARGET_GROUP_KEY, true, null, null);
             targetGroupChooser.setInputStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
             if (this.selectedGroup != null) {
                 targetGroupChooser.setSelectedNode(new GroupTreeNode(this.selectedGroup));
             }
-            
+
             if (styledCopyToButton != null) {
                 entityBrowser.addPresentationObjectToBottom(styledCopyToButton);
             }
@@ -348,17 +350,17 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         returnTable.setColor(1,3,"#f3f3f3");
         returnTable.setColor(2,4,"#f3f3f3");
         returnTable.setStyleClass("grayBorderBottom");
-        
+
         returnTable.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_TOP);
         returnTable.setVerticalAlignment(2, 4, Table.VERTICAL_ALIGN_TOP);
         returnTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_BOTTOM);
-        
+
         returnTable.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_RIGHT);
         return returnTable;
     }
-    
+
     /**
-     * 
+     *
      * @return
      */
     public Table topTable() {
@@ -379,17 +381,17 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         middleTable.setHeight(6);
         return middleTable;
     }
-    
+
     /**
      * This method is called everytime the getEntities method returns null or
      * empty list.
-     * 
+     *
      * @return a presentation object
      */
     protected PresentationObject getEmptyListPresentationObject() {
         return null;
     }
-    
+
     /**
      * @return StyledBasicUserOverViewToolbar
      */
@@ -399,18 +401,18 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         if (this.toolbar == null || this.selectedGroup == null) {
             this.toolbar = new StyledBasicUserOverViewToolbar();
         }
-        
+
         if (this.selectedGroup != null) {
             this.toolbar.setSelectedGroup(this.selectedGroup);
-            
+
         }
         this.toolbar.setDomain(this.ps.getParentDomainOfSelection());
         this.toolbar.setParentGroup(this.ps.getParentGroupOfSelection());
-        
+
         return this.toolbar;
-        
+
     }
-    
+
     /**
      * @param users
      * @return
@@ -430,14 +432,16 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
         // add BasisUserOverviewPs as ActionListener to the entityBrowser
         entityBrowser.addActionListener((IWActionListener) presentationStateParent);
-        
+
         //		define address converter class
         EntityToPresentationObjectConverter converterAddress = new EntityToPresentationObjectConverter() {
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
-            
-            public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+
+            @Override
+			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 // entity is a user, try to get the corresponding address
                 User user = (User) entity;
                 Address address = null;
@@ -446,7 +450,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 }
                 catch (RemoteException ex) {
                     System.err.println("[BasicUserOverview]: Address could not be retrieved.Message was : " + ex.getMessage());
-                    
+
                     ex.printStackTrace(System.err);
                 }
                 // now the corresponding address was found, now just use the
@@ -454,14 +458,16 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 return (browser.getDefaultConverter().getPresentationObject(address, path, browser, iwc));
             }
         };
-        
+
         // define email converter class
         EntityToPresentationObjectConverter converterEmail = new EntityToPresentationObjectConverter() {
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
-            
-            public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+
+            @Override
+			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 // entity is a user, try to get the corresponding address
                 User user = (User) entity;
                 Email email = null;
@@ -482,15 +488,17 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 return new Text(emailString);
             }
         };
-        
+
         // define phone converter class
         EntityToPresentationObjectConverter converterPhone = new EntityToPresentationObjectConverter() {
-        	
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
-            
-            public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+
+            @Override
+			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 // entity is a user, try to get the corresponding address
                 User user = (User) entity;
                 Phone[] phone = null;
@@ -510,7 +518,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 }
                 return table;
             }
-           
+
             private PresentationObject getPresentationObjectForPhone(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc)  {
                 StringBuffer displayValues = new StringBuffer();
                 List list = path.getValues((EntityRepresentation) genericEntity);
@@ -533,23 +541,25 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 	}
                 	displayValues.append(object.toString());
                 	// append white space
-                	displayValues.append(' ');  
+                	displayValues.append(' ');
                 }
                 Text text = new Text();
-                text.setText(displayValues.toString());               
+                text.setText(displayValues.toString());
                 return text;
               }
         };
-        
+
         // define special converter class for complete address
         EntityToPresentationObjectConverter converterCompleteAddress = new EntityToPresentationObjectConverter() {
             private List values;
-            
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
-            
-            public PresentationObject getPresentationObject(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+
+            @Override
+			public PresentationObject getPresentationObject(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 // entity is a user, try to get the corresponding address
                 User user = (User) genericEntity;
                 Address address = null;
@@ -602,15 +612,17 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         };
         // define user properties link converter class
         EntityToPresentationObjectConverter converterLink = new EntityToPresentationObjectConverter() {
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
-            
-            public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+
+            @Override
+			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 User user = (User) entity;
-                
+
                 PresentationObject text = browser.getDefaultConverter().getPresentationObject(entity, path, browser, iwc);
-                
+
                 //if(!canEditUser && !isCurrentUserSuperAdmin){//TODO: Eiki
                 // move to userpropertywindow instead
                 //	return text;
@@ -620,15 +632,15 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 //added to match new style links
                 aLink.setStyleClass(BasicUserOverview.this.styledLinkUnderline);
                 boolean isUserSuperAdmin = user.getPrimaryKey().equals(getSuperAdmin(iwc).getPrimaryKey());
-                
+
                 if ( !isUserSuperAdmin) {
                     aLink.setWindowToOpen(UserPropertyWindow.class);
                     aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, user.getPrimaryKey().toString());
-                    
+
                     if (BasicUserOverview.this.selectedGroup != null) {
                         aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID, BasicUserOverview.this.selectedGroup.getPrimaryKey().toString());
                     }
-                    
+
                 }
                 else
                     if (isUserSuperAdmin && BasicUserOverview.this.isCurrentUserSuperAdmin) {
@@ -641,16 +653,18 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         };
         // define checkbox button converter class
         EntityToPresentationObjectConverter converterToDeleteButton = new EntityToPresentationObjectConverter() {
-            
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 CheckBox checkAllCheckBox = new CheckBox("checkAll");
                 checkAllCheckBox.setToCheckOnClick(BasicUserOverview.SELECTED_USERS_KEY, "this.checked");
                 return checkAllCheckBox;
             }
-            
-            public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+
+            @Override
+			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 User user = (User) entity;
-                
+
                 if (!user.getPrimaryKey().equals(getSuperAdmin(iwc).getPrimaryKey())) {
                     CheckBox checkBox = new CheckBox(BasicUserOverview.SELECTED_USERS_KEY, Integer.toString(user.getID()));
                     return checkBox;
@@ -660,13 +674,15 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 								}
             }
         };
-        
+
         EntityToPresentationObjectConverter converterUserStatus = new EntityToPresentationObjectConverter() {
-          public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+          @Override
+		public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
             return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
         }
-        
-        public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+
+        @Override
+		public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
             // entity is a user, try to get the corresponding address
             User user = (User) entity;
             Status status = null;
@@ -674,7 +690,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             try {
 	            if (BasicUserOverview.this.ps.getSelectedGroup() != null) {
 	                userStatusID = getUserStatusBusiness(iwc).getUserGroupStatus(Integer.parseInt(user.getPrimaryKey().toString()),Integer.parseInt(BasicUserOverview.this.ps.getSelectedGroup().getPrimaryKey().toString()));
-	                if(userStatusID != -1) {	
+	                if(userStatusID != -1) {
 	                    status = getUserStatusBusiness(iwc).getStatusHome().findByPrimaryKey(new Integer(userStatusID));
 	                }
             	}
@@ -692,24 +708,26 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             if (status!= null) {
 							text = new Text(iwrb.getLocalizedString(status.getStatusKey()));
 						}
-            return text; 
+            return text;
         }
-    
-        	
-        	
+
+
+
         };
 
         EntityToPresentationObjectConverter converterCustodianInfo = new EntityToPresentationObjectConverter() {
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
               return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
           }
-          
-          public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+
+          @Override
+		public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
               // entity is a user, try to get the corresponding address
               User user = (User) entity;
               Collection custodians = null;
               LinkContainer linkContainer = new LinkContainer();
-              
+
 
               try {
             	  LinkToFamilyLogic linkToFamilyLogic = (LinkToFamilyLogic)ImplementorRepository.getInstance().newInstanceOrNull(LinkToFamilyLogic.class, this.getClass());
@@ -724,15 +742,15 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		                  //added to match new style links
 		                  link.setStyleClass(BasicUserOverview.this.styledLinkUnderline);
 		                  boolean isUserSuperAdmin = user.getPrimaryKey().equals(getSuperAdmin(iwc).getPrimaryKey());
-		                  
+
 		                  if ( !isUserSuperAdmin) {
 		                      link.setWindowToOpen(UserPropertyWindow.class);
 		                      link.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, custodian.getPrimaryKey().toString());
-		                      
+
 		                      if (BasicUserOverview.this.selectedGroup != null) {
 		                          link.addParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID, BasicUserOverview.this.selectedGroup.getPrimaryKey().toString());
 		                      }
-		                      
+
 		                  }
 		                  else {
 		                      if (isUserSuperAdmin && BasicUserOverview.this.isCurrentUserSuperAdmin) {
@@ -754,16 +772,18 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
               catch(Exception ex) {
               		ex.printStackTrace(System.err);
               }
-              return linkContainer; 
+              return linkContainer;
           }
         };
-        
+
         EntityToPresentationObjectConverter converterUserInfoColumn1 = new EntityToPresentationObjectConverter() {
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
               return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
           }
-          
-          public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+
+          @Override
+		public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
               // entity is a user, try to get the corresponding address
               User user = (User) entity;
               UserInfoColumns infoColumns = null;
@@ -781,16 +801,18 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
               if (infoColumns!= null) {
 				text = new Text(infoColumns.getUserInfo1());
 			}
-              return text; 
+              return text;
           }
         };
 
         EntityToPresentationObjectConverter converterUserInfoColumn2 = new EntityToPresentationObjectConverter() {
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
               return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
           }
-          
-          public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+
+          @Override
+		public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
               // entity is a user, try to get the corresponding address
               User user = (User) entity;
               UserInfoColumns infoColumns = null;
@@ -808,16 +830,18 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
               if (infoColumns!= null) {
 				text = new Text(infoColumns.getUserInfo2());
 			}
-              return text; 
+              return text;
           }
         };
-        
+
         EntityToPresentationObjectConverter converterUserInfoColumn3 = new EntityToPresentationObjectConverter() {
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
               return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
           }
 
-          public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+          @Override
+		public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
               // entity is a user, try to get the corresponding address
               User user = (User) entity;
               UserInfoColumns infoColumns = null;
@@ -835,7 +859,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
               if (infoColumns!= null) {
 				text = new Text(infoColumns.getUserInfo3());
 			}
-              return text; 
+              return text;
           }
         };
 
@@ -857,7 +881,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         String emailKey = Email.class.getName() + ".ADDRESS";
         String phoneKey = PHONE_TYPE_PATH +":" + Phone.class.getName() + ".PHONE_NUMBER";
         String pinKey = User.class.getName() + ".PERSONAL_ID";
-        
+
         String firstNameKey = User.class.getName() + ".FIRST_NAME";
         String middleNameKey = User.class.getName() + ".MIDDLE_NAME";
         String lastNameKey = User.class.getName() + ".LAST_NAME";
@@ -868,39 +892,39 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         String userInfo1Key = UserInfoColumns.class.getName() + ".USER_INFO_1";
         String userInfo2Key = UserInfoColumns.class.getName() + ".USER_INFO_2";
         String userInfo3Key = UserInfoColumns.class.getName() + ".USER_INFO_3";
-        
+
         String dateOfBirthKey = User.class.getName() + ".DATE_OF_BIRTH";
-        
+
         entityBrowser.setEntities(getEntityBrowserIdentifier(this.ps), users);
         entityBrowser.setName("BasicUserOverView");
         entityBrowser.setDefaultNumberOfRows(30);
         //entityBrowser.setLineColor("#DBDCDF");
         entityBrowser.setWidth(Table.HUNDRED_PERCENT);
         //entityBrowser.setLinesBetween(true);
-        
+
         //fonts
         Text column = new Text();
         column.setBold();
         entityBrowser.setColumnTextProxy(column);
-        
+
         //		set color of rows
         entityBrowser.setColorForEvenRows(IWColor.getHexColorString(246, 246, 247));
         entityBrowser.setColorForOddRows("#FFFFFF");
-        
+
         //set a style for the display table:
         entityBrowser.setStyleClass(this.styleTable);
-        
+
         //entityBrowser.setVerticalZebraColored("#FFFFFF",IWColor.getHexColorString(246,
         // 246, 247)); why does this not work!??
-        
+
         Table emptyTopTable = new Table(1,1);
         emptyTopTable.setCellpadding(0);
         emptyTopTable.setCellspacing(0);
         emptyTopTable.setHeight(16);
         emptyTopTable.emptyCell(1,1);
-        
+
         entityBrowser.add(emptyTopTable);
-        
+
         entityBrowser.setDefaultColumn(1, nameKey);
         entityBrowser.setDefaultColumn(2, pinKey);
         entityBrowser.setDefaultColumn(3, emailKey);
@@ -927,7 +951,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         entityBrowser.addEntity(Phone.class.getName());
         entityBrowser.addEntity(Status.class.getName());
         entityBrowser.addEntity(UserInfoColumns.class.getName());
-        
+
         //set the option columns
         entityBrowser.setOptionColumn(0,firstNameKey);
         entityBrowser.setOptionColumn(1,middleNameKey);
@@ -944,10 +968,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 		}
         // change display
         entityBrowser.setCellspacing(2);
-        
+
         return entityBrowser;
     }
-    
+
     @Override
 	public void main(IWContext iwc) throws Exception {
         this.empty();
@@ -955,21 +979,21 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         this.iwrb = this.getResourceBundle(iwc);
         Page parentPage = this.getParentPage();
         parentPage.setAllMargins(0);
-        
+
         this.accessController = iwc.getAccessController();
         this.ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
         this.selectedGroup = this.ps.getSelectedGroup();
         this.selectedDomain = this.ps.getSelectedDomain();
-        
+
         //Sets the alias group as the real group the selectedgroup points to
         checkForAlias();
-        
-        //gets the super user 
+
+        //gets the super user
         getSuperAdmin(iwc);
-        
+
         //sets the access permission variables
         setAccessPermissions(iwc);
-        
+
         //if we where moving stuff
         if (getPresentationStateOfBasicUserOverview(iwc).getResultOfMovingUsers() != null) {
             add(getResultList(iwc));
@@ -988,9 +1012,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
         else {
             //adds a front page if it exists
-            addGreetingPage(iwc);	
+            addGreetingPage(iwc);
         }
-        
+
         String openSendMailWindow = (String)iwc.getSessionAttribute(OPEN_SEND_MAIL_WINDOW);
 		if (openSendMailWindow != null && openSendMailWindow.equalsIgnoreCase("true")) {
 			Link l = new Link();
@@ -998,9 +1022,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 			parentPage.setOnLoad(l.getWindowToOpenCallingScript(iwc));
 			//parentPage.getAssociatedScript().addFunction("", l.getWindowToOpenCallingScript(iwc));
 		}
-        
+
     }
-    
+
     private void addGreetingPage(IWContext iwc) {
         //Birna did this
         				Table frameTable = new Table(1,2);
@@ -1013,13 +1037,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         				frameTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
         				frameTable.setLeftCellBorderWidth(1, 2, 0);
         				frameTable.setRightCellBorderWidth(1, 2, 0);
-        
+
         				Layer layer = new Layer(Layer.DIV);
-        				layer.setWidth("100%");
-        				layer.setHeight("100%");
-        				layer.setOverflow("auto");
+        				layer.setStyleAttribute("width", "100%");
+        				layer.setStyleAttribute("height", "100%");
+        				layer.setStyleAttribute("overflow", "auto");
                 frameTable.add(layer, 1, 2);
-        				
+
         String frontPageIdOrURI = iwc.getApplicationSettings().getProperty(USER_APP_START_PAGE,"-1");
         if(!"-1".equals(frontPageIdOrURI)) {
             IFrame frontPage = new IFrame();
@@ -1038,7 +1062,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
         add(frameTable);
     }
-    
+
     /**
      * sets the global access permission variables in this class for the current user
      * @param iwc
@@ -1047,16 +1071,16 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     private void setAccessPermissions(IWContext iwc) throws Exception {
         //access control stuff
         this.isCurrentUserSuperAdmin = iwc.isSuperAdmin();
-        
+
         this.hasViewPermissionForRealGroup = this.isCurrentUserSuperAdmin;
         this.hasEditPermissionForRealGroup = this.isCurrentUserSuperAdmin;
         this.hasDeletePermissionForRealGroup = this.isCurrentUserSuperAdmin;
         this.hasOwnerPermissionForRealGroup = this.isCurrentUserSuperAdmin;
         this.hasPermitPermissionForRealGroup = this.isCurrentUserSuperAdmin;
-        
+
         if (!this.isCurrentUserSuperAdmin){
             if(this.aliasGroup!=null){//thats the real group
-                this.hasOwnerPermissionForRealGroup = this.accessController.isOwner(this.aliasGroup, iwc); 
+                this.hasOwnerPermissionForRealGroup = this.accessController.isOwner(this.aliasGroup, iwc);
                 if(!this.hasOwnerPermissionForRealGroup) {
                     this.hasViewPermissionForRealGroup = this.accessController.hasViewPermissionFor(this.aliasGroup, iwc);
                     this.hasEditPermissionForRealGroup = this.accessController.hasEditPermissionFor(this.aliasGroup, iwc);
@@ -1072,7 +1096,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 }
             }
             else if(this.selectedGroup!=null){//the third case: selectedGroup == null happens when doing a search for example
-                this.hasOwnerPermissionForRealGroup = this.accessController.isOwner(this.selectedGroup, iwc); 
+                this.hasOwnerPermissionForRealGroup = this.accessController.isOwner(this.selectedGroup, iwc);
                 if(!this.hasOwnerPermissionForRealGroup) {
                     this.hasViewPermissionForRealGroup = this.accessController.hasViewPermissionFor(this.selectedGroup, iwc);
                     this.hasEditPermissionForRealGroup = this.accessController.hasEditPermissionFor(this.selectedGroup, iwc);
@@ -1087,10 +1111,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                     this.hasPermitPermissionForRealGroup = true;
                 }
             }
-            
+
         }
     }
-    
+
     com.idega.core.user.data.User getSuperAdmin(IWContext iwc) {
         if (this.administratorUser == null) {
             try {
@@ -1103,15 +1127,15 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
         return this.administratorUser;
     }
-    
+
     /**
-     * 
+     *
      */
     private void checkForAlias() {
         if (this.selectedGroup != null) {
             //alias stuff
             if (this.selectedGroup.getGroupType().equals("alias")) {
-                this.aliasGroup = this.selectedGroup.getAlias(); 
+                this.aliasGroup = this.selectedGroup.getAlias();
             }
             //TODO PALLI: Have to fix this once and for all. It looks like the class is cloned and not instanciated, so this variable doesn't become null.
             else {
@@ -1119,7 +1143,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             }
         }
     }
-    
+
     public static UserBusiness getUserBusiness(IWApplicationContext iwc) {
         UserBusiness business = null;
         if (business == null) {
@@ -1132,7 +1156,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
         return business;
     }
-    
+
     public static GroupBusiness getGroupBusiness(IWApplicationContext iwc) {
         GroupBusiness business = null;
         if (business == null) {
@@ -1157,7 +1181,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	  		}
 	  		return business;
 	  	}
-    
+
 	  	public UserInfoColumnsBusiness getUserInfoColumnsBusiness(IWApplicationContext iwc){
 	  		UserInfoColumnsBusiness business = null;
 	  		if(business == null){
@@ -1191,7 +1215,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
         return notRemovedUsers;
     }
-    
+
     public static Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, IWContext iwc) throws RemoteException {
         return moveUsers(userIds, parentGroup, targetGroupId, iwc, false);
     }
@@ -1213,12 +1237,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         resultMap.put(groupId, map);
         return resultMap;
     }
-    
+
     public static synchronized Map moveContentOfGroups(Collection groups, Collection groupTypesToMoveAmong, IWContext iwc) throws RemoteException {
         UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
         return userBusiness.moveUsers(iwc,groups, groupTypesToMoveAmong);
     }
-    
+
     public IWPresentationState getPresentationState(IWUserContext iwuc) {
         if (this._presentationState == null) {
             try {
@@ -1238,7 +1262,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	public String getBundleIdentifier() {
         return "com.idega.user";
     }
-    
+
     // necessary because of subclasses
     private BasicUserOverviewPS getPresentationStateOfBasicUserOverview(IWUserContext iwuc) {
         try {
@@ -1251,10 +1275,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             throw new RuntimeException(ex.getMessage());
         }
     }
-    
+
     ////////////////////////////////////////////////////////// hack for friday
     // /////////////////////////////////////////////////////////////////////////////////////
-    
+
     private Table getResultList(IWContext iwc) {
         BasicUserOverviewPS state = getPresentationStateOfBasicUserOverview(iwc);
         String movedUsersNumberMessage = getLocalizedString("number_of_sucessfully_moved_users", "Number of successfully moved users", iwc);
@@ -1262,7 +1286,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         String notMovedUsersMessage = getLocalizedString("the_following_users_were_not moved", "Following users were not moved", iwc);
         String success = getLocalizedString("all_users_were_moved_to the_specified_group", "All users were successfully moved.", iwc);
         String target = getLocalizedString("Target", "Target", iwc);
-        String targetMessage = null; 
+        String targetMessage = null;
         Map resultOfMovingUsers = state.getResultOfMovingUsers();
         UserBusiness userBusiness = BasicUserOverview.getUserBusiness(iwc);
         GroupBusiness groupBusiness = BasicUserOverview.getGroupBusiness(iwc);
@@ -1343,10 +1367,10 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
         notMovedUsersNumberMessage += ": " + notMovedUsers;
         notMovedUsersMessage += ": ";
-        
+
         Text movedUsersNumberMessageText = new Text(movedUsersNumberMessage += ": " + movedUsers);
         movedUsersNumberMessageText.setBold(); //setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-        
+
         Text targetMessageText = null;
         if (targetMessage != null) {
             targetMessageText = new Text(targetMessage);
@@ -1355,12 +1379,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
         Text notMovedUsersNumberMessageText = new Text(notMovedUsersNumberMessage);
         notMovedUsersNumberMessageText.setBold(); //setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
-        
+
         Text notMovedUsersMessageText = new Text(notMovedUsersMessage);
         notMovedUsersMessageText.setBold(); //setFontStyle(IWConstants.BUILDER_FONT_STYLE_LARGE);
         Text successText = new Text(success);
         successText.setBold();
-        
+
         Table table = new Table();
         int row = 1;
         if (targetMessageText != null) {
@@ -1381,7 +1405,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             }
         return table;
     }
-    
+
     private EntityBrowser getEntityBrowserForResult(Collection users, Map messageMap, BasicUserOverviewPS state, IWContext iwc) {
         // define entity browser
         EntityBrowser entityBrowser = EntityBrowser.getInstanceUsingEventSystem();
@@ -1397,18 +1421,18 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
         // add BasisUserOverviewPs as ActionListener to the entityBrowser
         entityBrowser.addActionListener((IWActionListener) presentationStateParent);
-        
+
         // define error message converter class
         MessageConverter converterErrorMessage = new MessageConverter();
         // set error message map
         converterErrorMessage.setEntityMessageMap(messageMap);
-        
+
         //    define address converter class
         EntityToPresentationObjectConverter converterAddress = new EntityToPresentationObjectConverter() {
             public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
-            
+
             public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 // entity is a user, try to get the corresponding address
                 User user = (User) entity;
@@ -1418,7 +1442,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 }
                 catch (RemoteException ex) {
                     System.err.println("[BasicUserOverview]: Address could not be retrieved.Message was : " + ex.getMessage());
-                    
+
                     ex.printStackTrace(System.err);
                 }
                 // now the corresponding address was found, now just use the
@@ -1426,13 +1450,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 return (browser.getDefaultConverter().getPresentationObject(address, path, browser, iwc));
             }
         };
-        
+
         // define email converter class
         EntityToPresentationObjectConverter converterEmail = new EntityToPresentationObjectConverter() {
             public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
-            
+
             public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 // entity is a user, try to get the corresponding address
                 User user = (User) entity;
@@ -1454,13 +1478,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 return new Text(emailString);
             }
         };
-        
+
         // define phone converter class
         EntityToPresentationObjectConverter converterPhone = new EntityToPresentationObjectConverter() {
             public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
-            
+
             public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 // entity is a user, try to get the corresponding address
                 User user = (User) entity;
@@ -1481,7 +1505,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 }
                 return table;
             }
-            
+
             private PresentationObject getPresentationObjectForPhone(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc)  {
                 StringBuffer displayValues = new StringBuffer();
                 List list = path.getValues((EntityRepresentation) genericEntity);
@@ -1504,21 +1528,21 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 	}
                 	displayValues.append(object.toString());
                 	// append white space
-                	displayValues.append(' ');  
+                	displayValues.append(' ');
                 }
                 Text text = new Text();
-                text.setText(displayValues.toString());               
+                text.setText(displayValues.toString());
                 return text;
               }
         };
         // define special converter class for complete address
         EntityToPresentationObjectConverter converterCompleteAddress = new EntityToPresentationObjectConverter() {
             private List values;
-            
+
             public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
-            
+
             public PresentationObject getPresentationObject(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 // entity is a user, try to get the corresponding address
                 User user = (User) genericEntity;
@@ -1570,7 +1594,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 return ((object == null) ? "" : object.toString());
             }
         };
-        
+
         // set default columns
         String errorMessageKey = "errorMessageKey";
         String nameKey = User.class.getName() + ".FIRST_NAME:" + User.class.getName() + ".MIDDLE_NAME:" + User.class.getName() + ".LAST_NAME";
@@ -1590,35 +1614,35 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         String emailKey = Email.class.getName() + ".ADDRESS";
         String phoneKey = PhoneType.class.getName() + ".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME:" + Phone.class.getName() + ".PHONE_NUMBER";
         String pinKey = User.class.getName() + ".PERSONAL_ID";
-        
+
         Iterator iterator = messageMap.keySet().iterator();
         String identifier = (iterator.hasNext()) ? iterator.next().toString() : "move";
-        
+
         entityBrowser.setEntities(identifier, users);
         entityBrowser.setDefaultNumberOfRows(Math.min(users.size(), 22));
         //entityBrowser.setLineColor("#DBDCDF");
         entityBrowser.setWidth(Table.HUNDRED_PERCENT);
         //entityBrowser.setLinesBetween(true);
-        
+
         //fonts
         Text column = new Text();
         column.setBold();
         entityBrowser.setColumnTextProxy(column);
-        
+
         //    set color of rows
         entityBrowser.setColorForEvenRows(IWColor.getHexColorString(246, 246, 247));
         entityBrowser.setColorForOddRows("#FFFFFF");
-        
+
         //entityBrowser.setVerticalZebraColored("#FFFFFF",IWColor.getHexColorString(246,
         // 246, 247)); why does this not work!??
-        
+
         entityBrowser.setDefaultColumn(1, errorMessageKey);
         entityBrowser.setDefaultColumn(2, nameKey);
         entityBrowser.setDefaultColumn(3, pinKey);
         entityBrowser.setDefaultColumn(4, emailKey);
         entityBrowser.setDefaultColumn(5, completeAddressKey);
         entityBrowser.setDefaultColumn(6, phoneKey);
-        
+
         // set special converters
         entityBrowser.setEntityToPresentationConverter(errorMessageKey, converterErrorMessage);
         entityBrowser.setEntityToPresentationConverter(completeAddressKey, converterCompleteAddress);
@@ -1633,19 +1657,19 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         // change display
         entityBrowser.setCellspacing(2);
         entityBrowser.setAcceptUserSettingsShowUserSettingsButton(false, false);
-        
+
         return entityBrowser;
     }
-    
+
     protected String getEntityBrowserIdentifier(BasicUserOverviewPS state) {
-        
+
         String identifier = (this.selectedGroup == null) ? "" : this.selectedGroup.getPrimaryKey().toString();
         identifier += "_";
         identifier += (state.getSelectedDomain() != null) ? state.getSelectedDomain().getPrimaryKey().toString() : "";
-        
+
         return identifier;
     }
-    
+
     public CountryHome getCountryHome() throws RemoteException {
 		return (CountryHome) IDOLookup.getHome(Country.class);
 	}

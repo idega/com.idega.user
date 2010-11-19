@@ -1,11 +1,13 @@
 package com.idega.user.presentation;
 
-import com.idega.util.IWColor;
-import com.idega.idegaweb.browser.presentation.IWBrowserView;
-import com.idega.presentation.*;
 import com.idega.event.IWPresentationEvent;
-import com.idega.user.event.PartitionSelectEvent;
+import com.idega.idegaweb.browser.presentation.IWBrowserView;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Layer;
+import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.text.Link;
+import com.idega.user.event.PartitionSelectEvent;
+import com.idega.util.IWColor;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -47,20 +49,23 @@ public class SubsetSelector extends PresentationObjectContainer implements IWBro
 	    this._selectedSubset = index;
 	}
 
+	@Override
 	public void setControlEventModel(IWPresentationEvent model){
 	    this._contolEvent = model;
 	}
 
+	@Override
 	public void setControlTarget(String controlTarget){
 	    this._controlTarget = controlTarget;
 	}
 
 
+	@Override
 	public void main(IWContext iwc) throws Exception
 	{
 		Layer partitionSelection = new Layer();
 		partitionSelection.setHorizontalAlignment("center");
-                partitionSelection.setBackgroundColor(new IWColor(230,230,230).getHexColorString());
+		partitionSelection.setStyleAttribute("background-color", new IWColor(230,230,230).getHexColorString());
 
 
 		if (this._size > this._subsetSize){
