@@ -31,6 +31,12 @@ public class MoveGroupConfirmWindowPS extends IWPresentationStateImpl implements
 						newParentGroup = newParentGroup.getAlias();
 					}
 
+					if (!newParentGroup.getGroupType().equals(group.getGroupType())) {
+						//TODO Add some error!!
+						return;
+					}
+					
+					
 					oldParentGroup.removeGroup(group, performer);
 					newParentGroup.addGroup(group);
 

@@ -8,6 +8,7 @@
   <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.builder-3.1.15.jar"></classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.entity-3.1.0.jar"></classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.media-3.1.1.jar"></classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/is.idega.block.family-1.0.5.jar"></classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jdom/jars/jdom-1.0.jar"></classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai-1.0.jar"></classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai_codec-1.0.jar"></classpathentry>

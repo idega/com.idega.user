@@ -56,6 +56,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 	private String PARAMETER_PID = "mrw_pid";
 	private String PARAMETER_SAVE = "mrw_sv";
 	private String PARAMETER_STATUS = "mrw_sta";
+	private String PARAMETER_EMAIL = "mrw_email";
 	private StatusHome sHome;
 	private UserHome uHome;
 
@@ -126,12 +127,16 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 		}
 		table.setWidth(2, "10");
 		table.setWidth(4, "10");
+		table.setWidth(6, "10");
 		table.add(formatText(this.iwrb.getLocalizedString("user.status", "Status")), 5, row);
+		table.add(formatText(this.iwrb.getLocalizedString("user.email", "E-mail")), 7, row);
 		TextInput pid = new TextInput();
+		TextInput email = new TextInput();
 		UserStatusDropdown status = new UserStatusDropdown("noname");
 		CheckBox check;
 		String sPid;
 		String sStat;
+		String sEmail;
 		User user;
 		Status stat;
 		for (int i = 1; i <= this.numberOfRows; i++) {
@@ -139,6 +144,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 			if (verifyForm) {
 				sPid = iwc.getParameter(this.PARAMETER_PID + "_" + i);
 				sStat = iwc.getParameter(this.PARAMETER_STATUS + "_" + i);
+				sEmail = iwc.getParameter(this.PARAMETER_EMAIL + "_" + i);
 				if (sPid != null && !sPid.equals("")) {
 					try {
 						++row;
@@ -158,8 +164,12 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 							table.add(formatText(this.iwrb.getLocalizedString(stat.getStatusKey(), stat.getStatusKey())), 5,
 									row);
 						}
+						if (sEmail != null) {
+							table.add(formatText(sEmail), 7, row);
+						}
 						form.maintainParameter(this.PARAMETER_PID + "_" + i);
 						form.maintainParameter(this.PARAMETER_STATUS + "_" + i);
+						form.maintainParameter(this.PARAMETER_EMAIL + "_" + i);
 						foundUser = true;
 					}
 					catch (FinderException e) {
@@ -180,9 +190,17 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 						+ " " + i);
 				pid.setStyleAttribute(STYLE_2);
 				pid.setMaxlength(10);
+				
+				email = new TextInput(this.PARAMETER_EMAIL + "_" + i);
+				email.setAsEmail(this.iwrb.getLocalizedString("user.email_incorrect_in_row",
+						"E-mail not correct for user in row")
+						+ " " + i);
+				email.setStyleAttribute(STYLE_2);
+				
 				table.add(formatText(Integer.toString(i)), 1, row);
 				table.add(pid, 3, row);
 				table.add(status, 5, row);
+				table.add(email, 7, row);
 			}
 		}
 		++row;
@@ -261,6 +279,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 	private boolean handleInsert(IWContext iwc) throws RemoteException {
 		String sPid;
 		String sStat;
+		String sEmail;
 		User user;
 		Status stat;
 		UserStatusBusiness usb = (UserStatusBusiness) IBOLookup.getServiceInstance(iwc, UserStatusBusiness.class);
@@ -272,6 +291,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 				try {
 					sPid = iwc.getParameter(this.PARAMETER_PID + "_" + i);
 					sStat = iwc.getParameter(this.PARAMETER_STATUS + "_" + i);
+					sEmail = iwc.getParameter(this.PARAMETER_EMAIL + "_" + i);
 					user = this.uHome.findByPersonalID(sPid);
 					if (UserStatusDropdown.NO_STATUS_KEY.equals(sStat)) {
 						stat = null;
@@ -296,6 +316,10 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 							if (user.getPrimaryGroup() == null) {
 								user.setPrimaryGroup(this.group);
 								user.store();
+							}
+							
+							if (sEmail != null && !"".equals(sEmail)) {
+								getUserBusiness(iwc).updateUserMail(user, sEmail);
 							}
 							
 							getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,this.group);

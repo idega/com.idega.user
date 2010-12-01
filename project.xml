@@ -222,5 +222,12 @@
       <type>jar</type>
       <url>http://www.idega.com/</url>
     </dependency>
+        <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>is.idega.block.family</artifactId>
+      <version>1.0.5</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
+    </dependency>
   </dependencies>
 </project>

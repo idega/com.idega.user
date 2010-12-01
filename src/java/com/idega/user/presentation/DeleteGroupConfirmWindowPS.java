@@ -55,6 +55,15 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
 						removePermissions(group,e.getIWContext());
 						
 						
+						Collection children = group.getChildren();
+						if (children != null && !children.isEmpty()) {
+							Iterator it = children.iterator();
+							while (it.hasNext()) {
+								Group child = (Group) it.next();
+								removePermissions(child,e.getIWContext());
+							}
+						}
+						
 						
 						//TODO fix this
 						e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");

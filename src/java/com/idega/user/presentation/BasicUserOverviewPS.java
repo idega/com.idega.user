@@ -1,5 +1,7 @@
 package com.idega.user.presentation;
 
+import is.idega.block.family.business.FamilyLogic;
+
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -7,8 +9,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.ejb.FinderException;
 import javax.swing.event.ChangeEvent;
+
 import com.idega.block.entity.event.EntityBrowserEvent;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.contact.data.Email;
@@ -55,6 +59,8 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
     //  String color = color1;
 	
 	private GroupBusiness business = null;
+
+	private FamilyLogic familyLogic = null;
 
     protected Group parentGroupOfSelection = null;
 
@@ -153,7 +159,9 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 			    	userIds = mainIwc.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
 			        // email users (if something has been chosen)
 			        StringBuffer toAddresses = new StringBuffer("");
+			        StringBuffer custToAddresses = new StringBuffer("");
 			        boolean first = true;
+			        boolean custFirst = true;
 		        	for (int i=0; i < userIds.length; i++) {
 		        		String userID = userIds[i];
 		        		try {
@@ -170,12 +178,33 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 			        				toAddresses.append(email.getEmailAddress());
 		        				}
 		        			}
+		        			
+		        			Collection custodians = getFamilyLogic(mainIwc).getCustodiansFor(user);
+		        			if (custodians != null && !custodians.isEmpty()) {
+		        				Iterator it = custodians.iterator();
+		        				while (it.hasNext()) {
+		        					User custodian = (User) it.next();
+				        			Collection custEmail = custodian.getEmails();
+				        			if (custEmail != null && !custEmail.isEmpty()) {
+				        				Email email = (Email) custEmail.iterator().next();
+				        				if (email.getEmailAddress() != null && !"".equals(email.getEmailAddress())) {
+				        					if (!custFirst) {
+				        						custToAddresses.append(";");		        						
+				        					} else {
+				        						custFirst = false;
+				        					}
+				        					custToAddresses.append(email.getEmailAddress());
+				        				}
+				        			}
+		        				}
+		        			}
 		        		}
 		        		catch (Exception ex) {
 		        			ex.printStackTrace();
 		        		}
 		        	}
 		        	mainIwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_TO_ADDRESS, toAddresses.toString());
+		        	mainIwc.setSessionAttribute(BasicUserOverviewEmailSenderWindow.PARAM_TO_CUSTODIAN_ADDRESS, custToAddresses.toString());
 		        	mainIwc.setSessionAttribute(BasicUserOverview.OPEN_SEND_MAIL_WINDOW, "true");
 		        	
 			    } else {
@@ -319,4 +348,15 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
         return this.business;
     }
 
+    public FamilyLogic getFamilyLogic(IWApplicationContext iwc) {
+        if (this.familyLogic == null) {
+            try {
+                this.familyLogic = (FamilyLogic) com.idega.business.IBOLookup.getServiceInstance(iwc, FamilyLogic.class);
+            }
+            catch (java.rmi.RemoteException rme) {
+                throw new RuntimeException(rme.getMessage());
+            }
+        }
+        return this.familyLogic;
+    }
 }

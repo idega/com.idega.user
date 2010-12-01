@@ -37,15 +37,18 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 	public static final String PARAM_MAIL_SERVER = "mail_server";
 	public static final String PARAM_FROM_ADDRESS = "from_address";
 	protected static final String PARAM_TO_ADDRESS = "to_address";
+	protected static final String PARAM_TO_CUSTODIAN_ADDRESS = "to_cust_address";
 	public static final String PARAM_SUBJECT = "subject";
 	protected static final String PARAM_BODY = "body";
 	private static final String PARAM_SEND = "send_mail";
+	private static final String PARAM_SEND_CUSTODIAN = "send_mail_cust";
 	
 	private boolean allowSend;
 	
 	//texts
 	private Text fromAddressText;
 	private Text toAddressText;
+	private Text toCustAddressText;
 	private Text subjectText;
 	private Text bodyText;
 	private Text sendingResultsText;
@@ -54,15 +57,20 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 	//fields
 	private MailToLink mailToLink;
 	private MailToLink mailToLink2;
+	private MailToLink mailToLink3;
+	private MailToLink mailToLink4;
 	private HiddenInput mailServerField;
 	private TextInput fromAddressField;
 	private TextInput toAddressField;
+	private TextInput toCustAddressField;
 	private TextInput subjectField;
 	private TextArea bodyField;
 	
 	//buttons
 	private SubmitButton sendButton;
 	private StyledButton styledSendButton;
+	private SubmitButton sendCustButton;
+	private StyledButton styledSendCustButton;
 	private CloseButton closeButton;
 	private StyledButton styledCloseButton;
 	
@@ -87,6 +95,11 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		if(send != null && !send.equals("")) {
 			sendEmail(iwc);
 		}
+		send = iwc.getParameter(PARAM_SEND_CUSTODIAN);
+		if(send != null && !send.equals("")) {
+			sendEmailCustodian(iwc);
+		}
+
 		lineUpFields(iwc);		
 		add(this.form,iwc);
 	}
@@ -116,11 +129,38 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 			System.out.println("BasicUserOverviewEmailSenderWindow: Error sending mail: " +e.getClass()+": "+e.getMessage());
 		}
 	}
-	
+
+	private void sendEmailCustodian(IWContext iwc) {
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+		String mailServer = iwc.getParameter(PARAM_MAIL_SERVER);
+		String fromAddress = iwc.getParameter(PARAM_FROM_ADDRESS);
+		String toAddress = iwc.getParameter(PARAM_TO_CUSTODIAN_ADDRESS);
+		String subject = iwc.getParameter(PARAM_SUBJECT);
+		String body = iwc.getParameter(PARAM_BODY);
+		
+		try {
+			if (toAddress == null || toAddress.equals("")) {
+				this.sendingResultsText = new Text(iwrb.getLocalizedString("error_sending_mail","Error sending mail, error message was:"));
+				this.sendingResultsMessageText = new Text(iwrb.getLocalizedString("no_emails_defined_for_selected_recipients","No emails defined for selected recipients"));
+				this.sendingResultsMessageText.setBold(false);
+			}
+			else {
+				com.idega.util.SendMail.send(fromAddress,fromAddress,"",toAddress,mailServer,subject,body);
+				this.sendingResultsText = new Text(iwrb.getLocalizedString("successful_sending_mail","Sending mail was successful"));
+			}
+		} catch (Exception e) {
+			this.sendingResultsText = new Text(iwrb.getLocalizedString("error_sending_mail","Error sending mail, error message was:"));
+			this.sendingResultsMessageText = new Text(e.getMessage());
+			this.sendingResultsMessageText.setBold(false);
+			System.out.println("BasicUserOverviewEmailSenderWindow: Error sending mail: " +e.getClass()+": "+e.getMessage());
+		}
+	}
+
 	protected void initializeTexts(IWContext iwc) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		this.fromAddressText = new Text(iwrb.getLocalizedString(PARAM_FROM_ADDRESS,"From Address"));
 		this.toAddressText = new Text(iwrb.getLocalizedString(PARAM_TO_ADDRESS,"To Address"));
+		this.toCustAddressText = new Text(iwrb.getLocalizedString(PARAM_TO_CUSTODIAN_ADDRESS,"To Custodians Address"));
 		this.subjectText = new Text(iwrb.getLocalizedString(PARAM_SUBJECT,"Subject"));
 		this.bodyText = new Text(iwrb.getLocalizedString(PARAM_BODY,"Body"));
 	}
@@ -135,6 +175,11 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		this.mailToLink2 = new MailToLink("(mac)");
 		this.mailToLink2.setStyleClass(linkStyleUnderline);
 
+		this.mailToLink3 = new MailToLink(iwrb.getLocalizedString("open_in_default_mail_program_cust", "Open custodians in default mail program"));
+		this.mailToLink3.setStyleClass(linkStyleUnderline);
+		
+		this.mailToLink4 = new MailToLink("(mac)");
+		this.mailToLink4.setStyleClass(linkStyleUnderline);
 		
 		this.fromAddressField = new TextInput(PARAM_FROM_ADDRESS);
 		this.fromAddressField.setSize(60);
@@ -145,7 +190,12 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		this.toAddressField.setSize(60);
 		this.toAddressField.setReadOnly(true);
 		this.toAddressField.setStyleAttribute("color: gray");
-		
+
+		this.toCustAddressField = new TextInput(PARAM_TO_CUSTODIAN_ADDRESS);
+		this.toCustAddressField.setSize(60);
+		this.toCustAddressField.setReadOnly(true);
+		this.toCustAddressField.setStyleAttribute("color: gray");
+
 		this.subjectField = new TextInput(PARAM_SUBJECT);
 		this.subjectField.setSize(60);
 		
@@ -153,6 +203,9 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		
 		this.sendButton = new SubmitButton(iwrb.getLocalizedString("send","Send"), PARAM_SEND, PARAM_SEND);
 		this.styledSendButton = new StyledButton(this.sendButton);
+
+		this.sendCustButton = new SubmitButton(iwrb.getLocalizedString("send_cust","Send to custodian"), PARAM_SEND_CUSTODIAN, PARAM_SEND_CUSTODIAN);
+		this.styledSendCustButton = new StyledButton(this.sendCustButton);
 
 		this.closeButton = new CloseButton(iwrb.getLocalizedString("close","Close"));
 		this.styledCloseButton = new StyledButton(this.closeButton);
@@ -165,9 +218,12 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		this.mailServerField.setContent((String)iwc.getSessionAttribute(PARAM_MAIL_SERVER));
 		this.fromAddressField.setContent((String)iwc.getSessionAttribute(PARAM_FROM_ADDRESS));
 		this.toAddressField.setContent((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS));
+		this.toCustAddressField.setContent((String)iwc.getSessionAttribute(PARAM_TO_CUSTODIAN_ADDRESS));
 		this.subjectField.setContent((String)iwc.getSessionAttribute(PARAM_SUBJECT));
 		this.mailToLink.setRecipients((String)iwc.getSessionAttribute(PARAM_FROM_ADDRESS));
 		this.mailToLink.setBCC((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS));
+		this.mailToLink3.setRecipients((String)iwc.getSessionAttribute(PARAM_FROM_ADDRESS));
+		this.mailToLink3.setBCC((String)iwc.getSessionAttribute(PARAM_TO_CUSTODIAN_ADDRESS));
 
 		if (this.fromAddressField.getContent() == null || "".equals(this.fromAddressField.getContent()) || "no_from_address_set".equals(this.fromAddressField.getContent())) {
 			this.allowSend = false;
@@ -182,18 +238,25 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 					String sub = URLEncoder.encode((String)iwc.getSessionAttribute(PARAM_SUBJECT), enc);
 					sub = TextSoap.findAndReplace(sub, '+', ' ');
 					this.mailToLink.setSubject(sub);
+					this.mailToLink3.setSubject(sub);
 				} catch (UnsupportedEncodingException e) {
 					this.mailToLink.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
+					this.mailToLink3.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
 				}
 			} else {
 				this.mailToLink.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
+				this.mailToLink3.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
 			}
 		} else {
 			this.mailToLink.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
+			this.mailToLink3.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
 		}
 		this.mailToLink2.setRecipients((String)iwc.getSessionAttribute(PARAM_FROM_ADDRESS));
 		this.mailToLink2.setBCC(((String)iwc.getSessionAttribute(PARAM_TO_ADDRESS)).replace(';', ','));
 		this.mailToLink2.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
+		this.mailToLink4.setRecipients((String)iwc.getSessionAttribute(PARAM_FROM_ADDRESS));
+		this.mailToLink4.setBCC(((String)iwc.getSessionAttribute(PARAM_TO_CUSTODIAN_ADDRESS)).replace(';', ','));
+		this.mailToLink4.setSubject((String)iwc.getSessionAttribute(PARAM_SUBJECT));
 	}
 	
 	public void lineUpFields(IWContext iwc) {	
@@ -214,13 +277,18 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 			inputTable.add(this.fromAddressField,2,2);
 			inputTable.add(this.toAddressText + ":",1,3);
 			inputTable.add(this.toAddressField,2,3);
-			inputTable.add(this.subjectText + ":",1,4);
-			inputTable.add(this.subjectField,2,4);
-			inputTable.add(this.bodyText + ":",1,5);
-			inputTable.add(this.bodyField,2,5);
-			inputTable.add(this.mailToLink,2,6);
-			inputTable.add(Text.getNonBrakingSpace(),2,6);
-			inputTable.add(this.mailToLink2,2,6);
+			inputTable.add(this.toCustAddressText + ":",1,4);
+			inputTable.add(this.toCustAddressField,2,4);
+			inputTable.add(this.subjectText + ":",1,5);
+			inputTable.add(this.subjectField,2,5);
+			inputTable.add(this.bodyText + ":",1,6);
+			inputTable.add(this.bodyField,2,6);
+			inputTable.add(this.mailToLink,2,7);
+			inputTable.add(Text.getNonBrakingSpace(),2,7);
+			inputTable.add(this.mailToLink2,2,7);
+			inputTable.add(this.mailToLink3,2,8);
+			inputTable.add(Text.getNonBrakingSpace(),2,8);
+			inputTable.add(this.mailToLink4,2,8);
 		} else {
 			inputTable.add(this.sendingResultsText,1,1);
 			if (this.sendingResultsMessageText != null) {
@@ -231,11 +299,14 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		buttonTable.setCellspacing(0);
 		buttonTable.setCellpadding(0);
 		buttonTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
+		buttonTable.setAlignment(4,1,Table.HORIZONTAL_ALIGN_RIGHT);
 		if (iwc.getParameter(PARAM_SEND) == null && this.allowSend) {
 			buttonTable.add(this.styledSendButton,1,1);
+			buttonTable.setWidth(2, "5");
+			buttonTable.add(this.styledSendCustButton,3,1);
 		}
-		buttonTable.setWidth(2, "5");
-		buttonTable.add(this.styledCloseButton,3,1);
+		buttonTable.setWidth(4, "5");
+		buttonTable.add(this.styledCloseButton,5,1);
 				
 		Table helpTable = new Table();
 		helpTable.setCellpadding(0);
