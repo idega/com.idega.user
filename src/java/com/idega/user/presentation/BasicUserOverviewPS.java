@@ -272,6 +272,8 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 
 					this.business = getGroupBusiness(mainIwc);
 
+					boolean copyUserInfo = mainIwc.isParameterSet(BasicUserOverview.COPY_USERS_INFO);
+					
 					try {
 						// move to the real group not the alias!
 						Group target = this.business
@@ -289,13 +291,13 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 													this._selectedGroup
 															.getAlias(),
 													targetGroupId, mainIwc,
-													true);
+													true, copyUserInfo);
 								} else {
 									this.resultOfMovingUsers = BasicUserOverview
 											.moveUsers(Arrays.asList(userIds),
 													this._selectedGroup
 															.getAlias(),
-													targetGroupId, mainIwc);
+													targetGroupId, mainIwc, false, copyUserInfo);
 								}
 							} else {
 								if (mainIwc
@@ -304,12 +306,12 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 											.moveUsers(Arrays.asList(userIds),
 													this._selectedGroup,
 													targetGroupId, mainIwc,
-													true);
+													true, copyUserInfo);
 								} else {
 									this.resultOfMovingUsers = BasicUserOverview
 											.moveUsers(Arrays.asList(userIds),
 													this._selectedGroup,
-													targetGroupId, mainIwc);
+													targetGroupId, mainIwc, false, copyUserInfo);
 								}
 							}
 						}

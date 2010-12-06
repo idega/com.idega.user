@@ -53,6 +53,7 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.IFrame;
+import com.idega.presentation.ui.Label;
 import com.idega.presentation.ui.PrintButton;
 import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
@@ -90,6 +91,7 @@ public class BasicUserOverview extends Page implements IWBrowserView,
 	public static final String DELETE_USERS_KEY = "delete_selected_users";
 	public static final String MOVE_USERS_KEY = "move_users";
 	public static final String COPY_USERS_KEY = "copy_users";
+	public static final String COPY_USERS_INFO = "copy_users_info";
 
 	protected static final String PHONE_TYPE_PATH = PhoneType.class.getName()
 			+ ".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME";
@@ -372,11 +374,18 @@ public class BasicUserOverview extends Page implements IWBrowserView,
 						this.selectedGroup));
 			}
 
+			CheckBox copyUserInfo = new CheckBox(COPY_USERS_INFO);
+			Label label = new Label(this.iwrb.getLocalizedString(
+					"buo_copy_move_user_info", "Copy/move user info"), copyUserInfo);
+			
+			entityBrowser.addPresentationObjectToBottom(targetGroupChooser);
+
 			if (styledCopyToButton != null) {
 				entityBrowser.addPresentationObjectToBottom(styledCopyToButton);
 			}
 			entityBrowser.addPresentationObjectToBottom(styledMoveToButton);
-			entityBrowser.addPresentationObjectToBottom(targetGroupChooser);
+			entityBrowser.addPresentationObjectToBottom(copyUserInfo);
+			entityBrowser.addPresentationObjectToBottom(label);			
 		}
 	}
 
@@ -1504,17 +1513,17 @@ public class BasicUserOverview extends Page implements IWBrowserView,
 
 	public static Map moveUsers(Collection userIds, Group parentGroup,
 			int targetGroupId, IWContext iwc) throws RemoteException {
-		return moveUsers(userIds, parentGroup, targetGroupId, iwc, false);
+		return moveUsers(userIds, parentGroup, targetGroupId, iwc, false, false);
 	}
 
 	public static Map moveUsers(Collection userIds, Group parentGroup,
 			int targetGroupId, IWContext iwc,
-			boolean leaveCopyOfUserInCurrentGroup) throws RemoteException {
+			boolean leaveCopyOfUserInCurrentGroup, boolean copyOrMoveUserInfo) throws RemoteException {
 		UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
 		// User currentUser = iwc.getCurrentUser();
 		Map resultMap = new HashMap();
 		Map map = userBusiness.moveUsers(iwc, userIds, parentGroup,
-				targetGroupId, leaveCopyOfUserInCurrentGroup);
+				targetGroupId, leaveCopyOfUserInCurrentGroup, copyOrMoveUserInfo);
 		Integer groupId;
 		if (parentGroup != null) {
 			groupId = (Integer) parentGroup.getPrimaryKey();
