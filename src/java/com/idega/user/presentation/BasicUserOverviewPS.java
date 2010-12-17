@@ -314,6 +314,11 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 													targetGroupId, mainIwc, false, copyUserInfo);
 								}
 							}
+						} else {
+							this.resultOfMovingUsers = BasicUserOverview
+							.moveUsers(Arrays.asList(userIds),
+									this._selectedGroup,
+									targetGroupId, mainIwc, false, copyUserInfo);							
 						}
 
 						this.targetGroupId = targetGroupId;
