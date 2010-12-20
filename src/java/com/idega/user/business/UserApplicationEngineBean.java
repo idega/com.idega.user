@@ -81,7 +81,7 @@ import com.idega.util.StringUtil;
 public class UserApplicationEngineBean implements UserApplicationEngine, Serializable {
 
 	private static final long serialVersionUID = -7472052374016555081L;
-	private static final Logger logger = Logger.getLogger(UserApplicationEngineBean.class.getName());
+	protected static final Logger logger = Logger.getLogger(UserApplicationEngineBean.class.getName());
 	
 	private GroupBusiness groupBusiness = null;
 	private UserBusiness userBusiness = null;
@@ -1002,7 +1002,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		}
 	}
 	
-	private UserBusiness getUserBusiness(IWContext iwc) {
+	protected UserBusiness getUserBusiness(IWContext iwc) {
 		if (userBusiness == null) {
 			try {
 				userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
