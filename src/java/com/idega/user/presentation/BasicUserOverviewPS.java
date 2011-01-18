@@ -317,7 +317,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 						} else {
 							this.resultOfMovingUsers = BasicUserOverview
 							.moveUsers(Arrays.asList(userIds),
-									this._selectedGroup,
+									null,
 									targetGroupId, mainIwc, false, copyUserInfo);							
 						}
 
