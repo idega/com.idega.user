@@ -611,7 +611,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (personalId == null) {
 			personalId = CoreConstants.EMPTY;
 		}
-		if (!personalId.equals(CoreConstants.EMPTY)) {
+		if (!StringUtil.isEmpty(personalId)) {
 			try {
 				user = userBusiness.getUser(personalId);
 			} catch (RemoteException e) {
@@ -639,6 +639,10 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		}
 		
 		result.setId(user.getId());
+		
+		if (!StringUtil.isEmpty(personalId) && !personalId.equals(user.getPersonalID())) {
+			user.setPersonalID(personalId);
+		}
 		
 		removeUserFromOldGroups(iwc, deselectedGroups, user);
 		
