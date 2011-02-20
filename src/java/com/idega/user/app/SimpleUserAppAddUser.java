@@ -628,19 +628,28 @@ public class SimpleUserAppAddUser extends Block {
 		addressFields.add(getSpacer());
 		
 		//	City
-		addressFields.add(getLabelContainer(iwrb.getLocalizedString("Address.CITY", "City")));
-		addressFields.add(inputs.get(7));
-		addressFields.add(getSpacer());
+		Layer city = new Layer();
+		city.setStyleClass("cityLayer");
+		city.add(getLabelContainer(iwrb.getLocalizedString("Address.CITY", "City")));
+		city.add(inputs.get(7));
+		city.add(getSpacer());
+		addressFields.add(city);
 		
 		//	Province
-		addressFields.add(getLabelContainer(iwrb.getLocalizedString("Address.PROVINCE", "Province")));
-		addressFields.add(inputs.get(8));
-		addressFields.add(getSpacer());
+		Layer province = new Layer();
+		province.setStyleClass("provinceLayer");
+		province.add(getLabelContainer(iwrb.getLocalizedString("Address.PROVINCE", "Province")));
+		province.add(inputs.get(8));
+		province.add(getSpacer());
+		addressFields.add(province);
 		
 		//	Country
-		addressFields.add(getLabelContainer(iwrb.getLocalizedString("Address.COUNTRY", "Country")));
-		addressFields.add(inputs.get(6));
-		addressFields.add(getSpacer());
+		Layer country = new Layer();
+		country.setStyleClass("countryLayer");
+		country.add(getLabelContainer(iwrb.getLocalizedString("Address.COUNTRY", "Country")));
+		country.add(inputs.get(6));
+		country.add(getSpacer());
+		addressFields.add(country);
 	}
 	
 	private void addParentGroups(IWContext iwc, Layer container, DropdownMenu parentGroupsChooser) {
