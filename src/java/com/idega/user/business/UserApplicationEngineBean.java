@@ -19,7 +19,6 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.faces.component.UIComponent;
 
-import org.apache.webdav.lib.WebdavResource;
 import org.jdom.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,7 +28,6 @@ import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBPageName;
 import com.idega.builder.data.IBPageNameHome;
 import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
@@ -38,6 +36,7 @@ import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.builder.data.ICPageHome;
+import com.idega.core.business.DefaultSpringBean;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneTypeBMPBean;
@@ -60,7 +59,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
-import com.idega.slide.business.IWSlideService;
+import com.idega.repository.bean.RepositoryItem;
 import com.idega.user.app.SimpleUserApp;
 import com.idega.user.app.SimpleUserAppAddUser;
 import com.idega.user.app.SimpleUserAppHelper;
@@ -78,34 +77,34 @@ import com.idega.util.SendMail;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 
-public class UserApplicationEngineBean implements UserApplicationEngine, Serializable {
+public class UserApplicationEngineBean extends DefaultSpringBean implements UserApplicationEngine, Serializable {
 
 	private static final long serialVersionUID = -7472052374016555081L;
 	private static final Logger logger = Logger.getLogger(UserApplicationEngineBean.class.getName());
-	
+
 	private GroupBusiness groupBusiness = null;
 	private UserBusiness userBusiness = null;
-	
+
 	@Autowired
 	private GroupHelper groupHelper;
-	
+
 	@Autowired(required = false)
 	private CompanyHelper companyHelper;
-	
+
 	@Autowired
 	private SimpleUserAppHelper presentationHelper;
-	
+
 	private Map<String, SimpleUserAppViewUsers> simpleUserApps = new HashMap<String, SimpleUserAppViewUsers>();
 	private Map<String, List<Integer>> pagerProperties = new HashMap<String, List<Integer>>();
-	
+
 	public GroupHelper getGroupHelper() {
 		return groupHelper;
 	}
-	
+
 	public void setGroupHelper(GroupHelper groupHelper) {
 		this.groupHelper = groupHelper;
 	}
-	
+
 	public CompanyHelper getCompanyHelper() {
 		return companyHelper;
 	}
@@ -114,11 +113,12 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		this.companyHelper = companyHelper;
 	}
 
+	@Override
 	public List<AdvancedProperty> getChildGroups(String groupId, String groupTypes, String groupRoles) {
 		if (groupId == null) {
 			return null;
 		}
-		
+
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
@@ -127,7 +127,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (groupBusiness == null) {
 			return null;
 		}
-		
+
 		int id = -1;
 		try {
 			id = Integer.valueOf(groupId).intValue();
@@ -135,7 +135,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			e.printStackTrace();
 			return null;
 		}
-		
+
 		Group selected = null;
 		try {
 			selected = groupBusiness.getGroupByGroupID(id);
@@ -146,8 +146,8 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			e.printStackTrace();
 			return null;
 		}
-		
-		
+
+
 		GroupHelper helper = getGroupHelper();
 		if (helper == null) {
 			return null;
@@ -156,26 +156,26 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (childGroups == null || childGroups.isEmpty()) {
 			return null;
 		}
-		
+
 		Locale locale = iwc.getCurrentLocale();
 		if (locale == null) {
 			locale = Locale.ENGLISH;
 		}
-		
+
 		Group group = null;
 		List<AdvancedProperty> childGroupsProperties = new ArrayList<AdvancedProperty>();
 		for (Iterator<Group> it = childGroups.iterator(); it.hasNext();) {
 			group = it.next();
-			
+
 			childGroupsProperties.add(new AdvancedProperty(group.getId(), getGroupNameInTreeOrientedWay(group, locale)));
 		}
-		
+
 		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 		childGroupsProperties.add(0, new AdvancedProperty("-1", iwrb.getLocalizedString("select_group", "Select group")));
-		
+
 		return childGroupsProperties;
 	}
-	
+
 	private String getGroupNameInTreeOrientedWay(Group group, Locale locale) {
 		ICTreeNode parentGroup = group.getParentNode();
 		StringBuilder name = new StringBuilder();
@@ -183,25 +183,26 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			name.append(CoreConstants.MINUS);
 			parentGroup = parentGroup.getParentNode();
 		}
-		
+
 		String levels = name.toString();
 		levels = levels.replaceFirst(CoreConstants.MINUS, CoreConstants.EMPTY);
-		
+
 		String groupName = group.getNodeName(locale);
-		
+
 		return levels.equals(CoreConstants.EMPTY) ? groupName : new StringBuilder(levels).append(CoreConstants.SPACE).append(groupName).toString();
 	}
-	
+
+	@Override
 	public List<Integer> removeUsers(List<Integer> usersIds, Integer groupId) {
 		if (usersIds == null || groupId == null) {
 			return null;
 		}
-		
+
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
 		}
-		
+
 		GroupBusiness groupBusiness = getGroupBusiness();
 		if (groupBusiness == null) {
 			return null;
@@ -210,7 +211,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (userBusiness == null) {
 			return null;
 		}
-		
+
 		Group group = null;
 		try {
 			group = groupBusiness.getGroupByGroupID(groupId.intValue());
@@ -226,7 +227,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (currentUser == null) {
 			return null;
 		}
-		
+
 		List<Integer> removedUsers = new ArrayList<Integer>();
 		Integer id = null;
 		for (int i = 0; i < usersIds.size(); i++) {
@@ -240,10 +241,11 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				e.printStackTrace();
 			}
 		}
-		
+
 		return removedUsers;
 	}
-	
+
+	@Override
 	public Document getMembersList(SimpleUserPropertiesBean bean, String containerId) {
 		if (bean == null) {
 			return null;
@@ -252,57 +254,59 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (iwc == null) {
 			return null;
 		}
-		
+
 		String image = null;
 		IWBundle bundle = getBundle(iwc);
 		if (bundle != null) {
 			image = bundle.getVirtualPathWithFileNameString(SimpleUserApp.EDIT_IMAGE);
 		}
-		
+
 		GroupMembersListViewer membersList = getPresentationHelper().getMembersList(bean, image, containerId, false);
-		
+
 		BuilderLogic builder = BuilderLogic.getInstance();
 		return builder.getRenderedComponent(iwc, membersList, true);
 	}
-	
+
+	@Override
 	public Document getAddUserPresentationObject(SimpleUserPropertiesBean bean, List<Integer> parentGroups, List<Integer> childGroups, Integer userId) {
 		if (bean == null) {
 			return null;
 		}
-		
+
 		if (StringUtil.isEmpty(bean.getInstanceId()) || StringUtil.isEmpty(bean.getContainerId())) {
 			logger.log(Level.WARNING, "Can not generate form for creating/editing form, missing properties: instance ID: " + bean.getInstanceId() +
 					", container ID: " + bean.getContainerId());
 			return null;
 		}
-		
+
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
 		}
-		
+
 		BuilderLogic builder = BuilderLogic.getInstance();
-		
+
 		SimpleUserAppAddUser addUser = new SimpleUserAppAddUser(bean);
 		addUser.setParentGroups(parentGroups);
 		addUser.setChildGroups(childGroups);
 		addUser.setUserId(userId);
-		
+
 		return builder.getRenderedComponent(iwc, addUser, true);
 	}
-	
+
+	@Override
 	public Document getSimpleUserApplication(String instanceId, Integer parentGroupId) {
 		if (instanceId == null) {
 			return null;
 		}
-		
+
 		Object simpleUserApp = simpleUserApps.get(instanceId);
 		if (simpleUserApp instanceof SimpleUserAppViewUsers) {
 			IWContext iwc = CoreUtil.getIWContext();
 			if (iwc == null) {
 				return null;
 			}
-			
+
 			SimpleUserAppViewUsers viewUsers = (SimpleUserAppViewUsers) simpleUserApp;
 			List<UIComponent> children = viewUsers.getChildren();
 			if (!ListUtil.isEmpty(children)) {
@@ -310,21 +314,23 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			}
 			viewUsers.setSelectedParentGroupId(parentGroupId);
 			viewUsers.setCheckPagerProperties(true);
-			
+
 			return BuilderLogic.getInstance().getRenderedComponent(iwc, viewUsers, true);
 		}
-		
+
 		return null;
 	}
-	
+
+	@Override
 	public void addViewUsersCase(String instanceId, SimpleUserAppViewUsers viewUsers) {
 		if (instanceId == null || viewUsers == null) {
 			return;
 		}
-		
+
 		simpleUserApps.put(instanceId, viewUsers);
 	}
-	
+
+	@Override
 	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, Integer userId, String groupTypes, String groupRoles) {
 		if (parentGroupId == null) {
 			return null;
@@ -333,7 +339,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (iwc == null) {
 			return null;
 		}
-		
+
 		User user = null;
 		if (userId != null) {
 			UserBusiness userBusiness = getUserBusiness(iwc);
@@ -345,7 +351,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				}
 			}
 		}
-		
+
 		GroupHelper helper = getGroupHelper();
 		if (helper == null) {
 			return null;
@@ -357,21 +363,22 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			selectedGroupId = String.valueOf(parentGroupId);
 		}
 		Layer availableGroupsContainer = getPresentationHelper().getSelectedGroups(iwc, user, helper, groups, ids, selectedGroupId);
-		
+
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, availableGroupsContainer, true);
 	}
-	
+
+	@Override
 	public UserDataBean getUserInfo(User user) {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
 		}
-		
+
 		UserBusiness userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
 			return null;
 		}
-		
+
 		IWBundle bundle = getBundle(iwc);
 		UserDataBean bean = new UserDataBean();
 		if (user == null) {
@@ -387,14 +394,14 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
-			
+
 			//	Name
 			bean.setName(user.getName());
-			
+
 			//	Personal ID
 			String personalID = user.getPersonalID();
 			bean.setPersonalId(personalID == null ? CoreConstants.EMPTY : personalID);
-			
+
 			//	Picture
 			String pictureUri = null;
 			Image image = userBusiness.getUserImage(user);
@@ -412,15 +419,15 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				bean.setImageSet(true);
 			}
 			bean.setPictureUri(pictureUri);
-			
+
 			//	Login
 			String login = userBusiness.getUserLogin(user);
 			bean.setLogin(login == null ? CoreConstants.EMPTY : login);
-			
+
 			//	Password
 			String password = userBusiness.getUserPassword(user);
 			bean.setPassword(password == null ? CoreConstants.EMPTY : password);
-			
+
 			//	Disabled account?
 			LoginInfo loginInfo = null;
 			try {
@@ -434,19 +441,19 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				bean.setAccountEnabled(loginInfo.getAccountEnabled());
 				bean.setChangePasswordNextTime(loginInfo.getChangeNextTime());
 			}
-			
+
 			//	Phone
 			Phone phone = null;
 			try {
 				phone = userBusiness.getUserPhone(Integer.valueOf(user.getId()), PhoneTypeBMPBean.HOME_PHONE_ID);
 			} catch (Exception e) {}
-			
+
 			//	Email
 			Email email = null;
 			try {
 				email = userBusiness.getUserMail(user);
 			} catch (Exception e) {}
-			
+
 			//	Address
 			Address address = null;
 			try {
@@ -454,48 +461,49 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			} catch (RemoteException e) {}
 			fillUserInfo(bean, phone, email, address);
 		}
-		
+
 		return bean;
 	}
-	
+
+	@Override
 	public void fillUserInfo(UserDataBean info, Phone phone, Email email, Address address) {
 		if (phone != null) {
 			info.setPhone(phone.getNumber());
 		}
-		
+
 		if (email != null) {
 			info.setEmail(email.getEmailAddress());
 		}
-		
+
 		if (address != null) {
 			info.setAddressId(address.getPrimaryKey().toString());
-			
+
 			String streetNameAndNumber = address.getStreetAddress();
 			info.setStreetNameAndNumber(streetNameAndNumber == null ? CoreConstants.EMPTY : streetNameAndNumber);
-			
+
 			String postalCodeValue = null;
 			PostalCode postalCode = address.getPostalCode();
 			if (postalCode != null) {
 				postalCodeValue = postalCode.getPostalCode();
 			}
 			info.setPostalCodeId(postalCodeValue == null ? CoreConstants.EMPTY : postalCodeValue);
-			
+
 			String countryName = CoreConstants.EMPTY;
 			Country country = address.getCountry();
 			if (country != null) {
 				countryName = country.getName();
 			}
 			info.setCountryName(countryName == null ? CoreConstants.EMPTY : countryName);
-			
+
 			String city = address.getCity();
 			info.setCity(city == null ? CoreConstants.EMPTY : city);
-			
+
 			String province = address.getProvince();
 			info.setProvince(province == null ? CoreConstants.EMPTY : province);
-			
+
 			String postalBox = address.getPOBox();
 			info.setPostalBox(postalBox == null ? CoreConstants.EMPTY : postalBox);
-			
+
 			Commune commune = address.getCommune();
 			if (commune != null) {
 				String communeName = commune.getCommuneName();
@@ -503,24 +511,25 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			}
 		}
 	}
-	
+
+	@Override
 	public UserDataBean getUserByPersonalId(String personalId) {
 		if (StringUtil.isEmpty(personalId)) {
 			return null;
 		}
-		
+
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
 		}
-		
+
 		UserBusiness userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
 			return null;
 		}
-		
+
 		UserDataBean info = null;
-		
+
 		User user = null;
 		try {
 			user = userBusiness.getUser(personalId);
@@ -531,7 +540,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		else {
 			info = getUserInfo(user);
 		}
-		
+
 		if (info == null && getCompanyHelper() != null) {
 			try {
 				info = getCompanyHelper().getCompanyInfo(personalId);
@@ -539,7 +548,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				logger.log(Level.WARNING, "Error getting company information by ID: " + personalId, e);
 			}
 		}
-		
+
 		if (info == null) {
 			IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
 			info = new UserDataBean();
@@ -547,23 +556,24 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 													.append(": ").append(personalId).toString();
 			info.setErrorMessage(errorMessage);
 		}
-		
+
 		return info;
 	}
-	
+
+	@Override
 	public AdvancedProperty createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
 			boolean allFieldsEditable, boolean sendEmailWithLoginInfo) {
 		if (userInfo == null) {
 			return null;
 		}
-		
+
 		AdvancedProperty result = new AdvancedProperty(userInfo.getUserId() == null ? null : String.valueOf(userInfo.getUserId()));
-		
+
 		String name = userInfo.getName();
 		String login = userInfo.getLogin();
 		String personalId = userInfo.getPersonalId();
 		String password = userInfo.getPassword();
-		
+
 		if (StringUtil.isEmpty(name) || StringUtil.isEmpty(login) || (!userInfo.isJuridicalPerson() && StringUtil.isEmpty(password)) || primaryGroupId == null ||
 				childGroups == null) {
 			return result;
@@ -577,27 +587,17 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (iwc == null) {
 			return result;
 		}
-		
-		IWSlideService slideService = null;
-		try {
-			slideService = (IWSlideService) IBOLookup.getServiceInstance(iwc, IWSlideService.class);
-		} catch (IBOLookupException e) {
-			logger.log(Level.SEVERE, "Error getting IWSlideService", e);
-		}
-		if (slideService == null) {
-			return result;
-		}
-		
+
 		String phoneNumber = userInfo.getPhone();
 		String email = userInfo.getEmail();
-		
+
 		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 		result.setValue(iwrb.getLocalizedString("error_saving_user", "Error occurred while saving your changes."));
-		
+
 		if (login.equals(CoreConstants.EMPTY)) {
 			return result;
 		}
-		
+
 		UserBusiness userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
 			return result;
@@ -606,7 +606,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (groupBusiness == null) {
 			return result;
 		}
-		
+
 		User user = null;
 		if (personalId == null) {
 			personalId = CoreConstants.EMPTY;
@@ -623,7 +623,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				user = userBusiness.getUser(userInfo.getUserId());
 			} catch (RemoteException e) {}
 		}
-		
+
 		if (user == null) {
 			//	Creating user
 			try {
@@ -637,16 +637,16 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				return result;
 			}
 		}
-		
+
 		result.setId(user.getId());
-		
+
 		removeUserFromOldGroups(iwc, deselectedGroups, user);
-		
+
 		//	Name
 		if (allFieldsEditable) {
 			user.setFullName(name);
 		}
-		
+
 		//	Phone
 		if (!StringUtil.isEmpty(phoneNumber)) {
 			Phone phone = null;
@@ -662,7 +662,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				}
 			}
 		}
-		
+
 		//	Email
 		Email mail = null;
 		try {
@@ -680,7 +680,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				return result;
 			}
 		}
-		
+
 		//	Picture
 		if (StringUtil.isEmpty(userInfo.getPictureUri())) {
 			user.setSystemImageID(null);	//	Deleting
@@ -688,21 +688,21 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		else {
 			try {
 				ICFile picture = ((ICFileHome) IDOLookup.getHome(ICFile.class)).create();
-				picture.setFileValue(slideService.getInputStream(userInfo.getPictureUri().replace(CoreConstants.WEBDAV_SERVLET_URI, CoreConstants.EMPTY)));
+				picture.setFileValue(getRepositoryService().getInputStream(userInfo.getPictureUri().replace(CoreConstants.WEBDAV_SERVLET_URI, CoreConstants.EMPTY)));
 				picture.setFileUri(userInfo.getPictureUri());
 				picture.setName(userInfo.getPictureUri().substring(userInfo.getPictureUri().lastIndexOf(CoreConstants.SLASH) + 1));
 				picture.store();
-				
+
 				user.setSystemImageID(Integer.valueOf(picture.getId()));
-				
-				WebdavResource resource =slideService.getWebdavResourceAuthenticatedAsRoot(userInfo.getPictureUri().replace(CoreConstants.WEBDAV_SERVLET_URI,
+
+				RepositoryItem resource = getRepositoryService().getRepositoryItemAsRootUser(userInfo.getPictureUri().replace(CoreConstants.WEBDAV_SERVLET_URI,
 						CoreConstants.EMPTY));
-				resource.deleteMethod();
+				resource.delete();
 			} catch(Exception e) {
 				logger.log(Level.WARNING, "Error setting image for user: " + userInfo.getPictureUri());
 			}
 		}
-		
+
 		//	Address
 		Address userAddress = null;
 		try {
@@ -732,7 +732,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				return result;
 			}
 		}
-		
+
 		//	Login
 		boolean newLogin = false;
 		LoginTable loginTable = null;
@@ -758,7 +758,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			if (oldPassword == null || !password.equals(oldPassword)) {
 				updatePassword = true;
 			}
-			 
+
 			if (updatePassword) {
 				try {
 					LoginDBHandler.changePassword(Integer.valueOf(user.getId()), password);
@@ -779,7 +779,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			loginInfo.setAccountEnabled(userInfo.getAccountEnabled());
 		}
 		loginInfo.store();
-		
+
 		//	Setting new available groups for user
 		checkChildGroups(childGroups, primaryGroupId);
 		for (int i = 0; i < childGroups.size(); i++) {
@@ -791,11 +791,11 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				e.printStackTrace();
 			}
 		}
-		
+
 		user.setPrimaryGroupID(primaryGroupId);
 		user.setJuridicalPerson(userInfo.isJuridicalPerson());
 		user.store();
-		
+
 		//	Sending mail
 		if (sendEmailWithLoginInfo) {
 			String portNumber = new StringBuilder(":").append(String.valueOf(iwc.getServerPort())).toString();
@@ -816,17 +816,17 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			}
 			sendEmail(userInfo.getEmail(), null, null, subject, text.toString());
 		}
-		
+
 		result.setValue(iwrb.getLocalizedString("success_saving_user", "Your changes were successfully saved."));
 		return result;
 	}
-	
+
 	private boolean sendEmail(String emailTo, String emailCc, String emailBcc, String subject, String text) {
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
 		if (settings == null) {
 			return false;
 		}
-		
+
 		String from = settings.getProperty(CoreConstants.PROP_SYSTEM_MAIL_FROM_ADDRESS);
 		String host = settings.getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
 		if (StringUtil.isEmpty(from) || StringUtil.isEmpty(host)) {
@@ -839,10 +839,10 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			logger.log(Level.WARNING, "Error sending mail!", e);
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	private PostalCode createPostalCode(String postalCodeValue) {
 		PostalCode postalCode = null;
 		try {
@@ -855,70 +855,72 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		}
 		return postalCode;
 	}
-	
-	private void checkChildGroups(List<Integer> childGroups, Integer primaryGroupId) {		
+
+	private void checkChildGroups(List<Integer> childGroups, Integer primaryGroupId) {
 		int existsAnyNull = 0;
 		for (int i = 0; i < childGroups.size(); i++) {
 			if (childGroups.get(i) == null) {
 				existsAnyNull++;
 			}
 		}
-		
+
 		for (int i = 0; i < existsAnyNull; i++) {
 			childGroups.remove(null);
 		}
-		
+
 		if (childGroups.size() == 0) {
 			childGroups.add(primaryGroupId);
 		}
 	}
-	
+
 	private Country getCountryById(String countryId) {
 		if (countryId == null) {
 			return null;
 		}
-		
+
 		try {
 			return ((CountryHome) getIDOHome(Country.class)).findByPrimaryKey(countryId);
 		} catch (Exception e) {
 		}
-		
+
 		return null;
 	}
-	
+
+	@Override
 	public Country getCountry(String countryName) {
 		if (countryName == null) {
 			return null;
 		}
-		
+
 		try {
 			return ((CountryHome) getIDOHome(Country.class)).findByCountryName(countryName);
 		} catch (Exception e) {}
-		
+
 		return null;
 	}
-	
+
+	@Override
 	public String getCountryIdByCountryName(String countryName) {
 		Country country = getCountry(countryName);
 		if (country == null) {
 			return null;
 		}
-		
+
 		return country.getPrimaryKey().toString();
 	}
-	
+
 	private PostalCode getPostalCode(String postalCode) {
 		if (postalCode == null) {
 			return null;
 		}
-		
+
 		try {
 			return ((PostalCodeHome) getIDOHome(PostalCode.class)).findByPostalCode(postalCode);
 		} catch (Exception e) {}
-		
+
 		return null;
 	}
-	
+
 	private IDOHome getIDOHome(Class<?> beanClass) {
 		try {
 			return IDOLookup.getHome(beanClass);
@@ -927,28 +929,29 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		}
 		return null;
 	}
-	
+
+	@Override
 	public String isValidEmail(String email) {
 		String error = "Please provide valid email!";
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return error;
 		}
-		
+
 		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 		String errorText = iwrb.getLocalizedString("invalid_email", error);
-		
+
 		if (email == null) {
 			return errorText;
 		}
-		
+
 		if (EmailValidator.getInstance().validateEmail(email)) {
 			return null;	// Email is valid
 		}
-		
+
 		return errorText;	//	Email is invalid
 	}
-	
+
 	private void removeUserFromOldGroups(IWContext iwc, List<Integer> deselectedGroups, User user) {
 		if (iwc == null || deselectedGroups == null || user == null) {
 			return;
@@ -956,7 +959,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (deselectedGroups.size() == 0) {
 			return;
 		}
-		
+
 		UserBusiness userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
 			return;
@@ -965,7 +968,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (groupBusiness == null) {
 			return;
 		}
-		
+
 		//	Getting deselected groups
 		Integer groupId = null;
 		Group group = null;
@@ -973,7 +976,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		for (int i = 0; i < deselectedGroups.size(); i++) {
 			group = null;
 			groupId = deselectedGroups.get(i);
-			
+
 			try {
 				group = groupBusiness.getGroupByGroupID(groupId.intValue());
 			} catch (RemoteException e) {
@@ -991,7 +994,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		group = null;
 		for (int i = 0; i < groups.size(); i++) {
 			group = groups.get(i);
-			
+
 			try {
 				userBusiness.removeUserFromGroup(user, group, currentUser);
 			} catch (RemoteException e) {
@@ -1001,7 +1004,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			}
 		}
 	}
-	
+
 	private UserBusiness getUserBusiness(IWContext iwc) {
 		if (userBusiness == null) {
 			try {
@@ -1013,7 +1016,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		}
 		return userBusiness;
 	}
-	
+
 	private GroupBusiness getGroupBusiness() {
 		if (groupBusiness == null) {
 			try {
@@ -1030,10 +1033,12 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		return iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
 	}
 
+	@Override
 	public String getSimpleUserApplicationClassName() {
 		return SimpleUserApp.class.getName();
 	}
-	
+
+	@Override
 	public String getGroupSaveStatus(boolean needErrorMessage) {
 		String sucessMessage = "Your changes were successfully saved.";
 		String errorMessage = "Error occurred while saving your changes.";
@@ -1041,48 +1046,49 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (iwc == null) {
 			return errorMessage;
 		}
-		
+
 		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
-		sucessMessage = iwrb.getLocalizedString("success_saving_group", sucessMessage); 
+		sucessMessage = iwrb.getLocalizedString("success_saving_group", sucessMessage);
 		errorMessage = iwrb.getLocalizedString("error_saving_group", errorMessage);
-		
+
 		return needErrorMessage ? errorMessage : sucessMessage;
 	}
-	
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public String saveGroup(String name, String homePageId, String type, String description, String parentGroupId, String groupId) {
 		if (StringUtil.isEmpty(name)) {
 			return null;
 		}
-		
+
 		GroupBusiness groupBusiness = getGroupBusiness();
 		if (groupBusiness == null) {
 			return null;
 		}
-		
+
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
 		}
-		
+
 		Group parentGroup = null;
 		try {
 			parentGroup = groupBusiness.getGroupByGroupID(Integer.valueOf(parentGroupId));
 		} catch(Exception e) {
 		}
-		
+
 		int homePageIdInt = -1;
 		try {
 			homePageIdInt = homePageId == null ? -1 : Integer.valueOf(homePageId);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		Group group = null;
 		try {
 			group = groupBusiness.getGroupByGroupID(Integer.valueOf(groupId));
 		} catch(Exception e) {}
-		
+
 		if (group == null) {
 			//	Create group
 			if (parentGroup == null) {
@@ -1101,7 +1107,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 					e.printStackTrace();
 				}
 			}
-		
+
 			if (group == null) {
 				return null;
 			}
@@ -1112,9 +1118,9 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			group.setHomePageID(homePageIdInt);
 			group.setGroupType(type);
 			group.setDescription(description);
-			
+
 			group.store();
-			
+
 			try {
 				List<Group> currentParentGroups = group.getParentGroups();
 				if (currentParentGroups == null || currentParentGroups.isEmpty() && parentGroup != null) {
@@ -1138,16 +1144,17 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				e.printStackTrace();
 			}
 		}
-		
+
 		return BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName()) ? group.getId() : null;
 	}
-	
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<AdvancedProperty> findAvailablePages(String phrase) {
 		if (phrase == null || CoreConstants.EMPTY.equals(phrase)) {
 			return null;
 		}
-		
+
 		ICPageHome pagesHome = null;
 		try {
 			pagesHome = (ICPageHome) IDOLookup.getHome(ICPage.class);
@@ -1157,9 +1164,9 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (pagesHome == null) {
 			return null;
 		}
-		
+
 		List<AdvancedProperty> pages = new ArrayList<AdvancedProperty>();
-		
+
 		//	Getting pages by localized name
 		Collection<IBPageName> pagesWithName = null;
 		try {
@@ -1172,7 +1179,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			IBPageName pageName = null;
 			for (Iterator<IBPageName> it = pagesWithName.iterator(); it.hasNext();) {
 				pageName = it.next();
-				
+
 				pagesIdAndName.put(String.valueOf(pageName.getPageId()), pageName.getPageName());
 			}
 		}
@@ -1182,7 +1189,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		}
 		else {
 			ids = new ArrayList<String>(pagesIdAndName.keySet());
-			
+
 			Collection<ICPage> pagesByLocalizedName = null;
 			try {
 				pagesByLocalizedName = pagesHome.findAllByPrimaryKeys(ids);
@@ -1195,7 +1202,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				ids.add(page.getId());
 			}
 		}
-		
+
 		//	Getting the rest of pages without localized name
 		Collection<ICPage> pagesWithoutLocalizedName = null;
 		try {
@@ -1204,7 +1211,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			e.printStackTrace();
 		}
 		pages.addAll(getFilteredPages(pagesWithoutLocalizedName, null));
-		
+
 		if (!pages.isEmpty()) {
 			Locale locale = null;
 			IWContext iwc = CoreUtil.getIWContext();
@@ -1215,13 +1222,13 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		}
 		return pages;
 	}
-	
+
 	private List<AdvancedProperty> getFilteredPages(Collection<ICPage> pages, Map<String, String> pagesIdAndName) {
 		List<AdvancedProperty> filteredPages = new ArrayList<AdvancedProperty>();
 		if (pages == null || pages.isEmpty()) {
 			return filteredPages;
 		}
-		
+
 		ICPage page = null;
 		String id = null;
 		String name = null;
@@ -1229,40 +1236,41 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			page = it.next();
 			id = null;
 			name = null;
-			
+
 			if (page != null && page.isPage() && !page.getDeleted()) {
 				id = page.getId();
-				
+
 				if (pagesIdAndName != null) {
 					name = pagesIdAndName.get(id);
 				}
 				if (name == null) {
 					name = page.getName();
 				}
-				
+
 				filteredPages.add(new AdvancedProperty(id, name));
 			}
 		}
-		
+
 		return filteredPages;
 	}
-	
+
 	private List<Group> getTopGroups(IWContext iwc, String groupTypes, boolean getTopAndParentGroups, boolean useChildrenOfTopNodesAsParentGroups) {
 		Collection<Group> topGroups = getGroupHelper().getTopGroupsFromDomain(iwc);
 		if (!getTopAndParentGroups) {
 			topGroups = getGroupHelper().getTopAndParentGroups(topGroups);
 		}
-		
+
 		return new ArrayList<Group>(getGroupHelper().getFilteredGroups(iwc, topGroups, groupTypes, CoreConstants.COMMA, useChildrenOfTopNodesAsParentGroups));
 	}
-	
+
+	@Override
 	public List<AdvancedProperty> getAvailableGroups(String groupTypes, String groupTypesForChildrenGroups, String roleTypes, int groupId, int groupsType,
 			boolean getTopAndParentGroups, boolean useChildrenOfTopNodesAsParentGroups) {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
 		}
-		
+
 		List<Group> groups = null;
 		switch (groupsType) {
 			case 0:
@@ -1275,7 +1283,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			default:
 				break;
 		}
-		
+
 		if (groups == null || groups.size() == 0) {
 			return null;
 		}
@@ -1283,26 +1291,28 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		for (Group group: groups) {
 			result.add(new AdvancedProperty(group.getId(), group.getName()));
 		}
-		
+
 		Collections.sort(result, new AdvancedPropertyComparator(iwc.getCurrentLocale()));
-		
+
 		return result;
 	}
 
+	@Override
 	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput, List<String> selectedRoles) {
 		return getPresentationHelper().getRolesEditor(iwc, groupId, addInput, selectedRoles);
 	}
 
+	@Override
 	public boolean changePermissionValueForRole(int groupId, String permissionKey, String roleKey, boolean value) {
 		if (permissionKey == null || roleKey == null) {
 			return false;
 		}
-		
+
 		GroupBusiness groupBusiness = getGroupBusiness();
 		if (groupBusiness == null) {
 			return false;
 		}
-		
+
 		Group group = null;
 		try {
 			group = groupBusiness.getGroupByGroupID(groupId);
@@ -1312,17 +1322,17 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (group == null) {
 			return false;
 		}
-		
+
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return false;
 		}
-		
+
 		AccessController accessController = iwc.getAccessController();
 		if (accessController == null) {
 			return false;
 		}
-		
+
 		boolean result = setRoleByPermissionForGroup(iwc, accessController, groupId, value, roleKey, permissionKey);
 
 		//removed by Eiki, roles should not be written to sub groups as well by default, an be added again if the interface has the option to do a recursive add and the user is notified.
@@ -1337,26 +1347,27 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
-			
+
 			return true;
 		}*/
-		
+
 		return result;
 	}
-	
+
 	private boolean setRoleByPermissionForGroup(IWContext iwc, AccessController accessController, int groupId, boolean value, String roleKey, String permissionKey) {
 		if (value) {
 			return accessController.addRoleToGroup(roleKey, permissionKey, groupId, iwc);
 		}
-		
+
 		return accessController.removeRoleFromGroup(roleKey, permissionKey, groupId, iwc);
 	}
 
+	@Override
 	public Document addNewRole(String roleKey, int groupId, List<String> selectedRoles) {
 		if (roleKey == null) {
 			return null;
 		}
-		
+
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
@@ -1367,24 +1378,26 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			e.printStackTrace();
 			return null;
 		}
-		
+
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, getRolesEditor(iwc, groupId, false, selectedRoles), false);
 	}
 
+	@Override
 	public Document getRenderedRolesEditor(int groupId, List<String> selectedRoles) {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
 		}
-		
+
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, getRolesEditor(iwc, groupId, false, selectedRoles), false);
 	}
 
+	@Override
 	public List<Integer> getPagerProperties(String id) {
 		if (StringUtil.isEmpty(id) || pagerProperties == null) {
 			return null;
 		}
-		
+
 		try {
 			return pagerProperties.get(id);
 		} catch(ClassCastException e) {
@@ -1392,23 +1405,25 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		} catch(NullPointerException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 
+	@Override
 	public void setPagerProperties(String id, List<Integer> properties) {
 		if (StringUtil.isEmpty(id) || ListUtil.isEmpty(properties)) {
 			return;
 		}
-		
+
 		pagerProperties.put(id, properties);
 	}
 
+	@Override
 	public String getIdForPagerProperties(SimpleUserPropertiesBean bean) {
 		if (bean == null) {
 			return null;
 		}
-		
+
 		return new StringBuilder(bean.getInstanceId()).append(bean.getParentGroupId()).append(bean.getGroupId()).append(bean.getOrderBy()).toString();
 	}
 
@@ -1420,28 +1435,29 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		this.presentationHelper = presentationHelper;
 	}
 
+	@Override
 	public AdvancedProperty isValidUserName(String userName) {
 		AdvancedProperty result = new AdvancedProperty(Boolean.FALSE.toString(), "Sorry, some error occurred...");
-		
+
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return result;
 		}
-		
+
 		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 		if (iwrb == null) {
 			return result;
 		}
-		
+
 		if (StringUtil.isEmpty(userName)) {
 			result.setValue(iwrb.getLocalizedString("empty_user_name", "User name can not be empty!"));
 			return result;
 		}
-		
+
 		try {
 			LoginTableHome loginInfo = (LoginTableHome) IDOLookup.getHome(LoginTable.class);
 			LoginTable login = loginInfo.findByLogin(userName);
-			
+
 			if (login != null && userName.equals(login.getUserLogin())) {
 				result.setValue(iwrb.getLocalizedString("user_name_exists", "Such user name already exists!"));
 			} else {
@@ -1454,7 +1470,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Error while checking if user name is valid: " + userName, e);
 		}
-		
+
 		return result;
 	}
 }
