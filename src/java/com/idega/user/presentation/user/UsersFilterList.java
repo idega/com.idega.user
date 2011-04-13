@@ -80,24 +80,26 @@ public class UsersFilterList extends Block {
 		
 		//	From IDs
 		selectedUsers = selectedUsers == null ? new ArrayList<String>(0) : selectedUsers;
-		users = users == null ? getUsersByIds(selectedUsers) : users;
+		users = ListUtil.isEmpty(users) ? getUsersByIds(selectedUsers) : users;
 		
 		String inputName = getSelectedUserInputName() + "_checkbox";
-		for (User user: users) {
-			Layer userEntry = new Layer();
-			container.add(userEntry);
-			container.add(new CSSSpacer());
-			
-			String id = user.getId();
-			
-			CheckBox select = new CheckBox(inputName, id);
-			select.setChecked(selectedUsers.contains(id), true);
-			select.setOnClick(new StringBuilder("UsersFilterHelper.markUserInForm('").append(select.getId()).append("', '").append(getSelectedUserInputName())
-					.append("', '").append(id).append("');").toString());
-			userEntry.add(select);
-			
-			Span name = new Span(new Text(user.getName()));
-			userEntry.add(name);
+		if (!ListUtil.isEmpty(users)) {
+			for (User user: users) {
+				Layer userEntry = new Layer();
+				container.add(userEntry);
+				container.add(new CSSSpacer());
+				
+				String id = user.getId();
+				
+				CheckBox select = new CheckBox(inputName, id);
+				select.setChecked(selectedUsers.contains(id), true);
+				select.setOnClick(new StringBuilder("UsersFilterHelper.markUserInForm('").append(select.getId()).append("', '").append(getSelectedUserInputName())
+						.append("', '").append(id).append("');").toString());
+				userEntry.add(select);
+				
+				Span name = new Span(new Text(user.getName()));
+				userEntry.add(name);
+			}
 		}
 	}
 	
