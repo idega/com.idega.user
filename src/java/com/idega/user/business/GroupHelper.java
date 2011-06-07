@@ -32,8 +32,7 @@ public interface GroupHelper {
 	
 	public List<User> getUsersByIds(IWContext iwc, List<String> usersIds, boolean sort);
 	
-	@SuppressWarnings("unchecked")
-	public Collection<Group> getTopAndParentGroups(Collection topGroups);
+	public Collection<Group> getTopAndParentGroups(Collection<Group> topGroups);
 	
 	public Collection<Group> getTopGroups(IWContext iwc, User user);
 	
@@ -53,11 +52,9 @@ public interface GroupHelper {
 	
 	public List<String> getUserGroupsIds(IWContext iwc, User user);
 	
-	@SuppressWarnings("unchecked")
-	public GroupNode addChildGroupsToNode(GroupNode parentNode, Collection groups, String image);
+	public GroupNode addChildGroupsToNode(GroupNode parentNode, Collection<Group> groups, String image);
 	
-	@SuppressWarnings("unchecked")
-	public List<GroupNode> convertGroupsToGroupNodes(Collection groups, IWContext iwc, boolean isFirstLevel, String imageBaseUri);
+	public List<GroupNode> convertGroupsToGroupNodes(Collection<Group> groups, IWContext iwc, boolean isFirstLevel, String imageBaseUri);
 	
 	public String getGroupImageBaseUri(IWContext iwc);
 	

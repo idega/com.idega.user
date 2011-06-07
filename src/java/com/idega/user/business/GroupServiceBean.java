@@ -140,6 +140,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return ids;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<GroupNode> appendParentGroupsToList(Collection<Group> parentGroups, Group selectedGroup, List<GroupNode> groupNodes, GroupBusiness groupBusiness,
 														String image, IWContext iwc) {
 		if (parentGroups == null) {
@@ -195,6 +196,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<GroupNode> getChildrenOfGroup(String uniqueId) {
 		if (uniqueId == null) {
 			return null;
@@ -829,7 +831,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return bean.getUserProperties(instanceId);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private boolean clearCache(String cacheKey, String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
 		if (cacheKey == null || instanceId == null) {
 			return false;
@@ -849,7 +850,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			minutes = cacheTime.intValue();
 		}
 		
-		Map cache = getCache(iwc, cacheKey, minutes);
+		Map<String, ?> cache = getCache(iwc, cacheKey, minutes);
 		if (cache == null) {
 			return false;
 		}
