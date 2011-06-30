@@ -47,9 +47,13 @@ import com.idega.util.expression.ELUtil;
 
 public class SimpleGroupCreator extends Block {
 
+	protected String groupTab = "groupTab";
+	protected String rolesTab = "rolesTab";
+	protected String mootabsPanel = "mootabs_panel";
+
 	private IWBundle bundle = null;
 	private IWResourceBundle iwrb = null;
-	
+
 	private String name = null;
 	private String homePageName = null;
 	private String homePageId = null;
@@ -59,24 +63,35 @@ public class SimpleGroupCreator extends Block {
 	private String editedGroupId = null;
 	private List<String> groupTypes = null;
 	private List<String> roleTypes = null;
-	
+
 	private String sep = "', '";
-	private String groupTab = "groupTab";
-	private String rolesTab = "rolesTab";
-	private String mootabsPanel = "mootabs_panel";
-	
+
+
+	private String nameFieldClass = "nameFieldClass";
+	private String groupTabClass = "groupTabClass";
+	private String homapageContainerClass = "homapageContainerClass";
+	private String groupTypesClass = "groupTypesClass";
+	private String descriptionClass = "descriptioClasClass";
+	private String rolesClass = "rolesclass";
+	private String savebuttonClass = "savebuttonClass";
+
 	private boolean editingMode = false;
-	
+
+
+	private GenericButton saveButton = null;
+
+	protected TextInput nameField = null;
+
 	@Override
 	public String getBundleIdentifier() {
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void initializeLocalVariables(IWContext iwc) {
 		bundle = getBundle(iwc);
 		iwrb = bundle.getResourceBundle(iwc);
-		
+
 		parentGroupId = iwc.getParameter(UserConstants.GROUPS_TO_RELOAD_IN_MENU_DROPDOWN_ID_IN_SIMPLE_USER_APPLICATION);
 		editedGroupId = iwc.getParameter(UserConstants.EDITED_GROUP_MENU_DROPDOWN_ID_IN_SIMPLE_USER_APPLICATION);
 		String selectedGroupTypes = iwc.getParameter(UserConstants.AVAILABLE_GROUP_TYPES_IN_SIMPLE_USER_APPLICATION);
@@ -89,23 +104,23 @@ public class SimpleGroupCreator extends Block {
 			selectedRoleTypes = StringHandler.replace(selectedRoleTypes, CoreConstants.SPACE, CoreConstants.EMPTY);
 			roleTypes = Arrays.asList(selectedRoleTypes.split(CoreConstants.COMMA));
 		}
-		
+
 		Group group = null;
 		if (editedGroupId != null) {
 			try {
 				group = ((GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class)).getGroupByGroupID(Integer.valueOf(editedGroupId));
 			} catch(Exception e) {}
 		}
-		
+
 		if (group != null) {
 			editingMode = true;
 			name = group.getName();
-			
+
 			try {
 				ICPage page = group.getHomePage();
 				if (page != null) {
 					homePageId = page.getId();
-					
+
 					Locale locale = iwc.getCurrentLocale();
 					IBPageNameHome pageNameHome = (IBPageNameHome) IDOLookup.getHome(IBPageName.class);
 					int localeId = ICLocaleBusiness.getLocaleId(locale);
@@ -114,27 +129,27 @@ public class SimpleGroupCreator extends Block {
 						List<IBPageName> names = new ArrayList<IBPageName>(pageNames);
 						homePageName = names.get(0).getPageName();
 					}
-					
+
 					if (homePageName == null) {
 						homePageName = page.getNodeName(locale);
 					}
 				}
 			} catch(Exception e) {}
-			
+
 			type = group.getGroupType();
-			
+
 			description = group.getDescription();
 		}
 	}
-	
+
 	@Override
 	public void main(IWContext iwc) throws IOException {
 		initializeLocalVariables(iwc);
-		
+
 		Layer container = new Layer();
 		add(container);
 		String mainId = container.getId();
-		
+
 		Lists titlesForTabs = new Lists();
 		container.add(titlesForTabs);
 		titlesForTabs.setStyleClass("mootabs_title");
@@ -142,14 +157,15 @@ public class SimpleGroupCreator extends Block {
 		titlesForTabs.add(groupTab);
 		groupTab.addText(iwrb.getLocalizedString("group", "Group"));
 		groupTab.setMarkupAttribute("title", this.groupTab);
-		
+		titlesForTabs.setStyleClass(this.groupTabClass);
+
 		Layer groupTabContent = new Layer();
 		groupTabContent.setStyleClass(mootabsPanel);
 		container.add(groupTabContent);
 		groupTabContent.setId(this.groupTab);
-		
+
 		String styleName = "webfaceFormItem";
-		
+
 		//	Name
 		Layer nameContainer = new Layer();
 		groupTabContent.add(nameContainer);
@@ -161,7 +177,9 @@ public class SimpleGroupCreator extends Block {
 		Label nameLabel = new Label(iwrb.getLocalizedString("group_name", "Group name"), nameInput);
 		nameContainer.add(nameLabel);
 		nameContainer.add(nameInput);
-		
+		nameContainer.setStyleClass(this.nameFieldClass);
+		this.nameField = nameInput;
+
 		//	Home page
 		Layer homePageContainer = new Layer();
 		groupTabContent.add(homePageContainer);
@@ -177,18 +195,20 @@ public class SimpleGroupCreator extends Block {
 		Label homePageLabel = new Label(iwrb.getLocalizedString("homepage", "Home page"), homePageInput);
 		homePageContainer.add(homePageLabel);
 		homePageContainer.add(homePageInput);
-		
+		homePageContainer.setStyleClass(this.homapageContainerClass);
+
 		//	Group types
 		Layer typesContainer = new Layer();
 		groupTabContent.add(typesContainer);
 		typesContainer.setStyleClass(styleName);
-		DropdownMenu groupTypes = new DropdownMenu();	
+		DropdownMenu groupTypes = new DropdownMenu();
 		fillWithGroupTypes(groupTypes, iwc.getCurrentLocale());
 		groupTypes.setSelectedElement(type == null ? GroupTypeBMPBean.TYPE_PERMISSION_GROUP : type);
 		Label typesLabel = new Label(iwrb.getLocalizedString("group_type", "Group type"), groupTypes);
 		typesContainer.add(typesLabel);
 		typesContainer.add(groupTypes);
-		
+		typesContainer.setStyleClass(this.groupTypesClass);
+
 		//	Description
 		Layer descriptionContainer = new Layer();
 		groupTabContent.add(descriptionContainer);
@@ -197,26 +217,28 @@ public class SimpleGroupCreator extends Block {
 		Label descriptionLabel = new Label(iwrb.getLocalizedString("group_description", "Description"), descriptionArea);
 		descriptionContainer.add(descriptionLabel);
 		descriptionContainer.add(descriptionArea);
-		
+		descriptionContainer.setStyleClass(this.descriptionClass);
+
 		//	Hidden inputs
 		HiddenInput groupInput = new HiddenInput("groupId", editedGroupId == null ? "-1" : editedGroupId);
 		groupTabContent.add(groupInput);
 		HiddenInput parentGroupInput = new HiddenInput("parentGroupId", parentGroupId == null ? "-1" : parentGroupId);
 		groupTabContent.add(parentGroupInput);
-		
+
 		//	Roles
 		ListItem rolesTab = new ListItem();
 		titlesForTabs.add(rolesTab);
 		rolesTab.setMarkupAttribute("title", this.rolesTab);
 		rolesTab.addText(iwrb.getLocalizedString("roles", "Roles"));
-		
+
 		Layer rolesTabContent = new Layer();
 		container.add(rolesTabContent);
 		rolesTabContent.setId(this.rolesTab);
 		rolesTabContent.setStyleClass(mootabsPanel);
-		rolesTabContent.add(ELUtil.getInstance().getBean(UserApplicationEngine.class).getRolesEditor(iwc, editedGroupId == null ? -1 : 
+		rolesTabContent.add(ELUtil.getInstance().getBean(UserApplicationEngine.class).getRolesEditor(iwc, editedGroupId == null ? -1 :
 			Integer.valueOf(editedGroupId), true, roleTypes));
-		
+		rolesTabContent.setStyleClass(this.rolesClass);
+
 		//	Save button
 		Layer buttonsContainer = new Layer();
 		groupTabContent.add(buttonsContainer);
@@ -230,13 +252,18 @@ public class SimpleGroupCreator extends Block {
 		action = new StringBuilder("saveGroupInSimpleUserApplication([").append(idsExpression.toString()).append("], ").append(selectedRolesParam).append(");");
 		saveButton.setOnClick(action.toString());
 		buttonsContainer.add(saveButton);
-		
+		buttonsContainer.setStyleClass(this.savebuttonClass);
+		this.saveButton = saveButton;
+
+
+
 		//	JS
 		Layer script = new Layer();
 		script.add(PresentationUtil.getJavaScriptAction(new StringBuffer("createTabsWithMootabs('").append(mainId).append("');").toString()));
 		container.add(script);
 	}
-	
+
+
 	@SuppressWarnings("unchecked")
 	private void fillWithGroupTypes(DropdownMenu menu, Locale locale) {
 		Collection<GroupType> allTypes = null;
@@ -254,7 +281,7 @@ public class SimpleGroupCreator extends Block {
 			menu.addMenuElements(allTypes);
 			return;
 		}
-		
+
 		String typeKey = null;
 		for (GroupType type: allTypes) {
 			typeKey = type.getType();
@@ -263,5 +290,13 @@ public class SimpleGroupCreator extends Block {
 			}
 		}
 	}
-	
+
+	public String getActionOnSave(){
+		return this.saveButton == null ? null : this.saveButton.getOnClick();
+	}
+
+	public void setActionOnSave(String action){
+		this.saveButton.setOnClick(action);
+	}
+
 }

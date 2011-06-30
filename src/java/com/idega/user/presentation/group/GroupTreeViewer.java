@@ -15,50 +15,51 @@ import com.idega.util.PresentationUtil;
 import com.idega.webface.WFUtil;
 
 public class GroupTreeViewer extends Block {
-	
+
 	private String groupsTreeViewerId = null;
 	private String selectedGroupsParameter = "null";
 	private String loadRemoteGroupsFunction = null;
 	private String styleClass = "groupsTreeListElement";	// Set your style if you want to define actions for tree node
-	
+
 	private String customFunction = null;
-	
+
 	private boolean executeScriptOnLoad = true;
 	private boolean addExtraJavaScript = true;
-	
+
 	public GroupTreeViewer() {
 	}
-	
+
 	public GroupTreeViewer(boolean executeScriptOnLoad) {
 		this.executeScriptOnLoad = executeScriptOnLoad;
 	}
-	
+
 	@Override
 	public void main(IWContext iwc) {
 		Layer main = new Layer();
-		
+
 		Layer treeContainer = new Layer();
 		if (groupsTreeViewerId != null) {
 			treeContainer.setId(groupsTreeViewerId);
 		}
 		main.add(treeContainer);
-		
+
 		addJavaScript(iwc, treeContainer.getId());
-		
+
 		add(main);
 	}
-	
+
 	private void addJavaScript(IWContext iwc, String id) {
 		if (addExtraJavaScript) {
 			IWBundle iwb = getBundle(iwc);
-			
+
 			List<String> files = new ArrayList<String>();
 			//	"Helpers"
 			files.add(CoreUtil.getCoreBundle().getVirtualPathWithFileNameString("javascript/ChooserHelper.js"));
 			files.add("/dwr/interface/ChooserService.js");
+			files.add("/dwr/interface/GroupService.js");
 			files.add(iwb.getVirtualPathWithFileNameString("javascript/groupTree.js"));
 			files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
-			
+
 			//	MooTools
 			Web2Business web2 = WFUtil.getBeanInstance(iwc, Web2Business.SPRING_BEAN_IDENTIFIER);
 			if (web2 != null) {
@@ -68,10 +69,10 @@ public class GroupTreeViewer extends Block {
 					e.printStackTrace();
 				}
 			}
-		
+
 			PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, files);
 		}
-		
+
 		//	Actions to be performed on page loaded event
 		StringBuffer function = new StringBuffer();
 		if (loadRemoteGroupsFunction == null) {	//	Then loading local groups
@@ -83,17 +84,17 @@ public class GroupTreeViewer extends Block {
 			}
 			else {
 				function.append("'").append(styleClass).append("'");
-			}	
+			}
 			function.append(");");
 		}
 		else {
 			function.append(loadRemoteGroupsFunction);
 		}
-		
+
 		if (customFunction != null) {
 			function.append(" ").append(customFunction);
 		}
-		
+
 		StringBuffer action = new StringBuffer();
 		if (executeScriptOnLoad) {
 			action.append("window.addEvent('domready', function() {").append(function).append("});");
@@ -101,12 +102,12 @@ public class GroupTreeViewer extends Block {
 		else {
 			action = function;
 		}
-		
+
 		StringBuffer scriptString = new StringBuffer();
 		scriptString.append("<script type=\"text/javascript\" > \n")
 		.append("\t").append(action).append(" \n")
 		.append("</script> \n");
-		 
+
 		add(scriptString.toString());
 	}
 
@@ -160,5 +161,5 @@ public class GroupTreeViewer extends Block {
 	public void setCustomFunction(String customFunction) {
 		this.customFunction = customFunction;
 	}
-	
+
 }

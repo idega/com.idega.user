@@ -7,6 +7,8 @@ var DESELECTED_GROUPS = new Array();
 var USER_ID = null;
 var SAVE_GROUP_RESULT_IN_HIDDEN_INPUT_ID = 'saveGroupResultInHiddenInputIdForSimpleUserApplication';
 
+var IS_GROUP_NAME_OK = true;
+
 function setErrorHandlerForSimpleUserApplication(errorExplanations) {
 	var errorHandler = function(e) {
 		closeAllLoadingMessages();
@@ -867,6 +869,10 @@ function createOrModifyGroup(parameters, getTopAndParentGroups, useChildrenOfTop
 }
 
 function saveGroupInSimpleUserApplication(ids, selectedRoles) {
+	if(!IS_GROUP_NAME_OK){
+		showHumanizedMessage("Not all fields are good", null);
+		return;
+	}
 	var nameId = ids[0];
 	var homePageId = ids[1];
 	var groupTypeId = ids[2];

@@ -62,6 +62,7 @@
 			
 			var groupName = new Element('span');
 			groupName.setProperty('id', node.uniqueId);
+			groupName.setAttribute('value', node.id);
 			if (styleClassName != null) {
 				groupName.addClass(styleClassName);
 			}
