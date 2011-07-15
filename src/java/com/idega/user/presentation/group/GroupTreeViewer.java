@@ -26,6 +26,8 @@ public class GroupTreeViewer extends Block {
 	private boolean executeScriptOnLoad = true;
 	private boolean addExtraJavaScript = true;
 
+
+
 	public GroupTreeViewer() {
 	}
 
@@ -42,6 +44,8 @@ public class GroupTreeViewer extends Block {
 			treeContainer.setId(groupsTreeViewerId);
 		}
 		main.add(treeContainer);
+		this.groupsTreeViewerId = treeContainer.getId();
+		treeContainer.setStyleClass("group-tree-container");
 
 		addJavaScript(iwc, treeContainer.getId());
 
@@ -142,6 +146,10 @@ public class GroupTreeViewer extends Block {
 
 	public void setGroupsTreeViewerId(String groupsTreeViewerId) {
 		this.groupsTreeViewerId = groupsTreeViewerId;
+	}
+
+	public String getGroupsTreeViewerId() {
+		return this.groupsTreeViewerId;
 	}
 
 	@Override

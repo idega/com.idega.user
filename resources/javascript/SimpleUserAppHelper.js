@@ -7,7 +7,12 @@ var DESELECTED_GROUPS = new Array();
 var USER_ID = null;
 var SAVE_GROUP_RESULT_IN_HIDDEN_INPUT_ID = 'saveGroupResultInHiddenInputIdForSimpleUserApplication';
 
-var IS_GROUP_NAME_OK = true;
+var SimpleAppInfo = new Object();	//this is for /is.idega.block.saga/resources/javascript/GroupEditorHelper.js
+SimpleAppInfo.isGroupNameOk = true;	
+SimpleAppInfo.currentGroupId = -1; //not existing group
+
+//var editOrCreateDialogWidth = Math.round(window.getWidth() * 0.5);
+//var editOrCreateDialogHeight = Math.round(window.getHeight() * 0.5);
 
 function setErrorHandlerForSimpleUserApplication(errorExplanations) {
 	var errorHandler = function(e) {
@@ -769,9 +774,10 @@ function deselectUserFromGroup(groupId) {
 }
 
 function createTabsWithMootabs(id) {
-	var widthForTabs = Math.round(window.getWidth() * 0.5);
-	var heightForTabs = Math.round(window.getHeight() * 0.5);
-	var tabs = new mootabs(id, {width: widthForTabs + 'px', height: (heightForTabs - 50) + 'px', changeTransition: 'none'});
+	dialogWidth = getEditOrCreateDialogWidth() - 20;
+	dialogHeight = getEditOrCreateDialogHeight() - 70;
+	var tabs = new mootabs(id, {width: dialogWidth + 'px',
+		height: dialogHeight + 'px', changeTransition: 'none'});
 }
 
 function createOrModifyGroup(parameters, getTopAndParentGroups, useChildrenOfTopNodesAsParentGroups, isEditAction) {
@@ -817,9 +823,10 @@ function createOrModifyGroup(parameters, getTopAndParentGroups, useChildrenOfTop
 	var date = new Date();
 	uri += '&openTime=' + date.getTime();
 	
-	var width = Math.round(window.getWidth() * 0.5);
-	var height = Math.round(window.getHeight() * 0.5);
-	MOOdalBox.init({resizeDuration: 0, evalScripts: true, animateCaption: false, defContentsWidth: width, defContentsHeight: height});
+	dialogWidth = getEditOrCreateDialogWidth();
+	dialogHeight = getEditOrCreateDialogHeight();
+	MOOdalBox.init({resizeDuration: 0, evalScripts: true, animateCaption: false,
+		defContentsWidth: dialogWidth, defContentsHeight: dialogHeight});
 	var actionOnCLose = function() {
 		var hiddenInput = $(SAVE_GROUP_RESULT_IN_HIDDEN_INPUT_ID);
 		var needToReloadGroups = false;
@@ -868,9 +875,14 @@ function createOrModifyGroup(parameters, getTopAndParentGroups, useChildrenOfTop
 	MOOdalBox.open(uri, '', '');
 }
 
+
+function areAllFieldsOk(){
+	return SimpleAppInfo.isGroupNameOk;
+}
+
 function saveGroupInSimpleUserApplication(ids, selectedRoles) {
-	if(!IS_GROUP_NAME_OK){
-		showHumanizedMessage("Not all fields are good", null);
+	if(!areAllFieldsOk()){
+		showHumanizedMessage(ids[8], null);
 		return;
 	}
 	var nameId = ids[0];
@@ -896,6 +908,7 @@ function saveGroupInSimpleUserApplication(ids, selectedRoles) {
 	showLoadingMessage(message);
 	UserApplicationEngine.saveGroup(name, homePage, groupType, description, parentGroup, group, {
 		callback: function(savedGroupId) {
+			SimpleAppInfo.currentGroupId = savedGroupId;
 			var container = $(containerId);
 			if (container == null) {
 				closeAllLoadingMessages();
@@ -1199,4 +1212,11 @@ SimpleUserApplication.navigateThruUsers = function(event, params, beanParameters
 	}
 	
 	navigateInUsersList(params, beanParameters, orderBy, index, moveToLeft, true);
+}
+
+function getEditOrCreateDialogWidth(){
+	return Math.round(window.getWidth() * 0.55);
+}
+function getEditOrCreateDialogHeight(){
+	return Math.round(window.getHeight() * 0.70);
 }

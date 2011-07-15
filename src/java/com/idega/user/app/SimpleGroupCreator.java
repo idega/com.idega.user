@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.ejb.FinderException;
+import javax.faces.component.UIComponent;
 
 import com.idega.builder.data.IBPageName;
 import com.idega.builder.data.IBPageNameHome;
@@ -21,6 +22,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
+import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.ListItem;
 import com.idega.presentation.text.Lists;
 import com.idega.presentation.ui.DropdownMenu;
@@ -47,9 +49,13 @@ import com.idega.util.expression.ELUtil;
 
 public class SimpleGroupCreator extends Block {
 
-	protected String groupTab = "groupTab";
-	protected String rolesTab = "rolesTab";
-	protected String mootabsPanel = "mootabs_panel";
+	private String groupTabTitle = "groupTab";
+	private String rolesTabTitle = "rolesTab";
+	private String mootabsPanel = "mootabs_panel";
+
+	private Layer groupTabContent = null;
+	private Layer rolesTabContent = null;
+	private Layer container = null;
 
 	private IWBundle bundle = null;
 	private IWResourceBundle iwrb = null;
@@ -67,20 +73,16 @@ public class SimpleGroupCreator extends Block {
 	private String sep = "', '";
 
 
-	private String nameFieldClass = "nameFieldClass";
-	private String groupTabClass = "groupTabClass";
-	private String homapageContainerClass = "homapageContainerClass";
-	private String groupTypesClass = "groupTypesClass";
-	private String descriptionClass = "descriptioClasClass";
-	private String rolesClass = "rolesclass";
-	private String savebuttonClass = "savebuttonClass";
 
-	private boolean editingMode = false;
+	protected boolean editingMode = false;
 
-
+	private Lists titlesForTabs = null;
 	private GenericButton saveButton = null;
 
 	protected TextInput nameField = null;
+
+	private String groupInputId = null;
+	private String parentGroupInputId = null;
 
 	@Override
 	public String getBundleIdentifier() {
@@ -89,10 +91,12 @@ public class SimpleGroupCreator extends Block {
 
 	@SuppressWarnings("unchecked")
 	private void initializeLocalVariables(IWContext iwc) {
+		this.getBundleIdentifier();
+
 		bundle = getBundle(iwc);
 		iwrb = bundle.getResourceBundle(iwc);
 
-		parentGroupId = iwc.getParameter(UserConstants.GROUPS_TO_RELOAD_IN_MENU_DROPDOWN_ID_IN_SIMPLE_USER_APPLICATION);
+		parentGroupId = parentGroupId == null ? iwc.getParameter(UserConstants.GROUPS_TO_RELOAD_IN_MENU_DROPDOWN_ID_IN_SIMPLE_USER_APPLICATION) : parentGroupId;
 		editedGroupId = iwc.getParameter(UserConstants.EDITED_GROUP_MENU_DROPDOWN_ID_IN_SIMPLE_USER_APPLICATION);
 		String selectedGroupTypes = iwc.getParameter(UserConstants.AVAILABLE_GROUP_TYPES_IN_SIMPLE_USER_APPLICATION);
 		if (!StringUtil.isEmpty(selectedGroupTypes)) {
@@ -146,23 +150,29 @@ public class SimpleGroupCreator extends Block {
 	public void main(IWContext iwc) throws IOException {
 		initializeLocalVariables(iwc);
 
-		Layer container = new Layer();
+		container = new Layer();
+		container.setStyleClass("SimpleGroupCreatorContainer");
 		add(container);
+
 		String mainId = container.getId();
 
-		Lists titlesForTabs = new Lists();
+		IWBundle userBundle = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
+		String cssAddScript = PresentationUtil.getCssLine(userBundle.getVirtualPathWithFileNameString("style/user.css"), true);
+		container.add(cssAddScript);
+
+
+		//create titles for tab list
+		titlesForTabs = new Lists();
 		container.add(titlesForTabs);
 		titlesForTabs.setStyleClass("mootabs_title");
-		ListItem groupTab = new ListItem();
-		titlesForTabs.add(groupTab);
-		groupTab.addText(iwrb.getLocalizedString("group", "Group"));
-		groupTab.setMarkupAttribute("title", this.groupTab);
-		titlesForTabs.setStyleClass(this.groupTabClass);
+		titlesForTabs.setStyleClass("groupTabClass");
 
-		Layer groupTabContent = new Layer();
+		//create group tab content
+		groupTabContent = new Layer();
 		groupTabContent.setStyleClass(mootabsPanel);
-		container.add(groupTabContent);
-		groupTabContent.setId(this.groupTab);
+
+		//add group tab with content
+		this.addNewNavigationTabAndContent(this.groupTabTitle,iwrb.getLocalizedString("group", "Group"),groupTabContent);
 
 		String styleName = "webfaceFormItem";
 
@@ -177,7 +187,8 @@ public class SimpleGroupCreator extends Block {
 		Label nameLabel = new Label(iwrb.getLocalizedString("group_name", "Group name"), nameInput);
 		nameContainer.add(nameLabel);
 		nameContainer.add(nameInput);
-		nameContainer.setStyleClass(this.nameFieldClass);
+		nameInput.setStyleClass("labeled-component");
+		nameContainer.setStyleClass("nameFieldClass");
 		this.nameField = nameInput;
 
 		//	Home page
@@ -195,7 +206,7 @@ public class SimpleGroupCreator extends Block {
 		Label homePageLabel = new Label(iwrb.getLocalizedString("homepage", "Home page"), homePageInput);
 		homePageContainer.add(homePageLabel);
 		homePageContainer.add(homePageInput);
-		homePageContainer.setStyleClass(this.homapageContainerClass);
+		homePageContainer.setStyleClass("homapageContainerClass");
 
 		//	Group types
 		Layer typesContainer = new Layer();
@@ -207,7 +218,7 @@ public class SimpleGroupCreator extends Block {
 		Label typesLabel = new Label(iwrb.getLocalizedString("group_type", "Group type"), groupTypes);
 		typesContainer.add(typesLabel);
 		typesContainer.add(groupTypes);
-		typesContainer.setStyleClass(this.groupTypesClass);
+		typesContainer.setStyleClass("groupTypesClass");
 
 		//	Description
 		Layer descriptionContainer = new Layer();
@@ -217,52 +228,71 @@ public class SimpleGroupCreator extends Block {
 		Label descriptionLabel = new Label(iwrb.getLocalizedString("group_description", "Description"), descriptionArea);
 		descriptionContainer.add(descriptionLabel);
 		descriptionContainer.add(descriptionArea);
-		descriptionContainer.setStyleClass(this.descriptionClass);
+		descriptionContainer.setStyleClass("descriptionClass");
+		descriptionArea.setStyleClass("labeled-component");
 
 		//	Hidden inputs
 		HiddenInput groupInput = new HiddenInput("groupId", editedGroupId == null ? "-1" : editedGroupId);
 		groupTabContent.add(groupInput);
+		groupInputId = groupInput.getId();
 		HiddenInput parentGroupInput = new HiddenInput("parentGroupId", parentGroupId == null ? "-1" : parentGroupId);
 		groupTabContent.add(parentGroupInput);
+		parentGroupInputId = parentGroupInput.getId();
 
 		//	Roles
-		ListItem rolesTab = new ListItem();
-		titlesForTabs.add(rolesTab);
-		rolesTab.setMarkupAttribute("title", this.rolesTab);
-		rolesTab.addText(iwrb.getLocalizedString("roles", "Roles"));
-
-		Layer rolesTabContent = new Layer();
-		container.add(rolesTabContent);
-		rolesTabContent.setId(this.rolesTab);
+		rolesTabContent = new Layer();
+		this.addNewNavigationTabAndContent(this.rolesTabTitle,iwrb.getLocalizedString("roles", "Roles"),rolesTabContent);
+		rolesTabContent.setId(this.rolesTabTitle);
 		rolesTabContent.setStyleClass(mootabsPanel);
 		rolesTabContent.add(ELUtil.getInstance().getBean(UserApplicationEngine.class).getRolesEditor(iwc, editedGroupId == null ? -1 :
 			Integer.valueOf(editedGroupId), true, roleTypes));
-		rolesTabContent.setStyleClass(this.rolesClass);
+//		rolesTabContent.setStyleClass(this.rolesClass);
 
 		//	Save button
 		Layer buttonsContainer = new Layer();
 		groupTabContent.add(buttonsContainer);
 		buttonsContainer.setStyleClass("webfaceButtonLayer");
+		buttonsContainer.setStyleClass("buttonsContainerClass");
 		GenericButton saveButton = new GenericButton(iwrb.getLocalizedString("save", "Save"));
-		StringBuilder idsExpression = new StringBuilder("'").append(nameInput.getId()).append(sep).append(homePageInputId).append(sep).append(groupTypes.getId());
-		idsExpression.append(sep).append(descriptionArea.getId()).append(sep).append(groupInput.getId()).append(sep).append(parentGroupInput.getId()).append(sep);
-		idsExpression.append(mainId).append(sep).append(iwrb.getLocalizedString("saving", "Saving...")).append("'");
+		saveButton.setStyleClass("saveButtonClass");
+		StringBuilder idsExpression = new StringBuilder("'").append(nameInput.getId())
+		.append(sep).append(homePageInputId)
+		.append(sep).append(groupTypes.getId())
+		.append(sep).append(descriptionArea.getId())
+		.append(sep).append(groupInput.getId())
+		.append(sep).append(parentGroupInput.getId())
+		.append(sep).append(mainId)
+		.append(sep).append(iwrb.getLocalizedString("saving", "Saving..."))
+		.append(sep).append(iwrb.getLocalizedString("not_all_fields_filled_properly", "Not all fields filled properly")).append("'");
 		GroupHelper groupHelper = ELUtil.getInstance().getBean(GroupHelper.class);
 		String selectedRolesParam = groupHelper.getJavaScriptFunctionParameter(roleTypes);
 		action = new StringBuilder("saveGroupInSimpleUserApplication([").append(idsExpression.toString()).append("], ").append(selectedRolesParam).append(");");
 		saveButton.setOnClick(action.toString());
 		buttonsContainer.add(saveButton);
-		buttonsContainer.setStyleClass(this.savebuttonClass);
+
 		this.saveButton = saveButton;
-
-
 
 		//	JS
 		Layer script = new Layer();
 		script.add(PresentationUtil.getJavaScriptAction(new StringBuffer("createTabsWithMootabs('").append(mainId).append("');").toString()));
 		container.add(script);
+
+		//add same class to all elements, to be able to choose what you need in extended class
+		this.addStyleClassForChildren(this.groupTabContent,"SimpleGroupCreator");
+		this.addStyleClassForChildren(this.rolesTabContent,"SimpleGroupCreator");
+		this.addStyleClassForChildren(buttonsContainer,"SimpleGroupCreator");
 	}
 
+
+	protected void addStyleClassForChildren(UIComponent element,String styleClassName){
+		List <UIComponent> children = element.getChildren();
+		for(UIComponent component : children){
+//			component.setValueExpression("class", WFUtil.createValueExpression(elContext, "#{}", expectedReturnType));
+			if(component instanceof PresentationObject){
+				((PresentationObject)component).setStyleClass(styleClassName);
+			}
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	private void fillWithGroupTypes(DropdownMenu menu, Locale locale) {
@@ -291,12 +321,75 @@ public class SimpleGroupCreator extends Block {
 		}
 	}
 
+	/**
+	 * gets js action that is set for saving
+	 * @return String action
+	 */
 	public String getActionOnSave(){
 		return this.saveButton == null ? null : this.saveButton.getOnClick();
 	}
 
+	/**
+	 * sets js action that is performed for saving
+	 */
 	public void setActionOnSave(String action){
+		this.saveButton.removeMarkupAttribute("onclick");
 		this.saveButton.setOnClick(action);
 	}
+
+
+	/**
+	 *
+	 * @param id the id of content it is also set as class to tab element
+	 * @param name name of tab to navigate to content
+	 * @param content element that will hold content
+	 */
+	public void addNewNavigationTabAndContent(String id, String name,Layer content){
+		//create and add tab
+		ListItem tab = new ListItem();
+		tab.setMarkupAttribute("title", id);
+		tab.addText(name);
+		titlesForTabs.add(tab);
+
+		//set a unique style class and same class as this component elements have
+		tab.setStyleClass(id);
+		tab.setStyleClass("SimpleGroupCreator");
+
+		//add content
+		content.setStyleClass(mootabsPanel);
+		this.container.addChild(2, content);
+		content.setId(id);
+	}
+
+	public void addToGroupContent(PresentationObject object){
+		this.groupTabContent.add(object);
+	}
+
+	public void addToRolesContent(PresentationObject object){
+		this.rolesTabContent.add(object);
+	}
+
+
+	protected String getParentGroupId() {
+		return parentGroupId;
+	}
+
+	/**
+	 * Set before the main method executes!
+	 * @param parentGroupId
+	 */
+	protected void setParentGroupId(String parentGroupId) {
+		this.parentGroupId = parentGroupId;
+	}
+
+	protected String getGroupInputId() {
+		return groupInputId;
+	}
+
+	protected String getParentGroupInputId() {
+		return parentGroupInputId;
+	}
+
+
 
 }

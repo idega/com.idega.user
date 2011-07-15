@@ -1,11 +1,16 @@
 package com.idega.user.bean;
 
+import java.io.Serializable;
+import java.util.Random;
+
 /**
  * @author valdas
  *
  */
-public class UserDataBean {
-	
+public class UserDataBean implements Serializable {
+
+	private static final long serialVersionUID = 8551665189039123915L;
+
 	private String name = null;
 	private String login = null;
 	private String password = null;
@@ -24,15 +29,17 @@ public class UserDataBean {
 	private String postalBox = null;
 	private String addressId;
 	private String commune;
-	
+
 	private Integer userId = null;
-	
+
 	private boolean juridicalPerson = false;
 	private Boolean changePasswordNextTime = Boolean.FALSE;
 	private Boolean accountEnabled = Boolean.TRUE;
 	private boolean accountExists = false;
 	private boolean imageSet;
-	
+
+	private int hashCode = 0;
+
 	public String getEmail() {
 		return email;
 	}
@@ -165,5 +172,22 @@ public class UserDataBean {
 	public void setCommune(String commune) {
 		this.commune = commune;
 	}
-	
+
+	@Override
+	public boolean equals(Object o){
+		if(o instanceof UserDataBean){
+			return this.getUserId() == ((UserDataBean)o).getUserId();
+		}
+		return this.hashCode() == o.hashCode();
+	}
+
+	@Override
+	public int hashCode(){
+		if(this.hashCode == 0){
+			Random generator = new Random();
+			this.hashCode = generator.nextInt();
+		}
+		return this.hashCode;
+	}
+
 }
