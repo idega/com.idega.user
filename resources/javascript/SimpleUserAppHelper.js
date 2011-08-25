@@ -11,9 +11,6 @@ var SimpleAppInfo = new Object();	//this is for /is.idega.block.saga/resources/j
 SimpleAppInfo.isGroupNameOk = true;	
 SimpleAppInfo.currentGroupId = -1; //not existing group
 
-//var editOrCreateDialogWidth = Math.round(window.getWidth() * 0.5);
-//var editOrCreateDialogHeight = Math.round(window.getHeight() * 0.5);
-
 function setErrorHandlerForSimpleUserApplication(errorExplanations) {
 	var errorHandler = function(e) {
 		closeAllLoadingMessages();
@@ -774,8 +771,8 @@ function deselectUserFromGroup(groupId) {
 }
 
 function createTabsWithMootabs(id) {
-	dialogWidth = getEditOrCreateDialogWidth() - 20;
-	dialogHeight = getEditOrCreateDialogHeight() - 70;
+	var dialogWidth = getEditOrCreateDialogWidth() - 20;
+	var dialogHeight = getEditOrCreateDialogHeight() - 70;
 	var tabs = new mootabs(id, {width: dialogWidth + 'px',
 		height: dialogHeight + 'px', changeTransition: 'none'});
 }
@@ -823,8 +820,8 @@ function createOrModifyGroup(parameters, getTopAndParentGroups, useChildrenOfTop
 	var date = new Date();
 	uri += '&openTime=' + date.getTime();
 	
-	dialogWidth = getEditOrCreateDialogWidth();
-	dialogHeight = getEditOrCreateDialogHeight();
+	var dialogWidth = getEditOrCreateDialogWidth();
+	var dialogHeight = getEditOrCreateDialogHeight();
 	MOOdalBox.init({resizeDuration: 0, evalScripts: true, animateCaption: false,
 		defContentsWidth: dialogWidth, defContentsHeight: dialogHeight});
 	var actionOnCLose = function() {
