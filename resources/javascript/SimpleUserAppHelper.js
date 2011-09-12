@@ -10,6 +10,9 @@ var SAVE_GROUP_RESULT_IN_HIDDEN_INPUT_ID = 'saveGroupResultInHiddenInputIdForSim
 var SimpleAppInfo = new Object();	//this is for /is.idega.block.saga/resources/javascript/GroupEditorHelper.js
 SimpleAppInfo.isGroupNameOk = true;	
 SimpleAppInfo.currentGroupId = -1; //not existing group
+SimpleAppInfo.actionsAfterSave = function(savedGroupId){
+	SimpleAppInfo.currentGroupId = savedGroupId;
+}
 
 //var editOrCreateDialogWidth = Math.round(window.getWidth() * 0.5);
 //var editOrCreateDialogHeight = Math.round(window.getHeight() * 0.5);
@@ -908,7 +911,7 @@ function saveGroupInSimpleUserApplication(ids, selectedRoles) {
 	showLoadingMessage(message);
 	UserApplicationEngine.saveGroup(name, homePage, groupType, description, parentGroup, group, {
 		callback: function(savedGroupId) {
-			SimpleAppInfo.currentGroupId = savedGroupId;
+			SimpleAppInfo.actionsAfterSave(savedGroupId);
 			var container = $(containerId);
 			if (container == null) {
 				closeAllLoadingMessages();

@@ -390,6 +390,14 @@ public class SimpleGroupCreator extends Block {
 		return parentGroupInputId;
 	}
 
+	protected String getType() {
+		return type;
+	}
+
+	protected void setType(String type) {
+		this.type = type;
+	}
+
 
 
 }
