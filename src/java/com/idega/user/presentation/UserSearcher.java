@@ -152,6 +152,16 @@ public class UserSearcher extends Block implements IWPageEventListener {
 	
 	private String legalNonDigitPIDLetters = null;
 	
+	private Integer userInfoPage;
+	
+	public void setUserInfoPage(Integer userInfoPage) {
+		this.userInfoPage = userInfoPage;
+	}
+	
+	public Integer getUserInfoPage() {
+		return userInfoPage;
+	}
+	
 	protected UserSession getUserSession(IWUserContext iwuc) {
 		try {
 			return (UserSession) IBOLookup.getSessionInstance(iwuc, UserSession.class);
@@ -178,6 +188,7 @@ public class UserSearcher extends Block implements IWPageEventListener {
 			this.interfaceStyleName = getStyleName(STYLENAME_INTERFACE);
 		}
 	}
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		//debugParameters(iwc);
 		initStyleNames();
@@ -590,15 +601,21 @@ private Table presentateFoundUsers(IWContext iwc) {
 			T.add(PersonalIDFormatter.format(u.getPersonalID(),iwc.getCurrentLocale()), colAdd, row);
 			userLink = new Link(u.getName());
 			
-			//Added by Roar 29.10.03
-			if (this.setToFormSubmit){
-				userLink.setToFormSubmit(getParentForm());	
-				userLink.setOnClick("findObj('"+ userPk.getID() +"').value='"+ u.getPrimaryKey() +"';");
+			if (getUserInfoPage() == null) {
+				//Added by Roar 29.10.03
+				if (this.setToFormSubmit){
+					userLink.setToFormSubmit(getParentForm());	
+					userLink.setOnClick("findObj('"+ userPk.getID() +"').value='"+ u.getPrimaryKey() +"';");
+				}
+				
+				userLink.addParameter(getUniqueUserParameter((Integer) u.getPrimaryKey()));
+				userLink.setEventListener(getListenerClass());
+				addParameters(userLink);
+			} else {
+				userLink.setPage(getUserInfoPage());
+				userLink.addParameter("mbe_userid", u.getId());
+				userLink.addParameter(PRM_USER_ID, u.getId());
 			}
-			
-			userLink.addParameter(getUniqueUserParameter((Integer) u.getPrimaryKey()));
-			userLink.setEventListener(getListenerClass());
-			addParameters(userLink);
 			T.add(userLink, colAdd + 1, row);
 			row++;
 			if (row == this.maxFoundUserRows) {
@@ -759,6 +776,7 @@ public void maintainParameter(Parameter parameter) {
 /* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#getBundleIdentifier()
 	 */
+@Override
 public String getBundleIdentifier() {
 	if (this.bundleIdentifer != null) {
 		return this.bundleIdentifer;
@@ -848,6 +866,7 @@ public String checkEmptyFieldScript() {
 /* (non-Javadoc)
  * @see com.idega.presentation.Block#getStyleNames()
  */
+@Override
 public Map getStyleNames() {
 	HashMap map = new HashMap();
 	map.put(STYLENAME_HEADER, this.headerFontStyle);
