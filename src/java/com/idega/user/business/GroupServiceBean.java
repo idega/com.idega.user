@@ -39,6 +39,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.WebUtil;
 import com.idega.util.expression.ELUtil;
 import com.idega.webface.WFUtil;
 
@@ -1005,4 +1006,18 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		
 		return true;
 	}
+
+    @Override
+    public boolean addUser(String groupId) {
+        WebUtil wu = new WebUtil();
+        
+        if (!wu.isLoggedIn()) {
+            return false;
+        }
+        
+        //IBOLookup pad4s ideti EJB bean
+        //jei neprisijunges, nukreipti i pages langa.
+        
+        return true;
+    }
 }

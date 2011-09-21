@@ -99,6 +99,13 @@ public interface GroupService extends IBOSession {
 	 */
 	public boolean addUsersIds(String instanceId, List<String> ids) throws RemoteException;
 	
+	/**
+	 * <p>Calls GroupBusiness#addUser(int groupId, com.idega.user.data.User user)</p>
+	 * @param groupId Group id to which user must be added.
+	 * @return true, if added, false otherwise.
+	 */
+	public boolean addUser(String groupId);
+	
 	public List<GroupNode> getChildrenOfGroup(String uniqueId);
 	
 	public List<GroupNode> getChildrenOfGroupWithLogin(String login, String password, String uniqueId);
