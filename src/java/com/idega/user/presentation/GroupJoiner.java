@@ -83,23 +83,34 @@
 package com.idega.user.presentation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 
 import org.apache.myfaces.custom.htmlTag.HtmlTag;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.block.web2.business.JQuery;
 import com.idega.block.web2.business.Web2Business;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWBaseComponent;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.ui.GenericButton;
+import com.idega.presentation.ui.Label;
 import com.idega.user.IWBundleStarter;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserConstants;
+import com.idega.user.data.Group;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
-import com.idega.util.PresentationUtil;
+import com.idega.util.expression.ELUtil;
+import com.idega.webface.WFUtil;
 
 /**
  * Class description goes here.
@@ -112,52 +123,138 @@ import com.idega.util.PresentationUtil;
 public class GroupJoiner extends IWBaseComponent{
     
     private String groupId = null;
-    
-    @Autowired
-    private JQuery jQuery;
-    
-    @Autowired
-    private Web2Business web2Business;
+    private Integer userId = null;
+    private UserBusiness userBusiness = null;
+    private IWResourceBundle iwrb = null;
+    private  IWContext iwc = null;
     
     public GroupJoiner() {}
     
-    public GroupJoiner(String groupId) {
+    public GroupJoiner(String groupId,Integer userId) {
         this.groupId = groupId;
+        this.userId = userId;
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     protected void initializeComponent(FacesContext context) {
-        
-        IWContext iwc = IWContext.getIWContext(context);
+        ELUtil.getInstance().autowire(this);
+        iwc = IWContext.getIWContext(context);
         if (!iwc.isLoggedOn()) {
             return;
         }
+        if(userId == null){
+        	userId = iwc.getCurrentUserId();
+        }
         
-        HtmlTag div = (HtmlTag)context.getApplication().createComponent(HtmlTag.COMPONENT_TYPE);
+        HtmlTag div = new HtmlTag();//(HtmlTag)context.getApplication().createComponent(HtmlTag.COMPONENT_TYPE);
+        getChildren().add(div);
         div.setValue(divTag);
         
         IWBundle bundle = getBundle(context, IWBundleStarter.IW_BUNDLE_IDENTIFIER);
-        IWResourceBundle iwrb = bundle.getResourceBundle(iwc);     
+        iwrb = bundle.getResourceBundle(iwc);     
 
+        if(groupId == null){
+        	Label label = new Label();
+        	div.getChildren().add(label);
+        	label.addText(iwrb.getLocalizedString("no_group_set", "No group set"));
+        	return;
+        }
         GenericButton gb = new GenericButton();
         div.getChildren().add(gb);
-        gb.setValue(iwrb.getLocalizedString("join", "Join"));
         
-        PresentationUtil.addStyleSheetToHeader(iwc, web2Business.getBundleURIToFancyBoxStyleFile());
+        Group group = null;
+        Collection <Group> groups =  null;
+        try{
+        	group = this.getUserBusiness().getGroupBusiness().getGroupByGroupID(Integer.valueOf(groupId));
+        	groups =  this.getUserBusiness().getUserGroups(userId);
+        }catch(Exception e){
+        	Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "failed getting groups by ids", e);
+        }
         
-        List<String> jsFiles = new ArrayList<String>();
-        jsFiles.add(jQuery.getBundleURIToJQueryLib());
-        jsFiles.addAll(web2Business.getBundleURIsToFancyBoxScriptFiles());
-        jsFiles.add(bundle.getVirtualPathWithFileNameString("javascript/GroupJoinerHelper.js"));
-        jsFiles.add("/dwr/engine.js");
-        //Shitas bus sugeneruotas ish java klases, jei yra annotation arba dwr.xml faile registruotas.
-        jsFiles.add("/dwr/interface/GroupService.js");
-        PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, jsFiles);
+        //TODO: check if Group override equals
+        if(groups.contains(group)){
+        	addLeave(gb);
+        }else{
+        	addJoin(gb);
+        }
         
-        String action = "GroupJoinerHelper.joinGroup('"+this.groupId+"');";
         
-        gb.setOnClick(action);
-        
-        getChildren().add(div);
     }
+    
+    private void addJoin(GenericButton button){
+    	button.setValue(iwrb.getLocalizedString("join", "Join"));
+    	String action = new StringBuilder("GroupJoinerHelper.joinGroup('").append(this.groupId)
+				.append(CoreConstants.JS_STR_PARAM_SEPARATOR).append(this.userId)
+				.append(CoreConstants.JS_STR_PARAM_END).toString();
+    	button.setOnClick(action);
+    }
+    
+    private void addLeave(GenericButton button){
+    	button.setValue(iwrb.getLocalizedString("leave", "Leave"));
+    	String action = new StringBuilder("GroupJoinerHelper.leaveGroup('").append(this.groupId)
+    			.append(CoreConstants.JS_STR_PARAM_SEPARATOR).append(this.userId)
+    			.append(CoreConstants.JS_STR_PARAM_END).toString();
+    	button.setOnClick(action);
+    }
+    
+    public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
+	/**
+	 * Gets the scripts that is need for this element to work
+	 * if this element is loaded dynamically (ajax) and not
+	 * in frame, than it will add them to it's layer.
+	 * @return script files uris
+	 */
+	public static List<String> getNeededScripts(IWContext iwc){
+		
+		List<String> scripts = new ArrayList<String>();
+
+		scripts.add(CoreConstants.DWR_ENGINE_SCRIPT);
+		scripts.add(CoreConstants.DWR_UTIL_SCRIPT);
+
+		Web2Business web2 = WFUtil.getBeanInstance(iwc, Web2Business.SPRING_BEAN_IDENTIFIER);
+		if (web2 != null) {
+			JQuery  jQuery = web2.getJQuery();
+			scripts.add(jQuery.getBundleURIToJQueryLib());
+
+			scripts.add(web2.getBundleUriToHumanizedMessagesScript());
+
+		}else{
+			Logger.getLogger("ContentShareComponent").log(Level.WARNING, "Failed getting Web2Business no jQuery and it's plugins files were added");
+		}
+
+		IWMainApplication iwma = iwc.getApplicationContext().getIWMainApplication();
+		IWBundle iwb = iwma.getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
+		scripts.add(iwb.getVirtualPathWithFileNameString("javascript/WhatsNewHelper.js"));
+		scripts.add("/dwr/interface/GroupService.js");
+		
+		return scripts;
+	}
+
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
+	}
+	private UserBusiness getUserBusiness() {
+		try{
+			if(userBusiness == null){
+				this.userBusiness = IBOLookup.getServiceInstance(iwc == null ? 
+							CoreUtil.getIWContext(): iwc, UserBusiness.class);
+			}
+		}catch(IBOLookupException e){
+			Logger.getLogger("ContentShareComponent").log(Level.WARNING, "Failed getting UserBusiness",e);
+		}
+		return userBusiness;
+	}
+
 }
