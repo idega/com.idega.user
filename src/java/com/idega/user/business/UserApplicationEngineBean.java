@@ -97,8 +97,8 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 	@Autowired
 	private SimpleUserAppHelper presentationHelper;
 
-	private Map<String, SimpleUserAppViewUsers> simpleUserApps = new HashMap<String, SimpleUserAppViewUsers>();
-	private Map<String, List<Integer>> pagerProperties = new HashMap<String, List<Integer>>();
+	private final Map<String, SimpleUserAppViewUsers> simpleUserApps = new HashMap<String, SimpleUserAppViewUsers>();
+	private final Map<String, List<Integer>> pagerProperties = new HashMap<String, List<Integer>>();
 
 	public GroupHelper getGroupHelper() {
 		return groupHelper;

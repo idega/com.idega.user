@@ -90,8 +90,6 @@ import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 
-import org.apache.myfaces.custom.htmlTag.HtmlTag;
-
 import com.idega.block.web2.business.JQuery;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.business.IBOLookup;
@@ -101,6 +99,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWBaseComponent;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Layer;
 import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.Label;
 import com.idega.user.IWBundleStarter;
@@ -109,6 +108,7 @@ import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.PresentationUtil;
 import com.idega.util.expression.ELUtil;
 import com.idega.webface.WFUtil;
 
@@ -127,6 +127,8 @@ public class GroupJoiner extends IWBaseComponent{
     private UserBusiness userBusiness = null;
     private IWResourceBundle iwrb = null;
     private  IWContext iwc = null;
+    private static String JS_STR_INITIALIZATION_END = "';";
+    
     
     public GroupJoiner() {}
     
@@ -147,21 +149,21 @@ public class GroupJoiner extends IWBaseComponent{
         	userId = iwc.getCurrentUserId();
         }
         
-        HtmlTag div = new HtmlTag();//(HtmlTag)context.getApplication().createComponent(HtmlTag.COMPONENT_TYPE);
-        getChildren().add(div);
-        div.setValue(divTag);
+//        HtmlTag div = new HtmlTag();//(HtmlTag)context.getApplication().createComponent(HtmlTag.COMPONENT_TYPE);
+//        getChildren().add(div);
+//        div.setValue(divTag);
+        Layer main = new Layer();
+        this.add(main);
         
         IWBundle bundle = getBundle(context, IWBundleStarter.IW_BUNDLE_IDENTIFIER);
         iwrb = bundle.getResourceBundle(iwc);     
 
         if(groupId == null){
         	Label label = new Label();
-        	div.getChildren().add(label);
+        	main.add(label);
         	label.addText(iwrb.getLocalizedString("no_group_set", "No group set"));
         	return;
         }
-        GenericButton gb = new GenericButton();
-        div.getChildren().add(gb);
         
         Group group = null;
         Collection <Group> groups =  null;
@@ -172,30 +174,43 @@ public class GroupJoiner extends IWBaseComponent{
         	Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "failed getting groups by ids", e);
         }
         
-        //TODO: check if Group override equals
-        if(groups.contains(group)){
-        	addLeave(gb);
-        }else{
-        	addJoin(gb);
-        }
+        GenericButton joinButton = new GenericButton();
+        main.add(joinButton);
+        GenericButton leaveButton = new GenericButton();
+        main.add(leaveButton);
         
+        StringBuilder parameters = new StringBuilder().append(this.userId)
+		        .append(CoreConstants.JS_STR_PARAM_SEPARATOR).append(this.groupId)
+				.append("','#").append(joinButton.getId())
+				.append("','#").append(leaveButton.getId())
+				.append(CoreConstants.JS_STR_PARAM_END);
+        
+        joinButton.setValue(iwrb.getLocalizedString("join", "Join"));
+    	String action = new StringBuilder("GroupJoinerHelper.joinGroup('").append(parameters).toString();
+    	joinButton.setOnClick(action);
+    	leaveButton.setValue(iwrb.getLocalizedString("leave", "Leave"));
+    	action = new StringBuilder("GroupJoinerHelper.leaveGroup('").append(parameters).toString();
+    	leaveButton.setOnClick(action);
+    	
+    	 if(groups.contains(group)){
+    		 joinButton.setStyleAttribute("display : none;");
+         }else{
+        	 leaveButton.setStyleAttribute("display : none;");
+         }
+         
+    	 addActions(main);
         
     }
     
-    private void addJoin(GenericButton button){
-    	button.setValue(iwrb.getLocalizedString("join", "Join"));
-    	String action = new StringBuilder("GroupJoinerHelper.joinGroup('").append(this.groupId)
-				.append(CoreConstants.JS_STR_PARAM_SEPARATOR).append(this.userId)
-				.append(CoreConstants.JS_STR_PARAM_END).toString();
-    	button.setOnClick(action);
-    }
-    
-    private void addLeave(GenericButton button){
-    	button.setValue(iwrb.getLocalizedString("leave", "Leave"));
-    	String action = new StringBuilder("GroupJoinerHelper.leaveGroup('").append(this.groupId)
-    			.append(CoreConstants.JS_STR_PARAM_SEPARATOR).append(this.userId)
-    			.append(CoreConstants.JS_STR_PARAM_END).toString();
-    	button.setOnClick(action);
+    private void addActions(Layer main){
+    	StringBuilder actions = new StringBuilder("GroupJoinerHelper.FAILURE_MSG = '")
+    		.append(iwrb.getLocalizedString("failed", "Failed")).append(JS_STR_INITIALIZATION_END)
+    		.append("GroupJoinerHelper.ADDING_TO_GROUP_MSG = '")
+    		.append(iwrb.getLocalizedString("adding_to_group", "Adding to group")).append(JS_STR_INITIALIZATION_END)
+    		.append("GroupJoinerHelper.REMOVING_FROM_GROUP_MSG = '")
+    		.append(iwrb.getLocalizedString("removing_from_group", "Removing from group")).append(JS_STR_INITIALIZATION_END);
+		String actionString = PresentationUtil.getJavaScriptAction(actions.toString());
+		main.add(actionString);
     }
     
     public Integer getUserId() {
@@ -208,8 +223,6 @@ public class GroupJoiner extends IWBaseComponent{
 
 	/**
 	 * Gets the scripts that is need for this element to work
-	 * if this element is loaded dynamically (ajax) and not
-	 * in frame, than it will add them to it's layer.
 	 * @return script files uris
 	 */
 	public static List<String> getNeededScripts(IWContext iwc){
@@ -232,7 +245,7 @@ public class GroupJoiner extends IWBaseComponent{
 
 		IWMainApplication iwma = iwc.getApplicationContext().getIWMainApplication();
 		IWBundle iwb = iwma.getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
-		scripts.add(iwb.getVirtualPathWithFileNameString("javascript/WhatsNewHelper.js"));
+		scripts.add(iwb.getVirtualPathWithFileNameString("javascript/GroupJoinerHelper.js"));
 		scripts.add("/dwr/interface/GroupService.js");
 		
 		return scripts;
