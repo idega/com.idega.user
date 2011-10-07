@@ -1,5 +1,6 @@
 package com.idega.user.presentation;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -36,9 +37,9 @@ import com.idega.util.IWColor;
  * Description: An editor window for the selecting role masters. <br>
  * Company: Idega Software <br>
  * Copyright: Idega Software 2003 <br>
- * 
+ *
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson </a>
- *  
+ *
  */
 public class RoleMastersWindow extends StyledIWAdminWindow {
 
@@ -81,7 +82,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 
 	/**
 	 * Constructor for RoleMastersWindow.
-	 * 
+	 *
 	 * @param name
 	 */
 	public RoleMastersWindow(String name) {
@@ -90,7 +91,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 
 	/**
 	 * Constructor for RoleMastersWindow.
-	 * 
+	 *
 	 * @param width
 	 * @param heigth
 	 */
@@ -100,7 +101,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 
 	/**
 	 * Constructor for RoleMastersWindow.
-	 * 
+	 *
 	 * @param name
 	 * @param width
 	 * @param height
@@ -112,7 +113,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 	@Override
 	public void main(IWContext iwc) throws Exception {
 		this.iwrb = this.getResourceBundle(iwc);
-		
+
 		/*Page parent = getParentPage();
 		if (parent != null) {
 			parent.addJavascriptURL("/dwr/engine.js");
@@ -129,14 +130,15 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 			try {
 
 				//delete roleMasters
-				List deleteRoleMastersIds = null;
+				List<Serializable> deleteRoleMastersIds = null;
 				if (iwc.isParameterSet(DELETE_PERMISSIONS_KEY)) {
 					deleteRoleMastersIds = CheckBoxConverter.getResultByParsing(iwc, DELETE_PERMISSIONS_KEY);
 
 					if (deleteRoleMastersIds != null && !deleteRoleMastersIds.isEmpty()) {
-						Iterator roleMastersToDeleteIter = deleteRoleMastersIds.iterator();
+						Iterator<Serializable> roleMastersToDeleteIter = deleteRoleMastersIds.iterator();
 						while (roleMastersToDeleteIter.hasNext()) {
-							Integer userGroupId = (Integer) roleMastersToDeleteIter.next();
+							Serializable id = roleMastersToDeleteIter.next();
+							Integer userGroupId = id instanceof Integer ? (Integer) id : Integer.valueOf(id.toString());
 							access.removeGroupFromRoleMastersList(getUserBusiness(iwc).getUser(userGroupId), iwc);
 						}
 					}
@@ -157,7 +159,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		}
 
 		//get the data
-		Collection groups = iwc.getAccessController().getAllGroupsThatAreRoleMasters(iwc);//Users
+		Collection<com.idega.user.data.bean.Group> groups = iwc.getAccessController().getAllGroupsThatAreRoleMasters(iwc);//Users
 																						  // really
 
 		EntityBrowser browser = EntityBrowser.getInstanceUsingEventSystemAndExternalForm();
@@ -186,10 +188,12 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 
 			private boolean loggedInUserIsAdmin;
 
+			@Override
 			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
 				return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
 			}
 
+			@Override
 			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
 
 				Group group = (Group) entity;
@@ -273,7 +277,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		SubmitButton saveButton = new SubmitButton(this.iwrb.getLocalizedString("save", "Save"));
 		saveButton.setSubmitConfirm(this.iwrb.getLocalizedString("change.selected.permissions?", "Change selected permissions?"));
 		StyledButton save = new StyledButton(saveButton);
-		
+
 		CloseButton closeButton = new CloseButton(this.iwrb.getLocalizedString("close", "Close"));
 		StyledButton close = new StyledButton(closeButton);
 
