@@ -253,5 +253,4 @@ public class SimpleUserApp extends Block {
 	public String getBundleIdentifier() {
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
-
 }

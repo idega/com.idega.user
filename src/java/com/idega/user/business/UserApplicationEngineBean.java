@@ -68,6 +68,7 @@ import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.bean.UserDataBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.user.event.GroupCreatedEvent;
 import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
@@ -76,11 +77,12 @@ import com.idega.util.ListUtil;
 import com.idega.util.SendMail;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 
 public class UserApplicationEngineBean extends DefaultSpringBean implements UserApplicationEngine, Serializable {
 
 	private static final long serialVersionUID = -7472052374016555081L;
-	private static final Logger logger = Logger.getLogger(UserApplicationEngineBean.class.getName());
+	protected static final Logger logger = Logger.getLogger(UserApplicationEngineBean.class.getName());
 
 	private GroupBusiness groupBusiness = null;
 	private UserBusiness userBusiness = null;
@@ -94,8 +96,8 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	@Autowired
 	private SimpleUserAppHelper presentationHelper;
 
-	private Map<String, SimpleUserAppViewUsers> simpleUserApps = new HashMap<String, SimpleUserAppViewUsers>();
-	private Map<String, List<Integer>> pagerProperties = new HashMap<String, List<Integer>>();
+	private final Map<String, SimpleUserAppViewUsers> simpleUserApps = new HashMap<String, SimpleUserAppViewUsers>();
+	private final Map<String, List<Integer>> pagerProperties = new HashMap<String, List<Integer>>();
 
 	public GroupHelper getGroupHelper() {
 		return groupHelper;
@@ -611,7 +613,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		if (personalId == null) {
 			personalId = CoreConstants.EMPTY;
 		}
-		if (!personalId.equals(CoreConstants.EMPTY)) {
+		if (!StringUtil.isEmpty(personalId)) {
 			try {
 				user = userBusiness.getUser(personalId);
 			} catch (RemoteException e) {
@@ -639,6 +641,10 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		}
 
 		result.setId(user.getId());
+
+		if (!StringUtil.isEmpty(personalId) && !personalId.equals(user.getPersonalID())) {
+			user.setPersonalID(personalId);
+		}
 
 		removeUserFromOldGroups(iwc, deselectedGroups, user);
 
@@ -795,6 +801,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		user.setPrimaryGroupID(primaryGroupId);
 		user.setJuridicalPerson(userInfo.isJuridicalPerson());
 		user.store();
+
+		GroupCreatedEvent groupCreatedEvent = new GroupCreatedEvent(user);
+		ELUtil.getInstance().publishEvent(groupCreatedEvent);
 
 		//	Sending mail
 		if (sendEmailWithLoginInfo) {
@@ -1005,7 +1014,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		}
 	}
 
-	private UserBusiness getUserBusiness(IWContext iwc) {
+	protected UserBusiness getUserBusiness(IWContext iwc) {
 		if (userBusiness == null) {
 			try {
 				userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
@@ -1055,7 +1064,6 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public String saveGroup(String name, String homePageId, String type, String description, String parentGroupId, String groupId) {
 		if (StringUtil.isEmpty(name)) {
 			return null;
@@ -1145,7 +1153,12 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			}
 		}
 
-		return BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName()) ? group.getId() : null;
+		if(BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName())){
+			GroupCreatedEvent groupCreatedEvent = new GroupCreatedEvent(group);
+			ELUtil.getInstance().publishEvent(groupCreatedEvent);
+			return group.getId();
+		}
+		return null;
 	}
 
 	@Override

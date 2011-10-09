@@ -7,9 +7,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 import javax.faces.component.UIComponent;
+
+import org.hsqldb.lib.StringUtil;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.builder.business.BuilderLogic;
@@ -54,9 +57,9 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	private GroupBusiness groupBusiness = null;
 	private UserBusiness userBusiness = null;
 	
-	private String groupsCacheName = "groupsInfoViewersUniqueIdsCache";
-	private String usersCacheName = "groupsUsersInfoViewersUniqueIdsCache";
-	private String treeCacheName = "groupsChooserTreeSelectedGroupsUniqueIdsCache";
+	private final String groupsCacheName = "groupsInfoViewersUniqueIdsCache";
+	private final String usersCacheName = "groupsUsersInfoViewersUniqueIdsCache";
+	private final String treeCacheName = "groupsChooserTreeSelectedGroupsUniqueIdsCache";
 
 	private GroupHelper getGroupHelper(IWContext iwc) {
 		if (helper == null) {
@@ -68,6 +71,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	/**
 	 * Returns tree of Groups
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<GroupNode> getTopGroupsAndDirectChildren(List<String> uniqueIds) {
 		IWContext iwc = CoreUtil.getIWContext();
@@ -140,6 +144,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return ids;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<GroupNode> appendParentGroupsToList(Collection<Group> parentGroups, Group selectedGroup, List<GroupNode> groupNodes, GroupBusiness groupBusiness,
 														String image, IWContext iwc) {
 		if (parentGroups == null) {
@@ -195,6 +200,8 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return null;
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
 	public List<GroupNode> getChildrenOfGroup(String uniqueId) {
 		if (uniqueId == null) {
 			return null;
@@ -237,6 +244,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return null;
 	}
 	
+	@Override
 	public List<GroupNode> getChildrenOfGroupWithLogin(String login, String password, String uniqueId) {
 		if (login == null || password == null) {
 			return null;
@@ -259,6 +267,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	/**
 	 * Returns tree of Groups
 	 */
+	@Override
 	public List<GroupNode> getGroupsTree(String login, String password, String instanceId, List<String> uniqueIds) {
 		if (login == null || password == null) {
 			return null;
@@ -295,6 +304,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	/**
 	 * Checks if can use DWR on remote server
 	 */
+	@Override
 	public boolean canUseRemoteServer(String server) {
 		List<String> scripts = new ArrayList<String>();
 		scripts.add(CoreConstants.DWR_ENGINE_SCRIPT);
@@ -303,6 +313,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return canMakeCallToServerAndScript(server, scripts);
 	}
 	
+	@Override
 	public boolean canMakeCallToServerAndScript(String server, List<String> scripts) {
 		if (server == null) {
 			return false;
@@ -328,6 +339,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	/**
 	 * Returns user's parameters for getting info about Groups
 	 */
+	@Override
 	public GroupPropertiesBean getGroupPropertiesBean(String instanceId) {
 		return getBasicGroupPropertiesBean(instanceId);
 	}
@@ -337,6 +349,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	 * @param instanceId
 	 * @return
 	 */
+	@Override
 	public UserPropertiesBean getUserPropertiesBean(String instanceId) {
 		return getBasicUserPropertiesBean(instanceId);
 	}
@@ -386,6 +399,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	/**
 	 * Returns info about selected groups
 	 */
+	@Override
 	public List<GroupDataBean> getGroupsInfo(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
 		//	Checking if valid parameters
 		if (instanceId == null) {
@@ -425,6 +439,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return info;
 	}
 	
+	@Override
 	public boolean reloadProperties(String instanceId) {
 		if (instanceId == null) {
 			return false;
@@ -509,6 +524,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		}
 	}
 	
+	@Override
 	public List<GroupMemberDataBean> getUsersInfo(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
 		//	Checking if valid parameters
 		if (instanceId == null) {
@@ -548,6 +564,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return info;
 	}
 	
+	@Override
 	public List<AdvancedProperty> getUserStatusLocalization() {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
@@ -597,6 +614,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return statusLocalization;
 	}
 	
+	@Override
 	public String getUserStatusLocalizationByKey(String key) {
 		if (key == null) {
 			return CoreConstants.EMPTY;
@@ -630,6 +648,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	 * @param password
 	 * @return
 	 */
+	@Override
 	public boolean logInUser(IWContext iwc, String login, String password) {
 		if (iwc == null || login == null || password == null) {
 			return false;
@@ -684,6 +703,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	 * @param userName
 	 * @return
 	 */
+	@Override
 	public boolean isLoggedUser(IWContext iwc, String userName) {
 		if (iwc == null || userName == null) {
 			return false;
@@ -787,6 +807,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		list.add(localizedStatus);
 	}
 	
+	@Override
 	public boolean isUserLoggedOn(IWContext iwc, String login, String password) {
 		if (iwc == null || login == null || password == null) {
 			return false;
@@ -805,6 +826,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return true;
 	}
 	
+	@Override
 	public GroupPropertiesBean getBasicGroupPropertiesBean(String instanceId) {
 		if (instanceId == null) {
 			return null;
@@ -817,6 +839,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return bean.getGroupProperties(instanceId);
 	}
 	
+	@Override
 	public UserPropertiesBean getBasicUserPropertiesBean(String instanceId) {
 		if (instanceId == null) {
 			return null;
@@ -829,7 +852,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return bean.getUserProperties(instanceId);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private boolean clearCache(String cacheKey, String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
 		if (cacheKey == null || instanceId == null) {
 			return false;
@@ -849,7 +871,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			minutes = cacheTime.intValue();
 		}
 		
-		Map cache = getCache(iwc, cacheKey, minutes);
+		Map<String, ?> cache = getCache(iwc, cacheKey, minutes);
 		if (cache == null) {
 			return false;
 		}
@@ -863,14 +885,17 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return true;
 	}
 	
+	@Override
 	public boolean clearGroupInfoCache(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
 		return clearCache(UserConstants.GROUP_INFO_VIEWER_DATA_CACHE_KEY, login, password, instanceId, cacheTime, remoteMode);
 	}
 	
+	@Override
 	public boolean clearUsersInfoCache(String login, String password, String instanceId, Integer cacheTime, boolean remoteMode) {
 		return clearCache(UserConstants.GROUP_USERS_VIEWER_DATA_CACHE_KEY, login, password, instanceId, cacheTime, remoteMode);
 	}
 	
+	@Override
 	public List<String> getLocalizationForGroupInfo() {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
@@ -896,6 +921,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return localizedText;
 	}
 	
+	@Override
 	public List<String> getLocalizationForGroupUsersInfo() {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
@@ -935,6 +961,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return localizedText;
 	}
 	
+	@Override
 	public boolean addUniqueIds(String cacheName, String instanceId, List<String> ids) {
 		if (cacheName == null || instanceId == null || ids == null) {
 			return false;
@@ -950,14 +977,17 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return true;
 	}
 	
+	@Override
 	public boolean addGroupsIds(String instanceId, List<String> ids) {
 		return addUniqueIds(groupsCacheName, instanceId, ids);
 	}
 	
+	@Override
 	public boolean addUsersIds(String instanceId, List<String> ids) {
 		return addUniqueIds(usersCacheName, instanceId, ids);
 	}
 	
+	@Override
 	public Map<String, List<String>> getUniqueIds(String cacheName) throws NullPointerException {
 		IWCacheManager2 cache = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
 		
@@ -974,6 +1004,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		}
 	}
 	
+	@Override
 	public boolean streamUniqueIds(String instanceId, List<String> uniqueIds, String cacheName) {
 		if (instanceId == null || uniqueIds == null || cacheName == null) {
 			return false;
@@ -1004,4 +1035,49 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		
 		return true;
 	}
+
+    @Override
+    public boolean addUser(String userId, String groupId) {
+    	
+    	if(StringUtil.isEmpty(userId) || StringUtil.isEmpty(userId)){
+    		return false;
+    	}
+    	
+        
+        //IBOLookup pad4s ideti EJB bean
+        //jei neprisijunges, nukreipti i pages langa.
+        
+    	GroupBusiness groupBusiness = getGroupBusiness(CoreUtil.getIWContext());
+    	try{
+    		User userToAdd = groupBusiness.getUserByID(Integer.valueOf(userId));
+    		groupBusiness.addUser(Integer.valueOf(groupId), userToAdd);
+    	}catch(Exception e){
+    		this.getLogger().log(Level.WARNING, "Failed adding user" +userId+ " to group" + groupId, e);
+    		return false;
+    	}
+        return true;
+    }
+    
+    @Override
+    public boolean removeUser(String userId, String groupId) {
+    	if(StringUtil.isEmpty(userId) || StringUtil.isEmpty(userId)){
+    		return false;
+    	}
+    	IWContext iwc = CoreUtil.getIWContext();
+    	if(!iwc.isLoggedOn()){
+    		return false;
+    	}
+    	GroupBusiness groupBusiness = getGroupBusiness(CoreUtil.getIWContext());
+    	int groupIdInt = Integer.valueOf(groupId);
+    	try{
+    		
+    		Group group = groupBusiness.getGroupByGroupID(groupIdInt);
+    		User user = groupBusiness.getUserByID(Integer.valueOf(userId));
+    		group.removeUser(user, iwc.getCurrentUser());
+    	}catch(Exception e){
+    		this.getLogger().log(Level.WARNING, "Failed adding user" +userId+ " to group" + groupId, e);
+    		return false;
+    	}
+        return true;
+    }
 }

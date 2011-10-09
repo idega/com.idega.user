@@ -20,7 +20,7 @@
 		<convert converter="bean" match="com.idega.user.bean.GroupMemberDataBean" />
 		<convert converter="bean" match="com.idega.user.bean.AddressData" />
 		<convert converter="bean" match="com.idega.user.business.GroupNode" />
-		
+		<convert converter="bean" match="com.idega.user.bean.UserDataBean" />
 		<create creator="jsf" javascript="UserApplicationEngine">
 	    	<param name="managedBeanName" value="userApplicationEngine" />
 	    	<param name="class" value="com.idega.user.business.UserApplicationEngineBean" />

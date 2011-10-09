@@ -99,6 +99,20 @@ public interface GroupService extends IBOSession {
 	 */
 	public boolean addUsersIds(String instanceId, List<String> ids) throws RemoteException;
 	
+	/** Adds user to group
+	 * @param userId
+	 * @param groupId
+	 * @return true if added user successfully, false if failed
+	 */
+	public boolean addUser(String userId, String groupId);
+	
+	/**Reamoves user from group
+	 * @param userId
+	 * @param groupId
+	 * @return true if removed user successfully, false if failed
+	 */
+	public boolean removeUser(String userId, String groupId);
+	
 	public List<GroupNode> getChildrenOfGroup(String uniqueId);
 	
 	public List<GroupNode> getChildrenOfGroupWithLogin(String login, String password, String uniqueId);

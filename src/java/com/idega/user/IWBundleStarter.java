@@ -33,6 +33,8 @@ import com.idega.util.CoreConstants;
 public class IWBundleStarter implements IWBundleStartable {
 
 	static Logger log = Logger.getLogger(IWBundleStarter.class.getName());
+	
+	public static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
 	public void start(IWBundle starterBundle) {
 		addViewNodes(starterBundle);
@@ -81,7 +83,7 @@ public class IWBundleStarter implements IWBundleStartable {
 		try {
 			ViewManager viewManager = ViewManager.getInstance(iwma);
 
-			Class applicationClass = RefactorClassRegistry.forName("com.idega.user.app.UserApplication");
+			Class<?> applicationClass = RefactorClassRegistry.forName("com.idega.user.app.UserApplication");
 			
 			//inline class to override the default hasUserAccess to check to top node view access
 			FramedWindowClassViewNode userNode = new FramedWindowClassViewNode("user",viewManager.getWorkspaceRoot()){
@@ -109,7 +111,7 @@ public class IWBundleStarter implements IWBundleStartable {
 			
 			userNode.setKeyboardShortcut(new KeyboardShortcut("1"));
 			userNode.setName("#{localizedStrings['com.idega.user']['iwapplication_name.UserApplication']}");
-			Collection roles = new ArrayList();
+			Collection<String> roles = new ArrayList<String>();
 			roles.add(StandardRoles.ROLE_KEY_USERADMIN);
 			userNode.setAuthorizedRoles(roles);
 			userNode.setWindowClass(applicationClass);

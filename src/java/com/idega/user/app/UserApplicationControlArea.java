@@ -53,7 +53,7 @@ import com.idega.util.IWTimestamp;
  * <p>
  * Company: idega Software
  * </p>
- * 
+ *
  * @author <a href="gummi@idega.is">Gu�mundur �g�st S�mundsson </a>
  * @version 1.0
  */
@@ -82,7 +82,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	private GroupTreeView groupTree = new GroupTreeView();
 
 	private UserBusiness userBiz = null;
-	
+
 
 	public UserApplicationControlArea() {
 		this.setAllMargins(0);
@@ -90,18 +90,22 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		this._stateHandler.setPresentationStateClass(UserApplicationControlAreaPS.class);
 	}
 
+	@Override
 	public void setControlEventModel(IWPresentationEvent model) {
 		this.groupTree.setControlEventModel(model);
 	}
 
+	@Override
 	public void setControlTarget(String controlTarget) {
 		this.groupTree.setControlTarget(controlTarget);
 	}
 
-	public Class getPresentationStateClass() {
+	@Override
+	public Class<?> getPresentationStateClass() {
 		return this._stateHandler.getPresentationStateClass();
 	}
 
+	@Override
 	public IWPresentationState getPresentationState(IWUserContext iwuc) {
 		return this._stateHandler.getPresentationState(this, iwuc);
 	}
@@ -110,10 +114,12 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		return this._stateHandler;
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 
+	@Override
 	public void initializeInMain(IWContext iwc) {
 
 		this.iwb = getBundle(iwc);
@@ -193,7 +199,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		this.groupTree.setToShowSuperRootNode(true);
 		this.groupTree.setDefaultOpenLevel(2);
 		this.groupTree.setSuperRootNodeName(this.iwrb.getLocalizedString("tree.super.node.name", "My groups"));
-		
+
 		Image icon = this.iwb.getImage("super_root_icon.gif");
 		this.groupTree.setSuperRootNodeIcon(icon);
 		Collection topGroupNodes = null;
@@ -208,7 +214,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 			Link refreshLink = new Link(refreshIcon);
 			this.groupTree.setRefreshLink(refreshLink);
 		}
-		
+
 		ChangeListener[] chListeners = this.getPresentationState(iwc).getChangeListener();
 		if (chListeners != null) {
 			for (int i = 0; i < chListeners.length; i++) {
@@ -218,23 +224,50 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public Table displayTable(IWContext iwc) {
-		Table table = new Table(1, 1);
-		table.setCellpadding(0);
-		table.setCellspacing(0);
-		table.setStyleClass("userAppMenuArea");
+		Table table = new Table(1, 2);
+		table.setCellpadding(7);
+		table.setCellpaddingTop(1, 2, 0);
 		table.setWidth(Table.HUNDRED_PERCENT);
 		table.setHeight(Table.HUNDRED_PERCENT);
 		table.setHeight(1, Table.HUNDRED_PERCENT);
-		
+		table.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_CENTER);
+
+		Table borderTable = new Table(1, 1);
+		borderTable.setCellpadding(0);
+		borderTable.setCellspacing(0);
+		borderTable.setWidth(Table.HUNDRED_PERCENT);
+		borderTable.setHeight(Table.HUNDRED_PERCENT);
+		borderTable.setCellBorder(1, 1, 1, "#cccccc", "solid");
+		borderTable.setColor(1, 1, "#FFFFFF");
+
 		Layer layer = new Layer(Layer.DIV);
-		layer.setStyleClass("userAppMenu");
-		layer.add(this.groupTree);
-		table.add(layer);
-		
+		layer.setStyleAttribute("width", "208px");
+		layer.setStyleAttribute("height", "100%");
+		//layer.setStyleAttribute("border", "1px #cccccc solid");
+		//layer.setStyleAttribute("background-color", "#ffffff");
+		//layer.setStyleClass("main");
+		//layer.setPadding(0);
+		//layer.add(groupTree);
+		layer.setStyleAttribute("overflow", "auto");
+		borderTable.add(layer);
+
+		Table treeTable = new Table(1, 1);
+		treeTable.setCellpadding(4);
+		treeTable.add(this.groupTree, 1, 1);
+		treeTable.setWidth(Table.HUNDRED_PERCENT);
+		treeTable.setHeight(Table.HUNDRED_PERCENT);
+		treeTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
+		layer.add(treeTable);
+
+		table.add(borderTable, 1, 1);
+
+		Image image = getBundle(iwc).getImage("banner.gif");
+		table.add(image, 1, 2);
+
 		return table;
 	}
 
@@ -268,6 +301,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		return welcomeMessageTable;
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
 
@@ -286,7 +320,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
 		table.setCellpaddingLeft(1, 1, 7);
 		table.setStyleClass(1, 2, "back");
-		
+
 		table.add(welcomeMessageTable(iwc), 1, 1);
 		table.add(displayTable(iwc), 1, 2);
 		add(table);

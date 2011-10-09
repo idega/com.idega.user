@@ -14,7 +14,7 @@ import com.idega.util.IWColor;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -65,8 +65,7 @@ public class SubsetSelector extends PresentationObjectContainer implements IWBro
 	{
 		Layer partitionSelection = new Layer();
 		partitionSelection.setHorizontalAlignment("center");
-		partitionSelection.setStyleAttribute("background-color", new IWColor(230,230,230).getHexColorString());
-
+        partitionSelection.setStyleAttribute("background-color", new IWColor(230,230,230).getHexColorString());
 
 		if (this._size > this._subsetSize){
 			for( int i = this._firstPartition; ((i < this._maxPartitions)&&((i-this._firstPartition) < this._maxShowedPartitions)); i++)

@@ -92,8 +92,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return userBusiness;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<GroupNode> convertGroupsToGroupNodes(@SuppressWarnings("rawtypes") Collection groups, IWContext iwc, boolean isFirstLevel, String imageBaseUri) {
+	public List<GroupNode> convertGroupsToGroupNodes(Collection<Group> groups, IWContext iwc, boolean isFirstLevel, String imageBaseUri) {
 		return convertGroupsToGroupNodes(groups, iwc, isFirstLevel, imageBaseUri, false);
 	}
 		
@@ -165,7 +164,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return imageUri.toString();
 	}
 	
-	public GroupNode addChildGroupsToNode(GroupNode parentNode, @SuppressWarnings("rawtypes") Collection groups, String image) {
+	public GroupNode addChildGroupsToNode(GroupNode parentNode, Collection<Group> groups, String image) {
 		if (groups == null) {
 			parentNode.setHasChildren(false);
 			return parentNode;
@@ -175,18 +174,12 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		}
 		
 		List<GroupNode> children = new ArrayList<GroupNode>();
-		Object o = null;
 		Group group = null;
 		GroupNode childNode = null;
-		for (@SuppressWarnings("rawtypes")
-		Iterator it = groups.iterator(); it.hasNext();) {
-			o = it.next();
-			if (o instanceof Group) {
-				group = (Group) o;
-				childNode = createGroupNodeFromGroup(group, image, false, false);
-				
-				children.add(childNode);
-			}
+		for (Iterator<Group> it = groups.iterator(); it.hasNext();) {
+			group = it.next();
+			childNode = createGroupNodeFromGroup(group, image, false, false);	
+			children.add(childNode);
 		}
 		
 		if (children.size() > 0) {
@@ -198,20 +191,16 @@ public class GroupHelperBusinessBean implements GroupHelper {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<Group> getChilrenfOfGroups(@SuppressWarnings("rawtypes") Collection groups) {
+	private List<Group> getChilrenfOfGroups(Collection<Group> groups) {
 		List<Group> children = new ArrayList<Group>();
 		if (groups == null) {
 			return null;
 		}
-		Object o = null;
+		
 		Group group = null;
-		for (@SuppressWarnings("rawtypes")
-		Iterator it = groups.iterator(); it.hasNext();) {
-			o = it.next();
-			if (o instanceof Group) {
-				group = (Group) o;
-				children.addAll(group.getChildGroups());
-			}
+		for (Iterator<Group> it = groups.iterator(); it.hasNext();) {
+			group = it.next();
+			children.addAll(group.getChildGroups());
 		}
 		
 		return children;
@@ -243,20 +232,14 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return getFilteredGroups(groups, types);
 	}
 	
-	private Collection<Group> getFilteredGroups(@SuppressWarnings("rawtypes") Collection groups, List<String> types) {
+	private Collection<Group> getFilteredGroups(Collection<Group> groups, List<String> types) {
 		Collection<Group> filtered = new ArrayList<Group>();
-		
-		Object o = null;
 		Group group = null;
-		for (@SuppressWarnings("rawtypes")
-		Iterator it = groups.iterator(); it.hasNext();) {
-			o = it.next();
-			if (o instanceof Group) {
-				group = (Group) o;
-				if (group.getGroupType() != null) {
-					if (types.contains(group.getGroupType())) {
-						filtered.add(group);
-					}
+		for (Iterator<Group> it = groups.iterator(); it.hasNext();) {
+			group = it.next();
+			if (group.getGroupType() != null) {
+				if (types.contains(group.getGroupType())) {
+					filtered.add(group);
 				}
 			}
 		}
@@ -559,6 +542,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return -1;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<String> getUserGroupsIds(IWContext iwc, User user) {
 		List<String> ids = new ArrayList<String>();
 		if (user == null) {
@@ -570,8 +554,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 			return ids;
 		}
 		
-		@SuppressWarnings("rawtypes")
-		Collection userGroups = null;
+		Collection<Group> userGroups = null;
 		try {
 			userGroups = userBusiness.getUserGroups(user);
 		} catch (EJBException e) {
@@ -583,13 +566,8 @@ public class GroupHelperBusinessBean implements GroupHelper {
 			return ids;
 		}
 		
-		Object o = null;
-		for (@SuppressWarnings("rawtypes")
-		Iterator it = userGroups.iterator(); it.hasNext();) {
-			o = it.next();
-			if (o instanceof Group) {
-				ids.add(((Group) o).getId());
-			}
+		for (Iterator<Group> it = userGroups.iterator(); it.hasNext();) {
+			ids.add(it.next().getId());
 		}
 		
 		return ids;
@@ -602,8 +580,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 			return null;
 		}
 		
-		@SuppressWarnings("rawtypes")
-		Collection topLevelGroups = null;
+		Collection<Group> topLevelGroups = null;
 		try {
 			topLevelGroups = domain.getTopLevelGroupsUnderDomain();
 		} catch (IDORelationshipException e) {
@@ -664,24 +641,19 @@ public class GroupHelperBusinessBean implements GroupHelper {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Collection<Group> getTopAndParentGroups(@SuppressWarnings("rawtypes") Collection topGroups) {
+	public Collection<Group> getTopAndParentGroups(Collection<Group> topGroups) {
 		if (ListUtil.isEmpty(topGroups)) {
 			return null;
 		}
 		
-		Object o = null;
 		Group group = null;
 		Collection<Group> topAndParentGroups = new ArrayList<Group>(topGroups);
 		List<Group> parentGroups = null;
-		for (@SuppressWarnings("rawtypes")
-		Iterator it = topGroups.iterator(); it.hasNext();) {
-			o = it.next();
-			if (o instanceof Group) {
-				group = (Group) o;
-				parentGroups = group.getParentGroups();
-				if (parentGroups != null) {
-					topAndParentGroups.addAll(parentGroups);
-				}
+		for (Iterator<Group> it = topGroups.iterator(); it.hasNext();) {
+			group = it.next();
+			parentGroups = group.getParentGroups();
+			if (parentGroups != null) {
+				topAndParentGroups.addAll(parentGroups);
 			}
 		}
 		
