@@ -24,6 +24,7 @@ public class GroupViewer extends Block {
 	private String server = null;
 	private String user = null;
 	private String password = null;
+	private String callback;
 	
 	private List<String> uniqueIds = null;
 	
@@ -255,5 +256,15 @@ public class GroupViewer extends Block {
 		bean.setCacheTime(getCacheTime());
 		
 		bean.setInstanceId(instanceId);
+		
+		bean.setCallback(getCallback());
+	}
+
+	public String getCallback() {
+		return callback;
+	}
+
+	public void setCallback(String callback) {
+		this.callback = callback;
 	}
 }

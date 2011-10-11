@@ -383,7 +383,10 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 	
 	container.injectInside(main);
 	getDivsSpacer().injectInside(main);
-	closeAllLoadingMessages();	
+	closeAllLoadingMessages();
+	
+	if (properties.callback)
+		executeJavaScriptActionsCodedInStringInGlobalScope(properties.callback);
 }
 
 function getUserNameAndAgeContainer(name, age, yearOfBirth, properties, localizedText, dateOfBirth) {
