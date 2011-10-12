@@ -1102,8 +1102,10 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		users.setUniqueIds(Arrays.asList(uniqueId));
 		users.setRemoteMode(true);
 		
+		String remoteServer = iwc.getApplicationSettings().getProperty("remote_felix_server", "http://felix.is");
+		
 		//	TODO
-		users.setServer("http://felix.is");
+		users.setServer(remoteServer);
 		users.setUser("martha");
 		users.setPassword("060455");
 		

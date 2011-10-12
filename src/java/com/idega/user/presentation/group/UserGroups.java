@@ -62,8 +62,10 @@ public class UserGroups extends GroupsChooserBlock {
 		PropertiesBean bean = new PropertiesBean();
 		bean.setRemoteMode(true);
 		
+		String remoteServer = iwc.getApplicationSettings().getProperty("remote_felix_server", "http://felix.is");
+		
 		//	TODO
-		bean.setServer("http://felix.is");
+		bean.setServer(remoteServer);
 		bean.setLogin("martha");
 		bean.setPassword("060455");
 		
