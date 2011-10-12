@@ -1,8 +1,6 @@
 if (UserGroups == null) var UserGroups = {};
 var $j = jQuery.noConflict();
 
-var usersContainerId = null;
-
 UserGroups.getRenderedGroup = function(loadingMessage, uniqueId, containerId, groupName) {
 	showLoadingMessage(loadingMessage);
 	
@@ -22,7 +20,6 @@ UserGroups.getRenderedGroup = function(loadingMessage, uniqueId, containerId, gr
 				return;
 			}
 			
-			usersContainerId = containerId;
 			IWCORE.insertRenderedComponent(rendered, {container: containerId, rewrite: true});
 		},
 		rpcType: dwr.engine.XMLHttpRequest,
@@ -32,7 +29,7 @@ UserGroups.getRenderedGroup = function(loadingMessage, uniqueId, containerId, gr
 
 UserGroups.scrollToUsers = function(containerId, message) {
 	if (UserInfoViewerHelper.GROUP_USERS == 0) {
-		jQuery('#' + containerId).append('<h4>' + message + '</h4>');
+		jQuery('#' + containerId).html('<h4>' + message + '</h4>');
 	}
-	$j.scrollTo('#' + usersContainerId, 300);
+	$j.scrollTo('#' + containerId, 300);
 }
