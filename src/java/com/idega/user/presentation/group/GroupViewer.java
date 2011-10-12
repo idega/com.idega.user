@@ -176,7 +176,6 @@ public class GroupViewer extends Block {
 			files.add(web2.getReflectionForMootoolsScriptFilePath());
 		}
 		
-		add(PresentationUtil.getJavaScriptSourceLines(files));
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, files);
 	}
 

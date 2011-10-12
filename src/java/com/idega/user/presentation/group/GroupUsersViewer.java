@@ -131,9 +131,6 @@ public class GroupUsersViewer extends GroupViewer {
 		
 		//	Adding script to page
 		PresentationUtil.addJavaScriptActionToBody(iwc, action.toString());
-		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n").append("\t").append(action.toString());
-		scriptString.append(" \n").append("</script> \n");
-		add(scriptString.toString());
 	}
 	
 	public void setShowAge(boolean showAge) {
