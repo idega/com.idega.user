@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +25,15 @@ import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.cache.IWCacheManager2;
+import com.idega.core.component.bean.RenderedComponent;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Layer;
+import com.idega.presentation.text.Heading3;
 import com.idega.user.bean.GroupDataBean;
 import com.idega.user.bean.GroupMemberDataBean;
 import com.idega.user.bean.GroupPropertiesBean;
@@ -38,6 +43,7 @@ import com.idega.user.bean.UserPropertiesBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.user.presentation.group.GroupInfoViewer;
+import com.idega.user.presentation.group.GroupUsersViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
@@ -1080,4 +1086,32 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
     	}
         return true;
     }
+
+	@Override
+	public RenderedComponent getRenderedGroup(String uniqueId, String containerId, String groupName) {
+		if (StringUtil.isEmpty(uniqueId) || StringUtil.isEmpty(containerId) || StringUtil.isEmpty(groupName))
+			return null;
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		IWBundle bundle = iwc.getIWMainApplication().getBundle(CoreConstants.IW_USER_BUNDLE_IDENTIFIER);
+		IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
+		
+		Layer container = new Layer();
+		container.add(new Heading3(iwrb.getLocalizedString("members_of_group", "Members of a group") + " " + groupName + ":"));
+		GroupUsersViewer users = new GroupUsersViewer();
+		users.setUniqueIds(Arrays.asList(uniqueId));
+		users.setRemoteMode(true);
+		
+		//	TODO
+		users.setServer("http://felix.is");
+		users.setUser("martha");
+		users.setPassword("060455");
+		
+		users.setAddReflection(true);
+		users.setAddJavaScriptForGroupsTree(false);
+		users.setCallback("UserGroups.scrollToUsers('" + containerId + "', '" + iwrb.getLocalizedString("there_are_no_users", "There are no users in this group") + "');");
+		container.add(users);
+		
+		return BuilderLogic.getInstance().getRenderedComponent(container, null);
+	}
 }
