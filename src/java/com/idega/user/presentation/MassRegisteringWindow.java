@@ -9,6 +9,7 @@ import javax.ejb.FinderException;
 import javax.transaction.TransactionManager;
 
 import com.idega.business.IBOLookup;
+import com.idega.core.contact.data.Email;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWResourceBundle;
@@ -23,6 +24,7 @@ import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.transaction.IdegaTransactionManager;
+import com.idega.user.business.NoEmailFoundException;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserStatusBusiness;
 import com.idega.user.data.Group;
@@ -318,8 +320,19 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 								user.store();
 							}
 							
+							Email mainEmail = null;
 							if (sEmail != null && !"".equals(sEmail)) {
-								getUserBusiness(iwc).updateUserMail(user, sEmail);
+								try {
+									// note: call of the following method does some repairing
+									// + if main mail is not set yet a main email is figured out
+									mainEmail = getUserBusiness(iwc).getUsersMainEmail(user);
+								}
+								catch (NoEmailFoundException ex) {
+									mainEmail = null;
+								}
+								if (mainEmail == null) {
+									getUserBusiness(iwc).updateUserMail(user, sEmail);
+								}
 							}
 							
 							getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,this.group);
