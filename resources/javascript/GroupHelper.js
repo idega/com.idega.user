@@ -590,18 +590,3 @@ function removeElementValueForAdvancedProperty(ids, key, value) {
 	}
 	groups_chooser_helper.addAdvancedProperty(key, newValues);
 }
-
-function getDwrCallType(remote) {
-	var dwrCallType = dwr.engine.XMLHttpRequest;
-	if (!dwrCallType) {
-		dwrCallType = dwr.engine.transport.xhr;
-	}
-	if (remote) {
-		dwrCallType = dwr.engine.ScriptTag;
-		if (!dwrCallType) {
-			dwrCallType = dwr.engine.transport.scriptTag;
-		}
-	}
-	
-	return dwrCallType;
-}
