@@ -22,7 +22,6 @@ import com.idega.business.IBOLookupException;
 import com.idega.business.IBOSessionBean;
 import com.idega.business.chooser.helper.GroupsChooserHelper;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
-import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.cache.IWCacheManager2;
@@ -1093,21 +1092,21 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
     	IWMainApplicationSettings settings = iwc.getApplicationSettings();
     	AdvancedProperty login = new AdvancedProperty(settings.getProperty("remote_felix_login", "martha"), settings.getProperty("remote_felix_pswd", "060455"));
     	
-    	try {
-	    	if (!iwc.isLoggedOn())
-	    		return login;
-	    	
-	    	LoginTable loginTable = LoginDBHandler.getUserLogin(iwc.getCurrentUser());
-	    	if (loginTable == null)
-	    		return login;
-	    	
-	    	if ("laddi".equals(loginTable.getUserLogin())) {
-	    		login.setId("laddi");
-	    		login.setValue("laddi");
-	    	}
-    	} catch (Exception e) {
-    		getLogger().log(Level.WARNING, "Error getting login", e);
-    	}
+//    	try {
+//	    	if (!iwc.isLoggedOn())
+//	    		return login;
+//	    	
+//	    	LoginTable loginTable = LoginDBHandler.getUserLogin(iwc.getCurrentUser());
+//	    	if (loginTable == null)
+//	    		return login;
+//	    	
+//	    	if ("laddi".equals(loginTable.getUserLogin())) {
+//	    		login.setId("laddi");
+//	    		login.setValue("laddi");
+//	    	}
+//    	} catch (Exception e) {
+//    		getLogger().log(Level.WARNING, "Error getting login", e);
+//    	}
     	
     	return login;
     }
