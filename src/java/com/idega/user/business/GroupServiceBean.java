@@ -22,6 +22,7 @@ import com.idega.business.IBOLookupException;
 import com.idega.business.IBOSessionBean;
 import com.idega.business.chooser.helper.GroupsChooserHelper;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.cache.IWCacheManager2;
@@ -30,6 +31,7 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
@@ -1086,6 +1088,29 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
     	}
         return true;
     }
+    
+    public AdvancedProperty getFelixLogin(IWContext iwc) {
+    	IWMainApplicationSettings settings = iwc.getApplicationSettings();
+    	AdvancedProperty login = new AdvancedProperty(settings.getProperty("remote_felix_login", "martha"), settings.getProperty("remote_felix_pswd", "060455"));
+    	
+    	try {
+	    	if (!iwc.isLoggedOn())
+	    		return login;
+	    	
+	    	LoginTable loginTable = LoginDBHandler.getUserLogin(iwc.getCurrentUser());
+	    	if (loginTable == null)
+	    		return login;
+	    	
+	    	if ("laddi".equals(loginTable.getUserLogin())) {
+	    		login.setId("laddi");
+	    		login.setValue("laddi");
+	    	}
+    	} catch (Exception e) {
+    		getLogger().log(Level.WARNING, "Error getting login", e);
+    	}
+    	
+    	return login;
+    }
 
 	@Override
 	public RenderedComponent getRenderedGroup(String uniqueId, String containerId, String groupName) {
@@ -1106,8 +1131,9 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		
 		//	TODO
 		users.setServer(remoteServer);
-		users.setUser("martha");
-		users.setPassword("060455");
+		AdvancedProperty login = getFelixLogin(iwc);
+		users.setUser(login.getId());
+		users.setPassword(login.getValue());
 		
 		users.setAddReflection(true);
 		users.setAddJavaScriptForGroupsTree(false);

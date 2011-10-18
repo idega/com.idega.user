@@ -9,12 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.idega.block.web2.business.JQuery;
 import com.idega.block.web2.business.JQueryPlugin;
 import com.idega.block.web2.business.Web2Business;
+import com.idega.builder.bean.AdvancedProperty;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.text.Heading3;
 import com.idega.user.bean.PropertiesBean;
+import com.idega.user.business.GroupService;
 import com.idega.util.CoreConstants;
 import com.idega.util.PresentationUtil;
 import com.idega.util.expression.ELUtil;
@@ -66,8 +70,16 @@ public class UserGroups extends GroupsChooserBlock {
 		
 		//	TODO
 		bean.setServer(remoteServer);
-		bean.setLogin("martha");
-		bean.setPassword("060455");
+		AdvancedProperty login = null;
+		GroupService groupService = null;
+		try {
+			groupService = IBOLookup.getSessionInstance(iwc, GroupService.class);
+		} catch (IBOLookupException e) {
+			e.printStackTrace();
+		}
+		login = groupService.getFelixLogin(iwc);
+		bean.setLogin(login.getId());
+		bean.setPassword(login.getValue());
 		
 		setPropertiesBean(bean);
 		

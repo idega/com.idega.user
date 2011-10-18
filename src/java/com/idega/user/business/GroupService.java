@@ -135,4 +135,6 @@ public interface GroupService extends IBOSession {
 	public String getUserStatusLocalizationByKey(String key);
 	
 	public RenderedComponent getRenderedGroup(String uniqueId, String containerId, String groupName);
+	
+	public AdvancedProperty getFelixLogin(IWContext iwc);
 }
