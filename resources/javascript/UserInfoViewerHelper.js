@@ -514,3 +514,9 @@ function getLocalizationForUserStatus(key) {
 	}
 	return found ? localization : 'Unknown';
 }
+
+UserInfoViewerHelper.initialize = function() {
+	jQuery('a.userGroupMembershipSelectedGroup').each(function() {
+		jQuery(this).fancybox();
+	});
+}
