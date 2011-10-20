@@ -121,6 +121,9 @@ public class GroupMembers extends Block {
 			//	Image
 			Image image = new Image();
 			image.setURL(data.getPictureUri());
+			image.setWidth(70);
+			image.setHeight(90);
+			
 			cell = row.createCell();
 			cell.add(image);
 			
