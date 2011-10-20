@@ -25,8 +25,8 @@ import com.idega.presentation.text.Heading3;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.ListItem;
 import com.idega.presentation.text.Lists;
-import com.idega.user.business.GroupComparator;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.business.group.GroupsComparator;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
@@ -78,7 +78,7 @@ public class UserGroupMembership extends Block {
 		}
 		
 		User user = iwc.getCurrentUser();
-		UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+		UserBusiness userBusiness = IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		@SuppressWarnings("unchecked")
 		Collection<Group> groups = userBusiness.getUserGroups(user);
 		if (ListUtil.isEmpty(groups)) {
@@ -88,15 +88,14 @@ public class UserGroupMembership extends Block {
 		
 		List<Group> userGroups = new ArrayList<Group>(groups);
 		Locale locale = iwc.getCurrentLocale();
-		Collections.sort(userGroups, new GroupComparator(iwc));
+		Collections.sort(userGroups, new GroupsComparator(locale));
 		
 		BuilderLogic builder = BuilderLogic.getInstance();
 		
-		container.add(new Heading3(iwrb.getLocalizedString("my_groups", "My groups") + CoreConstants.COLON));
 		Lists list = new Lists();
 		container.add(list);
 		list.setStyleClass("myGroupsList");
-		for (Iterator<Group> groupsIter = groups.iterator(); groupsIter.hasNext();) {
+		for (Iterator<Group> groupsIter = userGroups.iterator(); groupsIter.hasNext();) {
 			Group group = groupsIter.next();
 			String uniqueId = group.getUniqueId();
 			if (StringUtil.isEmpty(uniqueId)) {
