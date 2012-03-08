@@ -23,17 +23,19 @@ public class MoveGroupConfirmWindowPS extends IWPresentationStateImpl implements
 				Group oldParentGroup = event.getOldParentGroup();
 				Group newParentGroup = event.getNewParentGroup();
 				User performer = event.getPerformer();
-				IWApplicationContext iwac = e.getIWContext()
-						.getApplicationContext();
-				GroupBusiness groupBusiness = getGroupBusiness(iwac);
+				//IWApplicationContext iwac = e.getIWContext()
+				//		.getApplicationContext();
+				//GroupBusiness groupBusiness = getGroupBusiness(iwac);
 				try {
 					if (newParentGroup.isAlias()) {
 						newParentGroup = newParentGroup.getAlias();
 					}
 
-					if (!newParentGroup.getGroupType().equals(group.getGroupType())) {
-						//TODO Add some error!!
-						return;
+					if (!e.getIWContext().isSuperAdmin()) {
+						if (!newParentGroup.getGroupType().equals(group.getGroupType())) {
+							//TODO Add some error!!
+							return;
+						}
 					}
 					
 					

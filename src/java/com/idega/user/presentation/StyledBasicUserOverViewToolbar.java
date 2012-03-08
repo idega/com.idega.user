@@ -226,7 +226,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 toolbar1.setAlignment(toolbarXpos++,1,"center");
             }
 
-            if ( this.isCurrentUserSuperAdmin) {
+            //if ( this.isCurrentUserSuperAdmin) {
                 Table owners = new Table(1, 1);
                 owners.setStyleClass(this.styleButton);
                 owners.setAlignment(1,1,"center");
@@ -248,7 +248,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 
                 toolbar1.add(owners, toolbarXpos, 1);
                 toolbar1.setAlignment(toolbarXpos++,1,"center");
-            }
+            //}
 
             
             if( this.hasOwnerPermissionForRealGroup) {

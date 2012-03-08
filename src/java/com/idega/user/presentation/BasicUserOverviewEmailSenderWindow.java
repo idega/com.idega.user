@@ -124,8 +124,8 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 			}
 		} catch (Exception e) {
 			this.sendingResultsText = new Text(iwrb.getLocalizedString("error_sending_mail","Error sending mail, error message was:"));
-			this.sendingResultsMessageText = new Text(e.getMessage());
-			this.sendingResultsMessageText.setBold(false);
+			//this.sendingResultsMessageText = new Text(e.getMessage());
+			//this.sendingResultsMessageText.setBold(false);
 			System.out.println("BasicUserOverviewEmailSenderWindow: Error sending mail: " +e.getClass()+": "+e.getMessage());
 		}
 	}
@@ -150,8 +150,8 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 			}
 		} catch (Exception e) {
 			this.sendingResultsText = new Text(iwrb.getLocalizedString("error_sending_mail","Error sending mail, error message was:"));
-			this.sendingResultsMessageText = new Text(e.getMessage());
-			this.sendingResultsMessageText.setBold(false);
+			//this.sendingResultsMessageText = new Text(e.getMessage());
+			//this.sendingResultsMessageText.setBold(false);
 			System.out.println("BasicUserOverviewEmailSenderWindow: Error sending mail: " +e.getClass()+": "+e.getMessage());
 		}
 	}

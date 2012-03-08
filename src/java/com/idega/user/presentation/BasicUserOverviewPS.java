@@ -173,13 +173,13 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 							if (emails != null && !emails.isEmpty()) {
 								Email email = (Email) emails.iterator().next();
 								if (email.getEmailAddress() != null
-										&& !"".equals(email.getEmailAddress())) {
+										&& !"".equals(email.getEmailAddress().trim())) {
 									if (!first) {
 										toAddresses.append(";");
 									} else {
 										first = false;
 									}
-									toAddresses.append(email.getEmailAddress());
+									toAddresses.append(email.getEmailAddress().trim());
 								}
 							}
 
@@ -197,14 +197,14 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 												.iterator().next();
 										if (email.getEmailAddress() != null
 												&& !"".equals(email
-														.getEmailAddress())) {
+														.getEmailAddress().trim())) {
 											if (!custFirst) {
 												custToAddresses.append(";");
 											} else {
 												custFirst = false;
 											}
 											custToAddresses.append(email
-													.getEmailAddress());
+													.getEmailAddress().trim());
 										}
 									}
 								}
