@@ -93,6 +93,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 		showISStuff = (showStuff != null);
     
         Table toolbar1 = new Table();
+        toolbar1.setStyleClass("toolbar");
         toolbar1.setCellpadding(0);
         toolbar1.setCellspacing(0);
         

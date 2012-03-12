@@ -210,7 +210,7 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 								}
 							}
 						} catch (Exception ex) {
-							ex.printStackTrace();
+							//ex.printStackTrace();
 						}
 					}
 					mainIwc.setSessionAttribute(

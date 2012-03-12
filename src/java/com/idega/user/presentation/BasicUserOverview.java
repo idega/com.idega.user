@@ -176,7 +176,9 @@ public class BasicUserOverview extends Page implements IWBrowserView,
 		// create tables and toolbar
 		this.toolbar = getToolbar();
 		Table topTable = topTable();
+		topTable.setStyleClass("topTable");
 		Table middleTable = middleTable();
+		middleTable.setStyleClass("middleTable");
 		Table returnTable = returnTable();
 		returnTable.add(this.toolbar, 1, 1);
 		returnTable.add(middleTable, 1, 2);
@@ -247,6 +249,9 @@ public class BasicUserOverview extends Page implements IWBrowserView,
 
 			// add move to group option
 			addMoveOrAddButton(entityBrowser);
+			
+			//stuff from Laddi, won't work
+			addPrintButton(entityBrowser);
 
 			returnTable.add(form, 2, 4);
 
@@ -269,6 +274,11 @@ public class BasicUserOverview extends Page implements IWBrowserView,
 
 	}
 
+	protected void addPrintButton(EntityBrowser entityBrowser) {
+		PrintButton print = new PrintButton(this.iwb.getImage("print.gif"));
+		entityBrowser.addPresentationObjectToBottom(print);
+	}
+	
 	protected void addEmailButton(EntityBrowser entityBrowser, IWContext iwc) {
 		// add emailing option
 		if (this.hasEditPermissionForRealGroup && this.selectedGroup != null) {
@@ -1247,6 +1257,8 @@ public class BasicUserOverview extends Page implements IWBrowserView,
 		this.iwrb = this.getResourceBundle(iwc);
 		Page parentPage = this.getParentPage();
 		parentPage.setAllMargins(0);
+		
+		parentPage.addStyleSheetURLForPrint(iwb.getResourcesVirtualPath() + "/style/print.css");
 
 		this.accessController = iwc.getAccessController();
 		this.ps = (BasicUserOverviewPS) this.getPresentationState(iwc);
@@ -1321,14 +1333,14 @@ public class BasicUserOverview extends Page implements IWBrowserView,
 		if (!"-1".equals(frontPageIdOrURI)) {
 			IFrame frontPage = new IFrame();
 			// TODO Felix move to Style class
-			frontPage.setHeight("98%");
-			frontPage.setWidth("98%");
+			frontPage.setHeight("100%");
+			frontPage.setWidth("100%");
 			try {
 				frontPage.setIBPage(Integer.parseInt(frontPageIdOrURI));
 			} catch (NumberFormatException e) {
 				frontPage.setSrc(frontPageIdOrURI);
 			}
-			frontPage.setScrolling(IFrame.SCROLLING_NO);
+			frontPage.setScrolling(IFrame.SCROLLING_YES);
 			frontPage.setBorder(0);
 			layer.add(frontPage);
 		}
