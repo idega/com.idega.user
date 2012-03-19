@@ -1308,33 +1308,13 @@ public class BasicUserOverview extends Page implements IWBrowserView,
 	}
 
 	private void addGreetingPage(IWContext iwc) {
-		// Birna did this
-		Table frameTable = new Table(1, 2);
-		frameTable.setCellpaddingAndCellspacing(0);
-		frameTable.setHeight("100%");
-		frameTable.setWidth("100%");
-		frameTable.setHeight(1, 42);
-		frameTable.setHeight(2, "100%");
-		frameTable.setBackgroundImage(1, 1,
-				getBundle(iwc).getImage("bgtile.gif"));
-		frameTable.setStyleClass(1, 2, "main");
-		frameTable.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
-		frameTable.setLeftCellBorderWidth(1, 2, 0);
-		frameTable.setRightCellBorderWidth(1, 2, 0);
-
-		Layer layer = new Layer(Layer.DIV);
-		layer.setWidth("100%");
-		layer.setHeight("100%");
-		layer.setOverflow("auto");
-		frameTable.add(layer, 1, 2);
-
 		String frontPageIdOrURI = iwc.getApplicationSettings().getProperty(
 				USER_APP_START_PAGE, "-1");
 		if (!"-1".equals(frontPageIdOrURI)) {
 			IFrame frontPage = new IFrame();
 			// TODO Felix move to Style class
-			frontPage.setHeight("100%");
-			frontPage.setWidth("100%");
+			frontPage.setHeight("98%");
+			frontPage.setWidth("98%");
 			try {
 				frontPage.setIBPage(Integer.parseInt(frontPageIdOrURI));
 			} catch (NumberFormatException e) {
@@ -1342,9 +1322,8 @@ public class BasicUserOverview extends Page implements IWBrowserView,
 			}
 			frontPage.setScrolling(IFrame.SCROLLING_YES);
 			frontPage.setBorder(0);
-			layer.add(frontPage);
+			add(frontPage);
 		}
-		add(frameTable);
 	}
 
 	/**
