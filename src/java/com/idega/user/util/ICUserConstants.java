@@ -17,7 +17,10 @@ public class ICUserConstants extends GroupTypeConstants implements ConstantsPlac
 
 	//gives you the right to change a users personal id
 	public static final String ROLE_KEY_EDIT_FULL_NAME = "NameEdit";
-	
+
+	//gives you the right to change a users personal id
+	public static final String ROLE_KEY_EDIT_GENDER = "GenderEdit";
+
 	// do not set this variable to final
 	// the help bundle identfier might be changed by bundle starters
 	public static String HELP_BUNDLE_IDENTFIER = "com.idega.core";

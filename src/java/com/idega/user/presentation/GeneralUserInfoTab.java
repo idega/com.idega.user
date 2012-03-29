@@ -142,8 +142,11 @@ public class GeneralUserInfoTab extends UserTab {
 		this.personalIDField.setContent((String) this.fieldValues.get(this.personalIDFieldName));
 
 		IWContext iwc = IWContext.getInstance();
-		boolean unlockPersonalIDField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_PERSONAL_ID,iwc);
-		boolean unlockFullNameField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_FULL_NAME,iwc);
+		boolean unlockPersonalIDField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_PERSONAL_ID, iwc);
+
+		boolean unlockFullNameField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_FULL_NAME, iwc);
+		
+		boolean unlockGenderField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_GENDER, iwc);
 		
 		if (!unlockPersonalIDField){
 			this.personalIDField.setDisabled(true);
@@ -151,6 +154,10 @@ public class GeneralUserInfoTab extends UserTab {
 		
 		if (!unlockFullNameField) {
 			this.fullNameField.setDisabled(true);
+		}
+		
+		if (!unlockGenderField) {
+			this.genderField.setDisabled(true);
 		}
 		
 		StringTokenizer created = new StringTokenizer((String) this.fieldValues.get(this.createdFieldName), " -");
