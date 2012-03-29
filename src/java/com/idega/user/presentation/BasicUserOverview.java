@@ -237,6 +237,7 @@ public class BasicUserOverview extends Page implements IWBrowserView,
 			 */
 			// put browser into a form
 			Form form = new Form();
+			form.setMarkupAttribute("autocomplete", "off");
 			form.add(entityBrowser);
 			IWPresentationEvent event = (entityBrowser.getPresentationEvent());
 			form.addEventModel(event, iwc);
