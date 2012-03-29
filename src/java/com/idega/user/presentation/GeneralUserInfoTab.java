@@ -28,6 +28,7 @@ import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.user.util.ICUserConstants;
 import com.idega.util.IWTimestamp;
+import com.idega.util.text.SocialSecurityNumber;
 
 /**
  * Title:        User
@@ -148,12 +149,18 @@ public class GeneralUserInfoTab extends UserTab {
 		
 		boolean unlockGenderField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_GENDER, iwc);
 		
-		if (!unlockPersonalIDField){
+		if (!unlockPersonalIDField ){
 			this.personalIDField.setDisabled(true);
 		}
 		
 		if (!unlockFullNameField) {
 			this.fullNameField.setDisabled(true);
+		}
+		
+		if (unlockGenderField) {
+			if (getUser() != null && getUser().getPersonalID() != null) {
+				unlockGenderField = !SocialSecurityNumber.isValidIcelandicSocialSecurityNumber(getUser().getPersonalID());
+			}
 		}
 		
 		if (!unlockGenderField) {

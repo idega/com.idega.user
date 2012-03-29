@@ -11,6 +11,8 @@ package com.idega.user.presentation;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
@@ -111,22 +113,42 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		String toAddress = iwc.getParameter(PARAM_TO_ADDRESS);
 		String subject = iwc.getParameter(PARAM_SUBJECT);
 		String body = iwc.getParameter(PARAM_BODY);
-		
-		try {
-			if (toAddress == null || toAddress.equals("")) {
-				this.sendingResultsText = new Text(iwrb.getLocalizedString("error_sending_mail","Error sending mail, error message was:"));
-				this.sendingResultsMessageText = new Text(iwrb.getLocalizedString("no_emails_defined_for_selected_recipients","No emails defined for selected recipients"));
-				this.sendingResultsMessageText.setBold(false);
-			}
-			else {
-				com.idega.util.SendMail.send(fromAddress,fromAddress,"",toAddress,mailServer,subject,body);
-				this.sendingResultsText = new Text(iwrb.getLocalizedString("successful_sending_mail","Sending mail was successful"));
-			}
-		} catch (Exception e) {
+				
+		if (toAddress == null || toAddress.equals("")) {
 			this.sendingResultsText = new Text(iwrb.getLocalizedString("error_sending_mail","Error sending mail, error message was:"));
-			//this.sendingResultsMessageText = new Text(e.getMessage());
-			//this.sendingResultsMessageText.setBold(false);
-			System.out.println("BasicUserOverviewEmailSenderWindow: Error sending mail: " +e.getClass()+": "+e.getMessage());
+			this.sendingResultsMessageText = new Text(iwrb.getLocalizedString("no_emails_defined_for_selected_recipients","No emails defined for selected recipients"));
+			this.sendingResultsMessageText.setBold(false);
+		}
+		else {
+			int successCount = 0;
+			List<String> errors = new ArrayList<String>(); 
+			String to[] = toAddress.split(";");
+			
+			for (int i = 0; i < to.length; i++) {
+				try {
+					com.idega.util.SendMail.send(fromAddress, fromAddress, "", to[i], mailServer, subject, body);
+					successCount++;
+				} catch (Exception e) {
+					errors.add(e.getMessage() + ": " + to[i]);
+				}
+			}
+		
+			StringBuilder result = new StringBuilder(iwrb.getLocalizedString("send_mail.done","Sending mail done."));
+			result.append("<br>");
+			result.append(iwrb.getLocalizedString("send_mail.success_count","Number of successful emails"));
+			result.append(": ");
+			result.append(successCount);
+			if (!errors.isEmpty()) {
+				result.append("<br>");
+				result.append(iwrb.getLocalizedString("send_mail.errors","Errors sending to the following"));
+				result.append(":");				
+				for (String error : errors) {
+					result.append("<br>");
+					result.append(error);
+				}
+			}
+			
+			this.sendingResultsText = new Text(result.toString());
 		}
 	}
 
@@ -138,21 +160,41 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		String subject = iwc.getParameter(PARAM_SUBJECT);
 		String body = iwc.getParameter(PARAM_BODY);
 		
-		try {
-			if (toAddress == null || toAddress.equals("")) {
-				this.sendingResultsText = new Text(iwrb.getLocalizedString("error_sending_mail","Error sending mail, error message was:"));
-				this.sendingResultsMessageText = new Text(iwrb.getLocalizedString("no_emails_defined_for_selected_recipients","No emails defined for selected recipients"));
-				this.sendingResultsMessageText.setBold(false);
-			}
-			else {
-				com.idega.util.SendMail.send(fromAddress,fromAddress,"",toAddress,mailServer,subject,body);
-				this.sendingResultsText = new Text(iwrb.getLocalizedString("successful_sending_mail","Sending mail was successful"));
-			}
-		} catch (Exception e) {
+		if (toAddress == null || toAddress.equals("")) {
 			this.sendingResultsText = new Text(iwrb.getLocalizedString("error_sending_mail","Error sending mail, error message was:"));
-			//this.sendingResultsMessageText = new Text(e.getMessage());
-			//this.sendingResultsMessageText.setBold(false);
-			System.out.println("BasicUserOverviewEmailSenderWindow: Error sending mail: " +e.getClass()+": "+e.getMessage());
+			this.sendingResultsMessageText = new Text(iwrb.getLocalizedString("no_emails_defined_for_selected_recipients","No emails defined for selected recipients"));
+			this.sendingResultsMessageText.setBold(false);
+		}
+		else {
+			int successCount = 0;
+			List<String> errors = new ArrayList<String>(); 
+			String to[] = toAddress.split(";");
+			
+			for (int i = 0; i < to.length; i++) {
+				try {
+					com.idega.util.SendMail.send(fromAddress, fromAddress, "", to[i], mailServer, subject, body);
+					successCount++;
+				} catch (Exception e) {
+					errors.add(e.getMessage() + ": " + to[i]);
+				}
+			}
+		
+			StringBuilder result = new StringBuilder(iwrb.getLocalizedString("send_mail.done","Sending mail done."));
+			result.append("<br>");
+			result.append(iwrb.getLocalizedString("send_mail.success_count","Number of successful emails"));
+			result.append(": ");
+			result.append(successCount);
+			if (!errors.isEmpty()) {
+				result.append("<br>");
+				result.append(iwrb.getLocalizedString("send_mail.errors","Errors sending to the following"));
+				result.append(":");				
+				for (String error : errors) {
+					result.append("<br>");
+					result.append(error);
+				}
+			}
+			
+			this.sendingResultsText = new Text(result.toString());
 		}
 	}
 

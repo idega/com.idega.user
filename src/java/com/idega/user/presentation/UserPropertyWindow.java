@@ -101,7 +101,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			//we could also add the group if we want that to be notified of changes panel.setGroup(group);
 			
 			// add the standard tabs and then from plugins
-			UserTab userInfo = new GeneralUserInfoTab();
+			UserTab userInfo = new GeneralUserInfoTab(userId);
 			userInfo.setPanel(panel);
 			userInfo.setUserIDAndGroupID(userId, groupId);
 			

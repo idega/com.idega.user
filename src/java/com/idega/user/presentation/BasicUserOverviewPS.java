@@ -160,8 +160,8 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 					userIds = mainIwc
 							.getParameterValues(BasicUserOverview.SELECTED_USERS_KEY);
 					// email users (if something has been chosen)
-					StringBuffer toAddresses = new StringBuffer("");
-					StringBuffer custToAddresses = new StringBuffer("");
+					StringBuilder toAddresses = new StringBuilder("");
+					StringBuilder custToAddresses = new StringBuilder("");
 					boolean first = true;
 					boolean custFirst = true;
 					for (int i = 0; i < userIds.length; i++) {
