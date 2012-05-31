@@ -3,6 +3,7 @@ package com.idega.user.presentation.group;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.data.ICTreeNode;

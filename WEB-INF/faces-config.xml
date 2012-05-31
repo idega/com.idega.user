@@ -11,4 +11,38 @@ version="1.2">
 		<managed-bean-class>com.idega.user.bean.GroupsManagerBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<component>
+		<component-type>groupsFilter</component-type>
+		<component-class>com.idega.user.presentation.group.GroupsFilter</component-class>
+		<property>
+			<display-name>Selected groups</display-name>
+			<property-name>selectedGroups</property-name>
+			<property-class>java.util.List</property-class>
+		</property>
+		<property>
+			<display-name>Selected groups parameter name</display-name>
+			<property-name>selectedGroupParameterName</property-name>
+			<property-class>java.lang.String</property-class>
+		</property>
+		<property>
+			<display-name>Levels to open</display-name>
+			<property-name>levelsToOpen</property-name>
+			<property-class>java.lang.Integer</property-class>
+		</property>
+		<property>
+			<display-name>display all levels</display-name>
+			<property-name>displayAllLevels</property-name>
+			<property-class>java.lang.Boolean</property-class>
+		</property>
+		<property>
+			<display-name>use radiobox</display-name>
+			<property-name>useRadioBox</property-name>
+			<property-class>java.lang.Boolean</property-class>
+		</property>
+		<property>
+			<display-name>onclick action</display-name>
+			<property-name>onClickAction</property-name>
+			<property-class>java.util.String</property-class>
+		</property>
+	</component>
 </faces-config>

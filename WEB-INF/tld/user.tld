@@ -1,0 +1,47 @@
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd" 
+        version="2.1">
+
+	<tlib-version>2.1</tlib-version>
+	<short-name>User</short-name>
+	<uri>http://xmlns.idega.com/com.idega.user</uri>
+	<display-name>User Tag Library</display-name>
+	<description>idegaweb User Tag Library</description>
+
+	<tag>
+		<name>groupsFilter</name>
+		<tag-class>com.idega.user.presentation.group.GroupsFilterTag</tag-class>
+		<attribute>
+			<name>selectedGroups</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>selectedGroupsParameterName</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>displayAllLevels</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>levelsToOpen</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>onclickAction</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>useRadioBox</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+
+</taglib>
