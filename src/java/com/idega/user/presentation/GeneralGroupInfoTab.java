@@ -205,9 +205,15 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		this.uuidField = new TextInput(this.uuidFieldName);
 		this.uuidField.setLength(36);
 		this.uuidField.setMaxlength(36);
+		if (!iwc.isSuperAdmin()) {
+			this.uuidField.setDisabled(true);
+		}
 		this.linkToAliasedGroup = new Link("");
 		this.rdnField = new TextInput(this.rdnFieldName);
 		this.rdnField.setLength(72);
+		if (!iwc.isSuperAdmin()) {
+			this.rdnField.setDisabled(true);
+		}
 	}
 
 	public void initializeTexts() {
