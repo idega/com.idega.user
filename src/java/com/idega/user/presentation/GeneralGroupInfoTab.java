@@ -292,17 +292,15 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		table.add(this.linkToAliasedGroup, 2, 3);
 		
 		
-		if(IWContext.getInstance().isSuperAdmin()){
-			table.mergeCells(1,4,2,4);
-			table.add(this.uuidText, 1, 4);
-			table.add(Text.getBreak(), 1, 4);
-			table.add(this.uuidField, 1, 4);
-			table.addBreak(1,4);
-			table.addBreak(1,4);
-			table.add(this.rdnText, 1, 4);
-			table.add(Text.getBreak(), 1, 4);
-			table.add(this.rdnField, 1, 4);
-		}
+		table.mergeCells(1,4,2,4);
+		table.add(this.uuidText, 1, 4);
+		table.add(Text.getBreak(), 1, 4);
+		table.add(this.uuidField, 1, 4);
+		table.addBreak(1,4);
+		table.addBreak(1,4);
+		table.add(this.rdnText, 1, 4);
+		table.add(Text.getBreak(), 1, 4);
+		table.add(this.rdnField, 1, 4);
 		
 		table.mergeCells(1, 5, 2, 5);
 		table.add(this.descriptionText, 1, 5);
