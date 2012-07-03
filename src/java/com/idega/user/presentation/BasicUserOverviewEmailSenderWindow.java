@@ -12,6 +12,7 @@ package com.idega.user.presentation;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.idega.idegaweb.IWResourceBundle;
@@ -121,7 +122,7 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		}
 		else {
 			int successCount = 0;
-			List<String> errors = new ArrayList<String>(); 
+			List errors = new ArrayList(); 
 			String to[] = toAddress.split(";");
 			
 			for (int i = 0; i < to.length; i++) {
@@ -142,7 +143,8 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 				result.append("<br>");
 				result.append(iwrb.getLocalizedString("send_mail.errors","Errors sending to the following"));
 				result.append(":");				
-				for (String error : errors) {
+				for (Iterator iter = errors.iterator();iter.hasNext();) {
+					String error = (String)iter.next();
 					result.append("<br>");
 					result.append(error);
 				}
@@ -167,7 +169,7 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 		}
 		else {
 			int successCount = 0;
-			List<String> errors = new ArrayList<String>(); 
+			List errors = new ArrayList(); 
 			String to[] = toAddress.split(";");
 			
 			for (int i = 0; i < to.length; i++) {
@@ -188,7 +190,8 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 				result.append("<br>");
 				result.append(iwrb.getLocalizedString("send_mail.errors","Errors sending to the following"));
 				result.append(":");				
-				for (String error : errors) {
+				for (Iterator iter = errors.iterator();iter.hasNext();) {
+					String error = (String)iter.next();
 					result.append("<br>");
 					result.append(error);
 				}
