@@ -47,6 +47,10 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			addTitle(user.getName(), TITLE_STYLECLASS);
 		}
 		setTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"));
+		
+		if (this.panel.clickedApply() || this.panel.clickedOk()) {
+        	setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
+        }
 	}
 
 	/**
