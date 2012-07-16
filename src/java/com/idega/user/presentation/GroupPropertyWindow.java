@@ -45,6 +45,10 @@ public class GroupPropertyWindow extends TabbedPropertyWindow {
 			addTitle(group.getName(), TITLE_STYLECLASS);
 		}
 		setTitle(iwrb.getLocalizedString("group_property_window", "Group Property Window"));
+		
+		if (this.panel.clickedApply() || this.panel.clickedOk()) {
+        	setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
+        }
 	}
 
 	/**
