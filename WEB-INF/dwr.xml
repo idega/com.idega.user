@@ -19,6 +19,7 @@
 		
 		<create creator="ibo" javascript="UserApplicationEngine" scope="session">
 			<param name="class" value="com.idega.user.business.UserApplicationEngine" />
+			<include method="getUserByPersonalId" />
 		</create>
 		<convert converter="bean" match="com.idega.user.bean.SimpleUserPropertiesBean" />
 		<convert converter="bean" match="com.idega.user.bean.UserDataBean" />

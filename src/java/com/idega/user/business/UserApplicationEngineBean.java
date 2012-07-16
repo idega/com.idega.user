@@ -295,7 +295,7 @@ public class UserApplicationEngineBean extends IBOSessionBean implements UserApp
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} catch (FinderException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		
 		if (user == null) {
