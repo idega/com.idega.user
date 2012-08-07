@@ -11,6 +11,7 @@ import javax.ejb.FinderException;
 
 import org.jdom.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -50,31 +51,31 @@ import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
- * 
+ *
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
  * @version Revision: 1.00
  *
  * Last modified: 2008.07.31 09:30:25 by: valdas
  */
 
-@Scope("singleton")
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 @Service(GroupsFilterEngine.SPRING_BEAN_IDENTIFIER)
 public class GroupsFilterEngine implements Singleton {
 
 	public static final String SPRING_BEAN_IDENTIFIER = "groupsFilterEngine";
-	
+
 	private BuilderLogicWrapper builder;
-	
+
 	private String groupsListStyle = "filteredGroupsListStyle";
-	
+
 	//	It's a Spring bean!
 	private GroupsFilterEngine() {}
-	
+
 	public Document getFilteredGroups(String searchKey, String selectedGroupName, List<String> selectedGroups, String onClickAction, boolean useRadioBox) {
 		if (StringUtil.isEmpty(searchKey)) {
 			return null;
 		}
-		
+
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
@@ -88,7 +89,7 @@ public class GroupsFilterEngine implements Singleton {
 		if (currentUser == null) {
 			return null;
 		}
-		
+
 		FilteredGroupsBox filteredGroups = new FilteredGroupsBox();
 		filteredGroups.setFilteredGroups(getUserGroupsBySearchKey(iwc, currentUser, searchKey));
 		filteredGroups.setSearchResult(Boolean.TRUE);
@@ -96,31 +97,31 @@ public class GroupsFilterEngine implements Singleton {
 		filteredGroups.setSelectedGroupParameterName(selectedGroupName);
 		filteredGroups.setOnClickAction(onClickAction);
 		filteredGroups.setUseRadioBox(useRadioBox);
-		
+
 		BuilderService builderService = getBuilderService(iwc);
 		if (builderService == null) {
 			return null;
 		}
 		return builderService.getRenderedComponent(iwc, filteredGroups, true);
 	}
-	
+
 	private List<GroupFilterResult> getUserGroupsBySearchKey(IWContext iwc, User user, String searchKey) {
 		GroupBusiness groupBusiness = getGroupBusiness(iwc);
 		if (groupBusiness == null) {
 			return null;
 		}
-		
+
 		Collection<Group> userGroupsByPhrase = groupBusiness.getUserGroupsByPhrase(iwc, searchKey);
 		if (ListUtil.isEmpty(userGroupsByPhrase)) {
 			return null;
 		}
-		
+
 		List<GroupFilterResult> results = new ArrayList<GroupFilterResult>();
 		formatGroupsTree(iwc, user, results, userGroupsByPhrase, groupBusiness);
-		
+
 		return ListUtil.isEmpty(results) ? null : results;
 	}
-	
+
 	private void formatGroupsTree(IWContext iwc, User user, List<GroupFilterResult> results, Collection<Group> groups, GroupBusiness groupBusiness) {
 		int level = 0;
 		Group parentGroup = null;
@@ -129,7 +130,7 @@ public class GroupsFilterEngine implements Singleton {
 			level = 0;
 			parentGroup = group;
 			groupNode = parentGroup.getParentNode();
-			
+
 			try {
 				while (parentGroup != null && groupNode != null) {
 					try {
@@ -139,7 +140,7 @@ public class GroupsFilterEngine implements Singleton {
 					} catch (FinderException e) {
 						e.printStackTrace();
 					}
-					
+
 					if (parentGroup != null) {
 						groupNode = parentGroup.getParentNode();
 						level++;
@@ -148,11 +149,11 @@ public class GroupsFilterEngine implements Singleton {
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-			
+
 			results.add(new GroupFilterResult(level, group));
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public Document getChildGroups(Integer groupId, String selectedGroupParameterName, String onClickAction, boolean useRadioBox) {
 		if (groupId == null) {
@@ -162,7 +163,7 @@ public class GroupsFilterEngine implements Singleton {
 		if (iwc == null) {
 			return null;
 		}
-		
+
 		GroupBusiness groupBusiness = getGroupBusiness(iwc);
 		if (groupBusiness == null) {
 			return null;
@@ -178,7 +179,7 @@ public class GroupsFilterEngine implements Singleton {
 		if (group == null) {
 			return null;
 		}
-		
+
 		User currentUser = null;
 		try {
 			currentUser = iwc.getCurrentUser();
@@ -188,23 +189,23 @@ public class GroupsFilterEngine implements Singleton {
 		if (currentUser == null) {
 			return null;
 		}
-		
+
 		Collection<Group> children = group.getChildren();
 		if (ListUtil.isEmpty(children)) {
 			return null;
 		}
-		
+
 		Lists groupsList = new Lists();
 		addGroups(iwc, groupsList, children, null, null, iwc.getCurrentLocale(), groupsList.getId(), selectedGroupParameterName, 0, 1, false,
 				onClickAction, useRadioBox);
-	
+
 		BuilderService builderService = getBuilderService(iwc);
 		if (builderService == null) {
 			return null;
 		}
 		return builderService.getRenderedComponent(iwc, groupsList, true);
 	}
-	
+
 	private GroupBusiness getGroupBusiness(IWApplicationContext iwac) {
 		try {
 			return (GroupBusiness) IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
@@ -213,7 +214,7 @@ public class GroupsFilterEngine implements Singleton {
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void addGroups(IWContext iwc, Lists container, Collection<Group> groups, List<String> selectedGroups, List<GroupFilterResult> filteredGroups,
 							Locale locale, String mainContainerId, String selectedGroupParameterName, int level, int levelsToOpen, boolean displayAllLevels,
@@ -221,9 +222,9 @@ public class GroupsFilterEngine implements Singleton {
 		IWBundle bundle = iwc.getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
 		IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
 		GroupHelper groupHelper = ELUtil.getInstance().getBean(GroupHelper.class);
-		
+
 		container.setStyleClass(groupsListStyle);
-		
+
 		ListItem item = null;
 		String groupId = null;
 		String inputId = null;
@@ -250,14 +251,14 @@ public class GroupsFilterEngine implements Singleton {
 			groupId = group.getId();
 			groupName = group.getNodeName(locale);
 			addOneMoreLevel = addOneMoreLevel(iwc, group, selectedGroups, filteredGroups, level, levelsToOpen, displayAllLevels);
-			
+
 			item = new ListItem();
 			container.add(item);
 			item.setStyleClass("filteredGroupNodeStyle");
-			
+
 			groupNodeContainer = new Layer();
 			item.add(groupNodeContainer);
-			
+
 			Image openOrCloseImage = new Image(addOneMoreLevel ? imageCloseUri : imageOpenUri);
 			groupNodeContainer.add(openOrCloseImage);
 			if (group.getChildCount() <= 0) {
@@ -267,14 +268,14 @@ public class GroupsFilterEngine implements Singleton {
 				openOrCloseImage.setTitle(openOrCloseGroupsTooltip);
 				openOrCloseImage.setMarkupAttribute("groupid", groupId);
 			}
-			
+
 			if (StringUtil.isEmpty(groupIconBase)) {
 				groupIconBase = groupHelper.getGroupImageBaseUri(iwc);
 			}
 			groupIcon = new Image(groupHelper.getGroupIcon(group, groupIconBase, addOneMoreLevel));
 			groupNodeContainer.add(groupIcon);
 			groupIcon.setTitle(groupName);
-			
+
 			groupSelection = useRadioBox ? new RadioButton(selectedGroupParameterName, groupId) : new CheckBox(selectedGroupParameterName, groupId);
 			groupSelection.setStyleClass(checkBoxStyleClass);
 			groupSelection.setTitle(selectOrDeselectGroupTooltip);
@@ -298,14 +299,14 @@ public class GroupsFilterEngine implements Singleton {
 				changedOnClickAction = getActionAppliedToBeParameter(onClickAction);
 			}
 			groupSelection.setOnClick(action.toString());
-			
+
 			groupSelection.setMarkupAttribute(ICBuilderConstants.GROUP_ID_ATTRIBUTE, groupId);
 			groupSelection.setMarkupAttribute(ICBuilderConstants.GROUP_NAME_ATTRIBUTE, groupName);
-			
+
 			groupNameText = new Text(groupName);
 			groupNameText.setStyleClass(getStyleAttributeForGroupName(group, filteredGroups));
 			groupNodeContainer.add(groupNameText);
-			
+
 			childrenGroupsContainer = new Layer();
 			item.add(childrenGroupsContainer);
 			openOrCloseImage.setOnClick(new StringBuilder("GroupsFilter.openOrCloseNodes(['").append(openOrCloseImage.getId()).append("', '")
@@ -320,7 +321,7 @@ public class GroupsFilterEngine implements Singleton {
 					if (addOneMoreLevel) {
 						openOrCloseImage.setMarkupAttribute("dataloaded", Boolean.TRUE.toString());
 					}
-					
+
 					childrenGroups = new Lists();
 					childrenGroupsContainer.add(childrenGroups);
 					addGroups(iwc, childrenGroups, children, selectedGroups, filteredGroups, locale, mainContainerId, selectedGroupParameterName, level + 1,
@@ -332,18 +333,18 @@ public class GroupsFilterEngine implements Singleton {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private boolean forceToOpenNode(IWContext iwc, Group group, List<String> selectedGroups, List<GroupFilterResult> filteredGroups) {
 		if (ListUtil.isEmpty(selectedGroups)) {
 			return false;
 		}
-		
+
 		GroupBusiness groupBusiness = getGroupBusiness(iwc);
 		if (groupBusiness == null) {
 			return false;
 		}
-		
+
 		Collection<Group> childGroups = null;
 		try {
 			childGroups = groupBusiness.getChildGroups(group);
@@ -361,7 +362,7 @@ public class GroupsFilterEngine implements Singleton {
 				}
 			}
 		}
-		
+
 		if (ListUtil.isEmpty(filteredGroups)) {
 			return false;
 		}
@@ -370,35 +371,35 @@ public class GroupsFilterEngine implements Singleton {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	private boolean addOneMoreLevel(IWContext iwc, Group group, List<String> selectedGroups, List<GroupFilterResult> filteredGroups, int level, int levelsToOpen,
 			boolean displayAllLevels) {
 		return displayAllLevels || (level + 1) < levelsToOpen || forceToOpenNode(iwc, group, selectedGroups, filteredGroups);
 	}
-	
+
 	private String getStyleAttributeForGroupName(Group group, List<GroupFilterResult> filteredGroups) {
 		StringBuilder styleClass = new StringBuilder("basicFilteredGroupNameElementStyle");
 		if (ListUtil.isEmpty(filteredGroups)) {
 			return styleClass.toString();
 		}
-		
+
 		boolean directSearchResult = false;
 		for (int i = 0; (i < filteredGroups.size() && !directSearchResult); i++) {
 			if (group.equals(filteredGroups.get(i).getGroup())) {
 				directSearchResult = true;
 			}
 		}
-		
+
 		if (directSearchResult) {
 			return styleClass.append(" directSearchResultElementStyle").toString();
 		}
-		
+
 		return styleClass.append(" inDirectSearchResultElementStyle").toString();
 	}
-	
+
 	private BuilderService getBuilderService(IWApplicationContext iwac) {
 		return builder.getBuilderService(iwac);
 	}
@@ -411,7 +412,7 @@ public class GroupsFilterEngine implements Singleton {
 	public void setBuilder(BuilderLogicWrapper builder) {
 		this.builder = builder;
 	}
-	
+
 	public String getActionAppliedToBeParameter(String action) {
 		if (StringUtil.isEmpty(action)) {
 			return null;
@@ -419,7 +420,7 @@ public class GroupsFilterEngine implements Singleton {
 		action = StringHandler.replace(action, "'", "\\'");
 		return action;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public Collection<Group> getUserGroups(IWContext iwc, boolean onlyTopGroups) {
 		User currentUser = null;
@@ -431,14 +432,14 @@ public class GroupsFilterEngine implements Singleton {
 		if (currentUser == null) {
 			return null;
 		}
-		
+
 		UserBusiness userBusiness = null;
 		try {
 			userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		} catch (IBOLookupException e) {
 			e.printStackTrace();
 		}
-		
+
 		Collection<Group> groupsByPermissions = null;
 		try {
 			groupsByPermissions = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(currentUser, iwc);
@@ -447,7 +448,7 @@ public class GroupsFilterEngine implements Singleton {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		
+
 		Collection<Group> directGroups = null;
 		try {
 			directGroups = userBusiness.getUserGroups(currentUser);
@@ -456,7 +457,7 @@ public class GroupsFilterEngine implements Singleton {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		
+
 		if (ListUtil.isEmpty(groupsByPermissions) && ListUtil.isEmpty(directGroups)) {
 			return null;
 		}
@@ -466,7 +467,7 @@ public class GroupsFilterEngine implements Singleton {
 		if (ListUtil.isEmpty(directGroups)) {
 			return onlyTopGroups ? getOnlyTopGroups(iwc, groupsByPermissions) : groupsByPermissions;
 		}
-		
+
 		List<Group> userGroups = new ArrayList<Group>(directGroups);
 		for (Group group: groupsByPermissions) {
 			if (!userGroups.contains(group)) {
@@ -475,26 +476,26 @@ public class GroupsFilterEngine implements Singleton {
 		}
 		return onlyTopGroups ? getOnlyTopGroups(iwc, userGroups) : userGroups;
 	}
-	
+
 	private Collection<Group> getOnlyTopGroups(IWContext iwc, Collection<Group> userGroups) {
 		if (ListUtil.isEmpty(userGroups)) {
 			return null;
 		}
-		
+
 		GroupHelper helper = ELUtil.getInstance().getBean(GroupHelper.class);
 		Collection<Group> topGroups = helper.getTopGroupsFromDomain(iwc);
 		if (ListUtil.isEmpty(topGroups)) {
 			return userGroups;
 		}
-		
+
 		List<Group> onlyTopGroupsForUser = new ArrayList<Group>();
 		for (Group group: userGroups) {
 			if (topGroups.contains(group) && !onlyTopGroupsForUser.contains(group)) {
 				onlyTopGroupsForUser.add(group);
 			}
 		}
-		
+
 		return ListUtil.isEmpty(onlyTopGroupsForUser) ? userGroups : onlyTopGroupsForUser;
 	}
-	
+
 }
