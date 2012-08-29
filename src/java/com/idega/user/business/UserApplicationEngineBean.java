@@ -69,7 +69,6 @@ import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.bean.UserDataBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
-import com.idega.user.event.GroupCreatedEvent;
 import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
@@ -78,7 +77,6 @@ import com.idega.util.ListUtil;
 import com.idega.util.SendMail;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
-import com.idega.util.expression.ELUtil;
 
 public class UserApplicationEngineBean implements UserApplicationEngine, Serializable {
 
@@ -813,8 +811,6 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		user.setJuridicalPerson(userInfo.isJuridicalPerson());
 		user.store();
 
-		GroupCreatedEvent groupCreatedEvent = new GroupCreatedEvent(user);
-		ELUtil.getInstance().publishEvent(groupCreatedEvent);
 
 		//	Sending mail
 		if (sendEmailWithLoginInfo) {
@@ -1164,12 +1160,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				e.printStackTrace();
 			}
 		}
-		if(BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName())){
-			GroupCreatedEvent groupCreatedEvent = new GroupCreatedEvent(group);
-			ELUtil.getInstance().publishEvent(groupCreatedEvent);
-			return group.getId();
-		}
-		return null;
+		return BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName()) ? group.getId() : null;
 	}
 
 	@Override
