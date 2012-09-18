@@ -206,7 +206,7 @@ public class SimpleUserAppViewUsers extends Block {
 			pagerProperties = userAppEngine.getPagerProperties(userAppEngine.getIdForPagerProperties(properties));
 			if (!ListUtil.isEmpty(pagerProperties)) {
 				list.setLeftIndex(pagerProperties.get(0));
-				list.setRightIndex(pagerProperties.get(1));
+				list.setRightIndex(pagerProperties.get(1) + 1);
 				list.setCount(pagerProperties.get(2));
 			}
 		}

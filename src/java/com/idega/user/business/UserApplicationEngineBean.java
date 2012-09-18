@@ -422,12 +422,12 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			bean.setPictureUri(pictureUri);
 
 			//	Login
-			String login = userBusiness.getUserLogin(user);
-			bean.setLogin(login == null ? CoreConstants.EMPTY : login);
+//			String login = userBusiness.getUserLogin(user);
+//			bean.setLogin(login == null ? CoreConstants.EMPTY : login);
 
 			//	Password
-			String password = userBusiness.getUserPassword(user);
-			bean.setPassword(password == null ? CoreConstants.EMPTY : password);
+//			String password = userBusiness.getUserPassword(user);
+//			bean.setPassword(password == null ? CoreConstants.EMPTY : password);
 
 			//	Disabled account?
 			LoginInfo loginInfo = null;
@@ -571,17 +571,13 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		AdvancedProperty result = new AdvancedProperty(userInfo.getUserId() == null ? null : String.valueOf(userInfo.getUserId()));
 
 		String name = userInfo.getName();
-		String login = userInfo.getLogin();
+//		String login = userInfo.getLogin();
 		String personalId = userInfo.getPersonalId();
-		String password = userInfo.getPassword();
+//		String password = userInfo.getPassword();
+		String email = userInfo.getEmail();
 
-		if (StringUtil.isEmpty(name) || StringUtil.isEmpty(login) || (!userInfo.isJuridicalPerson() && StringUtil.isEmpty(password)) || primaryGroupId == null ||
-				childGroups == null) {
+		if (StringUtil.isEmpty(name) || primaryGroupId == null || childGroups == null || StringUtil.isEmpty(email)) {
 			return result;
-		}
-		if (StringUtil.isEmpty(password)) {
-			password = LoginDBHandler.getGeneratedPasswordForUser();
-			userInfo.setChangePasswordNextTime(true);
 		}
 
 		IWContext iwc = CoreUtil.getIWContext();
@@ -600,14 +596,9 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		}
 
 		String phoneNumber = userInfo.getPhone();
-		String email = userInfo.getEmail();
 
 		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 		result.setValue(iwrb.getLocalizedString("error_saving_user", "Error occurred while saving your changes."));
-
-		if (login.equals(CoreConstants.EMPTY)) {
-			return result;
-		}
 
 		UserBusiness userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
@@ -635,6 +626,11 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			} catch (RemoteException e) {}
 		}
 
+		String login = null;
+		String password = null;
+		LoginInfo loginInfo = null;
+		LoginTable loginTable = null;
+		boolean newLogin = false;
 		if (user == null) {
 			//	Creating user
 			try {
@@ -647,6 +643,32 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			if (user == null) {
 				return result;
 			}
+
+			login = user.getPersonalID();
+			if (StringUtil.isEmpty(login)) {
+				List<String> logins = LoginDBHandler.getPossibleGeneratedUserLogins(user);
+				if (ListUtil.isEmpty(logins))
+					return result;
+				login = logins.get(0);
+			}
+			if (StringUtil.isEmpty(login))
+				return result;
+			password = LoginDBHandler.getGeneratedPasswordForUser(user);
+			try {
+				loginTable = LoginDBHandler.createLogin(user, login, password);
+			} catch (LoginCreateException e) {
+				e.printStackTrace();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			if (loginTable == null)
+				return result;
+			loginInfo = LoginDBHandler.getLoginInfo(loginTable);
+			loginInfo.setChangeNextTime(Boolean.TRUE);
+			loginInfo.store();
+			userInfo.setChangePasswordNextTime(true);
+			newLogin = true;
+			sendEmailWithLoginInfo = true;
 		}
 
 		result.setId(user.getId());
@@ -699,8 +721,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		//	Picture
 		if (StringUtil.isEmpty(userInfo.getPictureUri())) {
 			user.setSystemImageID(null);	//	Deleting
-		}
-		else {
+		} else {
 			try {
 				ICFile picture = ((ICFileHome) IDOLookup.getHome(ICFile.class)).create();
 				picture.setFileValue(slideService.getInputStream(userInfo.getPictureUri().replace(CoreConstants.WEBDAV_SERVLET_URI, CoreConstants.EMPTY)));
@@ -729,8 +750,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				PostalCode postalCode = getPostalCode(userInfo.getPostalCodeId());
 				if (postalCode == null) {
 					postalCode = createPostalCode(userInfo.getPostalCodeId());
-				}
-				else {
+				} else {
 					postalCode.setPostalCode(userInfo.getPostalCodeId());
 					postalCode.store();
 				}
@@ -749,41 +769,39 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		}
 
 		//	Login
-		boolean newLogin = false;
-		LoginTable loginTable = null;
-		loginTable = LoginDBHandler.getUserLogin(user);
-		if (loginTable == null) {
-			//	Creating login
-			try {
-				loginTable = LoginDBHandler.createLogin(user, login, password);
-			} catch (LoginCreateException e) {
-				e.printStackTrace();
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-			if (loginTable == null) {
-				return result;
-			}
-			loginTable.store();
-			newLogin = true;
-		}
-		else if (allFieldsEditable) {
-			boolean updatePassword = false;
-			String oldPassword = loginTable.getUserPasswordInClearText();
-			if (oldPassword == null || !password.equals(oldPassword)) {
-				updatePassword = true;
-			}
-
-			if (updatePassword) {
-				try {
-					LoginDBHandler.changePassword(Integer.valueOf(user.getId()), password);
-				} catch (Exception e) {
-					e.printStackTrace();
-					return result;
-				}
-			}
-		}
-		LoginInfo loginInfo = LoginDBHandler.getLoginInfo(loginTable);
+		loginTable = loginTable == null ? LoginDBHandler.getUserLogin(user) : loginTable;
+//		if (loginTable == null) {
+//			//	Creating login
+//			try {
+//				loginTable = LoginDBHandler.createLogin(user, login, password);
+//			} catch (LoginCreateException e) {
+//				e.printStackTrace();
+//			} catch (RemoteException e) {
+//				e.printStackTrace();
+//			}
+//			if (loginTable == null) {
+//				return result;
+//			}
+//			loginTable.store();
+//			newLogin = true;
+//		}
+//		else if (allFieldsEditable) {
+//			boolean updatePassword = false;
+//			String oldPassword = loginTable.getUserPasswordInClearText();
+//			if (oldPassword == null || !password.equals(oldPassword)) {
+//				updatePassword = true;
+//			}
+//
+//			if (updatePassword) {
+//				try {
+//					LoginDBHandler.changePassword(Integer.valueOf(user.getId()), password);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					return result;
+//				}
+//			}
+//		}
+		loginInfo = loginInfo == null ? LoginDBHandler.getLoginInfo(loginTable) : loginInfo;
 		if (loginInfo == null) {
 			return result;
 		}
@@ -810,7 +828,6 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		user.setPrimaryGroupID(primaryGroupId);
 		user.setJuridicalPerson(userInfo.isJuridicalPerson());
 		user.store();
-
 
 		//	Sending mail
 		if (sendEmailWithLoginInfo) {
