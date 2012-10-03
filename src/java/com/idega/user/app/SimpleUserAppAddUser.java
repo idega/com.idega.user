@@ -20,6 +20,7 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.CSSSpacer;
@@ -80,6 +81,13 @@ public class SimpleUserAppAddUser extends Block {
 		}
 	}
 
+	private Boolean ableToSetLoginAndPassword = null;
+	private boolean isAbleToSetLoginAndPassword() {
+		if (ableToSetLoginAndPassword == null)
+			ableToSetLoginAndPassword = IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("sua_able_set_login_psw", Boolean.TRUE);
+		return ableToSetLoginAndPassword;
+	}
+
 	@Override
 	public void main(IWContext iwc) {
 		ELUtil.getInstance().autowire(this);
@@ -110,11 +118,11 @@ public class SimpleUserAppAddUser extends Block {
 		String nameValueInputId = nameValueInput.getId();
 
 		//	User password
-		PasswordInput passwordInput = iwc.isSuperAdmin() ? new PasswordInput() : null;
+		PasswordInput passwordInput = isAbleToSetLoginAndPassword() ? new PasswordInput() : null;
 		String passwordInputId = passwordInput == null ? null : passwordInput.getId();
 
 		//	Login name
-		TextInput loginValueInput = iwc.isSuperAdmin() || user != null ? new TextInput() : null;
+		TextInput loginValueInput = isAbleToSetLoginAndPassword() || user != null ? new TextInput() : null;
 		String loginInputId = null;
 		if (loginValueInput != null) {
 			if (!properties.isAllFieldsEditable())
