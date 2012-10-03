@@ -11,6 +11,7 @@ import javax.faces.component.UIComponent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.idega.business.IBOLookup;
 import com.idega.content.business.ContentConstants;
 import com.idega.content.upload.presentation.FileUploadViewer;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
@@ -34,6 +35,7 @@ import com.idega.presentation.ui.CountryDropdownMenu;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.GenericInput;
+import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.SelectOption;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.bean.SimpleUserPropertiesBean;
@@ -108,15 +110,17 @@ public class SimpleUserAppAddUser extends Block {
 		String nameValueInputId = nameValueInput.getId();
 
 		//	User password
-//		PasswordInput passwordInput = new PasswordInput();
-//		String passwordInputId = passwordInput.getId();
+		PasswordInput passwordInput = iwc.isSuperAdmin() ? new PasswordInput() : null;
+		String passwordInputId = passwordInput == null ? null : passwordInput.getId();
 
 		//	Login name
-//		TextInput loginValueInput = new TextInput();
-//		if (!properties.isAllFieldsEditable()) {
-//			loginValueInput.setDisabled(true);
-//		}
-//		String loginInputId = loginValueInput.getId();
+		TextInput loginValueInput = iwc.isSuperAdmin() || user != null ? new TextInput() : null;
+		String loginInputId = null;
+		if (loginValueInput != null) {
+			if (!properties.isAllFieldsEditable())
+				loginValueInput.setDisabled(true);
+			loginInputId = loginValueInput.getId();
+		}
 
 		//	Add user
 		Layer addUserlabelContainer = new Layer();
@@ -194,9 +198,8 @@ public class SimpleUserAppAddUser extends Block {
 		//	***************************** Data for inputs *****************************
 		UserDataBean userInfo = new UserDataBean();
 		UserApplicationEngine userEngine = ELUtil.getInstance().getBean(UserApplicationEngine.class);
-		if (user != null) {
+		if (user != null)
 			userInfo = userEngine.getUserInfo(user);
-		}
 
 		//	Personal ID
 		if (!StringUtil.isEmpty(personalId)) {
@@ -266,22 +269,32 @@ public class SimpleUserAppAddUser extends Block {
 		countriesDropdown.setSelectedCountry(country);
 
 		//	Login
-		TextInput loginValueInput = null;
 		if (user != null) {
-			loginValueInput = new TextInput();
 			loginValueInput.setDisabled(true);
 			loginValueInput.setContent(LoginDBHandler.getUserLogin(user).getUserLogin());
 		}
 
 		//	Password
-//		if (CoreConstants.EMPTY.equals(userInfo.getPassword())) {
-//			passwordInput.setDisabled(false);
-//		} else {
-//			if (!properties.isAllFieldsEditable()) {
-//				passwordInput.setDisabled(true);
-//			}
-//		}
-//		passwordInput.setContent(userInfo.getPassword());
+		if (passwordInput != null) {
+			String password = null;
+			if (user != null) {
+				try {
+					UserBusiness userBusiness = IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+					password = userBusiness.getUserPassword(user);
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Error getting password for user " + user, e);
+				}
+			}
+
+			if (StringUtil.isEmpty(password)) {
+				passwordInput.setDisabled(false);
+			} else {
+				if (!properties.isAllFieldsEditable()) {
+					passwordInput.setDisabled(true);
+				}
+			}
+			passwordInput.setContent(password);
+		}
 
 		//	Account enabled/disabled
 		CheckBox manageAccountAvailability = getCheckBox((userInfo.getAccountEnabled() == null || !userInfo.getAccountEnabled()) ?
@@ -298,8 +311,8 @@ public class SimpleUserAppAddUser extends Block {
 		List<String> idsForFields = new ArrayList<String>();
 		idsForFields.add(idValueInput.getId());								//	0	Personal ID
 		idsForFields.add(nameValueInputId);									//	1	Name
-		idsForFields.add(CoreConstants.MINUS);								//	2	Login
-		idsForFields.add(CoreConstants.MINUS);								//	3	Password
+		idsForFields.add(StringUtil.isEmpty(loginInputId) ? CoreConstants.MINUS : loginInputId);		//	2	Login
+		idsForFields.add(StringUtil.isEmpty(passwordInputId) ? CoreConstants.MINUS : passwordInputId);	//	3	Password
 		idsForFields.add(iwrb.getLocalizedString("loading", "Loading..."));	//	4	Message
 		idsForFields.add(emailInputId);										//	5 	Email
 		idsForFields.add(streetNameAndNumberInputId);						//	6	Street name and number
@@ -342,12 +355,12 @@ public class SimpleUserAppAddUser extends Block {
 		Layer userLoginContainer = new Layer();
 		container.add(userLoginContainer);
 		List<GenericInput> loginInputs = new ArrayList<GenericInput>();
-//		loginInputs.add(loginValueInput);
-//		loginInputs.add(passwordInput);
 		loginInputs.add(manageAccountAvailability);
 		loginInputs.add(changePasswordNextTime);
 		if (loginValueInput != null)
 			loginInputs.add(loginValueInput);
+		if (passwordInput != null)
+			loginInputs.add(passwordInput);
 		addLoginFields(iwc, userLoginContainer, loginInputs);
 
 		//	Selected groups
@@ -373,8 +386,8 @@ public class SimpleUserAppAddUser extends Block {
 		List<String> ids = new ArrayList<String>();
 		ids.add(parentGroupChooserId);			//	0
 		ids.add(nameValueInputId);				//	1	Name
-		ids.add(CoreConstants.MINUS);			//	2	Login
-		ids.add(CoreConstants.MINUS);			//	3	Password
+		ids.add(StringUtil.isEmpty(loginInputId) ? CoreConstants.MINUS : loginInputId);		//	2	Login
+		ids.add(StringUtil.isEmpty(passwordInputId) ? CoreConstants.MINUS : passwordInputId);	//	3	Password
 		ids.add(properties.getDefaultGroupId() == null ? "null" : properties.getDefaultGroupId());				//	4
 		ids.add(emailInputId);					//	5	Email
 		ids.add(phoneInputId);					//	6	Phone
@@ -505,8 +518,10 @@ public class SimpleUserAppAddUser extends Block {
 		}
 
 		//	Password
-//		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("password", "Password"), true));
-//		fieldsContainer.add(getComponentContainer(inputs.get(1)));
+		if (inputs.size() > 3) {
+			fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("password", "Password"), true));
+			fieldsContainer.add(getComponentContainer(inputs.get(3)));
+		}
 
 		//	Enable/disable account
 		if (properties.isAllowEnableDisableAccount()) {

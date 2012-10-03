@@ -371,14 +371,12 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 	@Override
 	public UserDataBean getUserInfo(User user) {
 		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
+		if (iwc == null)
 			return null;
-		}
 
 		UserBusiness userBusiness = getUserBusiness(iwc);
-		if (userBusiness == null) {
+		if (userBusiness == null)
 			return null;
-		}
 
 		IWBundle bundle = getBundle(iwc);
 		UserDataBean bean = new UserDataBean();
@@ -414,8 +412,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				} catch (Exception e) {}
 				pictureUri = new StringBuilder(bundle.getVirtualPathWithFileNameString("images/")).append(male ? "user_male" : "user_female").append(".png")
 					.toString();
-			}
-			else {
+			} else {
 				pictureUri = image.getMediaURL(iwc);
 				bean.setImageSet(true);
 			}
@@ -436,8 +433,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			} catch(Exception e) {}
 			if (loginInfo == null) {
 				bean.setAccountEnabled(Boolean.TRUE);
-			}
-			else {
+			} else {
 				bean.setAccountExists(true);
 				bean.setAccountEnabled(loginInfo.getAccountEnabled());
 				bean.setChangePasswordNextTime(loginInfo.getChangeNextTime());
@@ -468,13 +464,11 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 
 	@Override
 	public void fillUserInfo(UserDataBean info, Phone phone, Email email, Address address) {
-		if (phone != null) {
+		if (phone != null)
 			info.setPhone(phone.getNumber());
-		}
 
-		if (email != null) {
+		if (email != null)
 			info.setEmail(email.getEmailAddress());
-		}
 
 		if (address != null) {
 			info.setAddressId(address.getPrimaryKey().toString());
@@ -515,19 +509,16 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 
 	@Override
 	public UserDataBean getUserByPersonalId(String personalId) {
-		if (StringUtil.isEmpty(personalId)) {
+		if (StringUtil.isEmpty(personalId))
 			return null;
-		}
 
 		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
+		if (iwc == null)
 			return null;
-		}
 
 		UserBusiness userBusiness = getUserBusiness(iwc);
-		if (userBusiness == null) {
+		if (userBusiness == null)
 			return null;
-		}
 
 		UserDataBean info = null;
 
@@ -537,8 +528,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		} catch (Exception e) {}
 		if (user == null) {
 			logger.log(Level.WARNING, "User by was not found by provided personal ID ('" + personalId + "'), trying to find company");
-		}
-		else {
+		} else {
 			info = getUserInfo(user);
 		}
 
@@ -563,22 +553,18 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 
 	@Override
 	public AdvancedProperty createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
-			boolean allFieldsEditable, boolean sendEmailWithLoginInfo) {
-		if (userInfo == null) {
+			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password) {
+		if (userInfo == null)
 			return null;
-		}
 
 		AdvancedProperty result = new AdvancedProperty(userInfo.getUserId() == null ? null : String.valueOf(userInfo.getUserId()));
 
 		String name = userInfo.getName();
-//		String login = userInfo.getLogin();
 		String personalId = userInfo.getPersonalId();
-//		String password = userInfo.getPassword();
 		String email = userInfo.getEmail();
 
-		if (StringUtil.isEmpty(name) || primaryGroupId == null || childGroups == null || StringUtil.isEmpty(email)) {
+		if (StringUtil.isEmpty(name) || primaryGroupId == null || childGroups == null || StringUtil.isEmpty(email))
 			return result;
-		}
 
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
@@ -626,8 +612,6 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			} catch (RemoteException e) {}
 		}
 
-		String login = null;
-		String password = null;
 		LoginInfo loginInfo = null;
 		LoginTable loginTable = null;
 		boolean newLogin = false;
@@ -644,16 +628,19 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				return result;
 			}
 
-			login = user.getPersonalID();
 			if (StringUtil.isEmpty(login)) {
-				List<String> logins = LoginDBHandler.getPossibleGeneratedUserLogins(user);
-				if (ListUtil.isEmpty(logins))
+				login = user.getPersonalID();
+				if (StringUtil.isEmpty(login)) {
+					List<String> logins = LoginDBHandler.getPossibleGeneratedUserLogins(user);
+					if (ListUtil.isEmpty(logins))
+						return result;
+					login = logins.get(0);
+				}
+				if (StringUtil.isEmpty(login))
 					return result;
-				login = logins.get(0);
 			}
-			if (StringUtil.isEmpty(login))
-				return result;
-			password = LoginDBHandler.getGeneratedPasswordForUser(user);
+			if (StringUtil.isEmpty(password))
+				password = LoginDBHandler.getGeneratedPasswordForUser(user);
 			try {
 				loginTable = LoginDBHandler.createLogin(user, login, password);
 			} catch (LoginCreateException e) {
@@ -673,16 +660,15 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 
 		result.setId(user.getId());
 
-		if (!StringUtil.isEmpty(personalId) && !personalId.equals(user.getPersonalID())) {
+		//	Personal ID
+		if (!StringUtil.isEmpty(personalId) && !personalId.equals(user.getPersonalID()))
 			user.setPersonalID(personalId);
-		}
 
 		removeUserFromOldGroups(iwc, deselectedGroups, user);
 
 		//	Name
-		if (allFieldsEditable) {
+		if (allFieldsEditable)
 			user.setFullName(name);
-		}
 
 		//	Phone
 		if (!StringUtil.isEmpty(phoneNumber)) {
@@ -770,37 +756,21 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 
 		//	Login
 		loginTable = loginTable == null ? LoginDBHandler.getUserLogin(user) : loginTable;
-//		if (loginTable == null) {
-//			//	Creating login
-//			try {
-//				loginTable = LoginDBHandler.createLogin(user, login, password);
-//			} catch (LoginCreateException e) {
-//				e.printStackTrace();
-//			} catch (RemoteException e) {
-//				e.printStackTrace();
-//			}
-//			if (loginTable == null) {
-//				return result;
-//			}
-//			loginTable.store();
-//			newLogin = true;
-//		}
-//		else if (allFieldsEditable) {
-//			boolean updatePassword = false;
-//			String oldPassword = loginTable.getUserPasswordInClearText();
-//			if (oldPassword == null || !password.equals(oldPassword)) {
-//				updatePassword = true;
-//			}
-//
-//			if (updatePassword) {
-//				try {
-//					LoginDBHandler.changePassword(Integer.valueOf(user.getId()), password);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//					return result;
-//				}
-//			}
-//		}
+		if (!newLogin && allFieldsEditable && loginTable != null) {
+			boolean updatePassword = false;
+			String oldPassword = loginTable.getUserPasswordInClearText();
+			if (oldPassword == null || !password.equals(oldPassword))
+				updatePassword = true;
+
+			if (updatePassword) {
+				try {
+					LoginDBHandler.changePassword(Integer.valueOf(user.getId()), password);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return result;
+				}
+			}
+		}
 		loginInfo = loginInfo == null ? LoginDBHandler.getLoginInfo(loginTable) : loginInfo;
 		if (loginInfo == null) {
 			return result;

@@ -509,8 +509,8 @@ function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages
 	
 	var parentGroupChooserId = ids[0];
 	var nameValueInputId = ids[1];
-	//var loginInputId = ids[2];
-	//var passwordInputId = ids[3];
+	var loginInputId = ids[2];
+	var passwordInputId = ids[3];
 	var groupForUsersWithoutLoginId = ids[4];
 	var emailInputId = ids[5];
 	var phoneInputId = ids[6];
@@ -565,8 +565,8 @@ function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages
 	}
 	
 	//	Login
-	/*var login = getElementValue(loginInputId);
-	if (login == null) {
+	var login = loginInputId == '-' ? null : getElementValue(loginInputId);
+	/*if (login == null) {
 		showHumanizedMessage(messages[3], loginInputId);
 		return false;
 	}*/
@@ -574,8 +574,8 @@ function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages
 	var personalId = getElementValue(personalIdInputId);
 	
 	//	Password
-	/*var password = getElementValue(passwordInputId);
-	if (password == null && !juridicalPerson) {
+	var password = passwordInputId == '-' ? null : getElementValue(passwordInputId);
+	/*if (password == null && !juridicalPerson) {
 		showHumanizedMessage(messages[1], passwordInputId);
 		return false;
 	}*/
@@ -599,7 +599,8 @@ function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages
 	showLoadingMessage(messages[0]);
 	var userInfo = new UserDataBean(userName, /*login, password,*/ personalId, email, null, phone, streetNameAndNumber, postalCodeId, countryName, city, province,
 									postalBox, userId, juridicalPerson, changePasswordNextTime, accountEnabled);
-	UserApplicationEngine.createUser(userInfo, primaryGroupId, selectedGroups, DESELECTED_GROUPS, allFieldsEditable, sendEmailWithLoginInfo, {
+	UserApplicationEngine.createUser(userInfo, primaryGroupId, selectedGroups, DESELECTED_GROUPS, allFieldsEditable, sendEmailWithLoginInfo, login,
+		password, {
 		callback: function(result) {
 			closeAllLoadingMessages();
 			if (result != null) {
