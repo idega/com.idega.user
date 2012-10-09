@@ -126,7 +126,7 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 			
 			for (int i = 0; i < to.length; i++) {
 				try {
-					com.idega.util.SendMail.send(fromAddress, fromAddress, "", to[i], mailServer, subject, body);
+					com.idega.util.SendMail.send(fromAddress, to[i], "", "", mailServer, subject, body);
 					successCount++;
 				} catch (Exception e) {
 					errors.add(e.getMessage() + ": " + to[i]);
@@ -172,7 +172,7 @@ public class BasicUserOverviewEmailSenderWindow extends StyledIWAdminWindow {
 			
 			for (int i = 0; i < to.length; i++) {
 				try {
-					com.idega.util.SendMail.send(fromAddress, fromAddress, "", to[i], mailServer, subject, body);
+					com.idega.util.SendMail.send(fromAddress, to[i], "", "", mailServer, subject, body);
 					successCount++;
 				} catch (Exception e) {
 					errors.add(e.getMessage() + ": " + to[i]);
