@@ -20,7 +20,7 @@ UserAutocomplete.createAutocomplete = function(inputId,max,name){
 		allowAdd: true,
 		delay: 100,
 		autocompleteOptions: {
-			minLength : 1,
+			minLength : 1, //Change to 3 to start from 3 letters if you want
 			html: true,
 			select: function( event, ui ) {
 				jQuery("#"+inputId).val(ui.item.value).trigger('transformToTag', [ui.item.id, ui.item.label]);
@@ -35,8 +35,9 @@ UserAutocomplete.createAutocomplete = function(inputId,max,name){
 				var request  = jQuery("#"+inputId).val();
 				UserAutocompleteBean.getAutocompletedItems(request, 2, {
 					callback: function(userDataCollection) {
-						if(userDataCollection.length == 2){
-							jQuery("#"+inputId).trigger('transformToTag', [undefined, userDataCollection[0]]);
+						if(userDataCollection.length == 1){
+							var theOneGroup = userDataCollection[0];
+							jQuery("#"+inputId).trigger('transformToTag', [id,theOneGroup.label ]);
 						}
 						else{
 //							humanMsg.displayMsg(UserAutocomplete.nontrivialUserDefiningPhraseErrorMsg);
@@ -48,7 +49,7 @@ UserAutocomplete.createAutocomplete = function(inputId,max,name){
 			}
 			var checkAutocomplete = oldValue == true? false : true;
 			// check if the Value ist new
-			var isNewResult = obj.isNew(label.toString(), checkAutocomplete);
+			var isNewResult = obj.isNew(label, checkAutocomplete);
 			if(isNewResult[0] === true || (isNewResult[0] === false && typeof isNewResult[1] == 'string')) {
 
 				if(oldValue == false && typeof isNewResult[1] == 'string') {
@@ -60,7 +61,7 @@ UserAutocomplete.createAutocomplete = function(inputId,max,name){
 					// Make a new tag in front the input
 					html = '<li class="tagedit-listelement tagedit-listelement-old">';
 					html += '<span dir="'+obj.options.direction+'">' + label + '</span>';
-					html += "<input type='hidden' name = 'tag[]' disabled='disabled'" + " value=\"" + /*label.toString()*/ +"\" />";
+					html += "<input type='hidden' name = 'tag[]' disabled='disabled'" + " value=\""+ jQuery(label).find("input:hidden").val()+"\" />";
 					html += '<a class="tagedit-close" title="'+obj.options.texts.removeLinkTitle+'">x</a>';
 					html += '</li>';
 

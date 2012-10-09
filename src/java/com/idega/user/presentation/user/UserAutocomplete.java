@@ -21,6 +21,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
 import com.idega.webface.WFUtil;
 
+//TODO: rename to group autocomplete 
 public class UserAutocomplete extends IWUIBase{
 
 	IWResourceBundle iwrb = null;
