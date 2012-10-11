@@ -389,11 +389,8 @@ function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 	if (nameInput == null) {
 		return false;
 	}
-	/*var loginInput = document.getElementById(parameters[2]);
-	if (loginInput == null) {
-		return false;
-	}
-	var passwordInput = document.getElementById(parameters[3]);
+	var loginInput = document.getElementById(parameters[2]);
+	/*var passwordInput = document.getElementById(parameters[3]);
 	if (passwordInput != null) {
 		passwordInput.value = '';
 	}*/
@@ -409,7 +406,8 @@ function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 	document.getElementById(parameters[9]).value = '';
 	document.getElementById(parameters[10]).value = '';
 	dwr.util.setValue(document.getElementById(parameters[8]), '-1');
-	loginInput.value = '';
+	if (loginInput != null)
+		loginInput.value = '';
 	
 	refreshDeselectedGroups();
 	
@@ -423,7 +421,7 @@ function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 	setValueForUserInput(document.getElementById(parameters[10]), bean.province, allFieldsEditable);			//	Province
 
 	//setValueForUserInput(loginInput, bean.login, allFieldsEditable);											//	Login
-	//setValueForUserInput(passwordInput, bean.password, allFieldsEditable);										//	Password
+	//setValueForUserInput(passwordInput, bean.password, allFieldsEditable);									//	Password
 	
 	if (allFieldsEditable) {
 		UserApplicationEngine.getCountryIdByCountryName(bean.countryName, {
