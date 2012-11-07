@@ -771,7 +771,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				}
 			}
 		}
-		loginInfo = loginInfo == null ? LoginDBHandler.getLoginInfo(loginTable) : loginInfo;
+		loginInfo = loginInfo == null ? loginTable == null ? null : LoginDBHandler.getLoginInfo(loginTable) : loginInfo;
 		if (loginInfo == null) {
 			return result;
 		}
