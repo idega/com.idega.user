@@ -24,6 +24,7 @@ public class GroupViewer extends Block {
 	private String server = null;
 	private String user = null;
 	private String password = null;
+	private String callback;
 	
 	private List<String> uniqueIds = null;
 	
@@ -141,7 +142,7 @@ public class GroupViewer extends Block {
 		}
 	}
 	
-	protected void addScriptFiles(IWContext iwc, List<String> files, boolean addDirectly) {
+	protected void addScriptFiles(IWContext iwc, List<String> files) {
 		if (iwc == null || files == null) {
 			return;
 		}
@@ -164,25 +165,18 @@ public class GroupViewer extends Block {
 			files.add(groupHelper);
 		}
 		
-		if (!addDirectly) {
-			//	MooTools and reflection
-			Web2Business web2 = WFUtil.getBeanInstance(iwc, Web2Business.SPRING_BEAN_IDENTIFIER);
-			if (web2 != null) {
-				try {
-					files.add(web2.getBundleURIToMootoolsLib());
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-				files.add(web2.getReflectionForMootoolsScriptFilePath());
+		//	MooTools and reflection
+		Web2Business web2 = WFUtil.getBeanInstance(iwc, Web2Business.SPRING_BEAN_IDENTIFIER);
+		if (web2 != null) {
+			try {
+				files.add(web2.getBundleURIToMootoolsLib());
+			} catch (RemoteException e) {
+				e.printStackTrace();
 			}
+			files.add(web2.getReflectionForMootoolsScriptFilePath());
 		}
 		
-		if (addDirectly) {
-			add(PresentationUtil.getJavaScriptSourceLines(files));
-		}
-		else {
-			PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, files);
-		}
+		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, files);
 	}
 
 	public boolean isShowAddress() {
@@ -255,5 +249,15 @@ public class GroupViewer extends Block {
 		bean.setCacheTime(getCacheTime());
 		
 		bean.setInstanceId(instanceId);
+		
+		bean.setCallback(getCallback());
+	}
+
+	public String getCallback() {
+		return callback;
+	}
+
+	public void setCallback(String callback) {
+		this.callback = callback;
 	}
 }

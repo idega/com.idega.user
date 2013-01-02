@@ -1,0 +1,16 @@
+@CHARSET "UTF-8";
+
+span.groupsTreeListElement {
+	cursor: pointer;
+}
+
+li.groupsTreePartNode {
+	cursor: pointer;
+}
+
+.tree_drag_drop {
+	list-style: none;
+}
+
+div.userGroupMembers {
+}

@@ -224,7 +224,10 @@ function getUsersInfoCallback(members, properties, containerId) {
 		transport: dwr.engine.transport.xhr
 	});
 }
-	
+
+var UserInfoViewerHelper = {};
+UserInfoViewerHelper.GROUP_USERS = 0;
+
 function renderGroupUserInfoViewerWithAllData(members, properties, containerId, localizedText) {
 	var main = $(containerId);
 	if (main == null) {
@@ -237,6 +240,7 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 	container.addClass('groupsMembersInfoList');
 				
 	var maxElements = members.length;
+	UserInfoViewerHelper.GROUP_USERS = maxElements;
 	for (var j = 0; j < maxElements; j++) {
 		var user = new Element('div');
 		
@@ -383,7 +387,10 @@ function renderGroupUserInfoViewerWithAllData(members, properties, containerId, 
 	
 	container.injectInside(main);
 	getDivsSpacer().injectInside(main);
-	closeAllLoadingMessages();	
+	closeAllLoadingMessages();
+	
+	if (properties.callback)
+		executeJavaScriptActionsCodedInStringInGlobalScope(properties.callback);
 }
 
 function getUserNameAndAgeContainer(name, age, yearOfBirth, properties, localizedText, dateOfBirth) {
@@ -506,4 +513,10 @@ function getLocalizationForUserStatus(key) {
 		}
 	}
 	return found ? localization : 'Unknown';
+}
+
+UserInfoViewerHelper.initialize = function() {
+	jQuery('a.userGroupMembershipSelectedGroup').each(function() {
+		jQuery(this).fancybox();
+	});
 }

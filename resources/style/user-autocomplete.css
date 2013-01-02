@@ -1,0 +1,12 @@
+@CHARSET "UTF-8";
+.tagedit-list li.tagedit-listelement-new input{
+	height:1.5em;
+}
+.tagedit-list li.tagedit-listelement-old a.tagedit-close, .tagedit-list li.tagedit-listelement-old 
+	a.tagedit-break, .tagedit-list li.tagedit-listelement-old a.tagedit-delete, 
+	.tagedit-list li.tagedit-listelement-old a.tagedit-save{
+	height:auto;
+}
+.tagedit-list{
+	width:100%;	
+}

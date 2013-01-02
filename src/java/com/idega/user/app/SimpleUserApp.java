@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.block.web2.business.JQuery;
-import com.idega.block.web2.business.JQueryUIType;
+import com.idega.block.web2.business.JQueryPlugin;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.idegaweb.IWBundle;
@@ -122,7 +122,7 @@ public class SimpleUserApp extends Block {
 			e.printStackTrace();
 		}
 		files.add(jQuery.getBundleURIToJQueryLib());
-		files.add(jQuery.getBundleURIToJQueryUILib(JQueryUIType.UI_EASING));
+		files.add(jQuery. getBundleURIToJQueryPlugin(JQueryPlugin.EASING));
 		files.add(web2.getBundleUriToHumanizedMessagesScript());	
 		
 		List<String> cssFiles = new ArrayList<String>();

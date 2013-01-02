@@ -19,6 +19,19 @@
             <type>map</type>
           </key>
           <key>
+            <name>com.idega.user.presentation.UserGroupMembership</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.user.presentation.UserGroupMembership.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
             <name>com.idega.user.presentation.UserSearcher</name>
             <value>
               <map>
@@ -249,6 +262,21 @@
                   <name>component_property_file</name>
                   <type>java.lang.String</type>
                   <value>com.idega.user.handler.GroupHandler.pxml</value>
+                  <simple>false</simple>
+                  <reload>false</reload>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
+            <name>com.idega.user.presentation.group.UserGroups</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.user.presentation.group.UserGroups.pxml</value>
                   <simple>false</simple>
                   <reload>false</reload>
                 </key>

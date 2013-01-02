@@ -12,8 +12,6 @@ public class UserDataBean implements Serializable {
 	private static final long serialVersionUID = 8551665189039123915L;
 
 	private String name = null;
-	private String login = null;
-	private String password = null;
 	private String personalId = null;
 	private String email = null;
 	private String errorMessage = null;
@@ -57,12 +55,6 @@ public class UserDataBean implements Serializable {
 	}
 	public void setName(String name) {
 		this.name = name;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
 	}
 	public String getPersonalId() {
 		return personalId;
@@ -111,12 +103,6 @@ public class UserDataBean implements Serializable {
 	}
 	public void setPostalBox(String postalBox) {
 		this.postalBox = postalBox;
-	}
-	public String getLogin() {
-		return login;
-	}
-	public void setLogin(String login) {
-		this.login = login;
 	}
 	public Integer getUserId() {
 		return userId;

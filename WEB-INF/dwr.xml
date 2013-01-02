@@ -51,7 +51,7 @@
 			Document UserApplicationEngine.getSimpleUserApplication(String, Integer);
 			Document UserApplicationEngine.getAvailableGroupsForUserPresentationObject(Integer, Integer, String, String);
 			UserDataBean UserApplicationEngine.getUserByPersonalId(String);
-			AdvancedProperty UserApplicationEngine.createUser(UserDataBean, Integer, List<Integer>, List<Integer>, boolean, boolean);
+			AdvancedProperty UserApplicationEngine.createUser(UserDataBean, Integer, List<Integer>, List<Integer>, boolean, boolean, String, String);
   		]]>
 	</signatures>
 </dwr>

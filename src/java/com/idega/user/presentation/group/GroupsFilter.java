@@ -2,14 +2,22 @@ package com.idega.user.presentation.group;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import javax.el.ValueExpression;
+import javax.faces.context.FacesContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.block.web2.business.JQuery;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.presentation.Block;
+import com.idega.presentation.IWBaseComponent;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.ui.GenericButton;
@@ -23,27 +31,30 @@ import com.idega.util.PresentationUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
-public class GroupsFilter extends Block {
+public class GroupsFilter extends IWBaseComponent {
 	
-	private String selectedGroupParameterName = "selectedGroup";
+	private String selectedGroupParameterName = null;//"selectedGroup";
 	
-	private List<String> selectedGroups;
+	private Collection<String> selectedGroups = null;
 	
-	private int levelsToOpen = 1;
+	private Integer levelsToOpen = null;
 	
-	private boolean displayAllLevels;
-	private boolean useRadioBox = false;
+	private Boolean displayAllLevels = false;
+	private Boolean useRadioBox = false;
 	
-	private String onClickAction = null;
+	private String onClickAction = "";
 	
 	@Autowired
 	private JQuery jQuery;
 	
 	@Override
-	public void main(IWContext iwc) {
+	protected void initializeComponent(FacesContext context){
+		IWContext iwc = IWContext.getIWContext(context);
 		ELUtil.getInstance().autowire(this);
 		
-		IWBundle bundle = getBundle(iwc);
+		
+		IWMainApplication iwma = iwc.getApplicationContext().getIWMainApplication();
+		IWBundle bundle = iwma.getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
 		List<String> files = new ArrayList<String>(4);
 		files.add(jQuery.getBundleURIToJQueryLib());
 		files.add(CoreConstants.DWR_ENGINE_SCRIPT);
@@ -73,27 +84,31 @@ public class GroupsFilter extends Block {
 		TextInput filterInput = new TextInput();
 		filterInput.setTitle(iwrb.getLocalizedString("enter_group_name", "Enter group's name"));
 		
+		Collection <String> selectedGroups = getSelectedGroups();
 		boolean selectedAnything = !ListUtil.isEmpty(selectedGroups);
 		StringBuilder selectedGroupsExpression = selectedAnything ? new StringBuilder("[") : new StringBuilder("null");
 		if (selectedAnything) {
-			for (int i = 0; i < selectedGroups.size(); i++) {
-				selectedGroupsExpression.append("'").append(selectedGroups.get(i)).append("'");
+			for (Iterator<String> iter = selectedGroups.iterator();iter.hasNext();) {
+				selectedGroupsExpression.append("'").append(iter.next()).append("'");
 				
-				if ((i + 1) < selectedGroups.size()) {
+				if (iter.hasNext()) {
 					selectedGroupsExpression.append(", ");
 				}
 			}
 			selectedGroupsExpression.append("]");
 		}
+		String action = "GroupsFilter.setSelectedGroups(" + selectedGroupsExpression.toString() + ");";
+		String jsAction = PresentationUtil.getJavaScriptAction(action);
+		container.add(jsAction);
 		
 		String changedOnClickAction = null;
 		if (!StringUtil.isEmpty(onClickAction)) {
 			GroupsFilterEngine filterEngine = ELUtil.getInstance().getBean(GroupsFilterEngine.SPRING_BEAN_IDENTIFIER);
-			changedOnClickAction = filterEngine.getActionAppliedToBeParameter(onClickAction);
+			changedOnClickAction = filterEngine.getActionAppliedToBeParameter(getOnClickAction());
 		}
 		String filterAction = new StringBuilder("GroupsFilter.filterGroupsByNewInfo(['").append(filterInput.getId()).append("', '")
 												.append(iwrb.getLocalizedString("searching", "Searching...")).append("', '").append(body.getId())
-												.append("', '").append(selectedGroupParameterName).append("'], ").append(selectedGroupsExpression.toString())
+												.append("', '").append(getSelectedGroupParameterName()).append("'], ").append("GroupsFilter.getSelectedGroups()")
 												.append(", ").append(StringUtil.isEmpty(changedOnClickAction) ? "null" : new StringBuilder("'")
 												.append(changedOnClickAction).append("'").toString()).append(", ").append(useRadioBox).append(");").toString();
 		filterInput.setOnKeyPress(new StringBuilder("if (isEnterEvent(event)) {").append(filterAction).append(" return false;}").toString());
@@ -122,35 +137,50 @@ public class GroupsFilter extends Block {
 		GroupsFilterEngine groupsFilter = ELUtil.getInstance().getBean(GroupsFilterEngine.SPRING_BEAN_IDENTIFIER);
 		filteredGroups.setGroups(groupsFilter.getUserGroups(iwc, true));
 		
-		filteredGroups.setLevelsToOpen(levelsToOpen);
-		filteredGroups.setDisplayAllLevels(displayAllLevels);
-		filteredGroups.setOnClickAction(onClickAction);
-		filteredGroups.setUseRadioBox(useRadioBox);
+		filteredGroups.setLevelsToOpen(getLevelsToOpen());
+		filteredGroups.setDisplayAllLevels(isDisplayAllLevels());
+		filteredGroups.setOnClickAction(getOnClickAction());
+		filteredGroups.setUseRadioBox(isUseRadioBox());
 		
-		String[] selectedInForm = iwc.getParameterValues(selectedGroupParameterName);
+		String[] selectedInForm = iwc.getParameterValues(getSelectedGroupParameterName());
 		if (selectedInForm != null) {
 			selectedGroups = Arrays.asList(selectedInForm);
 		}
 		
-		filteredGroups.setSelectedGroups(selectedGroups);
-		filteredGroups.setSelectedGroupParameterName(selectedGroupParameterName);
+		Collection<String> selectedGroups = getSelectedGroups();
+		List<String> selectedGroupsList = selectedGroups instanceof List ? (List<String>)selectedGroups : new ArrayList<String>(selectedGroups);
+		filteredGroups.setSelectedGroups(selectedGroupsList);
+		filteredGroups.setSelectedGroupParameterName(getSelectedGroupParameterName());
 		return filteredGroups;
 	}
 	
-	@Override
 	public String getBundleIdentifier() {
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
 
-	public List<String> getSelectedGroups() {
+	@SuppressWarnings("unchecked")
+	public Collection<String> getSelectedGroups() {
+		if(selectedGroups != null){
+			return selectedGroups;
+		}
+		ValueExpression valueExpression = getValueExpression("selectedGroups");
+		if(valueExpression == null){
+			return Collections.emptyList();
+		}
+		selectedGroups = (Collection<String>)valueExpression.getValue(getFacesContext().getELContext());
 		return selectedGroups;
 	}
 
-	public void setSelectedGroups(List<String> selectedGroups) {
+	public void setSelectedGroups(Collection<String> selectedGroups) {
 		this.selectedGroups = selectedGroups;
 	}
 
 	public String getSelectedGroupParameterName() {
+		if(selectedGroupParameterName != null){
+			return selectedGroupParameterName;
+		}
+		Map <String, Object> map = getAttributes();
+		selectedGroupParameterName = (String)map.get("selectedGroupsParameterName");
 		return selectedGroupParameterName;
 	}
 
@@ -159,7 +189,10 @@ public class GroupsFilter extends Block {
 	}
 
 	public int getLevelsToOpen() {
-		return levelsToOpen;
+		if(levelsToOpen != null){
+			return levelsToOpen;
+		}
+		return 1;
 	}
 
 	public void setLevelsToOpen(int levelsToOpen) {
@@ -175,6 +208,10 @@ public class GroupsFilter extends Block {
 	}
 
 	public String getOnClickAction() {
+		if(onClickAction != null){
+			return onClickAction;
+		}
+		onClickAction = (String)getAttributes().get("onClickAction");
 		return onClickAction;
 	}
 
@@ -189,5 +226,5 @@ public class GroupsFilter extends Block {
 	public void setUseRadioBox(boolean useRadioBox) {
 		this.useRadioBox = useRadioBox;
 	}
-
+	
 }

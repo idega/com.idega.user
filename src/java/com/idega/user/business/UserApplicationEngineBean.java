@@ -68,7 +68,6 @@ import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.bean.UserDataBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
-import com.idega.user.event.GroupCreatedEvent;
 import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
@@ -77,7 +76,6 @@ import com.idega.util.ListUtil;
 import com.idega.util.SendMail;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
-import com.idega.util.expression.ELUtil;
 
 public class UserApplicationEngineBean extends DefaultSpringBean implements UserApplicationEngine, Serializable {
 
@@ -372,14 +370,12 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	@Override
 	public UserDataBean getUserInfo(User user) {
 		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
+		if (iwc == null)
 			return null;
-		}
 
 		UserBusiness userBusiness = getUserBusiness(iwc);
-		if (userBusiness == null) {
+		if (userBusiness == null)
 			return null;
-		}
 
 		IWBundle bundle = getBundle(iwc);
 		UserDataBean bean = new UserDataBean();
@@ -415,20 +411,19 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				} catch (Exception e) {}
 				pictureUri = new StringBuilder(bundle.getVirtualPathWithFileNameString("images/")).append(male ? "user_male" : "user_female").append(".png")
 					.toString();
-			}
-			else {
+			} else {
 				pictureUri = image.getMediaURL(iwc);
 				bean.setImageSet(true);
 			}
 			bean.setPictureUri(pictureUri);
 
 			//	Login
-			String login = userBusiness.getUserLogin(user);
-			bean.setLogin(login == null ? CoreConstants.EMPTY : login);
+//			String login = userBusiness.getUserLogin(user);
+//			bean.setLogin(login == null ? CoreConstants.EMPTY : login);
 
 			//	Password
-			String password = userBusiness.getUserPassword(user);
-			bean.setPassword(password == null ? CoreConstants.EMPTY : password);
+//			String password = userBusiness.getUserPassword(user);
+//			bean.setPassword(password == null ? CoreConstants.EMPTY : password);
 
 			//	Disabled account?
 			LoginInfo loginInfo = null;
@@ -437,8 +432,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			} catch(Exception e) {}
 			if (loginInfo == null) {
 				bean.setAccountEnabled(Boolean.TRUE);
-			}
-			else {
+			} else {
 				bean.setAccountExists(true);
 				bean.setAccountEnabled(loginInfo.getAccountEnabled());
 				bean.setChangePasswordNextTime(loginInfo.getChangeNextTime());
@@ -469,13 +463,11 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 	@Override
 	public void fillUserInfo(UserDataBean info, Phone phone, Email email, Address address) {
-		if (phone != null) {
+		if (phone != null)
 			info.setPhone(phone.getNumber());
-		}
 
-		if (email != null) {
+		if (email != null)
 			info.setEmail(email.getEmailAddress());
-		}
 
 		if (address != null) {
 			info.setAddressId(address.getPrimaryKey().toString());
@@ -516,19 +508,16 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 	@Override
 	public UserDataBean getUserByPersonalId(String personalId) {
-		if (StringUtil.isEmpty(personalId)) {
+		if (StringUtil.isEmpty(personalId))
 			return null;
-		}
 
 		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
+		if (iwc == null)
 			return null;
-		}
 
 		UserBusiness userBusiness = getUserBusiness(iwc);
-		if (userBusiness == null) {
+		if (userBusiness == null)
 			return null;
-		}
 
 		UserDataBean info = null;
 
@@ -538,8 +527,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		} catch (Exception e) {}
 		if (user == null) {
 			logger.log(Level.WARNING, "User by was not found by provided personal ID ('" + personalId + "'), trying to find company");
-		}
-		else {
+		} else {
 			info = getUserInfo(user);
 		}
 
@@ -564,26 +552,18 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 	@Override
 	public AdvancedProperty createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
-			boolean allFieldsEditable, boolean sendEmailWithLoginInfo) {
-		if (userInfo == null) {
+			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password) {
+		if (userInfo == null)
 			return null;
-		}
 
 		AdvancedProperty result = new AdvancedProperty(userInfo.getUserId() == null ? null : String.valueOf(userInfo.getUserId()));
 
 		String name = userInfo.getName();
-		String login = userInfo.getLogin();
 		String personalId = userInfo.getPersonalId();
-		String password = userInfo.getPassword();
+		String email = userInfo.getEmail();
 
-		if (StringUtil.isEmpty(name) || StringUtil.isEmpty(login) || (!userInfo.isJuridicalPerson() && StringUtil.isEmpty(password)) || primaryGroupId == null ||
-				childGroups == null) {
+		if (StringUtil.isEmpty(name) || primaryGroupId == null || childGroups == null || StringUtil.isEmpty(email))
 			return result;
-		}
-		if (StringUtil.isEmpty(password)) {
-			password = LoginDBHandler.getGeneratedPasswordForUser();
-			userInfo.setChangePasswordNextTime(true);
-		}
 
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
@@ -591,14 +571,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		}
 
 		String phoneNumber = userInfo.getPhone();
-		String email = userInfo.getEmail();
 
 		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 		result.setValue(iwrb.getLocalizedString("error_saving_user", "Error occurred while saving your changes."));
-
-		if (login.equals(CoreConstants.EMPTY)) {
-			return result;
-		}
 
 		UserBusiness userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
@@ -626,6 +601,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			} catch (RemoteException e) {}
 		}
 
+		LoginInfo loginInfo = null;
+		LoginTable loginTable = null;
+		boolean newLogin = false;
 		if (user == null) {
 			//	Creating user
 			try {
@@ -638,20 +616,48 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			if (user == null) {
 				return result;
 			}
+
+			if (StringUtil.isEmpty(login)) {
+				login = user.getPersonalID();
+				if (StringUtil.isEmpty(login)) {
+					List<String> logins = LoginDBHandler.getPossibleGeneratedUserLogins(user);
+					if (ListUtil.isEmpty(logins))
+						return result;
+					login = logins.get(0);
+				}
+				if (StringUtil.isEmpty(login))
+					return result;
+			}
+			if (StringUtil.isEmpty(password))
+				password = LoginDBHandler.getGeneratedPasswordForUser(user);
+			try {
+				loginTable = LoginDBHandler.createLogin(user, login, password);
+			} catch (LoginCreateException e) {
+				e.printStackTrace();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			if (loginTable == null)
+				return result;
+			loginInfo = LoginDBHandler.getLoginInfo(loginTable);
+			loginInfo.setChangeNextTime(Boolean.TRUE);
+			loginInfo.store();
+			userInfo.setChangePasswordNextTime(true);
+			newLogin = true;
+			sendEmailWithLoginInfo = true;
 		}
 
 		result.setId(user.getId());
 
-		if (!StringUtil.isEmpty(personalId) && !personalId.equals(user.getPersonalID())) {
+		//	Personal ID
+		if (!StringUtil.isEmpty(personalId) && !personalId.equals(user.getPersonalID()))
 			user.setPersonalID(personalId);
-		}
 
 		removeUserFromOldGroups(iwc, deselectedGroups, user);
 
 		//	Name
-		if (allFieldsEditable) {
+		if (allFieldsEditable)
 			user.setFullName(name);
-		}
 
 		//	Phone
 		if (!StringUtil.isEmpty(phoneNumber)) {
@@ -690,8 +696,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		//	Picture
 		if (StringUtil.isEmpty(userInfo.getPictureUri())) {
 			user.setSystemImageID(null);	//	Deleting
-		}
-		else {
+		} else {
 			try {
 				ICFile picture = ((ICFileHome) IDOLookup.getHome(ICFile.class)).create();
 				picture.setFileValue(getRepositoryService().getInputStream(userInfo.getPictureUri().replace(CoreConstants.WEBDAV_SERVLET_URI, CoreConstants.EMPTY)));
@@ -720,8 +725,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				PostalCode postalCode = getPostalCode(userInfo.getPostalCodeId());
 				if (postalCode == null) {
 					postalCode = createPostalCode(userInfo.getPostalCodeId());
-				}
-				else {
+				} else {
 					postalCode.setPostalCode(userInfo.getPostalCodeId());
 					postalCode.store();
 				}
@@ -740,30 +744,12 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		}
 
 		//	Login
-		boolean newLogin = false;
-		LoginTable loginTable = null;
-		loginTable = LoginDBHandler.getUserLogin(user);
-		if (loginTable == null) {
-			//	Creating login
-			try {
-				loginTable = LoginDBHandler.createLogin(user, login, password);
-			} catch (LoginCreateException e) {
-				e.printStackTrace();
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-			if (loginTable == null) {
-				return result;
-			}
-			loginTable.store();
-			newLogin = true;
-		}
-		else if (allFieldsEditable) {
+		loginTable = loginTable == null ? LoginDBHandler.getUserLogin(user) : loginTable;
+		if (!newLogin && allFieldsEditable && loginTable != null) {
 			boolean updatePassword = false;
 			String oldPassword = loginTable.getUserPasswordInClearText();
-			if (oldPassword == null || !password.equals(oldPassword)) {
+			if (oldPassword == null || !password.equals(oldPassword))
 				updatePassword = true;
-			}
 
 			if (updatePassword) {
 				try {
@@ -774,7 +760,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				}
 			}
 		}
-		LoginInfo loginInfo = LoginDBHandler.getLoginInfo(loginTable);
+		loginInfo = loginInfo == null ? loginTable == null ? null : LoginDBHandler.getLoginInfo(loginTable) : loginInfo;
 		if (loginInfo == null) {
 			return result;
 		}
@@ -801,9 +787,6 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		user.setPrimaryGroupID(primaryGroupId);
 		user.setJuridicalPerson(userInfo.isJuridicalPerson());
 		user.store();
-
-		GroupCreatedEvent groupCreatedEvent = new GroupCreatedEvent(user);
-		ELUtil.getInstance().publishEvent(groupCreatedEvent);
 
 		//	Sending mail
 		if (sendEmailWithLoginInfo) {
@@ -1153,12 +1136,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			}
 		}
 
-		if(BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName())){
-			GroupCreatedEvent groupCreatedEvent = new GroupCreatedEvent(group);
-			ELUtil.getInstance().publishEvent(groupCreatedEvent);
-			return group.getId();
-		}
-		return null;
+		return BuilderLogic.getInstance().reloadGroupsInCachedDomain(iwc, iwc.getServerName()) ? group.getId() : null;
 	}
 
 	@Override

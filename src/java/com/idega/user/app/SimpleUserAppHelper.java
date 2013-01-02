@@ -56,39 +56,40 @@ public class SimpleUserAppHelper {
 		list.setCheckIds(checkIds);
 		return list;
 	}
-	
+
 	public Layer getSelectedGroupsByIds(IWContext iwc, User user, GroupHelper helper, List<Integer> groupsIds, List<String> ids, String selectedGroupId) {
 		Layer selectedGroups = new Layer();
-		
+
 		List<Group> groups = null;
 		if (groupsIds == null || groupsIds.size() == 0) {
 			boolean changedToCurrentUser = false;
 			if (user == null) {
-				user = iwc.getCurrentUser();
-				changedToCurrentUser = true;
+				user = iwc.isLoggedOn() ? iwc.getCurrentUser() : null;
+				if (user != null)
+					changedToCurrentUser = true;
 			}
 			Collection<Group> topGroups = helper.getTopGroupsFromDomain(iwc);
 			if (changedToCurrentUser) {
 				user = null;
 			}
-			
+
 			if (topGroups == null || topGroups.size() == 0) {
 				addLabelForNoGroups(iwc, selectedGroups);
 				return selectedGroups;
 			}
-			
+
 			groups = new ArrayList<Group>(topGroups);
 		}
 		else {
 			groups = helper.getGroups(iwc, groupsIds);
 		}
-		
+
 		return getSelectedGroups(iwc, user, helper, groups, ids, selectedGroupId);
 	}
-	
+
 	public Layer getSelectedGroups(IWContext iwc, User user, GroupHelper helper, List<Group> groups, List<String> ids, String selectedGroupId) {
 		Layer selectedGroups = new Layer();
-		
+
 		if (groups == null) {
 			addLabelForNoGroups(iwc, selectedGroups);
 			return selectedGroups;
@@ -103,22 +104,22 @@ public class SimpleUserAppHelper {
 			if (changedToCurrentUser) {
 				user = null;
 			}
-			
+
 			if (topGroups == null || topGroups.size() == 0) {
 				addLabelForNoGroups(iwc, selectedGroups);
 				return selectedGroups;
 			}
-			
+
 			groups = new ArrayList<Group>(topGroups);
 		}
-		
+
 		if (ids == null) {
 			addLabelForNoGroups(iwc, selectedGroups);
 			return selectedGroups;
 		}
-		
+
 		List<String> userGroups = helper.getUserGroupsIds(iwc, user);
-		
+
 		Group group = null;
 		String groupId = null;
 		StringBuffer action = null;
@@ -127,12 +128,12 @@ public class SimpleUserAppHelper {
 		String styleClass = "selectSubGroupInSimpleUserAppCheckBoxStyle";
 		for (int i = 0; i < groups.size(); i++) {
 			group = groups.get(i);
-			
+
 			checkGroup = false;
 			//	Layer
 			Layer selectedGroup = new Layer();
 			selectedGroups.add(selectedGroup);
-				
+
 			//	Checkbox
 			groupId = group.getId() == null ? CoreConstants.EMPTY : group.getId();
 			CheckBox selectGroup = new CheckBox(group.getName(), groupId);
@@ -152,18 +153,18 @@ public class SimpleUserAppHelper {
 			selectGroup.setOnClick(action.toString());
 			ids.add(selectGroup.getId());
 			selectedGroup.add(selectGroup);
-			
+
 			//	Label
 			selectedGroup.add(new Text(group.getName() == null ? CoreConstants.EMPTY : group.getName()));
 		}
-		
+
 		return selectedGroups;
 	}
-	
+
 	private IWResourceBundle getResourceBundle(IWContext iwc) {
 		return iwc.getApplicationContext().getIWMainApplication().getBundle(UserConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
 	}
-	
+
 	private void addLabelForNoGroups(IWContext iwc, Layer container) {
 		IWResourceBundle iwrb = null;
 		String text = "There are no groups available";
@@ -179,19 +180,19 @@ public class SimpleUserAppHelper {
 			container.add(new Text(iwrb.getLocalizedString("no_groups_available", text)));
 		}
 	}
-	
+
 	protected String getJavaScriptParameter(String parameter) {
 		return ELUtil.getInstance().getBean(GroupHelper.class).getJavaScriptParameter(parameter);
 	}
-	
+
 	protected String getActionForAddUserView(SimpleUserPropertiesBean bean, String userId) {
 		return ELUtil.getInstance().getBean(GroupHelper.class).getActionForAddUserView(bean, userId);
 	}
-	
+
 	protected String getJavaScriptFunctionParameter(List<String> parameters) {
 		return ELUtil.getInstance().getBean(GroupHelper.class).getJavaScriptFunctionParameter(parameters);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput, List<String> selectedRoles) {
 		if (iwc == null) {
@@ -205,16 +206,16 @@ public class SimpleUserAppHelper {
 			} catch (RemoteException e) {
 			} catch (FinderException e) {}
 		}
-		
+
 		Layer container = new Layer();
 		container.setStyleClass("groupRolesStyleClass");
 		Layer rolesContainer = new Layer();
 		container.add(rolesContainer);
 		rolesContainer.setStyleClass("checkboxesForGroupRoleEditorStyleClass");
-		
+
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		String message = iwrb.getLocalizedString("saving", "Saving...");
-		
+
 		AccessController accessControler = iwc.getAccessController();
 		List<ICRole> allRoles = getFilteredRoles(getFilteredRolesByUser(iwc, accessControler), selectedRoles);
 		boolean addTable = true;
@@ -222,23 +223,23 @@ public class SimpleUserAppHelper {
 			rolesContainer.add(new Heading3(iwrb.getLocalizedString("no_roles", "There are no roles...")));
 			return container;
 		}
-		
+
 		if (group == null) {
 			rolesContainer.add(new Heading3(iwrb.getLocalizedString("create_new_group", "Create new group")));
 		}
 		else {
 			rolesContainer.add(new Heading3(iwrb.getLocalizedString("groupownerswindow.setting_roles_for_group", "Setting roles for ") + group.getName()));
-			
+
 			Collection<ICPermission> permissionsForCurrentGroup = accessControler.getAllRolesWithRolePermissionsForGroup(group);
 			List<String> permissions = Arrays.asList(new String[] {/*AccessController.PERMISSION_KEY_VIEW, AccessController.PERMISSION_KEY_EDIT,
 					AccessController.PERMISSION_KEY_CREATE, AccessController.PERMISSION_KEY_DELETE, */AccessController.PERMISSION_KEY_ROLE});
 			List<String> roles = getRolesNotIncludedOriginaly(permissionsForCurrentGroup, allRoles, selectedRoles);
-			
+
 			Table2 rolesTable = new Table2();
 			if (addTable) {
 				rolesContainer.add(rolesTable);
 			}
-			
+
 			TableRowGroup headerGroup = rolesTable.createHeaderRowGroup();
 			TableRow headerRow = headerGroup.createRow();
 			TableCell2 cell = headerRow.createHeaderCell();
@@ -247,7 +248,7 @@ public class SimpleUserAppHelper {
 				cell = headerRow.createHeaderCell();
 				cell.add(new Text(iwrb.getLocalizedString(permission, permission)));
 			}
-			
+
 			TableRowGroup bodyRows = rolesTable.createBodyRowGroup();
 			for (ICRole role: allRoles) {
 				addRowAndCellsForRole(groupId, role.getNodeName(), role.getRoleKey(), bodyRows, iwrb, permissions, permissionsForCurrentGroup, message);
@@ -256,7 +257,7 @@ public class SimpleUserAppHelper {
 				addRowAndCellsForRole(groupId, role, role, bodyRows, iwrb, permissions, permissionsForCurrentGroup, message);
 			}
 		}
-		
+
 		if (addInput) {
 			Layer newRoleContainer = new Layer();
 			container.add(newRoleContainer);
@@ -271,13 +272,13 @@ public class SimpleUserAppHelper {
 			newRoleContainer.add(newRoleLabel);
 			newRoleContainer.add(newRoleInput);
 		}
-		
+
 		return container;
 	}
-	
+
 	public String getBeanAsParameters(SimpleUserPropertiesBean bean, String parentGroupChooserId, String childGroupChooserId, String message) {
 		List<String> parameters = new ArrayList<String>();
-		
+
 		addParamaterToList(parameters, bean.getInstanceId());							//	0
 		addParamaterToList(parameters, bean.getContainerId());							//	1
 		addParamaterToList(parameters, StringUtil.isEmpty(childGroupChooserId) ? bean.getGroupChooserId() : childGroupChooserId);													//	2
@@ -295,14 +296,14 @@ public class SimpleUserAppHelper {
 		parameters.add(String.valueOf(bean.isChangePasswordNextTime()));				//	14
 		parameters.add(String.valueOf(bean.isAllowEnableDisableAccount()));				//	15
 		addParamaterToList(parameters, bean.getParentGroupId() == -1 ? null : String.valueOf(bean.getParentGroupId()));																	//	16
-		
+
 		return getJavaScriptFunctionParameter(parameters);
 	}
-	
+
 	private void addParamaterToList(List<String> parameters, String parameter) {
 		parameters.add(StringUtil.isEmpty(parameter) ? "null" : parameter);
 	}
-	
+
 	private List<ICRole> getFilteredRoles(List<ICRole> allRoles, List<String> selectedRoles) {
 		if (ListUtil.isEmpty(allRoles)) {
 			return null;
@@ -310,24 +311,24 @@ public class SimpleUserAppHelper {
 		if (ListUtil.isEmpty(selectedRoles)) {
 			return allRoles;
 		}
-		
+
 		List<ICRole> roles = new ArrayList<ICRole>();
 		for (ICRole role: allRoles) {
 			if (selectedRoles.contains(role.getRoleKey())) {
 				roles.add(role);
 			}
 		}
-		
+
 		return roles;
 	}
-	
+
 	private void addRowAndCellsForRole(int groupId, String roleName, String roleKey, TableRowGroup bodyRows, IWResourceBundle iwrb, List<String> permissions,
 			Collection<ICPermission> permissionsForCurrentGroup, String message) {
 		TableRow bodyRow = bodyRows.createRow();
-		
+
 		TableCell2 cell = bodyRow.createCell();
 		cell.add(new Text(iwrb.getLocalizedString(roleKey, roleName)));
-		
+
 		StringBuilder action = null;
 		String attribute = "groupid";
 		String checkBoxStyle = "changePermissionForRoleCheckboxStyle";
@@ -343,15 +344,15 @@ public class SimpleUserAppHelper {
 			cell.add(checkBox);
 		}
 	}
-	
+
 	private List<String> getRolesNotIncludedOriginaly(Collection<ICPermission> permissionsForGroup, List<ICRole> originalRoles, List<String> selectedRoles) {
 		List<String> roles = new ArrayList<String>();
-		
+
 		List<String> originalRolesKeys = new ArrayList<String>();
 		for (ICRole role: originalRoles) {
 			originalRolesKeys.add(role.getRoleKey());
 		}
-		
+
 		if (!ListUtil.isEmpty(permissionsForGroup)) {
 			String roleKey = null;
 			for (ICPermission permission: permissionsForGroup) {
@@ -361,7 +362,7 @@ public class SimpleUserAppHelper {
 				}
 			}
 		}
-		
+
 		if (!ListUtil.isEmpty(selectedRoles)) {
 			for (String selectedRole: selectedRoles) {
 				if (!roles.contains(selectedRole) && !originalRolesKeys.contains(selectedRole)) {
@@ -369,38 +370,38 @@ public class SimpleUserAppHelper {
 				}
 			}
 		}
-		
+
 		return roles;
 	}
-	
+
 	private boolean isRoleChecked(String permissionKey, String roleKey, Collection<ICPermission> allPermissions) {
 		if (permissionKey == null || roleKey == null ||allPermissions == null || allPermissions.isEmpty()) {
 			return false;
 		}
-		
+
 		ICPermission permission = null;
 		String permissionType = null;
 		String roleType = null;
 		for (Iterator<ICPermission> it = allPermissions.iterator(); it.hasNext();) {
 			permission = it.next();
-			
+
 			permissionType = permission.getContextValue();
 			roleType = permission.getPermissionString();
 			if (permissionKey.equals(permissionType) && roleKey.equals(roleType)) {
 				return permission.getPermissionValue();
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private List<ICRole> getFilteredRolesByUser(IWContext iwc, AccessController accessControler) {
 		Collection<ICRole> allRoles = accessControler.getAllRolesLegacy();
 		if (ListUtil.isEmpty(allRoles)) {
         	return null;
         }
-		
+
 		if (iwc.isSuperAdmin()) {
 	        List<ICRole> roles = new ArrayList<ICRole>();
 	        ICRole role = null;
@@ -410,10 +411,10 @@ public class SimpleUserAppHelper {
 	        		roles.add(role);
 	        	}
 	        }
-        
+
         	return roles;
         }
-        
+
         User user = null;
         try {
         	user = iwc.getCurrentUser();
@@ -421,12 +422,12 @@ public class SimpleUserAppHelper {
         if (user == null) {
         	return null;
         }
-        
+
         Set userRoles = accessControler.getAllRolesForUser(user);
         if (ListUtil.isEmpty(userRoles)) {
         	return null;
         }
-        
+
 		Collection<String> rolesKeys = new ArrayList<String>();
         for (Iterator it = userRoles.iterator(); it.hasNext();) {
         	rolesKeys.add(it.next().toString());
@@ -434,13 +435,13 @@ public class SimpleUserAppHelper {
         List<ICRole> filteredRoles = new ArrayList<ICRole>();
         for (String roleKey: rolesKeys) {
         	for (ICRole generalRole: allRoles) {
-        		if (roleKey.equals(generalRole.getRoleKey()) && !filteredRoles.contains(generalRole)) {        			
+        		if (roleKey.equals(generalRole.getRoleKey()) && !filteredRoles.contains(generalRole)) {
         			filteredRoles.add(generalRole);
         		}
         	}
         }
-        
+
         return filteredRoles;
 	}
-	
+
 }

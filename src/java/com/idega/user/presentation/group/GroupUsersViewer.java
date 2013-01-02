@@ -11,6 +11,7 @@ import com.idega.user.bean.UserPropertiesBean;
 import com.idega.user.business.UserConstants;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.PresentationUtil;
 import com.idega.webface.WFUtil;
 
 public class GroupUsersViewer extends GroupViewer {
@@ -116,7 +117,7 @@ public class GroupUsersViewer extends GroupViewer {
 		//	"Helpers"		
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/UserInfoViewerHelper.js"));
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
-		addScriptFiles(iwc, files, singleRenderingProcess);
+		addScriptFiles(iwc, files);
 		
 		//	Actions to be performed on page loaded event
 		StringBuffer singleAction = new StringBuffer("getSelectedUsers('").append(instanceId).append("', '").append(id).append("', '");
@@ -124,15 +125,12 @@ public class GroupUsersViewer extends GroupViewer {
 		StringBuffer action = null;
 		if (singleRenderingProcess) {
 			action = singleAction;
-		}
-		else {
+		} else {
 			action = new StringBuffer("window.addEvent('domready', function() {").append(singleAction.toString()).append("});");
 		}
 		
 		//	Adding script to page
-		StringBuffer scriptString = new StringBuffer("<script type=\"text/javascript\" > \n").append("\t").append(action.toString());
-		scriptString.append(" \n").append("</script> \n");
-		add(scriptString.toString());
+		PresentationUtil.addJavaScriptActionToBody(iwc, action.toString());
 	}
 	
 	public void setShowAge(boolean showAge) {

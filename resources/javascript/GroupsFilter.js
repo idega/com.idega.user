@@ -1,5 +1,7 @@
 if (GroupsFilter == null) var GroupsFilter = {};
 
+GroupsFilter._selectedGroups = [];
+
 GroupsFilter.constants = {
 	SEARCH_RESULT_PARAM: 'searchresult'
 }
@@ -113,6 +115,7 @@ GroupsFilter.openClosedNodes = function(image, params) {
 }
 
 GroupsFilter.manageCheckedGroupsInOtherContainers = function(params) {
+	GroupsFilter.manadgeSelectedGroups(params[0]);
 	var lists = jQuery('div.filteredGroupsBoxStyle');
 	if (lists == null || lists.length <= 1) {
 		return false;
@@ -129,5 +132,50 @@ GroupsFilter.manageCheckedGroupsInOtherContainers = function(params) {
 				otherCheckboxes[j].checked = false;
 			}
 		}
+	}
+}
+GroupsFilter.manadgeSelectedGroups = function(inputId){
+	var checkBox = jQuery('#' + inputId);
+	var checked = checkBox.filter(":checked").length > 0;
+	if(checked){
+		GroupsFilter.addSelectedGroups(checkBox.val());
+	}else{
+		GroupsFilter.removeSelectedGroups(checkBox.val());
+	}
+}
+
+GroupsFilter.getSelectedGroups = function(){
+	return GroupsFilter._selectedGroups;
+}
+
+GroupsFilter.setSelectedGroups = function(selectedGroups){
+	GroupsFilter._selectedGroups = selectedGroups;
+}
+
+GroupsFilter.addSelectedGroups = function(groups){
+	if((groups == undefined) || (groups == null)){
+		return;
+	}
+	if (groups instanceof Array) {
+		for(var i = 0;i<groups.length;i++){
+			GroupsFilter._selectedGroups.push(groups[i]);
+		}
+	}
+	else{
+		GroupsFilter._selectedGroups.push(groups);
+	}
+}
+
+GroupsFilter.removeSelectedGroups = function(groups){
+	if((groups == undefined) || (groups == null)){
+		return;
+	}
+	if (groups instanceof Array) {
+		for(var i = 0;i<groups.length;i++){
+			GroupsFilter._selectedGroups.splice(GroupsFilter._selectedGroups.indexOf(groups[i]), 1);
+		}
+	}
+	else{
+		GroupsFilter._selectedGroups.splice(GroupsFilter._selectedGroups.indexOf(groups), 1);
 	}
 }

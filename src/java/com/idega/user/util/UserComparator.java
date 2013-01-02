@@ -23,17 +23,17 @@ import com.idega.util.text.Name;
 public class UserComparator implements Comparator<User> {
 
 	private Locale iLocale;
+	private Collator collator;
 	
 	public UserComparator(Locale locale) {
 		this.iLocale = locale;
+		collator = Collator.getInstance(iLocale);
 	}
 	
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(User user1, User user2) {
-		Collator collator = Collator.getInstance(iLocale);
-		
 		Name name1 = new Name(user1.getFirstName(), user1.getMiddleName(), user1.getLastName());
 		Name name2 = new Name(user2.getFirstName(), user2.getMiddleName(), user2.getLastName());
 		

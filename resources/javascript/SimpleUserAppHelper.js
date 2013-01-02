@@ -390,13 +390,10 @@ function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 		return false;
 	}
 	var loginInput = document.getElementById(parameters[2]);
-	if (loginInput == null) {
-		return false;
-	}
-	var passwordInput = document.getElementById(parameters[3]);
+	/*var passwordInput = document.getElementById(parameters[3]);
 	if (passwordInput != null) {
 		passwordInput.value = '';
-	}
+	}*/
 	var emailInput = document.getElementById(parameters[5]);
 	if (emailInput != null) {
 		emailInput.value = '';
@@ -409,7 +406,8 @@ function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 	document.getElementById(parameters[9]).value = '';
 	document.getElementById(parameters[10]).value = '';
 	dwr.util.setValue(document.getElementById(parameters[8]), '-1');
-	loginInput.value = '';
+	if (loginInput != null)
+		loginInput.value = '';
 	
 	refreshDeselectedGroups();
 	
@@ -422,8 +420,8 @@ function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 	setValueForUserInput(document.getElementById(parameters[9]), bean.city, allFieldsEditable);					//	City
 	setValueForUserInput(document.getElementById(parameters[10]), bean.province, allFieldsEditable);			//	Province
 
-	setValueForUserInput(loginInput, bean.login, allFieldsEditable);											//	Login
-	setValueForUserInput(passwordInput, bean.password, allFieldsEditable);										//	Password
+	//setValueForUserInput(loginInput, bean.login, allFieldsEditable);											//	Login
+	//setValueForUserInput(passwordInput, bean.password, allFieldsEditable);									//	Password
 	
 	if (allFieldsEditable) {
 		UserApplicationEngine.getCountryIdByCountryName(bean.countryName, {
@@ -487,7 +485,7 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 		return false;
 	}
 	
-	if (USER_ID == null) {
+	/*if (USER_ID == null) {
 		var loginInputId = ids[2];
 		var userName = document.getElementById(loginInputId).value;
 		UserApplicationEngine.isValidUserName(userName, {
@@ -495,9 +493,9 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 				isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages, allFieldsEditable, userId, sendEmailWithLoginInfo, juridicalPerson);
 			}
 		});
-	} else {
+	} else {*/
 		isValidUserNameCallback({id: 'true', value: null}, ids, childGroups, messages, allFieldsEditable, userId, sendEmailWithLoginInfo, juridicalPerson);
-	}
+	//}
 }
 
 function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages, allFieldsEditable, userId, sendEmailWithLoginInfo, juridicalPerson) {
@@ -565,20 +563,20 @@ function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages
 	}
 	
 	//	Login
-	var login = getElementValue(loginInputId);
-	if (login == null) {
+	var login = loginInputId == '-' ? null : getElementValue(loginInputId);
+	/*if (login == null) {
 		showHumanizedMessage(messages[3], loginInputId);
 		return false;
-	}
+	}*/
 	
 	var personalId = getElementValue(personalIdInputId);
 	
 	//	Password
-	var password = getElementValue(passwordInputId);
-	if (password == null && !juridicalPerson) {
+	var password = passwordInputId == '-' ? null : getElementValue(passwordInputId);
+	/*if (password == null && !juridicalPerson) {
 		showHumanizedMessage(messages[1], passwordInputId);
 		return false;
-	}
+	}*/
 	
 	var email = document.getElementById(emailInputId).value;
 	var primaryGroupId = getParentGroupIdInSUA(parentGroupChooserId, ids[16]);
@@ -597,9 +595,10 @@ function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages
 	}
 	
 	showLoadingMessage(messages[0]);
-	var userInfo = new UserDataBean(userName, login, password, personalId, email, null, phone, streetNameAndNumber, postalCodeId, countryName, city, province,
+	var userInfo = new UserDataBean(userName, /*login, password,*/ personalId, email, null, phone, streetNameAndNumber, postalCodeId, countryName, city, province,
 									postalBox, userId, juridicalPerson, changePasswordNextTime, accountEnabled);
-	UserApplicationEngine.createUser(userInfo, primaryGroupId, selectedGroups, DESELECTED_GROUPS, allFieldsEditable, sendEmailWithLoginInfo, {
+	UserApplicationEngine.createUser(userInfo, primaryGroupId, selectedGroups, DESELECTED_GROUPS, allFieldsEditable, sendEmailWithLoginInfo, login,
+		password, {
 		callback: function(result) {
 			closeAllLoadingMessages();
 			if (result != null) {
@@ -632,11 +631,11 @@ function getElementValue(id) {
 	return value == '' ? null : value;
 }
 
-function UserDataBean(name, login, password, personalId, email, errorMessage, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox,
+function UserDataBean(name, /*login, password,*/ personalId, email, errorMessage, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox,
 					 userId, juridicalPerson, changePasswordNextTime, accountEnabled) {
 	this.name = name;
-	this.login = login;
-	this.password = password;
+	//this.login = login;
+	//this.password = password;
 	this.personalId = personalId;
 	this.email = email;
 	this.errorMessage = errorMessage;

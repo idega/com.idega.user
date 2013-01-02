@@ -54,6 +54,10 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 	
 	private UIComponent middlePartOfChooser = null;
 	
+	protected void initializeGroupsContainerId(Layer container) {
+		groupsTreeContainerId = new StringBuffer(container.getId()).append("TreeContainer").toString();
+	}
+	
 	@Override
 	public void main(IWContext iwc) {
 		PresentationUtil.addStyleSheetToHeader(iwc, getBundle(iwc).getVirtualPathWithFileNameString("style/user.css"));
@@ -62,7 +66,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		
 		idsParameterForFunction = getIdsString(uniqueIds);
 		if (groupsTreeContainerId == null) {
-			groupsTreeContainerId = new StringBuffer(main.getId()).append("TreeContainer").toString();
+			initializeGroupsContainerId(main);
 		}
 		
 		//	Connection chooser
@@ -82,14 +86,7 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 		addJavaScript(iwc);
 	}
 	
-	private void addGroupsTreeContainer(IWContext iwc, Layer main) {
-		IWResourceBundle iwrb = getResourceBundle(iwc);
-		
-		Layer groupsTreeContainer = new Layer();
-		FieldSet groupsContainer = new FieldSet(new Legend(iwrb.getLocalizedString("groups_tree", "Groups tree")));
-		Text explanation = new Text(iwrb.getLocalizedString("how_select_group", "Select (deselect) group by clicking it's name:"));
-		groupsContainer.add(explanation);
-		
+	protected GroupTreeViewer getGroupsTree(IWResourceBundle iwrb, IWContext iwc) {
 		GroupTreeViewer groupsTree = new GroupTreeViewer(executeScriptOnLoad);
 		groupsTree.setGroupsTreeViewerId(groupsTreeContainerId);
 		groupsTree.setStyleClass(groupsTreeStyleClass);
@@ -111,13 +108,26 @@ public class GroupsChooserBlock extends AbstractChooserBlock {
 			groupsTree.setCustomFunction(customTreeFunctionToBeExecutedOnLoad);
 		}
 		groupsTree.setSelectedGroupsParameter(idsParameterForFunction);
+		
+		return groupsTree;
+	}
+	
+	private void addGroupsTreeContainer(IWContext iwc, Layer main) {
+		IWResourceBundle iwrb = getResourceBundle(iwc);
+		
+		Layer groupsTreeContainer = new Layer();
+		FieldSet groupsContainer = new FieldSet(new Legend(iwrb.getLocalizedString("groups_tree", "Groups tree")));
+		Text explanation = new Text(iwrb.getLocalizedString("how_select_group", "Select (deselect) group by clicking it's name:"));
+		groupsContainer.add(explanation);
+		
+		GroupTreeViewer groupsTree = getGroupsTree(iwrb, iwc);
 		groupsContainer.add(groupsTree);
 		
 		groupsTreeContainer.add(groupsContainer);
 		main.add(groupsTreeContainer);
 	}
 	
-	private void addJavaScript(IWContext iwc) {		
+	protected void addJavaScript(IWContext iwc) {		
 		if (addExtraJavaScript) {
 			Web2Business web2Bean = WFUtil.getBeanInstance(iwc, Web2Business.SPRING_BEAN_IDENTIFIER);
 			

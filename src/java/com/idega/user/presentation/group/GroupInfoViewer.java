@@ -80,7 +80,7 @@ public class GroupInfoViewer extends GroupViewer {
 		//	"Helpers"
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
 		files.add(iwb.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
-		addScriptFiles(iwc, files, singleRenderingProcess);
+		addScriptFiles(iwc, files);
 
 		//	Actions to be performed on page loaded event
 		StringBuffer singleAction = new StringBuffer("getSelectedGroups('").append(instanceId).append("', '").append(id).append("', '");
@@ -88,8 +88,7 @@ public class GroupInfoViewer extends GroupViewer {
 		StringBuffer action = null;
 		if (singleRenderingProcess) {
 			action = singleAction;
-		}
-		else {
+		} else {
 			action = new StringBuffer("window.addEvent('domready', function() {").append(singleAction.toString()).append("});");
 		}
 		

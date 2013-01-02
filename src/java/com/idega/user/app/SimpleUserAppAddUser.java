@@ -11,13 +11,16 @@ import javax.faces.component.UIComponent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.idega.business.IBOLookup;
 import com.idega.content.business.ContentConstants;
 import com.idega.content.upload.presentation.FileUploadViewer;
+import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.contact.data.Email;
 import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.CSSSpacer;
@@ -50,27 +53,27 @@ import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 public class SimpleUserAppAddUser extends Block {
-	
+
 	private List<Integer> parentGroups = null;
 	private List<Integer> childGroups = null;
-	
+
 	private SimpleUserPropertiesBean properties = null;
-	
+
 	private Integer userId = null;
-	
+
 	@Autowired
 	private GroupHelper groupsHelper;
 	@Autowired
 	private SimpleUserAppHelper helper;
-	
+
 	private IWResourceBundle iwrb = null;
-	
+
 	private String requiredFieldLocalizationKey = "this_field_is_required";
 	private String requiredFieldLocalizationValue = "This field is required!";
-	
+
 	public SimpleUserAppAddUser(SimpleUserPropertiesBean properties) {
 		this.properties = properties;
-		
+
 		String parentComponentInstanceId = properties.getInstanceId();
 		String parentContainerId = properties.getContainerId();
 		if (StringUtil.isEmpty(parentComponentInstanceId) || StringUtil.isEmpty(parentContainerId)) {
@@ -78,15 +81,22 @@ public class SimpleUserAppAddUser extends Block {
 		}
 	}
 
+	private Boolean ableToSetLoginAndPassword = null;
+	private boolean isAbleToSetLoginAndPassword() {
+		if (ableToSetLoginAndPassword == null)
+			ableToSetLoginAndPassword = IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("sua_able_set_login_psw", Boolean.TRUE);
+		return ableToSetLoginAndPassword;
+	}
+
 	@Override
 	public void main(IWContext iwc) {
 		ELUtil.getInstance().autowire(this);
-		
+
 		Layer container = new Layer();
 		add(container);
-		
+
 		iwrb = getResourceBundle(iwc);
-		
+
 		//	User
 		String id = null;
 		String name = null;
@@ -102,31 +112,33 @@ public class SimpleUserAppAddUser extends Block {
 				email = getEmail(iwc, user);
 			}
 		}
-		
+
 		//	User name
 		TextInput nameValueInput = new TextInput();
 		String nameValueInputId = nameValueInput.getId();
-		
+
 		//	User password
-		PasswordInput passwordInput = new PasswordInput();
-		String passwordInputId = passwordInput.getId();
-		
+		PasswordInput passwordInput = isAbleToSetLoginAndPassword() ? new PasswordInput() : null;
+		String passwordInputId = passwordInput == null ? null : passwordInput.getId();
+
 		//	Login name
-		TextInput loginValueInput = new TextInput();
-		if (!properties.isAllFieldsEditable()) {
-			loginValueInput.setDisabled(true);
+		TextInput loginValueInput = isAbleToSetLoginAndPassword() || user != null ? new TextInput() : null;
+		String loginInputId = null;
+		if (loginValueInput != null) {
+			if (!properties.isAllFieldsEditable())
+				loginValueInput.setDisabled(true);
+			loginInputId = loginValueInput.getId();
 		}
-		String loginInputId = loginValueInput.getId();
-		
+
 		//	Add user
 		Layer addUserlabelContainer = new Layer();
 		addUserlabelContainer.setStyleClass("addUserlabelContainerStyleClass");
 		addUserlabelContainer.add(new Text(iwrb.getLocalizedString("add_user", "Add user")));
 		container.add(addUserlabelContainer);
-		
+
 		//	Container of available groups for user
 		Layer availableGroupsOfUserContaianer = getFieldsContainer();
-		
+
 		//	Parent groups dropdown
 		Layer parentGroupsContainer = new Layer();
 		container.add(parentGroupsContainer);
@@ -142,83 +154,82 @@ public class SimpleUserAppAddUser extends Block {
 		.append(helper.getJavaScriptParameter(properties.getParentGroupId() == -1 ? null : String.valueOf(properties.getParentGroupId()))).append(");");
 		parentGroupsChooser.setOnChange(action.toString());
 		addParentGroups(iwc, parentGroupsContainer, parentGroupsChooser);
-		
+
 		//	Choose user
 		Layer chooseUserLabelContainer = new Layer();
 		chooseUserLabelContainer.setStyleClass("addUserlabelContainerStyleClass");
 		chooseUserLabelContainer.add(new Text(iwrb.getLocalizedString("sua.personal_information", "Personal information")));
 		container.add(chooseUserLabelContainer);
-		
+
 		//	User fields
 		Layer userFieldsContainer = new Layer();
 		container.add(userFieldsContainer);
-		
+
 		//	Email
 		TextInput emailInpnut = new TextInput();
 		String emailInputId = emailInpnut.getId();
-		
+
 		//	Personal ID
 		TextInput idValueInput = new TextInput();
 		idValueInput.setTitle(iwrb.getLocalizedString("sua.enter_personal_id_to_search_for_user", "Enter personal ID to search for a person"));
 		idValueInput.setMaxlength(12);
-		
+
 		//	Phone
 		TextInput phoneInput = new TextInput();
 		String phoneInputId = phoneInput.getId();
-		
+
 		//	Street name and number
 		TextInput streetNameAndNumberInput = new TextInput();
 		String streetNameAndNumberInputId = streetNameAndNumberInput.getId();
-		
+
 		//	Postal code id
 		TextInput postalCodeIdInput = new TextInput();
 		String postalCodeIdInputId = postalCodeIdInput.getId();
-		
+
 		//	Countries
 		CountryDropdownMenu countriesDropdown = new CountryDropdownMenu();
 		countriesDropdown.setFirstSelectOption(new SelectOption(iwrb.getLocalizedString("simple_user_application.select_country", "Select country"), -1));
 		String countriesDropdownId = countriesDropdown.getId();
-		
+
 		//	City
 		TextInput cityInput = new TextInput();
 		String cityInputId = cityInput.getId();
-		
+
 		//	Province
 		TextInput provinceInput = new TextInput();
 		String provinceInputId = provinceInput.getId();
-		
+
 		//	Postal box
 		TextInput postalBoxInput = new TextInput();
 		String postalBoxInputId = postalBoxInput.getId();
-		
+
 		//	***************************** Data for inputs *****************************
 		UserDataBean userInfo = new UserDataBean();
 		UserApplicationEngine userEngine = ELUtil.getInstance().getBean(UserApplicationEngine.class);
-		if (user != null) {
+		if (user != null)
 			userInfo = userEngine.getUserInfo(user);
-		}
-		
+
 		//	Personal ID
 		if (!StringUtil.isEmpty(personalId)) {
 			idValueInput.setContent(personalId);
 			idValueInput.setDisabled(true);
 		}
-		
+
 		//	Name
 		if (!properties.isAllFieldsEditable()) {
 			nameValueInput.setDisabled(true);
 		}
 		nameValueInput.setContent(name == null ? CoreConstants.EMPTY : name);
-		
+
 		//	Phone
 		phoneInput.setContent(userInfo.getPhone());
-		
+
 		//	Email
 		emailInpnut.setContent(email == null ? CoreConstants.EMPTY : email);
 		if (!properties.isAllFieldsEditable()) {
 			emailInpnut.setDisabled(true);
 		}
-		
+
 		//	Picture
 		Image picture = new Image();
 		picture.setStyleClass("simpleUserApplicationUserPicture");
@@ -229,22 +240,22 @@ public class SimpleUserAppAddUser extends Block {
 		picture.setOnClick(getPictureChangerAction(pictureId, pictureChangerId));
 		picture.setURL(StringUtil.isEmpty(userInfo.getPictureUri()) ? getBundle(iwc).getVirtualPathWithFileNameString("images/user_default.png") :
 			userInfo.getPictureUri());
-		
+
 		//	Street and number
 		streetNameAndNumberInput.setContent(userInfo.getStreetNameAndNumber());
-		
+
 		//	Postal code
 		postalCodeIdInput.setContent(userInfo.getPostalCodeId());
-		
+
 		//	Postal box
 		postalBoxInput.setContent(userInfo.getPostalBox());
-		
+
 		//	City
 		cityInput.setContent(userInfo.getCity());
-		
+
 		//	Province
 		provinceInput.setContent(userInfo.getProvince());
-		
+
 		//	Country
 		Country country = userEngine.getCountry(userInfo.getCountryName());
 		if (country == null) {
@@ -264,38 +275,52 @@ public class SimpleUserAppAddUser extends Block {
 			}
 		}
 		countriesDropdown.setSelectedCountry(country);
-		
+
 		//	Login
-		loginValueInput.setContent(userInfo.getLogin());
-		
+		if (user != null) {
+			loginValueInput.setDisabled(true);
+			loginValueInput.setContent(LoginDBHandler.getUserLogin(user).getUserLogin());
+		}
+
 		//	Password
-		if (CoreConstants.EMPTY.equals(userInfo.getPassword())) {
-			passwordInput.setDisabled(false);
-		}
-		else {
-			if (!properties.isAllFieldsEditable()) {
-				passwordInput.setDisabled(true);
+		if (passwordInput != null) {
+			String password = null;
+			if (user != null) {
+				try {
+					UserBusiness userBusiness = IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+					password = userBusiness.getUserPassword(user);
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Error getting password for user " + user, e);
+				}
 			}
+
+			if (StringUtil.isEmpty(password)) {
+				passwordInput.setDisabled(false);
+			} else {
+				if (!properties.isAllFieldsEditable()) {
+					passwordInput.setDisabled(true);
+				}
+			}
+			passwordInput.setContent(password);
 		}
-		passwordInput.setContent(userInfo.getPassword());
-		
+
 		//	Account enabled/disabled
-		CheckBox manageAccountAvailability = getCheckBox((userInfo.getAccountEnabled() == null || !userInfo.getAccountEnabled()) ? 
+		CheckBox manageAccountAvailability = getCheckBox((userInfo.getAccountEnabled() == null || !userInfo.getAccountEnabled()) ?
 				iwrb.getLocalizedString("account_is_disabled_check_to_enable", "Account is disabled, check to enable it") :
 				iwrb.getLocalizedString("account_is_enabled_un_check_to_disable_it", "Account is enabled, uncheck to disable it"),
 				userInfo.getAccountEnabled() != null && userInfo.getAccountEnabled());
 		String accountManagerId = manageAccountAvailability.getId();
-		
+
 		//	Change password next time
 		CheckBox changePasswordNextTime = getCheckBox(iwrb.getLocalizedString("user_will_have_to_change_password_next_time",
 				"User will have to change password on next login"), userInfo.getChangePasswordNextTime() != null && userInfo.getChangePasswordNextTime());
 		String changePasswordNextTimeId = changePasswordNextTime.getId();
-	
+
 		List<String> idsForFields = new ArrayList<String>();
 		idsForFields.add(idValueInput.getId());								//	0	Personal ID
 		idsForFields.add(nameValueInputId);									//	1	Name
-		idsForFields.add(loginInputId);										//	2	Login
-		idsForFields.add(passwordInputId);									//	3	Password
+		idsForFields.add(StringUtil.isEmpty(loginInputId) ? CoreConstants.MINUS : loginInputId);		//	2	Login
+		idsForFields.add(StringUtil.isEmpty(passwordInputId) ? CoreConstants.MINUS : passwordInputId);	//	3	Password
 		idsForFields.add(iwrb.getLocalizedString("loading", "Loading..."));	//	4	Message
 		idsForFields.add(emailInputId);										//	5 	Email
 		idsForFields.add(streetNameAndNumberInputId);						//	6	Street name and number
@@ -311,7 +336,7 @@ public class SimpleUserAppAddUser extends Block {
 		StringBuffer idAction = new StringBuffer("getUserByPersonalId(event, ").append(helper.getJavaScriptFunctionParameter(idsForFields))
 								.append(SimpleUserApp.COMMA_SEPARATOR).append(properties.isAllFieldsEditable()).append(");");
 		idValueInput.setOnKeyUp(idAction.toString());
-		
+
 		List<UIComponent> inputs = new ArrayList<UIComponent>();
 		inputs.add(idValueInput);					//	0	Personal ID
 		inputs.add(nameValueInput);					//	1	Name
@@ -327,23 +352,25 @@ public class SimpleUserAppAddUser extends Block {
 		inputs.add(changePasswordNextTime);			//	11	Change password next time
 		inputs.add(picture);						//	12	Picture
 		addUserFields(iwc, userFieldsContainer, inputs, userInfo, pictureChangerId);
-		
+
 		//	Login information
 		Layer userLoginLabelContainer = new Layer();
 		userLoginLabelContainer.setStyleClass("addUserlabelContainerStyleClass");
 		userLoginLabelContainer.add(new Text(iwrb.getLocalizedString("login_information", "Login information")));
 		container.add(userLoginLabelContainer);
-		
+
 		//	Login fields
 		Layer userLoginContainer = new Layer();
 		container.add(userLoginContainer);
 		List<GenericInput> loginInputs = new ArrayList<GenericInput>();
-		loginInputs.add(loginValueInput);
-		loginInputs.add(passwordInput);
 		loginInputs.add(manageAccountAvailability);
 		loginInputs.add(changePasswordNextTime);
+		if (loginValueInput != null)
+			loginInputs.add(loginValueInput);
+		if (passwordInput != null)
+			loginInputs.add(passwordInput);
 		addLoginFields(iwc, userLoginContainer, loginInputs);
-		
+
 		//	Selected groups
 		Layer selectGroupsLabelContainer = new Layer();
 		selectGroupsLabelContainer.setStyleClass("addUserlabelContainerStyleClass");
@@ -353,13 +380,13 @@ public class SimpleUserAppAddUser extends Block {
 		Layer selectedGroupsContainer = new Layer();
 		container.add(selectedGroupsContainer);
 		List<String> childGroups = addSelectedGroups(iwc, user, selectedGroupsContainer, availableGroupsOfUserContaianer);
-		
+
 		//	Explanation text
 		Layer explanationContainer = getLabelContainer(null, true);
 		container.add(explanationContainer);
 		explanationContainer.add(new Text("&nbsp;"));
 		explanationContainer.add(new Text(iwrb.getLocalizedString(requiredFieldLocalizationKey, requiredFieldLocalizationValue)));
-		
+
 		//	Buttons
 		Layer buttons = new Layer();
 		container.add(buttons);
@@ -367,8 +394,8 @@ public class SimpleUserAppAddUser extends Block {
 		List<String> ids = new ArrayList<String>();
 		ids.add(parentGroupChooserId);			//	0
 		ids.add(nameValueInputId);				//	1	Name
-		ids.add(loginInputId);					//	2	Login
-		ids.add(passwordInputId);				//	3	Password
+		ids.add(StringUtil.isEmpty(loginInputId) ? CoreConstants.MINUS : loginInputId);		//	2	Login
+		ids.add(StringUtil.isEmpty(passwordInputId) ? CoreConstants.MINUS : passwordInputId);	//	3	Password
 		ids.add(properties.getDefaultGroupId() == null ? "null" : properties.getDefaultGroupId());				//	4
 		ids.add(emailInputId);					//	5	Email
 		ids.add(phoneInputId);					//	6	Phone
@@ -385,17 +412,17 @@ public class SimpleUserAppAddUser extends Block {
 		ids.add(pictureId);						//	17	Picture
 		addButtons(iwc, buttons, ids, childGroups, userInfo.isAccountExists());
 	}
-	
+
 	private String getPictureChangerAction(String id, String boxId) {
 		return new StringBuilder("SimpleUserApplication.togglePictureChanger('").append(id).append("', '").append(boxId).append("');").toString();
 	}
-	
+
 	private String getPictureChanger(IWContext iwc, Layer container, String pictureId, boolean hasImage) {
 		Layer pictureChangerContainer = new Layer();
 		container.add(pictureChangerContainer);
 		pictureChangerContainer.setStyleClass("simpleUserApplicationPictureChangerBox");
 		pictureChangerContainer.setStyleAttribute("display: none");
-		
+
 		Layer explantationContainer = new Layer();
 		explantationContainer.setStyleClass("simpleUserApplicationPictureChangerBoxExplanationText");
 		Text explanation = new Text(new StringBuilder(
@@ -403,7 +430,7 @@ public class SimpleUserAppAddUser extends Block {
 				.append("PNG, JPEG, GIF").toString());
 		explantationContainer.add(explanation);
 		pictureChangerContainer.add(explantationContainer);
-		
+
 		FileUploadViewer pictureUploader = new FileUploadViewer();
 		pictureUploader.setAllowMultipleFiles(false);
 		pictureUploader.setAutoAddFileInput(false);
@@ -412,10 +439,10 @@ public class SimpleUserAppAddUser extends Block {
 		pictureUploader.setActionAfterUpload(new StringBuilder("SimpleUserApplication.toggleUserPicture('").append(pictureId).append("', '")
 			.append(CoreConstants.WEBDAV_SERVLET_URI).append(uploadPath).append("', '").append(pictureChangerContainer.getId()).append("');").toString());
 		pictureChangerContainer.add(pictureUploader);
-		
+
 		Layer buttons = new Layer();
 		pictureChangerContainer.add(buttons);
-		
+
 		if (hasImage) {
 			GenericButton delete = new GenericButton(iwrb.getLocalizedString("delete", "Delete"));
 			delete.setOnClick(new StringBuilder("SimpleUserApplication.toggleUserPicture('").append(pictureId).append("', '")
@@ -424,16 +451,16 @@ public class SimpleUserAppAddUser extends Block {
 			delete.setStyleClass("simpleUserApplicationPictureDeleter");
 			buttons.add(delete);
 		}
-		
+
 		GenericButton close = new GenericButton(iwrb.getLocalizedString("close", "Close"));
 		close.setTitle(iwrb.getLocalizedString("sua.close_picture_changer", "Close"));
 		close.setOnClick(getPictureChangerAction(pictureId, pictureChangerContainer.getId()));
 		close.setStyleClass("simpleUserApplicationPictureChangerBoxCloser");
 		buttons.add(close);
-		
+
 		return pictureChangerContainer.getId();
 	}
-	
+
 	private CheckBox getCheckBox(String toolTip, boolean checked) {
 		CheckBox checkBox = new CheckBox();
 		checkBox.setChecked(checked, true);
@@ -443,12 +470,12 @@ public class SimpleUserAppAddUser extends Block {
 						.toString());
 		return checkBox;
 	}
-	
+
 	private String getEmail(IWContext iwc, User user) {
 		if (user == null) {
 			return null;
 		}
-		
+
 		UserBusiness userBusiness = groupsHelper.getUserBusiness(iwc);
 		if (userBusiness == null) {
 			return null;
@@ -457,19 +484,19 @@ public class SimpleUserAppAddUser extends Block {
 		try {
 			email = userBusiness.getUserMail(user);
 		} catch (RemoteException e) {}
-		
+
 		return email == null ? null : email.getEmailAddress();
 	}
-	
+
 	private List<String> addSelectedGroups(IWContext iwc, User user, Layer container, Layer fieldsContainer) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		
+
 		container.add(fieldsContainer);
-		
+
 		container.add(getDescriptionContainer(iwrb.getLocalizedString("add_user_checkbox_description",
 				"Select the groups the user should have access to by checking the groups checkbox.")));
 		container.add(getSpacer());
-		
+
 		List<String> ids = new ArrayList<String>();
 		String selectedGroupId = String.valueOf(properties.getGroupId());
 		if (selectedGroupId == null || ContentConstants.MINUS_ONE.equals(selectedGroupId)) {
@@ -477,83 +504,87 @@ public class SimpleUserAppAddUser extends Block {
 		}
 		Layer selectedGroupsContainer = helper.getSelectedGroupsByIds(iwc, user, groupsHelper, childGroups, ids, selectedGroupId);
 		fieldsContainer.add(selectedGroupsContainer);
-		
+
 		return ids;
 	}
-	
+
 	private void addLoginFields(IWContext iwc, Layer container, List<GenericInput> inputs) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		
+
 		Layer fieldsContainer = getFieldsContainer();
 		container.add(fieldsContainer);
-		
-		container.add(getDescriptionContainer(iwrb.getLocalizedString("user_login_description",
-				"The user's name is always the user's personal ID and it cannot be changed.")));
+
+		container.add(getDescriptionContainer(iwrb.getLocalizedString("user_login_password_description",
+				"The user's name is always the user's personal ID and it cannot be changed. Password will be auto generated by the system and sent via email to teh user")));
 		container.add(getSpacer());
-		
+
 		//	Login
-		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("login", "Username"), true));
-		fieldsContainer.add(getComponentContainer(inputs.get(0)));
-		fieldsContainer.add(getSpacer());
-		
+		if (inputs.size() > 2) {
+			fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("login", "Username"), true));
+			fieldsContainer.add(getComponentContainer(inputs.get(2)));
+			fieldsContainer.add(getSpacer());
+		}
+
 		//	Password
-		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("password", "Password"), true));
-		fieldsContainer.add(getComponentContainer(inputs.get(1)));
-		
+		if (inputs.size() > 3) {
+			fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("password", "Password"), true));
+			fieldsContainer.add(getComponentContainer(inputs.get(3)));
+		}
+
 		//	Enable/disable account
 		if (properties.isAllowEnableDisableAccount()) {
 			fieldsContainer.add(getSpacer());
 			fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("account_enabled", "Account enabled")));
-			fieldsContainer.add(getComponentContainer(inputs.get(2)));
+			fieldsContainer.add(getComponentContainer(inputs.get(0)));
 		}
-		
+
 		//	Change password next time
 		if (properties.isChangePasswordNextTime()) {
 			fieldsContainer.add(getSpacer());
 			fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("set_to_change_password_next_time", "Change password next time")));
-			fieldsContainer.add(getComponentContainer(inputs.get(3)));
+			fieldsContainer.add(getComponentContainer(inputs.get(1)));
 		}
 	}
-	
+
 	private Layer getFieldsContainer() {
 		Layer fieldsContainer = new Layer();
 		fieldsContainer.setStyleClass("userFieldsContainerStyleClass");
 		return fieldsContainer;
 	}
-	
+
 	private Layer getDescriptionContainer(String description) {
 		Layer descriptionContainer = new Layer();
 		descriptionContainer.setStyleClass("descriptionContainerStyleClass");
 		descriptionContainer.add(new Text(description));
 		return descriptionContainer;
 	}
-	
+
 	private Layer getLabelContainer(String localizedText) {
 		return getLabelContainer(localizedText, false);
 	}
-	
+
 	private Layer getLabelContainer(String localizedText, boolean required) {
 		Layer labelContainer = new Layer();
 		labelContainer.setStyleClass("userFieldLabelContainerStyleClass");
-		
+
 		if (!StringUtil.isEmpty(localizedText)) {
 			labelContainer.add(new Text(localizedText));
 		}
-		
+
 		if (required) {
 			addRequiredFieldMark(labelContainer);
 		}
-		
+
 		return labelContainer;
 	}
-	
+
 	private void addRequiredFieldMark(Layer container) {
 		Span requiredText = new Span(new Text("*"));
 		requiredText.setStyleClass("requiredFieldUserApp");
 		requiredText.setTitle(iwrb.getLocalizedString(requiredFieldLocalizationKey, requiredFieldLocalizationValue));
 		container.add(requiredText);
 	}
-	
+
 	private Layer getComponentContainer(UIComponent component) {
 		Layer componetContainer = new Layer();
 		componetContainer.setStyleClass("userFieldValueContainerStyleClass");
@@ -562,37 +593,37 @@ public class SimpleUserAppAddUser extends Block {
 		}
 		return componetContainer;
 	}
-	
+
 	private void addUserFields(IWContext iwc, Layer container, List<UIComponent> inputs, UserDataBean userInfo, String pictureChangerBoxId) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		
+
 		Layer fieldsContainer = getFieldsContainer();
 		container.add(fieldsContainer);
-		
+
 		container.add(getDescriptionContainer(iwrb.getLocalizedString("enter_personal_id_desc",
 				"Please enter the user's personal ID. The system finds the user's name from the national registry.")));
 		container.add(getSpacer());
-		
+
 		//	Personal ID
 		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("personal_id", "Personal ID")));
 		fieldsContainer.add(getComponentContainer(inputs.get(0)));
 		fieldsContainer.add(getSpacer());
-		
+
 		//	Name
 		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("user.user_name", "Name"), true));
 		fieldsContainer.add(getComponentContainer(inputs.get(1)));
 		fieldsContainer.add(getSpacer());
-		
+
 		//	Phone
 		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("phone", "Phone")));
 		fieldsContainer.add(getComponentContainer(inputs.get(2)));
 		fieldsContainer.add(getSpacer());
-		
+
 		//	Email
 		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("email", "Email"), true));
 		fieldsContainer.add(getComponentContainer(inputs.get(3)));
 		fieldsContainer.add(getSpacer());
-		
+
 		//	Picture
 		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("picture", "Picture")));
 		Layer imageContainer = getComponentContainer(inputs.get(12));
@@ -604,29 +635,29 @@ public class SimpleUserAppAddUser extends Block {
 		imageContainer.add(pictureEditor);
 		fieldsContainer.add(imageContainer);
 		fieldsContainer.add(getSpacer());
-		
+
 		//	Address fields
 		Layer addressFields = getFieldsContainer();
 		container.add(addressFields);
-		
+
 		container.add(getDescriptionContainer(iwrb.getLocalizedString("user_address_info", "User's address information")));
 		container.add(getSpacer());
-		
+
 		//	Street name and number
 		addressFields.add(getLabelContainer(iwrb.getLocalizedString("Address.STREET_NAME_AND_NUMBER", "Street name and number")));
 		addressFields.add(inputs.get(4));
 		addressFields.add(getSpacer());
-		
+
 		//	Postal code
 		addressFields.add(getLabelContainer(iwrb.getLocalizedString("Address.POSTAL_CODE", "Postal code")));
 		addressFields.add(inputs.get(5));
 		addressFields.add(getSpacer());
-		
+
 		//	Postal box
 		addressFields.add(getLabelContainer(iwrb.getLocalizedString("Address.POSTAL_BOX", "Postal box")));
 		addressFields.add(inputs.get(9));
 		addressFields.add(getSpacer());
-		
+
 		//	City
 		Layer city = new Layer();
 		city.setStyleClass("cityLayer");
@@ -634,7 +665,7 @@ public class SimpleUserAppAddUser extends Block {
 		city.add(inputs.get(7));
 		city.add(getSpacer());
 		addressFields.add(city);
-		
+
 		//	Province
 		Layer province = new Layer();
 		province.setStyleClass("provinceLayer");
@@ -642,7 +673,7 @@ public class SimpleUserAppAddUser extends Block {
 		province.add(inputs.get(8));
 		province.add(getSpacer());
 		addressFields.add(province);
-		
+
 		//	Country
 		Layer country = new Layer();
 		country.setStyleClass("countryLayer");
@@ -651,18 +682,18 @@ public class SimpleUserAppAddUser extends Block {
 		country.add(getSpacer());
 		addressFields.add(country);
 	}
-	
+
 	private void addParentGroups(IWContext iwc, Layer container, DropdownMenu parentGroupsChooser) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		
+
 		Layer fieldsContainer = getFieldsContainer();
 		container.add(fieldsContainer);
-		
+
 		container.add(getDescriptionContainer(iwrb.getLocalizedString("add_user_parent_group_description", "Select parent group")));
 		container.add(getSpacer());
-		
+
 		fieldsContainer.add(getLabelContainer(iwrb.getLocalizedString("select_parent_group", "Select parent group"), true));
-		
+
 		Layer parentGroupValueContainer = getComponentContainer(null);
 		fieldsContainer.add(parentGroupValueContainer);
 		String parentGroupId = properties.getParentGroupId() < 0 ? null : String.valueOf(properties.getParentGroupId());
@@ -701,14 +732,14 @@ public class SimpleUserAppAddUser extends Block {
 			}
 		}
 	}
-	
+
 	private void addLabelForNoGroups(IWResourceBundle iwrb, Layer container) {
 		container.add(new Text(iwrb.getLocalizedString("no_groups_available", "There are no groups available")));
 	}
-	
+
 	private void addButtons(IWContext iwc, Layer container, List<String> ids, List<String> childGroups, boolean accountExists) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		
+
 		GenericButton back = new GenericButton(iwrb.getLocalizedString("back", "Back"));
 		StringBuffer backAction = new StringBuffer("goBackToSimpleUserApp('").append(properties.getInstanceId());
 		backAction.append(SimpleUserApp.PARAMS_SEPARATOR).append(properties.getContainerId()).append(SimpleUserApp.PARAMS_SEPARATOR)
@@ -717,7 +748,7 @@ public class SimpleUserAppAddUser extends Block {
 					.append(");");
 		back.setOnClick(backAction.toString());
 		container.add(back);
-		
+
 		GenericButton save = new GenericButton(iwrb.getLocalizedString("save", "Save"));
 		List<String> messages = new ArrayList<String>();
 		messages.add(iwrb.getLocalizedString("saving", "Saving..."));								//	0
@@ -734,7 +765,7 @@ public class SimpleUserAppAddUser extends Block {
 		save.setOnClick(saveAction.toString());
 		container.add(save);
 	}
-	
+
 	@Override
 	public String getBundleIdentifier() {
 		return UserConstants.IW_BUNDLE_IDENTIFIER;

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.IBOSession;
+import com.idega.core.component.bean.RenderedComponent;
 import com.idega.presentation.IWContext;
 import com.idega.user.bean.GroupDataBean;
 import com.idega.user.bean.GroupMemberDataBean;
@@ -132,4 +133,8 @@ public interface GroupService extends IBOSession {
 	public boolean isUserLoggedOn(IWContext iwc, String login, String password);
 	
 	public String getUserStatusLocalizationByKey(String key);
+	
+	public RenderedComponent getRenderedGroup(String uniqueId, String containerId, String groupName);
+	
+	public AdvancedProperty getFelixLogin(IWContext iwc);
 }

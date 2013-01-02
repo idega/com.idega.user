@@ -14,6 +14,10 @@
 		}
 		
 		initGroupsTree(selectedGroups, styleClassName);
+		
+		if (typeof UserGroups != 'undefined') {
+			UserGroups.hideNeedlessGroups();
+		}
 	}
 	
 	function addTreeElements(nodes, rootUl, styleClassName, selectedGroups) {
