@@ -699,7 +699,8 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		} else {
 			try {
 				ICFile picture = ((ICFileHome) IDOLookup.getHome(ICFile.class)).create();
-				picture.setFileValue(getRepositoryService().getInputStream(userInfo.getPictureUri().replace(CoreConstants.WEBDAV_SERVLET_URI, CoreConstants.EMPTY)));
+				picture.setFileValue(getRepositoryService().getInputStreamAsRoot(userInfo.getPictureUri()
+						.replace(CoreConstants.WEBDAV_SERVLET_URI, CoreConstants.EMPTY)));
 				picture.setFileUri(userInfo.getPictureUri());
 				picture.setName(userInfo.getPictureUri().substring(userInfo.getPictureUri().lastIndexOf(CoreConstants.SLASH) + 1));
 				picture.store();
