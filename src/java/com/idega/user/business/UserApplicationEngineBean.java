@@ -648,6 +648,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		LoginInfo loginInfo = null;
 		LoginTable loginTable = null;
 		boolean newLogin = false;
+		boolean newUser = false;
 		if (user == null) {
 			logger.info("Creating new user: " + name + ", personal ID: " + personalId);
 			//	Creating user
@@ -662,20 +663,22 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				logger.warning("Unable to create new user: " + name + ", personal ID: " + personalId);
 				return result;
 			}
-
+			newUser = true;
+		}
+			
+		if (newUser || StringUtil.isEmpty(getUserLogin(personalId))) {
+			login = user.getPersonalID();
 			if (StringUtil.isEmpty(login)) {
-				login = user.getPersonalID();
-				if (StringUtil.isEmpty(login)) {
-					List<String> logins = LoginDBHandler.getPossibleGeneratedUserLogins(user);
-					if (ListUtil.isEmpty(logins))
-						return result;
-					login = logins.get(0);
-				}
-				if (StringUtil.isEmpty(login)) {
-					logger.warning("Failed to generate login for " + name + ", personal ID: " + personalId);
+				List<String> logins = LoginDBHandler.getPossibleGeneratedUserLogins(user);
+				if (ListUtil.isEmpty(logins))
 					return result;
-				}
+				login = logins.get(0);
 			}
+			if (StringUtil.isEmpty(login)) {
+				logger.warning("Failed to generate login for " + name + ", personal ID: " + personalId);
+				return result;
+			}
+			
 			if (StringUtil.isEmpty(password))
 				password = LoginDBHandler.getGeneratedPasswordForUser(user);
 			try {
