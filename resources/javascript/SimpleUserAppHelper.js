@@ -361,7 +361,7 @@ function getUserByPersonalId(event, parameters, allFieldsEditable) {
 	showLoadingMessage(parameters[4]);
 	UserApplicationEngine.getUserByPersonalId(id, {
 		callback: function(info) {
-			getUserByPersonalIdCallback(info, parameters, allFieldsEditable);
+			getUserByPersonalIdCallback(info, parameters, allFieldsEditable, personalId);
 		}
 	});
 }
@@ -373,7 +373,7 @@ function userApplicationRemoveSpaces(value) {
 	return value.replace(/^\s+|\s+$/g, '');
 }
 
-function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
+function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable, personalId) {
 	closeAllLoadingMessages();
 	if (bean == null) {
 		return false;
@@ -406,8 +406,17 @@ function getUserByPersonalIdCallback(bean, parameters, allFieldsEditable) {
 	document.getElementById(parameters[9]).value = '';
 	document.getElementById(parameters[10]).value = '';
 	dwr.util.setValue(document.getElementById(parameters[8]), '-1');
-	if (loginInput != null)
-		loginInput.value = '';
+	if (loginInput != null) {
+		UserApplicationEngine.getUserLogin(personalId, {
+			callback: function(userLogin) {
+				if (userLogin == null) {
+					loginInput.disabled = false;
+				} else {
+					loginInput.value = userLogin;
+				}
+			}
+		});
+	}
 	
 	refreshDeselectedGroups();
 	

@@ -53,6 +53,7 @@ import com.idega.core.location.data.PostalCodeHome;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
@@ -385,8 +386,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			String errorMessage = "Unable to find user by provided personal ID!";
 			errorMessage = iwrb.getLocalizedString("unable_to_find_user_by_personal_id", errorMessage);
 			bean.setErrorMessage(errorMessage);
-		}
-		else {
+		} else {
 			//	ID
 			try {
 				bean.setUserId(Integer.valueOf(user.getId()));
@@ -506,6 +506,31 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			}
 		}
 	}
+	
+	public String getUserLogin(String personalId) {
+		if (StringUtil.isEmpty(personalId)) {
+			logger.warning("Personal ID must be provided");
+			return null;
+		}
+		
+		try {
+			UserBusiness userBusiness = getUserBusiness(IWMainApplication.getDefaultIWApplicationContext());
+			User user = userBusiness.getUser(personalId);
+			if (user == null) {
+				logger.warning("User by personal ID '" + personalId + "' does not exist");
+				return null;
+			}
+			
+			LoginTable loginTable = LoginDBHandler.getUserLogin(user);
+			return loginTable == null ? null : loginTable.getUserLogin();
+		} catch (FinderException e) {
+			logger.warning("User by personal ID '" + personalId + "' does not exist or it does not have login");
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Error occured whil resolving user's login by personal ID: " + personalId, e);
+		}
+		return null;
+	}
+	
 
 	@Override
 	public UserDataBean getUserByPersonalId(String personalId) {
@@ -612,8 +637,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			try {
 				user = userBusiness.getUser(personalId);
 			} catch (RemoteException e) {
-			} catch (FinderException e) {
-			}
+			} catch (FinderException e) {}
 		}
 		if (userInfo.getUserId() != null) {
 			try {
@@ -1028,10 +1052,10 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		}
 	}
 
-	protected UserBusiness getUserBusiness(IWContext iwc) {
+	protected UserBusiness getUserBusiness(IWApplicationContext iwac) {
 		if (userBusiness == null) {
 			try {
-				userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
