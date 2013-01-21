@@ -554,8 +554,10 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 	@Override
 	public AdvancedProperty createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
 			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password) {
-		if (userInfo == null)
+		if (userInfo == null) {
+			logger.warning("User info is not provided!");
 			return null;
+		}
 
 		AdvancedProperty result = new AdvancedProperty(userInfo.getUserId() == null ? null : String.valueOf(userInfo.getUserId()));
 
@@ -563,11 +565,15 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		String personalId = userInfo.getPersonalId();
 		String email = userInfo.getEmail();
 
-		if (StringUtil.isEmpty(name) || primaryGroupId == null || childGroups == null || StringUtil.isEmpty(email))
+		if (StringUtil.isEmpty(name) || primaryGroupId == null || childGroups == null || StringUtil.isEmpty(email)) {
+			logger.warning("Some of the parameters are invalid! Name: " + name + ", primary group ID: " + primaryGroupId + ", child groups: " +
+					childGroups + ", email: " + email);
 			return result;
+		}
 
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
+			logger.warning(IWContext.class.getName() + " is unavailable");
 			return result;
 		}
 
@@ -578,6 +584,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			logger.log(Level.SEVERE, "Error getting IWSlideService", e);
 		}
 		if (slideService == null) {
+			logger.warning(IWSlideService.class.getName() + " is unavailable");
 			return result;
 		}
 
@@ -588,10 +595,12 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 
 		UserBusiness userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
+			logger.warning(UserBusiness.class.getName() + " is unavailable");
 			return result;
 		}
 		GroupBusiness groupBusiness = getGroupBusiness();
 		if (groupBusiness == null) {
+			logger.warning(GroupBusiness.class.getName() + " is unavailable");
 			return result;
 		}
 
@@ -616,6 +625,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		LoginTable loginTable = null;
 		boolean newLogin = false;
 		if (user == null) {
+			logger.info("Creating new user: " + name + ", personal ID: " + personalId);
 			//	Creating user
 			try {
 				user = userBusiness.createUserByPersonalIDIfDoesNotExist(name, personalId, null, null);
@@ -625,6 +635,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				e.printStackTrace();
 			}
 			if (user == null) {
+				logger.warning("Unable to create new user: " + name + ", personal ID: " + personalId);
 				return result;
 			}
 
@@ -636,8 +647,10 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 						return result;
 					login = logins.get(0);
 				}
-				if (StringUtil.isEmpty(login))
+				if (StringUtil.isEmpty(login)) {
+					logger.warning("Failed to generate login for " + name + ", personal ID: " + personalId);
 					return result;
+				}
 			}
 			if (StringUtil.isEmpty(password))
 				password = LoginDBHandler.getGeneratedPasswordForUser(user);
@@ -648,8 +661,11 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-			if (loginTable == null)
+			if (loginTable == null) {
+				logger.warning("Login table does not exist for " + name + ", personal ID: " + personalId);
 				return result;
+			}
+			
 			loginInfo = LoginDBHandler.getLoginInfo(loginTable);
 			loginInfo.setChangeNextTime(Boolean.TRUE);
 			loginInfo.store();
@@ -681,6 +697,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 					userBusiness.updateUserPhone(user, PhoneTypeBMPBean.HOME_PHONE_ID, phoneNumber);
 				} catch (Exception e) {
 					e.printStackTrace();
+					logger.warning("Error setting phone for " + name + ", personal ID: " + personalId);
 					return result;
 				}
 			}
@@ -700,6 +717,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				e.printStackTrace();
 			}
 			if (mail == null) {
+				logger.warning("Error setting email for " + name + ", personal ID: " + personalId);
 				return result;
 			}
 		}
@@ -750,6 +768,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				e.printStackTrace();
 			}
 			if (userAddress == null) {
+				logger.warning("Error setting address for " + name + ", personal ID: " + personalId);
 				return result;
 			}
 		}
@@ -767,12 +786,14 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 					LoginDBHandler.changePassword(Integer.valueOf(user.getId()), password);
 				} catch (Exception e) {
 					e.printStackTrace();
+					logger.log(Level.WARNING, "Failed to set password for " + name + ", personal ID: " + personalId, e);
 					return result;
 				}
 			}
 		}
 		loginInfo = loginInfo == null ? loginTable == null ? null : LoginDBHandler.getLoginInfo(loginTable) : loginInfo;
 		if (loginInfo == null) {
+			logger.warning("Unknown login information for " + name + ", personal ID: " + personalId);
 			return result;
 		}
 		if (userInfo.getChangePasswordNextTime() != null) {
@@ -811,8 +832,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 					.append(iwrb.getLocalizedString("your_user_name", "Your user name")).append(": ").append(login).append(", ")
 					.append(iwrb.getLocalizedString("your_password", "your password")).append(": ").append(password).append(". ")
 					.append(iwrb.getLocalizedString("we_recommend_to_change_password_after_login", "We recommend to change password after login!"));
-			}
-			else {
+			} else {
 				text = new StringBuilder(
 						iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified. Please, login in to review changes"))
 						.append("\n\r").append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink);
