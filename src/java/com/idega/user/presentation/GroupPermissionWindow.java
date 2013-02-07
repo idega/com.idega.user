@@ -50,14 +50,14 @@ import com.idega.util.IWColor;
  * Description: An editor window for the selected groups permissions. <br>The diplayed list of groups contains the groups the selected group has
  * <br>permissions to and then the currentUsers owned groups. <br>The selected groups permission groups will be disabled if the currentUser <br>
  * does not own them. <br>Company: Idega Software <br>Copyright: Idega Software 2003 <br>
- * 
+ *
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
- *  
+ *
  */
 public class GroupPermissionWindow extends StyledIWAdminWindow { //implements StatefullPresentation{
 
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-	private static final String PARAM_SELECTED_GROUP_ID = SelectGroupEvent.PRM_GROUP_ID; 
+	private static final String PARAM_SELECTED_GROUP_ID = SelectGroupEvent.PRM_GROUP_ID;
 	private static final String PARAM_SAVING = "gpw_save";
 	private static final String SESSION_PARAM_PERMISSIONS_BEFORE_SAVE = "gpw_permissions_b_s";
 	private static final String RECURSE_PERMISSIONS_TO_CHILDREN_KEY = "gpw_recurse_ch_of_gr";
@@ -69,7 +69,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	private String[] filterGroupTypes = null;
 
 	private String mainStyleClass = "main";
-	
+
 	List groupIdsToRecurseChangesOn = null;
 
 	private StatefullPresentationImplHandler stateHandler = null;
@@ -89,7 +89,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
     private List permissionTypes;
     private AccessController access;
 
-	
+
 	/**
 	 * Constructor for GroupPermissionWindow.
 	 */
@@ -104,7 +104,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	}
 	/**
 	 * Constructor for GroupPermissionWindow.
-	 * 
+	 *
 	 * @param name
 	 */
 	public GroupPermissionWindow(String name) {
@@ -112,7 +112,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	}
 	/**
 	 * Constructor for GroupPermissionWindow.
-	 * 
+	 *
 	 * @param width
 	 * @param heigth
 	 */
@@ -121,7 +121,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	}
 	/**
 	 * Constructor for GroupPermissionWindow.
-	 * 
+	 *
 	 * @param name
 	 * @param width
 	 * @param height
@@ -130,6 +130,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		super(name, width, height);
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		this.iwrb = this.getResourceBundle(iwc);
 		addTitle(this.iwrb.getLocalizedString("group_permission_window", "Group Permission Window"), TITLE_STYLECLASS);
@@ -147,23 +148,23 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			if (this.saveChanges) {
 				saveChanges(iwc);
 			}
-			
+
 			//add the permission form
 			addPermissionsForm(iwc);
-		
+
 		}
 
 	}
 
 	private void addInheritedPermissionsView(IWContext iwc) {
-		
+
 		Form form = new Form();
 		Text cannotEdit = new Text(this.iwrb.getLocalizedString("group_permission_window.cannot_edit","You cannot edit this groups permissions."),true,false,false);
-		
+
 		Text cannotEdit2 = new Text(this.iwrb.getLocalizedString("group_permission_window.group_has_inherited_permissions","This group has inherited permissions from the group : "));
-		
+
 		Text permissionControlGroupName = new Text(this.selectedGroup.getPermissionControllingGroup().getName(),true,false,false);
-		
+
 		Table mainTable = new Table();
 		int mainTableWidth = (this.width > 60) ? this.width - 60: 10;
 		int mainTableHeight = (this.height > 50) ? this.height - 50 : 10;
@@ -171,7 +172,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		mainTable.setHeight(mainTableHeight);
 		mainTable.setCellpadding(0);
 		mainTable.setCellspacing(0);
-		
+
 		Table table = new Table(1, 3);
 		table.setRowHeight(1,"20");
 		table.setStyleClass(this.mainStyleClass);
@@ -181,20 +182,20 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		table.setVerticalAlignment(1, 2, Table.VERTICAL_ALIGN_TOP);
 		table.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_BOTTOM);
 		table.setAlignment(1, 3, Table.HORIZONTAL_ALIGN_RIGHT);
-		
-		
+
+
 		table.add(cannotEdit,1,1);
 		table.add(cannotEdit2,1,2);
 		table.add(permissionControlGroupName,1,2);
-		
+
 		SubmitButton override = new SubmitButton(this.iwrb.getLocalizedImageButton("group_permission_window.override", "Override inherited permissions"),PARAM_OVERRIDE_INHERITANCE,"true");
 		CloseButton close = new CloseButton(this.iwrb.getLocalizedImageButton("close", "Close"));
-		
+
 		Link owners = new Link(this.iwrb.getLocalizedString("owner.button", "Owners"));
 				owners.setWindowToOpen(GroupOwnersWindow.class);
 				owners.setAsImageButton(true);
 				owners.addParameter(PARAM_SELECTED_GROUP_ID, this.selectedGroupId);
-				
+
     		Table bottomTable = new Table();
     		bottomTable.setCellpadding(0);
     		bottomTable.setCellspacing(5);
@@ -202,31 +203,31 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
     		bottomTable.setHeight(39);
     		bottomTable.setStyleClass(this.mainStyleClass);
     		bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
-    		
+
     		bottomTable.add(override,1,2);
     		bottomTable.add(Text.NON_BREAKING_SPACE,1,2);
     		bottomTable.add(owners,1,2);
     		bottomTable.add(Text.NON_BREAKING_SPACE,1,2);
     		bottomTable.add(close,1,2);
-		
+
 		mainTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
 		mainTable.setVerticalAlignment(1,3,Table.VERTICAL_ALIGN_TOP);
 		mainTable.add(table,1,1);
 		mainTable.add(bottomTable,1,3);
-				
+
 		form.add(mainTable);
 		add(form,iwc);
 	}
-	
+
 	private void addPermissionsForm(IWContext iwc) throws Exception {
 	    //get permission, order, sort alphabetically and use entitybrowser
 		Collection allPermissions = getAllPermissionForSelectedGroupAndCurrentUser(iwc);
 	    List entityList = orderAndGroupPermissionsByContextValue(allPermissions, iwc);
 		this.groupComparator = new GroupComparator(iwc);
 		this.groupComparator.setObjectsAreICPermissions(true);
-		this.groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));		
+		this.groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));
 		this.groupComparator.setSortByParents(true);
-		Collections.sort(entityList, this.groupComparator); 
+		Collections.sort(entityList, this.groupComparator);
 		List browserList = null;
 		List groupTypes = new ArrayList();
 		if (this.filterGroupTypes != null) {
@@ -241,14 +242,14 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		}
 		EntityBrowser browser = getEntityBrowser(this.permissionTypes, browserList);
 		//////////////////////////
-		
+
 		Form form = getGroupPermissionForm(browser);
 		//needed for the entitybrowser...I think...can't remember...need more beer ;)
 		form.add(new HiddenInput(PARAM_SELECTED_GROUP_ID, this.selectedGroupId));
 
 		add(form, iwc);
 	}
-	
+
 	private List getFilteredEntityListByGroupType(List entityList, List groupTypes) {
 	    List filteredEntityList = new ArrayList();
 	    Iterator it = entityList.iterator();
@@ -266,7 +267,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 	private EntityBrowser getEntityBrowser(List permissionTypes, List entityList) {
 		EntityBrowser browser = EntityBrowser.getInstanceUsingExternalForm();
-		
+
 		browser.setEntities("gpw_" + this.selectedGroupId, entityList);
 		//browser.setDefaultNumberOfRows(entityCollection.size() );
 		browser.setDefaultNumberOfRows(18);
@@ -284,19 +285,21 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		Text columnText = new Text();
 		columnText.setBold();
 		browser.setColumnTextProxy(columnText);
-		
+
 		int column = 1;
 		String groupIdColumn = "ICPermission.PERMISSION_CONTEXT_VALUE";
-		
-		
+
+
 		//CONVERTERS
 		// define groupname converter
 		EntityToPresentationObjectConverter contextValueConverter = new EntityToPresentationObjectConverter() {
 
+			@Override
 			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
 				return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
 			}
 
+			@Override
 			public PresentationObject getPresentationObject(Object permissions, EntityPath path, EntityBrowser browser, IWContext iwc) {
 
 				Collection col = (Collection) permissions;
@@ -315,7 +318,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 								cachedGroup = (CachedGroup)getGroupComparator().getApplicationCachedGroups().get(key);
 							}
 							else
-							{	
+							{
 							    group = getGroupBusiness(iwc).getGroupByGroupID(groupID.intValue());
 							    cachedGroup = new CachedGroup(group);
 							    GroupPermissionWindow.this.groupComparator.getApplicationCachedGroups().put(key, cachedGroup);
@@ -325,7 +328,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 						    group = getGroupBusiness(iwc).getGroupByGroupID(groupID.intValue());
 						    cachedGroup = new CachedGroup(group);
 						}
-						
+
 						String name = getGroupComparator().getIndentedGroupName(cachedGroup);
 //						String number = group.getMetaData(ICUserConstants.META_DATA_GROUP_NUMBER);
 						return new Text(name);
@@ -350,11 +353,13 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		EntityToPresentationObjectConverter permissionTypeConverter = new EntityToPresentationObjectConverter() {
 
 			//called when going between subsets
+			@Override
 			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
 				getPermissionMapFromSession(iwc, entityPath.getShortKey(), true); //zero the map
 				return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
 			}
 
+			@Override
 			public PresentationObject getPresentationObject(Object permissions, EntityPath path, EntityBrowser browser, IWContext iwc) {
 
 				Collection col = (Collection) permissions;
@@ -365,20 +370,20 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 				//used for displaying check boxes even though permission is not set
 				//perhaps the permit permission should only be allowed to permit other the same permissions?
 				boolean isOwnerOrHasPermitPermission = false;
-				 
+
 
 				final String columnName = path.getShortKey();
 				final String ownerType = "owner";
 				final String permitType = "permit";
 				final int selectedId = Integer.parseInt(GroupPermissionWindow.this.selectedGroupId);
-				
+
 				//here we add to the permission map in session for saving purposes
 				Map permissionMap = getPermissionMapFromSession(iwc, columnName, false);
 
 				String groupId = null;
 				String permissionType = null;
 
-				
+
 				while (iterator.hasNext() && !isSet) {
 					ICPermission perm = (ICPermission) iterator.next();
 					groupId = perm.getContextValue();
@@ -395,7 +400,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 							isSet = columnName.equals(permissionType);
 						}
 					}
-					
+
 					if (!isOwnerOrHasPermitPermission) { //isOwner is not always set if the group also has other permissions??
 						isOwnerOrHasPermitPermission = ownerType.equals(permissionType) || permitType.equals(permissionType);
 					}
@@ -430,22 +435,23 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			String type = (String) iter.next();
 			browser.setMandatoryColumnWithConverter(column++, type, permissionTypeConverter);
 		}
-		
-		
+
+
 		CheckBoxConverter recurseCheckBoxConverter = new CheckBoxConverter(RECURSE_PERMISSIONS_TO_CHILDREN_KEY) {
 
+			@Override
 			public PresentationObject getPresentationObject(Object permissions, EntityPath path, EntityBrowser browser, IWContext iwc) {
 
-			    String checkBoxKey = path.getShortKey(); 
+			    String checkBoxKey = path.getShortKey();
 			    String groupID = null;
 			    boolean checked = false;
-			    
+
 				Collection col = (Collection) permissions;
 				Iterator iterator = col.iterator();
 
 				while (iterator.hasNext()) {
 					ICPermission perm = (ICPermission) iterator.next();
-						
+
 					groupID = perm.getContextValue();
 
 					//we only care for permission that have a positive and active value
@@ -457,34 +463,34 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 						    continue;
 						}
 				}
-				
-				
+
+
 				CheckBox checkBox = new CheckBox(checkBoxKey, groupID);
 				checkBox.setChecked(checked);
-				
+
 				return checkBox;
 
 			}
 		};
-		
-		
+
+
 		recurseCheckBoxConverter.setShowTitle(true);
 		browser.setMandatoryColumnWithConverter(column++, RECURSE_PERMISSIONS_TO_CHILDREN_KEY, recurseCheckBoxConverter);
-	
-		
+
+
 
 		//converter ends
 
 		return browser;
 	}
 	private void saveChanges(IWContext iwc) {
-		
+
 		try {
-		    
+
 		    //Adds or removes this group as a permission controlling group to its child groups.
 			checkForPermissionControllingGroupChanges(iwc);
-			
-			
+
+
 			//iterate for each permission key, view, edit etc.
 			Iterator iterator = this.permissionTypes.iterator();
 
@@ -501,10 +507,10 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 				//children. If inherit is checked but a single permission like "edit" is unchecked then it is removed from
 				//that group and its children. If you only want to detactivate the inheritance but not change the children
 				//just uncheck inheritance.
-				
+
 				//add permissions and inherit if needed
 				addPermissions(iwc, key, groupIDs, permissions);
-				
+
 				//remove permissions and inherited if needed
 				removePermissions(iwc, key, permissions);
 
@@ -513,15 +519,15 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			//refresh permissions PermissionCacher.updatePermissions()
 			//temporary way of updating the permission map for groups
 			iwc.getApplicationContext().removeApplicationAttribute("ic_permission_map_" + AccessController.CATEGORY_GROUP_ID);
-			
+
 
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	/**
      * @param iwc
      * @param key
@@ -531,16 +537,16 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
      * @throws RemoteException
      */
     private void removePermissions(IWContext iwc, String key, Map permissions) throws Exception, FinderException, RemoteException {
-       
+
         //removing (setting to false) permissions
         Iterator entries = permissions.values().iterator();
-        while (entries.hasNext()) {	
+        while (entries.hasNext()) {
         	ICPermission permission = (ICPermission) entries.next();
-        	
+
         	removePermission(iwc, key, permission.getContextValue());
-        	  
+
         	removeInheritedPermissionFromChildGroups(iwc, key, permission);
-        	
+
         }
     }
     /**
@@ -552,11 +558,11 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
      * @throws Exception
      */
     private void removeInheritedPermissionFromChildGroups(IWContext iwc, String key, ICPermission permission) throws FinderException, RemoteException, Exception {
-       //if inherit is checked then we remove the permissions that we want to change from its children otherwise we set 
+       //if inherit is checked then we remove the permissions that we want to change from its children otherwise we set
         //it to not inherit to children
         if(this.groupIdsToRecurseChangesOn!=null && this.groupIdsToRecurseChangesOn.contains(new Integer(permission.getContextValue()))){
-       
-            //recurse through children and remove same rights	
+
+            //recurse through children and remove same rights
         	Group parent = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(permission.getContextValue()));
         	Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(parent);
         	if(children!=null && !children.isEmpty()){
@@ -567,12 +573,12 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
         			if(iwc.isSuperAdmin() || this.access.isOwner(childGroup,iwc) || this.access.hasPermitPermissionFor(childGroup,iwc)){
         			    removePermission(iwc, key, childGroup.getPrimaryKey().toString());
         			}
-        		
+
         		}
         	}
-        	
+
         }
-      
+
     }
     /**
      * @param iwc
@@ -597,19 +603,19 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
         //adding new permissions
         //
         if (groupIds != null && groupIds.length > 0) {
-            
+
             //Add permissions and recurse to the child groups if needed
         	for (int i = 0; i < groupIds.length; i++) {
         	    addPermission(iwc, key, groupIds[i]);
-        	
+
         		addInheritedPermissionToChildGroups(iwc, key, groupIds[i]);
-        		 
+
         		//remove from the list so we know which ones to remove later
         		permissions.remove(groupIds[i]);
-        	
+
         	}
         }
-        
+
     }
     /**
 	 * Inherits the permission to the children
@@ -624,14 +630,14 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
     private void addInheritedPermissionToChildGroups(IWContext iwc, String key, String groupId) throws FinderException, RemoteException, Exception {
         //get the permission to mark if it should inherit to children or not
         ICPermission perm = AccessControl.getGroupICPermissionForGroupAndPermissionKeyAndContextValue(this.selectedGroup,key,groupId);
-       
+
         //check if we need to recurse (inherit) the permission to the children of the group we are setting the permission to
         if(this.groupIdsToRecurseChangesOn!=null && this.groupIdsToRecurseChangesOn.contains(new Integer(groupId))){
-             
+
             perm.setToInheritToChildren();
             perm.store();
-           
-            
+
+
         	//recurse through children and give same rights
         	Group parent = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(groupId));
         	Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(parent);
@@ -651,8 +657,8 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
             perm.store();
         }
     }
-    
-    
+
+
     /**
 	 * Adds the permission from the selected group to the group it gets permission to
      * @param iwc
@@ -677,7 +683,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		    //its true and we don't have to do it again
 			this.selectedGroup.setIsPermissionControllingGroup(true);
 			this.selectedGroup.store();
-			
+
 			//getChildren and add this group as permission controlling group
 			Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(this.selectedGroup);
 			if(children!=null && !children.isEmpty()){
@@ -696,9 +702,9 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			if(isControlling){
 				this.selectedGroup.setIsPermissionControllingGroup(false);
 				this.selectedGroup.store();
-				
+
 			int id = ((Integer)this.selectedGroup.getPrimaryKey()).intValue();
-			
+
 //				getChildren and remove this group as permission controlling group
 			  Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(this.selectedGroup);
 			  if(children!=null && !children.isEmpty()){
@@ -708,17 +714,17 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 					  //we control the selected group so we do not have to ask permission to remove it
 					  if(id==child.getPermissionControllingGroupID()){
 					  	child.setPermissionControllingGroup(null);
-					  	
+
 						child.store();
 					  }
-					  
+
 				  }
 			  }
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Gets all the ICPermission entries for the selected group and the current user.
 	 * @param iwc
@@ -728,14 +734,14 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		Collection allPermissions = new ArrayList();
 		try {
 			User user = iwc.getCurrentUser();
-			
+
 			//for this group
-			allPermissions.addAll(AccessControl.getAllGroupPermissionsForGroup(this.selectedGroup));
+			allPermissions.addAll(AccessControl.getAllGroupPermissionsForGroupLegacy(this.selectedGroup));
 			//for the user
 			Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
 			//add the permissions to one big list
 			allPermissions.addAll(ownedPermissions);
-			
+
 //			get all permit permissions from parents or their permission controlling groups
 			Collection parentOrPersionControllingGroups = getAllParentOrPermissionControllingGroupsForUser(iwc, user);
 			if(!parentOrPersionControllingGroups.isEmpty()){
@@ -758,13 +764,13 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
      * @throws RemoteException
      */
     private ArrayList getAllParentOrPermissionControllingGroupsForUser(IWContext iwc, User user) throws RemoteException {
-        //permissions from the users direct parent groups or their permission controlling groups 
+        //permissions from the users direct parent groups or their permission controlling groups
         ArrayList parents = new ArrayList();
         Collection directlyRelatedParents = getGroupBusiness(iwc).getParentGroups(user);
-        
+
         Iterator iterating = directlyRelatedParents.iterator();
-        
-        
+
+
         while (iterating.hasNext()) {
         	Group parent = (Group) iterating.next();
         	if(parent.getPermissionControllingGroupID()>0){
@@ -772,20 +778,20 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
         	}
         	else{
         		parents.add(parent);
-        	}	
+        	}
         }
         return parents;
     }
     /**
 	 * Method getAndOrderAllPermissions orders by groupId and returns the permissions as a collection of collections.
-	 * 
+	 *
 	 * @param iwc
 	 * @return Collection
 	 */
 	private List orderAndGroupPermissionsByContextValue(Collection allPermissions, IWContext iwc) {
 
 		Iterator iter = allPermissions.iterator();
-		
+
 
 		//order the permissions by the groupId and create a List for each one.
 		Map map = new HashMap();
@@ -795,18 +801,18 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 		while (iter.hasNext()) {
 			ICPermission perm = (ICPermission) iter.next();
-			
-			
+
+
 			groupId = perm.getContextValue();
-			
+
 			List list = (List) map.get(groupId);
 			if (list == null) {
 				list = new ArrayList();
 			}
-			
+
 			list.add(perm);
-			
-			
+
+
 			map.put(groupId, list);
 
 		}
@@ -819,7 +825,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 	/**
 	 * Gets all the permissiontypes (e.g. read/write) from the collection of ICPermissions from the permissionString column.
-	 * 
+	 *
 	 * @param permissions
 	 * @return List
 	 */
@@ -828,7 +834,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 		if(this.permissionTypes == null ) {
 		    this.permissionTypes = new ArrayList();
-			
+
 	        this.permissionTypes.add(0, "view");
 			this.permissionTypes.add(1, "edit");
 			this.permissionTypes.add(2, "create");
@@ -854,12 +860,12 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 	/**
 	 * Method addGroupPermissionForm.
-	 * 
+	 *
 	 * @param iwc
 	 */
 	private Form getGroupPermissionForm(EntityBrowser browser) throws Exception {
 		Help help = getHelp(HELP_TEXT_KEY);
-		
+
 		SubmitButton save = new SubmitButton(this.iwrb.getLocalizedString("save", "Save"),PARAM_SAVING,"TRUE");
 		save.setSubmitConfirm(this.iwrb.getLocalizedString("grouppermissionwindow.confirm_message", "Change selected permissions?"));
 		StyledButton styledSave = new StyledButton(save);
@@ -874,14 +880,14 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		mainTable.setHeight(480);
 		mainTable.setCellpadding(0);
 		mainTable.setCellspacing(0);
-		
+
 		Table filterTable = new Table(5, 1);
 		filterTable.setCellpadding(0);
 		filterTable.setCellspacing(0);
 		Text filterGroupTypeText = new Text(this.iwrb.getLocalizedString("grouppermissionwindow.filter_group_types","Filter grouptypes"));
 		filterTable.add(filterGroupTypeText, 1, 1);
 		filterTable.add(Text.NON_BREAKING_SPACE, 2, 1);
-		
+
 		GroupTypeSelectionBoxInputHandler filterGroupTypes = new GroupTypeSelectionBoxInputHandler(PARAM_FILTER_GROUP_TYPES);
 		filterGroupTypes.setHeight(8);
 		StyledButton filterButton = new StyledButton(new SubmitButton(this.iwrb.getLocalizedString("grouppermissionwindow.filter_button","Filter")));
@@ -902,20 +908,20 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		table.setAlignment(2, 3, Table.HORIZONTAL_ALIGN_RIGHT);
 		table.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 		table.mergeCells(1, 2, 2, 2);
-		
+
 		table.add(new Text(this.iwrb.getLocalizedString("grouppermissionwindow.setting_permission_for_group","Setting permissions for ")+this.selectedGroup.getName(),true,false,false),1,1);
-		
+
 		Text inherit = new Text(this.iwrb.getLocalizedString("grouppermissionwindow.apply_recursively_to_children","Apply on children"));
 		table.add(inherit, 2, 1);
 		table.add(Text.NON_BREAKING_SPACE, 2, 1);
 		CheckBox setSamePermissionsOnChildrenCheckBox = new CheckBox(PARAM_IS_PERMISSION_CONTROLLER,"inherit_to_children");
 		setSamePermissionsOnChildrenCheckBox.setChecked(this.selectedGroup.isPermissionControllingGroup());
 		table.add(setSamePermissionsOnChildrenCheckBox, 2, 1);
-		
-		
+
+
 		table.add(browser, 1, 2);
 		table.add(filterTable, 2, 3);
-		
+
 		Table bottomButtonTable = new Table();
 		bottomButtonTable.setCellpadding(0);
 		bottomButtonTable.setCellspacing(0);
@@ -924,7 +930,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		bottomButtonTable.add(styledSave, 3, 1);
 		bottomButtonTable.add(Text.NON_BREAKING_SPACE, 4, 1);
 		bottomButtonTable.add(styledClose, 5, 1);
-		
+
     Table bottomTable = new Table();
 		bottomTable.setCellpadding(0);
 		bottomTable.setCellspacing(5);
@@ -935,21 +941,21 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		bottomTable.add(help,1,1);
 		bottomTable.setAlignment(2,1,Table.HORIZONTAL_ALIGN_RIGHT);
 		bottomTable.add(bottomButtonTable,2,1);
-		
+
 		 mainTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
 	   mainTable.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_TOP);
 	   mainTable.add(table,1,1);
 	   mainTable.add(bottomTable,1,3);
 	   Form form = new Form();
 	   form.add(mainTable);
-		
+
 //		form.maintainParameter(PARAM_PERMISSIONS_SET_TO_CHILDREN);
 
 		return form;
 	}
 
 	private void parseAction(IWContext iwc) throws RemoteException {
-		
+
 	   //get the id and the group with it
 	    this.selectedGroupId = iwc.getParameter(GroupPermissionWindow.PARAM_SELECTED_GROUP_ID);
 
@@ -959,7 +965,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		else {
 			iwc.setSessionAttribute(GroupPermissionWindow.PARAM_SELECTED_GROUP_ID, this.selectedGroupId);
 		}
-		
+
 		try {
 			this.selectedGroup = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(this.selectedGroupId));
 		}
@@ -970,8 +976,8 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 			e.printStackTrace();
 		}
 		////////////////////////////////////
-		
-		
+
+
 
 		//did the user ask to inherit permissions to any of the permissions
 		if (iwc.isParameterSet(RECURSE_PERMISSIONS_TO_CHILDREN_KEY))	{
@@ -982,26 +988,27 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 		//does this group have inherited permissions? then the user cannot change them unless they detach it
 		this.hasInheritedPermissions = this.selectedGroup.getPermissionControllingGroupID() > 0;
-	
+
 		//are we detaching from the inheritance?
 		if(iwc.isParameterSet(PARAM_OVERRIDE_INHERITANCE)){
 			this.selectedGroup.setPermissionControllingGroup(null);
 			this.selectedGroup.store();
 			this.hasInheritedPermissions = false;
 		}
-		////////////////////////////////////	
-		
+		////////////////////////////////////
+
 		//Are we saving the changes
 		this.saveChanges = iwc.isParameterSet(PARAM_SAVING);
-		
-		
+
+
 	    //get all types or keys. view, edit etc.
 	    this.permissionTypes = getAllPermissionTypes();
 	    this.access = iwc.getAccessController();
-		
+
 		this.filterGroupTypes = iwc.getParameterValues(PARAM_FILTER_GROUP_TYPES);
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
@@ -1016,6 +1023,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	/**
 	 * @see com.idega.presentation.PresentationObject#initializeInMain(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void initializeInMain(IWContext iwc) throws Exception {
 
 		//	this.addActionListener((IWActionListener)this.getPresentationState(iwc));
@@ -1068,6 +1076,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	/**
 	 * @see com.idega.presentation.PresentationObject#getName()
 	 */
+	@Override
 	public String getName() {
 		return "Group permissions";
 	}
