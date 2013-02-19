@@ -19,7 +19,7 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.faces.component.UIComponent;
 
-import org.jdom.Document;
+import org.jdom2.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.builder.bean.AdvancedProperty;

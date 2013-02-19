@@ -2,7 +2,7 @@ package com.idega.user.business.search;
 
 import java.util.Collection;
 
-import org.jdom.Document;
+import org.jdom2.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.builder.business.BuilderLogic;
@@ -20,10 +20,11 @@ import com.idega.util.expression.ELUtil;
 public class UserSearchEngineBean extends IBOServiceBean implements UserSearchEngine {
 
 	private static final long serialVersionUID = -4520130366076513478L;
-	
+
 	@Autowired
 	private UserHelper helper;
-	
+
+	@Override
 	public Collection<User> getSearchResults(String searchKey) {
 		try {
 			return getHelper().getUserEntities(searchKey);
@@ -32,7 +33,8 @@ public class UserSearchEngineBean extends IBOServiceBean implements UserSearchEn
 		}
 		return null;
 	}
-	
+
+	@Override
 	public Document getUserBrowser(String searchKey) {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
@@ -56,9 +58,9 @@ public class UserSearchEngineBean extends IBOServiceBean implements UserSearchEn
 		}
 		container.add(new Text(message));
 		container.add(new Break());
-		
+
 		container.add(getHelper().getUserBrowser(entities, searchKey, iwc, 8));
-		
+
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, container, false);
 	}
 

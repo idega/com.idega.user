@@ -9,7 +9,7 @@ import java.util.Locale;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
-import org.jdom.Document;
+import org.jdom2.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -154,7 +154,6 @@ public class GroupsFilterEngine implements Singleton {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public Document getChildGroups(Integer groupId, String selectedGroupParameterName, String onClickAction, boolean useRadioBox) {
 		if (groupId == null) {
 			return null;
@@ -215,7 +214,6 @@ public class GroupsFilterEngine implements Singleton {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void addGroups(IWContext iwc, Lists container, Collection<Group> groups, List<String> selectedGroups, List<GroupFilterResult> filteredGroups,
 							Locale locale, String mainContainerId, String selectedGroupParameterName, int level, int levelsToOpen, boolean displayAllLevels,
 							String onClickAction, boolean useRadioBox) {

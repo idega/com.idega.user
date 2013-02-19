@@ -2,7 +2,7 @@ package com.idega.user.business;
 
 import java.util.List;
 
-import org.jdom.Document;
+import org.jdom2.Document;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.SpringBeanName;
