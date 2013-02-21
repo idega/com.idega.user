@@ -3,6 +3,7 @@ package com.idega.user.business;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -280,14 +281,21 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		}
 
 		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
+		if (iwc == null)
 			return null;
-		}
 
 		BuilderLogic builder = BuilderLogic.getInstance();
 
 		SimpleUserAppAddUser addUser = new SimpleUserAppAddUser(bean);
 		addUser.setParentGroups(parentGroups);
+		if (ListUtil.isEmpty(childGroups) && bean.getParentGroupId() > 0) {
+			try {
+				Group parentGroup = getGroupBusiness().getGroupByGroupID(bean.getParentGroupId());
+				childGroups = CoreUtil.getIdsAsIntegers(parentGroup.getChildGroups());
+				if (ListUtil.isEmpty(childGroups))
+					childGroups = Arrays.asList(Integer.valueOf(parentGroup.getPrimaryKey().toString()));
+			} catch (Exception e) {}
+		}
 		addUser.setChildGroups(childGroups);
 		addUser.setUserId(userId);
 
@@ -820,14 +828,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			return false;
 		}
 
-		String from = settings.getProperty(CoreConstants.PROP_SYSTEM_MAIL_FROM_ADDRESS);
-		String host = settings.getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
-		if (StringUtil.isEmpty(from) || StringUtil.isEmpty(host)) {
-			logger.log(Level.WARNING, "Cann't send email from: " + from + " via: " + host + ". Set properties for application!");
-			return false;
-		}
+		String from = settings.getProperty(CoreConstants.PROP_SYSTEM_MAIL_FROM_ADDRESS, "staff@idega.com");
 		try {
-			SendMail.send(from, emailTo, emailCc, emailBcc, host, subject, text);
+			SendMail.send(from, emailTo, emailCc, emailBcc, null, subject, text);
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Error sending mail!", e);
 			return false;

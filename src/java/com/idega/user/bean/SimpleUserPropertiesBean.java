@@ -7,7 +7,7 @@ public class SimpleUserPropertiesBean {
 	private int orderBy = -1;
 	private int from = 0;
 	private int count = 20;
-	
+
 	private String instanceId = null;
 	private String containerId = null;
 	private String parentGroupChooserId = null;
@@ -17,7 +17,7 @@ public class SimpleUserPropertiesBean {
 	private String roleTypes = null;
 	private String message = null;
 	private String groupTypesForParentGroups = null;
-	
+
 	private boolean getParentGroupsFromTopNodes = true;
 	private boolean useChildrenOfTopNodesAsParentGroups = false;
 	private boolean allFieldsEditable = false;
@@ -28,16 +28,17 @@ public class SimpleUserPropertiesBean {
 	private boolean changePasswordNextTime = false;
 	private boolean allowEnableDisableAccount = false;
 	private boolean addChildGroupCreateButton = true;
-	private boolean addChildGroupEditButton = true;
-	
+	private boolean addChildGroupEditButton = true,
+					showSubGroup = true;
+
 	public SimpleUserPropertiesBean() {}
-	
+
 	public SimpleUserPropertiesBean(String instanceId, String containerId, String groupTypesForParentGroups, String groupTypes,String roleTypes,
 			boolean getParentGroupsFromTopNodes, boolean useChildrenOfTopNodesAsParentGroups, boolean allFieldsEditable, boolean juridicalPerson,
 			boolean addGroupCreateButton, boolean addGroupEditButton, boolean sendMailToUser, boolean changePasswordNextTime, boolean allowEnableDisableAccount,
 			boolean addChildGroupCreateButton, boolean addChildGroupEditButton) {
 		this();
-		
+
 		this.instanceId = instanceId;
 		this.containerId = containerId;
 		this.groupTypesForParentGroups = groupTypesForParentGroups;
@@ -55,7 +56,7 @@ public class SimpleUserPropertiesBean {
 		this.addChildGroupCreateButton = addChildGroupCreateButton;
 		this.addChildGroupEditButton = addChildGroupEditButton;
 	}
-	
+
 	public int getGroupId() {
 		return groupId;
 	}
@@ -251,5 +252,13 @@ public class SimpleUserPropertiesBean {
 	public void setAddChildGroupEditButton(boolean addChildGroupEditButton) {
 		this.addChildGroupEditButton = addChildGroupEditButton;
 	}
-	
+
+	public boolean isShowSubGroup() {
+		return showSubGroup;
+	}
+
+	public void setShowSubGroup(boolean showSubGroup) {
+		this.showSubGroup = showSubGroup;
+	}
+
 }

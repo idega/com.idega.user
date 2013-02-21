@@ -372,14 +372,17 @@ public class SimpleUserAppAddUser extends Block {
 		addLoginFields(iwc, userLoginContainer, loginInputs);
 
 		//	Selected groups
-		Layer selectGroupsLabelContainer = new Layer();
-		selectGroupsLabelContainer.setStyleClass("addUserlabelContainerStyleClass");
-		container.add(selectGroupsLabelContainer);
-		selectGroupsLabelContainer.add(new Text(iwrb.getLocalizedString("select_sub_group", "Select sub group")));
-		addRequiredFieldMark(selectGroupsLabelContainer);
-		Layer selectedGroupsContainer = new Layer();
-		container.add(selectedGroupsContainer);
-		List<String> childGroups = addSelectedGroups(iwc, user, selectedGroupsContainer, availableGroupsOfUserContaianer);
+		List<String> childGroups = null;
+		if (properties.isShowSubGroup()) {
+			Layer selectGroupsLabelContainer = new Layer();
+			selectGroupsLabelContainer.setStyleClass("addUserlabelContainerStyleClass");
+			container.add(selectGroupsLabelContainer);
+			selectGroupsLabelContainer.add(new Text(iwrb.getLocalizedString("select_sub_group", "Select sub group")));
+			addRequiredFieldMark(selectGroupsLabelContainer);
+			Layer selectedGroupsContainer = new Layer();
+			container.add(selectedGroupsContainer);
+			addSelectedGroups(iwc, user, selectedGroupsContainer, availableGroupsOfUserContaianer);
+		}
 
 		//	Explanation text
 		Layer explanationContainer = getLabelContainer(null, true);
