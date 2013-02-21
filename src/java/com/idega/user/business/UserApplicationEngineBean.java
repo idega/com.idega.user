@@ -1326,30 +1326,12 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		}
 
 		boolean result = setRoleByPermissionForGroup(iwc, accessController, groupId, value, roleKey, permissionKey);
-
-		//removed by Eiki, roles should not be written to sub groups as well by default, an be added again if the interface has the option to do a recursive add and the user is notified.
-		/*if (result) {
-			try {
-				Collection<Group> groups = groupBusiness.getChildGroupsRecursive(group);
-				if (groups != null && !groups.isEmpty()) {
-					for (Group childGroup: groups) {
-						setRoleByPermissionForGroup(iwc, accessController, Integer.valueOf(childGroup.getId()), value, roleKey, permissionKey);
-					}
-				}
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-
-			return true;
-		}*/
-
 		return result;
 	}
 
 	private boolean setRoleByPermissionForGroup(IWContext iwc, AccessController accessController, int groupId, boolean value, String roleKey, String permissionKey) {
-		if (value) {
+		if (value)
 			return accessController.addRoleToGroup(roleKey, permissionKey, groupId, iwc);
-		}
 
 		return accessController.removeRoleFromGroup(roleKey, permissionKey, groupId, iwc);
 	}
