@@ -53,6 +53,7 @@ import com.idega.core.location.data.PostalCodeHome;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
@@ -392,8 +393,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			String errorMessage = "Unable to find user by provided personal ID!";
 			errorMessage = iwrb.getLocalizedString("unable_to_find_user_by_personal_id", errorMessage);
 			bean.setErrorMessage(errorMessage);
-		}
-		else {
+		} else {
 			//	ID
 			try {
 				bean.setUserId(Integer.valueOf(user.getId()));
@@ -515,6 +515,32 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	@Override
+	public String getUserLogin(String personalId) {
+		if (StringUtil.isEmpty(personalId)) {
+			logger.warning("Personal ID must be provided");
+			return null;
+		}
+
+		try {
+			UserBusiness userBusiness = getUserBusiness(IWMainApplication.getDefaultIWApplicationContext());
+			User user = userBusiness.getUser(personalId);
+			if (user == null) {
+				logger.warning("User by personal ID '" + personalId + "' does not exist");
+				return null;
+			}
+
+			LoginTable loginTable = LoginDBHandler.getUserLogin(user);
+			return loginTable == null ? null : loginTable.getUserLogin();
+		} catch (FinderException e) {
+			logger.warning("User by personal ID '" + personalId + "' does not exist or it does not have login");
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Error occured whil resolving user's login by personal ID: " + personalId, e);
+		}
+		return null;
+	}
+
+
+	@Override
 	public UserDataBean getUserByPersonalId(String personalId) {
 		if (StringUtil.isEmpty(personalId))
 			return null;
@@ -561,8 +587,10 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	@Override
 	public AdvancedProperty createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
 			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password) {
-		if (userInfo == null)
+		if (userInfo == null) {
+			logger.warning("User info is not provided!");
 			return null;
+		}
 
 		AdvancedProperty result = new AdvancedProperty(userInfo.getUserId() == null ? null : String.valueOf(userInfo.getUserId()));
 
@@ -570,11 +598,15 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		String personalId = userInfo.getPersonalId();
 		String email = userInfo.getEmail();
 
-		if (StringUtil.isEmpty(name) || primaryGroupId == null || childGroups == null || StringUtil.isEmpty(email))
+		if (StringUtil.isEmpty(name) || primaryGroupId == null || childGroups == null || StringUtil.isEmpty(email)) {
+			logger.warning("Some of the parameters are invalid! Name: " + name + ", primary group ID: " + primaryGroupId + ", child groups: " +
+					childGroups + ", email: " + email);
 			return result;
+		}
 
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
+			logger.warning(IWContext.class.getName() + " is unavailable");
 			return result;
 		}
 
@@ -585,10 +617,12 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 		UserBusiness userBusiness = getUserBusiness(iwc);
 		if (userBusiness == null) {
+			logger.warning(UserBusiness.class.getName() + " is unavailable");
 			return result;
 		}
 		GroupBusiness groupBusiness = getGroupBusiness();
 		if (groupBusiness == null) {
+			logger.warning(GroupBusiness.class.getName() + " is unavailable");
 			return result;
 		}
 
@@ -600,8 +634,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			try {
 				user = userBusiness.getUser(personalId);
 			} catch (RemoteException e) {
-			} catch (FinderException e) {
-			}
+			} catch (FinderException e) {}
 		}
 		if (userInfo.getUserId() != null) {
 			try {
@@ -612,7 +645,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		LoginInfo loginInfo = null;
 		LoginTable loginTable = null;
 		boolean newLogin = false;
+		boolean newUser = false;
 		if (user == null) {
+			logger.info("Creating new user: " + name + ", personal ID: " + personalId);
 			//	Creating user
 			try {
 				user = userBusiness.createUserByPersonalIDIfDoesNotExist(name, personalId, null, null);
@@ -622,20 +657,25 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				e.printStackTrace();
 			}
 			if (user == null) {
+				logger.warning("Unable to create new user: " + name + ", personal ID: " + personalId);
+				return result;
+			}
+			newUser = true;
+		}
+
+		if (newUser || StringUtil.isEmpty(getUserLogin(personalId))) {
+			login = user.getPersonalID();
+			if (StringUtil.isEmpty(login)) {
+				List<String> logins = LoginDBHandler.getPossibleGeneratedUserLogins(user);
+				if (ListUtil.isEmpty(logins))
+					return result;
+				login = logins.get(0);
+			}
+			if (StringUtil.isEmpty(login)) {
+				logger.warning("Failed to generate login for " + name + ", personal ID: " + personalId);
 				return result;
 			}
 
-			if (StringUtil.isEmpty(login)) {
-				login = user.getPersonalID();
-				if (StringUtil.isEmpty(login)) {
-					List<String> logins = LoginDBHandler.getPossibleGeneratedUserLogins(user);
-					if (ListUtil.isEmpty(logins))
-						return result;
-					login = logins.get(0);
-				}
-				if (StringUtil.isEmpty(login))
-					return result;
-			}
 			if (StringUtil.isEmpty(password))
 				password = LoginDBHandler.getGeneratedPasswordForUser(user);
 			try {
@@ -645,8 +685,11 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-			if (loginTable == null)
+			if (loginTable == null) {
+				logger.warning("Login table does not exist for " + name + ", personal ID: " + personalId);
 				return result;
+			}
+
 			loginInfo = LoginDBHandler.getLoginInfo(loginTable);
 			loginInfo.setChangeNextTime(Boolean.TRUE);
 			loginInfo.store();
@@ -678,6 +721,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 					userBusiness.updateUserPhone(user, PhoneTypeBMPBean.HOME_PHONE_ID, phoneNumber);
 				} catch (Exception e) {
 					e.printStackTrace();
+					logger.warning("Error setting phone for " + name + ", personal ID: " + personalId);
 					return result;
 				}
 			}
@@ -697,6 +741,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				e.printStackTrace();
 			}
 			if (mail == null) {
+				logger.warning("Error setting email for " + name + ", personal ID: " + personalId);
 				return result;
 			}
 		}
@@ -748,6 +793,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				e.printStackTrace();
 			}
 			if (userAddress == null) {
+				logger.warning("Error setting address for " + name + ", personal ID: " + personalId);
 				return result;
 			}
 		}
@@ -765,12 +811,14 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 					LoginDBHandler.changePassword(Integer.valueOf(user.getId()), password);
 				} catch (Exception e) {
 					e.printStackTrace();
+					logger.log(Level.WARNING, "Failed to set password for " + name + ", personal ID: " + personalId, e);
 					return result;
 				}
 			}
 		}
 		loginInfo = loginInfo == null ? loginTable == null ? null : LoginDBHandler.getLoginInfo(loginTable) : loginInfo;
 		if (loginInfo == null) {
+			logger.warning("Unknown login information for " + name + ", personal ID: " + personalId);
 			return result;
 		}
 		if (userInfo.getChangePasswordNextTime() != null) {
@@ -809,8 +857,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 					.append(iwrb.getLocalizedString("your_user_name", "Your user name")).append(": ").append(login).append(", ")
 					.append(iwrb.getLocalizedString("your_password", "your password")).append(": ").append(password).append(". ")
 					.append(iwrb.getLocalizedString("we_recommend_to_change_password_after_login", "We recommend to change password after login!"));
-			}
-			else {
+			} else {
 				text = new StringBuilder(
 						iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified. Please, login in to review changes"))
 						.append("\n\r").append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink);
@@ -1001,10 +1048,10 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		}
 	}
 
-	protected UserBusiness getUserBusiness(IWContext iwc) {
+	protected UserBusiness getUserBusiness(IWApplicationContext iwac) {
 		if (userBusiness == null) {
 			try {
-				userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
 			}
 			catch (Exception e) {
 				e.printStackTrace();

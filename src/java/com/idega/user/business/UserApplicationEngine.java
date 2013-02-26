@@ -77,4 +77,6 @@ public interface UserApplicationEngine {
 	public void fillUserInfo(UserDataBean info, Phone phone, Email email, Address address);
 
 	public AdvancedProperty isValidUserName(String userName);
+	
+	public String getUserLogin(String personalId);
 }
