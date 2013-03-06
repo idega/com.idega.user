@@ -16,7 +16,7 @@ import com.idega.presentation.ui.IFrame;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega
- * @author <a href="mailto:gummi@idega.is">Guğmundur Ágúst Sæmundsson</a>
+ * @author <a href="mailto:gummi@idega.is">GuÃ°mundur ÃgÃºst SÃ¦mundsson</a>
  * @version 1.0
  */
 

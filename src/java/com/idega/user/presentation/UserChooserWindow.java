@@ -56,7 +56,7 @@ public class UserChooserWindow extends StyledAbstractChooserWindow {
 		this.getLocation().setApplicationClass(this.getClass());
 		this.getLocation().isInPopUpWindow(true);
 	}
-//œr private ’ protected
+//Âœr private Â’ protected
 	protected void init(IWContext iwc) {
 		this.form = new Form();
 		this.searchString = iwc.getParameter(this.PARAMETER_SEARCH);
