@@ -24,8 +24,8 @@ import com.idega.user.data.Group;
 /**
  * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
  * 
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gumundur ¡g˙st
- *         SÊmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu√∞mundur √Åg√∫st
+ *         S√¶mundsson</a>
  * @version 1.0
  */
 
@@ -60,7 +60,7 @@ public class CreateUserGroup extends Window {
 	public CreateUserGroup() {
 		super();
 		this.groupType = new Vector();
-		this.setName("idegaWeb Builder - Stofna HÛp");
+		this.setName("idegaWeb Builder - Stofna H√≥p");
 		this.setHeight(340);
 		this.setWidth(390);
 		this.setBackgroundColor("#d4d0c8");

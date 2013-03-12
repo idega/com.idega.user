@@ -7,6 +7,7 @@ import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.text.Link;
 import com.idega.user.event.PartitionSelectEvent;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWColor;
 
 /**
@@ -14,13 +15,13 @@ import com.idega.util.IWColor;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Gu�mundur �g�st S�mundsson</a>
+ * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
  */
 
 public class SubsetSelector extends PresentationObjectContainer implements IWBrowserView
 {
-	private static final String spacer = " ";
+	private static final String spacer = CoreConstants.SPACE;
 	private int _maxShowedPartitions = 6;
 	private int _maxPartitions;
 	private int _firstPartition = 0;
