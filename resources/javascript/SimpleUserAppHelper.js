@@ -536,9 +536,15 @@ function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages
 	if (childGroups == null) {
 		if (groupForUsersWithoutLoginId != null && groupForUsersWithoutLoginId != 'null') {
 			selectedGroups.push(groupForUsersWithoutLoginId);
+		} else {
+			jQuery('input.selectSubGroupInSimpleUserAppCheckBoxStyle').each(function() {
+				var checkbox = this;
+				if (checkbox.checked) {
+					selectedGroups.push(this.value);
+				}
+			});
 		}
-	}
-	else {
+	} else {
 		var checkboxValue = null;
 		for (var i = 0; i < childGroups.length; i++) {
 			checkboxValue = getCheckboxValue(childGroups[i], true);
@@ -775,9 +781,15 @@ function deselectUserFromGroup(groupId) {
 			existsId = true;
 		}
 	}
-	if (existsId) {
+	if (existsId)
+		return;
+	
+	var checkbox = jQuery('input.selectSubGroupInSimpleUserAppCheckBoxStyle[value=\'' + groupId + '\']');
+	if (checkbox != null && (checkbox.attr('checked') == 'checked' || checkbox.attr('checked') == 'true')) {
+		removeElementFromArray(DESELECTED_GROUPS, groupId);
 		return;
 	}
+	
 	DESELECTED_GROUPS.push(groupId);
 }
 
