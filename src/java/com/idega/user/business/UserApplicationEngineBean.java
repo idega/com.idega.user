@@ -56,7 +56,6 @@ import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -866,28 +865,17 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			text.append("\n\r").append(iwrb.getLocalizedString("with_regards", "With regards,")).append("\r")
 				.append(iwc.getIWMainApplication().getSettings().getProperty("with_regards_text", serverLink.concat(" team")));
 
-			sendEmail(userInfo.getEmail(), null, null, subject, text.toString());
+			sendEmail(userInfo.getEmail(), subject, text.toString());
 		}
 
 		result.setValue(iwrb.getLocalizedString("success_saving_user", "Your changes were successfully saved."));
 		return result;
 	}
 
-	private boolean sendEmail(String emailTo, String emailCc, String emailBcc, String subject, String text) {
-		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
-		if (settings == null) {
-			return false;
-		}
-
-		String from = settings.getProperty(CoreConstants.PROP_SYSTEM_MAIL_FROM_ADDRESS, "staff@idega.com");
-		try {
-			SendMail.send(from, emailTo, emailCc, emailBcc, null, subject, text);
-		} catch (Exception e) {
-			logger.log(Level.WARNING, "Error sending mail!", e);
-			return false;
-		}
-
-		return true;
+	private boolean sendEmail(String emailTo, String subject, String text) {
+		String from = IWMainApplication.getDefaultIWMainApplication().getSettings()
+				.getProperty(CoreConstants.PROP_SYSTEM_MAIL_FROM_ADDRESS, "staff@idega.com");
+		return SendMail.sendSimpleMail(from, emailTo, subject, text);
 	}
 
 	private PostalCode createPostalCode(String postalCodeValue) {
