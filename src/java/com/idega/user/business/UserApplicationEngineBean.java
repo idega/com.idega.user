@@ -851,7 +851,8 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			String serverLink = StringHandler.replace(iwc.getServerURL(), portNumber, CoreConstants.EMPTY);
 			String subject = newLogin ? iwrb.getLocalizedString("account_was_created", "Account was created") :
 										iwrb.getLocalizedString("account_information_was_changed", "Account was modified");
-			StringBuilder text = new StringBuilder(iwrb.getLocalizedString("dear", "Dear").concat(user.getName()).concat(",\n\r"));
+			StringBuilder text = new StringBuilder(iwrb.getLocalizedString("dear", "Dear").concat(CoreConstants.SPACE).concat(user.getName())
+					.concat(",\n\r"));
 			if (newLogin) {
 				text = text.append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink).append("\n\r")
 					.append(iwrb.getLocalizedString("your_user_name", "Your user name")).append(": ").append(login).append(", ")
