@@ -506,31 +506,41 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			}
 		}
 	}
-	
+
+	@Override
 	public String getUserLogin(String personalId) {
-		if (StringUtil.isEmpty(personalId)) {
-			logger.warning("Personal ID must be provided");
-			return null;
-		}
-		
+		return getUserLogin(personalId, null);
+	}
+
+	private String getUserLogin(String personalId, Integer id) {
 		try {
 			UserBusiness userBusiness = getUserBusiness(IWMainApplication.getDefaultIWApplicationContext());
-			User user = userBusiness.getUser(personalId);
+			User user = null;
+			if (!StringUtil.isEmpty(personalId)) {
+				try {
+					user = userBusiness.getUser(personalId);
+				} catch (Exception e) {}
+			}
+
+			if (user == null && id != null) {
+				try {
+					user = userBusiness.getUser(id);
+				} catch (Exception e) {}
+			}
+
 			if (user == null) {
-				logger.warning("User by personal ID '" + personalId + "' does not exist");
+				logger.warning("User by personal ID '" + personalId + "' nor ID '" + id + "' does not exist");
 				return null;
 			}
-			
+
 			LoginTable loginTable = LoginDBHandler.getUserLogin(user);
 			return loginTable == null ? null : loginTable.getUserLogin();
-		} catch (FinderException e) {
-			logger.warning("User by personal ID '" + personalId + "' does not exist or it does not have login");
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Error occured whil resolving user's login by personal ID: " + personalId, e);
 		}
 		return null;
 	}
-	
+
 
 	@Override
 	public UserDataBean getUserByPersonalId(String personalId) {
@@ -665,8 +675,9 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			}
 			newUser = true;
 		}
-			
-		if (newUser || StringUtil.isEmpty(getUserLogin(personalId))) {
+
+		Integer userId = user == null ? null : Integer.valueOf(user.getId());
+		if (newUser && StringUtil.isEmpty(getUserLogin(personalId, userId))) {
 			login = user.getPersonalID();
 			if (StringUtil.isEmpty(login)) {
 				List<String> logins = LoginDBHandler.getPossibleGeneratedUserLogins(user);
@@ -678,7 +689,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				logger.warning("Failed to generate login for " + name + ", personal ID: " + personalId);
 				return result;
 			}
-			
+
 			if (StringUtil.isEmpty(password))
 				password = LoginDBHandler.getGeneratedPasswordForUser(user);
 			try {
@@ -692,7 +703,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				logger.warning("Login table does not exist for " + name + ", personal ID: " + personalId);
 				return result;
 			}
-			
+
 			loginInfo = LoginDBHandler.getLoginInfo(loginTable);
 			loginInfo.setChangeNextTime(Boolean.TRUE);
 			loginInfo.store();
