@@ -515,29 +515,37 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 	@Override
 	public String getUserLogin(String personalId) {
-		if (StringUtil.isEmpty(personalId)) {
-			logger.warning("Personal ID must be provided");
-			return null;
-		}
+		return getUserLogin(personalId, null);
+	}
 
+	private String getUserLogin(String personalId, Integer id) {
 		try {
 			UserBusiness userBusiness = getUserBusiness(IWMainApplication.getDefaultIWApplicationContext());
-			User user = userBusiness.getUser(personalId);
+			User user = null;
+			if (!StringUtil.isEmpty(personalId)) {
+				try {
+					user = userBusiness.getUser(personalId);
+				} catch (Exception e) {}
+			}
+
+			if (user == null && id != null) {
+				try {
+					user = userBusiness.getUser(id);
+				} catch (Exception e) {}
+			}
+
 			if (user == null) {
-				logger.warning("User by personal ID '" + personalId + "' does not exist");
+				logger.warning("User by personal ID '" + personalId + "' nor ID '" + id + "' does not exist");
 				return null;
 			}
 
 			LoginTable loginTable = LoginDBHandler.getUserLogin(user);
 			return loginTable == null ? null : loginTable.getUserLogin();
-		} catch (FinderException e) {
-			logger.warning("User by personal ID '" + personalId + "' does not exist or it does not have login");
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Error occured whil resolving user's login by personal ID: " + personalId, e);
 		}
 		return null;
 	}
-
 
 	@Override
 	public UserDataBean getUserByPersonalId(String personalId) {
@@ -662,8 +670,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			newUser = true;
 		}
 
-		if (newUser || StringUtil.isEmpty(getUserLogin(personalId))) {
-			login = StringUtil.isEmpty(login) ? user.getPersonalID() : login;
+		Integer userId = user == null ? null : Integer.valueOf(user.getId());
+		if (newUser && StringUtil.isEmpty(getUserLogin(personalId, userId))) {
+			login = user.getPersonalID();
 			if (StringUtil.isEmpty(login)) {
 				List<String> logins = LoginDBHandler.getPossibleGeneratedUserLogins(user);
 				if (ListUtil.isEmpty(logins))

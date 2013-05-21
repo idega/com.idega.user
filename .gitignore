@@ -2,6 +2,10 @@
 /.classpath
 target
 .settings
+<<<<<<< HEAD
 .settings
 .classpath
 .project
+=======
+bin/
+>>>>>>> 7ffede079085bf3c05b305bc8465d3bc7003dbf5
