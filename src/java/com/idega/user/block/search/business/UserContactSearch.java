@@ -1,9 +1,9 @@
 /*
  * $Id: UserContactSearch.java,v 1.15 2007/07/02 16:16:09 civilis Exp $ Created on
  * Jan 17, 2005
- * 
+ *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.contact.data.Email;
@@ -31,10 +32,11 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
+import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 
 /**
- * 
+ *
  * Last modified: $Date: 2007/07/02 16:16:09 $ by $Author: civilis $ This class
  * implements the Searchplugin interface and can therefore be used in a Search
  * block (com.idega.core.search). <br>
@@ -42,7 +44,7 @@ import com.idega.util.ListUtil;
  * returns contact information for users. <br>
  * To use it simply register this class as a iw.searchplugin component in a
  * bundle.
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
  * @version $Revision: 1.15 $
  */
@@ -55,11 +57,11 @@ public class UserContactSearch implements SearchPlugin {
 	public static final String SEARCH_TYPE = "user";
 
 	public static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-	
+
 	protected IWMainApplication iwma;
 
 	/**
-	 *  
+	 *
 	 */
 	public UserContactSearch() {
 		super();
@@ -67,36 +69,40 @@ public class UserContactSearch implements SearchPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.core.search.business.SearchPlugin#getAdvancedSearchSupportedParameters()
 	 */
+	@Override
 	public List getAdvancedSearchSupportedParameters() {
 		return null;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.core.search.business.SearchPlugin#getSupportsSimpleSearch()
 	 */
+	@Override
 	public boolean getSupportsSimpleSearch() {
 		return true;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.core.search.business.SearchPlugin#getSupportsAdvancedSearch()
 	 */
+	@Override
 	public boolean getSupportsAdvancedSearch() {
 		return false;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.core.search.business.SearchPlugin#initialize(com.idega.idegaweb.IWMainApplication)
 	 */
+	@Override
 	public boolean initialize(IWMainApplication iwma) {
 		this.iwma = iwma;
 		return true;
@@ -104,27 +110,29 @@ public class UserContactSearch implements SearchPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.core.search.business.SearchPlugin#destroy(com.idega.idegaweb.IWMainApplication)
 	 */
+	@Override
 	public void destroy(IWMainApplication iwma) {
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.core.search.business.SearchPlugin#createSearch(com.idega.core.search.business.SearchQuery)
 	 */
+	@Override
 	public Search createSearch(SearchQuery searchQuery) {
 		List results = new ArrayList();
 		List alreadyAddedContacts = new ArrayList();
-		
+
 		BasicSearch searcher = new BasicSearch();
 		searcher.setSearchName(getSearchName());
 		searcher.setSearchType(SEARCH_TYPE);
 		searcher.setSearchQuery(searchQuery);
 		Collection users = getUsers(searchQuery);
-		
+
 		if (users != null && !users.isEmpty()) {
 			Iterator iter = users.iterator();
 			while (iter.hasNext()) {
@@ -135,7 +143,7 @@ public class UserContactSearch implements SearchPlugin {
 				}
 				else{
 					alreadyAddedContacts.add(user.getPrimaryKey());
-					
+
 					BasicSearchResult result = new BasicSearchResult();
 					fillSearchResultType(result, user);
 					fillSearchResultName(result,user);
@@ -159,9 +167,9 @@ public class UserContactSearch implements SearchPlugin {
 			result.setSearchResultURI("mailto:" + email);
 		}
 		else {
-			result.setSearchResultURI("#");
+			result.setSearchResultURI(CoreConstants.HASH);
 		}
-		
+
 	}
 
 	protected void fillSearchResultExtraInformation(BasicSearchResult result, User user) {
@@ -175,7 +183,7 @@ public class UserContactSearch implements SearchPlugin {
 	protected void fillSearchResultName(BasicSearchResult result, User user) {
 		StringBuffer name = new StringBuffer();
 		name.append(user.getName());
-		result.setSearchResultName(name.toString());	
+		result.setSearchResultName(name.toString());
 	}
 
 	protected void fillSearchResultAbstract(BasicSearchResult result, User user) {
@@ -183,15 +191,15 @@ public class UserContactSearch implements SearchPlugin {
 		StringBuffer abstractText = new StringBuffer();
 		Collection phones = user.getPhones();
 		Collection addresses = user.getAddresses();
-		
+
 		if (addresses != null && !addresses.isEmpty()) {
 			abstractText.append(((Address) addresses.iterator().next()).getStreetAddress());
 			someThingAdded = true;
 		}
-		
+
 		if (phones != null && !phones.isEmpty()) {
 			Iterator numbers = phones.iterator();
-			
+
 			while (numbers.hasNext()) {
 				Phone phone = (Phone) numbers.next();
 				String number = phone.getNumber();
@@ -202,11 +210,11 @@ public class UserContactSearch implements SearchPlugin {
 					abstractText.append(number);
 					someThingAdded = true;
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		result.setSearchResultAbstract(abstractText.toString());
 	}
 
@@ -248,9 +256,10 @@ public class UserContactSearch implements SearchPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.core.search.business.SearchPlugin#getSearchName()
 	 */
+	@Override
 	public String getSearchName() {
 		IWBundle bundle = this.iwma.getBundle(IW_BUNDLE_IDENTIFIER);
 		return bundle.getResourceBundle(IWContext.getInstance()).getLocalizedString(SEARCH_NAME_LOCALIZABLE_KEY,
@@ -259,24 +268,28 @@ public class UserContactSearch implements SearchPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.core.search.business.SearchPlugin#getSearchDescription()
 	 */
+	@Override
 	public String getSearchDescription() {
 		IWBundle bundle = this.iwma.getBundle(IW_BUNDLE_IDENTIFIER);
 		return bundle.getResourceBundle(IWContext.getInstance()).getLocalizedString(SEARCH_DESCRIPTION_LOCALIZABLE_KEY,
 				"Searches for user contact information");
 	}
 
+	@Override
 	public Collection getExtraRowElements(SearchResult result, IWResourceBundle iwrb) {
 		return null;
 	}
-	
+
+	@Override
 	public String getSearchIdentifier() {
-		
+
 		return iwma.getBundle(IW_BUNDLE_IDENTIFIER).getComponentName(this.getClass());
 	}
-	
+
+	@Override
 	public String getResultImgByResultURI(String result_uri) {
 		return null;
 	}
