@@ -672,7 +672,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 		Integer userId = user == null ? null : Integer.valueOf(user.getId());
 		if (newUser && StringUtil.isEmpty(getUserLogin(personalId, userId))) {
-			login = user.getPersonalID();
+			if (!StringUtil.isEmpty(user.getPersonalID())) {
+				login = user.getPersonalID();
+			}
 			if (StringUtil.isEmpty(login)) {
 				List<String> logins = LoginDBHandler.getPossibleGeneratedUserLogins(user);
 				if (ListUtil.isEmpty(logins))
