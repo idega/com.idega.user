@@ -13,6 +13,7 @@ import com.idega.presentation.ui.AbstractTreeViewer;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.event.SelectDomainEvent;
 import com.idega.user.event.SelectGroupEvent;
+import com.idega.util.CoreConstants;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -304,7 +305,7 @@ public class GroupTreeView extends IWTreeControl {
 				}
 
 				if (this._usesOnClick) {
-					l.setURL("#");
+					l.setURL(CoreConstants.HASH);
 					l.setOnClick(ONCLICK_FUNCTION_NAME + "('" + nodeName + "','" + node.getNodeType() + "_" + node.getNodeID() + "')");
 				}
 				//        else if(nodeActionPrm != null){
