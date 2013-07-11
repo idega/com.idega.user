@@ -738,21 +738,23 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		}
 
 		//	Email
-		Email mail = null;
-		try {
-			mail = userBusiness.getUserMail(user);
-		} catch (RemoteException e) {}
-		if (mail == null || allFieldsEditable) {
+		if (!StringUtil.isEmpty(email)) {
+			Email mail = null;
 			try {
-				mail = userBusiness.updateUserMail(user, email);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			} catch (CreateException e) {
-				e.printStackTrace();
-			}
-			if (mail == null) {
-				logger.warning("Error setting email for " + name + ", personal ID: " + personalId);
-				return result;
+				mail = userBusiness.getUserMail(user);
+			} catch (RemoteException e) {}
+			if (mail == null || allFieldsEditable) {
+				try {
+					mail = userBusiness.updateUserMail(user, email);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (CreateException e) {
+					e.printStackTrace();
+				}
+				if (mail == null) {
+					logger.warning("Error setting email for " + name + ", personal ID: " + personalId);
+					return result;
+				}
 			}
 		}
 
@@ -921,7 +923,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	private Country getCountryById(String countryId) {
-		if (countryId == null) {
+		if (StringUtil.isEmpty(countryId)) {
 			return null;
 		}
 
@@ -957,7 +959,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	private PostalCode getPostalCode(String postalCode) {
-		if (postalCode == null) {
+		if (StringUtil.isEmpty(postalCode)) {
 			return null;
 		}
 
