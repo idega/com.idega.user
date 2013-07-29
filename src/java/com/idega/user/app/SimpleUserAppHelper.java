@@ -395,7 +395,6 @@ public class SimpleUserAppHelper {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<ICRole> getFilteredRolesByUser(IWContext iwc, AccessController accessControler) {
 		Collection<ICRole> allRoles = accessControler.getAllRoles();
 		if (ListUtil.isEmpty(allRoles)) {
@@ -423,13 +422,13 @@ public class SimpleUserAppHelper {
         	return null;
         }
 
-        Set userRoles = accessControler.getAllRolesForUser(user);
+        Set<String> userRoles = accessControler.getAllRolesForUser(user);
         if (ListUtil.isEmpty(userRoles)) {
         	return null;
         }
 
 		Collection<String> rolesKeys = new ArrayList<String>();
-        for (Iterator it = userRoles.iterator(); it.hasNext();) {
+        for (Iterator<String> it = userRoles.iterator(); it.hasNext();) {
         	rolesKeys.add(it.next().toString());
         }
         List<ICRole> filteredRoles = new ArrayList<ICRole>();
