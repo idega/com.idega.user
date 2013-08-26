@@ -818,7 +818,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		if (!newLogin && allFieldsEditable && loginTable != null) {
 			boolean updatePassword = false;
 			String oldPassword = loginTable.getUserPasswordInClearText();
-			if (oldPassword == null || !password.equals(oldPassword))
+			if (password != null && oldPassword == null || !password.equals(oldPassword))
 				updatePassword = true;
 
 			if (updatePassword) {
