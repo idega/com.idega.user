@@ -50,6 +50,7 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -614,7 +615,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 
 		IWSlideService slideService = null;
 		try {
-			slideService = (IWSlideService) IBOLookup.getServiceInstance(iwc, IWSlideService.class);
+			slideService = IBOLookup.getServiceInstance(iwc, IWSlideService.class);
 		} catch (IBOLookupException e) {
 			logger.log(Level.SEVERE, "Error getting IWSlideService", e);
 		}
@@ -984,7 +985,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		return null;
 	}
 
-	private IDOHome getIDOHome(Class<?> beanClass) {
+	private <E extends IDOEntity> IDOHome getIDOHome(Class<E> beanClass) {
 		try {
 			return IDOLookup.getHome(beanClass);
 		} catch (IDOLookupException e) {
@@ -1071,7 +1072,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 	protected UserBusiness getUserBusiness(IWApplicationContext iwac) {
 		if (userBusiness == null) {
 			try {
-				userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+				userBusiness = IBOLookup.getServiceInstance(iwac, UserBusiness.class);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -1083,7 +1084,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 	private GroupBusiness getGroupBusiness() {
 		if (groupBusiness == null) {
 			try {
-				groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), GroupBusiness.class);
+				groupBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), GroupBusiness.class);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
