@@ -38,6 +38,20 @@ public class UserDataBean implements Serializable {
 
 	private int hashCode = 0;
 
+	public UserDataBean() {
+		super();
+	}
+
+	public UserDataBean(String name, String personalId, String email, String phone, String address) {
+		this();
+
+		this.name = name;
+		this.personalId = personalId;
+		this.email = email;
+		this.phone = phone;
+		this.streetNameAndNumber = address;
+	}
+
 	public String getEmail() {
 		return email;
 	}
