@@ -48,6 +48,20 @@ public class UserDataBean implements Serializable {
 		this.workPhone = workPhone;
 	}
 	
+	public UserDataBean() {
+		super();
+	}
+
+	public UserDataBean(String name, String personalId, String email, String phone, String address) {
+		this();
+
+		this.name = name;
+		this.personalId = personalId;
+		this.email = email;
+		this.phone = phone;
+		this.streetNameAndNumber = address;
+	}
+
 	public String getEmail() {
 		return email;
 	}
