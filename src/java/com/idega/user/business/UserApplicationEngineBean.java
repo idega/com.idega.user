@@ -442,8 +442,13 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 
 			//	Phone
 			Phone phone = null;
+			Phone mobilePhone = null;
+			Phone workphoPhone = null;
 			try {
-				phone = userBusiness.getUserPhone(Integer.valueOf(user.getId()), PhoneTypeBMPBean.HOME_PHONE_ID);
+				int userId = Integer.valueOf(user.getId());
+				phone = userBusiness.getUserPhone(userId, PhoneTypeBMPBean.HOME_PHONE_ID);
+				mobilePhone = userBusiness.getUserPhone(userId, PhoneTypeBMPBean.MOBILE_PHONE_ID);
+				workphoPhone = userBusiness.getUserPhone(userId, PhoneTypeBMPBean.WORK_PHONE_ID);
 			} catch (Exception e) {}
 
 			//	Email
@@ -457,16 +462,21 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			try {
 				address = userBusiness.getUsersMainAddress(user);
 			} catch (RemoteException e) {}
-			fillUserInfo(bean, phone, email, address);
+			fillUserInfo(bean, phone,mobilePhone,workphoPhone, email, address);
 		}
 
 		return bean;
 	}
 
-	@Override
-	public void fillUserInfo(UserDataBean info, Phone phone, Email email, Address address) {
+	private void fillUserInfo(UserDataBean info, Phone phone, Phone mobilePhone,
+			Phone workPhone, Email email, Address address){
 		if (phone != null)
 			info.setPhone(phone.getNumber());
+		if (mobilePhone != null)
+			info.setMobilePhone(mobilePhone.getNumber());
+		
+		if (workPhone != null)
+			info.setMobilePhone(workPhone.getNumber());
 
 		if (email != null)
 			info.setEmail(email.getEmailAddress());
@@ -506,6 +516,14 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 				info.setCommune(communeName == null ? CoreConstants.EMPTY : communeName);
 			}
 		}
+	}
+	
+	public void fillUserInfo(UserDataBean info, Phone phone, Phone mobilePhone, Email email, Address address){
+		fillUserInfo(info, mobilePhone, mobilePhone, null, email, address);
+	}
+	@Override
+	public void fillUserInfo(UserDataBean info, Phone phone, Email email, Address address) {
+		fillUserInfo(info, phone, null, email, address);
 	}
 
 	@Override
