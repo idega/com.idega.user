@@ -1,5 +1,7 @@
 package com.idega.user.presentation;
 
+import javax.faces.component.UIComponent;
+
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -19,23 +21,23 @@ import com.idega.util.CoreConstants;
  */
 
 public class GroupChooser extends AbstractChooser {
-	
+
   private Image chooserButtonImage = null;
   private boolean submitForm;
-  
+
   public GroupChooser() {
   	this(false);
   }
-  
+
   public GroupChooser(boolean useOldLogic) {
 	  super(useOldLogic);
 	  addForm(false);
   }
-  
+
   public GroupChooser(String chooserName) {
 	  this(chooserName, true, null, null);
   }
-  
+
   public GroupChooser(String chooserName, boolean useOldLogic, String instanceId, String method) {
     this(useOldLogic);
     setInstanceId(instanceId);
@@ -53,16 +55,18 @@ public class GroupChooser extends AbstractChooser {
   	setChooseButtonImage(chooserButtonImage);
   }
 
-  public void main(IWContext iwc){
+  @Override
+public void main(IWContext iwc){
     empty();
     if (this.chooserButtonImage == null) {
 		IWBundle iwb = iwc.getIWMainApplication().getBundle(CoreConstants.IW_USER_BUNDLE_IDENTIFIER);
 		setChooseButtonImage(iwb.getImage("magnifyingglass.gif","Choose"));
     }
-    	
+
   }
 
-  public Class<?> getChooserWindowClass() {
+  @Override
+  public Class<? extends UIComponent> getChooserWindowClass() {
 	  if (isUseOldLogic()) {
 		  return GroupChooserWindow.class;
 	  }
@@ -72,18 +76,20 @@ public class GroupChooser extends AbstractChooser {
   public void setSelectedNode(GroupTreeNode groupNode) {
       super.setChooserValue(groupNode.getNodeName(), groupNode.getNodeID());
   }
-  
+
   public void setSelectedGroup(String userId, String userName) {
 	  super.setChooserValue(userName,userId);
   }
-  
-  public String getBundleIdentifier(){
+
+  @Override
+public String getBundleIdentifier(){
     return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
   }
 
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.ui.AbstractChooser#addParametersToForm(com.idega.presentation.ui.Form)
 	 */
+	@Override
 	protected void addParametersToForm(Form form) {
 		if(this.submitForm){
 			form.addParameter(GroupChooserWindow.SUBMIT_PARENT_FORM_AFTER_CHANGE, "true");
@@ -92,16 +98,17 @@ public class GroupChooser extends AbstractChooser {
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.ui.AbstractChooser#addParametersToLink(com.idega.presentation.text.Link)
 	 */
+	@Override
 	protected void addParametersToLink(Link link) {
 		if(this.submitForm){
 			link.addParameter(GroupChooserWindow.SUBMIT_PARENT_FORM_AFTER_CHANGE, "true");
 		}
 	}
-	
+
 	public void setToSubmitParentFormOnChange(){
 		this.submitForm = true;
 	}
-	
+
 	@Override
 	public String getChooserHelperVarName() {
 		  return "group_chooser_helper";

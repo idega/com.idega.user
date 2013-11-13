@@ -16,6 +16,9 @@ public class UserDataBean implements Serializable {
 	private String email = null;
 	private String errorMessage = null;
 	private String phone = null;
+	private String mobilePhone = null;
+	private String workPhone = null;
+
 	private String pictureUri;
 
 	//	Address
@@ -37,6 +40,27 @@ public class UserDataBean implements Serializable {
 	private boolean imageSet;
 
 	private int hashCode = 0;
+
+	public String getWorkPhone() {
+		return workPhone;
+	}
+	public void setWorkPhone(String workPhone) {
+		this.workPhone = workPhone;
+	}
+	
+	public UserDataBean() {
+		super();
+	}
+
+	public UserDataBean(String name, String personalId, String email, String phone, String address) {
+		this();
+
+		this.name = name;
+		this.personalId = personalId;
+		this.email = email;
+		this.phone = phone;
+		this.streetNameAndNumber = address;
+	}
 
 	public String getEmail() {
 		return email;
@@ -175,5 +199,13 @@ public class UserDataBean implements Serializable {
 		}
 		return this.hashCode;
 	}
+	
+	public String getMobilePhone() {
+		return mobilePhone;
+	}
+	public void setMobilePhone(String mobilePhone) {
+		this.mobilePhone = mobilePhone;
+	}
+
 
 }

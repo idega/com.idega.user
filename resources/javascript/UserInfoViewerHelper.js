@@ -517,6 +517,6 @@ function getLocalizationForUserStatus(key) {
 
 UserInfoViewerHelper.initialize = function() {
 	jQuery('a.userGroupMembershipSelectedGroup').each(function() {
-		jQuery(this).fancybox();
+		jQuery(this).fancybox({type: 'ajax'});
 	});
 }

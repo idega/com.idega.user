@@ -50,6 +50,7 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -447,8 +448,13 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 			//	Phone
 			Phone phone = null;
+			Phone mobilePhone = null;
+			Phone workphoPhone = null;
 			try {
-				phone = userBusiness.getUserPhone(Integer.valueOf(user.getId()), PhoneTypeBMPBean.HOME_PHONE_ID);
+				int userId = Integer.valueOf(user.getId());
+				phone = userBusiness.getUserPhone(userId, PhoneTypeBMPBean.HOME_PHONE_ID);
+				mobilePhone = userBusiness.getUserPhone(userId, PhoneTypeBMPBean.MOBILE_PHONE_ID);
+				workphoPhone = userBusiness.getUserPhone(userId, PhoneTypeBMPBean.WORK_PHONE_ID);
 			} catch (Exception e) {}
 
 			//	Email
@@ -462,16 +468,21 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			try {
 				address = userBusiness.getUsersMainAddress(user);
 			} catch (RemoteException e) {}
-			fillUserInfo(bean, phone, email, address);
+			fillUserInfo(bean, phone,mobilePhone,workphoPhone, email, address);
 		}
 
 		return bean;
 	}
 
-	@Override
-	public void fillUserInfo(UserDataBean info, Phone phone, Email email, Address address) {
+	private void fillUserInfo(UserDataBean info, Phone phone, Phone mobilePhone,
+			Phone workPhone, Email email, Address address){
 		if (phone != null)
 			info.setPhone(phone.getNumber());
+		if (mobilePhone != null)
+			info.setMobilePhone(mobilePhone.getNumber());
+
+		if (workPhone != null)
+			info.setMobilePhone(workPhone.getNumber());
 
 		if (email != null)
 			info.setEmail(email.getEmailAddress());
@@ -511,6 +522,14 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				info.setCommune(communeName == null ? CoreConstants.EMPTY : communeName);
 			}
 		}
+	}
+
+	public void fillUserInfo(UserDataBean info, Phone phone, Phone mobilePhone, Email email, Address address){
+		fillUserInfo(info, mobilePhone, mobilePhone, null, email, address);
+	}
+	@Override
+	public void fillUserInfo(UserDataBean info, Phone phone, Email email, Address address) {
+		fillUserInfo(info, phone, null, email, address);
 	}
 
 	@Override
@@ -815,7 +834,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		if (!newLogin && allFieldsEditable && loginTable != null) {
 			boolean updatePassword = false;
 			String oldPassword = loginTable.getUserPasswordInClearText();
-			if (oldPassword == null || !password.equals(oldPassword))
+			if (password != null && (oldPassword == null || !password.equals(oldPassword)))
 				updatePassword = true;
 
 			if (updatePassword) {
@@ -970,7 +989,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		return null;
 	}
 
-	private IDOHome getIDOHome(Class<?> beanClass) {
+	private <E extends IDOEntity> IDOHome getIDOHome(Class<E> beanClass) {
 		try {
 			return IDOLookup.getHome(beanClass);
 		} catch (IDOLookupException e) {
@@ -1057,7 +1076,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	protected UserBusiness getUserBusiness(IWApplicationContext iwac) {
 		if (userBusiness == null) {
 			try {
-				userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+				userBusiness = IBOLookup.getServiceInstance(iwac, UserBusiness.class);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -1069,7 +1088,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	private GroupBusiness getGroupBusiness() {
 		if (groupBusiness == null) {
 			try {
-				groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), GroupBusiness.class);
+				groupBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), GroupBusiness.class);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
