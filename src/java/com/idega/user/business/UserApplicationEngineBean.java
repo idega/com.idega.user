@@ -476,7 +476,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			info.setMobilePhone(mobilePhone.getNumber());
 		
 		if (workPhone != null)
-			info.setMobilePhone(workPhone.getNumber());
+			info.setWorkPhone(workPhone.getNumber());
 
 		if (email != null)
 			info.setEmail(email.getEmailAddress());
@@ -560,7 +560,34 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 		return null;
 	}
 
+	@Override
+	public UserDataBean getUserById(Integer id) {
+		if ((id == null) || (id < 1))
+			return null;
 
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null)
+			return null;
+
+		UserBusiness userBusiness = getUserBusiness(iwc);
+		if (userBusiness == null)
+			return null;
+
+		UserDataBean info = null;
+
+		User user = null;
+		try {
+			user = userBusiness.getUser(id);
+		} catch (Exception e) {}
+		if (user == null) {
+			logger.log(Level.WARNING, "User by was not found by provided personal ID ('" + id + "'), trying to find company");
+		} else {
+			info = getUserInfo(user);
+		}
+
+		return info;
+	}
+	
 	@Override
 	public UserDataBean getUserByPersonalId(String personalId) {
 		if (StringUtil.isEmpty(personalId))
