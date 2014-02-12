@@ -37,6 +37,8 @@ public interface UserApplicationEngine {
 	public void addViewUsersCase(String instanceId, SimpleUserAppViewUsers viewUsers);
 
 	public UserDataBean getUserByPersonalId(String personalId);
+	
+	public UserDataBean getUserById(Integer id);
 
 	public AdvancedProperty createUser(UserDataBean userData, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
 			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password);

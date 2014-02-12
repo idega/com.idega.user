@@ -44,8 +44,7 @@ import com.idega.util.expression.ELUtil;
 public class UserAutocompleteBean extends DefaultSpringBean implements DWRAnnotationPersistance {
 
 	public static final String BEAN_NAME = "userAutocompleteBean";
-	
-	@SuppressWarnings("unchecked")
+
 	@RemoteMethod
 	public List<LabeledItem> getAutocompletedItems(String term, int max,String name){
 		IWContext iwc = CoreUtil.getIWContext();
@@ -86,7 +85,7 @@ public class UserAutocompleteBean extends DefaultSpringBean implements DWRAnnota
 			item.setLabel(label);
 			item.setValue(term);
 		}
-		
+
 		UserApplicationEngine userApplicationEngine = ELUtil.getInstance().getBean(UserApplicationEngine.class);
 		for(User user : requestedUsers){
 			UserDataBean userDataBean = userApplicationEngine.getUserInfo(user);
@@ -112,5 +111,5 @@ public class UserAutocompleteBean extends DefaultSpringBean implements DWRAnnota
 		}
 		return items;
 	}
-	
+
 }
