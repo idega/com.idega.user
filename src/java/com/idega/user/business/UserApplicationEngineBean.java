@@ -474,7 +474,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			info.setPhone(phone.getNumber());
 		if (mobilePhone != null)
 			info.setMobilePhone(mobilePhone.getNumber());
-		
+
 		if (workPhone != null)
 			info.setWorkPhone(workPhone.getNumber());
 
@@ -517,7 +517,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 			}
 		}
 	}
-	
+
 	public void fillUserInfo(UserDataBean info, Phone phone, Phone mobilePhone, Email email, Address address){
 		fillUserInfo(info, mobilePhone, mobilePhone, null, email, address);
 	}
@@ -587,7 +587,7 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 
 		return info;
 	}
-	
+
 	@Override
 	public UserDataBean getUserByPersonalId(String personalId) {
 		if (StringUtil.isEmpty(personalId))
@@ -1164,7 +1164,6 @@ public class UserApplicationEngineBean implements UserApplicationEngine, Seriali
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public String saveGroup(String name, String homePageId, String type, String description, String parentGroupId, String groupId) {
 		if (StringUtil.isEmpty(name)) {
 			return null;
