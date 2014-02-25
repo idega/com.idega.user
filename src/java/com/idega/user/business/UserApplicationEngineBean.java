@@ -592,7 +592,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 		return info;
 	}
-	
+
 	@Override
 	public UserDataBean getUserByPersonalId(String personalId) {
 		if (StringUtil.isEmpty(personalId))
