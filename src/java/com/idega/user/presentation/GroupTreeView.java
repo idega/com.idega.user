@@ -1,7 +1,6 @@
 package com.idega.user.presentation;
 
 import com.idega.core.builder.business.ICBuilderConstants;
-import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.browser.presentation.IWTreeControl;
 import com.idega.presentation.IWContext;
@@ -24,7 +23,7 @@ import com.idega.util.CoreConstants;
  * @version 1.0
  */
 
-public class GroupTreeView extends IWTreeControl {
+public class GroupTreeView extends IWTreeControl<GroupTreeNode> {
 
 	private static final String TREEVIEW_PREFIX = AbstractTreeViewer.TREEVIEW_PREFIX;
 
@@ -71,7 +70,7 @@ public class GroupTreeView extends IWTreeControl {
 		setWrap(false);
 	}
 
-	public static GroupTreeView getGroupTreeInstance(ICTreeNode node, IWContext iwc) {
+	public static GroupTreeView getGroupTreeInstance(GroupTreeNode node, IWContext iwc) {
 		GroupTreeView viewer = new GroupTreeView();
 		viewer.setRootNode(node);
 		return viewer;
@@ -114,19 +113,15 @@ public class GroupTreeView extends IWTreeControl {
 		updateIconDimensions();
 	}
 
-	/*
-	  public void addParameters(Link l, ICTreeNode node, IWContext iwc){
-
-	  }
-	*/
-
 	@Override
-	public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
-		return getObjectToAddToColumn(colIndex, (GroupTreeNode) node, iwc, nodeIsOpen, nodeHasChild, isRootNode);
-	}
-
-	public PresentationObject getObjectToAddToColumn(int colIndex, GroupTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
-		//System.out.println("adding into column "+ colIndex + " for node " + node);
+	public PresentationObject getObjectToAddToColumn(
+			int colIndex,
+			GroupTreeNode node,
+			IWContext iwc,
+			boolean nodeIsOpen,
+			boolean nodeHasChild,
+			boolean isRootNode
+	) {
 		String image = "treeviewer";
 		if (node.getGroupType() != null) {
 			image = node.getGroupType();
@@ -142,7 +137,7 @@ public class GroupTreeView extends IWTreeControl {
 			case GroupTreeNode.TYPE_GROUP :
 				grSelect.setGroupToSelect(node.getNodeID());
 				if (node.getParentNode() != null) {
-					if (((GroupTreeNode) node.getParentNode()).getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
+					if (node.getParentNode().getNodeType() == GroupTreeNode.TYPE_DOMAIN) {
 						grSelect.setParentDomainOfSelection(Integer.parseInt(node.getParentNode().getId()));
 					}
 					else {

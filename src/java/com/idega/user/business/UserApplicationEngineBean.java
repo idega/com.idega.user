@@ -41,7 +41,6 @@ import com.idega.core.business.DefaultSpringBean;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneTypeBMPBean;
-import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.core.location.data.Address;
@@ -179,7 +178,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	private String getGroupNameInTreeOrientedWay(Group group, Locale locale) {
-		ICTreeNode parentGroup = group.getParentNode();
+		Group parentGroup = group.getParentNode();
 		StringBuilder name = new StringBuilder();
 		while (parentGroup != null) {
 			name.append(CoreConstants.MINUS);
@@ -1244,7 +1243,6 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<AdvancedProperty> findAvailablePages(String phrase) {
 		if (phrase == null || CoreConstants.EMPTY.equals(phrase)) {
 			return null;
