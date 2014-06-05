@@ -81,4 +81,6 @@ public interface UserApplicationEngine {
 	public AdvancedProperty isValidUserName(String userName);
 	
 	public String getUserLogin(String personalId);
+	
+	public String getUserIdByLogin(String login);
 }
