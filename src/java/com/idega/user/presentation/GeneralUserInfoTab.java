@@ -42,7 +42,7 @@ public class GeneralUserInfoTab extends UserTab {
 
 	private static final String TAB_NAME = "usr_info_tab_name";
 	private static final String DEFAULT_TAB_NAME = "General";
-	
+
 	private static final String HELP_TEXT_KEY = "tabbed_property_panel";
 
 	private TextInput idField;
@@ -77,7 +77,7 @@ public class GeneralUserInfoTab extends UserTab {
 	private Text createdText;
 	private Text imageText;
 	private Text removeImageText;
-	
+
 	private User user = null;
 	private int systemImageId = -1;
 
@@ -92,7 +92,8 @@ public class GeneralUserInfoTab extends UserTab {
 		this();
 		setUserID(userId);
 	}
-	
+
+	@Override
 	public void initializeFieldNames() {
 		this.idFieldName = "usr_info_UMid";
 		this.fullNameFieldName = "usr_info_UMflname";
@@ -106,6 +107,7 @@ public class GeneralUserInfoTab extends UserTab {
 		this.removeImageFieldName = "image_removeImageFieldName";
 	}
 
+	@Override
 	public void initializeFieldValues() {
 		this.fieldValues.put(this.idFieldName, "");
 		this.fieldValues.put(this.fullNameFieldName, "");
@@ -121,9 +123,10 @@ public class GeneralUserInfoTab extends UserTab {
 		updateFieldsDisplayStatus();
 	}
 
+	@Override
 	public void updateFieldsDisplayStatus() {
-		
-		this.idField.setContent((String) this.fieldValues.get(this.idFieldName));		
+
+		this.idField.setContent((String) this.fieldValues.get(this.idFieldName));
 		this.fullNameField.setContent((String) this.fieldValues.get(this.fullNameFieldName));
 		this.displayNameField.setContent((String) this.fieldValues.get(this.displayNameFieldName));
 		this.descriptionField.setContent((String) this.fieldValues.get(this.descriptionFieldName));
@@ -144,11 +147,11 @@ public class GeneralUserInfoTab extends UserTab {
 
 		IWContext iwc = IWContext.getInstance();
 		boolean unlockPersonalIDField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_PERSONAL_ID,iwc);
-		
+
 		if (!unlockPersonalIDField){
 			this.personalIDField.setDisabled(true);
 		}
-		
+
 		StringTokenizer created = new StringTokenizer((String) this.fieldValues.get(this.createdFieldName), " -");
 		if (created.hasMoreTokens()) {
 			this.createdField.setYear(created.nextToken());
@@ -159,15 +162,16 @@ public class GeneralUserInfoTab extends UserTab {
 		if (created.hasMoreTokens()) {
 			this.createdField.setDay(created.nextToken());
 		}
-		
+
 		this.imageField.setImageId(this.systemImageId);
 		this.removeImageField.setChecked(((Boolean)this.fieldValues.get(this.removeImageFieldName)).booleanValue());
 	}
 
+	@Override
 	public void initializeFields() {
 		this.idField = new TextInput(this.idFieldName);
 		this.idField.setLength(20);//changed from 12 - birna
-		
+
 		this.fullNameField = new TextInput(this.fullNameFieldName);
 		this.fullNameField.setLength(20);
 
@@ -211,20 +215,21 @@ public class GeneralUserInfoTab extends UserTab {
 
 		this.personalIDField = new TextInput(this.personalIDFieldName);
 		this.personalIDField.setLength(20); //changed from 12 - birna
-		
+
 		this.createdField = new DateInput(this.createdFieldName);
 		this.createdField.setYearRange(time.getYear(), time.getYear() - 50);
-		
+
 		this.imageField = new ImageInserter(this.imageFieldName + getUserId());
 		this.imageField.setWidth(String.valueOf(107));
 		this.imageField.setMaxImageWidth(107);
 		this.imageField.setHasUseBox(false);
-		
+
 		this.removeImageField = new CheckBox(this.removeImageFieldName);
 		this.removeImageField.setWidth("10");
 		this.removeImageField.setHeight("10");
 	}
 
+	@Override
 	public void initializeTexts() {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
@@ -249,7 +254,7 @@ public class GeneralUserInfoTab extends UserTab {
 		this.imageText.setBold();
 		this.removeImageText = new Text(iwrb.getLocalizedString(this.removeImageFieldName, "do not show an image"));
 	}
-	
+
 	public Help getHelpButton() {
 		IWContext iwc = IWContext.getInstance();
 		IWBundle iwb = getBundle(iwc);
@@ -259,12 +264,13 @@ public class GeneralUserInfoTab extends UserTab {
 		help.setHelpTextKey(HELP_TEXT_KEY);
 		help.setImage(helpImage);
 		return help;
-		
+
 	}
 
+	@Override
 	public void lineUpFields() {
 		resize(1, 1);
-		
+
 		Table table = new Table(); //changed from (2,5) - birna
 		table.setWidth("100%");
 		table.setCellpadding(5);
@@ -274,23 +280,23 @@ public class GeneralUserInfoTab extends UserTab {
 		table.add(this.fullNameText,1,1);//(idText, 1, 1);
 		table.add(Text.getBreak(), 1, 1);
 		table.add(this.fullNameField,1,1);//(idField, 2, 1);
-		
+
 		table.add(this.personalIDText,2,1);//(personalIDText, 1, 2);
 		table.add(Text.getBreak(), 2, 1);
 		table.add(this.personalIDField,2,1);//(personalIDField, 2, 2);
-		
+
 		table.add(this.idText,1,2);//(fullNameText, 1, 3);
 		table.add(Text.getBreak(), 1, 2);
 		table.add(this.idField,1,2);//(fullNameField, 2, 3);
-		
+
 		table.add(this.displayNameText,2,2);//(displayNameText, 1, 4);
 		table.add(Text.getBreak(), 2, 2);
 		table.add(this.displayNameField, 2, 2);
-		
+
 		table.add(this.genderText, 1,3);
 		table.add(Text.getBreak(), 1, 3);
 		table.add(this.genderField,1,3);//(genderField, 2, 5);
-		
+
 		table.mergeCells(1, 4, 2, 4);
 		table.add(this.dateOfBirthText, 1, 4);
 		table.add(Text.getBreak(), 1, 4);
@@ -315,17 +321,19 @@ public class GeneralUserInfoTab extends UserTab {
 		table.add(this.imageText,3,1);
 		table.add(Text.getBreak(), 3, 1);
 		table.add(this.imageField,3,1);
-		
+
 		table.add(this.removeImageField,3,1);
 		//table.add(Text.getNonBrakingSpace(),3,1);
 		table.add(this.removeImageText,3,1);
 		add(table, 1, 1);
 	}
-	
+
+	@Override
 	public void main(IWContext iwc) {
-		getPanel().addHelpButton(getHelpButton());		
+		getPanel().addHelpButton(getHelpButton());
 	}
 
+	@Override
 	public boolean collect(IWContext iwc) {
 		if (iwc != null) {
 			String name = iwc.getParameter(this.fullNameFieldName);
@@ -343,7 +351,7 @@ public class GeneralUserInfoTab extends UserTab {
 			}
 			if (name != null) {
 				this.fieldValues.put(this.fullNameFieldName, name);
-			}	
+			}
 			if (dname != null) {
 				this.fieldValues.put(this.displayNameFieldName, dname);
 			}
@@ -374,24 +382,25 @@ public class GeneralUserInfoTab extends UserTab {
 		return false;
 	}
 
+	@Override
 	public boolean store(IWContext iwc) {
 		try {
 			if (getUserId() > 0) {
-				
+
 				if(getGroupID()>0){//temp remove with other IWMember stuff
 					Group club = getClubForGroup(getGroup());
-					if(club!=null){				
+					if(club!=null){
 						boolean success = setClubMemberNumberForUser((String)this.fieldValues.get(this.idFieldName),getUser(),club);
 						if(!success){//number already taken
-							this.idField.setStyleAttribute("color:#FF0000"); 
+							this.idField.setStyleAttribute("color:#FF0000");
 						}
 						else {
 							this.idField.setStyleAttribute("color:#000000");
-						} 
+						}
 					}
 				}
-				
-				
+
+
 				IWTimestamp dateOfBirthTS = null;
 				String st = (String) this.fieldValues.get(this.dateOfBirthFieldName);
 				Integer gen = (this.fieldValues.get(this.genderFieldName).equals("")) ? null : new Integer((String) this.fieldValues.get(this.genderFieldName));
@@ -433,9 +442,9 @@ public class GeneralUserInfoTab extends UserTab {
 				}
 			}
 			if (getUserId() > -1) {
-	
+
 				String image = (String)this.fieldValues.get(this.imageFieldName);
-	
+
 				if ((image != null) && (!image.equals("-1")) && (!image.equals(""))) {
 					if (this.user == null) {
 						this.user = getUser();
@@ -455,11 +464,11 @@ public class GeneralUserInfoTab extends UserTab {
 						this.user.store();
 						updateFieldsDisplayStatus();
 					}
-	
+
 					iwc.removeSessionAttribute(this.imageFieldName + getUserId());
-	
+
 				}
-	
+
 			}
 		}
 		catch (Exception e) {
@@ -470,6 +479,7 @@ public class GeneralUserInfoTab extends UserTab {
 		return true;
 	}//end store
 
+	@Override
 	public void initFieldContents() {
 
 		try {
@@ -479,7 +489,7 @@ public class GeneralUserInfoTab extends UserTab {
 				memberNumber = getMemberNumber(getUser());
 				this.imageField.setImSessionImageName(this.imageFieldName + getUserId());
 				this.systemImageId = getSelectedImageId(user);
-				
+
 				if (this.systemImageId != -1) {
 					this.fieldValues.put(this.imageFieldName, Integer.toString(this.systemImageId));
 				}
@@ -508,20 +518,21 @@ public class GeneralUserInfoTab extends UserTab {
 
 
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
-	
-	
-	
+
+
+
 	//TODO Eiki inherit from this class and use plugin stuff
 	//START REMOVE
-	
+
 	private String getMemberNumber(User user) throws RemoteException {
 		String memberNumber = null;
-		
+
 		Group selectedGroup = getGroup();
-		if(selectedGroup!=null){	
+		if(selectedGroup!=null){
 			Group club = getClubForGroup(selectedGroup);
 			if(club!=null){
 				memberNumber = getClubMemberNumberForUser(user,club);
@@ -533,10 +544,10 @@ public class GeneralUserInfoTab extends UserTab {
 		else {
 			System.out.print("SELECTED GROUP IS NULL");
 		}
-		
+
 		return memberNumber;
 	}
-	
+
 	/*
 		* Returns the club that is a parent for this group.
 	 */
@@ -552,40 +563,40 @@ public class GeneralUserInfoTab extends UserTab {
 					return parentGroup;//there should only be one
 				}
 			}
-		} 
+		}
 		return null;
 	}
-	
+
 	public String getClubMemberNumberForUser(User user, Group club){
 		String id = user.getMetaData("CLUB_MEMB_NR_"+club.getPrimaryKey().toString());
 		if(id!=null){
 			return id;
 		}else{
 			return null;
-		}	
+		}
 	}
-	
+
 	/**
 	 * @return false if number is already taken, else true
 	 */
-	public synchronized boolean setClubMemberNumberForUser(String number, User user, Group club){
-		
+	public boolean setClubMemberNumberForUser(String number, User user, Group club){
+
 		boolean setNumber = false;
 		String clubId = club.getPrimaryKey().toString();
-		
+
 		if(number.equals("")){
 			user.removeMetaData("CLUB_MEMB_NR_"+clubId);
 			user.store();
 			return true;
 		}
-		
-		
+
+
 		try {
 			Collection users = getUserBusiness(getIWApplicationContext()).getUserHome().findUsersByMetaData("CLUB_MEMB_NR_"+clubId,number);
-			
+
 			if( users!=null && !users.isEmpty()){
 				Iterator iter = users.iterator();
-				
+
 				while (iter.hasNext()) {
 					User thingy = (User) iter.next();
 					if(thingy.getPrimaryKey().equals(user.getPrimaryKey())){
@@ -604,20 +615,20 @@ public class GeneralUserInfoTab extends UserTab {
 		}
 		catch (FinderException e) {
 			setNumber = true;
-		} 
+		}
 		catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		
+
 		if(setNumber){
 			user.setMetaData("CLUB_MEMB_NR_"+clubId,number);
 			user.store();
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	private int getSelectedImageId(User user) {
 			try {
 				int tempImageId = user.getSystemImageID();

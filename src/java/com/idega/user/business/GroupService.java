@@ -99,42 +99,42 @@ public interface GroupService extends IBOSession {
 	 * @see com.idega.user.business.GroupServiceBean#addUsersIds
 	 */
 	public boolean addUsersIds(String instanceId, List<String> ids) throws RemoteException;
-	
+
 	/** Adds user to group
 	 * @param userId
 	 * @param groupId
 	 * @return true if added user successfully, false if failed
 	 */
 	public boolean addUser(String userId, String groupId);
-	
-	/**Reamoves user from group
+
+	/** Removes user from group
 	 * @param userId
 	 * @param groupId
 	 * @return true if removed user successfully, false if failed
 	 */
 	public boolean removeUser(String userId, String groupId);
-	
+
 	public List<GroupNode> getChildrenOfGroup(String uniqueId);
-	
+
 	public List<GroupNode> getChildrenOfGroupWithLogin(String login, String password, String uniqueId);
-	
+
 	public boolean streamUniqueIds(String instanceId, List<String> uniqueIds, String cacheName);
-	
+
 	public boolean logInUser(IWContext iwc, String login, String password);
-	
+
 	public boolean isLoggedUser(IWContext iwc, String userName);
-	
+
 	public boolean canMakeCallToServerAndScript(String server, List<String> scripts);
-	
+
 	public boolean addUniqueIds(String cacheName, String instanceId, List<String> ids);
-	
+
 	public Map<String, List<String>> getUniqueIds(String cacheName) throws NullPointerException;
-	
+
 	public boolean isUserLoggedOn(IWContext iwc, String login, String password);
-	
+
 	public String getUserStatusLocalizationByKey(String key);
-	
+
 	public RenderedComponent getRenderedGroup(String uniqueId, String containerId, String groupName);
-	
+
 	public AdvancedProperty getFelixLogin(IWContext iwc);
 }

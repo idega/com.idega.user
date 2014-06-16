@@ -84,7 +84,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 	}
 
 	@Override
-	public synchronized UserBusiness getUserBusiness(IWApplicationContext iwc) {
+	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
 		if (userBusiness == null) {
 			try {
 				userBusiness = IBOLookup.getServiceInstance(iwc, UserBusiness.class);
@@ -265,7 +265,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return getSortedGroups(getFilteredGroups(groups, getExtractedTypesList(typesValue, splitter), useChildrenAsTopNodes), iwc);
 	}
 
-	private synchronized GroupBusiness getGroupBusiness(IWApplicationContext iwac) {
+	private GroupBusiness getGroupBusiness(IWApplicationContext iwac) {
 		if (groupBusiness == null) {
 			try {
 				groupBusiness = IBOLookup.getServiceInstance(iwac, GroupBusiness.class);

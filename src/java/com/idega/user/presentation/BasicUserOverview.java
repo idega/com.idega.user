@@ -198,7 +198,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         } else {
             EntityBrowser entityBrowser = getEntityBrowser(users, iwc);
             // put print button to bottom
-    		LinkToUserStats linkToUserStats = (LinkToUserStats)ImplementorRepository.getInstance().newInstanceOrNull(LinkToUserStats.class, this.getClass());
+    		LinkToUserStats linkToUserStats = ImplementorRepository.getInstance().newInstanceOrNull(LinkToUserStats.class, this.getClass());
     		if (linkToUserStats != null) {
 /*    		    linkToUserStats.setSelectedGroup(this.selectedGroup);
     		    linkToUserStats.setInvocationFileName("Invocation-UserStats.xml");
@@ -730,7 +730,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
 
               try {
-            	  LinkToFamilyLogic linkToFamilyLogic = (LinkToFamilyLogic)ImplementorRepository.getInstance().newInstanceOrNull(LinkToFamilyLogic.class, this.getClass());
+            	  LinkToFamilyLogic linkToFamilyLogic = ImplementorRepository.getInstance().newInstanceOrNull(LinkToFamilyLogic.class, this.getClass());
             	  if (linkToFamilyLogic != null) {
             		  custodians = linkToFamilyLogic.getCustodiansFor(user, iwc);
             	  }
@@ -1148,7 +1148,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         UserBusiness business = null;
         if (business == null) {
             try {
-                business = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+                business = com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
             }
             catch (java.rmi.RemoteException rme) {
                 throw new RuntimeException(rme.getMessage());
@@ -1161,7 +1161,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         GroupBusiness business = null;
         if (business == null) {
             try {
-                business = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+                business = com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
             }
             catch (java.rmi.RemoteException rme) {
                 throw new RuntimeException(rme.getMessage());
@@ -1173,7 +1173,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	  		UserStatusBusiness business = null;
 	  		if(business == null){
 	  			try{
-	  				business = (UserStatusBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserStatusBusiness.class);
+	  				business = com.idega.business.IBOLookup.getServiceInstance(iwc,UserStatusBusiness.class);
 	  			}
 	  			catch(java.rmi.RemoteException rme){
 	  				throw new RuntimeException(rme.getMessage());
@@ -1186,7 +1186,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 	  		UserInfoColumnsBusiness business = null;
 	  		if(business == null){
 	  			try{
-	  				business = (UserInfoColumnsBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc,UserInfoColumnsBusiness.class);
+	  				business = com.idega.business.IBOLookup.getServiceInstance(iwc,UserInfoColumnsBusiness.class);
 	  			}
 	  			catch(java.rmi.RemoteException rme){
 	  				throw new RuntimeException(rme.getMessage());
@@ -1238,15 +1238,16 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         return resultMap;
     }
 
-    public static synchronized Map moveContentOfGroups(Collection groups, Collection groupTypesToMoveAmong, IWContext iwc) throws RemoteException {
+    public static Map moveContentOfGroups(Collection groups, Collection groupTypesToMoveAmong, IWContext iwc) throws RemoteException {
         UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
         return userBusiness.moveUsers(iwc,groups, groupTypesToMoveAmong);
     }
 
-    public IWPresentationState getPresentationState(IWUserContext iwuc) {
+    @Override
+	public IWPresentationState getPresentationState(IWUserContext iwuc) {
         if (this._presentationState == null) {
             try {
-                IWStateMachine stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwuc, IWStateMachine.class);
+                IWStateMachine stateMachine = IBOLookup.getSessionInstance(iwuc, IWStateMachine.class);
                 this._presentationState = (BasicUserOverviewPS) stateMachine.getStateFor(getCompoundId(), this.getPresentationStateClass());
             }
             catch (RemoteException re) {
@@ -1255,7 +1256,8 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
         return this._presentationState;
     }
-    public Class getPresentationStateClass() {
+    @Override
+	public Class getPresentationStateClass() {
         return BasicUserOverviewPS.class;
     }
     @Override
@@ -1266,7 +1268,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     // necessary because of subclasses
     private BasicUserOverviewPS getPresentationStateOfBasicUserOverview(IWUserContext iwuc) {
         try {
-            IWStateMachine stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwuc, IWStateMachine.class);
+            IWStateMachine stateMachine = IBOLookup.getSessionInstance(iwuc, IWStateMachine.class);
             String code = IWMainApplication.getEncryptedClassName(BasicUserOverview.class);
             code = ":" + code;
             return (BasicUserOverviewPS) stateMachine.getStateFor(code, BasicUserOverviewPS.class);
@@ -1429,11 +1431,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
         //    define address converter class
         EntityToPresentationObjectConverter converterAddress = new EntityToPresentationObjectConverter() {
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
 
-            public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 // entity is a user, try to get the corresponding address
                 User user = (User) entity;
                 Address address = null;
@@ -1453,11 +1457,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
         // define email converter class
         EntityToPresentationObjectConverter converterEmail = new EntityToPresentationObjectConverter() {
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
 
-            public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 // entity is a user, try to get the corresponding address
                 User user = (User) entity;
                 Email email = null;
@@ -1481,11 +1487,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
         // define phone converter class
         EntityToPresentationObjectConverter converterPhone = new EntityToPresentationObjectConverter() {
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
 
-            public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 // entity is a user, try to get the corresponding address
                 User user = (User) entity;
                 Phone[] phone = null;
@@ -1539,11 +1547,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         EntityToPresentationObjectConverter converterCompleteAddress = new EntityToPresentationObjectConverter() {
             private List values;
 
-            public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
                 return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
             }
 
-            public PresentationObject getPresentationObject(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+            @Override
+			public PresentationObject getPresentationObject(Object genericEntity, EntityPath path, EntityBrowser browser, IWContext iwc) {
                 // entity is a user, try to get the corresponding address
                 User user = (User) genericEntity;
                 Address address = null;
