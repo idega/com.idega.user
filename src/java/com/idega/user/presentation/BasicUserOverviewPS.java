@@ -14,6 +14,7 @@ import javax.ejb.FinderException;
 import javax.swing.event.ChangeEvent;
 
 import com.idega.block.entity.event.EntityBrowserEvent;
+import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.contact.data.Email;
 import com.idega.data.IDOLookup;
@@ -27,6 +28,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.event.ResetPresentationEvent;
 import com.idega.user.block.search.event.UserSearchEvent;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.User;
@@ -164,49 +166,33 @@ public class BasicUserOverviewPS extends IWControlFramePresentationState
 					StringBuilder custToAddresses = new StringBuilder("");
 					boolean first = true;
 					boolean custFirst = true;
+					UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(mainIwc, UserBusiness.class);
 					for (int i = 0; i < userIds.length; i++) {
 						String userID = userIds[i];
 						try {
 							User user = getGroupBusiness(mainIwc).getUserByID(
 									Integer.parseInt(userID));
-							Collection emails = user.getEmails();
-							if (emails != null && !emails.isEmpty()) {
-								Email email = (Email) emails.iterator().next();
-								if (email.getEmailAddress() != null
-										&& !"".equals(email.getEmailAddress().trim())) {
-									if (!first) {
-										toAddresses.append(";");
-									} else {
-										first = false;
-									}
-									toAddresses.append(email.getEmailAddress().trim());
-								}
+							Email email = userBusiness.getUserMail(user);
+							if (!first) {
+								toAddresses.append(";");
+							} else {
+								first = false;
 							}
-
+							toAddresses.append(email.getEmailAddress().trim());
 							Collection custodians = getFamilyLogic(mainIwc)
 									.getCustodiansFor(user);
 							if (custodians != null && !custodians.isEmpty()) {
 								Iterator it = custodians.iterator();
 								while (it.hasNext()) {
 									User custodian = (User) it.next();
-									Collection custEmail = custodian
-											.getEmails();
-									if (custEmail != null
-											&& !custEmail.isEmpty()) {
-										Email email = (Email) custEmail
-												.iterator().next();
-										if (email.getEmailAddress() != null
-												&& !"".equals(email
-														.getEmailAddress().trim())) {
-											if (!custFirst) {
-												custToAddresses.append(";");
-											} else {
-												custFirst = false;
-											}
-											custToAddresses.append(email
-													.getEmailAddress().trim());
-										}
+									email = userBusiness.getUserMail(custodian);
+									if (!custFirst) {
+										custToAddresses.append(";");
+									} else {
+										custFirst = false;
 									}
+									custToAddresses.append(email
+											.getEmailAddress().trim());
 								}
 							}
 						} catch (Exception ex) {
