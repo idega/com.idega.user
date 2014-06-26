@@ -40,15 +40,14 @@ import com.idega.util.ListUtil;
 @Service
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class UserHelper {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(UserHelper.class.getName());
-	
+
 	private UserBusiness userBusiness = null;
-	
-	@SuppressWarnings("unchecked")
+
 	public GroupTreeView getGroupTree(IWContext iwc) {
 		GroupTreeView viewer = new GroupTreeView();
-		try {			
+		try {
 			if (iwc.isSuperAdmin()) {
 				GroupTreeNode node = new GroupTreeNode(iwc.getDomain(),iwc.getApplicationContext());
 				viewer.setRootNode(node);
@@ -56,7 +55,7 @@ public class UserHelper {
 			else{
 				UserBusiness biz = getUserBusiness(iwc);
 				Collection<Group> allGroups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
-				
+
 				//	Filter groups
 				List<String> allowedGroupTypes = null;
 				if (iwc.isParameterSet(AbstractChooser.FILTER_PARAMETER))  {
@@ -65,7 +64,7 @@ public class UserHelper {
 						allowedGroupTypes = getGroupTypes(filter, iwc);
 					}
 				}
-				
+
 				Collection<Group> groups = new ArrayList<Group>();
 				if (allowedGroupTypes == null)  {
 					groups = allGroups;
@@ -84,14 +83,14 @@ public class UserHelper {
 		catch(Exception e) {
 			 LOGGER.log(Level.WARNING, "Error getting GroupTreeView", e);
 		}
-		
+
 		return viewer;
 	}
-	
+
 	private UserBusiness getUserBusiness(IWApplicationContext iwc) {
 		if (this.userBusiness == null) {
 			try {
-				this.userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				this.userBusiness = IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
 			catch (RemoteException rme) {
 				return null;
@@ -99,13 +98,12 @@ public class UserHelper {
 		}
 		return this.userBusiness;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	private List<String> getGroupTypes(String selectedGroup, IWContext iwc)  {
 		Group group = null;
 		GroupBusiness groupBusiness = null;
 		try {
-			groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+			groupBusiness = IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			if (!(CreateGroupWindow.NO_GROUP_SELECTED.equals(selectedGroup)))  {
 				group = groupBusiness.getGroupByGroupID(Integer.valueOf(selectedGroup));
 			}
@@ -117,23 +115,23 @@ public class UserHelper {
 		if (group == null) {
 			return null;
 		}
-		
+
 		Collection<GroupType> groupsTypes = null;
 		try {
 			groupsTypes = groupBusiness.getAllAllowedGroupTypesForChildren(group, iwc);
 		}
 		catch (Exception e) {
-			
+
 		}
 		if (ListUtil.isEmpty(groupsTypes)) {
 			return null;
 		}
-		
+
 		List<String> groupTypes = new ArrayList<String>();
 		for (GroupType groupType: groupsTypes)  {
 			groupTypes.add(groupType.getType());
 		}
-		
+
 		return groupTypes;
 	}
 
@@ -141,7 +139,7 @@ public class UserHelper {
 		if (group == null || ListUtil.isEmpty(allowedGroupTypes)) {
 			return false;
 		}
-		
+
 		String groupType = group.getGroupTypeValue();
 		for (String type: allowedGroupTypes)  {
 			if (type.equals(groupType)) {
@@ -150,32 +148,34 @@ public class UserHelper {
 		}
 		return false;
 	}
-	
+
 	private Collection<GroupTreeNode> convertGroupCollectionToGroupNodeCollection(Collection<Group> groups, IWApplicationContext iwac){
 		List<GroupTreeNode> list = new ArrayList<GroupTreeNode>();
 		for (Group group: groups) {
 			GroupTreeNode node = new GroupTreeNode(group, iwac);
 			list.add(node);
-		}		
+		}
 		return list;
 	}
-	
+
 	public EntityBrowser getUserBrowser(Collection<User> entities, String searchKey, IWContext iwc, int rows)  {
 	    // define checkbox button converter class
 	    EntityToPresentationObjectConverter converterToChooseButton = new EntityToPresentationObjectConverter() {
 
-	      public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
-	        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);  
-	      } 
+	      @Override
+		public PresentationObject getHeaderPresentationObject(EntityPath entityPath, EntityBrowser browser, IWContext iwc) {
+	        return browser.getDefaultConverter().getHeaderPresentationObject(entityPath, browser, iwc);
+	      }
 
-	      public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
+	      @Override
+		public PresentationObject getPresentationObject(Object entity, EntityPath path, EntityBrowser browser, IWContext iwc) {
 	        User user = (User) entity;
 	        RadioButton radioButton = new RadioButton();
 	        // define displaystring and value of the textinput of the parent window
 	        radioButton.setOnClick(StyledAbstractChooserWindow.SELECT_FUNCTION_NAME+"('"
 	          + user.getName() +
 	          "','"
-	          + ((Integer) user.getPrimaryKey()).toString() + 
+	          + ((Integer) user.getPrimaryKey()).toString() +
 	          "')");
 	        return radioButton;
 	      }
@@ -190,16 +190,16 @@ public class UserHelper {
 	    browser.setDefaultNumberOfRows(rows);
 
 	    browser.setWidth(Table.HUNDRED_PERCENT);
-	      
+
 	    //fonts
 	    Text column = new Text();
 	    column.setBold();
 	    browser.setColumnTextProxy(column);
-	      
+
 	    //    set color of rows
 	    browser.setColorForEvenRows(IWColor.getHexColorString(246, 246, 247));
 	    browser.setColorForOddRows("#FFFFFF");
-	      
+
 	    browser.setDefaultColumn(1, nameKey);
 	    browser.setDefaultColumn(2, pinKey);
 	    browser.setMandatoryColumn(1, "Choose");
@@ -210,7 +210,7 @@ public class UserHelper {
 	    browser.addMandatoryParameter(UserChooserBrowserWindow.SEARCH_KEY, searchKey);
 	    return browser;
 	}
-	
+
 	public Collection<User> getUserEntities(String searchKey)  {
 	    if (searchKey == null) {
 			return new ArrayList<User>();
@@ -225,7 +225,7 @@ public class UserHelper {
 	    	throw new RuntimeException(ex.getMessage());
 	    }
 	}
-	
+
 	private String getModifiedSearchString(String originalSearchString)  {
 	    StringBuffer buffer = new StringBuffer("%");
 	    buffer.append(originalSearchString).append("%");

@@ -1,10 +1,10 @@
 package com.idega.user.app;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.event.ChangeListener;
 
@@ -35,6 +35,7 @@ import com.idega.presentation.text.Text;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
+import com.idega.user.data.TopNodeGroup;
 import com.idega.user.presentation.BasicUserOverview;
 import com.idega.user.presentation.BasicUserOverviewPS;
 import com.idega.user.presentation.GroupTreeView;
@@ -202,7 +203,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
 		Image icon = this.iwb.getImage("super_root_icon.gif");
 		this.groupTree.setSuperRootNodeIcon(icon);
-		Collection topGroupNodes = null;
+		Collection<TopNodeGroup> topGroupNodes = null;
 		try {
 			topGroupNodes = getUserBusiness(iwc).getStoredTopGroupNodes(iwc.getCurrentUser());
 		}
@@ -253,7 +254,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		//layer.setPadding(0);
 		//layer.add(groupTree);
 		layer.setStyleAttribute("overflow", "auto");
-		borderTable.add(layer);
+		borderTable.add(layer, 1, 1);
 
 		Table treeTable = new Table(1, 1);
 		treeTable.setCellpadding(4);
@@ -331,8 +332,8 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		}
 		else {
 			UserBusiness biz = getUserBusiness(iwc);
-			Collection groups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
-			Collection groupNodes = convertGroupCollectionToGroupNodeCollection(groups, iwc.getApplicationContext());
+			Collection<Group> groups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
+			Collection<GroupTreeNode> groupNodes = convertGroupCollectionToGroupNodeCollection(groups, iwc.getApplicationContext());
 			this.groupTree.setFirstLevelNodes(groupNodes.iterator());
 
 		}
@@ -362,7 +363,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
 		if (this.userBiz == null) {
 			try {
-				this.userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				this.userBiz = com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
@@ -371,12 +372,12 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		return this.userBiz;
 	}
 
-	public Collection convertGroupCollectionToGroupNodeCollection(Collection col, IWApplicationContext iwac) {
-		List list = new Vector();
+	public Collection<GroupTreeNode> convertGroupCollectionToGroupNodeCollection(Collection<Group> col, IWApplicationContext iwac) {
+		List<GroupTreeNode> list = new ArrayList<GroupTreeNode>();
 
-		Iterator iter = col.iterator();
+		Iterator<Group> iter = col.iterator();
 		while (iter.hasNext()) {
-			Group group = (Group) iter.next();
+			Group group = iter.next();
 			GroupTreeNode node = new GroupTreeNode(group, iwac);
 			list.add(node);
 		}
@@ -386,7 +387,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
 	private BasicUserOverviewPS getPresentationStateOfBasicUserOverview(IWUserContext iwuc) {
 		try {
-			IWStateMachine stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwuc, IWStateMachine.class);
+			IWStateMachine stateMachine = IBOLookup.getSessionInstance(iwuc, IWStateMachine.class);
 			String code = IWMainApplication.getEncryptedClassName(BasicUserOverview.class);
 			code = ":" + code;
 			return (BasicUserOverviewPS) stateMachine.getStateFor(code, BasicUserOverviewPS.class);

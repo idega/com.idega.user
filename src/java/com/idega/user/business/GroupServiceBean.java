@@ -79,7 +79,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	 * Returns tree of Groups
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<GroupNode> getTopGroupsAndDirectChildren(List<String> uniqueIds) {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
@@ -151,7 +150,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		return ids;
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<GroupNode> appendParentGroupsToList(Collection<Group> parentGroups, Group selectedGroup, List<GroupNode> groupNodes, GroupBusiness groupBusiness,
 														String image, IWContext iwc) {
 		if (parentGroups == null) {
@@ -208,7 +206,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<GroupNode> getChildrenOfGroup(String uniqueId) {
 		if (uniqueId == null) {
 			return null;

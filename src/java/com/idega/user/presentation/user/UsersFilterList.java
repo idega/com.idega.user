@@ -35,17 +35,17 @@ import com.idega.util.expression.ELUtil;
 public class UsersFilterList extends Block {
 
 	public static final String USERS_FILTER_SELECTED_USERS = "usersFilterSelectedUsers";
-	
+
 	private String groupId;
-	
+
 	private List<String> roles;
-	
+
 	private String selectedUserInputName;
 	private List<String> selectedUsers;
 
 	@Autowired
 	private GroupHelper groupHelper;
-	
+
 	public List<String> getSelectedUsers() {
 		return selectedUsers;
 	}
@@ -53,62 +53,61 @@ public class UsersFilterList extends Block {
 	public void setSelectedUsers(List<String> selectedUsers) {
 		this.selectedUsers = selectedUsers;
 	}
-	
+
 	@Override
 	public void main(IWContext iwc) {
 		ELUtil.getInstance().autowire(this);
-		
+
 		PresentationUtil.addStyleSheetToHeader(iwc, getBundle(iwc).getVirtualPathWithFileNameString("style/user.css"));
-		
+
 		Layer container = new Layer();
 		container.setStyleClass("usersFilterUsersListStyle");
 		add(container);
-		
+
 		if (StringUtil.isEmpty(groupId) && ListUtil.isEmpty(selectedUsers) && ListUtil.isEmpty(roles)) {
 			return;
 		}
-		
+
 		//	From a selected group
 		List<User> users = getUsersFromSelectedGroup(iwc);
 		if (ListUtil.isEmpty(users) && ListUtil.isEmpty(selectedUsers) && ListUtil.isEmpty(roles)) {
 			container.add(new Heading3(getResourceBundle(iwc).getLocalizedString("users_filter.no_users_found", "There are no users")));
 			return;
 		}
-		
+
 		//	By roles
 		users = users == null ? getUsersByRoles(iwc, roles) : users;
-		
+
 		//	From IDs
 		selectedUsers = selectedUsers == null ? new ArrayList<String>(0) : selectedUsers;
 		users = ListUtil.isEmpty(users) ? getUsersByIds(selectedUsers) : users;
-		
+
 		String inputName = getSelectedUserInputName() + "_checkbox";
 		if (!ListUtil.isEmpty(users)) {
 			for (User user: users) {
 				Layer userEntry = new Layer();
 				container.add(userEntry);
 				container.add(new CSSSpacer());
-				
+
 				String id = user.getId();
-				
+
 				CheckBox select = new CheckBox(inputName, id);
 				select.setChecked(selectedUsers.contains(id), true);
 				select.setOnClick(new StringBuilder("UsersFilterHelper.markUserInForm('").append(select.getId()).append("', '").append(getSelectedUserInputName())
 						.append("', '").append(id).append("');").toString());
 				userEntry.add(select);
-				
+
 				Span name = new Span(new Text(user.getName()));
 				userEntry.add(name);
 			}
 		}
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	private List<User> getUsersByRoles(IWContext iwc, List<String> roles) {
 		if (ListUtil.isEmpty(roles)) {
 			return null;
 		}
-		
+
 		List<User> users = new ArrayList<User>();
 		GroupBusiness groupBusiness = null;
 		try {
@@ -128,14 +127,14 @@ public class UsersFilterList extends Block {
 		if (userBusiness == null) {
 			return null;
 		}
-		
+
 		AccessController accessController = iwc.getAccessController();
 		for (String roleKey: roles) {
 			Collection<Group> groupsByRole = accessController.getAllGroupsForRoleKeyLegacy(roleKey, iwc);
 			if (ListUtil.isEmpty(groupsByRole)) {
 				continue;
 			}
-			
+
 			for (Group group: groupsByRole) {
 				if (StringUtil.isEmpty(group.getName())) {
 					try {
@@ -148,7 +147,7 @@ public class UsersFilterList extends Block {
 					} catch (Exception e) {
 					}
 				}
-				
+
 				Collection<User> usersInGroup = null;
 				try {
 					usersInGroup = groupBusiness.getUsers(group);
@@ -156,7 +155,7 @@ public class UsersFilterList extends Block {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 				if (!ListUtil.isEmpty(usersInGroup)) {
 					for (User user: usersInGroup) {
 						if (!users.contains(user)) {
@@ -166,16 +165,15 @@ public class UsersFilterList extends Block {
 				}
 			}
 		}
-		
+
 		return users;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	private List<User> getUsersByIds(List<String> ids) {
 		if (ListUtil.isEmpty(ids)) {
 			return null;
 		}
-		
+
 		try {
 			UserBusiness userBusiness = IBOLookup.getServiceInstance(getIWApplicationContext(), UserBusiness.class);
 			Collection<User> users = userBusiness.getUsers(ArrayUtil.convertListToArray(ids));
@@ -185,17 +183,17 @@ public class UsersFilterList extends Block {
 		}
 		return null;
 	}
-	
+
 	private List<User> getUsersFromSelectedGroup(IWContext iwc) {
 		if (StringUtil.isEmpty(groupId)) {
 			return null;
 		}
-		
+
 		SimpleUserPropertiesBean properties = new SimpleUserPropertiesBean();
 		properties.setGroupId(Integer.valueOf(groupId));
 		return groupHelper.getUsersInGroup(iwc, properties, true);
 	}
-	
+
 	@Override
 	public String getBundleIdentifier() {
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
@@ -227,5 +225,5 @@ public class UsersFilterList extends Block {
 	public void setRoles(List<String> roles) {
 		this.roles = roles;
 	}
-	
+
 }

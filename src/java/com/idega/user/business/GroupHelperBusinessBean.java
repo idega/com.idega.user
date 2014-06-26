@@ -61,7 +61,6 @@ public class GroupHelperBusinessBean implements GroupHelper {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<GroupNode> getTopGroupsAndDirectChildren(User user, IWContext iwc, boolean basicInformationOnly) {
 		List<GroupNode> fake = new ArrayList<GroupNode>();
 
@@ -638,7 +637,6 @@ public class GroupHelperBusinessBean implements GroupHelper {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public Collection<Group> getTopGroups(IWContext iwc, User user) {
 		if (iwc == null || user == null) {
 			return new ArrayList<Group>();

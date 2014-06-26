@@ -207,7 +207,7 @@ public class GroupsFilterEngine implements Singleton {
 
 	private GroupBusiness getGroupBusiness(IWApplicationContext iwac) {
 		try {
-			return (GroupBusiness) IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+			return IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
 		} catch (IBOLookupException e) {
 			e.printStackTrace();
 		}
@@ -332,7 +332,6 @@ public class GroupsFilterEngine implements Singleton {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private boolean forceToOpenNode(IWContext iwc, Group group, List<String> selectedGroups, List<GroupFilterResult> filteredGroups) {
 		if (ListUtil.isEmpty(selectedGroups)) {
 			return false;
@@ -419,7 +418,6 @@ public class GroupsFilterEngine implements Singleton {
 		return action;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Collection<Group> getUserGroups(IWContext iwc, boolean onlyTopGroups) {
 		User currentUser = null;
 		try {
@@ -433,7 +431,7 @@ public class GroupsFilterEngine implements Singleton {
 
 		UserBusiness userBusiness = null;
 		try {
-			userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+			userBusiness = IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		} catch (IBOLookupException e) {
 			e.printStackTrace();
 		}

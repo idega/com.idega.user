@@ -40,24 +40,24 @@ public class UserGroupMembership extends Block {
 
 	private IWBundle bundle;
 	private IWResourceBundle iwrb;
-	
+
 	@Autowired
 	private JQuery jQuery;
-	
+
 	@Autowired
 	private Web2Business web2;
-	
+
 	@Override
 	public String getBundleIdentifier() {
 		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
-	
+
 	@Override
 	public void main(IWContext iwc) throws Exception {
 		ELUtil.getInstance().autowire(this);
 		bundle = getBundle(iwc);
 		iwrb = bundle.getResourceBundle(iwc);
-		
+
 		PresentationUtil.addStyleSheetsToHeader(iwc, Arrays.asList(
 				bundle.getVirtualPathWithFileNameString("style/user.css"),
 				web2.getBundleURIToFancyBoxStyleFile()
@@ -67,31 +67,30 @@ public class UserGroupMembership extends Block {
 				bundle.getVirtualPathWithFileNameString("javascript/UserInfoViewerHelper.js")
 		));
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, web2.getBundleURIsToFancyBoxScriptFiles());
-		
+
 		Layer container = new Layer();
 		add(container);
 		container.setStyleClass("userGroupMembership");
-		
+
 		if (!iwc.isLoggedOn()) {
 			container.add(new Heading3(iwrb.getLocalizedString("user_not_logged_in", "User is not logged in")));
 			return;
 		}
-		
+
 		User user = iwc.getCurrentUser();
 		UserBusiness userBusiness = IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-		@SuppressWarnings("unchecked")
 		Collection<Group> groups = userBusiness.getUserGroups(user);
 		if (ListUtil.isEmpty(groups)) {
 			container.add(new Heading3(iwrb.getLocalizedString("user_is_not_member_of_any_group", "User is not a member of any group")));
 			return;
 		}
-		
+
 		List<Group> userGroups = new ArrayList<Group>(groups);
 		Locale locale = iwc.getCurrentLocale();
 		Collections.sort(userGroups, new GroupsComparator(locale));
-		
+
 		BuilderLogic builder = BuilderLogic.getInstance();
-		
+
 		Lists list = new Lists();
 		container.add(list);
 		list.setStyleClass("myGroupsList");
@@ -103,7 +102,7 @@ public class UserGroupMembership extends Block {
 				group.setUniqueId(uniqueId);
 				group.store();
 			}
-			
+
 			ListItem item = new ListItem();
 			Link link = new Link(group.getNodeName(locale));
 			link.setURL(builder.getUriToObject(GroupMembers.class, Arrays.asList(new AdvancedProperty(GroupMembers.GROUP_UNIQUE_ID_PARAM, uniqueId))));
@@ -111,7 +110,7 @@ public class UserGroupMembership extends Block {
 			item.add(link);
 			list.add(item);
 		}
-		
+
 		String action = "UserInfoViewerHelper.initialize();";
 		if (!CoreUtil.isSingleComponentRenderingProcess(iwc)) {
 			action = "jQuery(window).load(function() {"+ action +"});";

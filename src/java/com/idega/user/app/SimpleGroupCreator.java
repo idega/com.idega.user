@@ -89,7 +89,6 @@ public class SimpleGroupCreator extends Block {
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void initializeLocalVariables(IWContext iwc) {
 		this.getBundleIdentifier();
 
@@ -112,7 +111,7 @@ public class SimpleGroupCreator extends Block {
 		Group group = null;
 		if (editedGroupId != null) {
 			try {
-				group = ((GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class)).getGroupByGroupID(Integer.valueOf(editedGroupId));
+				group = IBOLookup.getServiceInstance(iwc, GroupBusiness.class).getGroupByGroupID(Integer.valueOf(editedGroupId));
 			} catch(Exception e) {}
 		}
 
