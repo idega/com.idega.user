@@ -39,7 +39,7 @@ var userValidationHelper ={
 							valid = false;
 							return;
 						}
-						if(reply == userValidationHelper.options.userId()){
+						if(reply == vUserId){
 							valid = true;
 							return;
 						}
