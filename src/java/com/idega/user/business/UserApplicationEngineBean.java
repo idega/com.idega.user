@@ -1548,4 +1548,28 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 		return result;
 	}
+
+	@Override
+	public String getUserIdByLogin(String login) {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			return null;
+		}
+		if (StringUtil.isEmpty(login)) {
+			return null;
+		}
+
+		try {
+			LoginTableHome loginInfo = (LoginTableHome) IDOLookup.getHome(LoginTable.class);
+			LoginTable loginTable = loginInfo.findByLogin(login);
+
+			return String.valueOf(loginTable.getUserId());
+		} catch (FinderException e) {
+			return null;
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Error while getting user id by user login: " + login, e);
+		}
+
+		return null;
+	}
 }
