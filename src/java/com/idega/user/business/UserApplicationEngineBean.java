@@ -698,7 +698,6 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		LoginInfo loginInfo = null;
 		LoginTable loginTable = null;
 		boolean newLogin = false;
-		boolean newUser = false;
 		if (user == null) {
 			logger.info("Creating new user: " + name + ", personal ID: " + personalId);
 			//	Creating user
@@ -713,11 +712,14 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				logger.warning("Unable to create new user: " + name + ", personal ID: " + personalId);
 				return result;
 			}
-			newUser = true;
 		}
 
+		//	Generating login for new user OR existing user without login
 		Integer userId = user == null ? null : Integer.valueOf(user.getId());
-		if (newUser && StringUtil.isEmpty(getUserLogin(personalId, userId))) {
+		String userLogin = getUserLogin(personalId, userId);
+		if (StringUtil.isEmpty(userLogin)) {
+			logger.info("Creating login and password for user: " + name + ", personal ID: " + user.getPersonalID());
+
 			if (!StringUtil.isEmpty(user.getPersonalID())) {
 				login = user.getPersonalID();
 			}
