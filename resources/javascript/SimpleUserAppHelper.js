@@ -299,8 +299,12 @@ function getAddUserPresentationObjectCallback(component, containerId) {
 	
 	removeChildren(container);
 	insertNodesToContainer(component, container);
+	jQuery('body').trigger('simple-user-app-loaded');
 	return true;
 }
+jQuery(document).ready(function(){
+	jQuery('body').trigger('simple-user-app-loaded');
+});
 
 function goBackToSimpleUserApp(instanceId, containerId, message, parentGroupChooserId, selectedParentGroupId) {
 	refreshDeselectedGroups();
