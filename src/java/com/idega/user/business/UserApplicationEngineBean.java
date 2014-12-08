@@ -19,6 +19,7 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.faces.component.UIComponent;
+import javax.mail.Message;
 
 import org.jdom2.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,7 @@ import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -908,8 +910,11 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 		//	Sending mail
 		if (sendEmailWithLoginInfo) {
+			IWMainApplicationSettings settings = iwc.getIWMainApplication().getSettings();
+
 			String portNumber = new StringBuilder(":").append(String.valueOf(iwc.getServerPort())).toString();
-			String serverLink = StringHandler.replace(iwc.getServerURL(), portNumber, CoreConstants.EMPTY);
+			String portal = settings.getProperty("sua.portal_address");
+			String serverLink = StringUtil.isEmpty(portal) ? StringHandler.replace(iwc.getServerURL(), portNumber, CoreConstants.EMPTY) : portal;
 			String subject = newLogin ? iwrb.getLocalizedString("account_was_created", "Account was created") :
 										iwrb.getLocalizedString("account_information_was_changed", "Account was modified");
 			StringBuilder text = new StringBuilder(iwrb.getLocalizedString("dear", "Dear").concat(CoreConstants.SPACE).concat(user.getName())
@@ -924,8 +929,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 						iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified. Please, login in to review changes"))
 						.append("\n\r").append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink);
 			}
-			text.append("\n\r").append(iwrb.getLocalizedString("with_regards", "With regards,")).append("\r")
-				.append(iwc.getIWMainApplication().getSettings().getProperty("with_regards_text", serverLink.concat(" team")));
+			text.append("\n\r").append(iwrb.getLocalizedString("with_regards", "With regards,")).append("\r").append(settings.getProperty("with_regards_text", serverLink.concat(" team")));
 
 			sendEmail(userInfo.getEmail(), subject, text.toString());
 		}
@@ -935,9 +939,22 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	private boolean sendEmail(String emailTo, String subject, String text) {
-		String from = IWMainApplication.getDefaultIWMainApplication().getSettings()
-				.getProperty(CoreConstants.PROP_SYSTEM_MAIL_FROM_ADDRESS, "staff@idega.com");
-		return SendMail.sendSimpleMail(from, emailTo, subject, text);
+		IWMainApplication iwma = getApplication();
+		IWMainApplicationSettings settings = iwma.getSettings();
+		String from = settings.getProperty(CoreConstants.PROP_SYSTEM_MAIL_FROM_ADDRESS, "staff@idega.com");
+
+		if (settings.getBoolean("sua.send_simple_mail", Boolean.FALSE)) {
+			return SendMail.sendSimpleMail(from, emailTo, subject, text);
+		}
+
+		try {
+			Message msg = SendMail.send(from, emailTo, null, null, null, null, subject, text);
+			return msg != null;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error sending mail to '" + emailTo + "' with subject '" + subject + "' and message '" + text + "'", e);
+		}
+
+		return false;
 	}
 
 	private PostalCode createPostalCode(String postalCodeValue) {
