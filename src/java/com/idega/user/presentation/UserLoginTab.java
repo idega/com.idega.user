@@ -23,7 +23,7 @@ import com.idega.util.IWTimestamp;
 /**
  * Title:        UserLoginTab
  * Description:	A tab for creating or modifying a users login information
- * Copyright:    Copyright (c) 2001 
+ * Copyright:    Copyright (c) 2001
  * Company:      Idega Software
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
  * @version 1.5
@@ -66,6 +66,7 @@ public class UserLoginTab extends UserTab {
 		//		super.setName("Login");
 	}
 
+	@Override
 	public void init() {
 		this.errorMessageTable = new Table();
 		this.errorText = new Text();
@@ -73,6 +74,7 @@ public class UserLoginTab extends UserTab {
 		super.init();
 	}
 
+	@Override
 	public void initFieldContents() {
 		try {
 			LoginTable lTable = LoginDBHandler.getDefaultUserLogin(getUserId());
@@ -95,6 +97,7 @@ public class UserLoginTab extends UserTab {
 		}
 	}
 
+	@Override
 	public void updateFieldsDisplayStatus() {
 		this.userLoginField.setContent((String) this.fieldValues.get(_PARAM_USER_LOGIN));
 		this.passwordField.setContent((String) this.fieldValues.get(_PARAM_PASSWORD));
@@ -105,6 +108,7 @@ public class UserLoginTab extends UserTab {
 		this.disableAccountField.setChecked(((Boolean) this.fieldValues.get(_PARAM_DISABLE_ACCOUNT)).booleanValue());
 	}
 
+	@Override
 	public void initializeFields() {
 		this.userLoginField = new TextInput(_PARAM_USER_LOGIN);
 		this.userLoginField.setLength(32);
@@ -126,6 +130,7 @@ public class UserLoginTab extends UserTab {
 		this.disableAccountField.setWidth("10");
 	}
 
+	@Override
 	public void initializeTexts() {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
@@ -146,6 +151,7 @@ public class UserLoginTab extends UserTab {
 		this.disableAccountText.setBold();
 	}
 
+	@Override
 	public boolean store(IWContext iwc) {
 		//get all the params from the fields Map
 		IWResourceBundle iwrb = getResourceBundle(iwc);
@@ -170,9 +176,9 @@ public class UserLoginTab extends UserTab {
 //						Check if the current user is allowed to change the password/username, only Admin,the user himself and the changedByUser or a member of changedByGroup can.
 						checkToSeeIfCurrentUserChangeTheLogin(iwc, iwrb, userLoginTable);
 					}
-					//if nobody has created a username + password for the user, we don't care who's doing it. 
+					//if nobody has created a username + password for the user, we don't care who's doing it.
 					//The current user and his primary group will be saved in the logintable record if no errors occur.
-					
+
 					//only adds an error message if the new login name is taken!
 					checkIfLoginIsTaken(iwrb, newLoginName, oldLogin);
 				}
@@ -187,8 +193,8 @@ public class UserLoginTab extends UserTab {
 		catch (Exception ex) {
 			this.addErrorMessage(ex.getMessage());
 		}
-		
-		
+
+
 		if (someErrors()) {
 			presentErrorMessage(this.clearErrorMessages());
 			return false;
@@ -228,7 +234,7 @@ public class UserLoginTab extends UserTab {
 							//show error!
 							String changerGroupName = userLoginTable.getChangedByGroup().getName();
 							Object[] arguments = {changerName,pin,changerGroupName};
-							
+
 							String formatted = MessageFormat.format(iwrb.getLocalizedString("usr_log_changing_login_not_allowed_with_groupname", "You cannot change this users login! Only the administrator, the user himself, {0} (personal id : {1}) or someone from the group {2} can."), arguments);
 							this.addErrorMessage(formatted);
 						}
@@ -236,15 +242,15 @@ public class UserLoginTab extends UserTab {
 					}
 					else{
 						//show error!
-						
+
 						Object[] arguments = {changerName,pin};
 						String formatted = MessageFormat.format(iwrb.getLocalizedString("usr_log_changing_login_not_allowed", "You cannot change this users login! Only the administrator, the user himself or the user {0} (personal id : {1}) can."), arguments);
 						this.addErrorMessage(formatted);
 					}
-				
+
 				}
-				//else we don't care, its the first time of change or the user is the last changer, the LoginDBHandler will save the current user as the lastChangedBy user...	
-			}	
+				//else we don't care, its the first time of change or the user is the last changer, the LoginDBHandler will save the current user as the lastChangedBy user...
+			}
 		}
 	}
 
@@ -294,7 +300,7 @@ public class UserLoginTab extends UserTab {
 			LoginTable loginTable = LoginDBHandler.getDefaultUserLogin(this.getUserId());
 			if (loginTable != null) {
 				if (updateLoginTable) {
-					LoginDBHandler.updateLogin(this.getUserId(), login, passw);
+					LoginDBHandler.updateLogin(loginTable, this.getUserId(), login, passw);
 				}
 				//removed password expires
 				//LoginDBHandler.updateLoginInfo(loginTable, accountEnabled, IWTimestamp.RightNow(), 5000,passwExpires, canChangePassw, mustChangePassw, null);
@@ -317,6 +323,7 @@ public class UserLoginTab extends UserTab {
 		}
 	}
 
+	@Override
 	public void lineUpFields() {
 		Table table = new Table();
 		table.setWidth(Table.HUNDRED_PERCENT);
@@ -354,12 +361,14 @@ public class UserLoginTab extends UserTab {
 		this.add(table);
 	}
 
+	@Override
 	public void main(IWContext iwc) {
 		if (getPanel() != null) {
 			getPanel().addHelpButton(getHelpButton());
 		}
 	}
 
+	@Override
 	public boolean collect(IWContext iwc) {
 		if (iwc != null) {
 			IWResourceBundle iwrb = getResourceBundle(iwc);
@@ -492,10 +501,12 @@ public class UserLoginTab extends UserTab {
 		return help;
 	}
 
+	@Override
 	public void initializeFieldNames() {
 		/**@todo: implement this com.idega.user.presentation.UserTab abstract method*/
 	}
 
+	@Override
 	public void initializeFieldValues() {
 		this.fieldValues.put(UserLoginTab._PARAM_USER_LOGIN, "");
 		this.fieldValues.put(UserLoginTab._PARAM_PASSWORD, "");
@@ -508,6 +519,7 @@ public class UserLoginTab extends UserTab {
 		this.updateFieldsDisplayStatus();
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
