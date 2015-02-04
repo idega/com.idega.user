@@ -15,6 +15,7 @@ import com.idega.business.IBOLookup;
 import com.idega.content.business.ContentConstants;
 import com.idega.content.upload.presentation.FileUploadViewer;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
+import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.contact.data.Email;
 import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
@@ -279,8 +280,13 @@ public class SimpleUserAppAddUser extends Block {
 
 		//	Login
 		if (user != null) {
-			loginValueInput.setDisabled(true);
-			loginValueInput.setContent(LoginDBHandler.getUserLogin(user).getUserLogin());
+			LoginTable loginTable = LoginDBHandler.getUserLogin(user);
+			if (loginTable == null) {
+				loginValueInput.setDisabled(false);
+			} else {
+				loginValueInput.setDisabled(true);
+				loginValueInput.setContent(loginTable.getUserLogin());
+			}
 		}
 
 		//	Password
