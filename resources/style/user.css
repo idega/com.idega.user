@@ -134,7 +134,7 @@
 
 .userEmailLabelContainerStyleClass {
 	float: left;
-	width: 15%;
+	width: 25%;
 }
 
 .userPhoneLabelContainerStyleClass {
@@ -144,13 +144,13 @@
 
 .changeUserLabelContainerStyleClass {
 	float: left;
-	width: 15%;
+	width: 10%;
 	text-align: center;
 }
 
 .removeUserLabelContainerStyleClass {
 	float: left;
-	width: 15%;
+	width: 10%;
 	text-align: center;
 }
 
