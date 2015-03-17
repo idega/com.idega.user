@@ -436,8 +436,8 @@ public class SimpleUserAppAddUser extends Block {
 		Layer explantationContainer = new Layer();
 		explantationContainer.setStyleClass("simpleUserApplicationPictureChangerBoxExplanationText");
 		Text explanation = new Text(new StringBuilder(
-				iwrb.getLocalizedString("sua.select_picture_and_upload_note_about_alowed_files", "Select profile picture and upload it. Available files: "))
-				.append("PNG, JPEG, GIF").toString());
+				iwrb.getLocalizedString("sua.select_picture_and_upload_note_about_alowed_files", "Select profile picture and upload it. Available types:"))
+				.append(" PNG, JPEG, GIF").toString());
 		explantationContainer.add(explanation);
 		pictureChangerContainer.add(explantationContainer);
 

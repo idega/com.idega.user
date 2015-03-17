@@ -500,7 +500,6 @@ password=
 permission=
 permissions=
 personal.id.number=
-personal_id=Personal ID
 phone=
 please_enter_login=Skriv anv\u00E4ndarnamn\!
 please_enter_name=Skriv in namn\!
@@ -682,3 +681,16 @@ your_user_name=Ditt anv\u00E4ndarnamn
 \u00CDH\u00CD_access=\u00CDH\u00CD_access
 \u00CDSS_access=\u00CDSS_access
 with_regards=V\u00E4nliga h\u00E4lsningar
+
+personal_id=Personnummer
+phone_number=Telefonnummer
+sua.personal_information=Personuppgifter
+sua.enter_personal_id_to_search_for_user=Ange personnummer för att söka efter en person
+sua.click_to_delete_or_change_picture=Klicka för att ändra eller ta bort bilden
+sua.click_to_add_picture=Klicka för att lägga bilden
+sua.select_picture_and_upload_note_about_alowed_files=Välj profilbild och ladda upp den. Tillgängliga typer:
+sua.close_picture_changer=Stäng
+sua.edit_user_picture=Redigera bild
+
+
+
