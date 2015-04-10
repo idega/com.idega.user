@@ -17,6 +17,7 @@ public class SimpleUserPropertiesBean {
 	private String roleTypes = null;
 	private String message = null;
 	private String groupTypesForParentGroups = null;
+	private String parentGroups;
 
 	private boolean getParentGroupsFromTopNodes = true;
 	private boolean useChildrenOfTopNodesAsParentGroups = false;
@@ -36,7 +37,7 @@ public class SimpleUserPropertiesBean {
 	public SimpleUserPropertiesBean(String instanceId, String containerId, String groupTypesForParentGroups, String groupTypes,String roleTypes,
 			boolean getParentGroupsFromTopNodes, boolean useChildrenOfTopNodesAsParentGroups, boolean allFieldsEditable, boolean juridicalPerson,
 			boolean addGroupCreateButton, boolean addGroupEditButton, boolean sendMailToUser, boolean changePasswordNextTime, boolean allowEnableDisableAccount,
-			boolean addChildGroupCreateButton, boolean addChildGroupEditButton) {
+			boolean addChildGroupCreateButton, boolean addChildGroupEditButton, String parentGroups) {
 		this();
 
 		this.instanceId = instanceId;
@@ -55,6 +56,7 @@ public class SimpleUserPropertiesBean {
 		this.allowEnableDisableAccount = allowEnableDisableAccount;
 		this.addChildGroupCreateButton = addChildGroupCreateButton;
 		this.addChildGroupEditButton = addChildGroupEditButton;
+		this.parentGroups = parentGroups;
 	}
 
 	public int getGroupId() {
@@ -259,6 +261,14 @@ public class SimpleUserPropertiesBean {
 
 	public void setShowSubGroup(boolean showSubGroup) {
 		this.showSubGroup = showSubGroup;
+	}
+
+	public String getParentGroups() {
+		return parentGroups;
+	}
+
+	public void setParentGroups(String parentGroups) {
+		this.parentGroups = parentGroups;
 	}
 
 }

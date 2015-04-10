@@ -2,6 +2,7 @@ package com.idega.user.app;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.block.web2.business.Web2Business;
 import com.idega.builder.business.BuilderLogic;
+import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
@@ -21,6 +23,7 @@ import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.SelectOption;
 import com.idega.user.bean.SimpleUserPropertiesBean;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupHelper;
 import com.idega.user.business.UserApplicationEngine;
 import com.idega.user.business.UserConstants;
@@ -30,6 +33,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.PresentationUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 public class SimpleUserAppViewUsers extends Block {
@@ -311,7 +315,7 @@ public class SimpleUserAppViewUsers extends Block {
 		Layer parentGroupChooserContainer = new Layer();
 		parentGroupChooserContainer.setStyleClass("parentGroupContainerStyleClass");
 		choosers.add(parentGroupChooserContainer);
-		Group parentGroup = fillParentGroupChooser(iwc, groupsDropdown, parentGroupChooserContainer, ids);
+		Group parentGroup = fillParentGroupChooser(iwc, groupsDropdown, parentGroupChooserContainer, ids, properties.getParentGroups());
 		addGroupButtons(iwc, parentGroupsChooserId, null, parentGroupChooserContainer, 0, properties.isAddGroupCreateButton(), properties.isAddGroupEditButton());
 		choosers.add(getSpacer());
 
@@ -403,20 +407,27 @@ public class SimpleUserAppViewUsers extends Block {
 		return filteredChildGroups.get(0);
 	}
 
-	private Group fillParentGroupChooser(IWContext iwc, DropdownMenu groupsDropdown, Layer container, String[] ids) {
+	private Group fillParentGroupChooser(IWContext iwc, DropdownMenu groupsDropdown, Layer container, String[] ids, String parentGroups) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
 		Collection<Group> topGroups = null;
-		if (getParentGroup() == null) {
+		if (!StringUtil.isEmpty(parentGroups)) {
+			properties.setGetParentGroupsFromTopNodes(false);
+			List<String> groupsIds = Arrays.asList(parentGroups.split(CoreConstants.COMMA));
+			try {
+				GroupBusiness groupBusiness = IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				topGroups = groupBusiness.getGroups(groupsIds);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else if (getParentGroup() == null) {
 			//	Group is not set as property
 			topGroups = groupsHelper.getTopGroupsFromDomain(iwc);
-		}
-		else {
+		} else {
 			//	Group is set as property
 			if (properties.isUseChildrenOfTopNodesAsParentGroups()) {
 				topGroups = getParentGroup().getChildren();
-			}
-			else {
+			} else {
 				addGroupNameLabel(iwrb, container, getParentGroup());
 				return getParentGroup();
 			}
@@ -430,8 +441,16 @@ public class SimpleUserAppViewUsers extends Block {
 			return null;
 		}
 
-		List<Group> filteredTopGroups = new ArrayList<Group>(groupsHelper.getFilteredGroups(iwc, topGroups, properties.getGroupTypesForParentGroups(),
-														CoreConstants.COMMA, (getParentGroup() == null && properties.isUseChildrenOfTopNodesAsParentGroups())));
+		List<Group> filteredTopGroups = StringUtil.isEmpty(parentGroups) ?
+				new ArrayList<Group>(groupsHelper.getFilteredGroups(
+						iwc,
+						topGroups,
+						properties.getGroupTypesForParentGroups(),
+						CoreConstants.COMMA,
+						(getParentGroup() == null && properties.isUseChildrenOfTopNodesAsParentGroups())
+					)
+				) :
+				new ArrayList<Group>(topGroups);
 		if (filteredTopGroups.size() > 1) {
 			Group groupToReturn = null;
 

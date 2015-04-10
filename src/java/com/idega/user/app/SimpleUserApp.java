@@ -42,12 +42,13 @@ public class SimpleUserApp extends Block {
 	public static final String EDIT_IMAGE = "images/edit.png";
 
 	/** Properties start **/
-	private Group parentGroup = null;
-	private Group groupForUsersWithoutLogin = null;
+	private Group	parentGroup = null,
+					groupForUsersWithoutLogin = null;
 
-	private String groupTypes = null;
-	private String groupTypesForChildGroups = null;
-	private String roleTypesForChildGroups = null;
+	private String	groupTypes = null,
+					groupTypesForChildGroups = null,
+					roleTypesForChildGroups = null,
+					parentGroups = null;
 
 	private boolean getParentGroupsFromTopNodes = true,
 					useChildrenOfTopNodesAsParentGroups = false,
@@ -123,7 +124,7 @@ public class SimpleUserApp extends Block {
 		SimpleUserPropertiesBean properties = new SimpleUserPropertiesBean(instanceId, container.getId(), groupTypes, groupTypesForChildGroups,
 				roleTypesForChildGroups, getParentGroupsFromTopNodes, useChildrenOfTopNodesAsParentGroups, allFieldsEditable, juridicalPerson,
 				addGroupCreateButton, addGroupEditButton, sendMailToUser, changePasswordNextTime, allowEnableDisableAccount, addChildGroupCreateButton,
-				addChildGroupEditButton);
+				addChildGroupEditButton, getParentGroups());
 
 		if (isUseMainGroupOfCurrentUserAsParent()) {
 			User user = iwc.isLoggedOn() ? iwc.getCurrentUser() : null;
@@ -296,6 +297,14 @@ public class SimpleUserApp extends Block {
 
 	public void setAddChildGroupEditButton(boolean addChildGroupEditButton) {
 		this.addChildGroupEditButton = addChildGroupEditButton;
+	}
+
+	public String getParentGroups() {
+		return parentGroups;
+	}
+
+	public void setParentGroups(String parentGroups) {
+		this.parentGroups = parentGroups;
 	}
 
 	/** Methods for properties end **/
