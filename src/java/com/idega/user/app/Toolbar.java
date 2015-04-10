@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.faces.component.UIComponent;
+
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
@@ -36,6 +39,7 @@ import com.idega.user.presentation.CreateUser;
 import com.idega.user.presentation.MassMovingWindowPlugin;
 import com.idega.user.presentation.RoleMastersWindow;
 import com.idega.util.CoreConstants;
+import com.idega.util.ListUtil;
 
 /**
  * <p>
@@ -50,14 +54,14 @@ import com.idega.util.CoreConstants;
  * <p>
  * Company: idega Software
  * </p>
- * 
+ *
  * @author <a href="gummi@idega.is">Gu�mundur �g�st S�mundsson </a>
- * 
+ *
  * @version 1.0
  */
 
 public class Toolbar extends Page implements IWBrowserView {
-	
+
 	public static final String SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY = "selected_group_mm_id_key";
 
 	protected String title;
@@ -85,26 +89,30 @@ public class Toolbar extends Page implements IWBrowserView {
 		this.selectedGroupProviderStateId = selectedGroupProviderStateId;
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 	}
 
+	@Override
 	public void setControlEventModel(IWPresentationEvent model) {
 		this._controlEvent = model;
 		this.searchForm.setControlEventModel(model);
 	}
 
+	@Override
 	public void setControlTarget(String controlTarget) {
 		this._controlTarget = controlTarget;
 		this.searchForm.setControlTarget(controlTarget);
 
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
 		this.iwb = getBundle(iwc);
 		this.iwrb = getResourceBundle(iwc);
-		
+
 		Table controlTable = new Table(1, 3);
 		controlTable.setCellpadding(0);
 		controlTable.setCellspacing(0);
@@ -132,12 +140,12 @@ public class Toolbar extends Page implements IWBrowserView {
 		toolbar1.setBorder(0);
 		toolbarTable.add(toolbar1, 1, 1);
 		int toolbarColumn = 1;
-		
+
 		//User
 		Image iconCrUser = this.iwb.getImage("new_user.gif");
 		Link tLink11 = getToolbarLink(new Text(this.iwrb.getLocalizedString("new.member", "New member")), CreateUser.class, null);
 		Link newUserImageLink = getToolbarLink(iconCrUser, CreateUser.class, null);
-		
+
 		if (this.selectedGroupProviderStateId != null){
 			tLink11.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, this.selectedGroupProviderStateId);
 			newUserImageLink.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, this.selectedGroupProviderStateId);
@@ -155,16 +163,16 @@ public class Toolbar extends Page implements IWBrowserView {
 		Image iconCrGroup = this.iwb.getImage("new_group.gif");
 		Link tLink12 = getToolbarLink(new Text(this.iwrb.getLocalizedString("new.group", "New group")), CreateGroupWindow.class, null);
 		Link imageLink = getToolbarLink(iconCrGroup, CreateGroupWindow.class, null);
-		
+
 		tLink12.setStyleClass(this.styledLink);
 		toolbar1.setCellpaddingLeft(toolbarColumn, 1, 7);
 		toolbar1.setCellpaddingRight(toolbarColumn, 1, 3);
-		
+
 		if (this.selectedGroupProviderStateId != null){
 			tLink12.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, this.selectedGroupProviderStateId);
 			imageLink.addParameter(CreateGroupWindow.SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, this.selectedGroupProviderStateId);
 		}
-		
+
 		toolbar1.add(imageLink, toolbarColumn++, 1);
 		toolbar1.setVerticalAlignment(toolbarColumn, 1, Table.VERTICAL_ALIGN_TOP);
 		toolbar1.setCellpaddingTop(toolbarColumn, 1, 3);
@@ -186,7 +194,7 @@ public class Toolbar extends Page implements IWBrowserView {
 		Image iconSearch = this.iwb.getImage("search.gif");
 		Link tLink13 = getToolbarLink(new Text(this.iwrb.getLocalizedString("button.search", "Search")), SearchWindow.class, null);
 		Link searchLink = getToolbarLink(iconSearch, SearchWindow.class, null);
-		
+
 		tLink13.setStyleClass(this.styledLink);
 		if (this.userApplicationMainAreaStateId != null){
 			tLink13.addParameter(UserApplicationMainArea.USER_APPLICATION_MAIN_AREA_PS_KEY, this.userApplicationMainAreaStateId);
@@ -200,21 +208,22 @@ public class Toolbar extends Page implements IWBrowserView {
 		toolbar1.add(tLink13, toolbarColumn++, 1);
 
 		// adding all plugins that implement the interface ToolbarElement
-		List  toolbarElements = new ArrayList();
+		List<ToolbarElement> toolbarElements = new ArrayList<ToolbarElement>();
 		User user = iwc.getCurrentUser();
-		Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
-		Iterator iter = plugins.iterator();
-		while (iter.hasNext()) {
-		    UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) iter.next();
-			List list = pluginBiz.getMainToolbarElements();
-			if (list != null) {
-				toolbarElements.addAll(list);
+		Collection<UserGroupPlugInBusiness> plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
+		if (!ListUtil.isEmpty(plugins)) {
+			Iterator<UserGroupPlugInBusiness> iter = plugins.iterator();
+			while (iter.hasNext()) {
+			    UserGroupPlugInBusiness pluginBiz = iter.next();
+				List<ToolbarElement> list = pluginBiz.getMainToolbarElements();
+				if (!ListUtil.isEmpty(list)) {
+					toolbarElements.addAll(list);
+				}
 			}
 		}
 		// adding some toolbar elements that belong to this bundle
 		toolbarElements.add(new MassMovingWindowPlugin());
-		
-		boolean addPlugins = false;
+
 		if (!toolbarElements.isEmpty()) {
 			Table toolbar2 = new Table();
 			toolbar2.setCellpadding(0);
@@ -225,11 +234,12 @@ public class Toolbar extends Page implements IWBrowserView {
 
 			DropdownMenu menu  = new DropdownMenu("other_choices");
 			final IWContext finalIwc = iwc;
-			Comparator priorityComparator = new Comparator() {
-				
-				public int compare(Object toolbarElementA, Object toolbarElementB) {
-					int priorityA = ((ToolbarElement) toolbarElementA).getPriority(finalIwc);
-					int priorityB = ((ToolbarElement) toolbarElementB).getPriority(finalIwc);
+			Comparator<ToolbarElement> priorityComparator = new Comparator<ToolbarElement>() {
+
+				@Override
+				public int compare(ToolbarElement toolbarElementA, ToolbarElement toolbarElementB) {
+					int priorityA = toolbarElementA.getPriority(finalIwc);
+					int priorityB = toolbarElementB.getPriority(finalIwc);
 					if (priorityA == -1  && priorityB == -1) {
 						return 0;
 					}
@@ -243,54 +253,57 @@ public class Toolbar extends Page implements IWBrowserView {
 				}
 			};
 			Collections.sort(toolbarElements, priorityComparator);
-			Iterator toolbarElementsIterator = toolbarElements.iterator();
-			while (toolbarElementsIterator.hasNext()) {
-				ToolbarElement toolbarElement = (ToolbarElement) toolbarElementsIterator.next();
+			List<ToolbarElement> elementsToAdd = new ArrayList<ToolbarElement>();
+			for (Iterator<ToolbarElement> toolbarElementsIterator = toolbarElements.iterator(); toolbarElementsIterator.hasNext();) {
+				ToolbarElement toolbarElement = toolbarElementsIterator.next();
+
 				if (toolbarElement.isValid(iwc)) {
-					addPlugins = true;
-					Class toolPresentationClass = toolbarElement.getPresentationObjectClass(iwc);
+					elementsToAdd.add(toolbarElement);
+					Class<? extends UIComponent> toolPresentationClass = toolbarElement.getPresentationObjectClass(iwc);
+
 					Map parameterMap = toolbarElement.getParameterMap(iwc);
+					if (parameterMap == null) {
+						parameterMap = new HashMap();
+					}
 					// a special parameter, very few plugins are using it
 					if (this.selectedGroupProviderStateId != null) {
-						if (parameterMap == null) {
-							parameterMap = new HashMap();
-						}
-						parameterMap.put(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, this.selectedGroupProviderStateId );
+						parameterMap.put(SELECTED_GROUP_PROVIDER_PRESENTATION_STATE_ID_KEY, this.selectedGroupProviderStateId);
 					}
+
 					String toolName = toolbarElement.getName(iwc);
-					if (! toolbarElement.isButton(iwc)) { 
-						SelectOption toolOption = new SelectOption(toolName, "1");
+					if (!toolbarElement.isButton(iwc)) {
+						SelectOption toolOption = new SelectOption(toolName, toolPresentationClass.getName());
 						toolOption.setWindowToOpenOnSelect(toolPresentationClass, parameterMap);
 						menu.addOption(toolOption);
-					}
-					else {
+					} else {
 						Image toolImage = toolbarElement.getButtonImage(finalIwc);
 						toolbar2.setCellpaddingLeft(toolbarColumn, 1, 7);
 						if (toolImage != null) {
 							toolbar2.setCellpaddingRight(toolbarColumn, 1, 3);
-							toolbar2.add(getToolbarLink(toolImage, toolPresentationClass, parameterMap), toolbarColumn++, 1);
+							Link toolbarLink = getToolbarLink(toolImage, toolPresentationClass, parameterMap);
+							toolbar2.add(toolbarLink, toolbarColumn++, 1);
 						}
+
 						Link toolLink = getToolbarLink(new Text(toolName), toolPresentationClass, parameterMap);
 						toolLink.setStyleClass(this.styledLink);
-						
 						toolbar2.setVerticalAlignment(toolbarColumn, 1, Table.VERTICAL_ALIGN_TOP);
 						toolbar2.setCellpaddingTop(toolbarColumn, 1, 3);
 						toolbar2.add(toolLink, toolbarColumn++, 1);
 					}
 				}
-			}		
+			}
 
-			if (addPlugins) {
+			if (!ListUtil.isEmpty(elementsToAdd)) {
 				Image dottedImage = this.iwb.getImage("dotted.gif");
 				toolbarTable.setCellpaddingLeft(2, 1, 10);
 				toolbarTable.setCellpaddingRight(2, 1, 3);
 				toolbarTable.add(dottedImage, 2, 1);
-				
+
 				if(!menu.isEmpty()){
 					Form form = new Form();
 					menu.addMenuElementFirst("", "");
 					form.add(menu);
-	
+
 					//TODO only used for now in FELIX! Refactor to a plugin
 					int handbookFileID = Integer.parseInt(iwc.getApplicationSettings().getProperty("USER_APP_HANDBOOK_FILE", "-1"));
 					if (handbookFileID != -1) {
@@ -298,7 +311,7 @@ public class Toolbar extends Page implements IWBrowserView {
 						option.setFileToOpenOnSelect(handbookFileID);
 						menu.add(option);
 					}
-					
+
 					Image iconOtherChanges = this.iwb.getImage("other_choises.gif");
 					Text menuText =  new Text(this.iwrb.getLocalizedString("button.other_choices", "Other choices"));
 					menuText.setStyleClass(this.styledText);
@@ -309,10 +322,10 @@ public class Toolbar extends Page implements IWBrowserView {
 					toolbar2.setCellpaddingLeft(toolbarColumn, 1, 7);
 					toolbar2.add(form, toolbarColumn++, 1);
 				}
-			
+
 			}
 		}
-		
+
 		//search
 		Table button9 = new Table(2, 1);
 		Text text9 = new Text(this.iwrb.getLocalizedString("fast_search", "Fast search"));
@@ -327,17 +340,17 @@ public class Toolbar extends Page implements IWBrowserView {
 		toolbarTable.setCellpaddingRight(4, 1, 6);
 		toolbarTable.add(this.searchForm, 4, 1);
 	}
-	
+
 	protected Link getToolbarLink(PresentationObject obj, Class windowClass, Map parameters) {
 		Link link = new Link(obj);
 		link.setWindowToOpen(windowClass);
 		if (parameters != null) {
 			link.setParameter(parameters);
 		}
-		
+
 		return link;
 	}
-	
+
 	protected Table getToolbarButtonWithChangeClassEvent(String textOnButton, Image icon, Class changeClass) {
 		Table button = new Table(2, 1);
 		button.setCellpadding(0);
@@ -358,6 +371,7 @@ public class Toolbar extends Page implements IWBrowserView {
 		return button;
 	}
 
+	@Override
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -370,6 +384,6 @@ public class Toolbar extends Page implements IWBrowserView {
 	}
 
 	public GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws RemoteException {
-		return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+		return com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
 	}
 }
