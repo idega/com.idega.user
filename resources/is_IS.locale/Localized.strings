@@ -559,6 +559,6 @@ sua.select_picture_and_upload_note_about_alowed_files=Veldu prófíl mynd og sen
 sua.close_picture_changer=Loka
 sua.edit_user_picture=Breyta mynd
 user_address_info=Notendahandbók tölu upplýsingar
-
+user_login_password_description=Notandinn nafn er alltaf notanda skráir ID og það er ekki hægt að breyta. Lykilorð verður sjálfkrafa af kerfinu og send með tölvupósti til notenda
 
 
