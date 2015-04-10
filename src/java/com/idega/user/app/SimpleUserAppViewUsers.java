@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.SelectOption;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.GroupComparator;
 import com.idega.user.business.GroupHelper;
 import com.idega.user.business.UserApplicationEngine;
 import com.idega.user.business.UserConstants;
@@ -441,16 +443,20 @@ public class SimpleUserAppViewUsers extends Block {
 			return null;
 		}
 
-		List<Group> filteredTopGroups = StringUtil.isEmpty(parentGroups) ?
-				new ArrayList<Group>(groupsHelper.getFilteredGroups(
+		List<Group> filteredTopGroups = null;
+		if (StringUtil.isEmpty(parentGroups)) {
+			filteredTopGroups = new ArrayList<Group>(groupsHelper.getFilteredGroups(
 						iwc,
 						topGroups,
 						properties.getGroupTypesForParentGroups(),
 						CoreConstants.COMMA,
 						(getParentGroup() == null && properties.isUseChildrenOfTopNodesAsParentGroups())
 					)
-				) :
-				new ArrayList<Group>(topGroups);
+				);
+		} else {
+			filteredTopGroups = new ArrayList<Group>(topGroups);
+			Collections.sort(filteredTopGroups, new GroupComparator(iwc));
+		}
 		if (filteredTopGroups.size() > 1) {
 			Group groupToReturn = null;
 
