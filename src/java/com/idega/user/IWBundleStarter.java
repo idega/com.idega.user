@@ -26,16 +26,17 @@ import com.idega.util.CoreConstants;
 
 /**
  * A starter for adding the user app workspace node and more
- * 
+ *
  * @author eiki
- * 
+ *
  */
 public class IWBundleStarter implements IWBundleStartable {
 
 	static Logger log = Logger.getLogger(IWBundleStarter.class.getName());
-	
+
 	public static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
+	@Override
 	public void start(IWBundle starterBundle) {
 		addViewNodes(starterBundle);
 	}
@@ -46,8 +47,8 @@ public class IWBundleStarter implements IWBundleStartable {
 			//TODO finish layered userapp
 			//registerLayeredUserApp(starterBundle, iwma);
 			registerFramedUserApp(iwma);
-			
-			
+
+
 			registerDWRListeners(starterBundle.getApplication().getIWApplicationContext());
 
 		}
@@ -57,7 +58,7 @@ public class IWBundleStarter implements IWBundleStartable {
 		ViewManager viewManager = ViewManager.getInstance(iwma);
 
 		DefaultViewNode userNode = new DefaultViewNode("user", viewManager.getWorkspaceRoot());
-		userNode.setJspUri(starterBundle.getJSPURI("userapp.jsp"));
+		userNode.setFaceletUri(starterBundle.getFaceletURI("userapp.xhtml"));
 		userNode.setName("#{localizedStrings['com.idega.user']['user']}");
 		userNode.setKeyboardShortcut(new KeyboardShortcut("1"));
 
@@ -71,23 +72,24 @@ public class IWBundleStarter implements IWBundleStartable {
 	protected void registerDWRListeners(IWApplicationContext iwac) {
 		DWREventService dwr;
 		try {
-			dwr = (DWREventService) IBOLookup.getServiceInstance(iwac, DWREventService.class);
+			dwr = IBOLookup.getServiceInstance(iwac, DWREventService.class);
 			dwr.registerListener(new UserAppDWREventListener());
 		} catch (IBOLookupException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	protected void registerFramedUserApp(IWMainApplication iwma){			
+
+	protected void registerFramedUserApp(IWMainApplication iwma){
 		try {
 			ViewManager viewManager = ViewManager.getInstance(iwma);
 
 			Class<?> applicationClass = RefactorClassRegistry.forName("com.idega.user.app.UserApplication");
-			
+
 			//inline class to override the default hasUserAccess to check to top node view access
 			FramedWindowClassViewNode userNode = new FramedWindowClassViewNode("user",viewManager.getWorkspaceRoot()){
-			
+
+				@Override
 				public boolean hasUserAccess(IWUserContext iwuc){
 					try {
 						return getUserBusiness().hasTopNodes(iwuc.getCurrentUser(), iwuc);
@@ -96,10 +98,10 @@ public class IWBundleStarter implements IWBundleStartable {
 					}
 					return false;
 				}
-				
+
 				public UserBusiness getUserBusiness() {
 					try {
-						return (UserBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
+						return IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
 					}
 					catch (IBOLookupException ile) {
 						throw new IBORuntimeException(ile);
@@ -107,25 +109,26 @@ public class IWBundleStarter implements IWBundleStartable {
 				}
 
 			};
-			
-			
+
+
 			userNode.setKeyboardShortcut(new KeyboardShortcut("1"));
 			userNode.setName("#{localizedStrings['com.idega.user']['iwapplication_name.UserApplication']}");
 			Collection<String> roles = new ArrayList<String>();
 			roles.add(StandardRoles.ROLE_KEY_USERADMIN);
 			userNode.setAuthorizedRoles(roles);
 			userNode.setWindowClass(applicationClass);
-			
+
 			String jspPath = iwma.getBundle(CoreConstants.WORKSPACE_BUNDLE_IDENTIFIER).getJSPURI("workspace.jsp");
 			userNode.setJspUri(jspPath);
-			
-			
+
+
 		}
 		catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-		
+
+	@Override
 	public void stop(IWBundle starterBundle) {
 	}
 
