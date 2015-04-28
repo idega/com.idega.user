@@ -247,7 +247,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
 		Layer layer = new Layer(Layer.DIV);
 		layer.setStyleAttribute("width", "208px");
-		layer.setStyleAttribute("height", "100%");
+//		layer.setStyleAttribute("height", "100%");
 		//layer.setStyleAttribute("border", "1px #cccccc solid");
 		//layer.setStyleAttribute("background-color", "#ffffff");
 		//layer.setStyleClass("main");
@@ -334,6 +334,7 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 			UserBusiness biz = getUserBusiness(iwc);
 			Collection<Group> groups = biz.getUsersTopGroupNodesByViewAndOwnerPermissions(iwc.getCurrentUser(), iwc);
 			Collection<GroupTreeNode> groupNodes = convertGroupCollectionToGroupNodeCollection(groups, iwc.getApplicationContext());
+
 			this.groupTree.setFirstLevelNodes(groupNodes.iterator());
 
 		}
