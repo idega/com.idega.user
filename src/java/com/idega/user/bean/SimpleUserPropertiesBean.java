@@ -17,7 +17,10 @@ public class SimpleUserPropertiesBean {
 	private String roleTypes = null;
 	private String message = null;
 	private String groupTypesForParentGroups = null;
-	private String parentGroups;
+	private String	parentGroups,
+					parentGroupsToExclude = null,
+					subGroups = null,
+					subGroupsToExclude = null;
 
 	private boolean getParentGroupsFromTopNodes = true;
 	private boolean useChildrenOfTopNodesAsParentGroups = false;
@@ -37,7 +40,7 @@ public class SimpleUserPropertiesBean {
 	public SimpleUserPropertiesBean(String instanceId, String containerId, String groupTypesForParentGroups, String groupTypes,String roleTypes,
 			boolean getParentGroupsFromTopNodes, boolean useChildrenOfTopNodesAsParentGroups, boolean allFieldsEditable, boolean juridicalPerson,
 			boolean addGroupCreateButton, boolean addGroupEditButton, boolean sendMailToUser, boolean changePasswordNextTime, boolean allowEnableDisableAccount,
-			boolean addChildGroupCreateButton, boolean addChildGroupEditButton, String parentGroups) {
+			boolean addChildGroupCreateButton, boolean addChildGroupEditButton, String parentGroups, String parentGroupsToExclude, String subGroups, String subGroupsToExclude) {
 		this();
 
 		this.instanceId = instanceId;
@@ -56,7 +59,11 @@ public class SimpleUserPropertiesBean {
 		this.allowEnableDisableAccount = allowEnableDisableAccount;
 		this.addChildGroupCreateButton = addChildGroupCreateButton;
 		this.addChildGroupEditButton = addChildGroupEditButton;
+
 		this.parentGroups = parentGroups;
+		this.parentGroupsToExclude = parentGroupsToExclude;
+		this.subGroups = subGroups;
+		this.subGroupsToExclude = subGroupsToExclude;
 	}
 
 	public int getGroupId() {
@@ -269,6 +276,30 @@ public class SimpleUserPropertiesBean {
 
 	public void setParentGroups(String parentGroups) {
 		this.parentGroups = parentGroups;
+	}
+
+	public String getParentGroupsToExclude() {
+		return parentGroupsToExclude;
+	}
+
+	public void setParentGroupsToExclude(String parentGroupsToExclude) {
+		this.parentGroupsToExclude = parentGroupsToExclude;
+	}
+
+	public String getSubGroups() {
+		return subGroups;
+	}
+
+	public void setSubGroups(String subGroups) {
+		this.subGroups = subGroups;
+	}
+
+	public String getSubGroupsToExclude() {
+		return subGroupsToExclude;
+	}
+
+	public void setSubGroupsToExclude(String subGroupsToExclude) {
+		this.subGroupsToExclude = subGroupsToExclude;
 	}
 
 }

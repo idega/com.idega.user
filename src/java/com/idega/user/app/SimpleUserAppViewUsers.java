@@ -2,7 +2,6 @@ package com.idega.user.app;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -317,7 +316,7 @@ public class SimpleUserAppViewUsers extends Block {
 		Layer parentGroupChooserContainer = new Layer();
 		parentGroupChooserContainer.setStyleClass("parentGroupContainerStyleClass");
 		choosers.add(parentGroupChooserContainer);
-		Group parentGroup = fillParentGroupChooser(iwc, groupsDropdown, parentGroupChooserContainer, ids, properties.getParentGroups());
+		Group parentGroup = fillParentGroupChooser(iwc, groupsDropdown, parentGroupChooserContainer, ids, properties.getParentGroups(), properties.getParentGroupsToExclude());
 		addGroupButtons(iwc, parentGroupsChooserId, null, parentGroupChooserContainer, 0, properties.isAddGroupCreateButton(), properties.isAddGroupEditButton());
 		choosers.add(getSpacer());
 
@@ -331,9 +330,8 @@ public class SimpleUserAppViewUsers extends Block {
 			Layer childGroupChooserContainer = new Layer();
 			childGroupChooserContainer.setStyleClass("childGroupChooserContainerSyleClass");
 			choosers.add(childGroupChooserContainer);
-			childGroup = fillChildGroupsChooser(iwc, childGroupChooserContainer, parentGroup, childGroupsChooser, ids);
-			addGroupButtons(iwc, childGroupsChooserId, parentGroupsChooserId, childGroupChooserContainer, 1, properties.isAddChildGroupCreateButton(),
-					properties.isAddChildGroupEditButton());
+			childGroup = fillChildGroupsChooser(iwc, childGroupChooserContainer, parentGroup, childGroupsChooser, ids, properties.getSubGroups(), properties.getSubGroupsToExclude());
+			addGroupButtons(iwc, childGroupsChooserId, parentGroupsChooserId, childGroupChooserContainer, 1, properties.isAddChildGroupCreateButton(), properties.isAddChildGroupEditButton());
 			choosers.add(getSpacer());
 		}
 
@@ -375,13 +373,12 @@ public class SimpleUserAppViewUsers extends Block {
 		return -1;
 	}
 
-	private Group fillChildGroupsChooser(IWContext iwc, Layer container, Group parent, DropdownMenu childGroups, String[] ids) {
+	private Group fillChildGroupsChooser(IWContext iwc, Layer container, Group parent, DropdownMenu childGroups, String[] ids, String subGroups, String subGroupsToExclude) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
 		String loadingMessage = iwrb.getLocalizedString("loading", "Loading...");
 
-		List<Group> filteredChildGroups = groupsHelper.getFilteredChildGroups(iwc, parent, properties.getGroupTypes(), properties.getRoleTypes(),
-																				CoreConstants.COMMA);
+		List<Group> filteredChildGroups = groupsHelper.getFilteredChildGroups(iwc, parent, properties.getGroupTypes(), properties.getRoleTypes(), CoreConstants.COMMA, subGroups, subGroupsToExclude);
 
 		String parentGroupChooserId = ids[1];
 		String groupUsersContainerId = ids[0];
@@ -409,19 +406,24 @@ public class SimpleUserAppViewUsers extends Block {
 		return filteredChildGroups.get(0);
 	}
 
-	private Group fillParentGroupChooser(IWContext iwc, DropdownMenu groupsDropdown, Layer container, String[] ids, String parentGroups) {
+	private Group fillParentGroupChooser(IWContext iwc, DropdownMenu groupsDropdown, Layer container, String[] ids, String parentGroups, String groupsToExclude) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
+
+		List<String> idsToExclude = StringUtil.getValuesFromString(groupsToExclude, CoreConstants.COMMA);
 
 		Collection<Group> topGroups = null;
 		if (!StringUtil.isEmpty(parentGroups)) {
 			properties.setGetParentGroupsFromTopNodes(false);
-			List<String> groupsIds = Arrays.asList(parentGroups.split(CoreConstants.COMMA));
+			List<String> groupsIds = StringUtil.getValuesFromString(parentGroups, CoreConstants.COMMA);
+			groupsIds.removeAll(idsToExclude);
+			getLogger().info("Groups to select: " + groupsIds);
 			try {
 				GroupBusiness groupBusiness = IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 				topGroups = groupBusiness.getGroups(groupsIds);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			getLogger().info("Got top groups: " + topGroups);
 		} else if (getParentGroup() == null) {
 			//	Group is not set as property
 			topGroups = groupsHelper.getTopGroupsFromDomain(iwc);
@@ -434,14 +436,19 @@ public class SimpleUserAppViewUsers extends Block {
 				return getParentGroup();
 			}
 		}
-		if (!properties.isGetParentGroupsFromTopNodes()) {
+
+		if (StringUtil.isEmpty(parentGroups) && !properties.isGetParentGroupsFromTopNodes()) {
 			topGroups = groupsHelper.getTopAndParentGroups(topGroups);	//	Will get top nodes and parent groups for them
+			getLogger().info("Got top and parent groups: " + topGroups);
 		}
+
 		if (ListUtil.isEmpty(topGroups)) {
 			//	No groups found for current user
 			container.add(new Text(iwrb.getLocalizedString("no_groups_available", "There are no groups available")));
 			return null;
 		}
+
+		getLogger().info("Top groups: " + topGroups);
 
 		List<Group> filteredTopGroups = null;
 		if (StringUtil.isEmpty(parentGroups)) {
@@ -489,7 +496,9 @@ public class SimpleUserAppViewUsers extends Block {
 			action.append(groupsDropdown.getId()).append("', ");															//	4
 			action.append(helper.getJavaScriptParameter(properties.getGroupTypes())).append(SimpleUserApp.COMMA_SEPARATOR);	//	5
 			action.append(helper.getJavaScriptParameter(properties.getRoleTypes())).append(SimpleUserApp.COMMA_SEPARATOR);	//	6
-			action.append(helper.getBeanAsParameters(properties, null, childGroupsChooserId, null));
+			action.append(helper.getBeanAsParameters(properties, null, childGroupsChooserId, null)).append(SimpleUserApp.COMMA_SEPARATOR);	//	7
+			action.append(CoreConstants.QOUTE_SINGLE_MARK).append(properties.getSubGroups()).append(CoreConstants.QOUTE_SINGLE_MARK).append(SimpleUserApp.COMMA_SEPARATOR);	//	8
+			action.append(CoreConstants.QOUTE_SINGLE_MARK).append(properties.getSubGroupsToExclude()).append(CoreConstants.QOUTE_SINGLE_MARK);	//	9
 			action.append(");");
 			groupsDropdown.setOnChange(action.toString());
 			container.add(groupsDropdown);

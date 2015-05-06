@@ -4,9 +4,12 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -30,8 +33,11 @@ import com.idega.util.CoreUtil;
 import com.idega.util.GenericUserComparator;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 
 public class GroupHelperBusinessBean implements GroupHelper {
+
+	private static final Logger LOGGER = Logger.getLogger(GroupHelperBusinessBean.class.getName());
 
 	private UserBusiness userBusiness = null;
 	private GroupBusiness groupBusiness = null;
@@ -277,7 +283,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 	}
 
 	@Override
-	public List<Group> getFilteredChildGroups(IWContext iwc, int parentGroupId, String groupTypes, String groupRoles, String splitter) {
+	public List<Group> getFilteredChildGroups(IWContext iwc, int parentGroupId, String groupTypes, String groupRoles, String splitter, String subGroups, String subGroupsToExclude) {
 		GroupBusiness groupBusiness = getGroupBusiness(iwc);
 		if (groupBusiness == null) {
 			return null;
@@ -290,11 +296,39 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		} catch (FinderException e) {
 			e.printStackTrace();
 		}
-		return getFilteredChildGroups(iwc, parent, groupTypes, groupRoles, splitter);
+		return getFilteredChildGroups(iwc, parent, groupTypes, groupRoles, splitter, subGroups, subGroupsToExclude);
+	}
+
+	private Map<String, List<String>> getGroupsIds(String ids) {
+		if (StringUtil.isEmpty(ids)) {
+			return Collections.emptyMap();
+		}
+
+		List<String> values = StringUtil.getValuesFromString(ids, CoreConstants.SEMICOLON);
+		if (ListUtil.isEmpty(values)) {
+			return Collections.emptyMap();
+		}
+
+		Map<String, List<String>> results = new HashMap<String, List<String>>();
+		for (String value: values) {
+			String[] parts = value.split(CoreConstants.EQ);
+			if (ArrayUtil.isEmpty(parts) || parts.length != 2) {
+				continue;
+			}
+
+			String id = parts[0];
+			List<String> subIds = StringUtil.getValuesFromString(parts[1], CoreConstants.COMMA);
+			if (!StringUtil.isEmpty(id) && !ListUtil.isEmpty(subIds)) {
+				results.put(id, subIds);
+			}
+		}
+
+		LOGGER.info("Parsed: " + results + " from " + ids);
+		return results;
 	}
 
 	@Override
-	public List<Group> getFilteredChildGroups(IWContext iwc, Group parent, String groupTypes, String groupRoles, String splitter) {
+	public List<Group> getFilteredChildGroups(IWContext iwc, Group parent, String groupTypes, String groupRoles, String splitter, String subGroups, String subGroupsToExclude) {
 		List<Group> filtered = new ArrayList<Group>();
 		if (parent == null) {
 			return filtered;
@@ -305,11 +339,27 @@ public class GroupHelperBusinessBean implements GroupHelper {
 			return filtered;
 		}
 
-		List<String> types = getExtractedTypesList(groupTypes, splitter);
-		try {
-			filtered.addAll(groupBusiness.getChildGroupsRecursiveResultFiltered(parent, types, true));
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		Map<String, List<String>> subGroupsIds = getGroupsIds(subGroups);
+		List<String> groupsIds = parent == null || MapUtil.isEmpty(subGroupsIds) ? null : subGroupsIds.get(parent.getId());
+		Map<String, List<String>> subGroupsToExcludeIds = getGroupsIds(subGroupsToExclude);
+
+		if (StringUtil.isEmpty(subGroups) || ListUtil.isEmpty(groupsIds) || MapUtil.isEmpty(subGroupsIds) || (parent != null && !subGroupsIds.containsKey(parent.getId()))) {
+			List<String> types = getExtractedTypesList(groupTypes, splitter);
+			try {
+				filtered.addAll(groupBusiness.getChildGroupsRecursiveResultFiltered(parent, types, true));
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			LOGGER.info("Got sub groups (" + filtered + ") as usual for " + parent);
+		} else {
+			try {
+				Collection<Group> groups = groupBusiness.getGroups(groupsIds);
+				filtered = ListUtil.isEmpty(groups) ? new ArrayList<Group>(0) : new ArrayList<Group>(groups);
+				LOGGER.info("Got sub groups (" + groups + ") for defined IDs: " + groupsIds + ". To exclude: " + subGroupsToExcludeIds);
+				Collections.sort(filtered, new GroupComparator(iwc));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		Group group = null;
@@ -713,8 +763,11 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isChangePasswordNextTime());
 		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isSendMailToUser());
 		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.isAllowEnableDisableAccount());
-		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.getParentGroupId() == -1 ? "null" :
-																								getJavaScriptParameter(String.valueOf(bean.getParentGroupId())));
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(bean.getParentGroupId() == -1 ? "null" : getJavaScriptParameter(String.valueOf(bean.getParentGroupId()))).append(CoreConstants.COMMA);
+		action.append(CoreConstants.QOUTE_SINGLE_MARK).append(bean.getParentGroups()).append(CoreConstants.QOUTE_SINGLE_MARK).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(CoreConstants.QOUTE_SINGLE_MARK).append(bean.getParentGroupsToExclude()).append(CoreConstants.QOUTE_SINGLE_MARK).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(CoreConstants.QOUTE_SINGLE_MARK).append(bean.getSubGroups()).append(CoreConstants.QOUTE_SINGLE_MARK).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(CoreConstants.QOUTE_SINGLE_MARK).append(bean.getSubGroupsToExclude()).append(CoreConstants.QOUTE_SINGLE_MARK);
 		action.append(");");
 		return action.toString();
 	}

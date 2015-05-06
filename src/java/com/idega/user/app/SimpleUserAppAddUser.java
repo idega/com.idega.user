@@ -153,7 +153,10 @@ public class SimpleUserAppAddUser extends Block {
 		action.append(iwrb.getLocalizedString("loading", "Loading...")).append("', ");
 		action.append(helper.getJavaScriptParameter(properties.getGroupTypes())).append(SimpleUserApp.COMMA_SEPARATOR);
 		action.append(helper.getJavaScriptParameter(properties.getRoleTypes())).append("], ")
-		.append(helper.getJavaScriptParameter(properties.getParentGroupId() == -1 ? null : String.valueOf(properties.getParentGroupId()))).append(");");
+		.append(helper.getJavaScriptParameter(properties.getParentGroupId() == -1 ? null : String.valueOf(properties.getParentGroupId()))).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(CoreConstants.QOUTE_SINGLE_MARK).append(properties.getSubGroups()).append(CoreConstants.QOUTE_SINGLE_MARK).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(CoreConstants.QOUTE_SINGLE_MARK).append(properties.getSubGroupsToExclude()).append(CoreConstants.QOUTE_SINGLE_MARK);
+		action.append(");");
 		parentGroupsChooser.setOnChange(action.toString());
 		addParentGroups(iwc, parentGroupsContainer, parentGroupsChooser);
 

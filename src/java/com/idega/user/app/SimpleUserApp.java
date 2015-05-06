@@ -48,7 +48,10 @@ public class SimpleUserApp extends Block {
 	private String	groupTypes = null,
 					groupTypesForChildGroups = null,
 					roleTypesForChildGroups = null,
-					parentGroups = null;
+					parentGroups = null,
+					parentGroupsToExclude = null,
+					subGroups = null,
+					subGroupsToExclude = null;
 
 	private boolean getParentGroupsFromTopNodes = true,
 					useChildrenOfTopNodesAsParentGroups = false,
@@ -124,7 +127,7 @@ public class SimpleUserApp extends Block {
 		SimpleUserPropertiesBean properties = new SimpleUserPropertiesBean(instanceId, container.getId(), groupTypes, groupTypesForChildGroups,
 				roleTypesForChildGroups, getParentGroupsFromTopNodes, useChildrenOfTopNodesAsParentGroups, allFieldsEditable, juridicalPerson,
 				addGroupCreateButton, addGroupEditButton, sendMailToUser, changePasswordNextTime, allowEnableDisableAccount, addChildGroupCreateButton,
-				addChildGroupEditButton, getParentGroups());
+				addChildGroupEditButton, getParentGroups(), getParentGroupsToExclude(), getSubGroups(), getSubGroupsToExclude());
 
 		if (isUseMainGroupOfCurrentUserAsParent()) {
 			User user = iwc.isLoggedOn() ? iwc.getCurrentUser() : null;
@@ -305,6 +308,30 @@ public class SimpleUserApp extends Block {
 
 	public void setParentGroups(String parentGroups) {
 		this.parentGroups = parentGroups;
+	}
+
+	public String getParentGroupsToExclude() {
+		return parentGroupsToExclude;
+	}
+
+	public void setParentGroupsToExclude(String parentGroupsToExclude) {
+		this.parentGroupsToExclude = parentGroupsToExclude;
+	}
+
+	public String getSubGroups() {
+		return subGroups;
+	}
+
+	public void setSubGroups(String subGroups) {
+		this.subGroups = subGroups;
+	}
+
+	public String getSubGroupsToExclude() {
+		return subGroupsToExclude;
+	}
+
+	public void setSubGroupsToExclude(String subGroupsToExclude) {
+		this.subGroupsToExclude = subGroupsToExclude;
 	}
 
 	/** Methods for properties end **/

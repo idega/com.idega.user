@@ -22,7 +22,7 @@ public interface UserApplicationEngine {
 
 	public static final String SPRING_BEAN_IDENTIFIER = "userApplicationEngine";
 
-	public List<AdvancedProperty> getChildGroups(String groupId, String groupTypes, String groupRoles);
+	public List<AdvancedProperty> getChildGroups(String groupId, String groupTypes, String groupRoles, String subGroups, String subGroupsToExclude);
 
 	public List<Integer> removeUsers(List<Integer> usersIds, Integer groupId);
 
@@ -32,12 +32,12 @@ public interface UserApplicationEngine {
 
 	public Document getSimpleUserApplication(String instanceId, Integer parentGroupId);
 
-	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, Integer userId, String groupTypes, String groupRoles);
+	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, Integer userId, String groupTypes, String groupRoles, String subGroups, String subGroupsToExclude);
 
 	public void addViewUsersCase(String instanceId, SimpleUserAppViewUsers viewUsers);
 
 	public UserDataBean getUserByPersonalId(String personalId);
-	
+
 	public UserDataBean getUserById(Integer id);
 
 	public AdvancedProperty createUser(UserDataBean userData, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
@@ -58,7 +58,7 @@ public interface UserApplicationEngine {
 	public List<AdvancedProperty> findAvailablePages(String phrase);
 
 	public List<AdvancedProperty> getAvailableGroups(String groupTypes, String groupTypesForChildrenGroups, String roleTypes, int groupId, int groupsType,
-			boolean getTopAndParentGroups, boolean useChildrenOfTopNodesAsParentGroups);
+			boolean getTopAndParentGroups, boolean useChildrenOfTopNodesAsParentGroups, String subGroups, String subGroupsToExclude);
 
 	public Layer getRolesEditor(IWContext iwc, int groupId, boolean addInput, List<String> selectedRoles);
 
@@ -79,8 +79,8 @@ public interface UserApplicationEngine {
 	public void fillUserInfo(UserDataBean info, Phone phone, Email email, Address address);
 
 	public AdvancedProperty isValidUserName(String userName);
-	
+
 	public String getUserLogin(String personalId);
-	
+
 	public String getUserIdByLogin(String login);
 }

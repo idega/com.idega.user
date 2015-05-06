@@ -14,59 +14,59 @@ import com.idega.user.data.User;
 @SpringBeanName("groupHelper")
 public interface GroupHelper {
 
-	public List<Group> getFilteredChildGroups(IWContext iwc, Group parent, String groupTypes, String groupRoles, String splitter);
-	
-	public List<Group> getFilteredChildGroups(IWContext iwc, int parentGroupId, String groupTypes, String groupRoles, String splitter);
-	
+	public List<Group> getFilteredChildGroups(IWContext iwc, Group parent, String groupTypes, String groupRoles, String splitter, String subGroups, String subGroupsToExclude);
+
+	public List<Group> getFilteredChildGroups(IWContext iwc, int parentGroupId, String groupTypes, String groupRoles, String splitter, String subGroups, String subGroupsToExclude);
+
 	public Collection<Group> getFilteredGroups(Collection<Group> groups, List<String> types, boolean useChildrenAsTopNodes);
-	
+
 	public Collection<Group> getFilteredGroups(IWContext iwc, Collection<Group> groups, String typesValue, String splitter, boolean useChildrenAsTopNodes);
-	
+
 	public Group getGroup(IWContext iwc, int id);
-	
+
 	public Group getGroup(IWContext iwc, String id);
-	
+
 	public List<Group> getGroups(IWContext iwc, List<Integer> groupsIds);
-	
+
 	public List<User> getUsersInGroup(IWContext iwc, SimpleUserPropertiesBean bean, boolean sort);
-	
+
 	public List<User> getUsersByIds(IWContext iwc, List<String> usersIds, boolean sort);
-	
+
 	public Collection<Group> getTopAndParentGroups(Collection<Group> topGroups);
-	
+
 	public Collection<Group> getTopGroups(IWContext iwc, User user);
-	
+
 	public List<GroupNode> getTopGroupsAndDirectChildren();
-	
+
 	public List<GroupNode> getTopGroupsAndDirectChildren(User user, IWContext iwc);
-	
+
 	public List<GroupNode> getTopGroupsAndDirectChildren(User user, IWContext iwc, boolean basicInformationOnly);
-	
+
 	public Collection<Group> getTopGroupsFromDomain(IWContext iwc);
-	
+
 	public User getUser(IWContext iwc, int id);
-	
+
 	public User getUser(IWContext iwc, String id);
-	
+
 	public UserBusiness getUserBusiness(IWApplicationContext iwc);
-	
+
 	public List<String> getUserGroupsIds(IWContext iwc, User user);
-	
+
 	public GroupNode addChildGroupsToNode(GroupNode parentNode, Collection<Group> groups, String image);
-	
+
 	public List<GroupNode> convertGroupsToGroupNodes(Collection<Group> groups, IWContext iwc, boolean isFirstLevel, String imageBaseUri);
-	
+
 	public String getGroupImageBaseUri(IWContext iwc);
-	
+
 	public String getActionForAddUserView(SimpleUserPropertiesBean bean, String userId);
-	
+
 	public String getJavaScriptParameter(String parameter);
-	
+
 	public String getGroupIcon(Group group, String imageBaseUri, boolean nodeIsOpened);
-	
+
 	public List<User> getSortedUsers(Collection<User> users, Locale locale, boolean sortByPersonalId);
 
 	public List<User> getSortedUsers(Collection<User> users, Locale locale, SimpleUserPropertiesBean bean);
-	
+
 	public String getJavaScriptFunctionParameter(List<String> parameters);
 }

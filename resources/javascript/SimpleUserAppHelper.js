@@ -46,7 +46,7 @@ function getParentGroupIdInSUA(chooserId, selectedId) {
 	return parentGroupId;
 }
 
-function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles, params) {
+function reloadComponents(message, childGroupsChooserId, orderByChooserId, containerId, chooserId, groupTypes, groupRoles, params, subGroups, subGroupsToExclude) {
 	showLoadingMessage(message);
 	var chooser = document.getElementById(childGroupsChooserId);
 	if (chooser != null) {
@@ -55,7 +55,7 @@ function reloadComponents(message, childGroupsChooserId, orderByChooserId, conta
 	
 	var parentGroupId = getParentGroupIdInSUA(chooserId, params[16]);
 	
-	UserApplicationEngine.getChildGroups(parentGroupId, groupTypes, groupRoles, {
+	UserApplicationEngine.getChildGroups(parentGroupId, groupTypes, groupRoles, subGroups, subGroupsToExclude, {
 		callback: function(childGroups) {
 			getChildGroupsCallback(childGroups, childGroupsChooserId, orderByChooserId, containerId, chooserId, message, params);
 		}
@@ -238,7 +238,7 @@ function removeUser(containerId, userId, groupId, checkBoxId) {
 function addUserPresentationObject(instanceId, containerId, parentGroupChooserId, groupChooserId, message, defaultGroupId, userId,
 										groupTypes, roleTypes, getParentGroupsFromTopNodes, groupTypesForParentGroups,
 										useChildrenOfTopNodesAsParentGroups, allFieldsEditable, juridicalPerson, changePasswordNextTime, sendMailToUser,
-										allowEnableDisableAccount, selectedParentGroupId) {
+										allowEnableDisableAccount, selectedParentGroupId, parentGroups, parentGroupsToExclude, subGroups, subGroupsToExclude) {
 	USER_ID = userId;
 	
 	refreshDeselectedGroups();
@@ -250,7 +250,7 @@ function addUserPresentationObject(instanceId, containerId, parentGroupChooserId
 	//	Properties bean
 	var bean = new SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes, getParentGroupsFromTopNodes,
 											groupTypesForParentGroups, useChildrenOfTopNodesAsParentGroups, allFieldsEditable, juridicalPerson,
-											changePasswordNextTime, sendMailToUser, allowEnableDisableAccount);
+											changePasswordNextTime, sendMailToUser, allowEnableDisableAccount, parentGroups, parentGroupsToExclude, subGroups, subGroupsToExclude);
 	
 	//	Parent groups
 	var parentGroups = getSelectObjectValues(parentGroupChooserId);
@@ -319,7 +319,7 @@ function goBackToSimpleUserApp(instanceId, containerId, message, parentGroupChoo
 	});
 }
 
-function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters, selectedGroupId) {
+function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters, selectedGroupId, subGroups, subGroupsToExclude) {
 	refreshDeselectedGroups();
 	var groupId = getParentGroupIdInSUA(parentGroupChooserId, selectedGroupId);
 	var containerId = parameters[0];
@@ -327,7 +327,7 @@ function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters, 
 	var groupTypes = parameters[2];
 	var roleTypes = parameters[3];
 	showLoadingMessage(message);
-	UserApplicationEngine.getAvailableGroupsForUserPresentationObject(groupId, userId, groupTypes, roleTypes, {
+	UserApplicationEngine.getAvailableGroupsForUserPresentationObject(groupId, userId, groupTypes, roleTypes, subGroups, subGroupsToExclude, {
 		callback: function(component) {
 			getAddUserPresentationObjectCallback(component, containerId);
 		}
@@ -708,7 +708,7 @@ function getCheckboxValueFromCheckBox(checkbox, checkIfChecked) {
 
 function SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGroupId, containerId, groupTypes, roleTypes, getParentGroupsFromTopNodes,
 									groupTypesForParentGroups, useChildrenOfTopNodesAsParentGroups, allFieldsEditable, juridicalPerson, changePasswordNextTime,
-									sendMailToUser, allowEnableDisableAccount) {
+									sendMailToUser, allowEnableDisableAccount, parentGroups, parentGroupsToExclude, subGroups, subGroupsToExclude) {
 	
 	this.parentGroupId = parentGroupId;
 	this.groupId = groupId;
@@ -729,6 +729,11 @@ function SimpleUserPropertiesBean(instanceId, parentGroupId, groupId, defaultGro
 	this.sendMailToUser = sendMailToUser;
 	this.changePasswordNextTime = changePasswordNextTime;
 	this.allowEnableDisableAccount = allowEnableDisableAccount;
+	
+	this.parentGroups = parentGroups;
+	this.parentGroupsToExclude = parentGroupsToExclude;
+	this.subGroups = subGroups;
+	this.subGroupsToExclude = subGroupsToExclude;
 }
 
 function SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy, parameters) {

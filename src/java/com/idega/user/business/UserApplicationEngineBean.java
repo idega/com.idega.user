@@ -117,7 +117,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	@Override
-	public List<AdvancedProperty> getChildGroups(String groupId, String groupTypes, String groupRoles) {
+	public List<AdvancedProperty> getChildGroups(String groupId, String groupTypes, String groupRoles, String subGroups, String subGroupsToExclude) {
 		if (groupId == null) {
 			return null;
 		}
@@ -150,12 +150,11 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			return null;
 		}
 
-
 		GroupHelper helper = getGroupHelper();
 		if (helper == null) {
 			return null;
 		}
-		Collection<Group> childGroups = helper.getFilteredChildGroups(iwc, selected, groupTypes, groupRoles, ",");
+		Collection<Group> childGroups = helper.getFilteredChildGroups(iwc, selected, groupTypes, groupRoles, CoreConstants.COMMA, subGroups, subGroupsToExclude);
 		if (childGroups == null || childGroups.isEmpty()) {
 			return null;
 		}
@@ -341,7 +340,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	@Override
-	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, Integer userId, String groupTypes, String groupRoles) {
+	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, Integer userId, String groupTypes, String groupRoles, String subGroups, String subGroupsToExclude) {
 		if (parentGroupId == null) {
 			return null;
 		}
@@ -366,7 +365,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		if (helper == null) {
 			return null;
 		}
-		List<Group> groups = helper.getFilteredChildGroups(iwc, parentGroupId.intValue(), groupTypes, groupRoles, ",");
+		List<Group> groups = helper.getFilteredChildGroups(iwc, parentGroupId.intValue(), groupTypes, groupRoles, CoreConstants.COMMA, subGroups, subGroupsToExclude);
 		List<String> ids = new ArrayList<String>();
 		String selectedGroupId = null;
 		if (groups == null || groups.isEmpty()) {
@@ -1376,8 +1375,17 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	@Override
-	public List<AdvancedProperty> getAvailableGroups(String groupTypes, String groupTypesForChildrenGroups, String roleTypes, int groupId, int groupsType,
-			boolean getTopAndParentGroups, boolean useChildrenOfTopNodesAsParentGroups) {
+	public List<AdvancedProperty> getAvailableGroups(
+			String groupTypes,
+			String groupTypesForChildrenGroups,
+			String roleTypes,
+			int groupId,
+			int groupsType,
+			boolean getTopAndParentGroups,
+			boolean useChildrenOfTopNodesAsParentGroups,
+			String subGroups,
+			String subGroupsToExclude
+	) {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
@@ -1391,7 +1399,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				break;
 			case 1:
 				//	Child groups
-				return getChildGroups(String.valueOf(groupId), groupTypesForChildrenGroups, roleTypes);
+				return getChildGroups(String.valueOf(groupId), groupTypesForChildrenGroups, roleTypes, subGroups, subGroupsToExclude);
 			default:
 				break;
 		}
