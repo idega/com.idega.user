@@ -19,7 +19,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
-import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.user.app.UserApplication;
 import com.idega.user.business.UserAppDWREventListener;
 import com.idega.user.business.UserBusiness;
 import com.idega.util.CoreConstants;
@@ -84,7 +84,7 @@ public class IWBundleStarter implements IWBundleStartable {
 		try {
 			ViewManager viewManager = ViewManager.getInstance(iwma);
 
-			Class<?> applicationClass = RefactorClassRegistry.forName("com.idega.user.app.UserApplication");
+			Class<UserApplication> applicationClass = UserApplication.class;
 
 			//inline class to override the default hasUserAccess to check to top node view access
 			FramedWindowClassViewNode userNode = new FramedWindowClassViewNode("user",viewManager.getWorkspaceRoot()){
@@ -123,7 +123,7 @@ public class IWBundleStarter implements IWBundleStartable {
 
 
 		}
-		catch (ClassNotFoundException e) {
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
