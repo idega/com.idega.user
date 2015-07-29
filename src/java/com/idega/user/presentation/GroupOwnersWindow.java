@@ -5,7 +5,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
 import javax.ejb.FinderException;
+
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
@@ -27,6 +29,7 @@ import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
@@ -45,7 +48,7 @@ import com.idega.util.ListUtil;
 public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWindow {//implements StatefullPresentation{
 
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-	private static final String PARAM_SELECTED_GROUP_ID = SelectGroupEvent.PRM_GROUP_ID; //todo remove when using event system
+	public static final String PARAM_SELECTED_GROUP_ID = SelectGroupEvent.PRM_GROUP_ID; //todo remove when using event system
 	private static final String PARAM_SAVING = "gpw_save";
 	private static final String PARAM_USER_CHOOSER_USER_ID = "us_ch_us_id";
 	private static final String RECURSE_PERMISSIONS_TO_CHILDREN_KEY = "gpw_recurse_ch_of_gr";
@@ -114,16 +117,12 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 		this.iwrb = this.getResourceBundle(iwc);
 		addTitle(this.iwrb.getLocalizedString("gpow.group_owners_window", "Group Owners Window"), TITLE_STYLECLASS);
 
-
-
 		parseAction(iwc);
 
 		if (this.saveChanges) {
-
 			AccessController access = iwc.getAccessController();
 
 			try {
-
 				//delete owners
 				List deleteOwnersIds = null;
 				if (iwc.isParameterSet(DELETE_PERMISSIONS_KEY)) {
@@ -167,6 +166,8 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 								}
 							}
 							else {
+								
+								
 								//add owner recursively
 								Group parent = this.selectedGroup;
 								Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(parent);
@@ -341,11 +342,20 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 
 		Help help = getHelp(HELP_TEXT_KEY);
 
-		SubmitButton save = new SubmitButton(this.iwrb.getLocalizedImageButton("save", "Save"));
-		save.setSubmitConfirm(this.iwrb.getLocalizedString("change.selected.permissions?", "Change selected permissions?"));
+		SubmitButton saveButton = new SubmitButton(this.iwrb.getLocalizedString("save", "Save"));
+		saveButton.setSubmitConfirm(this.iwrb.getLocalizedString("change.selected.permissions?", "Change selected permissions?"));
 
-		CloseButton close = new CloseButton(this.iwrb.getLocalizedImageButton("close", "Close"));
-
+		StyledButton save = new StyledButton(saveButton);
+		CloseButton closeButton = new CloseButton(this.iwrb.getLocalizedString("close", "Close"));
+		StyledButton close = new StyledButton(closeButton);
+		
+		Table buttonTable = new Table(3, 1);
+		buttonTable.setCellpadding(0);
+		buttonTable.setCellspacing(0);
+		buttonTable.setWidth(2, 5);
+		buttonTable.add(close, 1, 1);
+		buttonTable.add(save, 3, 1);
+		
 		Table table = new Table(2, 3);
 		table.setRowHeight(1,"20");
 		table.setStyleClass(this.mainStyleClass);
@@ -367,10 +377,8 @@ public class GroupOwnersWindow extends StyledIWAdminWindow { //GroupPermissionWi
 		table.add(ucb, 1, 2);
 		table.setVerticalAlignment(1, 3, "bottom");
 		table.setVerticalAlignment(2, 3, "bottom");
-		table.add(help, 1, 3);
-		table.add(save, 2, 3);
-		table.add(Text.NON_BREAKING_SPACE, 2, 3);
-		table.add(close, 2, 3);
+		table.add(help,1,3);
+		table.add(buttonTable, 2, 3);
 		table.setWidth(600);
 		table.setHeight(410);
 		table.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);

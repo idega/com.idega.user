@@ -258,7 +258,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		if (iwc == null) {
 			return null;
 		}
-
 		if (!isLoggedUser(iwc, login)) {
 			if (!logInUser(iwc, login, password)) {
 				return null;
@@ -548,7 +547,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		if (iwc == null) {
 			return null;
 		}
-
 		if (remoteMode && !isUserLoggedOn(iwc, login, password)) {
 			return null;
 		}
@@ -712,7 +710,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		if (iwc == null || userName == null) {
 			return false;
 		}
-
 		//	Getting current user
 		User current = null;
 		try {
@@ -723,7 +720,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		if (current == null) {	//	Not logged
 			return false;
 		}
-
 		LoginTableHome loginHome = getLoginHome();
 		if (loginHome == null) {
 			return false;
@@ -736,7 +732,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			e.printStackTrace();
 			return false;
 		}
-
 		//	Checking if current user is making request
 		LoginTable login = null;
 		try {
@@ -860,7 +855,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		if (cacheKey == null || instanceId == null) {
 			return false;
 		}
-
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return false;
@@ -999,7 +993,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		boolean overFlowDisk = true;
 		boolean eternal = false;
 		long cacheTime = 5 * 60;	// Seconds
-
 		try {
 			return cache.getCache(cacheName, caheSize, overFlowDisk, eternal, cacheTime, cacheTime);
 		} catch(Exception e) {
@@ -1029,7 +1022,6 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 				ids.add(uniqueIds.get(i));
 			}
 		}
-
 		try {
 			getUniqueIds(cacheName).put(instanceId, ids);
 		} catch (Exception e) {

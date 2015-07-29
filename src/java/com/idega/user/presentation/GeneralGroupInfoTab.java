@@ -1,6 +1,7 @@
 package com.idega.user.presentation;
 
 import java.rmi.RemoteException;
+
 import com.idega.builder.presentation.IBPageChooser;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
@@ -31,7 +32,7 @@ import com.idega.util.Disposable;
 
 /**
  * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
- * 
+ *
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu�mundur
  *         �g�st S�mundsson </a>
  * @version 1.0
@@ -61,7 +62,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private Link linkToAliasedGroup;
 	//generated distinguised name, ldap attribute (ou) that we find out by asking for recursively parents of this group
 	private TextInput rdnField;
-	
+
 	private Text nameText;
 	private Text descriptionText;
 	private Text homepageText;
@@ -71,7 +72,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 	private Text uuidText;
 	private Text linkToAliasedGroupText;
 	private Text rdnText;
-	
+
 	private String nameFieldName;
 	private String descriptionFieldName;
 	private String homepageFieldName;
@@ -102,6 +103,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		//		setName("General");
 	}
 
+	@Override
 	public void initFieldContents() {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
@@ -141,7 +143,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 				catch(LDAPInterfaceException rne){}
 			}
 			this.fieldValues.put(this.rdnFieldName, (rdn != null) ? rdn : "");
-			
+
 			updateFieldsDisplayStatus();
 		}
 		catch (Exception e) {
@@ -149,6 +151,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		}
 	}
 
+	@Override
 	public void updateFieldsDisplayStatus() {
 		this.nameField.setContent((String) this.fieldValues.get(this.nameFieldName));
 		this.descriptionField.setContent((String) this.fieldValues.get(this.descriptionFieldName));
@@ -170,11 +173,12 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		}
 		this.shortNameField.setContent((String) this.fieldValues.get(this.shortNameFieldName));
 		this.abbrField.setContent((String) this.fieldValues.get(this.abbrFieldName));
-		
+
 		this.uuidField.setContent((String) this.fieldValues.get(this.uuidFieldName));
 		this.rdnField.setContent((String) this.fieldValues.get(this.rdnFieldName));
 	}
 
+	@Override
 	public void initializeFields() {
 		this.nameField = new TextInput(this.nameFieldName);
 		this.nameField.setLength(26);
@@ -202,15 +206,22 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		this.shortNameField.setLength(26);
 		this.abbrField = new TextInput(this.abbrFieldName);
 		this.abbrField.setLength(26);
-		
+
 		this.uuidField = new TextInput(this.uuidFieldName);
 		this.uuidField.setLength(36);
 		this.uuidField.setMaxlength(36);
+		if (!iwc.isSuperAdmin()) {
+			this.uuidField.setDisabled(true);
+		}
 		this.linkToAliasedGroup = new Link("");
 		this.rdnField = new TextInput(this.rdnFieldName);
 		this.rdnField.setLength(72);
+		if (!iwc.isSuperAdmin()) {
+			this.rdnField.setDisabled(true);
+		}
 	}
 
+	@Override
 	public void initializeTexts() {
 		IWContext iwc = IWContext.getInstance();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
@@ -236,6 +247,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		this.rdnText.setBold();
 	}
 
+	@Override
 	public boolean store(IWContext iwc) {
 		try {
 			if (getGroupId() > -1) {
@@ -249,7 +261,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 				group.setGroupType((String) this.fieldValues.get(this.grouptypeFieldName));
 				group.setShortName((String) this.fieldValues.get(this.shortNameFieldName));
 				group.setAbbrevation((String) this.fieldValues.get(this.abbrFieldName));
-				
+
 				if(iwc.isSuperAdmin()){
 					group.setUniqueId((String) this.fieldValues.get(this.uuidFieldName));
 					group.setMetaData(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING, (String) this.fieldValues.get(this.rdnFieldName));
@@ -265,6 +277,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		return true;
 	}
 
+	@Override
 	public void lineUpFields() {
 		resize(1, 1);
 		setCellpadding(0);
@@ -291,20 +304,18 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		table.add(this.linkToAliasedGroupText, 2, 3);
 		table.add(Text.getBreak(), 2, 3);
 		table.add(this.linkToAliasedGroup, 2, 3);
-		
-		
-		if(IWContext.getInstance().isSuperAdmin()){
-			table.mergeCells(1,4,2,4);
-			table.add(this.uuidText, 1, 4);
-			table.add(Text.getBreak(), 1, 4);
-			table.add(this.uuidField, 1, 4);
-			table.addBreak(1,4);
-			table.addBreak(1,4);
-			table.add(this.rdnText, 1, 4);
-			table.add(Text.getBreak(), 1, 4);
-			table.add(this.rdnField, 1, 4);
-		}
-		
+
+
+		table.mergeCells(1,4,2,4);
+		table.add(this.uuidText, 1, 4);
+		table.add(Text.getBreak(), 1, 4);
+		table.add(this.uuidField, 1, 4);
+		table.addBreak(1,4);
+		table.addBreak(1,4);
+		table.add(this.rdnText, 1, 4);
+		table.add(Text.getBreak(), 1, 4);
+		table.add(this.rdnField, 1, 4);
+
 		table.mergeCells(1, 5, 2, 5);
 		table.add(this.descriptionText, 1, 5);
 		table.add(Text.getBreak(), 1, 5);
@@ -320,6 +331,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		add(table, 1, 1);
 	}
 
+	@Override
 	public boolean collect(IWContext iwc) {
 		if (iwc != null) {
 			String gname = iwc.getParameter(this.nameFieldName);
@@ -330,7 +342,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 			String gabbr = iwc.getParameter(this.abbrFieldName);
 			String uuid = iwc.getParameter(this.uuidFieldName);
 			String rdn = iwc.getParameter(this.rdnFieldName);
-			
+
 			if (gname != null) {
 				this.fieldValues.put(this.nameFieldName, gname);
 			}
@@ -353,17 +365,18 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 			if(uuid!=null && !"".equals(uuid)){
 				this.fieldValues.put(this.uuidFieldName,uuid);
 			}
-			
+
 			if(rdn!=null && !"".equals(rdn)){
 				this.fieldValues.put(this.rdnFieldName,rdn);
 			}
-			
+
 			updateFieldsDisplayStatus();
 			return true;
 		}
 		return false;
 	}
 
+	@Override
 	public void initializeFieldNames() {
 		this.descriptionFieldName = "UM_group_desc";
 		this.nameFieldName = "UM_group_name";
@@ -375,6 +388,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		this.rdnFieldName = "UM_group_rdn";
 	}
 
+	@Override
 	public void initializeFieldValues() {
 		this.fieldValues.put(this.nameFieldName, "");
 		this.fieldValues.put(this.descriptionFieldName, "");
@@ -384,31 +398,34 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		this.fieldValues.put(this.abbrFieldName, "");
 		this.fieldValues.put(this.uuidFieldName, "");
 		this.fieldValues.put(this.rdnFieldName, "");
-		
+
 		updateFieldsDisplayStatus();
 	}
 
+	@Override
 	public void dispose(IWContext iwc) {
 		iwc.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
 		iwc.removeSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		getPanel().addHelpButton(getHelpButton());
 		//used by the GroupList class
 		Object obj = iwc.getSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED);
-		
+
 		if (obj == null) {
 			obj = getGroupBusiness(iwc).getParentGroups(getGroupId());
 			iwc.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_DIRECTLY_RELATED, obj);
 		}
-		
+
 		Object ob = iwc.getSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED);
-		
+
 		if (ob == null) {
 			ob = getGroupBusiness(iwc).getParentGroupsInDirect(getGroupId());
 			iwc.setSessionAttribute(GeneralGroupInfoTab.SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED, ob);
@@ -420,7 +437,7 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable {
 		Group group;
 		String groupTypeString;
 		try {
-			groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+			groupBusiness = IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			group = groupBusiness.getGroupByGroupID(getGroupId());
 			groupTypeString = group.getGroupType();
 		}

@@ -57,7 +57,14 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
 						//disable permissions for group if it has no other parents.
 						removePermissions(group,e.getIWContext());
 
-
+						Collection<Group> children = group.getChildren();
+						if (children != null && !children.isEmpty()) {
+							Iterator<Group> it = children.iterator();
+							while (it.hasNext()) {
+								Group child = it.next();
+								removePermissions(child,e.getIWContext());
+							}
+						}
 
 						//TODO fix this
 						e.getIWContext().getApplicationContext().removeApplicationAttribute("domain_group_tree");
@@ -151,13 +158,11 @@ public class DeleteGroupConfirmWindowPS extends IWPresentationStateImpl implemen
 
 	private GroupBusiness getGroupBusiness(IWApplicationContext iwac)    {
 		try {
-			return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+			return com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
 		}
 		catch (java.rmi.RemoteException rme) {
 			throw new RuntimeException(rme.getMessage());
 		}
 	}
-
-
 
 }

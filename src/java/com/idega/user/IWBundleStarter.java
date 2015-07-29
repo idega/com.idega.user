@@ -34,7 +34,7 @@ public class IWBundleStarter implements IWBundleStartable {
 
 	static Logger log = Logger.getLogger(IWBundleStarter.class.getName());
 
-	public static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
+	public static String IW_BUNDLE_IDENTIFIER = CoreConstants.IW_USER_BUNDLE_IDENTIFIER;
 
 	@Override
 	public void start(IWBundle starterBundle) {

@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.ejb.FinderException;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.search.business.SearchPlugin;
@@ -24,12 +26,13 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
+import com.idega.user.data.User;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2007/06/14 18:58:05 $ by $Author: civilis $
- * 
+ *
  * This class implements the Searchplugin interface and can therefore be used in a Search block (com.idega.core.search).<br>
  * It searches for groups by their type and returns contact information for the users in the groups that it finds<br>
  * To use it simply register this class as a iw.searchplugin component in a bundle.
@@ -40,9 +43,9 @@ public class GroupTypeUserContactSearch extends UserContactSearch implements Sea
 
 	public static final String SEARCH_NAME_LOCALIZABLE_KEY = "group_type_user_contact_search.name";
 	public static final String SEARCH_DESCRIPTION_LOCALIZABLE_KEY = "group_type_user_contact_search.description";
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public GroupTypeUserContactSearch() {
 		super();
@@ -51,11 +54,12 @@ public class GroupTypeUserContactSearch extends UserContactSearch implements Sea
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.SearchPlugin#getSearchName()
 	 */
+	@Override
 	public String getSearchName() {
 		IWBundle bundle = this.iwma.getBundle(IW_BUNDLE_IDENTIFIER);
 		return bundle.getResourceBundle(IWContext.getInstance()).getLocalizedString(SEARCH_NAME_LOCALIZABLE_KEY,"Contacts by group type");
 	}
-	
+
 	@Override
 	public String getSearchIdentifier() {
 		return iwma.getBundle(IW_BUNDLE_IDENTIFIER).getComponentName(this.getClass());
@@ -64,6 +68,7 @@ public class GroupTypeUserContactSearch extends UserContactSearch implements Sea
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.SearchPlugin#getSearchDescription()
 	 */
+	@Override
 	public String getSearchDescription() {
 		IWBundle bundle = this.iwma.getBundle(IW_BUNDLE_IDENTIFIER);
 		return bundle.getResourceBundle(IWContext.getInstance()).getLocalizedString(SEARCH_DESCRIPTION_LOCALIZABLE_KEY,"Searches for user contact information by group type");
@@ -71,18 +76,19 @@ public class GroupTypeUserContactSearch extends UserContactSearch implements Sea
 	/* (non-Javadoc)
 	 * @see com.idega.user.block.search.business.UserContactSearch#getUsers(com.idega.core.search.business.SearchQuery)
 	 */
-	protected Collection getUsers(SearchQuery searchQuery){
-		List users = new ArrayList();
-		
-		try {
-			GroupBusiness groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(this.iwma.getIWApplicationContext(),GroupBusiness.class);
-			Collection groups = groupBusiness.getGroupsByGroupTypeAndFirstPartOfName(((SimpleSearchQuery)searchQuery).getSimpleSearchQuery().replace('*','%').toLowerCase(),"");
+	@Override
+	protected Collection<User> getUsers(SearchQuery searchQuery){
+		List<User> users = new ArrayList<User>();
 
-			
+		try {
+			GroupBusiness groupBusiness = IBOLookup.getServiceInstance(this.iwma.getIWApplicationContext(),GroupBusiness.class);
+			Collection<Group> groups = groupBusiness.getGroupsByGroupTypeAndFirstPartOfName(((SimpleSearchQuery)searchQuery).getSimpleSearchQuery().replace('*','%').toLowerCase(),"");
+
+
 			if(groups!=null){
-				Iterator iterator = groups.iterator();
+				Iterator<Group> iterator = groups.iterator();
 				while (iterator.hasNext()) {
-					Group group = (Group) iterator.next();
+					Group group = iterator.next();
 					try {
 						users.addAll(groupBusiness.getUsers(group));
 					}
@@ -98,7 +104,7 @@ public class GroupTypeUserContactSearch extends UserContactSearch implements Sea
 		catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		
+
 		return users;
 	}
 }

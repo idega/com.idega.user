@@ -27,20 +27,22 @@ public class GroupChooserInputHandler extends GroupChooser implements InputHandl
     public GroupChooserInputHandler() {
 		super();
 	}
-	
+
 	public GroupChooserInputHandler(String name) {
 		super(name, true, null, null);
 	}
-	
-    public Object convertSingleResultingObjectToType(Object value, String className) {
+
+    @Override
+	public Object convertSingleResultingObjectToType(Object value, String className) {
 		return value;
     }
 
-    public String getDisplayForResultingObject(Object value, IWContext iwc) {
+    @Override
+	public String getDisplayForResultingObject(Object value, IWContext iwc) {
         String groupID = (String)value;
         Group group = null;
         if (groupID != null && !groupID.equals("")) {
-	        groupID = groupID.substring(groupID.lastIndexOf("_")+1);    
+	        groupID = groupID.substring(groupID.lastIndexOf("_")+1);
         }
         try {
             group = getGroupBusiness().getGroupByGroupID(Integer.parseInt((groupID)));
@@ -49,14 +51,16 @@ public class GroupChooserInputHandler extends GroupChooser implements InputHandl
             System.out.println(e.getMessage());
         }
         return groupID;
-        
+
     }
 
+	@Override
 	public PresentationObject getHandlerObject(String name, Collection values, IWContext iwc) {
         return null;
     }
 
-    public PresentationObject getHandlerObject(String name,	String value, IWContext iwc) {
+    @Override
+	public PresentationObject getHandlerObject(String name,	String value, IWContext iwc) {
         this.setName(name);
 		if (value != null) {
 			this.setValue(value);
@@ -77,6 +81,7 @@ public class GroupChooserInputHandler extends GroupChooser implements InputHandl
 		return this;
 	}
 
+	@Override
 	public Object getResultingObject(String[] value, IWContext iwc)	throws Exception {
 	    String groupID = null;
 		if (value != null && value.length == 1) {
@@ -84,18 +89,18 @@ public class GroupChooserInputHandler extends GroupChooser implements InputHandl
 		}
 		return groupID;
 	}
-	
+
 	private GroupBusiness getGroupBusiness() throws RemoteException {
 		if (this.groupBiz == null) {
-			this.groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), GroupBusiness.class);
-		}	
+			this.groupBiz = IBOLookup.getServiceInstance(this.getIWApplicationContext(), GroupBusiness.class);
+		}
 		return this.groupBiz;
 	}
 
 	private UserBusiness getUserBusiness() throws RemoteException {
 		if (this.userBiz == null) {
-			this.userBiz = (UserBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), UserBusiness.class);
-		}	
+			this.userBiz = IBOLookup.getServiceInstance(this.getIWApplicationContext(), UserBusiness.class);
+		}
 		return this.userBiz;
 	}
 }

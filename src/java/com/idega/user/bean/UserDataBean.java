@@ -19,7 +19,8 @@ public class UserDataBean implements Serializable {
 	private String mobilePhone = null;
 	private String workPhone = null;
 
-	private String pictureUri;
+	private String	pictureUri,
+					password;
 
 	//	Address
 	private String streetNameAndNumber = null;
@@ -47,7 +48,7 @@ public class UserDataBean implements Serializable {
 	public void setWorkPhone(String workPhone) {
 		this.workPhone = workPhone;
 	}
-	
+
 	public UserDataBean() {
 		super();
 	}
@@ -79,6 +80,12 @@ public class UserDataBean implements Serializable {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	public String getPersonalId() {
 		return personalId;
@@ -199,7 +206,7 @@ public class UserDataBean implements Serializable {
 		}
 		return this.hashCode;
 	}
-	
+
 	public String getMobilePhone() {
 		return mobilePhone;
 	}

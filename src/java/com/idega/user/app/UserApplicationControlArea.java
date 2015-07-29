@@ -40,6 +40,7 @@ import com.idega.user.presentation.BasicUserOverview;
 import com.idega.user.presentation.BasicUserOverviewPS;
 import com.idega.user.presentation.GroupTreeView;
 import com.idega.util.IWTimestamp;
+import com.idega.util.PresentationUtil;
 
 /**
  * <p>
@@ -200,7 +201,6 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		this.groupTree.setToShowSuperRootNode(true);
 		this.groupTree.setDefaultOpenLevel(iwc.getIWMainApplication().getSettings().getInt("groups_tree_levels_opened", 2));
 		this.groupTree.setSuperRootNodeName(this.iwrb.getLocalizedString("tree.super.node.name", "My groups"));
-
 		Image icon = this.iwb.getImage("super_root_icon.gif");
 		this.groupTree.setSuperRootNodeIcon(icon);
 		Collection<TopNodeGroup> topGroupNodes = null;
@@ -302,14 +302,21 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		return welcomeMessageTable;
 	}
 
+	public Layer displayLayer(IWContext iwc) {
+		Layer layer = new Layer(Layer.DIV);
+		layer.setID("treeLayer");
+		layer.add(this.groupTree);
+
+		return layer;
+	}
+
 	@Override
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
 
 		IWBundle iwb = getBundle(iwc);
-		Page parentPage = this.getParentPage();
 		String styleSrc = iwb.getVirtualPathWithFileNameString(this.styleScript);
-		parentPage.addStyleSheetURL(styleSrc);
+		PresentationUtil.addStyleSheetToHeader(iwc, styleSrc);
 
 		Table table = new Table(1, 2);
 		table.setCellpaddingAndCellspacing(0);
@@ -326,6 +333,8 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		table.add(displayTable(iwc), 1, 2);
 		add(table);
 
+		add(displayLayer(iwc));
+
 		if (iwc.isSuperAdmin()) {
 			GroupTreeNode node = new GroupTreeNode(iwc.getDomain(), iwc.getApplicationContext());
 			this.groupTree.setRootNode(node);
@@ -338,27 +347,6 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 			this.groupTree.setFirstLevelNodes(groupNodes.iterator());
 
 		}
-
-		//    Collection topGroups =
-		// iwc.getDomain().getTopLevelGroupsUnderDomain();
-		//
-		//    if(topGroups != null){
-		//      String type = gBusiness.getGroupType(UserGroupRepresentative.class);
-		//      Iterator iter = topGroups.iterator();
-		//      while (iter.hasNext()) {
-		//        Group item = (Group)iter.next();
-		//        if(type.equals(item.getGroupType())){
-		//          iter.remove();
-		//        }
-		//      }
-
-		//      groupTree.setFirstLevelNodes(topGroups.iterator());
-		//    }
-
-		//    groupTree.setControlEventModel(_contolEvent);
-		//    groupTree.setControlTarget(_controlTarget);
-
-		//    this.getParentPage().setBackgroundColor("#d4d0c8");
 	}
 
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {

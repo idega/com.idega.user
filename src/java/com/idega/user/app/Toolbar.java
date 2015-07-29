@@ -9,8 +9,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
 
 import javax.faces.component.UIComponent;
+
+import org.reflections.Reflections;
 
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWApplicationContext;
@@ -112,7 +116,6 @@ public class Toolbar extends Page implements IWBrowserView {
 		this.empty();
 		this.iwb = getBundle(iwc);
 		this.iwrb = getResourceBundle(iwc);
-
 		Table controlTable = new Table(1, 3);
 		controlTable.setCellpadding(0);
 		controlTable.setCellspacing(0);
@@ -211,14 +214,51 @@ public class Toolbar extends Page implements IWBrowserView {
 		List<ToolbarElement> toolbarElements = new ArrayList<ToolbarElement>();
 		User user = iwc.getCurrentUser();
 		Collection<UserGroupPlugInBusiness> plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
-		if (!ListUtil.isEmpty(plugins)) {
-			Iterator<UserGroupPlugInBusiness> iter = plugins.iterator();
-			while (iter.hasNext()) {
-			    UserGroupPlugInBusiness pluginBiz = iter.next();
-				List<ToolbarElement> list = pluginBiz.getMainToolbarElements();
-				if (!ListUtil.isEmpty(list)) {
-					toolbarElements.addAll(list);
+		if (ListUtil.isEmpty(plugins)) {
+			plugins = null;
+			Set<Class<? extends UserGroupPlugInBusiness>> tmp1 = new Reflections("com.idega").getSubTypesOf(UserGroupPlugInBusiness.class);
+			if (!ListUtil.isEmpty(tmp1)) {
+				plugins = new ArrayList(tmp1);
+			}
+			Set<Class<? extends UserGroupPlugInBusiness>> tmp = new Reflections("is.idega").getSubTypesOf(UserGroupPlugInBusiness.class);
+			if (!ListUtil.isEmpty(tmp)) {
+				if (ListUtil.isEmpty(plugins)) {
+					plugins = new ArrayList(tmp);
+				} else {
+					for (Object t: tmp) {
+						if (t instanceof UserGroupPlugInBusiness) {
+							plugins.add((UserGroupPlugInBusiness) t);
+						}
+					}
 				}
+			}
+		}
+		if (!ListUtil.isEmpty(plugins)) {
+			Iterator<?> iter = plugins.iterator();
+			while (iter.hasNext()) {
+			    Object pluginBiz = iter.next();
+			    if (pluginBiz instanceof UserGroupPlugInBusiness) {
+					List<ToolbarElement> list = ((UserGroupPlugInBusiness) pluginBiz).getMainToolbarElements();
+					if (!ListUtil.isEmpty(list)) {
+						toolbarElements.addAll(list);
+					}
+			    } else if (pluginBiz instanceof Class<?>) {
+			    	UserGroupPlugInBusiness tmpBiz = null;
+			    	Class<?> theClass = (Class<?>) pluginBiz;
+				    String beanName = null;
+			    	try {
+				    	if (theClass.isInterface()) {
+				    		beanName = theClass.getName() + "Bean";
+				    		tmpBiz = (UserGroupPlugInBusiness) Class.forName(beanName).newInstance();
+					    	List<ToolbarElement> list = tmpBiz.getMainToolbarElements();
+							if (!ListUtil.isEmpty(list)) {
+								toolbarElements.addAll(list);
+							}
+				    	}
+			    	} catch (Exception e) {
+						getLogger().log(Level.WARNING, "Error getting bean instance for " + beanName, e);
+					}
+			    }
 			}
 		}
 		// adding some toolbar elements that belong to this bundle
@@ -273,6 +313,7 @@ public class Toolbar extends Page implements IWBrowserView {
 					String toolName = toolbarElement.getName(iwc);
 					if (!toolbarElement.isButton(iwc)) {
 						SelectOption toolOption = new SelectOption(toolName, toolPresentationClass.getName());
+//						SelectOption toolOption = new SelectOption(toolName, "1");
 						toolOption.setWindowToOpenOnSelect(toolPresentationClass, parameterMap);
 						menu.addOption(toolOption);
 					} else {
@@ -298,12 +339,10 @@ public class Toolbar extends Page implements IWBrowserView {
 				toolbarTable.setCellpaddingLeft(2, 1, 10);
 				toolbarTable.setCellpaddingRight(2, 1, 3);
 				toolbarTable.add(dottedImage, 2, 1);
-
 				if(!menu.isEmpty()){
 					Form form = new Form();
 					menu.addMenuElementFirst("", "");
 					form.add(menu);
-
 					//TODO only used for now in FELIX! Refactor to a plugin
 					int handbookFileID = Integer.parseInt(iwc.getApplicationSettings().getProperty("USER_APP_HANDBOOK_FILE", "-1"));
 					if (handbookFileID != -1) {
@@ -322,7 +361,6 @@ public class Toolbar extends Page implements IWBrowserView {
 					toolbar2.setCellpaddingLeft(toolbarColumn, 1, 7);
 					toolbar2.add(form, toolbarColumn++, 1);
 				}
-
 			}
 		}
 

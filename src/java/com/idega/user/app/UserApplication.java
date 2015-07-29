@@ -27,10 +27,19 @@ import com.idega.user.business.UserBusiness;
 import com.idega.util.PresentationUtil;
 
 /**
- * <p>Title: idegaWeb</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: idega Software</p>
+ * <p>
+ * Title: idegaWeb
+ * </p>
+ * <p>
+ * Description:
+ * </p>
+ * <p>
+ * Copyright: Copyright (c) 2002
+ * </p>
+ * <p>
+ * Company: idega Software
+ * </p>
+ *
  * @author <a href="gummi@idega.is">Gudmundur A. Saemundsson</a>
  * @modified <a href="eiki@idega.is">Eirikur S. Hrafnsson</a>
  * @version 1.1
@@ -39,9 +48,9 @@ import com.idega.util.PresentationUtil;
 public class UserApplication extends IWBrowser {
 
   private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-  
+
 	UserBusiness userBusiness = null;
-  
+
 	/**
 		 * added 7/10/03 for stylesheet writeout
 		 */
@@ -61,12 +70,12 @@ public class UserApplication extends IWBrowser {
     if(iwma.getProductInfo().isMajorPlatformVersionEqualOrHigherThan(3)){
     		//Not add the top for new versions
         this.addToTop(new Top());
-        this.setSpanPixels(POS_TOP,0); 
+        this.setSpanPixels(POS_TOP,0);
     } else {
         this.addToTop(new Top());
-        this.setSpanPixels(POS_TOP,50); 
+        this.setSpanPixels(POS_TOP,50);
     }
-    
+
     this.setSpanPixels(POS_LEFTMAIN, 230);
     this.setSpanPixels(POS_MENU,29);
     this.setSpanPixels(POS_BOTTOM,35);
@@ -76,29 +85,35 @@ public class UserApplication extends IWBrowser {
 	UserApplicationControlArea treeArea = new UserApplicationControlArea();
 	UserApplicationMainArea mainArea = new UserApplicationMainArea();
 	UserApplicationBottomArea bottomArea = new UserApplicationBottomArea();
-		
+
 	this.addToMenu(menuArea);
     this.showMenuFrame(true);
     this.showEventFrame(true); //MUST BE TRUE!
 	this.addToLeftMain(treeArea);
     this.addToMain(mainArea);
     this.addToBottom(bottomArea);
-    
+
 	menuArea.setUserApplicationMainAreaStateId(mainArea.getCompoundId());
-    
+
 	this.setEventURL(IWPresentationEvent.getEventHandlerFrameURL(IWContext.getInstance()));
-    
+
     this.getTopFrame().setNoresize(true);
     this.getTopFrame().setScrolling(false);
     this.getMenuFrame().setScrolling(false);
     this.getMenuFrame().setNoresize(true);
+		this.getMenuFrame().setMarkupAttribute("marginheight", "0");
+		this.getMenuFrame().setMarkupAttribute("marginwidth", "0");
     this.getBottomFrame().setScrolling(false);
     this.getBottomFrame().setNoresize(true);
     this.getEventFrame().setScrolling(false);
     this.getEventFrame().setNoresize(true);
     this.getMainFrame().setScrolling(true);
+		this.getMainFrame().setMarkupAttribute("marginheight", "0");
+		this.getMainFrame().setMarkupAttribute("marginwidth", "0");
     this.getLeftMainFrame().setNoresize(false);
-    this.getLeftMainFrame().setScrollingAuto();
+		this.getLeftMainFrame().setScrolling(false);
+		this.getLeftMainFrame().setMarkupAttribute("marginheight", "0");
+		this.getLeftMainFrame().setMarkupAttribute("marginwidth", "0");
   }
 
   @Override
@@ -109,6 +124,10 @@ public String getBundleIdentifier(){
   @Override
 public void main(IWContext iwc) throws Exception {
   	setTitle(getResourceBundle(iwc).getLocalizedString("user_application.title", "User Application"));
+  		this.userBusiness = getUserBusiness(iwc);
+		this.styleSrc = UserApplication.this.userBusiness.getUserApplicationStyleSheetURL();
+		this.parentPage = getParentPage();
+		this.parentPage.addStyleSheetURL(UserApplication.this.styleSrc);
 
     Frame mainFrame = this.getFrame(this.getFrameName(POS_MAIN));
     PresentationObject buo = mainFrame.getPresentationObject();
@@ -116,7 +135,7 @@ public void main(IWContext iwc) throws Exception {
 
     this.addActionListener(POS_LEFTMAIN,l);
     this.addActionListener(POS_MENU,l);
-    this.addActionListener(POS_MAIN,l); 
+    this.addActionListener(POS_MAIN,l);
 
     Frame leftFrame = this.getFrame(this.getFrameName(POS_LEFTMAIN));
     PresentationObject bgo = leftFrame.getPresentationObject();
@@ -136,7 +155,8 @@ public void main(IWContext iwc) throws Exception {
         Page parent = this.getParentPage();
         parent.setAllMargins(0);
         parent.setBackgroundColor("#ffffff"); //changed from #386cb7
-      } else {
+		}
+		else {
         setAllMargins(0);
         setBackgroundColor("#ffffff"); //changed from #386cb7
       }
@@ -147,14 +167,16 @@ public void main(IWContext iwc) throws Exception {
       return "com.idega.user";
     }
 
-    public ChangeListener getChangeControler(){
+    @Override
+	public ChangeListener getChangeControler(){
       return (ChangeListener)this.getPresentationState(this.getIWUserContext());
     }
 
-    public IWPresentationState getPresentationState(IWUserContext iwuc){
+    @Override
+	public IWPresentationState getPresentationState(IWUserContext iwuc){
       if(this._presentationState == null){
         try {
-          IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
+          IWStateMachine stateMachine = IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
           this._presentationState = (IWControlFramePresentationState)stateMachine.getStateFor(getCompoundId(),this.getPresentationStateClass());
         }
         catch (RemoteException re) {
@@ -164,7 +186,8 @@ public void main(IWContext iwc) throws Exception {
       return this._presentationState;
     }
 
-    public Class<IWControlFramePresentationState> getPresentationStateClass(){
+    @Override
+	public Class<IWControlFramePresentationState> getPresentationStateClass(){
       return IWControlFramePresentationState.class;
     }
 
@@ -188,14 +211,14 @@ public void main(IWContext iwc) throws Exception {
         headerTable.setCellspacing(0);
         headerTable.setWidth("100%");
         headerTable.setHeight("100%");
- 
-		//setting the styleSheet 
-		UserApplication.this.userBusiness = getUserBusiness(iwc); 
+
+		//setting the styleSheet
+		UserApplication.this.userBusiness = getUserBusiness(iwc);
 		UserApplication.this.styleSrc = UserApplication.this.userBusiness.getUserApplicationStyleSheetURL();
 		UserApplication.this.parentPage = getParentPage();
 		UserApplication.this.parentPage.addStyleSheetURL(UserApplication.this.styleSrc);
 		PresentationUtil.addJavaScriptSourceLineToHeader(iwc, getBundle(iwc).getVirtualPathWithFileNameString("javascript/UserApplication.js"));
-		
+
         headerTable.setAlignment(1,1,Table.HORIZONTAL_ALIGN_LEFT);
         headerTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
 
@@ -209,7 +232,7 @@ public void main(IWContext iwc) throws Exception {
 	protected UserBusiness getUserBusiness(IWApplicationContext iwc) {
 			if (this.userBusiness == null) {
 				try {
-					this.userBusiness = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+					this.userBusiness = com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 				}
 				catch (java.rmi.RemoteException rme) {
 					throw new RuntimeException(rme.getMessage());

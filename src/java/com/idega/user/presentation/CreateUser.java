@@ -4,10 +4,10 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 import javax.swing.event.ChangeListener;
-import javax.transaction.TransactionManager;
 
 import com.idega.business.IBOLookup;
 import com.idega.event.IWActionListener;
@@ -31,17 +31,18 @@ import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
-import com.idega.transaction.IdegaTransactionManager;
 import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.CoreConstants;
+import com.idega.util.StringUtil;
 
 /**
  * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
- * 
+ *
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu�mundur
  *         �g�st S�mundsson</a>
  * @version 1.0
@@ -186,105 +187,113 @@ public class CreateUser extends StyledIWAdminWindow {
 		this.myForm.add(this.mainTable);
 	}
 
-	public void commitCreation(IWContext iwc) {
+	public void commitCreation(final IWContext iwc) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		User newUser = null;
-		Group group = null;
 		Integer primaryGroupId = null;
 		if (this.selectedGroupId != null && !this.selectedGroupId.equals("")) {
-			TransactionManager transaction = IdegaTransactionManager.getInstance();
 			try {
-				// START A TRANSACTION!
-				transaction.begin();
 				primaryGroupId = new Integer(this.selectedGroupId);
-				if ((this.ssn != null || !this.ssn.equals("")) && (this.fullName == null || this.fullName.equals(""))) {
+
+				if (!StringUtil.isEmpty(ssn)) {
 					try {
 						newUser = getUserBusiness(iwc).getUser(this.ssn);
-						this.fullName = newUser.getName();
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						newUser = null;
 					}
-					if (newUser != null) {
-						this.fullName = newUser.getName();
-					}
-					else {
-						this.fullName = this.ssn;
-					}
 				}
-				group = getGroupBusiness(iwc).getGroupByGroupID(primaryGroupId.intValue());
-				if (iwc.getAccessController().hasEditPermissionFor(group, iwc)) {
-					newUser = getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(this.fullName, this.ssn, null, null);
-					if (this.ssn == null || this.ssn.equals("")) {
-						// added / so it won't clash with any real personal
-						// id's
-						newUser.setPersonalID("/"
-								+ Integer.toString(((Integer) newUser.getPrimaryKey()).intValue()) + "/");
+				if (newUser == null) {
+					if (StringUtil.isEmpty(fullName) && !StringUtil.isEmpty(ssn)) {
+						fullName = ssn;
 					}
-										
-					String error = getUserBusiness(iwc).isUserSuitedForGroup(newUser, group);
+				} else {
+					fullName = newUser.getName();
+					ssn = newUser.getPersonalID();
+				}
+
+				boolean hasPermission = false;
+				try {
+					com.idega.user.data.bean.Group group = getGroupBusiness(iwc).getGroupDAO().findGroup(primaryGroupId);;
+					hasPermission = iwc.getAccessController().hasEditPermissionFor(group, iwc);
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Error while checking if current user has permission to edit group by ID: " + primaryGroupId, e);
+				}
+
+				if (hasPermission) {
+					getLogger().info("Curent user has permission to edit group " + primaryGroupId);	//	TODO
+
+					newUser = newUser == null ? getUserBusiness(iwc).createUserByPersonalIDIfDoesNotExist(this.fullName, this.ssn, null, null) : newUser;
+					if (StringUtil.isEmpty(ssn)) {
+						// added / so it won't clash with any real personal id's
+						newUser.setPersonalID(CoreConstants.SLASH + Integer.toString(((Integer) newUser.getPrimaryKey()).intValue()) + CoreConstants.SLASH);
+					}
+
+					final Group group = getGroupBusiness(iwc).getGroupByGroupID(primaryGroupId.intValue());
+					String error = null;
+					try {
+						error = getUserBusiness(iwc).isUserSuitedForGroup(newUser, group);
+					} catch (Exception e) {
+						getLogger().log(Level.WARNING, "Error checking if " + newUser + " (ID: " + newUser.getId() + ", personal ID: " +
+								newUser.getPersonalID() + ") is suitable for group " + group, e);
+					}
 					if (error == null) {
-						group.addGroup(newUser);
+						getLogger().info(newUser + " is suitable for " + primaryGroupId);	//	TODO
+
+						getGroupBusiness(iwc).addUser(primaryGroupId, newUser);
 						if (newUser.getPrimaryGroupID() < 0) {
 							newUser.setPrimaryGroupID(primaryGroupId);
 						}
 						newUser.store();
-						
+
 						getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(newUser, group);
+						getLogger().info("Gone through plugins");
+
 						Link gotoLink = new Link();
 						gotoLink.setWindowToOpen(UserPropertyWindow.class);
-						gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID,
-								newUser.getPrimaryKey().toString());
+						gotoLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, newUser.getPrimaryKey().toString());
 						close();
 						setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
 						String script = "window.opener." + gotoLink.getWindowToOpenCallingScript(iwc);
 						setOnLoad(script);
-					}
-					else {
+					} else {
+						getLogger().warning(newUser + "(ID: " + newUser.getId() + ", personal ID: " + newUser.getPersonalID() +
+								") is not suited for group with ID: " + primaryGroupId + ". Error: " + error);
+
 						setAlertOnLoad(error);
 						this.ssnField.setContent(this.ssn);
 						this.fullNameField.setContent(this.fullName);
 					}
-				}
-				else {
-					setAlertOnLoad(iwrb.getLocalizedString("new_user.no_edit_permission_for_parent_group",
-							"You cannot add the user to this group because you do not have edit permission to it."));
+				} else {
+					getLogger().warning("Current user does not have permission to edit group with ID: " + primaryGroupId);
+					setAlertOnLoad(iwrb.getLocalizedString("new_user.no_edit_permission_for_parent_group", "You cannot add the user to this group because you do not have edit permission to it."));
 					this.ssnField.setContent(this.ssn);
 					this.fullNameField.setContent(this.fullName);
 				}
-				transaction.commit();
-			}// try ends
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
-				try {
-					transaction.rollback();
-				}
-				catch (Exception e1) {
-					e1.printStackTrace();
-				}
 				String msg = e.getMessage();
-				
+
 				String errorMessage = iwrb.getLocalizedString(
 						"new_user.transaction_rollback",
 						"User could not be created/added because of the error: ")
 						+ msg
 						+ iwrb.getLocalizedString("new_user.try_again"," Please try again or contact the system administrator if you think it is a server error.");
-				
-				
+
+
 				setAlertOnLoad(errorMessage);
-				
+
 				this.ssnField.setContent(this.ssn);
 				this.fullNameField.setContent(this.fullName);
 				// add the parent group also?
 			}
-		}
-		else {
+		} else {
 			setAlertOnLoad(iwrb.getLocalizedString("new_user.group_required", "Group must be selected"));
 			this.ssnField.setContent(this.ssn);
 			this.fullNameField.setContent(this.fullName);
 		}
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
 		IWResourceBundle iwrb = getResourceBundle(iwc);
@@ -394,10 +403,11 @@ public class CreateUser extends StyledIWAdminWindow {
 		}
 	}
 
+	@Override
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
 		if (this.userBiz == null) {
 			try {
-				this.userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				this.userBiz = com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
@@ -409,7 +419,7 @@ public class CreateUser extends StyledIWAdminWindow {
 	public GroupBusiness getGroupBusiness(IWApplicationContext iwc) {
 		if (this.groupBiz == null) {
 			try {
-				this.groupBiz = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				this.groupBiz = com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
@@ -418,6 +428,7 @@ public class CreateUser extends StyledIWAdminWindow {
 		return this.groupBiz;
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
@@ -433,9 +444,9 @@ public class CreateUser extends StyledIWAdminWindow {
 		addActionListener((IWActionListener) state);
 		IWStateMachine stateMachine;
 		// add all change listeners
-		Collection changeListeners;
+		Collection<ChangeListener> changeListeners;
 		try {
-			stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
+			stateMachine = IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
 			changeListeners = stateMachine.getAllChangeListeners();
 			// try to get the selected group
 			if (selectedGroupProviderStateId != null) {
@@ -448,11 +459,11 @@ public class CreateUser extends StyledIWAdminWindow {
 			}
 		}
 		catch (RemoteException e) {
-			changeListeners = new ArrayList();
+			changeListeners = new ArrayList<ChangeListener>();
 		}
-		Iterator iterator = changeListeners.iterator();
+		Iterator<ChangeListener> iterator = changeListeners.iterator();
 		while (iterator.hasNext()) {
-			state.addChangeListener((ChangeListener) iterator.next());
+			state.addChangeListener(iterator.next());
 		}
 		return tempSelectedGroupID;
 	}

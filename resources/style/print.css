@@ -1,0 +1,39 @@
+@page {
+	size: landscape;
+}
+
+table.toolbar {
+	display: none;
+}
+
+table.topTable {
+	position: relative;
+	font-size: 1.5em;
+	font-weight: bold;
+	margin-bottom: 18px;
+}
+
+table.borderAll {
+	position: relative;
+	border-spacing: 0 !important;
+}
+
+table.borderAll tr:first-child, table.borderAll tr:last-child, table.borderAll input {
+	display: none;
+}
+
+table.borderAll tr td {
+	border-bottom: 1px #ccc solid;
+	padding: 3px 5px;
+}
+
+table td {
+	background-color: #fff !important;
+	background-image: none !important;
+	height: auto !important;
+	width: auto !important;
+}
+
+table.middleTable {
+	display: none;
+}

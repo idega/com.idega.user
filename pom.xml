@@ -9,17 +9,6 @@
   <packaging>jar</packaging>
   <name>idegaWeb User</name>
   <description>User Application</description>
-  <scm>
-    
-    <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.user/</connection>
-    <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.user/</developerConnection> 
-    
-    <!--
-    <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.user/</connection>
-    <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.user/</developerConnection>
-    -->
-    <tag>com_idega_block_platform-4_1_2</tag>
-  </scm>
 
   <developers>
     <developer>
@@ -77,5 +66,11 @@
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.webface</artifactId>
     </dependency>
+    
+    <dependency>
+         <groupId>org.reflections</groupId>
+         <artifactId>reflections</artifactId>
+         <version>0.9.9-RC1</version>
+     </dependency>
   </dependencies>
 </project>

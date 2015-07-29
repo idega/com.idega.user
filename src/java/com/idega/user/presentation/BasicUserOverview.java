@@ -1,6 +1,7 @@
 package com.idega.user.presentation;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,11 +13,14 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.swing.event.ChangeListener;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.block.entity.presentation.converter.DateConverter;
 import com.idega.block.entity.presentation.converter.MessageConverter;
+import com.idega.block.web2.business.JQuery;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.builder.data.ICDomain;
@@ -51,10 +55,10 @@ import com.idega.presentation.text.LinkContainer;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.PrintButton;
 import com.idega.presentation.ui.StyledButton;
-import com.idega.presentation.ui.SubmitButton;
 import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
@@ -69,6 +73,8 @@ import com.idega.util.CoreConstants;
 import com.idega.util.IWColor;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.PresentationUtil;
+import com.idega.util.expression.ELUtil;
 import com.idega.util.text.TextSoap;
 /**
  * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
@@ -87,6 +93,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     public static final String DELETE_USERS_KEY = "delete_selected_users";
     public static final String MOVE_USERS_KEY = "move_users";
     public static final String COPY_USERS_KEY = "copy_users";
+    public static final String COPY_USERS_INFO = "copy_users_info";
 
     protected static final String PHONE_TYPE_PATH = PhoneType.class.getName() + ".IC_PHONE_TYPE_ID|TYPE_DISPLAY_NAME";
     protected static final String USER_APPLICATION_FRONT_PAGE_ID = "USER_APPLICATION_FRONT_PAGE_ID";
@@ -114,6 +121,9 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     private boolean hasDeletePermissionForRealGroup = false;
     private boolean hasOwnerPermissionForRealGroup = false;
 	private boolean hasPermitPermissionForRealGroup = false;
+
+	@Autowired
+	private JQuery jQuery;
 
     public BasicUserOverview() {
         super();
@@ -161,7 +171,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         return toolbarTable;
     }
     protected Table getList(IWContext iwc) {
-
+    	 Form form = new Form();
 
 
 
@@ -196,7 +206,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
                 returnTable.add(po, 2, 4);
             }
         } else {
-            EntityBrowser entityBrowser = getEntityBrowser(users, iwc);
+            EntityBrowser entityBrowser = getEntityBrowser(users, iwc, form.getId());
             // put print button to bottom
     		LinkToUserStats linkToUserStats = ImplementorRepository.getInstance().newInstanceOrNull(LinkToUserStats.class, this.getClass());
     		if (linkToUserStats != null) {
@@ -219,19 +229,18 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         		entityBrowser.addPresentationObjectToBottom(link);
     		}*/
             // put browser into a form
-            Form form = new Form();
             form.add(entityBrowser);
             IWPresentationEvent event = (entityBrowser.getPresentationEvent());
             form.addEventModel(event, iwc);
 
 //          add email option
-            addEmailButton(entityBrowser, iwc);
+            addEmailButton(entityBrowser, iwc, form.getId());
 
 //          add delete option
-            addDeleteButton(entityBrowser);
+            addDeleteButton(entityBrowser, form.getId());
 
             //add move to group option
-            addMoveOrAddButton(entityBrowser);
+            addMoveOrAddButton(entityBrowser, form.getId());
 
             returnTable.add(form, 2, 4);
         }
@@ -239,21 +248,20 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         return returnTable;
     }
 
-    private void addEmailButton(EntityBrowser entityBrowser, IWContext iwc) {
+    private void addEmailButton(EntityBrowser entityBrowser, IWContext iwc, String formId) {
         //add emailing option
         if (this.hasEditPermissionForRealGroup && this.selectedGroup != null) {
-            SubmitButton emailButton =
-                new SubmitButton(
-                        this.iwrb.getLocalizedString("Email selection", "Email selection"),
-                        BasicUserOverview.EMAIL_USERS_KEY,
-                        BasicUserOverview.EMAIL_USERS_KEY);
+            GenericButton emailButton =
+                new GenericButton(
+                        this.iwrb.getLocalizedString("Email selection", "Email selection"));
+            emailButton.setOnClick("UserApplication.doExecute(null, event, '" + formId + "', '" + EMAIL_USERS_KEY + "');");
             StyledButton styledEmailButton = new StyledButton(emailButton);
             entityBrowser.addPresentationObjectToBottom(styledEmailButton);
             User currentUser = iwc.getCurrentUser();
             String fromAddress = null;
-            Collection emails =currentUser.getEmails();
+            Collection<Email> emails = currentUser.getEmails();
             if (emails != null && !emails.isEmpty()) {
-            	Email email = (Email) emails.iterator().next();
+            	Email email = emails.iterator().next();
             	if (email != null && email.getEmailAddress()!= "") {
             		fromAddress = currentUser.getName() + " <" + email.getEmailAddress() + ">";
             	}
@@ -267,18 +275,16 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
     }
 
-    private void addDeleteButton(EntityBrowser entityBrowser) {
+    private void addDeleteButton(EntityBrowser entityBrowser, String formId) {
         //add delete option
         if (this.hasDeletePermissionForRealGroup) {
             String confirmDeleting = this.iwrb.getLocalizedString("buo_delete_selected_users", "Delete selected users");
             confirmDeleting += " ?";
-            SubmitButton deleteButton =
-                new SubmitButton(
-                        this.iwrb.getLocalizedString("Delete selection", "Delete selection"),
-                        BasicUserOverview.DELETE_USERS_KEY,
-                        BasicUserOverview.DELETE_USERS_KEY);
+            GenericButton deleteButton =
+                new GenericButton(
+                        this.iwrb.getLocalizedString("Delete selection", "Delete selection"));
+            deleteButton.setOnClick("UserApplication.doExecute('" + confirmDeleting + "', event, '" + formId + "', '" + DELETE_USERS_KEY + "');");
             StyledButton styledDeleteButton = new StyledButton(deleteButton);
-            deleteButton.setSubmitConfirm(confirmDeleting);
             //form.add(deleteButton);
             //form.add(Text.getNonBrakingSpace());
             entityBrowser.addPresentationObjectToBottom(styledDeleteButton);
@@ -286,7 +292,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
         }
     }
 
-    private void addMoveOrAddButton(EntityBrowser entityBrowser) {
+    private void addMoveOrAddButton(EntityBrowser entityBrowser, String formId) {
         String confirmMoving;
         String buttonMoving;
         String confirmCopying = "";
@@ -305,19 +311,19 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             buttonCopying = this.iwrb.getLocalizedString("Copy to", "Copy to");
 
         }
-        confirmMoving += " ?";
+        confirmCopying += "?";
+        confirmMoving += "?";
 
         if(addMoveOrAddButton) {
             StyledButton styledCopyToButton = null;
             if (this.selectedGroup != null) {
-                SubmitButton copyToButton = new SubmitButton(buttonCopying, BasicUserOverview.COPY_USERS_KEY, BasicUserOverview.COPY_USERS_KEY);
-                copyToButton.setSubmitConfirm(confirmCopying);
+                GenericButton copyToButton = new GenericButton(buttonCopying);
+                copyToButton.setOnClick("UserApplication.doExecute('" + confirmCopying + "', event, '" + formId + "', '" + COPY_USERS_KEY + "');");
                 styledCopyToButton = new StyledButton(copyToButton);
             }
-            SubmitButton moveToButton = new SubmitButton(buttonMoving, BasicUserOverview.MOVE_USERS_KEY, BasicUserOverview.MOVE_USERS_KEY);
-            moveToButton.setSubmitConfirm(confirmMoving);
+            GenericButton moveToButton = new GenericButton(buttonMoving);
+            moveToButton.setOnClick("UserApplication.doExecute('" + confirmMoving + "', event, '" + formId + "', '" + MOVE_USERS_KEY + "');");
             StyledButton styledMoveToButton = new StyledButton(moveToButton);
-
 
             GroupChooser targetGroupChooser = new GroupChooser(SELECTED_TARGET_GROUP_KEY, true, null, null);
             targetGroupChooser.setInputStyle(IWConstants.BUILDER_FONT_STYLE_INTERFACE);
@@ -328,6 +334,7 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
             if (styledCopyToButton != null) {
                 entityBrowser.addPresentationObjectToBottom(styledCopyToButton);
             }
+
             entityBrowser.addPresentationObjectToBottom(styledMoveToButton);
             entityBrowser.addPresentationObjectToBottom(targetGroupChooser);
         }
@@ -417,9 +424,12 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
      * @param users
      * @return
      */
-    protected EntityBrowser getEntityBrowser(Collection users, IWContext iwc) {
+    protected EntityBrowser getEntityBrowser(Collection<User> users, IWContext iwc, String formId) {
         // define entity browser
         EntityBrowser entityBrowser = EntityBrowser.getInstanceUsingEventSystemAndExternalForm();
+
+        entityBrowser.setActionForShowAll("UserApplication.doExecute(null, event, '" + formId + "', event.target.name);");
+
         PresentationObject parentObject = this.getParentObject();
         entityBrowser.setArtificialCompoundId(parentObject.getCompoundId(), iwc);
         IWPresentationState presentationStateParent = ((StatefullPresentation) parentObject).getPresentationState(iwc);
@@ -974,6 +984,13 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
 
     @Override
 	public void main(IWContext iwc) throws Exception {
+    	ELUtil.getInstance().autowire(this);
+    	PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, Arrays.asList(
+    			jQuery.getBundleURIToJQueryLib(),
+    			CoreConstants.DWR_UTIL_SCRIPT,
+    			getBundle(iwc).getVirtualPathWithFileNameString("javascript/UserApplication.js")
+    	));
+
         this.empty();
         this.iwb = this.getBundle(iwc);
         this.iwrb = this.getResourceBundle(iwc);
@@ -1217,14 +1234,14 @@ public class BasicUserOverview extends Page implements IWBrowserView, StatefullP
     }
 
     public static Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, IWContext iwc) throws RemoteException {
-        return moveUsers(userIds, parentGroup, targetGroupId, iwc, false);
+        return moveUsers(userIds, parentGroup, targetGroupId, iwc, false, false);
     }
 
-    public static Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, IWContext iwc, boolean leaveCopyOfUserInCurrentGroup) throws RemoteException {
+    public static Map moveUsers(Collection userIds, Group parentGroup, int targetGroupId, IWContext iwc, boolean leaveCopyOfUserInCurrentGroup, boolean copyOrMoveUserInfo) throws RemoteException {
         UserBusiness userBusiness = getUserBusiness(iwc.getApplicationContext());
         //User currentUser = iwc.getCurrentUser();
         Map resultMap = new HashMap();
-        Map map = userBusiness.moveUsers(iwc,userIds, parentGroup, targetGroupId, leaveCopyOfUserInCurrentGroup);
+        Map map = userBusiness.moveUsers(iwc,userIds, parentGroup, targetGroupId, leaveCopyOfUserInCurrentGroup, copyOrMoveUserInfo);
         Integer groupId;
         if (parentGroup != null) {
             groupId = (Integer) parentGroup.getPrimaryKey();

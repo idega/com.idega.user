@@ -47,14 +47,12 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			addTitle(user.getName(), TITLE_STYLECLASS);
 		}
 		setTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"));
+		
+		if (this.panel.clickedApply() || this.panel.clickedOk()) {
+        	setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
+        }
 	}
 
-	// public UserBusiness getUserBusiness(IWApplicationContext iwac) throws
-	// RemoteException {
-	// return (UserBusiness)
-	// com.idega.business.IBOLookup.getServiceInstance(iwac,
-	// UserBusiness.class);
-	// }
 	/**
 	 * @see com.idega.presentation.TabbedPropertyWindow#disposeOfPanel(com.idega.presentation.IWContext)
 	 */
@@ -107,7 +105,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			//we could also add the group if we want that to be notified of changes panel.setGroup(group);
 			
 			// add the standard tabs and then from plugins
-			UserTab userInfo = new GeneralUserInfoTab();
+			UserTab userInfo = new GeneralUserInfoTab(userId);
 			userInfo.setPanel(panel);
 			userInfo.setUserIDAndGroupID(userId, groupId);
 			

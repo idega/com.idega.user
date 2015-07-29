@@ -200,7 +200,7 @@ public class SimpleUserAppHelper {
 		Group group = null;
 		if (groupId != -1) {
 			try {
-				group = ((GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class)).getGroupByGroupID(groupId);
+				group = IBOLookup.getServiceInstance(iwc, GroupBusiness.class).getGroupByGroupID(groupId);
 			} catch (IBOLookupException e) {
 			} catch (RemoteException e) {
 			} catch (FinderException e) {}

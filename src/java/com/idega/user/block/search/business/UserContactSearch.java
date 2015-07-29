@@ -234,7 +234,7 @@ public class UserContactSearch implements SearchPlugin {
 
 	protected Collection getUsers(SearchQuery searchQuery) {
 		try {
-			SearchEngine userSearch = (SearchEngine) IBOLookup.getServiceInstance(this.iwma.getIWApplicationContext(),
+			SearchEngine userSearch = IBOLookup.getServiceInstance(this.iwma.getIWApplicationContext(),
 					SearchEngine.class);
 			String query = ((SimpleSearchQuery) searchQuery).getSimpleSearchQuery();
 			if(query!=null){

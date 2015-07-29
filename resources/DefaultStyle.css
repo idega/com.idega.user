@@ -271,3 +271,32 @@ table.userAppMenuArea div.userAppMenu {
 	background-color: #fff;
 	padding: 4px;
 }
+
+div#treeLayer {
+	position: absolute;
+	left: 7px;
+	right: 7px;
+	top: 7px;
+	bottom: 7px;
+	overflow: auto;
+	border: 1px #CFCFCF solid;
+	background-color: #FFFFFF;
+	padding: 4px;
+
+	/* IE fix for non support for bottom:0  */
+	height: expression(
+	(
+	document.body.clientHeight) ?
+	document.body.clientHeight - 14 + 'px'
+	:
+	document.documentElement.clientHeight - 14 + 'px'
+	);
+	
+	width: expression(
+	(
+	document.body.clientWidth) ?
+	document.body.clientWidth - 14 + 'px'
+	:
+	document.documentElement.clientWidth - 14 + 'px'
+	);
+}

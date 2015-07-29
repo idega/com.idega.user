@@ -4,6 +4,138 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  	<release version="3.1.23" date="2009-07-13">
+   		<action dev="palli" type="update">
+   			Fixing localizations
+   		</action>
+   	</release>
+  	<release version="3.1.22" date="2008-03-10">
+   		<action dev="gimmi" type="update">
+   			URLEncoding email subject
+   		</action>
+   	</release>
+  	<release version="3.1.21" date="2008-02-05">
+   		<action dev="valdas" type="update">
+   			Changed few methods' signatures in GroupService
+   			Added signatures in dwr.xml
+   		</action>
+   	</release>
+  	<release version="3.1.20" date="2008-01-16">
+   		<action dev="valdas" type="update">
+   			Added few public methods to GroupService
+   			Resized GroupPermissionWindow (Gimmi)
+   		</action>
+   	</release>
+   	<release version="3.1.19" date="2007-12-04">
+   		<action dev="gimmi" type="update">
+   			EmailFormFix
+   		</action>
+   	</release>
+  	<release version="3.1.18" date="2007-11-22">
+     	<action dev="valdas" type="update">
+			Changes for groups tree, groups and users info viewers.
+    	</action>
+    </release>
+  
+  	<release version="3.1.17" date="2007-11-13">
+     	<action dev="valdas" type="update">
+			Changed GroupService bean - now session scope, added new methods, updated existing (because of IE + DWR cross domain).
+    	</action>
+    </release>
+  
+ 	 <release version="3.1.16" date="2007-08-07">
+     	<action dev="valdas" type="update">
+			Added validation if instanceId is known for Simple User Application
+    	</action>
+    </release>
+  
+  	<release version="3.1.15" date="2007-08-01">
+     	<action dev="sigtryggur" type="update">
+			Refectored CitizenImage and CitizenAccountPreferences to UserImage and UserDetailPreferences from the citizen bundle
+    	</action>
+    </release>
+  	
+  	<release version="3.1.14" date="2007-07-22">
+     	<action dev="valdas" type="update">
+			Now forcing to choose group when saving user (if any groups exist) in Simple User Application
+			Now before saving user, removing user from de-selected groups in Simple User Application
+    	</action>
+    </release>
+  
+  	<release version="3.1.13" date="2007-07-19">
+     	<action dev="valdas" type="update">
+			Added email field for Simple User Application
+    	</action>
+    </release>
+  
+  	<release version="3.1.12" date="2007-07-12">
+     	<action dev="valdas" type="update">
+			Passing parameter true to clean rendered UIComponent for Simple User Application
+    	</action>
+    </release>
+  
+  	<release version="3.1.11" date="2007-07-11">
+      <action dev="valdas" type="update">
+		Backed DWR to 1.1
+      </action>
+    </release>
+
+	<release version="3.1.10" date="2007-07-04">
+      <action dev="valdas" type="add">
+		Added Simple User application component.
+		Built logic for 'view users' case. 
+      </action>
+    </release>
+
+	<release version="3.1.9" date="2007-06-16">
+      <action dev="eiki" type="update">
+		Updated DWR to 2.0.1 and added some dwr beans.
+		Removed the welcome message and logo in the user app.
+      </action>
+    </release>
+    
+    <release version="3.1.8" date="2007-06-11">
+      <action dev="palli" type="update">
+      		Added node icons for msi.
+      </action>       
+    </release>
+
+    <release version="3.1.7" date="2007-06-01">
+      <action dev="eiki" type="update">
+      		Added bundlestarter for viewnode and custom permission code, merged with missing stuff from HEAD and "fixed" Scrolltable style and button layout.
+      </action>       
+    </release>
+    
+    <release version="3.1.6" date="2007-05-29">
+      <action dev="sigtryggur" type="update">
+      		Added some icons to the treeview in the userapplication
+      </action>       
+    </release>
+    
+    <release version="3.1.5" date="2007-04-23">
+      <action dev="eiki" type="update">
+      		Merged changes made in v.2.0 to v3.1, added Felix icelandic locale variant and changed bundle properties to application properties.
+      </action>       
+    </release>
+    
+    <release version="3.1.4" date="2007-02-16">
+      <action dev="eiki" type="update">
+      		Change the UserLoginTab in com.idega.user to fix a security hole along with Login and user classes in core.
+			Now only the user himself, admin or the first person or the persons group that changes the users password for the first time can change it again. 
+      </action>       
+    </release>
+    
+    <release version="3.1.3" date="2007-01-26">
+      <action dev="sigtryggur" type="update">
+      	Added new email sending function to BasicUserOverview
+      </action>       
+    </release>
+
+	<release version="3.1.2" date="2005-06-22">
+      <action dev="tryggvil" type="update">
+      	Bufgix version. Removing method from LinkToUserStats.
+      </action>       
+    </release>
 
     <release version="3.1.4" date="2007-02-16">
       <action dev="eiki" type="update">

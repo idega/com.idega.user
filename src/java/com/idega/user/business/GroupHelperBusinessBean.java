@@ -50,7 +50,6 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		if (iwc == null) {
 			return fake;
 		}
-
 		User currentUser = null;
 		try {
 			currentUser = iwc.getCurrentUser();
@@ -236,7 +235,6 @@ public class GroupHelperBusinessBean implements GroupHelper {
 			}
  			return groups;
 		}
-
 		if (useChildrenAsTopNodes) {
 			return getFilteredGroups(getChilrenfOfGroups(groups), types);
 		}
@@ -540,7 +538,6 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		if (groupBusiness == null) {
 			return null;
 		}
-
 		try {
 			return groupBusiness.getGroupByGroupID(id);
 		} catch (RemoteException e) {
@@ -585,7 +582,6 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		if (userBusiness == null) {
 			return null;
 		}
-
 		try {
 			return userBusiness.getUser(id);
 		} catch (RemoteException e) {
@@ -593,7 +589,6 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		}
 		return null;
 	}
-
 	private int getParsedValue(String value) {
 		if (value == null) {
 			return -1;

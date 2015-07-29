@@ -193,8 +193,6 @@ public class UserLoginTab extends UserTab {
 		catch (Exception ex) {
 			this.addErrorMessage(ex.getMessage());
 		}
-
-
 		if (someErrors()) {
 			presentErrorMessage(this.clearErrorMessages());
 			return false;
@@ -234,7 +232,6 @@ public class UserLoginTab extends UserTab {
 							//show error!
 							String changerGroupName = userLoginTable.getChangedByGroup().getName();
 							Object[] arguments = {changerName,pin,changerGroupName};
-
 							String formatted = MessageFormat.format(iwrb.getLocalizedString("usr_log_changing_login_not_allowed_with_groupname", "You cannot change this users login! Only the administrator, the user himself, {0} (personal id : {1}) or someone from the group {2} can."), arguments);
 							this.addErrorMessage(formatted);
 						}
@@ -242,12 +239,10 @@ public class UserLoginTab extends UserTab {
 					}
 					else{
 						//show error!
-
 						Object[] arguments = {changerName,pin};
 						String formatted = MessageFormat.format(iwrb.getLocalizedString("usr_log_changing_login_not_allowed", "You cannot change this users login! Only the administrator, the user himself or the user {0} (personal id : {1}) can."), arguments);
 						this.addErrorMessage(formatted);
 					}
-
 				}
 				//else we don't care, its the first time of change or the user is the last changer, the LoginDBHandler will save the current user as the lastChangedBy user...
 			}

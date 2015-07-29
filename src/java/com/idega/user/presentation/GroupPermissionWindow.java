@@ -206,8 +206,8 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
     		bottomTable.add(override,1,2);
     		bottomTable.add(Text.NON_BREAKING_SPACE,1,2);
-    		bottomTable.add(owners,1,2);
-    		bottomTable.add(Text.NON_BREAKING_SPACE,1,2);
+    		//bottomTable.add(owners,1,2);
+    		//bottomTable.add(Text.NON_BREAKING_SPACE,1,2);
     		bottomTable.add(close,1,2);
 
 		mainTable.setVerticalAlignment(1,1,Table.VERTICAL_ALIGN_TOP);
@@ -569,17 +569,17 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
         		Iterator childIter = children.iterator();
         		while (childIter.hasNext()) {
         			Group childGroup = (Group) childIter.next();
-        			//only if the user is allowed
-        			if(iwc.isSuperAdmin() || this.access.isOwner(childGroup,iwc) || this.access.hasPermitPermissionFor(childGroup,iwc)){
-        			    removePermission(iwc, key, childGroup.getPrimaryKey().toString());
+        			if (childGroup.getGroupTypeEntity().getAllowsPermissions()) {
+	        			//only if the user is allowed
+	        			if(iwc.isSuperAdmin() || this.access.isOwner(childGroup,iwc) || this.access.hasPermitPermissionFor(childGroup,iwc)){
+	        			    removePermission(iwc, key, childGroup.getPrimaryKey().toString());
+	        			}
         			}
-
         		}
         	}
-
         }
-
     }
+
     /**
      * @param iwc
      * @param key
@@ -589,6 +589,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
     private void removePermission(IWContext iwc, String key, String groupId) throws Exception {
         this.access.setPermission(AccessController.CATEGORY_GROUP_ID, iwc, this.selectedGroupId, groupId, key, Boolean.FALSE);
     }
+
     /**
      * @param iwc
      * @param key
@@ -636,8 +637,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
             perm.setToInheritToChildren();
             perm.store();
-
-
         	//recurse through children and give same rights
         	Group parent = getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(groupId));
         	Collection children = getGroupBusiness(iwc).getChildGroupsRecursive(parent);
@@ -645,10 +644,12 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
         		Iterator childIter = children.iterator();
         		while (childIter.hasNext()) {
         			Group childGroup = (Group) childIter.next();
-        			//only if current user owns the group or has permit permission to it
-        			if(iwc.isSuperAdmin() || this.access.isOwner(childGroup,iwc) || this.access.hasPermitPermissionFor(childGroup,iwc)){
-        				addPermission(iwc, key, childGroup.getPrimaryKey().toString());
-        			}
+        			//if (childGroup.getGroupTypeEntity().getAllowsPermissions()) {
+	        			//only if current user owns the group or has permit permission to it
+	        			if(iwc.isSuperAdmin() || this.access.isOwner(childGroup,iwc) || this.access.hasPermitPermissionFor(childGroup,iwc)){
+	        				addPermission(iwc, key, childGroup.getPrimaryKey().toString());
+	        			}
+        			//}
         		}
         	}
         }
@@ -730,29 +731,42 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	 * @param iwc
 	 * @return
 	 */
-	private Collection getAllPermissionForSelectedGroupAndCurrentUser(IWContext iwc) {
-		Collection allPermissions = new ArrayList();
+	private Collection<ICPermission> getAllPermissionForSelectedGroupAndCurrentUser(IWContext iwc) {
+		List<ICPermission> allPermissions = new ArrayList<ICPermission>();
 		try {
 			User user = iwc.getCurrentUser();
 
 			//for this group
-			allPermissions.addAll(AccessControl.getAllGroupPermissionsForGroupLegacy(this.selectedGroup));
+			Collection<ICPermission> thisGroup = AccessControl.getAllGroupPermissionsForGroupLegacy(this.selectedGroup);
+			allPermissions.addAll(thisGroup);
 			//for the user
-			Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
+			Collection<ICPermission> ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
 			//add the permissions to one big list
 			allPermissions.addAll(ownedPermissions);
 
+			int size = thisGroup.size() + ownedPermissions.size();
 //			get all permit permissions from parents or their permission controlling groups
 			Collection parentOrPersionControllingGroups = getAllParentOrPermissionControllingGroupsForUser(iwc, user);
+			Collection permitPermissions = null;
 			if(!parentOrPersionControllingGroups.isEmpty()){
-			    Collection permitPermissions = AccessControl.getAllGroupPermitPermissions(parentOrPersionControllingGroups);
-			    allPermissions.addAll(permitPermissions);
+			    permitPermissions = AccessControl.getAllGroupPermitPermissions(parentOrPersionControllingGroups);
+			    size += permitPermissions.size();
 			}
 
+
+			//add the permissions to one big list
+			allPermissions = new ArrayList(size);
+
+			allPermissions.addAll(thisGroup);
+			allPermissions.addAll(ownedPermissions);
+			if (permitPermissions != null) {
+				allPermissions.addAll(permitPermissions);
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("GroupPermission selected group (" + this.selectedGroupId + ") not found or remote error!");
+			allPermissions = new ArrayList();
 		}
 		return allPermissions;
 	}
@@ -763,16 +777,16 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
      * @return
      * @throws RemoteException
      */
-    private ArrayList getAllParentOrPermissionControllingGroupsForUser(IWContext iwc, User user) throws RemoteException {
+    private List<Group> getAllParentOrPermissionControllingGroupsForUser(IWContext iwc, User user) throws RemoteException {
         //permissions from the users direct parent groups or their permission controlling groups
-        ArrayList parents = new ArrayList();
-        Collection directlyRelatedParents = getGroupBusiness(iwc).getParentGroups(user);
+        List<Group> parents = new ArrayList<Group>();
+        Collection<Group> directlyRelatedParents = getGroupBusiness(iwc).getParentGroups(user);
 
-        Iterator iterating = directlyRelatedParents.iterator();
+        Iterator<Group> iterating = directlyRelatedParents.iterator();
 
 
         while (iterating.hasNext()) {
-        	Group parent = (Group) iterating.next();
+        	Group parent = iterating.next();
         	if(parent.getPermissionControllingGroupID()>0){
         		parents.add(parent.getPermissionControllingGroup());
         	}
@@ -788,32 +802,31 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 	 * @param iwc
 	 * @return Collection
 	 */
-	private List orderAndGroupPermissionsByContextValue(Collection allPermissions, IWContext iwc) {
-
-		Iterator iter = allPermissions.iterator();
+	private List<List<ICPermission>> orderAndGroupPermissionsByContextValue(Collection<ICPermission> allPermissions, IWContext iwc) {
+		Iterator<ICPermission> iter = allPermissions.iterator();
 
 
 		//order the permissions by the groupId and create a List for each one.
-		Map map = new HashMap();
-		List finalCollection = new ArrayList();
+		Map<String, List<ICPermission>> map = new HashMap<String, List<ICPermission>>();
+		List<List<ICPermission>> finalCollection = new ArrayList<List<ICPermission>>();
 
 		String groupId;
 
 		while (iter.hasNext()) {
-			ICPermission perm = (ICPermission) iter.next();
+			ICPermission perm = iter.next();
+			if (perm.getPermissionValue()) {
+				groupId = perm.getContextValue();
+
+				List<ICPermission> list = map.get(groupId);
+				if (list == null) {
+					list = new ArrayList<ICPermission>();
+				}
+
+				list.add(perm);
 
 
-			groupId = perm.getContextValue();
-
-			List list = (List) map.get(groupId);
-			if (list == null) {
-				list = new ArrayList();
+				map.put(groupId, list);
 			}
-
-			list.add(perm);
-
-
-			map.put(groupId, list);
 
 		}
 
@@ -887,7 +900,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		Text filterGroupTypeText = new Text(this.iwrb.getLocalizedString("grouppermissionwindow.filter_group_types","Filter grouptypes"));
 		filterTable.add(filterGroupTypeText, 1, 1);
 		filterTable.add(Text.NON_BREAKING_SPACE, 2, 1);
-
 		GroupTypeSelectionBoxInputHandler filterGroupTypes = new GroupTypeSelectionBoxInputHandler(PARAM_FILTER_GROUP_TYPES);
 		filterGroupTypes.setHeight(8);
 		StyledButton filterButton = new StyledButton(new SubmitButton(this.iwrb.getLocalizedString("grouppermissionwindow.filter_button","Filter")));
@@ -921,7 +933,6 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 		table.add(browser, 1, 2);
 		table.add(filterTable, 2, 3);
-
 		Table bottomButtonTable = new Table();
 		bottomButtonTable.setCellpadding(0);
 		bottomButtonTable.setCellspacing(0);
@@ -1051,7 +1062,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		if (this.groupBiz == null) {
 
 			try {
-				this.groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				this.groupBiz = IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();

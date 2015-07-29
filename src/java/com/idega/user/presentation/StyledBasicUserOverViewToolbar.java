@@ -36,8 +36,10 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
     private boolean hasOwnerPermissionForRealGroup = false;
     private boolean hasPermitPermissionForRealGroup = false;
     //private boolean hasViewPermissionForRealGroup = false;
+    //private boolean hasOwner
     private boolean isCurrentUserSuperAdmin = false;
     private boolean isRoleMaster = false;
+    //private boolean hasOwnerMasterRole = false;
     private ICDomain parentDomain;
     private Group parentGroup;
     private Group selectedGroup;
@@ -91,6 +93,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 		showISStuff = (showStuff != null);
     
         Table toolbar1 = new Table();
+        toolbar1.setStyleClass("toolbar");
         toolbar1.setCellpadding(0);
         toolbar1.setCellspacing(0);
         
@@ -114,6 +117,8 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
             //TODO EIki check alias stuff
             //can a user create a group under an alias?
             
+            int toolbarXpos = 2;
+            
             if (this.hasCreatePermissionForRealGroup) {
                 
                 Table button = new Table(1, 1);
@@ -132,8 +137,8 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 }
                 
                 button.add(tLink11, 1, 1);
-                toolbar1.add(button, 2, 1);
-                toolbar1.setAlignment(2,1,"center");
+                toolbar1.add(button, toolbarXpos, 1);
+                toolbar1.setAlignment(toolbarXpos++,1,"center");
             }
             //group
             //TODO ADD ALIAS CHECK AND CHANGE THE LINK TO THE GROUP IF OWNER
@@ -156,8 +161,8 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
             
             editLink.setWindowToOpen(GroupPropertyWindow.class);
             editGroup.add(editLink, 1, 1);
-            toolbar1.add(editGroup, 3, 1);
-            toolbar1.setAlignment(3,1,"center");
+            toolbar1.add(editGroup, toolbarXpos, 1);
+            toolbar1.setAlignment(toolbarXpos++,1,"center");
 
             //permission	
             //TODO Eiki open up seperate windows for the alias group and the permissions
@@ -178,12 +183,12 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 
                 tLink12.setWindowToOpen(GroupRolesWindow.class);
                 
-                toolbar1.add(button4, 4, 1);
-                toolbar1.setAlignment(4,1,"center");
+                toolbar1.add(button4, toolbarXpos, 1);
+                toolbar1.setAlignment(toolbarXpos++,1,"center");
             }
             
             
-            if ( this.hasOwnerPermissionForRealGroup || this.hasPermitPermissionForRealGroup) {
+            if ( (this.hasOwnerPermissionForRealGroup || this.hasPermitPermissionForRealGroup) && this.selectedGroup.getGroupTypeEntity().getAllowsPermissions()) {
                 Table button4 = new Table(1, 1);
                 button4.setStyleClass(this.styleButton);
                 button4.setAlignment(1,1,"center");
@@ -200,9 +205,52 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                 
                 tLink12.setWindowToOpen(GroupPermissionWindow.class);
                 
-                toolbar1.add(button4, 5, 1);
-                toolbar1.setAlignment(5,1,"center");
+                toolbar1.add(button4, toolbarXpos, 1);
+                toolbar1.setAlignment(toolbarXpos++,1,"center");
             }
+
+            if ( this.isCurrentUserSuperAdmin) {
+                Table owners = new Table(1, 1);
+                owners.setStyleClass(this.styleButton);
+                owners.setAlignment(1,1,"center");
+                owners.setCellpadding(1);
+                Text text = new Text(this.iwrb.getLocalizedString("owner.button", "Owners"));
+                Link link = new Link(text);
+                link.setStyleClass(this.styledLinkClass);
+
+                
+                owners.add(link, 1, 1);
+                link.setWindowToOpen(GroupOwnersWindow.class);
+        		link.addParameter(GroupOwnersWindow.PARAM_SELECTED_GROUP_ID, this.selectedGroup.getNodeID());
+                
+                toolbar1.add(owners, toolbarXpos, 1);
+                toolbar1.setAlignment(toolbarXpos++,1,"center");
+            }
+
+            //if ( this.isCurrentUserSuperAdmin) {
+                Table owners = new Table(1, 1);
+                owners.setStyleClass(this.styleButton);
+                owners.setAlignment(1,1,"center");
+                owners.setCellpadding(1);
+                Text text = new Text(this.iwrb.getLocalizedString("move_group.button", "Move group"));
+                Link link = new Link(text);
+                link.setStyleClass(this.styledLinkClass);
+
+                
+                owners.add(link, 1, 1);
+                link.setWindowToOpen(MoveGroupWindow.class);
+                if (this.selectedGroup != null) {
+					link.addParameter(MoveGroupWindow.GROUP_ID_KEY, ((Integer) this.selectedGroup.getPrimaryKey()).toString());
+				}
+                if (this.parentGroup != null) {
+					link.addParameter(MoveGroupWindow.OLD_PARENT_GROUP_ID_KEY, ((Integer) this.parentGroup.getPrimaryKey()).toString());
+				}
+        		//link.addParameter(MoveGroupWindow.PARAM_SELECTED_GROUP_ID, this.selectedGroup.getNodeID());
+                
+                toolbar1.add(owners, toolbarXpos, 1);
+                toolbar1.setAlignment(toolbarXpos++,1,"center");
+            //}
+
             
             if( this.hasOwnerPermissionForRealGroup) {
                 // delete button
@@ -225,8 +273,8 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
 									tLink5.addParameter(DeleteGroupConfirmWindow.PARENT_DOMAIN_ID_KEY, ((Integer) this.parentDomain.getPrimaryKey()).toString());
 								}
                 button5.add(tLink5, 1, 1);
-                toolbar1.add(button5, 6, 1);
-                toolbar1.setAlignment(6,1,"center");
+                toolbar1.add(button5, toolbarXpos, 1);
+                toolbar1.setAlignment(toolbarXpos++,1,"center");
             }            
        
             if (this.hasEditPermissionForRealGroup && this.selectedGroup != null) {
@@ -249,8 +297,8 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                     tLink14.setWindowToOpen(MassRegisteringWindow.class);
                     
                     button3.add(tLink14, 1, 1);
-                    toolbar1.add(button3, 7, 1);
-                    toolbar1.setAlignment(7,1,"center");
+                    toolbar1.add(button3, toolbarXpos, 1);
+                    toolbar1.setAlignment(toolbarXpos++,1,"center");
                 }
         		// adding all plugins that implement the interface ToolbarElement
         		//get plugins
@@ -273,7 +321,7 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
         		// adding some toolbar elements that belong to this bundle
 //        		toolbarElements.add(new MassMovingWindowPlugin());
         		// all toolbar elements found, start sorting
-        		int column = 8;
+        		//int column = 8;
         		Comparator priorityComparator = new Comparator() {
         			
         			public int compare(Object toolbarElementA, Object toolbarElementB) {
@@ -315,8 +363,8 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
                         toolLink.setParameter(parameterMap);
                         toolLink.setWindowToOpen(toolPresentationClass);
                         toolButton.add(toolLink, 1,1);
-                        toolbar1.add(toolButton, column, 1);
-                        toolbar1.setAlignment(column++, 1, Table.HORIZONTAL_ALIGN_CENTER);
+                        toolbar1.add(toolButton, toolbarXpos, 1);
+                        toolbar1.setAlignment(toolbarXpos++, 1, Table.HORIZONTAL_ALIGN_CENTER);
         			}
             	}
             }
@@ -427,8 +475,5 @@ public class StyledBasicUserOverViewToolbar extends Toolbar {
             }
             
         }
-    }
-    
-    
-    
+    }   
 }

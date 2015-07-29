@@ -29,6 +29,7 @@ import com.idega.user.data.User;
 import com.idega.user.util.ICUserConstants;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
+import com.idega.util.text.SocialSecurityNumber;
 
 /**
  * Title:        User
@@ -148,8 +149,26 @@ public class GeneralUserInfoTab extends UserTab {
 		IWContext iwc = IWContext.getInstance();
 		boolean unlockPersonalIDField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_PERSONAL_ID,iwc);
 
-		if (!unlockPersonalIDField){
+		boolean unlockFullNameField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_FULL_NAME, iwc);
+
+		boolean unlockGenderField = iwc.getAccessController().hasRole(ICUserConstants.ROLE_KEY_EDIT_GENDER, iwc);
+
+		if (!unlockPersonalIDField ){
 			this.personalIDField.setDisabled(true);
+		}
+
+		if (!unlockFullNameField) {
+			this.fullNameField.setDisabled(true);
+		}
+
+		if (unlockGenderField) {
+			if (getUser() != null && getUser().getPersonalID() != null) {
+				unlockGenderField = !SocialSecurityNumber.isValidIcelandicSocialSecurityNumber(getUser().getPersonalID());
+			}
+		}
+
+		if (!unlockGenderField) {
+			this.genderField.setDisabled(true);
 		}
 
 		StringTokenizer created = new StringTokenizer((String) this.fieldValues.get(this.createdFieldName), " -");
@@ -174,6 +193,8 @@ public class GeneralUserInfoTab extends UserTab {
 
 		this.fullNameField = new TextInput(this.fullNameFieldName);
 		this.fullNameField.setLength(20);
+
+		this.fullNameField.setDisabled(true);
 
 		this.displayNameField = new TextInput(this.displayNameFieldName);
 		this.displayNameField.setLength(20);//changed from 12 - birna

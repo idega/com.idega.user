@@ -4,9 +4,12 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
 import javax.ejb.FinderException;
 import javax.transaction.TransactionManager;
+
 import com.idega.business.IBOLookup;
+import com.idega.core.contact.data.Email;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWResourceBundle;
@@ -14,13 +17,14 @@ import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
-import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.BackButton;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.transaction.IdegaTransactionManager;
+import com.idega.user.business.NoEmailFoundException;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserStatusBusiness;
 import com.idega.user.data.Group;
@@ -54,6 +58,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 	private String PARAMETER_PID = "mrw_pid";
 	private String PARAMETER_SAVE = "mrw_sv";
 	private String PARAMETER_STATUS = "mrw_sta";
+	private String PARAMETER_EMAIL = "mrw_email";
 	private StatusHome sHome;
 	private UserHome uHome;
 
@@ -124,12 +129,16 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 		}
 		table.setWidth(2, "10");
 		table.setWidth(4, "10");
+		table.setWidth(6, "10");
 		table.add(formatText(this.iwrb.getLocalizedString("user.status", "Status")), 5, row);
+		table.add(formatText(this.iwrb.getLocalizedString("user.email", "E-mail")), 7, row);
 		TextInput pid = new TextInput();
+		TextInput email = new TextInput();
 		UserStatusDropdown status = new UserStatusDropdown("noname");
 		CheckBox check;
 		String sPid;
 		String sStat;
+		String sEmail;
 		User user;
 		Status stat;
 		for (int i = 1; i <= this.numberOfRows; i++) {
@@ -137,6 +146,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 			if (verifyForm) {
 				sPid = iwc.getParameter(this.PARAMETER_PID + "_" + i);
 				sStat = iwc.getParameter(this.PARAMETER_STATUS + "_" + i);
+				sEmail = iwc.getParameter(this.PARAMETER_EMAIL + "_" + i);
 				if (sPid != null && !sPid.equals("")) {
 					try {
 						++row;
@@ -156,8 +166,12 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 							table.add(formatText(this.iwrb.getLocalizedString(stat.getStatusKey(), stat.getStatusKey())), 5,
 									row);
 						}
+						if (sEmail != null) {
+							table.add(formatText(sEmail), 7, row);
+						}
 						form.maintainParameter(this.PARAMETER_PID + "_" + i);
 						form.maintainParameter(this.PARAMETER_STATUS + "_" + i);
+						form.maintainParameter(this.PARAMETER_EMAIL + "_" + i);
 						foundUser = true;
 					}
 					catch (FinderException e) {
@@ -178,35 +192,55 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 						+ " " + i);
 				pid.setStyleAttribute(STYLE_2);
 				pid.setMaxlength(10);
+				
+				email = new TextInput(this.PARAMETER_EMAIL + "_" + i);
+				email.setAsEmail(this.iwrb.getLocalizedString("user.email_incorrect_in_row",
+						"E-mail not correct for user in row")
+						+ " " + i);
+				email.setStyleAttribute(STYLE_2);
+				
 				table.add(formatText(Integer.toString(i)), 1, row);
 				table.add(pid, 3, row);
 				table.add(status, 5, row);
+				table.add(email, 7, row);
 			}
 		}
 		++row;
 		++row;
-		Table bottomTable = new Table();
+		
+		Table buttonTable = new Table(3, 1);
+		buttonTable.setCellpadding(0);
+		buttonTable.setCellspacing(0);
+		buttonTable.setWidth(2, 5);
+				
+		Table bottomTable = new Table(2,1);
 		bottomTable.setCellpadding(0);
 		bottomTable.setCellspacing(5);
 		bottomTable.setWidth(Table.HUNDRED_PERCENT);
-		bottomTable.setHeight(39);
+		bottomTable.setHeight(30);
 		bottomTable.setStyleClass(this.mainTableStyle);
 		bottomTable.add(help, 1, 1);
 		bottomTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
-		bottomTable.add(new SubmitButton(this.iwrb.getLocalizedImageButton("cancel", "Cancel"), this.ACTION, this.ACTION_CANCEL), 2, 1);
-		bottomTable.add(Text.getNonBrakingSpace(), 2, 1);
+		bottomTable.add(buttonTable,2,1);
+		
+		
 		table.setAlignment(5, row, Table.HORIZONTAL_ALIGN_RIGHT);
 		table.setRowVerticalAlignment(row, Table.VERTICAL_ALIGN_TOP);
+		
 		if (verifyForm) {
 			table.mergeCells(1, row, 2, row);
-			bottomTable.add(new BackButton(this.iwrb.getLocalizedImageButton("back", "Back")), 1, 1);
+			StyledButton backButton = new StyledButton(new BackButton(this.iwrb.getLocalizedString("back", "Back")));
+			buttonTable.add(backButton, 1, 1);
 			if (foundUser) {
-				bottomTable.add(new SubmitButton(this.iwrb.getLocalizedImageButton("save", "Save"), this.ACTION, this.ACTION_SAVE), 2,
-						1);
+				StyledButton saveButton = new StyledButton(new SubmitButton(this.iwrb.getLocalizedString("save", "Save"), this.ACTION, this.ACTION_SAVE));
+				buttonTable.add(saveButton, 3,1);
 			}
 		}
 		else {
-			bottomTable.add(new SubmitButton(this.iwrb.getLocalizedImageButton("next", "Next"), this.ACTION, this.ACTION_NEXT), 2, 1);
+			StyledButton cancelButton = new StyledButton(new SubmitButton(this.iwrb.getLocalizedString("cancel", "Cancel"), this.ACTION, this.ACTION_CANCEL));
+			buttonTable.add(cancelButton, 1, 1);
+			StyledButton nextButton = new StyledButton(new SubmitButton(this.iwrb.getLocalizedString("next", "Next"), this.ACTION, this.ACTION_NEXT));
+			buttonTable.add(nextButton, 3, 1);
 		}
 		// add close button
 		mainTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
@@ -247,6 +281,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 	private boolean handleInsert(IWContext iwc) throws RemoteException {
 		String sPid;
 		String sStat;
+		String sEmail;
 		User user;
 		Status stat;
 		UserStatusBusiness usb = (UserStatusBusiness) IBOLookup.getServiceInstance(iwc, UserStatusBusiness.class);
@@ -258,6 +293,7 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 				try {
 					sPid = iwc.getParameter(this.PARAMETER_PID + "_" + i);
 					sStat = iwc.getParameter(this.PARAMETER_STATUS + "_" + i);
+					sEmail = iwc.getParameter(this.PARAMETER_EMAIL + "_" + i);
 					user = this.uHome.findByPersonalID(sPid);
 					if (UserStatusDropdown.NO_STATUS_KEY.equals(sStat)) {
 						stat = null;
@@ -282,6 +318,21 @@ public class MassRegisteringWindow extends StyledIWAdminWindow {
 							if (user.getPrimaryGroup() == null) {
 								user.setPrimaryGroup(this.group);
 								user.store();
+							}
+							
+							Email mainEmail = null;
+							if (sEmail != null && !"".equals(sEmail)) {
+								try {
+									// note: call of the following method does some repairing
+									// + if main mail is not set yet a main email is figured out
+									mainEmail = getUserBusiness(iwc).getUsersMainEmail(user);
+								}
+								catch (NoEmailFoundException ex) {
+									mainEmail = null;
+								}
+								if (mainEmail == null) {
+									getUserBusiness(iwc).updateUserMail(user, sEmail);
+								}
 							}
 							
 							getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,this.group);

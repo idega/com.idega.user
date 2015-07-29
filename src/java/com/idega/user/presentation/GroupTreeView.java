@@ -25,7 +25,7 @@ import com.idega.util.CoreConstants;
 
 public class GroupTreeView extends IWTreeControl<GroupTreeNode> {
 
-	private static final String TREEVIEW_PREFIX = AbstractTreeViewer.TREEVIEW_PREFIX;
+	public static final String TREEVIEW_PREFIX = AbstractTreeViewer.TREEVIEW_PREFIX;
 
 	Image folderAndFileIcons[][] = null;
 	String folderAndFileIconNames[] = { "treeviewer_node_closed.gif", "treeviewer_node_open.gif", "treeviewer_node_leaf.gif" };
