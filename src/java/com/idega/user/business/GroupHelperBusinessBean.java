@@ -672,7 +672,6 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return getSortedGroups(topLevelGroups, iwc);
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<Group> getSortedGroups(Collection<Group> groups, IWContext iwc) {
 		if (ListUtil.isEmpty(groups) || iwc == null) {
 			return new ArrayList<Group>();
