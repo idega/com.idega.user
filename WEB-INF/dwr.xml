@@ -44,12 +44,12 @@
 			
 			import com.idega.builder.bean.AdvancedProperty;
 			
-			List<AdvancedProperty> UserApplicationEngine.getChildGroups(String, String, String);
+			List<AdvancedProperty> UserApplicationEngine.getChildGroups(String, String, String, String, String);
 			List<Integer> UserApplicationEngine.removeUsers(List<Integer>, Integer);
 			Document UserApplicationEngine.getMembersList(SimpleUserPropertiesBean, String);
 			Document UserApplicationEngine.getAddUserPresentationObject(SimpleUserPropertiesBean, List<Integer>, List<Integer>, Integer);
 			Document UserApplicationEngine.getSimpleUserApplication(String, Integer);
-			Document UserApplicationEngine.getAvailableGroupsForUserPresentationObject(Integer, Integer, String, String);
+			Document UserApplicationEngine.getAvailableGroupsForUserPresentationObject(Integer, Integer, String, String, String, String);
 			UserDataBean UserApplicationEngine.getUserByPersonalId(String);
 			UserDataBean UserApplicationEngine.getUserById(Integer);
 			AdvancedProperty UserApplicationEngine.createUser(UserDataBean, Integer, List<Integer>, List<Integer>, boolean, boolean, String, String);

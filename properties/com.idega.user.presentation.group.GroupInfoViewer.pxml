@@ -30,7 +30,7 @@
                             <key>
                               <name>iw_method_param_handler</name>
                               <type>java.lang.String</type>
-                              <value />
+                              <value></value>
                             </key>
                             <key>
                               <name>iw_method_param_prim_key</name>
@@ -86,7 +86,7 @@
                             <key>
                               <name>iw_method_param_handler</name>
                               <type>java.lang.String</type>
-                              <value />
+                              <value></value>
                             </key>
                             <key>
                               <name>iw_method_param_prim_key</name>
@@ -142,7 +142,7 @@
                             <key>
                               <name>iw_method_param_handler</name>
                               <type>java.lang.String</type>
-                              <value />
+                              <value></value>
                             </key>
                             <key>
                               <name>iw_method_param_prim_key</name>
@@ -198,7 +198,7 @@
                             <key>
                               <name>iw_method_param_handler</name>
                               <type>java.lang.String</type>
-                              <value />
+                              <value></value>
                             </key>
                             <key>
                               <name>iw_method_param_prim_key</name>
@@ -254,7 +254,7 @@
                             <key>
                               <name>iw_method_param_handler</name>
                               <type>java.lang.String</type>
-                              <value />
+                              <value></value>
                             </key>
                             <key>
                               <name>iw_method_param_prim_key</name>
@@ -310,7 +310,7 @@
                             <key>
                               <name>iw_method_param_handler</name>
                               <type>java.lang.String</type>
-                              <value />
+                              <value></value>
                             </key>
                             <key>
                               <name>iw_method_param_prim_key</name>
@@ -366,7 +366,7 @@
                             <key>
                               <name>iw_method_param_handler</name>
                               <type>java.lang.String</type>
-                              <value />
+                              <value></value>
                             </key>
                             <key>
                               <name>iw_method_param_prim_key</name>
@@ -422,7 +422,7 @@
                             <key>
                               <name>iw_method_param_handler</name>
                               <type>java.lang.String</type>
-                              <value />
+                              <value></value>
                             </key>
                             <key>
                               <name>iw_method_param_prim_key</name>
@@ -478,7 +478,7 @@
                             <key>
                               <name>iw_method_param_handler</name>
                               <type>java.lang.String</type>
-                              <value />
+                              <value></value>
                             </key>
                             <key>
                               <name>iw_method_param_prim_key</name>
@@ -534,7 +534,7 @@
                             <key>
                               <name>iw_method_param_handler</name>
                               <type>java.lang.String</type>
-                              <value />
+                              <value></value>
                             </key>
                             <key>
                               <name>iw_method_param_prim_key</name>
@@ -590,7 +590,7 @@
                             <key>
                               <name>iw_method_param_handler</name>
                               <type>java.lang.String</type>
-                              <value />
+                              <value></value>
                             </key>
                             <key>
                               <name>iw_method_param_prim_key</name>
@@ -701,7 +701,7 @@
                             <key>
                               <name>iw_method_param_handler</name>
                               <type>java.lang.Integer</type>
-                              <value />
+                              <value></value>
                             </key>
                             <key>
                               <name>iw_method_param_prim_key</name>
