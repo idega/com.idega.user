@@ -69,4 +69,7 @@ public interface GroupHelper {
 	public List<User> getSortedUsers(Collection<User> users, Locale locale, SimpleUserPropertiesBean bean);
 
 	public String getJavaScriptFunctionParameter(List<String> parameters);
+
+	public List<GroupNode> convertGroupsToGroupNodes(Collection<Group> groups, IWContext iwc, String imageBaseUri, Integer levelCount, boolean allLevels);
+
 }

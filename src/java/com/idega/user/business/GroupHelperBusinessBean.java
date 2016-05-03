@@ -136,6 +136,52 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		return list;
 	}
 
+	@Override
+	public List<GroupNode> convertGroupsToGroupNodes(Collection<Group> groups, IWContext iwc, String imageBaseUri, Integer levelCount, boolean allLevels) {
+		return convertGroupsToGroupNodes(groups, iwc, imageBaseUri, false, levelCount, allLevels);
+	}
+
+
+	private List<GroupNode> convertGroupsToGroupNodes(Collection<Group> groups, IWContext iwc, String imageBaseUri,
+			boolean basicInformationOnly, Integer levelCount, boolean allLevels) {
+		List <GroupNode> list = new ArrayList<GroupNode>();
+		if (groups == null || iwc == null) {
+			return list;
+		}
+
+		GroupBusiness groupBusiness = getGroupBusiness(iwc);
+
+		GroupNode groupNode = null;
+		for (Group group: groups) {
+			groupNode = createGroupNodeFromGroup(group, imageBaseUri, false, basicInformationOnly);
+			if (groupNode != null) {
+				//All levels
+				if (allLevels) {
+					if (groupBusiness != null) {
+						try {
+							groupNode.setChildren(convertGroupsToGroupNodes(groupBusiness.getChildGroups(group), iwc, imageBaseUri, basicInformationOnly, levelCount, allLevels));
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
+					}
+				} else if (levelCount != null) {
+					if (groupBusiness != null) {
+						try {
+							groupNode.setChildren(convertGroupsToGroupNodes(groupBusiness.getChildGroups(group), iwc, imageBaseUri, basicInformationOnly, levelCount - 1, allLevels));
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+
+				list.add(groupNode);
+			}
+		}
+
+		return list;
+	}
+
+
 	private GroupNode createGroupNodeFromGroup(Group group, String imageBaseUri, boolean nodeIsOpened, boolean basicInformationOnly) {
 		if (group == null) {
 			return null;
@@ -151,6 +197,7 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		node.setName(group.getName());
 		node.setId(group.getId());
 		node.setHasChildren(group.getChildCount() > 0);
+		node.setType(group.getGroupType());
 
 		if (!basicInformationOnly) {
 			node.setImage(getGroupIcon(group, imageBaseUri, nodeIsOpened));
