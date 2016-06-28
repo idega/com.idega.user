@@ -834,6 +834,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		try {
 			userAddress = userBusiness.getUsersMainAddress(user);
 		} catch (RemoteException e) {}
+		String streetNameAndNumber = null;
 		if (userAddress == null || allFieldsEditable) {
 			try {
 				Country country = getCountryById(userInfo.getCountryName());
@@ -844,8 +845,19 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 					postalCode.setPostalCode(userInfo.getPostalCodeId());
 					postalCode.store();
 				}
-				userAddress = userBusiness.updateUsersMainAddressOrCreateIfDoesNotExist(user, userInfo.getStreetNameAndNumber(), postalCode, country,
-						userInfo.getCity(), userInfo.getProvince(), userInfo.getPostalBox(), null);
+				streetNameAndNumber = userInfo.getStreetNameAndNumber();
+				if (streetNameAndNumber != null) {
+					userAddress = userBusiness.updateUsersMainAddressOrCreateIfDoesNotExist(
+							user,
+							userInfo.getStreetNameAndNumber(),
+							postalCode,
+							country,
+							userInfo.getCity(),
+							userInfo.getProvince(),
+							userInfo.getPostalBox(),
+							null
+					);
+				}
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			} catch (RemoteException e) {
@@ -853,7 +865,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			} catch (CreateException e) {
 				e.printStackTrace();
 			}
-			if (userAddress == null) {
+			if (streetNameAndNumber != null && userAddress == null) {
 				logger.warning("Error setting address for " + name + ", personal ID: " + personalId);
 				return result;
 			}
