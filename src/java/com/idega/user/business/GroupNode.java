@@ -1,13 +1,24 @@
 package com.idega.user.business;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class GroupNode {
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "groupNode")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class GroupNode implements Serializable {
+
+	private static final long serialVersionUID = -885171588872322089L;
 
 	private String id;
 	private String name = null;
 	private String uniqueId = null;
 	private String image = null;
+	private String type = null;
+
 
 	private boolean hasChildren = false;
 
@@ -59,6 +70,14 @@ public class GroupNode {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }
