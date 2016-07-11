@@ -247,22 +247,9 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 
 		Layer layer = new Layer(Layer.DIV);
 		layer.setStyleAttribute("width", "208px");
-//		layer.setStyleAttribute("height", "100%");
-		//layer.setStyleAttribute("border", "1px #cccccc solid");
-		//layer.setStyleAttribute("background-color", "#ffffff");
-		//layer.setStyleClass("main");
-		//layer.setPadding(0);
-		//layer.add(groupTree);
+		layer.add(groupTree);
 		layer.setStyleAttribute("overflow", "auto");
 		borderTable.add(layer, 1, 1);
-
-		Table treeTable = new Table(1, 1);
-		treeTable.setCellpadding(4);
-		treeTable.add(this.groupTree, 1, 1);
-		treeTable.setWidth(Table.HUNDRED_PERCENT);
-		treeTable.setHeight(Table.HUNDRED_PERCENT);
-		treeTable.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
-		layer.add(treeTable);
 
 		table.add(borderTable, 1, 1);
 
@@ -332,8 +319,6 @@ public class UserApplicationControlArea extends Page implements IWBrowserView, S
 		table.add(welcomeMessageTable(iwc), 1, 1);
 		table.add(displayTable(iwc), 1, 2);
 		add(table);
-
-		add(displayLayer(iwc));
 
 		if (iwc.isSuperAdmin()) {
 			GroupTreeNode node = new GroupTreeNode(iwc.getDomain(), iwc.getApplicationContext());
