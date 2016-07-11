@@ -111,7 +111,7 @@ public class UserApplication extends IWBrowser {
 		this.getMainFrame().setMarkupAttribute("marginheight", "0");
 		this.getMainFrame().setMarkupAttribute("marginwidth", "0");
     this.getLeftMainFrame().setNoresize(false);
-		this.getLeftMainFrame().setScrolling(false);
+		this.getLeftMainFrame().setScrollingAuto();
 		this.getLeftMainFrame().setMarkupAttribute("marginheight", "0");
 		this.getLeftMainFrame().setMarkupAttribute("marginwidth", "0");
   }
