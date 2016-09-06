@@ -1071,7 +1071,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
     		User user = groupBusiness.getUserByID(Integer.valueOf(userId));
     		group.removeUser(user, iwc.getCurrentUser());
     	}catch(Exception e){
-    		this.getLogger().log(Level.WARNING, "Failed adding user" +userId+ " to group" + groupId, e);
+    		this.getLogger().log(Level.WARNING, "Failed adding user " + userId + " to group " + groupId, e);
     		return false;
     	}
         return true;
