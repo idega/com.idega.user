@@ -35,10 +35,12 @@ import com.idega.user.app.UserApplicationMenuAreaPS;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.dao.GroupDAO;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 
 /**
  * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
@@ -213,7 +215,8 @@ public class CreateUser extends StyledIWAdminWindow {
 
 				boolean hasPermission = false;
 				try {
-					com.idega.user.data.bean.Group group = getGroupBusiness(iwc).getGroupDAO().findGroup(primaryGroupId);;
+					GroupDAO groupDAO = ELUtil.getInstance().getBean(GroupDAO.class);
+					com.idega.user.data.bean.Group group = groupDAO.findGroup(primaryGroupId);;
 					hasPermission = iwc.getAccessController().hasEditPermissionFor(group, iwc);
 				} catch (Exception e) {
 					getLogger().log(Level.WARNING, "Error while checking if current user has permission to edit group by ID: " + primaryGroupId, e);
