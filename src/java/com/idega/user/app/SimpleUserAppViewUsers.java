@@ -21,7 +21,9 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.BackButton;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.GenericButton;
+import com.idega.presentation.ui.Label;
 import com.idega.presentation.ui.SelectOption;
+import com.idega.presentation.ui.TextInput;
 import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupComparator;
@@ -335,6 +337,18 @@ public class SimpleUserAppViewUsers extends Block {
 			choosers.add(getSpacer());
 		}
 
+		//	Personal ID
+		Layer personalIdContainer = new Layer();
+		personalIdContainer.setStyleClass("personal-id-container-style-class");
+		TextInput personalIdInput = new TextInput();
+		personalIdInput.setOnKeyUp("SimpleUserApplication.searchForUser(event, {parentGroup: '" + groupsDropdown.getId() + "', childGroup: '" +
+				childGroupsChooser.getId() + "', personalIdInputId: '" + personalIdInput.getId() + "'}, " + getParamsForChildGroups(iwc, ids) + ");");
+		Label personalIdLabel = new Label(getResourceBundle(iwc).getLocalizedString("personal_id", "Personal ID"), personalIdInput);
+		personalIdContainer.add(personalIdLabel);
+		personalIdContainer.add(personalIdInput);
+		choosers.add(personalIdContainer);
+		choosers.add(getSpacer());
+
 		//	Order
 		Layer orderByLabelContainer = new Layer();
 		choosers.add(orderByLabelContainer);
@@ -373,16 +387,24 @@ public class SimpleUserAppViewUsers extends Block {
 		return -1;
 	}
 
-	private Group fillChildGroupsChooser(IWContext iwc, Layer container, Group parent, DropdownMenu childGroups, String[] ids, String subGroups, String subGroupsToExclude) {
-		IWResourceBundle iwrb = getResourceBundle(iwc);
-
-		String loadingMessage = iwrb.getLocalizedString("loading", "Loading...");
-
-		List<Group> filteredChildGroups = groupsHelper.getFilteredChildGroups(iwc, parent, properties.getGroupTypes(), properties.getRoleTypes(), CoreConstants.COMMA, subGroups, subGroupsToExclude);
-
-		String parentGroupChooserId = ids[1];
+	private String getParamsForChildGroups(IWContext iwc, String[] ids) {
 		String groupUsersContainerId = ids[0];
+		String parentGroupChooserId = ids[1];
 		String orderByChooserId = ids[3];
+		String loadingMessage = getResourceBundle(iwc).getLocalizedString("loading", "Loading...");
+
+		StringBuilder params = new StringBuilder();
+		params.append(helper.getJavaScriptParameter(ids[2])).append(", '");
+		params.append(groupUsersContainerId).append(SimpleUserApp.PARAMS_SEPARATOR);
+		params.append(parentGroupChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);
+		params.append(orderByChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);
+		params.append(loadingMessage).append("', ");
+		params.append(helper.getBeanAsParameters(properties, ids[1], ids[2], loadingMessage));
+		return params.toString();
+	}
+
+	private Group fillChildGroupsChooser(IWContext iwc, Layer container, Group parent, DropdownMenu childGroups, String[] ids, String subGroups, String subGroupsToExclude) {
+		List<Group> filteredChildGroups = groupsHelper.getFilteredChildGroups(iwc, parent, properties.getGroupTypes(), properties.getRoleTypes(), CoreConstants.COMMA, subGroups, subGroupsToExclude);
 
 		if (!filteredChildGroups.isEmpty()) {
 			childGroups.addMenuElement("-1", CoreConstants.MINUS);
@@ -391,13 +413,7 @@ public class SimpleUserAppViewUsers extends Block {
 		if (!filteredChildGroups.isEmpty()) {
 			childGroups.setSelectedElement(filteredChildGroups.get(0).getId());
 		}
-		StringBuffer onChangeChildGroupsChooserAction = new StringBuffer("selectChildGroup(");
-		onChangeChildGroupsChooserAction.append(helper.getJavaScriptParameter(ids[2])).append(", '");
-		onChangeChildGroupsChooserAction.append(groupUsersContainerId).append(SimpleUserApp.PARAMS_SEPARATOR);
-		onChangeChildGroupsChooserAction.append(parentGroupChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);
-		onChangeChildGroupsChooserAction.append(orderByChooserId).append(SimpleUserApp.PARAMS_SEPARATOR);
-		onChangeChildGroupsChooserAction.append(loadingMessage).append("', ");
-		onChangeChildGroupsChooserAction.append(helper.getBeanAsParameters(properties, ids[1], ids[2], loadingMessage)).append(");");
+		StringBuffer onChangeChildGroupsChooserAction = new StringBuffer("selectChildGroup(").append(getParamsForChildGroups(iwc, ids)).append(");");
 		childGroups.setOnChange(onChangeChildGroupsChooserAction.toString());
 		container.add(childGroups);
 		if (filteredChildGroups.size() == 0) {

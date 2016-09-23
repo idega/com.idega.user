@@ -334,7 +334,7 @@ function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters, 
 	});
 }
 
-function getUserByPersonalId(event, parameters, allFieldsEditable) {
+function getUserByPersonalId(event, parameters, allFieldsEditable, customCallback) {
 	if (parameters == null) {
 		return false;
 	}
@@ -362,9 +362,14 @@ function getUserByPersonalId(event, parameters, allFieldsEditable) {
 	}
 	
 	var id = userApplicationRemoveSpaces(personalId);
-	showLoadingMessage(parameters[4]);
+	showLoadingMessage(parameters.length >= 5 ? parameters[4] : '');
 	UserApplicationEngine.getUserByPersonalId(id, {
 		callback: function(info) {
+			if (customCallback) {
+				customCallback(info);
+				return;
+			}
+			
 			getUserByPersonalIdCallback(info, parameters, allFieldsEditable, personalId);
 		}
 	});
@@ -1248,4 +1253,28 @@ function getEditOrCreateDialogWidth(){
 }
 function getEditOrCreateDialogHeight(){
 	return Math.round(window.getHeight() * 0.70);
+}
+
+SimpleUserApplication.searchForUser = function(event, params, groupChooserId, containerId, parentGroupChooserId, orderByChooserId, message, parametersForMembersList) {
+	var parameters = [];
+	parameters.push(params.personalIdInputId);
+	getUserByPersonalId(event, parameters, true, function(info) {
+		if (info == null || info.personalId == null || info.personalId == '') {
+			closeAllLoadingMessages();
+			return;
+		}
+		
+		var parentGroupId = getParentGroupIdInSUA(parentGroupChooserId, parameters[16]);
+		var groupId = getSelectObjectValue(groupChooserId);
+		var orderBy = getSelectObjectValue(orderByChooserId);
+		
+		var bean = new SimpleUserPropertiesBeanWithParameters(parentGroupId, groupId, orderBy, parametersForMembersList);
+		bean.personalId = info.personalId;
+		
+		UserApplicationEngine.getMembersList(bean, containerId, {
+			callback: function(component) {
+				getMembersListCallback(component, containerId);
+			}
+		});
+	});
 }

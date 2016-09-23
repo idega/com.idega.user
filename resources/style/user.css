@@ -48,6 +48,11 @@
 	width: 50%;
 }
 
+.personal-id-container-style-class label {
+	float: left;
+	width: 41.8%;
+}
+
 .orderByLabelContainerStyleClass {
 	float: left;
 	width: 50%;

@@ -15,7 +15,8 @@
 .childGroupsLabelContainerStyleClass,
 .orderByLabelContainerStyleClass,
 .userFiledsContainerStyleClass,
-.userFieldLabelContainerStyleClass{
+.userFieldLabelContainerStyleClass,
+.personal-id-container-style-class {
 	padding-left: 10px;
 	margin-right: -50px;
 	font-weight: bold;
@@ -30,7 +31,8 @@
 }
 
 .choosersAndDescriptionStyleClass .userApplicationChoosersContainer div select,
-.userFieldsContainerStyleClass .userFieldValueContainerStyleClass select{
+.userFieldsContainerStyleClass .userFieldValueContainerStyleClass select, 
+.personal-id-container-style-class input {
 	font-size: 14px;
 	width: 200px;
 	margin-bottom: 8px;
@@ -97,4 +99,10 @@ div.userAppLowerPartStyleClass{
 
 *html .userValuesLineContainerStyleClass .changeUserImageStyleClass{
 	height: 14px;
+}
+
+div.personal-id-container-style-class input {
+	background-color: white;
+	border-color: #a4a4a4 !important;
+	width: 175px !important;
 }

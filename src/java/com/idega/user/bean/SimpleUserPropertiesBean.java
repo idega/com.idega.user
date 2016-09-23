@@ -22,6 +22,8 @@ public class SimpleUserPropertiesBean {
 					subGroups = null,
 					subGroupsToExclude = null;
 
+	private String personalId = null;
+
 	private boolean getParentGroupsFromTopNodes = true;
 	private boolean useChildrenOfTopNodesAsParentGroups = false;
 	private boolean allFieldsEditable = false;
@@ -300,6 +302,14 @@ public class SimpleUserPropertiesBean {
 
 	public void setSubGroupsToExclude(String subGroupsToExclude) {
 		this.subGroupsToExclude = subGroupsToExclude;
+	}
+
+	public String getPersonalId() {
+		return personalId;
+	}
+
+	public void setPersonalId(String personalId) {
+		this.personalId = personalId;
 	}
 
 }

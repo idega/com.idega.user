@@ -1,6 +1,7 @@
 package com.idega.user.presentation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -44,26 +45,26 @@ import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 public class GroupMembersListViewer extends Block {
-	
+
 	private Random idGenerator = new Random();
 	private String idPrefix = "id";
-	
+
 	private SimpleUserPropertiesBean bean = null;
 	private String image = null;
 	private String containerId = null;
 	private boolean checkIds = true;
-	
+
 	private Integer leftIndex;
 	private Integer rightIndex;
 	private Integer count;
-	
+
 	@Autowired
 	private SimpleUserAppHelper helper;
-	
+
 	@Override
 	public void main(IWContext iwc) {
 		ELUtil.getInstance().autowire(this);
-		
+
 		if (bean == null || image == null || StringUtil.isEmpty(containerId)) {
 			return;
 		}
@@ -71,25 +72,32 @@ public class GroupMembersListViewer extends Block {
 		if (helper == null) {
 			return;
 		}
-		
-		List<User> allUsers = helper.getUsersInGroup(iwc, bean, false);
+
+		List<User> allUsers = null;
+		try {
+			allUsers = StringUtil.isEmpty(bean.getPersonalId()) ?
+					helper.getUsersInGroup(iwc, bean, false) :
+					Arrays.asList(helper.getUserBusiness(iwc).getUser(bean.getPersonalId()));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting users. Params: " + bean, e);
+		}
 		if (ListUtil.isEmpty(allUsers)) {
 			return;
 		}
-		
+
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-		
+
 		List<User> users = getNeededPartOfUsers(helper.getSortedUsers(allUsers, iwc.getCurrentLocale(), bean));
-		
+
 		Layer container = new Layer();
 		fixId(container);
 		add(container);
-		
+
 		Layer pagingContainer = getPagingContainer(iwc, users, allUsers.size());
 		if (pagingContainer != null) {
 			container.add(pagingContainer);
 		}
-		
+
 		User user = null;
 		String userValuesLineContainerStyleClass = "userValuesLineContainerStyleClass";
 		String nameContainerStyleClass = "userNameValueContainerStyleClass";
@@ -100,7 +108,7 @@ public class GroupMembersListViewer extends Block {
 		String removeUserContainerStyleClass = "removeUserCheckboxContainerStyleClass";
 		String changeUserImageStyleClass = "changeUserImageStyleClass";
 		StringBuffer checkBoxAction = null;
-		
+
 		String odd = "odd";
 		String even = "even";
 		String unknown = iwrb.getLocalizedString("unknown", "Unknown");
@@ -113,7 +121,7 @@ public class GroupMembersListViewer extends Block {
 		int from = getLeftIndex() + 1;
 		for (int i = 0; i < users.size(); i++) {
 			user = users.get(i);
-			
+
 			userId = user.getId();
 			name = user.getName();
 			if (CoreConstants.EMPTY.equals(name)) {
@@ -125,12 +133,12 @@ public class GroupMembersListViewer extends Block {
 			}
 			email = getUserEmail(iwc, user);
 			phoneNumbers = getUserPhonesNumbers(iwc, user);
-			
+
 			groupId = bean.getGroupId();
 			if (groupId < 0) {
 				groupId = bean.getParentGroupId();
 			}
-			
+
 			Layer lineContainer = new Layer();
 			fixId(lineContainer);
 			lineContainer.setStyleClass(userValuesLineContainerStyleClass);
@@ -141,7 +149,7 @@ public class GroupMembersListViewer extends Block {
 				lineContainer.setStyleClass(odd);
 			}
 			container.add(lineContainer);
-			
+
 			Layer nameContainer = new Layer();
 			fixId(nameContainer);
 			nameContainer.setStyleClass(nameContainerStyleClass);
@@ -150,7 +158,7 @@ public class GroupMembersListViewer extends Block {
 			fixId(nameText);
 			nameContainer.add(nameText);
 			lineContainer.add(nameContainer);
-			
+
 			Layer personalIdContainer = new Layer();
 			fixId(personalIdContainer);
 			personalIdContainer.setStyleClass(personalIdContainerStyleClass);
@@ -158,7 +166,7 @@ public class GroupMembersListViewer extends Block {
 			fixId(personalIdText);
 			personalIdContainer.add(personalIdText);
 			lineContainer.add(personalIdContainer);
-			
+
 			Layer emailContainer = new Layer();
 			fixId(emailContainer);
 			emailContainer.setStyleClass(emailContainerStyleClass);
@@ -166,13 +174,13 @@ public class GroupMembersListViewer extends Block {
 			fixId(emailText);
 			emailContainer.add(emailText);
 			lineContainer.add(emailContainer);
-			
+
 			Layer phonesContainer = new Layer();
 			fixId(phonesContainer);
 			phonesContainer.setStyleClass(phoneContainerStyleClass);
 			fillPhonesSection(phonesContainer, phoneNumbers);
 			lineContainer.add(phonesContainer);
-			
+
 			Layer changeUserContainer = new Layer();
 			fixId(changeUserContainer);
 			changeUserContainer.setStyleClass(changeUserContainerStyleClass);
@@ -183,7 +191,7 @@ public class GroupMembersListViewer extends Block {
 			changeUserImage.setOnClick(helper.getActionForAddUserView(bean, userId));
 			changeUserContainer.add(changeUserImage);
 			lineContainer.add(changeUserContainer);
-			
+
 			Layer removeUserContainer = new Layer();
 			fixId(removeUserContainer);
 			removeUserContainer.setStyleClass(removeUserContainerStyleClass);
@@ -198,7 +206,7 @@ public class GroupMembersListViewer extends Block {
 			removeUserContainer.add(removeUserCheckbox);
 			lineContainer.add(removeUserContainer);
 		}
-		
+
 		if (StringUtil.isEmpty(bean.getInstanceId())) {
 			Logger.getLogger(GroupMembersListViewer.class.getSimpleName()).log(Level.WARNING, "Instance ID is unknown, can't set pager values");
 		}
@@ -207,12 +215,12 @@ public class GroupMembersListViewer extends Block {
 			properties.add(getLeftIndex());
 			properties.add(getRightIndex());
 			properties.add(getCount());
-			
+
 			UserApplicationEngine userAppEngine = ELUtil.getInstance().getBean(UserApplicationEngine.class);
 			userAppEngine.setPagerProperties(userAppEngine.getIdForPagerProperties(bean), properties);
 		}
 	}
-	
+
 	private void fillPhonesSection(Layer container, List<String> numbers) {
 		if (ListUtil.isEmpty(numbers)) {
 			Text noNumbers = new Text(CoreConstants.MINUS);
@@ -220,27 +228,27 @@ public class GroupMembersListViewer extends Block {
 			container.add(noNumbers);
 			return;
 		}
-		
+
 		for (Iterator<String> numbersIter = numbers.iterator(); numbersIter.hasNext();) {
 			Text numberLine = new Text(numbersIter.next());
 			fixId(numberLine);
 			container.add(numberLine);
-			
+
 			if (numbersIter.hasNext()) {
 				container.add(new Break());
 			}
 		}
 	}
-	
+
 	private UserBusiness getUserBusiness(IWContext iwc) {
 		try {
-			return (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+			return IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		} catch (IBOLookupException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	private String getUserEmail(IWContext iwc, User user) {
 		Email email = null;
 		try {
@@ -249,10 +257,10 @@ public class GroupMembersListViewer extends Block {
 		if (email == null) {
 			return null;
 		}
-		
+
 		return email.getEmailAddressMailtoFormatted();
 	}
-	
+
 	private List<String> getUserPhonesNumbers(IWContext iwc, User user) {
 		Phone[] phones = null;
 		try {
@@ -272,11 +280,11 @@ public class GroupMembersListViewer extends Block {
 				filteredPhones.add(phone);
 			}
 		}
-		
+
 		if (ListUtil.isEmpty(filteredPhones)) {
 			return null;
 		}
-		
+
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		List<String> phoneNumbers = new ArrayList<String>(filteredPhones.size());
 		for (Phone phone: filteredPhones) {
@@ -303,15 +311,15 @@ public class GroupMembersListViewer extends Block {
 			}
 			}
 		}
-		
+
 		return phoneNumbers;
 	}
-	
+
 	private Layer getPagingContainer(IWContext iwc, List<User> users, int totalUsers) {
 		if (users.size() < getCount()) {
 			return null;
 		}
-		
+
 		IWBundle bundle = getBundle(iwc);
 		IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
 		String ofLocalized = iwrb.getLocalizedString("of", "of");
@@ -328,15 +336,15 @@ public class GroupMembersListViewer extends Block {
 		pageSizeInput.setOnKeyUp(new StringBuilder("SimpleUserApplication.navigateThruUsers(event, ")
 			.append(getPagerActionParameters(iwrb, pageSizeInputId, bean.getOrderBy(), getRightIndex(), true)).append(");")
 		.toString());
-		
+
 		Layer pager = new Layer();
 		pager.setStyleClass("simpleUserApplicationGroupMembersPagerStyle");
-		
+
 		Table2 pagerTable = new Table2();
 		pagerTable.setStyleClass("simpleUserApplicationGroupMembersPagerTableStyle");
 		pager.add(pagerTable);
 		TableRow row = pagerTable.createHeaderRowGroup().createRow();
-		
+
 		Layer previousContainer = new Layer();
 		row.createHeaderCell().add(previousContainer);
 		previousContainer.setStyleClass("simpleUserApplicationGroupMembersPreviousPagePagerStyle");
@@ -349,7 +357,7 @@ public class GroupMembersListViewer extends Block {
 			Text previousPage = new Text(iwrb.getLocalizedString("previous_page", "Previous page"));
 			previousContainer.add(previousPage);
 		}
-		
+
 		Layer pageSizeContainer = new Layer();
 		row.createHeaderCell().add(pageSizeContainer);
 		pageSizeContainer.setStyleClass("simpleUserApplicationGroupMembersPageSizeStyle");
@@ -361,7 +369,7 @@ public class GroupMembersListViewer extends Block {
 			.append(iwrb.getLocalizedString("page_size", "Page size")).append(":").toString(), pageSizeInput);
 		pageSizeContainer.add(pageSizeInfo);
 		pageSizeContainer.add(pageSizeInput);
-		
+
 		Layer nextContainer = new Layer();
 		row.createHeaderCell().add(nextContainer);
 		nextContainer.setStyleClass("simpleUserApplicationGroupMembersNextPagePagerStyle");
@@ -374,16 +382,16 @@ public class GroupMembersListViewer extends Block {
 			next.setTitle(iwrb.getLocalizedString("go_to_next_page", "Go to next page"));
 			next.setOnClick(getPagerAction(iwrb, pageSizeInputId, getRightIndex(), false));
 		}
-		
+
 //		pager.add(new CSSSpacer());
 		return pager;
 	}
-	
+
 	private String getPagerAction(IWResourceBundle iwrb, String pageSizeInputId, int index, boolean moveToLeft) {
 		return new StringBuilder("navigateInUsersList(").append(getPagerActionParameters(iwrb, pageSizeInputId, bean.getOrderBy(), index, moveToLeft))
 			.append(");").toString();
 	}
-	
+
 	private String getPagerActionParameters(IWResourceBundle iwrb, String pageSizeInputId, int orderBy, int index, boolean moveToLeft) {
 		String message = iwrb.getLocalizedString("loading", "Loading...");
 		return new StringBuilder("['").append(containerId).append("', '").append(message).append("', '")
@@ -394,25 +402,25 @@ public class GroupMembersListViewer extends Block {
 			.append(index).append(", ").append(moveToLeft)
 		.toString();
 	}
-	
+
 	@Override
 	public String getBundleIdentifier() {
 		return UserConstants.IW_BUNDLE_IDENTIFIER;
 	}
-	
+
 	private void fixId(PresentationObject component) {
 		if (!checkIds) {
 			return;
 		}
-		
+
 		String id = component.getId();
-		
+
 		boolean changeId = false;
 		while (findComponent(id) != null) {
 			id = new StringBuilder(idPrefix).append(idGenerator.nextInt(Integer.MAX_VALUE)).toString();
 			changeId = true;
 		}
-		
+
 		if (changeId) {
 			component.setId(id);
 		}
@@ -438,14 +446,14 @@ public class GroupMembersListViewer extends Block {
 		if (ListUtil.isEmpty(users)) {
 			return null;
 		}
-		
+
 		int from = getLeftIndex();
 		int to = getRightIndex();
 		if (to > users.size()) {
 			to = users.size();
 			rightIndex = to;
 		}
-		
+
 		if (users.size() >= to) {
 			List<User> usersToDisplay = new ArrayList<User>();
 			for (int i = from; (i < users.size() && i < to); i++) {
@@ -455,14 +463,14 @@ public class GroupMembersListViewer extends Block {
 		}
 		return users;
 	}
-	
+
 	public int getLeftIndex() {
 		if (leftIndex == null) {
 			leftIndex = bean == null ? 0 : bean.getFrom() < 0 ? 0 : bean.getFrom();
 		}
 		return leftIndex;
 	}
-	
+
 	public int getRightIndex() {
 		if (rightIndex == null) {
 			int from = getLeftIndex();
@@ -470,7 +478,7 @@ public class GroupMembersListViewer extends Block {
 			if (to < 0) {
 				to = 1;
 			}
-			
+
 			if (to < from) {
 				int temp = from;
 				leftIndex = to;
@@ -488,14 +496,14 @@ public class GroupMembersListViewer extends Block {
 	public void setRightIndex(Integer rightIndex) {
 		this.rightIndex = rightIndex;
 	}
-	
+
 	public Integer getCount() {
 		if (count == null) {
 			count = bean == null ? 20 : bean.getCount() < 0 ? 1 : bean.getCount();
 		}
 		return count;
 	}
-	
+
 	public void setCount(Integer count) {
 		this.count = count;
 	}
