@@ -51,6 +51,8 @@ import com.idega.util.ListUtil;
 public class UserContactSearch implements SearchPlugin {
 
 	private static final String SEARCH_NAME_LOCALIZABLE_KEY = "user_contact_search.name";
+	
+	public static final String SEARCH_UPLOAD_DATE_LOCALIZABLE_KEY = "content_search.upload_date";
 
 	private static final String SEARCH_DESCRIPTION_LOCALIZABLE_KEY = "user_contact_search.description";
 
@@ -279,6 +281,11 @@ public class UserContactSearch implements SearchPlugin {
 	}
 
 	@Override
+	public Collection getFileCreationDates(SearchResult result, IWResourceBundle iwrb) {
+		return null;
+	}
+	
+	@Override
 	public Collection getExtraRowElements(SearchResult result, IWResourceBundle iwrb) {
 		return null;
 	}
@@ -291,6 +298,11 @@ public class UserContactSearch implements SearchPlugin {
 
 	@Override
 	public String getResultImgByResultURI(String result_uri) {
+		return null;
+	}
+
+	@Override
+	public String getSearchDateColumnName() {
 		return null;
 	}
 }
