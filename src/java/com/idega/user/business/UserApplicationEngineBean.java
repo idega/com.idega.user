@@ -925,7 +925,8 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 			String portNumber = new StringBuilder(":").append(String.valueOf(iwc.getServerPort())).toString();
 			String portal = settings.getProperty("sua.portal_address");
-			String serverLink = StringUtil.isEmpty(portal) ? StringHandler.replace(iwc.getServerURL(), portNumber, CoreConstants.EMPTY) : portal;
+			String serverURL = CoreUtil.getServerURL(iwc.getRequest());
+			String serverLink = StringUtil.isEmpty(portal) ? StringHandler.replace(serverURL, portNumber, CoreConstants.EMPTY) : portal;
 			String subject = newLogin ? iwrb.getLocalizedString("account_was_created", "Account was created") :
 										iwrb.getLocalizedString("account_information_was_changed", "Account was modified");
 			StringBuilder text = new StringBuilder(iwrb.getLocalizedString("dear", "Dear").concat(CoreConstants.SPACE).concat(user.getName())
