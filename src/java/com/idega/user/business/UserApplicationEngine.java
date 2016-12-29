@@ -1,6 +1,7 @@
 package com.idega.user.business;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jdom2.Document;
 
@@ -42,6 +43,9 @@ public interface UserApplicationEngine {
 
 	public AdvancedProperty createUser(UserDataBean userData, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
 			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password);
+
+	public AdvancedProperty createUser(UserDataBean userData, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
+			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password, Map<String, String> emailProps);
 
 	public String isValidEmail(String email);
 

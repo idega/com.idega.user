@@ -808,3 +808,8 @@ picture=Picture
 sua.edit_user_picture=Edit picture
 sua.add_user_picture=Add picture
 unknown_group=Unknown group
+
+dear=Dear
+account_was_modified_explanation=Your account was modified{0}. Please, login in to review changes.
+with_regards=With regards,
+account_information_was_changed=Account was modified

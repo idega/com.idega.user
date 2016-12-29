@@ -2,6 +2,7 @@ package com.idega.user.business;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -79,6 +80,7 @@ import com.idega.util.ListUtil;
 import com.idega.util.SendMail;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 
 public class UserApplicationEngineBean extends DefaultSpringBean implements UserApplicationEngine, Serializable {
 
@@ -641,6 +643,12 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	@Override
 	public AdvancedProperty createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
 			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password) {
+		return createUser(userInfo, primaryGroupId, childGroups, deselectedGroups, allFieldsEditable, sendEmailWithLoginInfo, login, password, null);
+	}
+
+	@Override
+	public AdvancedProperty createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
+			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password, Map<String, String> emailProps) {
 		if (userInfo == null) {
 			logger.warning("User info is not provided!");
 			return null;
@@ -937,9 +945,13 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 					.append(iwrb.getLocalizedString("your_password", "your password")).append(": ").append(password).append(". ")
 					.append(iwrb.getLocalizedString("we_recommend_to_change_password_after_login", "We recommend to change password after login!"));
 			} else {
-				text = text.append(
-						iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified. Please, login in to review changes"))
-						.append("\n\r").append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink);
+				String mainText = CoreConstants.EMPTY;
+				if (!MapUtil.isEmpty(emailProps) && emailProps.containsKey(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS)) {
+					mainText = MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified{0}. Please, login in to review changes."), CoreConstants.SPACE + emailProps.get(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS));
+				} else {
+					mainText = MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified{0}. Please, login in to review changes."), CoreConstants.EMPTY);
+				}
+				text = text.append(mainText).append("\n\r").append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink);
 			}
 			text.append("\n\r").append(iwrb.getLocalizedString("with_regards", "With regards,")).append("\r").append(settings.getProperty("with_regards_text", serverLink.concat(" team")));
 
