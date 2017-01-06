@@ -24,4 +24,6 @@ public class UserConstants implements ConstantsPlaceholder {
 	public static final String AVAILABLE_GROUP_TYPES_IN_SIMPLE_USER_APPLICATION = "availableGroupTypesInSimpleUserApplication";
 	public static final String AVAILABLE_ROLE_TYPES_IN_SIMPLE_USER_APPLICATION = "availableRoleTypesInSimpleUserApplication";
 
+	public static final String EMAIL_PLACEHOLDER_ADDED_ACCESS = "EMAIL_PLACEHOLDER_ADDED_ACCESS";
+
 }

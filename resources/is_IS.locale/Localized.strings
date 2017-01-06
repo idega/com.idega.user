@@ -605,4 +605,8 @@ sua.edit_user_picture=Breyta mynd
 user_address_info=Notendahandbók tölu upplýsingar
 user_login_password_description=Notandinn nafn er alltaf notanda skráir ID og það er ekki hægt að breyta. Lykilorð verður sjálfkrafa af kerfinu og send með tölvupósti til notenda
 
-
+dear=Kæri/kæra
+account_was_modified_explanation=Gerð hefur verið breyting á aðgangi þínum{0}, skráðu þig inn í Felix til að sjá breytingar.
+login_here=Innskráning hér
+with_regards=Kær kveðja,
+account_information_was_changed=Reikningur var breytt
