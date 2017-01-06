@@ -488,11 +488,12 @@ yes=J\u00E1
 yes=J\u00E1
 
 dear=Kæri/kæra
-account_was_modified_explanation=Gerð hefur verið breyting á aðgangi þínum{0}, skráðu þig inn í Felix til að sjá breytingar.
+account_was_modified_explanation=Gerð hefur verið breyting á aðgangi þínum, skráðu þig inn til að sjá breytingar.
+account_was_modified_explanation_felix=Gerð hefur verið breyting á aðgangi þínum {0}, skráðu þig inn í Felix til að sjá breytingar.
 login_here=Innskráning hér
 with_regards=Kær kveðja,
 account_was_created=Var búin
-account_information_was_changed=Reikningur var breytt
+account_information_was_changed=Breyting hefur verið gerð á aðgangi þínum
 
 
 

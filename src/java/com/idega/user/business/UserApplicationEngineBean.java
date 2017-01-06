@@ -947,9 +947,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			} else {
 				String mainText = CoreConstants.EMPTY;
 				if (!MapUtil.isEmpty(emailProps) && emailProps.containsKey(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS)) {
-					mainText = MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified{0}. Please, login in to review changes."), CoreConstants.SPACE + emailProps.get(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS));
+					mainText = MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation_felix", "Your account was modified {0}. Please, login in to review changes."), emailProps.get(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS));
 				} else {
-					mainText = MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified{0}. Please, login in to review changes."), CoreConstants.EMPTY);
+					mainText = MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified. Please, login in to review changes."), CoreConstants.EMPTY);
 				}
 				text = text.append(mainText).append("\n\r").append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink);
 			}
