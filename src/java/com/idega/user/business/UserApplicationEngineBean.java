@@ -643,11 +643,11 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	@Override
 	public AdvancedProperty createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
 			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password) {
-		return createUser(userInfo, primaryGroupId, childGroups, deselectedGroups, allFieldsEditable, sendEmailWithLoginInfo, login, password, null);
+		return createUserWithEmailProps(userInfo, primaryGroupId, childGroups, deselectedGroups, allFieldsEditable, sendEmailWithLoginInfo, login, password, null);
 	}
 
 	@Override
-	public AdvancedProperty createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
+	public AdvancedProperty createUserWithEmailProps(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
 			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password, Map<String, String> emailProps) {
 		if (userInfo == null) {
 			logger.warning("User info is not provided!");
