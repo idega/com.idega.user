@@ -1434,6 +1434,10 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		}
 		List<AdvancedProperty> result = new ArrayList<AdvancedProperty>();
 		for (Group group: groups) {
+			if (group == null) {
+				continue;
+			}
+
 			result.add(new AdvancedProperty(group.getId(), group.getName()));
 		}
 
