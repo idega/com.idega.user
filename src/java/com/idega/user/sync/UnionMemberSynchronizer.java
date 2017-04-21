@@ -11,13 +11,13 @@ public interface UnionMemberSynchronizer {
 
 	public Group getClub(String clubNumber);
 
-	public String registerMemberToClub(String ssn, Group club, String clubMembershipType) throws RemoteException;
+	public String registerMemberToClub(String ssn, Group club, String clubMembershipType, String groupUniqueId) throws RemoteException;
 
 	public Group getClubByAbbreviation(String abbreviation);
 	public Group getClubByUniqueId(String uniqueId);
 	public Group getClubByUniqueId(String uniqueId, List<Group> leagues);
 	public Group getClubByUniqueIdAndLeaguesName(String uniqueId, List<String> leaguesNames);
 
-	public String disableMemberInClub(String ssn, Group club) throws RemoteException;
+	public String disableMemberInClub(String ssn, Group club, String groupUniqueId) throws RemoteException;
 
 }
