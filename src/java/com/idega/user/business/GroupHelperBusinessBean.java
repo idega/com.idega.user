@@ -756,6 +756,10 @@ public class GroupHelperBusinessBean implements GroupHelper {
 		List<Group> parentGroups = null;
 		for (Iterator<Group> it = topGroups.iterator(); it.hasNext();) {
 			group = it.next();
+			if (group == null) {
+				continue;
+			}
+
 			parentGroups = group.getParentGroups();
 			if (parentGroups != null) {
 				topAndParentGroups.addAll(parentGroups);
