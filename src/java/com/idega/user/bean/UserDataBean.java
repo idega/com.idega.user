@@ -1,6 +1,7 @@
 package com.idega.user.bean;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -41,6 +42,8 @@ public class UserDataBean implements Serializable {
 	private boolean imageSet;
 
 	private int hashCode = 0;
+
+	private Map<String, String> metadata = null;
 
 	public String getWorkPhone() {
 		return workPhone;
@@ -212,6 +215,12 @@ public class UserDataBean implements Serializable {
 	}
 	public void setMobilePhone(String mobilePhone) {
 		this.mobilePhone = mobilePhone;
+	}
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
 	}
 
 

@@ -541,6 +541,15 @@ function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages
 	var changePasswordNextTime = isCheckboxChecked(ids[15]);
 	var accountEnabled = isCheckboxChecked(ids[14]);
 	
+	var language1id =ids[18];
+	var language2id =ids[19];
+	var language3id =ids[20];
+	var language4id =ids[21];
+	
+	var genderId =ids[22];
+	var birthDayId =ids[23];
+	var skillLevelId =ids[24];
+	
 	var selectedGroups = new Array();
 	if (childGroups == null) {
 		if (groupForUsersWithoutLoginId != null && groupForUsersWithoutLoginId != 'null') {
@@ -611,6 +620,14 @@ function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages
 	var city = document.getElementById(cityInputId).value;
 	var province = document.getElementById(provinceInputId).value;
 	var postalBox = document.getElementById(postalBoxInputId).value;
+	var language1 = document.getElementById(language1id).value;
+	var language2 = document.getElementById(language2id).value;
+	var language3 = document.getElementById(language3id).value;
+	var language4 = document.getElementById(language4id).value;
+	
+	var gender = document.getElementById(genderId).value;
+	var birthDay = document.getElementById(birthDayId).value;
+	var skillLevel = document.getElementById(skillLevelId).value;
 	
 	if (USER_ID != null) {
 		if (USER_ID != userId) {
@@ -620,7 +637,7 @@ function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages
 	
 	showLoadingMessage(messages[0]);
 	var userInfo = new UserDataBean(userName, /*login, password,*/ personalId, email, null, phone, streetNameAndNumber, postalCodeId, countryName, city, province,
-									postalBox, userId, juridicalPerson, changePasswordNextTime, accountEnabled);
+									postalBox, userId, juridicalPerson, changePasswordNextTime, accountEnabled, language1, language2, language3, language4, gender, birthDay, skillLevel);
 	UserApplicationEngine.createUser(userInfo, primaryGroupId, selectedGroups, DESELECTED_GROUPS, allFieldsEditable, sendEmailWithLoginInfo, login,
 		password, {
 		callback: function(result) {
@@ -656,7 +673,7 @@ function getElementValue(id) {
 }
 
 function UserDataBean(name, /*login, password,*/ personalId, email, errorMessage, phone, streetNameAndNumber, postalCodeId, countryName, city, province, postalBox,
-					 userId, juridicalPerson, changePasswordNextTime, accountEnabled) {
+					 userId, juridicalPerson, changePasswordNextTime, accountEnabled, language1, language2, language3, language4, gender, birthDay, skillLevel) {
 	this.name = name;
 	//this.login = login;
 	//this.password = password;
@@ -675,6 +692,14 @@ function UserDataBean(name, /*login, password,*/ personalId, email, errorMessage
 	this.changePasswordNextTime = changePasswordNextTime;
 	this.accountEnabled = accountEnabled;
 	this.pictureUri = SimpleUserApplication.userPicture;
+	this.metadata = {};
+	this.metadata.language1 = language1;
+	this.metadata.language2 = language2;
+	this.metadata.language3 = language3;
+	this.metadata.language4 = language4;
+	this.metadata.gender = gender;
+	this.metadata.birthDay = birthDay;
+	this.metadata.skillLevel = skillLevel;
 }
 
 function isCheckboxChecked(id) {

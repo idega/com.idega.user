@@ -2,21 +2,27 @@ package com.idega.user.app;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 
+import javax.ejb.FinderException;
 import javax.faces.component.UIComponent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.content.business.ContentConstants;
 import com.idega.content.upload.presentation.FileUploadViewer;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.contact.data.Email;
+import com.idega.core.localisation.data.ICLanguage;
+import com.idega.core.localisation.data.ICLanguageHome;
 import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.data.IDOLookup;
@@ -37,6 +43,7 @@ import com.idega.presentation.ui.CountryDropdownMenu;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.GenericInput;
+import com.idega.presentation.ui.IWDatePicker;
 import com.idega.presentation.ui.PasswordInput;
 import com.idega.presentation.ui.SelectOption;
 import com.idega.presentation.ui.TextInput;
@@ -46,6 +53,8 @@ import com.idega.user.business.GroupHelper;
 import com.idega.user.business.UserApplicationEngine;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserConstants;
+import com.idega.user.data.Gender;
+import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
@@ -71,6 +80,19 @@ public class SimpleUserAppAddUser extends Block {
 
 	private String requiredFieldLocalizationKey = "this_field_is_required";
 	private String requiredFieldLocalizationValue = "This field is required!";
+
+	private ICLanguageHome icLanguageHome;
+
+	private ICLanguageHome getICLanguageHome() {
+		if (this.icLanguageHome  == null) {
+			try {
+				this.icLanguageHome = (ICLanguageHome) IDOLookup.getHome(ICLanguage.class);
+			} catch (RemoteException rme) {
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return this.icLanguageHome;
+	}
 
 	public SimpleUserAppAddUser(SimpleUserPropertiesBean properties) {
 		this.properties = properties;
@@ -208,6 +230,118 @@ public class SimpleUserAppAddUser extends Block {
 		TextInput postalBoxInput = new TextInput();
 		String postalBoxInputId = postalBoxInput.getId();
 
+		List<String> langs = Arrays.asList("de", "fr", "es", "en", "it", "ru", "zh");
+
+		List<ICLanguage> languages = new ArrayList<ICLanguage>();
+		try {
+			languages.addAll(getICLanguageHome().findManyByISOAbbreviation(langs));
+		} catch (FinderException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+
+		// Language
+		UserBusiness userBusiness = null;
+		try {
+			userBusiness = IBOLookup.getServiceInstance(getIWApplicationContext(), UserBusiness.class);
+		} catch (IBOLookupException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Map<String, String> metadata  = user.getMetaDataAttributes();
+
+
+		if (!StringUtil.isEmpty(metadata.get(""))){
+
+		}
+		ICLanguage l1 = null;
+		ICLanguage l2 = null;
+		ICLanguage l3 = null;
+		String l4 = null;
+		String sl = null;
+		if (user != null) {
+			Map<String, String> meta = user.getMetaDataAttributes();
+			if (!StringUtil.isEmpty(meta.get("language1"))){
+				try {
+					l1 = getICLanguageHome().findByPrimaryKey(Integer.parseInt(meta.get("language1")));
+				} catch (NumberFormatException | FinderException e) {
+				}
+			}
+			if (!StringUtil.isEmpty(meta.get("language2"))){
+				try{
+					l2 = getICLanguageHome().findByPrimaryKey(Integer.parseInt(meta.get("language2")));
+				} catch (NumberFormatException | FinderException e) {
+				}
+			}
+			if (!StringUtil.isEmpty(meta.get("language3"))){
+				try {
+					l3 = getICLanguageHome().findByPrimaryKey(Integer.parseInt(meta.get("language3")));
+				} catch (NumberFormatException | FinderException e) {
+				}
+			}
+			l4 =meta.get("language4");
+			sl =meta.get("skillLevel");
+		}
+
+
+		DropdownMenu language1 = new DropdownMenu();
+		language1.setEntities(languages);
+		language1.setMenuElement(0, iwrb.getLocalizedString("simple_user_application.select_language", "Select language"));
+		language1.setSelectedElement(0);
+		if (l1 != null) language1.setSelectedElement(Integer.parseInt(l1.getPrimaryKey().toString()));
+
+
+		DropdownMenu language2 = new DropdownMenu();
+		language2.setEntities(languages);
+		language2.setMenuElement(0, iwrb.getLocalizedString("simple_user_application.select_language", "Select language"));
+		language2.setSelectedElement(0);
+		if (l2 != null) language2.setSelectedElement(Integer.parseInt(l2.getPrimaryKey().toString()));
+
+		DropdownMenu language3 = new DropdownMenu();
+		language3.setEntities(languages);
+		language3.setMenuElement(0, iwrb.getLocalizedString("simple_user_application.select_language", "Select language"));
+		language3.setSelectedElement(0);
+		if (l3 != null) language3.setSelectedElement(Integer.parseInt(l3.getPrimaryKey().toString()));
+
+		TextInput languageOther = new TextInput();
+		languageOther.setValue(l4);
+
+		String l1id = language1.getId();
+		String l2id = language2.getId();
+		String l3id = language3.getId();
+		String l4id = languageOther.getId();
+
+		DropdownMenu gender = new DropdownMenu();
+		GenderHome genderHome = null;
+		try {
+			genderHome = (GenderHome) IDOLookup.getHome(Gender.class);
+			List <Gender> genders = new ArrayList<Gender>(genderHome.findAllGenders());
+			gender.setEntities(genders);
+			gender.setMenuElement(-1, iwrb.getLocalizedString("simple_user_application.select_gender", "Select gender"));
+			gender.setSelectedElement(user.getGenderID());
+		} catch (IDOLookupException e1) {
+		} catch (FinderException e) {
+
+		}
+		String genderId = gender.getId();
+
+		IWDatePicker birthDay = new IWDatePicker();
+		birthDay.setDate(user.getDateOfBirth());
+		String birthDayId = birthDay.getId();
+		birthDay.setVersion("1.8.17");
+
+		DropdownMenu skillLevel = new DropdownMenu();
+		skillLevel.setMenuElement(0, iwrb.getLocalizedString("simple_user_application.select_skillLevel", "Select skill level"));
+		skillLevel.setMenuElement(1, iwrb.getLocalizedString("simple_user_application.expert_skillLevel", "Expert"));
+		skillLevel.setMenuElement(2, iwrb.getLocalizedString("simple_user_application.advanced_skillLevel", "Advanced"));
+		skillLevel.setMenuElement(3, iwrb.getLocalizedString("simple_user_application.basic_skillLevel", "Basic"));
+		skillLevel.setSelectedElement(sl == null ? 0 : Integer.parseInt(sl));
+		String skillLevelId = skillLevel.getId();
+
+		Text dateCreated = new Text(user.getCreated().toGMTString());
+		String dateCreatedId = dateCreated.getId();
+
 		//	***************************** Data for inputs *****************************
 		UserDataBean userInfo = new UserDataBean();
 		UserApplicationEngine userEngine = ELUtil.getInstance().getBean(UserApplicationEngine.class);
@@ -297,7 +431,7 @@ public class SimpleUserAppAddUser extends Block {
 			String password = null;
 			if (user != null) {
 				try {
-					UserBusiness userBusiness = IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+					userBusiness = IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 					password = userBusiness.getUserPassword(user);
 				} catch (Exception e) {
 					getLogger().log(Level.WARNING, "Error getting password for user " + user, e);
@@ -343,6 +477,14 @@ public class SimpleUserAppAddUser extends Block {
 		idsForFields.add(accountManagerId);									//	13	Account enabled
 		idsForFields.add(changePasswordNextTimeId);							//	14	Change password
 		idsForFields.add(pictureId);										//	15	Picture
+		idsForFields.add(l1id);
+		idsForFields.add(l2id);
+		idsForFields.add(l3id);
+		idsForFields.add(l4id);
+		idsForFields.add(genderId);
+		idsForFields.add(birthDayId);
+		idsForFields.add(skillLevelId);
+		idsForFields.add(dateCreatedId);
 		StringBuffer idAction = new StringBuffer("getUserByPersonalId(event, ").append(helper.getJavaScriptFunctionParameter(idsForFields))
 								.append(SimpleUserApp.COMMA_SEPARATOR).append(properties.isAllFieldsEditable()).append(");");
 		idValueInput.setOnKeyUp(idAction.toString());
@@ -361,6 +503,14 @@ public class SimpleUserAppAddUser extends Block {
 		inputs.add(manageAccountAvailability);		//	10	Enable/disable account
 		inputs.add(changePasswordNextTime);			//	11	Change password next time
 		inputs.add(picture);						//	12	Picture
+		inputs.add(language1);
+		inputs.add(language2);
+		inputs.add(language3);
+		inputs.add(languageOther);
+		inputs.add(gender);
+		inputs.add(birthDay);
+		inputs.add(skillLevel);
+		inputs.add(dateCreated);
 		addUserFields(iwc, userFieldsContainer, inputs, userInfo, pictureChangerId);
 
 		//	Login information
@@ -423,6 +573,14 @@ public class SimpleUserAppAddUser extends Block {
 		ids.add(properties.isChangePasswordNextTime() ? changePasswordNextTimeId : "-1");						//	15 Change password next time
 		ids.add(properties.getParentGroupId() == -1 ? "-1" : String.valueOf(properties.getParentGroupId()));	//	16 Selected group ID
 		ids.add(pictureId);						//	17	Picture
+		ids.add(l1id);
+		ids.add(l2id);
+		ids.add(l3id);
+		ids.add(l4id);
+		ids.add(genderId);
+		ids.add(birthDayId);
+		ids.add(skillLevelId);
+		ids.add(dateCreatedId);
 		addButtons(iwc, buttons, ids, childGroups, userInfo.isAccountExists());
 	}
 
@@ -750,6 +908,71 @@ public class SimpleUserAppAddUser extends Block {
 		country.add(inputs.get(6));
 		country.add(getSpacer());
 		fieldContainer.add(country);
+
+		// Language 1
+		fieldContainer = new Layer("span");
+		fieldsContainer.add(fieldContainer);
+		fieldContainer.setStyleClass("language field-layer");
+		fieldContainer.add(getLabelContainer(iwrb.getLocalizedString("language", "Language")));
+		fieldContainer.add(getComponentContainer(inputs.get(13)));
+		fieldContainer.add(getSpacer());
+
+		// Language 2
+		fieldContainer = new Layer("span");
+		fieldsContainer.add(fieldContainer);
+		fieldContainer.setStyleClass("language field-layer");
+		fieldContainer.add(getLabelContainer(iwrb.getLocalizedString("language", "Language")));
+		fieldContainer.add(getComponentContainer(inputs.get(14)));
+		fieldContainer.add(getSpacer());
+
+		// Language 3
+		fieldContainer = new Layer("span");
+		fieldsContainer.add(fieldContainer);
+		fieldContainer.setStyleClass("language field-layer");
+		fieldContainer.add(getLabelContainer(iwrb.getLocalizedString("language", "Language")));
+		fieldContainer.add(getComponentContainer(inputs.get(15)));
+		fieldContainer.add(getSpacer());
+
+		// Language 4
+		fieldContainer = new Layer("span");
+		fieldsContainer.add(fieldContainer);
+		fieldContainer.setStyleClass("language field-layer");
+		fieldContainer.add(getLabelContainer(iwrb.getLocalizedString("language", "Language")));
+		fieldContainer.add(getComponentContainer(inputs.get(16)));
+		fieldContainer.add(getSpacer());
+
+		// Gender
+		fieldContainer = new Layer("span");
+		fieldsContainer.add(fieldContainer);
+		fieldContainer.setStyleClass("gender field-layer");
+		fieldContainer.add(getLabelContainer(iwrb.getLocalizedString("gender", "Gender")));
+		fieldContainer.add(getComponentContainer(inputs.get(17)));
+		fieldContainer.add(getSpacer());
+
+		// Birth day
+		fieldContainer = new Layer("span");
+		fieldsContainer.add(fieldContainer);
+		fieldContainer.setStyleClass("birthday field-layer");
+		fieldContainer.add(getLabelContainer(iwrb.getLocalizedString("birthday", "Birth day")));
+		fieldContainer.add(getComponentContainer(inputs.get(18)));
+		fieldContainer.add(getSpacer());
+
+		// Skill level
+		fieldContainer = new Layer("span");
+		fieldsContainer.add(fieldContainer);
+		fieldContainer.setStyleClass("skilllevel field-layer");
+		fieldContainer.add(getLabelContainer(iwrb.getLocalizedString("skilllevel", "Skill level")));
+		fieldContainer.add(getComponentContainer(inputs.get(19)));
+		fieldContainer.add(getSpacer());
+
+		// Date created
+		fieldContainer = new Layer("span");
+		fieldsContainer.add(fieldContainer);
+		fieldContainer.setStyleClass("datecreated field-layer");
+		fieldContainer.add(getLabelContainer(iwrb.getLocalizedString("datecreated", "Date created")));
+		fieldContainer.add(getComponentContainer(inputs.get(20)));
+		fieldContainer.add(getSpacer());
+
 	}
 
 	private void addParentGroups(IWContext iwc, Layer container, DropdownMenu parentGroupsChooser) {

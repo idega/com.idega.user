@@ -814,3 +814,4 @@ account_was_modified_explanation=Your account was modified. Please, login in to 
 account_was_modified_explanation_felix=Your account was modified {0}. Please, login in to review changes.
 with_regards=With regards,
 account_information_was_changed=Account was modified
+simple_user_application.select_language=Select language

@@ -2,11 +2,15 @@ package com.idega.user.business;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -878,6 +882,21 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				return result;
 			}
 		}
+
+
+		Map<String, String> metadata = userInfo.getMetadata();
+		if (metadata != null){
+			DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
+			Date birthDay;
+			try {
+				birthDay = df.parse(metadata.remove("birthDay"));
+				user.setDateOfBirth(new java.sql.Date(birthDay.getTime()));
+			} catch (ParseException e) {
+			}
+			user.setGender(Integer.parseInt(metadata.remove("gender")));
+			user.setMetaDataAttributes(metadata);
+		}
+
 
 		//	Login
 		loginTable = loginTable == null ? LoginDBHandler.getUserLogin(user) : loginTable;

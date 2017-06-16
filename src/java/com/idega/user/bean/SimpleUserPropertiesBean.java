@@ -37,6 +37,8 @@ public class SimpleUserPropertiesBean {
 	private boolean addChildGroupEditButton = true,
 					showSubGroup = true;
 
+	private boolean showExtraInputs = false;
+
 	public SimpleUserPropertiesBean() {}
 
 	public SimpleUserPropertiesBean(String instanceId, String containerId, String groupTypesForParentGroups, String groupTypes,String roleTypes,
@@ -310,6 +312,14 @@ public class SimpleUserPropertiesBean {
 
 	public void setPersonalId(String personalId) {
 		this.personalId = personalId;
+	}
+
+	public boolean isShowLanguageInputs() {
+		return showExtraInputs;
+	}
+
+	public void setShowLanguageInputs(boolean showLanguageInputs) {
+		this.showExtraInputs = showLanguageInputs;
 	}
 
 }
