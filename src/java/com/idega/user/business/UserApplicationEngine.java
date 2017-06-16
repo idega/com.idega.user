@@ -35,6 +35,8 @@ public interface UserApplicationEngine {
 
 	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, Integer userId, String groupTypes, String groupRoles, String subGroups, String subGroupsToExclude);
 
+	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, Integer userId, String groupTypes, String groupRoles, String subGroups, String subGroupsToExclude, String parentGroups);
+
 	public void addViewUsersCase(String instanceId, SimpleUserAppViewUsers viewUsers);
 
 	public UserDataBean getUserByPersonalId(String personalId);

@@ -319,7 +319,7 @@ function goBackToSimpleUserApp(instanceId, containerId, message, parentGroupChoo
 	});
 }
 
-function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters, selectedGroupId, subGroups, subGroupsToExclude) {
+function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters, selectedGroupId, subGroups, subGroupsToExclude, parentGroups) {
 	refreshDeselectedGroups();
 	var groupId = getParentGroupIdInSUA(parentGroupChooserId, selectedGroupId);
 	var containerId = parameters[0];
@@ -327,7 +327,7 @@ function reloadAvailableGroupsForUser(parentGroupChooserId, userId, parameters, 
 	var groupTypes = parameters[2];
 	var roleTypes = parameters[3];
 	showLoadingMessage(message);
-	UserApplicationEngine.getAvailableGroupsForUserPresentationObject(groupId, userId, groupTypes, roleTypes, subGroups, subGroupsToExclude, {
+	UserApplicationEngine.getAvailableGroupsForUserPresentationObject(groupId, userId, groupTypes, roleTypes, subGroups, subGroupsToExclude, parentGroups, {
 		callback: function(component) {
 			getAddUserPresentationObjectCallback(component, containerId);
 		}

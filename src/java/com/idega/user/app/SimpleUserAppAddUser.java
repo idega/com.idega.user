@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 
 import javax.ejb.FinderException;
@@ -173,30 +174,33 @@ public class SimpleUserAppAddUser extends Block {
 		container.add(parentGroupsContainer);
 		UIComponentBase parentGroupsChooser;
 		String parentGroupChooserId;
-		if (user == null){
-			parentGroupsChooser = new DropdownMenu();
-			parentGroupChooserId = parentGroupsChooser.getId();
-			StringBuffer action = new StringBuffer("reloadAvailableGroupsForUser(");
-			action.append(helper.getJavaScriptParameter(parentGroupChooserId)).append(SimpleUserApp.COMMA_SEPARATOR);
-			action.append(helper.getJavaScriptParameter(id)).append(SimpleUserApp.COMMA_SEPARATOR).append("['");
-			action.append(availableGroupsOfUserContaianer.getId()).append(SimpleUserApp.PARAMS_SEPARATOR);
-			action.append(iwrb.getLocalizedString("loading", "Loading...")).append("', ");
-			action.append(helper.getJavaScriptParameter(properties.getGroupTypes())).append(SimpleUserApp.COMMA_SEPARATOR);
-			action.append(helper.getJavaScriptParameter(properties.getRoleTypes())).append("], ")
-			.append(helper.getJavaScriptParameter(properties.getParentGroupId() == -1 ? null : String.valueOf(properties.getParentGroupId()))).append(SimpleUserApp.COMMA_SEPARATOR);
-			action.append(CoreConstants.QOUTE_SINGLE_MARK).append(properties.getSubGroups()).append(CoreConstants.QOUTE_SINGLE_MARK).append(SimpleUserApp.COMMA_SEPARATOR);
-			action.append(CoreConstants.QOUTE_SINGLE_MARK).append(properties.getSubGroupsToExclude()).append(CoreConstants.QOUTE_SINGLE_MARK);
-			action.append(");");
-			((DropdownMenu)parentGroupsChooser).setOnChange(action.toString());
-			addParentGroups(iwc, parentGroupsContainer, (DropdownMenu)parentGroupsChooser);
+
+		if (!StringUtil.isEmpty(properties.getParentGroups())){
+			StringTokenizer st = new StringTokenizer(properties.getParentGroups(), ",");
+			parentGroups = new ArrayList<Integer>();
+			while (st.hasMoreTokens()){
+				try {
+					parentGroups.add(Integer.parseInt(st.nextToken().trim()));
+				} catch (Exception e) {}
+			}
 		}
-		else {
-			Group group = user.getPrimaryGroup();
-			String groupName = "";
-			if (group != null) groupName = group.getName();
-			parentGroupsChooser = new Text(groupName);
-			parentGroupChooserId = parentGroupsChooser.getId();
-		}
+		parentGroupsChooser = new DropdownMenu();
+		parentGroupChooserId = parentGroupsChooser.getId();
+		StringBuffer action = new StringBuffer("reloadAvailableGroupsForUser(");
+		action.append(helper.getJavaScriptParameter(parentGroupChooserId)).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(helper.getJavaScriptParameter(id)).append(SimpleUserApp.COMMA_SEPARATOR).append("['");
+		action.append(availableGroupsOfUserContaianer.getId()).append(SimpleUserApp.PARAMS_SEPARATOR);
+		action.append(iwrb.getLocalizedString("loading", "Loading...")).append("', ");
+		action.append(helper.getJavaScriptParameter(properties.getGroupTypes())).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(helper.getJavaScriptParameter(properties.getRoleTypes())).append("], ")
+		.append(helper.getJavaScriptParameter(properties.getParentGroupId() == -1 ? null : String.valueOf(properties.getParentGroupId()))).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(CoreConstants.QOUTE_SINGLE_MARK).append(properties.getSubGroups()).append(CoreConstants.QOUTE_SINGLE_MARK).append(SimpleUserApp.COMMA_SEPARATOR);
+		action.append(CoreConstants.QOUTE_SINGLE_MARK).append(properties.getSubGroupsToExclude()).append(CoreConstants.QOUTE_SINGLE_MARK);
+		action.append(SimpleUserApp.COMMA_SEPARATOR).append(CoreConstants.QOUTE_SINGLE_MARK).append(properties.getParentGroups()).append(CoreConstants.QOUTE_SINGLE_MARK);
+		action.append(");");
+		((DropdownMenu)parentGroupsChooser).setOnChange(action.toString());
+		addParentGroups(iwc, parentGroupsContainer, (DropdownMenu)parentGroupsChooser);
+
 
 
 		//	Choose user

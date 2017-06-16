@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -347,6 +348,11 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 	@Override
 	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, Integer userId, String groupTypes, String groupRoles, String subGroups, String subGroupsToExclude) {
+		return getAvailableGroupsForUserPresentationObject(parentGroupId, userId, groupTypes, groupRoles, subGroups, subGroupsToExclude, null);
+	}
+
+	@Override
+	public Document getAvailableGroupsForUserPresentationObject(Integer parentGroupId, Integer userId, String groupTypes, String groupRoles, String subGroups, String subGroupsToExclude, String parentGroups) {
 		if (parentGroupId == null) {
 			return null;
 		}
@@ -377,6 +383,23 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		if (groups == null || groups.isEmpty()) {
 			selectedGroupId = String.valueOf(parentGroupId);
 		}
+
+		if (!StringUtil.isEmpty(parentGroups)){
+			StringTokenizer st = new StringTokenizer(parentGroups, ",");
+			ArrayList<String> grList = new ArrayList<String>();
+			while (st.hasMoreTokens()){
+				grList.add(st.nextToken().trim());
+			}
+			List<Group> groupsNew = new ArrayList<Group>();
+			for (Group group : groups){
+				if (grList.contains(group.getId())){
+					groupsNew.add(group);
+				}
+			}
+			groups= groupsNew;
+		}
+
+
 		Layer availableGroupsContainer = getPresentationHelper().getSelectedGroups(iwc, user, helper, groups, ids, selectedGroupId);
 
 		return BuilderLogic.getInstance().getRenderedComponent(iwc, availableGroupsContainer, true);
