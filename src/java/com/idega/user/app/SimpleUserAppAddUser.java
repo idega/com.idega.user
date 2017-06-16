@@ -11,6 +11,7 @@ import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIComponentBase;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -166,21 +167,33 @@ public class SimpleUserAppAddUser extends Block {
 		//	Parent groups dropdown
 		Layer parentGroupsContainer = new Layer();
 		container.add(parentGroupsContainer);
-		DropdownMenu parentGroupsChooser = new DropdownMenu();
-		String parentGroupChooserId = parentGroupsChooser.getId();
-		StringBuffer action = new StringBuffer("reloadAvailableGroupsForUser(");
-		action.append(helper.getJavaScriptParameter(parentGroupChooserId)).append(SimpleUserApp.COMMA_SEPARATOR);
-		action.append(helper.getJavaScriptParameter(id)).append(SimpleUserApp.COMMA_SEPARATOR).append("['");
-		action.append(availableGroupsOfUserContaianer.getId()).append(SimpleUserApp.PARAMS_SEPARATOR);
-		action.append(iwrb.getLocalizedString("loading", "Loading...")).append("', ");
-		action.append(helper.getJavaScriptParameter(properties.getGroupTypes())).append(SimpleUserApp.COMMA_SEPARATOR);
-		action.append(helper.getJavaScriptParameter(properties.getRoleTypes())).append("], ")
-		.append(helper.getJavaScriptParameter(properties.getParentGroupId() == -1 ? null : String.valueOf(properties.getParentGroupId()))).append(SimpleUserApp.COMMA_SEPARATOR);
-		action.append(CoreConstants.QOUTE_SINGLE_MARK).append(properties.getSubGroups()).append(CoreConstants.QOUTE_SINGLE_MARK).append(SimpleUserApp.COMMA_SEPARATOR);
-		action.append(CoreConstants.QOUTE_SINGLE_MARK).append(properties.getSubGroupsToExclude()).append(CoreConstants.QOUTE_SINGLE_MARK);
-		action.append(");");
-		parentGroupsChooser.setOnChange(action.toString());
-		addParentGroups(iwc, parentGroupsContainer, parentGroupsChooser);
+		UIComponentBase parentGroupsChooser;
+		String parentGroupChooserId;
+		if (user == null){
+			parentGroupsChooser = new DropdownMenu();
+			parentGroupChooserId = parentGroupsChooser.getId();
+			StringBuffer action = new StringBuffer("reloadAvailableGroupsForUser(");
+			action.append(helper.getJavaScriptParameter(parentGroupChooserId)).append(SimpleUserApp.COMMA_SEPARATOR);
+			action.append(helper.getJavaScriptParameter(id)).append(SimpleUserApp.COMMA_SEPARATOR).append("['");
+			action.append(availableGroupsOfUserContaianer.getId()).append(SimpleUserApp.PARAMS_SEPARATOR);
+			action.append(iwrb.getLocalizedString("loading", "Loading...")).append("', ");
+			action.append(helper.getJavaScriptParameter(properties.getGroupTypes())).append(SimpleUserApp.COMMA_SEPARATOR);
+			action.append(helper.getJavaScriptParameter(properties.getRoleTypes())).append("], ")
+			.append(helper.getJavaScriptParameter(properties.getParentGroupId() == -1 ? null : String.valueOf(properties.getParentGroupId()))).append(SimpleUserApp.COMMA_SEPARATOR);
+			action.append(CoreConstants.QOUTE_SINGLE_MARK).append(properties.getSubGroups()).append(CoreConstants.QOUTE_SINGLE_MARK).append(SimpleUserApp.COMMA_SEPARATOR);
+			action.append(CoreConstants.QOUTE_SINGLE_MARK).append(properties.getSubGroupsToExclude()).append(CoreConstants.QOUTE_SINGLE_MARK);
+			action.append(");");
+			((DropdownMenu)parentGroupsChooser).setOnChange(action.toString());
+			addParentGroups(iwc, parentGroupsContainer, (DropdownMenu)parentGroupsChooser);
+		}
+		else {
+			Group group = user.getPrimaryGroup();
+			String groupName = "";
+			if (group != null) groupName = group.getName();
+			parentGroupsChooser = new Text(groupName);
+			parentGroupChooserId = parentGroupsChooser.getId();
+		}
+
 
 		//	Choose user
 		Layer chooseUserLabelContainer = new Layer();
@@ -249,12 +262,8 @@ public class SimpleUserAppAddUser extends Block {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		Map<String, String> metadata  = user.getMetaDataAttributes();
 
 
-		if (!StringUtil.isEmpty(metadata.get(""))){
-
-		}
 		ICLanguage l1 = null;
 		ICLanguage l2 = null;
 		ICLanguage l3 = null;
@@ -319,7 +328,7 @@ public class SimpleUserAppAddUser extends Block {
 			List <Gender> genders = new ArrayList<Gender>(genderHome.findAllGenders());
 			gender.setEntities(genders);
 			gender.setMenuElement(-1, iwrb.getLocalizedString("simple_user_application.select_gender", "Select gender"));
-			gender.setSelectedElement(user.getGenderID());
+			if (user != null) gender.setSelectedElement(user.getGenderID());
 		} catch (IDOLookupException e1) {
 		} catch (FinderException e) {
 
@@ -327,7 +336,7 @@ public class SimpleUserAppAddUser extends Block {
 		String genderId = gender.getId();
 
 		IWDatePicker birthDay = new IWDatePicker();
-		birthDay.setDate(user.getDateOfBirth());
+		if (user != null) birthDay.setDate(user.getDateOfBirth());
 		String birthDayId = birthDay.getId();
 		birthDay.setVersion("1.8.17");
 
@@ -339,7 +348,7 @@ public class SimpleUserAppAddUser extends Block {
 		skillLevel.setSelectedElement(sl == null ? 0 : Integer.parseInt(sl));
 		String skillLevelId = skillLevel.getId();
 
-		Text dateCreated = new Text(user.getCreated().toGMTString());
+		Text dateCreated = new Text(user == null ? "" : user.getCreated().toGMTString());
 		String dateCreatedId = dateCreated.getId();
 
 		//	***************************** Data for inputs *****************************
