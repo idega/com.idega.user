@@ -158,7 +158,11 @@ public class SimpleUserAppAddUser extends Block {
 		//	Add user
 		Layer addUserlabelContainer = new Layer();
 		addUserlabelContainer.setStyleClass("addUserlabelContainerStyleClass add-user-label");
-		addUserlabelContainer.add(new Text(iwrb.getLocalizedString("add_user", "Add user")));
+		if (user != null) {
+			addUserlabelContainer.add(new Text(iwrb.getLocalizedString("update_user", "Update user")));
+		} else {
+			addUserlabelContainer.add(new Text(iwrb.getLocalizedString("add_user", "Add user")));
+		}
 		container.add(addUserlabelContainer);
 
 		//	Container of available groups for user
