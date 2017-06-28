@@ -687,7 +687,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		String personalId = userInfo.getPersonalId();
 		String email = userInfo.getEmail();
 
-		if (StringUtil.isEmpty(name) || primaryGroupId == null || childGroups == null || StringUtil.isEmpty(email)) {
+		if (StringUtil.isEmpty(name) || primaryGroupId == null || childGroups == null || StringUtil.isEmpty(email) || StringUtil.isEmpty(userInfo.getPhone())) {
 			logger.warning("Some of the parameters are invalid! Name: " + name + ", primary group ID: " + primaryGroupId + ", child groups: " +
 					childGroups + ", email: " + email);
 			return result;
@@ -916,7 +916,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				user.setDateOfBirth(new java.sql.Date(birthDay.getTime()));
 			} catch (ParseException e) {
 			}
-			user.setGender(Integer.parseInt(metadata.remove("gender")));
+			Integer gender = Integer.parseInt(metadata.remove("gender"));
+			if (gender > 0)	user.setGender(Integer.parseInt(metadata.remove("gender")));
+			else user.setGender(null);
 			user.setMetaDataAttributes(metadata);
 		}
 

@@ -833,7 +833,7 @@ public class SimpleUserAppAddUser extends Block {
 		fieldContainer = new Layer("span");
 		fieldsContainer.add(fieldContainer);
 		fieldContainer.setStyleClass("phone field-layer");
-		fieldContainer.add(getLabelContainer(iwrb.getLocalizedString("phone", "Phone")));
+		fieldContainer.add(getLabelContainer(iwrb.getLocalizedString("phone", "Phone"), true));
 		fieldContainer.add(getComponentContainer(inputs.get(2)));
 		fieldContainer.add(getSpacer());
 
