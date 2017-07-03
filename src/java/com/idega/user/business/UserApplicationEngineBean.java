@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -906,7 +905,6 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			}
 		}
 
-
 		Map<String, String> metadata = userInfo.getMetadata();
 		if (metadata != null){
 			DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
@@ -914,14 +912,19 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			try {
 				birthDay = df.parse(metadata.remove("birthDay"));
 				user.setDateOfBirth(new java.sql.Date(birthDay.getTime()));
-			} catch (ParseException e) {
+			} catch (Exception e) {}
+
+			Integer gender = null;
+			try {
+				gender = Integer.parseInt(metadata.remove("gender"));
+			} catch (Exception e) {}
+			if (gender != null && gender > 0) {
+				user.setGender(gender);
+			} else {
+				user.setGender(null);
 			}
-			Integer gender = Integer.parseInt(metadata.remove("gender"));
-			if (gender > 0)	user.setGender(Integer.parseInt(metadata.remove("gender")));
-			else user.setGender(null);
 			user.setMetaDataAttributes(metadata);
 		}
-
 
 		//	Login
 		loginTable = loginTable == null ? LoginDBHandler.getUserLogin(user) : loginTable;
