@@ -673,8 +673,17 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	@Override
-	public AdvancedProperty createUserWithEmailProps(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
-			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password, Map<String, String> emailProps) {
+	public AdvancedProperty createUserWithEmailProps(
+			UserDataBean userInfo,
+			Integer primaryGroupId,
+			List<Integer> childGroups,
+			List<Integer> deselectedGroups,
+			boolean allFieldsEditable,
+			boolean sendEmailWithLoginInfo,
+			String login,
+			String password,
+			Map<String, String> emailProps
+	) {
 		if (userInfo == null) {
 			logger.warning("User info is not provided!");
 			return null;
@@ -686,21 +695,24 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		String personalId = userInfo.getPersonalId();
 		String email = userInfo.getEmail();
 
-		if (StringUtil.isEmpty(name) || primaryGroupId == null || childGroups == null || StringUtil.isEmpty(email) || StringUtil.isEmpty(userInfo.getPhone())) {
-			logger.warning("Some of the parameters are invalid! Name: " + name + ", primary group ID: " + primaryGroupId + ", child groups: " +
-					childGroups + ", email: " + email);
-			return result;
-		}
-
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			logger.warning(IWContext.class.getName() + " is unavailable");
+			result.setValue("Error occurred while saving your changes.");
+			return result;
+		}
+
+		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
+
+		if (StringUtil.isEmpty(name) || primaryGroupId == null || childGroups == null || StringUtil.isEmpty(email) || StringUtil.isEmpty(userInfo.getPhone())) {
+			logger.warning("Some of the parameters are invalid! Name: " + name + ", primary group ID: " + primaryGroupId + ", child groups: " +
+					childGroups + ", email: " + email + ", phone: " + userInfo.getPhone());
+			result.setValue(iwrb.getLocalizedString("sua.required_field_not_fille_in", "Some required field is not filled-in"));
 			return result;
 		}
 
 		String phoneNumber = userInfo.getPhone();
 
-		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 		result.setValue(iwrb.getLocalizedString("error_saving_user", "Error occurred while saving your changes."));
 
 		UserBusiness userBusiness = getUserBusiness(iwc);
