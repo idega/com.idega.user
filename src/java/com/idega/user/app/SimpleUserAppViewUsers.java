@@ -529,6 +529,10 @@ public class SimpleUserAppViewUsers extends Block {
 		else if (filteredTopGroups.size() == 1) {
 			//	Only one group available
 			Group group = filteredTopGroups.get(0);
+			groupsDropdown.addMenuElements(filteredTopGroups);
+			properties.setParentGroupId(Integer.valueOf(group.getId()));
+			groupsDropdown.setMarkupAttribute("style", "display:none;");
+			container.add(groupsDropdown);
 			addGroupNameLabel(iwrb, container, group);
 			return group;
 		}
