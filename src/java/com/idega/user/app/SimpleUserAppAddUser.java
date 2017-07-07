@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -251,11 +252,27 @@ public class SimpleUserAppAddUser extends Block {
 		TextInput postalBoxInput = new TextInput();
 		String postalBoxInputId = postalBoxInput.getId();
 
-		List<String> langs = Arrays.asList("de", "fr", "es", "en", "it", "ru", "zh");
+		//List<String> langs = Arrays.asList("en", "fr", "de", "es", "pt");
+		List<String> langs2 = Arrays.asList("bg", "cs", "da", "nl", "et", "fi", "el", "hu", "ga", "it", "lv", "lt", "mt", "pl", "ro", "sk", "sl", "sv");
+
 
 		List<ICLanguage> languages = new ArrayList<ICLanguage>();
+		List<ICLanguage> languages2 = new ArrayList<ICLanguage>();
 		try {
-			languages.addAll(getICLanguageHome().findManyByISOAbbreviation(langs));
+			languages.add(getICLanguageHome().findByISOAbbreviation("en"));
+			languages.add(getICLanguageHome().findByISOAbbreviation("fr"));
+			languages.add(getICLanguageHome().findByISOAbbreviation("de"));
+			languages.add(getICLanguageHome().findByISOAbbreviation("es"));
+			languages.add(getICLanguageHome().findByISOAbbreviation("pt"));
+
+			languages2.addAll(getICLanguageHome().findManyByISOAbbreviation(langs2));
+			languages2.sort(new Comparator<ICLanguage>() {
+			      @Override
+			      public int compare(ICLanguage o1, ICLanguage o2) {
+			        return o1.getName().compareTo(o2.getName());
+			      }
+			    });
+			languages.addAll(languages2);
 		} catch (FinderException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
