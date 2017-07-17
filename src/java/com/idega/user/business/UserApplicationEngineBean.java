@@ -919,7 +919,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 		Map<String, String> metadata = userInfo.getMetadata();
 		if (metadata != null){
-			DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
+			DateFormat df = new SimpleDateFormat("dd/MM/yy");
 			Date birthDay;
 			try {
 				birthDay = df.parse(metadata.remove("birthDay"));

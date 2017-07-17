@@ -361,6 +361,8 @@ public class SimpleUserAppAddUser extends Block {
 		String genderId = gender.getId();
 
 		IWDatePicker birthDay = new IWDatePicker();
+		birthDay.setDateFormat("dd/MM/yy");
+		birthDay.setDateFormatJS("dd/mm/y");
 		if (user != null) birthDay.setDate(user.getDateOfBirth());
 		String birthDayId = birthDay.getId();
 		birthDay.setVersion("1.8.17");
