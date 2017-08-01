@@ -216,7 +216,7 @@ public class CreateUser extends StyledIWAdminWindow {
 				boolean hasPermission = false;
 				try {
 					GroupDAO groupDAO = ELUtil.getInstance().getBean(GroupDAO.class);
-					com.idega.user.data.bean.Group group = groupDAO.findGroup(primaryGroupId);;
+					com.idega.user.data.bean.Group group = groupDAO.findGroup(primaryGroupId);
 					hasPermission = iwc.getAccessController().hasEditPermissionFor(group, iwc);
 				} catch (Exception e) {
 					getLogger().log(Level.WARNING, "Error while checking if current user has permission to edit group by ID: " + primaryGroupId, e);
