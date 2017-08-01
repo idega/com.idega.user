@@ -92,7 +92,7 @@ public class IWBundleStarter implements IWBundleStartable {
 				@Override
 				public boolean hasUserAccess(IWUserContext iwuc){
 					try {
-						return getUserBusiness().hasTopNodes(iwuc.getCurrentUser(), iwuc);
+						return getUserBusiness().hasTopNodes(iwuc.getCurrentUser(), iwuc) || iwuc.isUserInRole(StandardRoles.ROLE_KEY_USERADMIN);
 					} catch (RemoteException e) {
 						e.printStackTrace();
 					}
