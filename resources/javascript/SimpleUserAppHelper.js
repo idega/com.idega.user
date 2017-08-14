@@ -516,6 +516,23 @@ function isValidUserEmailCallback(result, ids, childGroups, messages, allFieldsE
 	//}
 }
 
+SimpleUserApplication.isValidLogin = function(loginInputId) {
+	var userName = document.getElementById(loginInputId).value;
+	UserApplicationEngine.isValidUserName(userName, {
+		callback: function(userNameCheckResult) {
+			closeAllLoadingMessages();
+			if (userNameCheckResult != null && userNameCheckResult.id == 'false') {
+				showHumanizedMessage(userNameCheckResult.value, loginInputId);
+				jQuery('#' + loginInputId).addClass('error');
+				return false;
+			}
+			
+			jQuery('#' + loginInputId).removeClass('error');
+			return true;
+		}
+	});
+}
+
 function isValidUserNameCallback(userNameCheckResult, ids, childGroups, messages, allFieldsEditable, userId, sendEmailWithLoginInfo, juridicalPerson) {
 	closeAllLoadingMessages();
 	if (userNameCheckResult != null && userNameCheckResult.id == 'false') {

@@ -409,6 +409,12 @@ span.requiredFieldUserApp {
 	font-size: 1.4em;
 }
 
+input.error {
+	color: #FF2700 !important;
+	border-color: #FF2700 !important;
+	border: 1px solid !important;
+}
+
 div.groupsChooserBoxBodyStyle {
 	height: 150px;
 	width: auto;
