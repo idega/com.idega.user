@@ -748,7 +748,11 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			try {
 				loginTable = LoginDBHandler.createLogin(user, login, password);
 			} catch (LoginCreateException e) {
-				e.printStackTrace();
+				logger.log(Level.WARNING, "Error creating login '" + login + "' for user " + user, e);
+				String message = iwrb.getLocalizedString("error_creating_account_with_username_{0}_for_{1}", "Error creating account for {1} with username {0}: username {0} is already in use");
+				message = MessageFormat.format(message, new Object[] {login, user == null ? CoreConstants.EMPTY : user.getName()});
+				result.setValue(message);
+				return result;
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}

@@ -130,6 +130,7 @@ public class SimpleUserAppAddUser extends Block {
 			if (!properties.isAllFieldsEditable())
 				loginValueInput.setDisabled(true);
 			loginInputId = loginValueInput.getId();
+			loginValueInput.setOnKeyUp("SimpleUserApplication.isValidLogin('" + loginValueInput.getId() + "');");
 		}
 
 		//	Add user
