@@ -1021,6 +1021,8 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			sendEmail(userInfo.getEmail(), subject, text.toString());
 		}
 
+		CoreUtil.clearAllCaches();
+
 		result.setValue(iwrb.getLocalizedString("success_saving_user", "Your changes were successfully saved."));
 		return result;
 	}
