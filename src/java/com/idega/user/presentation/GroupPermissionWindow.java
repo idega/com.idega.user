@@ -221,15 +221,15 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 	private void addPermissionsForm(IWContext iwc) throws Exception {
 	    //get permission, order, sort alphabetically and use entitybrowser
-		Collection allPermissions = getAllPermissionForSelectedGroupAndCurrentUser(iwc);
-	    List entityList = orderAndGroupPermissionsByContextValue(allPermissions, iwc);
+		Collection<ICPermission> allPermissions = getAllPermissionForSelectedGroupAndCurrentUser(iwc);
+	    List<List<ICPermission>> entityList = orderAndGroupPermissionsByContextValue(allPermissions, iwc);
 		this.groupComparator = new GroupComparator(iwc);
 		this.groupComparator.setObjectsAreICPermissions(true);
 		this.groupComparator.setGroupBusiness(this.getGroupBusiness(iwc));
 		this.groupComparator.setSortByParents(true);
 		Collections.sort(entityList, this.groupComparator);
 		List browserList = null;
-		List groupTypes = new ArrayList();
+		List<String> groupTypes = new ArrayList<>();
 		if (this.filterGroupTypes != null) {
 		    for (int i=0; i<this.filterGroupTypes.length; i++) {
 		        groupTypes.add(this.filterGroupTypes[i]);
@@ -746,16 +746,16 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 
 			int size = thisGroup.size() + ownedPermissions.size();
 //			get all permit permissions from parents or their permission controlling groups
-			Collection parentOrPersionControllingGroups = getAllParentOrPermissionControllingGroupsForUser(iwc, user);
-			Collection permitPermissions = null;
+			Collection<Group> parentOrPersionControllingGroups = getAllParentOrPermissionControllingGroupsForUser(iwc, user);
+			Collection<ICPermission> permitPermissions = null;
 			if(!parentOrPersionControllingGroups.isEmpty()){
-			    permitPermissions = AccessControl.getAllGroupPermitPermissions(parentOrPersionControllingGroups);
+			    permitPermissions = AccessControl.getAllGroupPermitPermissionsOld(parentOrPersionControllingGroups);
 			    size += permitPermissions.size();
 			}
 
 
 			//add the permissions to one big list
-			allPermissions = new ArrayList(size);
+			allPermissions = new ArrayList<>(size);
 
 			allPermissions.addAll(thisGroup);
 			allPermissions.addAll(ownedPermissions);
@@ -766,7 +766,7 @@ public class GroupPermissionWindow extends StyledIWAdminWindow { //implements St
 		catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("GroupPermission selected group (" + this.selectedGroupId + ") not found or remote error!");
-			allPermissions = new ArrayList();
+			allPermissions = new ArrayList<>();
 		}
 		return allPermissions;
 	}
