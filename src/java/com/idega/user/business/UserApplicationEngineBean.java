@@ -47,6 +47,7 @@ import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.Commune;
+import com.idega.core.location.data.CommuneHome;
 import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
@@ -850,9 +851,10 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		if (userAddress == null || allFieldsEditable) {
 			try {
 				Country country = getCountryById(userInfo.getCountryName());
-				PostalCode postalCode = getPostalCode(userInfo.getPostalCodeId());
+				Commune commune = getCommune(StringUtil.isEmpty(userInfo.getCommune()) ? userInfo.getCity() : userInfo.getCommune());
+				PostalCode postalCode = getPostalCode(userInfo.getPostalCodeId(), country);
 				if (postalCode == null) {
-					postalCode = createPostalCode(userInfo.getPostalCodeId());
+					postalCode = createPostalCode(userInfo.getPostalCodeId(), country, commune, userInfo.getCity());
 				} else {
 					postalCode.setPostalCode(userInfo.getPostalCodeId());
 					postalCode.store();
@@ -867,7 +869,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 							userInfo.getCity(),
 							userInfo.getProvince(),
 							userInfo.getPostalBox(),
-							null
+							commune == null ? null : (Integer) commune.getPrimaryKey()
 					);
 				}
 			} catch (NumberFormatException e) {
@@ -968,6 +970,19 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		return result;
 	}
 
+	private Commune getCommune(String name) {
+		if (StringUtil.isEmpty(name)) {
+			return null;
+		}
+
+		try {
+			CommuneHome communeHome = (CommuneHome) IDOLookup.getHome(Commune.class);
+			return communeHome.findByCommuneName(name);
+		} catch (Exception e) {}
+
+		return null;
+	}
+
 	private boolean sendEmail(String emailTo, String subject, String text) {
 		IWMainApplication iwma = getApplication();
 		IWMainApplicationSettings settings = iwma.getSettings();
@@ -987,12 +1002,15 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		return false;
 	}
 
-	private PostalCode createPostalCode(String postalCodeValue) {
+	private PostalCode createPostalCode(String postalCodeValue, Country country, Commune commune, String city) {
 		PostalCode postalCode = null;
 		try {
 			PostalCodeHome postalCodeHome = (PostalCodeHome) getIDOHome(PostalCode.class);
 			postalCode = postalCodeHome.create();
+			postalCode.setName(commune == null ? city : commune.getCommuneName());
 			postalCode.setPostalCode(postalCodeValue);
+			postalCode.setCountry(country);
+			postalCode.setCommune(commune);
 			postalCode.store();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -1053,13 +1071,14 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		return country.getPrimaryKey().toString();
 	}
 
-	private PostalCode getPostalCode(String postalCode) {
+	private PostalCode getPostalCode(String postalCode, Country country) {
 		if (StringUtil.isEmpty(postalCode)) {
 			return null;
 		}
 
 		try {
-			return ((PostalCodeHome) getIDOHome(PostalCode.class)).findByPostalCode(postalCode);
+			PostalCodeHome postalCodeHome = (PostalCodeHome) getIDOHome(PostalCode.class);
+			return country == null ? postalCodeHome.findByPostalCode(postalCode) : postalCodeHome.findByPostalCodeAndCountryId(postalCode, (Integer) country.getPrimaryKey());
 		} catch (Exception e) {}
 
 		return null;
