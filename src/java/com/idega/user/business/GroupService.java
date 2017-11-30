@@ -137,4 +137,7 @@ public interface GroupService extends IBOSession {
 	public RenderedComponent getRenderedGroup(String uniqueId, String containerId, String groupName);
 
 	public AdvancedProperty getFelixLogin(IWContext iwc);
+
+	public List<AdvancedProperty> getChildGroupsRecursive(Integer groupId);
+
 }

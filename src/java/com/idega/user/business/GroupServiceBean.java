@@ -1131,4 +1131,32 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 
 		return BuilderLogic.getInstance().getRenderedComponent(container, null);
 	}
+
+	@Override
+	public List<AdvancedProperty> getChildGroupsRecursive(Integer groupId) {
+		if (groupId == null) {
+			return null;
+		}
+
+		IWContext iwc = CoreUtil.getIWContext();
+		try {
+			Collection<Group> groups = getGroupBusiness(iwc).getChildGroupsRecursive(groupId);
+			if (ListUtil.isEmpty(groups)) {
+				return null;
+			}
+
+			List<AdvancedProperty> results = new ArrayList<>();
+			for (Group group: groups) {
+				results.add(new AdvancedProperty(group.getId(), group.getName(), group.getType()));
+			}
+			getLogger().info("Child groups recursively for group with ID: " + groupId + " (total: " + (results == null ? "0" : results.size()) + "): " + results);
+
+			return results;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting child groups recursively for group with ID: " + groupId, e);
+		}
+
+		return null;
+	}
+
 }
