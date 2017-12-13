@@ -34,20 +34,24 @@ import com.idega.user.data.GroupTypeHome;
 public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements InputHandler {
 	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 	private List _allGroupTypes = new ArrayList();
-	
+
+	public static final String GROUP_TYPE_CLUB_PLAYER = "iwme_club_player";
+	public static final String GROUP_TYPE_CLUB_PRACTICE_PLAYER = "iwme_club_practice_player";
+
 	public GroupTypeSelectionBoxInputHandler() {
 		super();
 	}
-	
+
 	public GroupTypeSelectionBoxInputHandler(String name) {
 		super(name);
 	}
-	
+
+	@Override
 	public void main(IWContext iwc) {
         initialize(iwc);
         super.main(iwc);
 	}
-	
+
 	private void initialize(IWContext iwc) {
 		try {
 			IWResourceBundle iwrb = this.getResourceBundle(iwc);
@@ -74,11 +78,12 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see com.idega.business.InputHandler#getHandlerObject(java.lang.String, java.lang.String, com.idega.presentation.IWContext)
 	 */
+	@Override
 	public PresentationObject getHandlerObject(String name, String value, IWContext iwc) {
 		//initialize(iwc); //this is now done in the main function
 		this.setName(name);
@@ -91,11 +96,12 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 	/* (non-Javadoc)
 	 * @see com.idega.business.InputHandler#getResultingObject(java.lang.String[], com.idega.presentation.IWContext)
 	 */
+	@Override
 	public Object getResultingObject(String[] values, IWContext iwc) throws Exception {
 		Collection groupTypes = null;
 		if (values != null && values.length > 0) {
 			groupTypes = new ArrayList();
-			
+
 			for(int i=0; i<values.length; i++) {
 				groupTypes.add(values[i]);
 			}
@@ -109,6 +115,7 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 	/* (non-Javadoc)
 	 * @see com.idega.business.InputHandler#getDisplayNameOfValue(java.lang.Object, com.idega.presentation.IWContext)
 	 */
+	@Override
 	public String getDisplayForResultingObject(Object value, IWContext iwc) {
 		Collection groupTypes = (Collection) value;
 		if (groupTypes == null || groupTypes.isEmpty()) {
@@ -117,6 +124,11 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 		String result = null;
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		if(groupTypes != null) {
+			//If group types collection contains iwme_club_player and iwme_club_practice_player, leave only iwme_club_player
+			if (groupTypes.contains(GROUP_TYPE_CLUB_PLAYER) && groupTypes.contains(GROUP_TYPE_CLUB_PRACTICE_PLAYER)) {
+				groupTypes.remove(GROUP_TYPE_CLUB_PRACTICE_PLAYER);
+			}
+
 			StringBuffer buf = new StringBuffer();
 			Iterator gtIter = groupTypes.iterator();
 			boolean isFirst = true;
@@ -127,7 +139,7 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 					buf.append(",");
 				}
 				String name = (String) gtIter.next();
-				
+
 				buf.append(iwrb.getLocalizedString(name,name));
 			}
 			result = buf.toString();
@@ -135,26 +147,29 @@ public class GroupTypeSelectionBoxInputHandler extends SelectionBox implements I
 		return result;
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 
+	@Override
 	public PresentationObject getHandlerObject(String name, Collection values, IWContext iwc) {
 		SelectionBox box = (SelectionBox) getHandlerObject(name, (String) null, iwc);
 		if (values != null) {
 			Iterator iterator = values.iterator();
 			while (iterator.hasNext()) {
-				String value = (String) iterator.next(); 
+				String value = (String) iterator.next();
 				box.setSelectedElement(value);
 			}
 		}
-		return box;		
+		return box;
 	}
 
 
 	/* (non-Javadoc)
 	 * @see com.idega.business.InputHandler#convertResultingObjectToType(java.lang.Object, java.lang.String)
 	 */
+	@Override
 	public Object convertSingleResultingObjectToType(Object value, String className) {
 		return value;
 	}
