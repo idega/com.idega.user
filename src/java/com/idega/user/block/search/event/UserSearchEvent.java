@@ -1,7 +1,11 @@
 package com.idega.user.block.search.event;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.idega.event.IWPresentationEvent;
 import com.idega.presentation.IWContext;
-import com.idega.event.*;
+import com.idega.util.StringUtil;
 
 
 /**
@@ -18,7 +22,7 @@ public class UserSearchEvent extends IWPresentationEvent {
 	private static final long serialVersionUID = 4045345287265772753L;
 
 	public static final String SEARCH_FIELD_SEARCH_TYPE = "usr_search_type";
-	
+
 	public static final String SEARCH_FIELD_SIMPLE_SEARCH_STRING = "usr_search";
 	public static final String SEARCH_FIELD_FIRST_NAME = "usr_search_f_name";
 	public static final String SEARCH_FIELD_MIDDLE_NAME = "usr_search_m_name";
@@ -30,10 +34,10 @@ public class UserSearchEvent extends IWPresentationEvent {
 	public static final String SEARCH_FIELD_AGE_CEILING = "usr_search_age_ceil";
 	public static final String SEARCH_FIELD_PERSONAL_ID = "usr_search_personal_id";
 	public static final String SEARCH_FIELD_ADDRESS = "usr_search_address";
-	
+
 	public static final int SEARCHTYPE_SIMPLE = 0;
 	public static final int SEARCHTYPE_ADVANCED = 1;
-	
+
 	private String searchString = null;
 	private int searchType = 0;
 	private String[] groups = null;
@@ -63,11 +67,18 @@ public class UserSearchEvent extends IWPresentationEvent {
 		if (type == null){
 		    type = iwc.getParameter(SEARCH_FIELD_SEARCH_TYPE+".x");
 		}
-	
+
 		try {
 			this.searchType = Integer.parseInt(type);
 			if (this.searchType == UserSearchEvent.SEARCHTYPE_SIMPLE){// simple search
 				this.searchString = iwc.getParameter(SEARCH_FIELD_SIMPLE_SEARCH_STRING);
+				try {
+					if (!StringUtil.isEmpty(this.searchString)) {
+						this.searchString = new String(this.searchString.getBytes("ISO-8859-1"), "UTF-8");
+					}
+				} catch (Exception eUE) {
+					Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Could not encode search string: " + this.searchString, eUE);
+				}
 				return iwc.isParameterSet(SEARCH_FIELD_SIMPLE_SEARCH_STRING);
 			} else if (this.searchType == UserSearchEvent.SEARCHTYPE_ADVANCED){// advanced search
 				this.firstName = iwc.getParameter(SEARCH_FIELD_FIRST_NAME);
@@ -77,13 +88,13 @@ public class UserSearchEvent extends IWPresentationEvent {
 				this.genderId = iwc.isParameterSet(SEARCH_FIELD_GENDER_ID) ? Integer.parseInt(iwc.getParameter(SEARCH_FIELD_GENDER_ID)) : 0;
 				this.personalId = iwc.getParameter(SEARCH_FIELD_PERSONAL_ID);
 				this.address = iwc.getParameter(SEARCH_FIELD_ADDRESS);
-				
+
 				if (iwc.isParameterSet(SEARCH_FIELD_AGE_FLOOR)) {
 					this.ageFloor = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_AGE_FLOOR));
 				}
 				if (iwc.isParameterSet(SEARCH_FIELD_AGE_CEILING)) {
 					this.ageCeil = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_AGE_CEILING));
-				}	
+				}
 				if (iwc.isParameterSet(SEARCH_FIELD_STATUS_ID)) {
 					this.statusId = Integer.parseInt(iwc.getParameter(SEARCH_FIELD_STATUS_ID));
 				}
@@ -94,7 +105,7 @@ public class UserSearchEvent extends IWPresentationEvent {
 			System.err.println("["+this.getClass()+"] :No searchType or error in advances search");
 			return false;
 		}
-		
+
 		return true;
     }
 	/**
