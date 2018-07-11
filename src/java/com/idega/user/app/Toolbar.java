@@ -249,11 +249,14 @@ public class Toolbar extends Page implements IWBrowserView {
 			    	try {
 				    	if (theClass.isInterface()) {
 				    		beanName = theClass.getName() + "Bean";
-				    		tmpBiz = (UserGroupPlugInBusiness) Class.forName(beanName).newInstance();
-					    	List<ToolbarElement> list = tmpBiz.getMainToolbarElements();
-							if (!ListUtil.isEmpty(list)) {
-								toolbarElements.addAll(list);
-							}
+				    		Object o = Class.forName(beanName).newInstance();
+				    		if (o instanceof UserGroupPlugInBusiness) {
+					    		tmpBiz = (UserGroupPlugInBusiness) o;
+						    	List<ToolbarElement> list = tmpBiz.getMainToolbarElements();
+								if (!ListUtil.isEmpty(list)) {
+									toolbarElements.addAll(list);
+								}
+				    		}
 				    	}
 			    	} catch (Exception e) {
 						getLogger().log(Level.WARNING, "Error getting bean instance for " + beanName, e);
