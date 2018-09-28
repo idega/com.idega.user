@@ -286,6 +286,7 @@ company_employee_role=Company employee role
 company_role=Company role
 company_staff=company_staff
 company_super_admin=company_super_admin
+citizen_administrator=Citizen Administrator
 confirmPassword=
 content_author=content_author
 content_editor=content_editor

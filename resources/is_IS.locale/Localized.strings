@@ -566,6 +566,7 @@ Address.STREET_NAME_AND_NUMBER=Götunafn og númer
 company_admin=Fyrirtæki admin
 company_staff=fyrirtæki starfsmenn
 company_super_admin=Fyrirtæki super admin
+citizen_administrator=Landlæknir
 loading=Hleð ...
 please_enter_login=Vinsamlegast sláðu tenging\!
 please_enter_name=Vinsamlegast sláðu nafn\!
