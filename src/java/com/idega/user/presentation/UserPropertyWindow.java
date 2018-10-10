@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
@@ -18,7 +20,7 @@ import com.idega.util.IWColor;
 
 /**
  * Title: User Copyright: Copyright (c) 2001 Company: idega.is
- * 
+ *
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gudmundur Saemundsson</a>,<a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  * @version 1.5
  */
@@ -38,6 +40,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		this.setBackgroundColor(new IWColor(207, 208, 210));
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
@@ -47,7 +50,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			addTitle(user.getName(), TITLE_STYLECLASS);
 		}
 		setTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"));
-		
+
 		if (this.panel.clickedApply() || this.panel.clickedOk()) {
         	setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
         }
@@ -56,25 +59,28 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 	/**
 	 * @see com.idega.presentation.TabbedPropertyWindow#disposeOfPanel(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public boolean disposeOfPanel(IWContext iwc) {
 		return iwc.isParameterSet(PARAMETERSTRING_USER_ID);
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 
 	public GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws RemoteException {
-		return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+		return com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
 	}
 
+	@Override
 	public String getSessionAddressString() {
 		return SESSION_ADDRESS;
 	}
 
 	/**
 	 * <p>
-	 * Initializes the userId and groupId variables. 
+	 * Initializes the userId and groupId variables.
 	 * This is by default called from initializePanel()
 	 * </p>
 	 * @param iwc
@@ -90,7 +96,8 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		setUserId(userId);
 		setGroupId(groupId);
 	}
-	
+
+	@Override
 	public void initializePanel(IWContext iwc, TabbedPropertyPanel panel) {
 		try {
 			int count = 0;
@@ -98,25 +105,25 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			initializeUserAndGroup(iwc);
 			int userId = getUserId();
 			int groupId = getGroupId();
-			
+
 			// Collects the tab info and calls usergroupplugin methods
 			User user = getUserBusiness(iwc).getUser(userId);
 			panel.setCollector(new UserGroupPluginFormCollector(user));
 			//we could also add the group if we want that to be notified of changes panel.setGroup(group);
-			
+
 			// add the standard tabs and then from plugins
 			UserTab userInfo = new GeneralUserInfoTab(userId);
 			userInfo.setPanel(panel);
 			userInfo.setUserIDAndGroupID(userId, groupId);
-			
+
 			UserTab addressInfo = new AddressInfoTab();
 			addressInfo.setPanel(panel);
 			addressInfo.setUserIDAndGroupID(userId, groupId);
-			
+
 			UserTab phone = new UserPhoneTab();
 			phone.setPanel(panel);
 			phone.setUserIDAndGroupID(userId, groupId);
-			
+
 			UserTab group = new UserGroupList();
 			group.setPanel(panel);
 			group.setUserIDAndGroupID(userId, groupId);
@@ -124,14 +131,14 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			panel.addTab(addressInfo, ++count, iwc);
 			panel.addTab(phone, ++count, iwc);
 			panel.addTab(group, ++count, iwc);
-			
+
 			// METADATA TAB, only show if admin
 			if (iwc.isSuperAdmin()) {
 				GenericMetaDataTab metaDataTab = new GenericMetaDataTab(user);
 				metaDataTab.setPanel(panel);
 				panel.addTab(metaDataTab, ++count, iwc);
 			}
-			
+
 			// get plugins for extra tabs
 			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
 			Iterator iter = plugins.iterator();
@@ -148,7 +155,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 					}
 				}
 			}
-			
+
 			// don't forget the login tab
 			UserLoginTab ult = new UserLoginTab();
 			ult.setPanel(panel);
@@ -164,6 +171,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 	/**
 	 * overrides the default behaviour to check for edit permissions
 	 */
+	@Override
 	protected TabbedPropertyPanel getPanelInstance(IWContext iwc) {
 		boolean useOkButton = false;
 		boolean useApplyButton = false;
@@ -178,6 +186,9 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		if (isAdmin) {// only super admin can edit without permission
 			useOkButton = true;
 			useApplyButton = true;
+		}
+		if (!useOkButton && iwc.getApplicationSettings().getBoolean("ua.not_admin_can_save_users", false) && iwc.hasRole(StandardRoles.ROLE_KEY_USERADMIN)) {
+			useOkButton = true;
 		}
 		// check if we have edit permissions, otherwise disable saving
 		String groupId = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
@@ -204,7 +215,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 					try {
 					    User selectedUser = getUserBusiness(iwc).getUser(selectedUserId);
 					    Collection parentGroupsOfSelectedUser = selectedUser.getParentGroups();
-					    Iterator parentIter = parentGroupsOfSelectedUser.iterator(); 
+					    Iterator parentIter = parentGroupsOfSelectedUser.iterator();
 					    while (parentIter.hasNext()) {
 					        if (iwc.getAccessController().hasEditPermissionFor((Group)parentIter.next(), iwc)) {
 					            useOkButton = true;
@@ -230,14 +241,14 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.block.cal.presentation.CalPropertyWindow#getIdParameter()
 	 */
 	public String getIdParameter() {
 		return PARAMETERSTRING_USER_ID;
 	}
 
-	
+
 	/**
 	 * @return Returns the groupId.
 	 */
@@ -245,7 +256,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		return this.groupId;
 	}
 
-	
+
 	/**
 	 * @param groupId The groupId to set.
 	 */
@@ -253,7 +264,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		this.groupId = groupId;
 	}
 
-	
+
 	/**
 	 * @return Returns the userId.
 	 */
@@ -261,7 +272,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 		return this.userId;
 	}
 
-	
+
 	/**
 	 * @param userId The userId to set.
 	 */
