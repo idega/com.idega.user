@@ -140,4 +140,6 @@ public interface GroupService extends IBOSession {
 
 	public List<AdvancedProperty> getChildGroupsRecursive(Integer groupId);
 
+	public boolean createGroup(String name, String type, Integer parentGroupId);
+
 }

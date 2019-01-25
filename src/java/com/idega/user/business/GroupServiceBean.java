@@ -49,6 +49,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.StringHandler;
 import com.idega.util.expression.ELUtil;
 import com.idega.webface.WFUtil;
 
@@ -1034,14 +1035,9 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 
     @Override
     public boolean addUser(String userId, String groupId) {
-
-    	if(StringUtil.isEmpty(userId) || StringUtil.isEmpty(userId)){
+    	if (!StringHandler.isNumeric(userId) || !StringHandler.isNumeric(userId)){
     		return false;
     	}
-
-
-        //IBOLookup pad4s ideti EJB bean
-        //jei neprisijunges, nukreipti i pages langa.
 
     	GroupBusiness groupBusiness = getGroupBusiness(CoreUtil.getIWContext());
     	try{
@@ -1103,8 +1099,9 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 
 	@Override
 	public RenderedComponent getRenderedGroup(String uniqueId, String containerId, String groupName) {
-		if (StringUtil.isEmpty(uniqueId) || StringUtil.isEmpty(containerId) || StringUtil.isEmpty(groupName))
+		if (StringUtil.isEmpty(uniqueId) || StringUtil.isEmpty(containerId) || StringUtil.isEmpty(groupName)) {
 			return null;
+		}
 
 		IWContext iwc = CoreUtil.getIWContext();
 		IWBundle bundle = iwc.getIWMainApplication().getBundle(CoreConstants.IW_USER_BUNDLE_IDENTIFIER);
@@ -1157,6 +1154,34 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 		}
 
 		return null;
+	}
+
+	@Override
+	public boolean createGroup(String name, String type, Integer parentGroupId) {
+		if (StringUtil.isEmpty(name)) {
+			getLogger().warning("Group name is not provided");
+			return false;
+		}
+		if (StringUtil.isEmpty(type)) {
+			getLogger().warning("Group type is not provided");
+			return false;
+		}
+
+		try {
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc == null || !iwc.isSuperAdmin()) {
+				return false;
+			}
+
+			GroupBusiness groupBusiness = getGroupBusiness(iwc);
+			Group parentGroup = parentGroupId == null ? null : groupBusiness.getGroupByGroupID(parentGroupId);
+			Group newGroup = groupBusiness.createGroupUnder(name, null, type, parentGroup);
+			return newGroup != null;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error creating group with name '" + name + "' and type '" + type + "'" + (parentGroupId == null ? CoreConstants.EMPTY : " under group with ID " + parentGroupId), e);
+		}
+
+		return false;
 	}
 
 }
