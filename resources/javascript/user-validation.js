@@ -28,7 +28,11 @@ var userValidationHelper ={
 			userValidationHelper.options = jQuery.extend(true,{},userValidationHelper.options,opts);
 			jQuery.validator.addMethod("validate-login-existance", function(value, element,arg) {
 				var valid = false;
-				UserApplicationEngine.getUserIdByLogin(value,{
+				var loginValidator = userValidationHelper.options.loginValidator;
+				if (loginValidator == null) {
+					loginValidator = UserApplicationEngine;
+				}
+				loginValidator.getUserIdByLogin(value,{
 					callback:function(reply) {
 						if(!reply || (reply < 0)){
 							valid = true;
