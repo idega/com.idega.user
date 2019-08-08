@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.idegaweb.IWApplicationContext;
@@ -42,18 +43,23 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 
 	@Override
 	public void main(IWContext iwc) throws Exception {
-		IWResourceBundle iwrb = getResourceBundle(iwc);
-		String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
-		if (userIdString != null) {
-			int userId = Integer.parseInt(userIdString);
-			User user = getUserBusiness(iwc).getUser(userId);
-			addTitle(user.getName(), TITLE_STYLECLASS);
-		}
-		setTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"));
+		try {
+			IWResourceBundle iwrb = getResourceBundle(iwc);
+			String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
+			if (userIdString != null) {
+				int userId = Integer.parseInt(userIdString);
+				User user = getUserBusiness(iwc).getUser(userId);
+				addTitle(user.getName(), TITLE_STYLECLASS);
+			}
+			setTitle(iwrb.getLocalizedString("user_property_window", "User Property Window"));
 
-		if (this.panel.clickedApply() || this.panel.clickedOk()) {
-        	setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
-        }
+			if (this.panel.clickedApply() || this.panel.clickedOk()) {
+	        	setOnLoad("window.opener.parent.frames['iwb_main'].location.reload()");
+	        }
+		} catch (Throwable e) {
+			getLogger().log(Level.WARNING, "Error rendering " + getClass().getSimpleName(), e);
+			throw e;
+		}
 	}
 
 	/**
@@ -162,9 +168,9 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			ult.setUserIDAndGroupID(userId, groupId);
 			panel.addTab(ult, ++count, iwc);
 		}
-		catch (RemoteException remoteEx) {
-			logError("[UserPropertyWindow] Could not look up services bean");
-			throw new RuntimeException("[UserPropertyWindow] Could not look up services beans", remoteEx);
+		catch (Throwable e) {
+			getLogger().log(Level.WARNING, "Error initializing tab " + getClass().getSimpleName() + ". User ID: " + getUserId() + ", selected group ID: " + getGroupId(), e);
+			throw new RuntimeException("[UserPropertyWindow] Could not look up services beans", e);
 		}
 	}
 
@@ -173,70 +179,75 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 	 */
 	@Override
 	protected TabbedPropertyPanel getPanelInstance(IWContext iwc) {
-		boolean useOkButton = false;
-		boolean useApplyButton = false;
-		boolean useCancelButton = true;
-		boolean isAdmin = iwc.isSuperAdmin();
-		TabbedPropertyPanel panelInSession = (TabbedPropertyPanel) iwc.getSessionAttribute(getSessionAddressString());
-		if (panelInSession != null) {
-			useOkButton = panelInSession.isOkButtonDisabled();
-			useApplyButton = panelInSession.isApplyButtonDisabled();
-			useCancelButton = panelInSession.isCancelButtonDisabled();
-		}
-		if (isAdmin) {// only super admin can edit without permission
-			useOkButton = true;
-			useApplyButton = true;
-		}
-		if (!useOkButton && iwc.getApplicationSettings().getBoolean("ua.not_admin_can_save_users", false) && iwc.hasRole(StandardRoles.ROLE_KEY_USERADMIN)) {
-			useOkButton = true;
-		}
-		// check if we have edit permissions, otherwise disable saving
-		String groupId = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
-		if (groupId != null && !"-1".equals(groupId) && !isAdmin) {
-			try {
-				useOkButton = iwc.getAccessController().hasEditPermissionFor(
-						getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(groupId)), iwc);
+		try {
+			boolean useOkButton = false;
+			boolean useApplyButton = false;
+			boolean useCancelButton = true;
+			boolean isAdmin = iwc.isSuperAdmin();
+			TabbedPropertyPanel panelInSession = (TabbedPropertyPanel) iwc.getSessionAttribute(getSessionAddressString());
+			if (panelInSession != null) {
+				useOkButton = panelInSession.isOkButtonDisabled();
+				useApplyButton = panelInSession.isApplyButtonDisabled();
+				useCancelButton = panelInSession.isCancelButtonDisabled();
 			}
-			catch (Exception e) {
-				e.printStackTrace();
+			if (isAdmin) {// only super admin can edit without permission
+				useOkButton = true;
+				useApplyButton = true;
 			}
-			useApplyButton = useOkButton;
-		}
-		if (!useOkButton) {
-			String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
-			if (userIdString != null && !userIdString.equals("")) {
-				Integer selectedUserId = null;
+			if (!useOkButton && iwc.getApplicationSettings().getBoolean("ua.not_admin_can_save_users", false) && iwc.hasRole(StandardRoles.ROLE_KEY_USERADMIN)) {
+				useOkButton = true;
+			}
+			// check if we have edit permissions, otherwise disable saving
+			String groupId = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_SELECTED_GROUP_ID);
+			if (groupId != null && !"-1".equals(groupId) && !isAdmin) {
 				try {
-				    selectedUserId = new Integer(userIdString);
-				} catch (NumberFormatException e){
-				    e.printStackTrace();
+					useOkButton = iwc.getAccessController().hasEditPermissionFor(
+							getGroupBusiness(iwc).getGroupByGroupID(Integer.parseInt(groupId)), iwc);
 				}
-				if (selectedUserId != null) {
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+				useApplyButton = useOkButton;
+			}
+			if (!useOkButton) {
+				String userIdString = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
+				if (userIdString != null && !userIdString.equals("")) {
+					Integer selectedUserId = null;
 					try {
-					    User selectedUser = getUserBusiness(iwc).getUser(selectedUserId);
-					    Collection parentGroupsOfSelectedUser = selectedUser.getParentGroups();
-					    Iterator parentIter = parentGroupsOfSelectedUser.iterator();
-					    while (parentIter.hasNext()) {
-					        if (iwc.getAccessController().hasEditPermissionFor((Group)parentIter.next(), iwc)) {
-					            useOkButton = true;
-					            break;
-					        }
-					    }
-					} catch (RemoteException e) {
+					    selectedUserId = new Integer(userIdString);
+					} catch (NumberFormatException e){
 					    e.printStackTrace();
+					}
+					if (selectedUserId != null) {
+						try {
+						    User selectedUser = getUserBusiness(iwc).getUser(selectedUserId);
+						    Collection parentGroupsOfSelectedUser = selectedUser.getParentGroups();
+						    Iterator parentIter = parentGroupsOfSelectedUser.iterator();
+						    while (parentIter.hasNext()) {
+						        if (iwc.getAccessController().hasEditPermissionFor((Group)parentIter.next(), iwc)) {
+						            useOkButton = true;
+						            break;
+						        }
+						    }
+						} catch (RemoteException e) {
+						    e.printStackTrace();
+						}
 					}
 				}
 			}
+			if (panelInSession != null) {
+				panelInSession.disableApplyButton(!useApplyButton);
+				panelInSession.disableOkButton(!useOkButton);
+				panelInSession.disableCancelButton(!useCancelButton);
+				return panelInSession;
+			}
+			else {
+				return new TabbedPropertyPanel(getSessionAddressString(), iwc, useOkButton, useCancelButton, useApplyButton);
+			}
+		} catch (Throwable t) {
+			getLogger().log(Level.WARNING, "Error getting instance of panel", t);
 		}
-		if (panelInSession != null) {
-			panelInSession.disableApplyButton(!useApplyButton);
-			panelInSession.disableOkButton(!useOkButton);
-			panelInSession.disableCancelButton(!useCancelButton);
-			return panelInSession;
-		}
-		else {
-			return new TabbedPropertyPanel(getSessionAddressString(), iwc, useOkButton, useCancelButton, useApplyButton);
-		}
+		return null;
 	}
 
 	/*
