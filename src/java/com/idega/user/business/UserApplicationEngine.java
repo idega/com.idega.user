@@ -3,6 +3,8 @@ package com.idega.user.business;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.MessagingException;
+
 import org.jdom2.Document;
 
 import com.idega.builder.bean.AdvancedProperty;
@@ -11,6 +13,7 @@ import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.Country;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.user.app.SimpleUserAppViewUsers;
@@ -48,6 +51,17 @@ public interface UserApplicationEngine {
 			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password, Map<String, String> emailProps);
 
 	public String isValidEmail(String email);
+	
+	public void sendMailWithLoginInfo(
+			IWContext iwc,
+			IWResourceBundle iwrb,
+			boolean newLogin,
+			String name,
+			String login,
+			String password,
+			String email,
+			Map<String, String> emailProps
+	) throws MessagingException;
 
 	public String getSimpleUserApplicationClassName();
 

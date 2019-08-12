@@ -21,6 +21,7 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.faces.component.UIComponent;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 
 import org.jdom2.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -935,39 +936,69 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 		//	Sending mail
 		if (sendEmailWithLoginInfo) {
-			IWMainApplicationSettings settings = iwc.getIWMainApplication().getSettings();
-
-			String portNumber = new StringBuilder(":").append(String.valueOf(iwc.getServerPort())).toString();
-			String portal = settings.getProperty("sua.portal_address");
-			String serverURL = CoreUtil.getServerURL(iwc.getRequest());
-			String serverLink = StringUtil.isEmpty(portal) ? StringHandler.replace(serverURL, portNumber, CoreConstants.EMPTY) : portal;
-			String subject = newLogin ? iwrb.getLocalizedString("account_was_created", "Account was created") :
-										iwrb.getLocalizedString("account_information_was_changed", "Account was modified");
-			StringBuilder text = new StringBuilder(iwrb.getLocalizedString("dear", "Dear").concat(CoreConstants.SPACE).concat(user.getName())
-					.concat(",\n\r"));
-			if (newLogin) {
-				text = text.append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink).append("\n\r")
-					.append(iwrb.getLocalizedString("your_user_name", "Your user name")).append(": ").append(login).append(", ")
-					.append(iwrb.getLocalizedString("your_password", "your password")).append(": ").append(password).append(". ")
-					.append(iwrb.getLocalizedString("we_recommend_to_change_password_after_login", "We recommend to change password after login!"));
-			} else {
-				String mainText = CoreConstants.EMPTY;
-				if (!MapUtil.isEmpty(emailProps) && emailProps.containsKey(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS)) {
-					mainText = MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation_felix", "Your account was modified {0}. Please, login in to review changes."), emailProps.get(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS));
-				} else {
-					mainText = MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified. Please, login in to review changes."), CoreConstants.EMPTY);
-				}
-				text = text.append(mainText).append("\n\r").append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink);
+			try {
+				sendMailWithLoginInfo(
+						iwc, 
+						iwrb, 
+						newLogin, 
+						user.getName(), 
+						userLogin, 
+						password,
+						email, 
+						emailProps
+				);
+			} catch (MessagingException e) {
+				getLogger().log(
+						Level.WARNING, 
+						"Failed sending email with login",
+						e
+				);
 			}
-			text.append("\n\r").append(iwrb.getLocalizedString("with_regards", "With regards,")).append("\r").append(settings.getProperty("with_regards_text", serverLink.concat(" team")));
-
-			sendEmail(userInfo.getEmail(), subject, text.toString());
 		}
 
 		CoreUtil.clearAllCaches();
 
 		result.setValue(iwrb.getLocalizedString("success_saving_user", "Your changes were successfully saved."));
 		return result;
+	}
+	
+	public void sendMailWithLoginInfo(
+			IWContext iwc,
+			IWResourceBundle iwrb,
+			boolean newLogin,
+			String name,
+			String login,
+			String password,
+			String email,
+			Map<String, String> emailProps
+	) throws MessagingException {
+		IWMainApplicationSettings settings = iwc.getIWMainApplication().getSettings();
+
+		String portNumber = new StringBuilder(":").append(String.valueOf(iwc.getServerPort())).toString();
+		String portal = settings.getProperty("sua.portal_address");
+		String serverURL = CoreUtil.getServerURL(iwc.getRequest());
+		String serverLink = StringUtil.isEmpty(portal) ? StringHandler.replace(serverURL, portNumber, CoreConstants.EMPTY) : portal;
+		String subject = newLogin ? iwrb.getLocalizedString("account_was_created", "Account was created") :
+									iwrb.getLocalizedString("account_information_was_changed", "Account was modified");
+		StringBuilder text = new StringBuilder(iwrb.getLocalizedString("dear", "Dear").concat(CoreConstants.SPACE).concat(name)
+				.concat(",\n\r"));
+		if (newLogin) {
+			text = text.append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink).append("\n\r")
+				.append(iwrb.getLocalizedString("your_user_name", "Your user name")).append(": ").append(login).append(", ")
+				.append(iwrb.getLocalizedString("your_password", "your password")).append(": ").append(password).append(". ")
+				.append(iwrb.getLocalizedString("we_recommend_to_change_password_after_login", "We recommend to change password after login!"));
+		} else {
+			String mainText = CoreConstants.EMPTY;
+			if (!MapUtil.isEmpty(emailProps) && emailProps.containsKey(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS)) {
+				mainText = MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation_felix", "Your account was modified {0}. Please, login in to review changes."), emailProps.get(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS));
+			} else {
+				mainText = MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified. Please, login in to review changes."), CoreConstants.EMPTY);
+			}
+			text = text.append(mainText).append("\n\r").append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink);
+		}
+		text.append("\n\r").append(iwrb.getLocalizedString("with_regards", "With regards,")).append("\r").append(settings.getProperty("with_regards_text", serverLink.concat(" team")));
+
+		sendEmail(email, subject, text.toString());
 	}
 
 	private Commune getCommune(String name) {
