@@ -146,13 +146,13 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 			}
 
 			// get plugins for extra tabs
-			Collection plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
-			Iterator iter = plugins.iterator();
+			Collection<UserGroupPlugInBusiness> plugins = getGroupBusiness(iwc).getUserGroupPluginsForUser(user);
+			Iterator<UserGroupPlugInBusiness> iter = plugins.iterator();
 			while (iter.hasNext()) {
-				UserGroupPlugInBusiness pluginBiz = (UserGroupPlugInBusiness) iter.next();
-				List tabs = pluginBiz.getUserPropertiesTabs(user);
+				UserGroupPlugInBusiness pluginBiz = iter.next();
+				List<?> tabs = pluginBiz.getUserPropertiesTabs(user);
 				if (tabs != null) {
-					Iterator tab = tabs.iterator();
+					Iterator<?> tab = tabs.iterator();
 					while (tab.hasNext()) {
 						UserTab el = (UserTab) tab.next();
 						el.setPanel(panel);
@@ -221,10 +221,10 @@ public class UserPropertyWindow extends TabbedPropertyWindow {
 					if (selectedUserId != null) {
 						try {
 						    User selectedUser = getUserBusiness(iwc).getUser(selectedUserId);
-						    Collection parentGroupsOfSelectedUser = selectedUser.getParentGroups();
-						    Iterator parentIter = parentGroupsOfSelectedUser.iterator();
+						    Collection<Group> parentGroupsOfSelectedUser = selectedUser.getParentGroups();
+						    Iterator<Group> parentIter = parentGroupsOfSelectedUser.iterator();
 						    while (parentIter.hasNext()) {
-						        if (iwc.getAccessController().hasEditPermissionFor((Group)parentIter.next(), iwc)) {
+						        if (iwc.getAccessController().hasEditPermissionFor(parentIter.next(), iwc)) {
 						            useOkButton = true;
 						            break;
 						        }
