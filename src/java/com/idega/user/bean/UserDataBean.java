@@ -32,7 +32,7 @@ public class UserDataBean implements Serializable {
 	private String addressId;
 	private String commune;
 
-	private Integer userId = null;
+	private Integer userId = null, groupId = null;
 
 	private boolean juridicalPerson = false;
 	private Boolean changePasswordNextTime = Boolean.FALSE;
@@ -214,5 +214,12 @@ public class UserDataBean implements Serializable {
 		this.mobilePhone = mobilePhone;
 	}
 
+	public Integer getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(Integer groupId) {
+		this.groupId = groupId;
+	}
 
 }
