@@ -544,6 +544,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			info.setProvince(province == null ? CoreConstants.EMPTY : province);
 
 			String postalBox = address.getPOBox();
+			if (StringUtil.isEmpty(postalBox) && postalCode != null) {
+				postalBox = postalCode.getPostalCode();
+			}
 			info.setPostalBox(postalBox == null ? CoreConstants.EMPTY : postalBox);
 
 			Commune commune = address.getCommune();
