@@ -286,8 +286,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		}
 
 		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null)
+		if (iwc == null) {
 			return null;
+		}
 
 		BuilderLogic builder = BuilderLogic.getInstance();
 
@@ -297,8 +298,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			try {
 				Group parentGroup = getGroupBusiness().getGroupByGroupID(bean.getParentGroupId());
 				childGroups = CoreUtil.getIdsAsIntegers(parentGroup.getChildGroups());
-				if (ListUtil.isEmpty(childGroups))
+				if (ListUtil.isEmpty(childGroups)) {
 					childGroups = Arrays.asList(Integer.valueOf(parentGroup.getPrimaryKey().toString()));
+				}
 			} catch (Exception e) {}
 		}
 		addUser.setChildGroups(childGroups);
@@ -383,12 +385,14 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	@Override
 	public UserDataBean getUserInfo(User user) {
 		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null)
+		if (iwc == null) {
 			return null;
+		}
 
 		UserBusiness userBusiness = getUserBusiness(iwc);
-		if (userBusiness == null)
+		if (userBusiness == null) {
 			return null;
+		}
 
 		IWBundle bundle = getBundle(iwc);
 		UserDataBean bean = new UserDataBean();
@@ -480,21 +484,32 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 	private void fillUserInfo(UserDataBean info, Phone phone, Phone mobilePhone,
 			Phone workPhone, Email email, Address address){
-		if (phone != null)
+		if (phone != null) {
 			info.setPhone(phone.getNumber());
-		if (mobilePhone != null)
+		}
+		if (mobilePhone != null) {
 			info.setMobilePhone(mobilePhone.getNumber());
+		}
 
-		if (workPhone != null)
+		if (workPhone != null) {
 			info.setWorkPhone(workPhone.getNumber());
+		}
 
-		if (email != null)
+		if (email != null) {
 			info.setEmail(email.getEmailAddress());
+		}
 
 		if (address != null) {
 			info.setAddressId(address.getPrimaryKey().toString());
 
 			String streetNameAndNumber = address.getStreetAddress();
+			if (StringUtil.isEmpty(streetNameAndNumber)) {
+				streetNameAndNumber = address.getStreetNameOriginal();
+				String number = address.getStreetNumber();
+				streetNameAndNumber = StringUtil.isEmpty(streetNameAndNumber) ?
+						streetNameAndNumber :
+						StringUtil.isEmpty(number) ? streetNameAndNumber : streetNameAndNumber.concat(CoreConstants.SPACE).concat(number);
+			}
 			info.setStreetNameAndNumber(streetNameAndNumber == null ? CoreConstants.EMPTY : streetNameAndNumber);
 
 			String postalCodeValue = null;
@@ -512,6 +527,17 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			info.setCountryName(countryName == null ? CoreConstants.EMPTY : countryName);
 
 			String city = address.getCity();
+			if (StringUtil.isEmpty(city) && postalCode != null) {
+				Commune commune = postalCode.getCommune();
+				commune = commune == null ? address.getCommune() : commune;
+				if (commune != null) {
+					city = commune.getCommuneName();
+				}
+
+				if (StringUtil.isEmpty(city)) {
+					city = postalCode.getName();
+				}
+			}
 			info.setCity(city == null ? CoreConstants.EMPTY : city);
 
 			String province = address.getProvince();
@@ -572,16 +598,19 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 	@Override
 	public UserDataBean getUserById(Integer id) {
-		if ((id == null) || (id < 1))
+		if ((id == null) || (id < 1)) {
 			return null;
+		}
 
 		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null)
+		if (iwc == null) {
 			return null;
+		}
 
 		UserBusiness userBusiness = getUserBusiness(iwc);
-		if (userBusiness == null)
+		if (userBusiness == null) {
 			return null;
+		}
 
 		UserDataBean info = null;
 
@@ -600,16 +629,19 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 	@Override
 	public UserDataBean getUserByPersonalId(String personalId) {
-		if (StringUtil.isEmpty(personalId))
+		if (StringUtil.isEmpty(personalId)) {
 			return null;
+		}
 
 		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null)
+		if (iwc == null) {
 			return null;
+		}
 
 		UserBusiness userBusiness = getUserBusiness(iwc);
-		if (userBusiness == null)
+		if (userBusiness == null) {
 			return null;
+		}
 
 		UserDataBean info = null;
 
@@ -736,8 +768,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			}
 			if (StringUtil.isEmpty(login)) {
 				List<String> logins = LoginDBHandler.getPossibleGeneratedUserLogins(user);
-				if (ListUtil.isEmpty(logins))
+				if (ListUtil.isEmpty(logins)) {
 					return result;
+				}
 				login = logins.get(0);
 			}
 			if (StringUtil.isEmpty(login)) {
@@ -745,8 +778,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				return result;
 			}
 
-			if (StringUtil.isEmpty(password))
+			if (StringUtil.isEmpty(password)) {
 				password = LoginDBHandler.getGeneratedPasswordForUser(user);
+			}
 			try {
 				loginTable = LoginDBHandler.createLogin(user, login, password);
 			} catch (LoginCreateException e) {
@@ -774,14 +808,16 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		result.setId(user.getId());
 
 		//	Personal ID
-		if (!StringUtil.isEmpty(personalId) && !personalId.equals(user.getPersonalID()))
+		if (!StringUtil.isEmpty(personalId) && !personalId.equals(user.getPersonalID())) {
 			user.setPersonalID(personalId);
+		}
 
 		removeUserFromOldGroups(iwc, deselectedGroups, user);
 
 		//	Name
-		if (allFieldsEditable)
+		if (allFieldsEditable) {
 			user.setFullName(name);
+		}
 
 		//	Phone
 		if (!StringUtil.isEmpty(phoneNumber)) {
@@ -891,8 +927,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		if (!newLogin && allFieldsEditable && loginTable != null) {
 			boolean updatePassword = false;
 			String oldPassword = loginTable.getUserPasswordInClearText();
-			if (password != null && (oldPassword == null || !password.equals(oldPassword)))
+			if (password != null && (oldPassword == null || !password.equals(oldPassword))) {
 				updatePassword = true;
+			}
 
 			if (updatePassword) {
 				try {
@@ -938,18 +975,18 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		if (sendEmailWithLoginInfo) {
 			try {
 				sendMailWithLoginInfo(
-						iwc, 
-						iwrb, 
-						newLogin, 
-						user.getName(), 
-						userLogin, 
+						iwc,
+						iwrb,
+						newLogin,
+						user.getName(),
+						userLogin,
 						password,
-						email, 
+						email,
 						emailProps
 				);
 			} catch (MessagingException e) {
 				getLogger().log(
-						Level.WARNING, 
+						Level.WARNING,
 						"Failed sending email with login",
 						e
 				);
@@ -961,7 +998,8 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		result.setValue(iwrb.getLocalizedString("success_saving_user", "Your changes were successfully saved."));
 		return result;
 	}
-	
+
+	@Override
 	public void sendMailWithLoginInfo(
 			IWContext iwc,
 			IWResourceBundle iwrb,
@@ -1543,8 +1581,9 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	private boolean setRoleByPermissionForGroup(IWContext iwc, AccessController accessController, int groupId, boolean value, String roleKey, String permissionKey) {
-		if (value)
+		if (value) {
 			return accessController.addRoleToGroup(roleKey, permissionKey, groupId, iwc);
+		}
 
 		return accessController.removeRoleFromGroup(roleKey, permissionKey, groupId, iwc);
 	}
