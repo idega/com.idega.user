@@ -222,4 +222,9 @@ public class UserDataBean implements Serializable {
 		this.groupId = groupId;
 	}
 
+	@Override
+	public String toString() {
+		return getName() + ": " + getPersonalId();
+	}
+
 }
