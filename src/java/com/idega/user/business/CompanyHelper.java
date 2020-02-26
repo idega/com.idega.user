@@ -12,4 +12,6 @@ public interface CompanyHelper extends Singleton {
 
 	public Address getCompanyAddress(String companyPersonalId);
 
+	public UserDataBean doCreateCompany(String name, String companyPersonalId);
+
 }
