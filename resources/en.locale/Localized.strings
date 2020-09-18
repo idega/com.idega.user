@@ -414,3 +414,8 @@ success_saving_user=Your changes were successfully saved.
 error_saving_user=Error occurred while saving Your changes.
 unknown=Unknown
 invalid_email=Please provide valid email!
+
+account_was_modified_explanation_cloud4club=Your access to cloud4club.com has been modified.
+account_was_modified_explanation_cloud4club.club=Club: {0}
+account_was_modified_explanation_cloud4club.added_access=Change: {0}
+

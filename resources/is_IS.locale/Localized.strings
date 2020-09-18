@@ -612,3 +612,7 @@ account_was_modified_explanation_felix=Gerð hefur verið breyting á aðgangi �
 login_here=Innskráning hér
 with_regards=Kær kveðja,
 account_information_was_changed=Breyting hefur verið gerð á aðgangi þínum
+
+account_was_modified_explanation_cloud4club=Gerð hefur verið breyting á aðgangi þínum í cloud4club.com.
+account_was_modified_explanation_cloud4club.club=Klúbbur: {0}
+account_was_modified_explanation_cloud4club.added_access=Breyting: {0}

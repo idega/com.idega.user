@@ -815,3 +815,7 @@ account_was_modified_explanation=Your account was modified. Please, login in to 
 account_was_modified_explanation_felix=Your account was modified {0}. Please, login in to review changes.
 with_regards=With regards,
 account_information_was_changed=Account was modified
+
+account_was_modified_explanation_cloud4club=Your access to cloud4club.com has been modified.
+account_was_modified_explanation_cloud4club.club=Club: {0}
+account_was_modified_explanation_cloud4club.added_access=Change: {0}

@@ -1029,15 +1029,26 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				.append(iwrb.getLocalizedString("your_password", "your password")).append(": ").append(password).append(". ")
 				.append(iwrb.getLocalizedString("we_recommend_to_change_password_after_login", "We recommend to change password after login!"));
 		} else {
-			String mainText = CoreConstants.EMPTY;
-			if (!MapUtil.isEmpty(emailProps) && emailProps.containsKey(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS)) {
-				mainText = MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation_felix", "Your account was modified {0}. Please, login in to review changes."), emailProps.get(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS));
+			StringBuilder mainText = new StringBuilder();
+			String defaultServerURL = settings.getProperty("DEFAULT_SERVER_URL", "cloud4club.com");
+			if (!StringUtil.isEmpty(defaultServerURL) && defaultServerURL.contains("cloud4club")) {
+				mainText = mainText.append(iwrb.getLocalizedString("account_was_modified_explanation_cloud4club", "Your access to cloud4club.com has been modified.")).append("\n\r\n\r");
+				if (!MapUtil.isEmpty(emailProps) && emailProps.containsKey(UserConstants.EMAIL_PLACEHOLDER_CLUB)) {
+					mainText = mainText.append(MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation_cloud4club.club", "Club: {0}"), emailProps.get(UserConstants.EMAIL_PLACEHOLDER_CLUB))).append("\n\r");
+				}
+				if (!MapUtil.isEmpty(emailProps) && emailProps.containsKey(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS)) {
+					mainText = mainText.append(MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation_cloud4club.added_access", "Change: {0}"), emailProps.get(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS))).append("\n\r");
+				}
 			} else {
-				mainText = MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified. Please, login in to review changes."), CoreConstants.EMPTY);
+				if (!MapUtil.isEmpty(emailProps) && emailProps.containsKey(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS)) {
+					mainText = mainText.append(MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation_felix", "Your account was modified {0}. Please, login in to review changes."), emailProps.get(UserConstants.EMAIL_PLACEHOLDER_ADDED_ACCESS)));
+				} else {
+					mainText = mainText.append(MessageFormat.format(iwrb.getLocalizedString("account_was_modified_explanation", "Your account was modified. Please, login in to review changes."), CoreConstants.EMPTY));
+				}
 			}
-			text = text.append(mainText).append("\n\r").append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink);
+			text = text.append(mainText.toString()).append("\n\r").append(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink);
 		}
-		text.append("\n\r").append(iwrb.getLocalizedString("with_regards", "With regards,")).append("\r").append(settings.getProperty("with_regards_text", serverLink.concat(" team")));
+		text.append("\n\r\n\r").append(iwrb.getLocalizedString("with_regards", "With regards,")).append("\n\r").append(settings.getProperty("with_regards_text", serverLink.concat(" team")));
 
 		sendEmail(email, subject, text.toString());
 	}
