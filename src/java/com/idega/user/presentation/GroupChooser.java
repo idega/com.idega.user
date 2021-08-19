@@ -1,6 +1,7 @@
 package com.idega.user.presentation;
 
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.text.Link;
@@ -44,8 +45,11 @@ private boolean submitForm;
   public void main(IWContext iwc){
     empty();
     if(this.chooserButtonImage == null) {
-			IWBundle iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER); //BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
+    	IWMainApplication iwma = iwc == null ? IWMainApplication.getDefaultIWMainApplication() : iwc.getIWMainApplication();
+		IWBundle iwb = iwma.getBundle(IW_BUNDLE_IDENTIFIER); //BuilderConstants.STANDARD_IW_BUNDLE_IDENTIFIER);
+		if (iwb != null) {
 			setChooseButtonImage(iwb.getImage("magnifyingglass.gif","Choose"));
+		}
     }
     	
   }
