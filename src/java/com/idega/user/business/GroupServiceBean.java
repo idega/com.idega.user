@@ -83,12 +83,12 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	public List<GroupNode> getTopGroupsAndDirectChildren(List<String> uniqueIds) {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
-			return new ArrayList<GroupNode>();
+			return new ArrayList<>();
 		}
 
 		GroupHelper helper = getGroupHelper(iwc);
 		if (helper == null) {
-			return new ArrayList<GroupNode>();
+			return new ArrayList<>();
 		}
 
 		List<GroupNode> topGroupsAndDirectChildren = helper.getTopGroupsAndDirectChildren();
@@ -101,7 +101,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return topGroupsAndDirectChildren;
 		}
 
-		List<String> uniqueIdsOfTopGroups = new ArrayList<String>();
+		List<String> uniqueIdsOfTopGroups = new ArrayList<>();
 		uniqueIdsOfTopGroups = getCurrentTreeUniqueIds(uniqueIdsOfTopGroups, topGroupsAndDirectChildren);
 
 		String image = helper.getGroupImageBaseUri(iwc);
@@ -310,7 +310,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 	 */
 	@Override
 	public boolean canUseRemoteServer(String server) {
-		List<String> scripts = new ArrayList<String>();
+		List<String> scripts = new ArrayList<>();
 		scripts.add(CoreConstants.DWR_ENGINE_SCRIPT);
 		scripts.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 
@@ -582,7 +582,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return null;
 		}
 
-		List<AdvancedProperty> statusLocalization = new ArrayList<AdvancedProperty>();
+		List<AdvancedProperty> statusLocalization = new ArrayList<>();
 		addStatusLocalization(statusLocalization, "STAT_ASSCOACH", iwrb.getLocalizedString("STAT_ASSCOACH", "Assistant Coach"));
 		addStatusLocalization(statusLocalization, "STAT_B_CASH", iwrb.getLocalizedString("STAT_B_CASH", "Cashier"));
 		addStatusLocalization(statusLocalization, "STAT_B_CEO", iwrb.getLocalizedString("STAT_B_CEO", "CEO"));
@@ -906,7 +906,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return null;
 		}
 
-		List<String> localizedText = new ArrayList<String>();
+		List<String> localizedText = new ArrayList<>();
 		localizedText.add(iwrb.getLocalizedString("group_name", "Name: "));					//	0
 		localizedText.add(iwrb.getLocalizedString("short_name", "Short name: "));			//	1
 		localizedText.add(iwrb.getLocalizedString("group_address", "Address: "));			//	2
@@ -932,7 +932,7 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 			return null;
 		}
 
-		List<String> localizedText = new ArrayList<String>();
+		List<String> localizedText = new ArrayList<>();
 		localizedText.add(iwrb.getLocalizedString("user_name", "Name: "));							//	0
 		localizedText.add(iwrb.getLocalizedString("user_title", "Title: "));						//	1
 		localizedText.add(iwrb.getLocalizedString("user_age", "Age: "));							//	2
@@ -1052,22 +1052,23 @@ public class GroupServiceBean extends IBOSessionBean implements GroupService {
 
     @Override
     public boolean removeUser(String userId, String groupId) {
-    	if(StringUtil.isEmpty(userId) || StringUtil.isEmpty(userId)){
+    	if (StringUtil.isEmpty(userId) || StringUtil.isEmpty(userId)) {
     		return false;
     	}
+
     	IWContext iwc = CoreUtil.getIWContext();
-    	if(!iwc.isLoggedOn()){
+    	if (iwc == null || !iwc.isLoggedOn()) {
     		return false;
     	}
+
     	GroupBusiness groupBusiness = getGroupBusiness(CoreUtil.getIWContext());
     	int groupIdInt = Integer.valueOf(groupId);
-    	try{
-
+    	try {
     		Group group = groupBusiness.getGroupByGroupID(groupIdInt);
     		User user = groupBusiness.getUserByID(Integer.valueOf(userId));
     		group.removeUser(user, iwc.getCurrentUser());
-    	}catch(Exception e){
-    		this.getLogger().log(Level.WARNING, "Failed adding user " + userId + " to group " + groupId, e);
+    	} catch (Exception e) {
+    		this.getLogger().log(Level.WARNING, "Failed removing user " + userId + " from group " + groupId, e);
     		return false;
     	}
         return true;
