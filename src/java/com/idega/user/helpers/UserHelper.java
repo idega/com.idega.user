@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -15,18 +14,33 @@ import com.idega.block.entity.business.EntityToPresentationObjectConverter;
 import com.idega.block.entity.data.EntityPath;
 import com.idega.block.entity.presentation.EntityBrowser;
 import com.idega.business.IBOLookup;
+import com.idega.core.accesscontrol.business.LoginDBHandler;
+import com.idega.core.accesscontrol.data.LoginInfo;
+import com.idega.core.business.DefaultSpringBean;
+import com.idega.core.contact.data.Email;
+import com.idega.core.contact.data.Phone;
+import com.idega.core.contact.data.PhoneTypeBMPBean;
+import com.idega.core.location.data.Address;
+import com.idega.core.location.data.Commune;
+import com.idega.core.location.data.Country;
+import com.idega.core.location.data.PostalCode;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.AbstractChooser;
 import com.idega.presentation.ui.RadioButton;
 import com.idega.presentation.ui.StyledAbstractChooserWindow;
+import com.idega.user.bean.UserDataBean;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.GroupTreeNode;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserConstants;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.User;
@@ -34,14 +48,17 @@ import com.idega.user.data.UserHome;
 import com.idega.user.presentation.CreateGroupWindow;
 import com.idega.user.presentation.GroupTreeView;
 import com.idega.user.presentation.UserChooserBrowserWindow;
+import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.IWColor;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 
-@Service
+@Service(UserHelper.USER_HELPER_BEAN)
 @Scope(BeanDefinition.SCOPE_SINGLETON)
-public class UserHelper {
+public class UserHelper extends DefaultSpringBean {
 
-	private static final Logger LOGGER = Logger.getLogger(UserHelper.class.getName());
+	public static final String USER_HELPER_BEAN = "userHelperBean";
 
 	private UserBusiness userBusiness = null;
 
@@ -65,7 +82,7 @@ public class UserHelper {
 					}
 				}
 
-				Collection<Group> groups = new ArrayList<Group>();
+				Collection<Group> groups = new ArrayList<>();
 				if (allowedGroupTypes == null)  {
 					groups = allGroups;
 				}
@@ -81,7 +98,7 @@ public class UserHelper {
 			}
 		}
 		catch(Exception e) {
-			 LOGGER.log(Level.WARNING, "Error getting GroupTreeView", e);
+			 getLogger().log(Level.WARNING, "Error getting GroupTreeView", e);
 		}
 
 		return viewer;
@@ -109,7 +126,7 @@ public class UserHelper {
 			}
 		}
 		catch (Exception e)  {
-			LOGGER.log(Level.WARNING, "Error getting group by: " + selectedGroup, e);
+			getLogger().log(Level.WARNING, "Error getting group by: " + selectedGroup, e);
 			return null;
 		}
 		if (group == null) {
@@ -127,7 +144,7 @@ public class UserHelper {
 			return null;
 		}
 
-		List<String> groupTypes = new ArrayList<String>();
+		List<String> groupTypes = new ArrayList<>();
 		for (GroupType groupType: groupsTypes)  {
 			groupTypes.add(groupType.getType());
 		}
@@ -150,7 +167,7 @@ public class UserHelper {
 	}
 
 	private Collection<GroupTreeNode> convertGroupCollectionToGroupNodeCollection(Collection<Group> groups, IWApplicationContext iwac){
-		List<GroupTreeNode> list = new ArrayList<GroupTreeNode>();
+		List<GroupTreeNode> list = new ArrayList<>();
 		for (Group group: groups) {
 			GroupTreeNode node = new GroupTreeNode(group, iwac);
 			list.add(node);
@@ -213,7 +230,7 @@ public class UserHelper {
 
 	public Collection<User> getUserEntities(String searchKey)  {
 	    if (searchKey == null) {
-			return new ArrayList<User>();
+			return new ArrayList<>();
 		}
 	    try {
 	    	UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
@@ -231,4 +248,176 @@ public class UserHelper {
 	    buffer.append(originalSearchString).append("%");
 	    return buffer.toString();
 	}
+
+	public UserDataBean getUserInfo(User user) {
+		IWContext iwc = CoreUtil.getIWContext();
+		IWApplicationContext iwac = iwc == null ? getIWApplicationContext() : iwc;
+
+		UserBusiness userBusiness = getUserBusiness(iwac);
+		if (userBusiness == null) {
+			return null;
+		}
+
+		IWBundle bundle = getBundle(UserConstants.IW_BUNDLE_IDENTIFIER);
+		UserDataBean bean = new UserDataBean();
+		if (user == null) {
+			IWResourceBundle iwrb = bundle.getResourceBundle(iwc == null ? getCurrentLocale() : iwc.getCurrentLocale());
+			String errorMessage = "Unable to find user by provided personal ID!";
+			errorMessage = iwrb.getLocalizedString("unable_to_find_user_by_personal_id", errorMessage);
+			bean.setErrorMessage(errorMessage);
+		} else {
+			//	ID
+			try {
+				bean.setUserId(Integer.valueOf(user.getId()));
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+
+			//	Name
+			bean.setName(user.getName());
+
+			//	Personal ID
+			String personalID = user.getPersonalID();
+			bean.setPersonalId(personalID == null ? CoreConstants.EMPTY : personalID);
+
+			//	Picture
+			String pictureUri = null;
+			Image image = userBusiness.getUserImage(user);
+			if (image == null) {
+				//	Default image
+				boolean male = true;
+				try {
+					male = userBusiness.isMale(user.getGenderID());
+				} catch (Exception e) {}
+				pictureUri = new StringBuilder(bundle.getVirtualPathWithFileNameString("images/")).append(male ? "user_male" : "user_female").append(".png")
+					.toString();
+			} else {
+				pictureUri = image.getMediaURL(iwc);
+				bean.setImageSet(true);
+			}
+			bean.setPictureUri(pictureUri);
+
+			//	Login
+//			String login = userBusiness.getUserLogin(user);
+//			bean.setLogin(login == null ? CoreConstants.EMPTY : login);
+
+			//	Password
+//			String password = userBusiness.getUserPassword(user);
+//			bean.setPassword(password == null ? CoreConstants.EMPTY : password);
+
+			//	Disabled account?
+			LoginInfo loginInfo = null;
+			try {
+				loginInfo = LoginDBHandler.getLoginInfo(LoginDBHandler.getUserLogin(user));
+			} catch(Exception e) {}
+			if (loginInfo == null) {
+				bean.setAccountEnabled(Boolean.TRUE);
+			} else {
+				bean.setAccountExists(true);
+				bean.setAccountEnabled(loginInfo.getAccountEnabled());
+				bean.setChangePasswordNextTime(loginInfo.getChangeNextTime());
+			}
+
+			//	Phone
+			Phone phone = null;
+			Phone mobilePhone = null;
+			Phone workphoPhone = null;
+			try {
+				int userId = Integer.valueOf(user.getId());
+				phone = userBusiness.getUserPhone(userId, PhoneTypeBMPBean.HOME_PHONE_ID);
+				mobilePhone = userBusiness.getUserPhone(userId, PhoneTypeBMPBean.MOBILE_PHONE_ID);
+				workphoPhone = userBusiness.getUserPhone(userId, PhoneTypeBMPBean.WORK_PHONE_ID);
+			} catch (Exception e) {}
+
+			//	Email
+			Email email = null;
+			try {
+				email = userBusiness.getUserMail(user);
+			} catch (Exception e) {}
+
+			//	Address
+			Address address = null;
+			try {
+				address = userBusiness.getUsersMainAddress(user);
+			} catch (RemoteException e) {}
+			fillUserInfo(bean, phone,mobilePhone,workphoPhone, email, address);
+		}
+
+		return bean;
+	}
+
+	public void fillUserInfo(UserDataBean info, Phone phone, Phone mobilePhone, Phone workPhone, Email email, Address address) {
+		if (phone != null) {
+			info.setPhone(phone.getNumber());
+		}
+		if (mobilePhone != null) {
+			info.setMobilePhone(mobilePhone.getNumber());
+		}
+
+		if (workPhone != null) {
+			info.setWorkPhone(workPhone.getNumber());
+		}
+
+		if (email != null) {
+			info.setEmail(email.getEmailAddress());
+		}
+
+		if (address != null) {
+			info.setAddressId(address.getPrimaryKey().toString());
+
+			String streetNameAndNumber = address.getStreetAddress();
+			if (StringUtil.isEmpty(streetNameAndNumber)) {
+				streetNameAndNumber = address.getStreetNameOriginal();
+				String number = address.getStreetNumber();
+				streetNameAndNumber = StringUtil.isEmpty(streetNameAndNumber) ?
+						streetNameAndNumber :
+						StringUtil.isEmpty(number) ? streetNameAndNumber : streetNameAndNumber.concat(CoreConstants.SPACE).concat(number);
+			}
+			info.setStreetNameAndNumber(streetNameAndNumber == null ? CoreConstants.EMPTY : streetNameAndNumber);
+
+			String postalCodeValue = null;
+			PostalCode postalCode = address.getPostalCode();
+			if (postalCode != null) {
+				postalCodeValue = postalCode.getPostalCode();
+			}
+			info.setPostalCodeId(postalCodeValue == null ? CoreConstants.EMPTY : postalCodeValue);
+
+			String countryName = CoreConstants.EMPTY;
+			Country country = address.getCountry();
+			if (country != null) {
+				countryName = country.getName();
+			}
+			info.setCountryName(countryName == null ? CoreConstants.EMPTY : countryName);
+
+			String city = address.getCity();
+			if (StringUtil.isEmpty(city) && postalCode != null) {
+				Commune commune = postalCode.getCommune();
+				commune = commune == null ? address.getCommune() : commune;
+				if (commune != null) {
+					city = commune.getCommuneName();
+				}
+
+				if (StringUtil.isEmpty(city)) {
+					city = postalCode.getName();
+				}
+			}
+			info.setCity(city == null ? CoreConstants.EMPTY : city);
+
+			String province = address.getProvince();
+			info.setProvince(province == null ? CoreConstants.EMPTY : province);
+
+			String postalBox = address.getPOBox();
+			if (StringUtil.isEmpty(postalBox) && postalCode != null) {
+				postalBox = postalCode.getPostalCode();
+			}
+			info.setPostalBox(postalBox == null ? CoreConstants.EMPTY : postalBox);
+
+			Commune commune = address.getCommune();
+			if (commune != null) {
+				String communeName = commune.getCommuneName();
+				info.setCommune(communeName == null ? CoreConstants.EMPTY : communeName);
+			}
+		}
+	}
+
 }

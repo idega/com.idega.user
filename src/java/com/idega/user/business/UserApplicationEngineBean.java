@@ -63,7 +63,6 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.user.app.SimpleUserApp;
@@ -74,6 +73,7 @@ import com.idega.user.bean.SimpleUserPropertiesBean;
 import com.idega.user.bean.UserDataBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.user.helpers.UserHelper;
 import com.idega.user.presentation.GroupMembersListViewer;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
@@ -101,8 +101,11 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	@Autowired
 	private SimpleUserAppHelper presentationHelper;
 
-	private final Map<String, SimpleUserAppViewUsers> simpleUserApps = new HashMap<String, SimpleUserAppViewUsers>();
-	private final Map<String, List<Integer>> pagerProperties = new HashMap<String, List<Integer>>();
+	@Autowired
+	private UserHelper userHelper;
+
+	private final Map<String, SimpleUserAppViewUsers> simpleUserApps = new HashMap<>();
+	private final Map<String, List<Integer>> pagerProperties = new HashMap<>();
 
 	public GroupHelper getGroupHelper() {
 		return groupHelper;
@@ -169,7 +172,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		}
 
 		Group group = null;
-		List<AdvancedProperty> childGroupsProperties = new ArrayList<AdvancedProperty>();
+		List<AdvancedProperty> childGroupsProperties = new ArrayList<>();
 		for (Iterator<Group> it = childGroups.iterator(); it.hasNext();) {
 			group = it.next();
 
@@ -234,7 +237,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			return null;
 		}
 
-		List<Integer> removedUsers = new ArrayList<Integer>();
+		List<Integer> removedUsers = new ArrayList<>();
 		Integer id = null;
 		for (int i = 0; i < usersIds.size(); i++) {
 			id = usersIds.get(i);
@@ -372,7 +375,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			return null;
 		}
 		List<Group> groups = helper.getFilteredChildGroups(iwc, parentGroupId.intValue(), groupTypes, groupRoles, CoreConstants.COMMA, subGroups, subGroupsToExclude);
-		List<String> ids = new ArrayList<String>();
+		List<String> ids = new ArrayList<>();
 		String selectedGroupId = null;
 		if (groups == null || groups.isEmpty()) {
 			selectedGroupId = String.valueOf(parentGroupId);
@@ -384,181 +387,11 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 	@Override
 	public UserDataBean getUserInfo(User user) {
-		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
-			return null;
-		}
-
-		UserBusiness userBusiness = getUserBusiness(iwc);
-		if (userBusiness == null) {
-			return null;
-		}
-
-		IWBundle bundle = getBundle(iwc);
-		UserDataBean bean = new UserDataBean();
-		if (user == null) {
-			IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
-			String errorMessage = "Unable to find user by provided personal ID!";
-			errorMessage = iwrb.getLocalizedString("unable_to_find_user_by_personal_id", errorMessage);
-			bean.setErrorMessage(errorMessage);
-		} else {
-			//	ID
-			try {
-				bean.setUserId(Integer.valueOf(user.getId()));
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-
-			//	Name
-			bean.setName(user.getName());
-
-			//	Personal ID
-			String personalID = user.getPersonalID();
-			bean.setPersonalId(personalID == null ? CoreConstants.EMPTY : personalID);
-
-			//	Picture
-			String pictureUri = null;
-			Image image = userBusiness.getUserImage(user);
-			if (image == null) {
-				//	Default image
-				boolean male = true;
-				try {
-					male = userBusiness.isMale(user.getGenderID());
-				} catch (Exception e) {}
-				pictureUri = new StringBuilder(bundle.getVirtualPathWithFileNameString("images/")).append(male ? "user_male" : "user_female").append(".png")
-					.toString();
-			} else {
-				pictureUri = image.getMediaURL(iwc);
-				bean.setImageSet(true);
-			}
-			bean.setPictureUri(pictureUri);
-
-			//	Login
-//			String login = userBusiness.getUserLogin(user);
-//			bean.setLogin(login == null ? CoreConstants.EMPTY : login);
-
-			//	Password
-//			String password = userBusiness.getUserPassword(user);
-//			bean.setPassword(password == null ? CoreConstants.EMPTY : password);
-
-			//	Disabled account?
-			LoginInfo loginInfo = null;
-			try {
-				loginInfo = LoginDBHandler.getLoginInfo(LoginDBHandler.getUserLogin(user));
-			} catch(Exception e) {}
-			if (loginInfo == null) {
-				bean.setAccountEnabled(Boolean.TRUE);
-			} else {
-				bean.setAccountExists(true);
-				bean.setAccountEnabled(loginInfo.getAccountEnabled());
-				bean.setChangePasswordNextTime(loginInfo.getChangeNextTime());
-			}
-
-			//	Phone
-			Phone phone = null;
-			Phone mobilePhone = null;
-			Phone workphoPhone = null;
-			try {
-				int userId = Integer.valueOf(user.getId());
-				phone = userBusiness.getUserPhone(userId, PhoneTypeBMPBean.HOME_PHONE_ID);
-				mobilePhone = userBusiness.getUserPhone(userId, PhoneTypeBMPBean.MOBILE_PHONE_ID);
-				workphoPhone = userBusiness.getUserPhone(userId, PhoneTypeBMPBean.WORK_PHONE_ID);
-			} catch (Exception e) {}
-
-			//	Email
-			Email email = null;
-			try {
-				email = userBusiness.getUserMail(user);
-			} catch (Exception e) {}
-
-			//	Address
-			Address address = null;
-			try {
-				address = userBusiness.getUsersMainAddress(user);
-			} catch (RemoteException e) {}
-			fillUserInfo(bean, phone,mobilePhone,workphoPhone, email, address);
-		}
-
-		return bean;
-	}
-
-	private void fillUserInfo(UserDataBean info, Phone phone, Phone mobilePhone,
-			Phone workPhone, Email email, Address address){
-		if (phone != null) {
-			info.setPhone(phone.getNumber());
-		}
-		if (mobilePhone != null) {
-			info.setMobilePhone(mobilePhone.getNumber());
-		}
-
-		if (workPhone != null) {
-			info.setWorkPhone(workPhone.getNumber());
-		}
-
-		if (email != null) {
-			info.setEmail(email.getEmailAddress());
-		}
-
-		if (address != null) {
-			info.setAddressId(address.getPrimaryKey().toString());
-
-			String streetNameAndNumber = address.getStreetAddress();
-			if (StringUtil.isEmpty(streetNameAndNumber)) {
-				streetNameAndNumber = address.getStreetNameOriginal();
-				String number = address.getStreetNumber();
-				streetNameAndNumber = StringUtil.isEmpty(streetNameAndNumber) ?
-						streetNameAndNumber :
-						StringUtil.isEmpty(number) ? streetNameAndNumber : streetNameAndNumber.concat(CoreConstants.SPACE).concat(number);
-			}
-			info.setStreetNameAndNumber(streetNameAndNumber == null ? CoreConstants.EMPTY : streetNameAndNumber);
-
-			String postalCodeValue = null;
-			PostalCode postalCode = address.getPostalCode();
-			if (postalCode != null) {
-				postalCodeValue = postalCode.getPostalCode();
-			}
-			info.setPostalCodeId(postalCodeValue == null ? CoreConstants.EMPTY : postalCodeValue);
-
-			String countryName = CoreConstants.EMPTY;
-			Country country = address.getCountry();
-			if (country != null) {
-				countryName = country.getName();
-			}
-			info.setCountryName(countryName == null ? CoreConstants.EMPTY : countryName);
-
-			String city = address.getCity();
-			if (StringUtil.isEmpty(city) && postalCode != null) {
-				Commune commune = postalCode.getCommune();
-				commune = commune == null ? address.getCommune() : commune;
-				if (commune != null) {
-					city = commune.getCommuneName();
-				}
-
-				if (StringUtil.isEmpty(city)) {
-					city = postalCode.getName();
-				}
-			}
-			info.setCity(city == null ? CoreConstants.EMPTY : city);
-
-			String province = address.getProvince();
-			info.setProvince(province == null ? CoreConstants.EMPTY : province);
-
-			String postalBox = address.getPOBox();
-			if (StringUtil.isEmpty(postalBox) && postalCode != null) {
-				postalBox = postalCode.getPostalCode();
-			}
-			info.setPostalBox(postalBox == null ? CoreConstants.EMPTY : postalBox);
-
-			Commune commune = address.getCommune();
-			if (commune != null) {
-				String communeName = commune.getCommuneName();
-				info.setCommune(communeName == null ? CoreConstants.EMPTY : communeName);
-			}
-		}
+		return userHelper.getUserInfo(user);
 	}
 
 	public void fillUserInfo(UserDataBean info, Phone phone, Phone mobilePhone, Email email, Address address){
-		fillUserInfo(info, mobilePhone, mobilePhone, null, email, address);
+		userHelper.fillUserInfo(info, mobilePhone, mobilePhone, null, email, address);
 	}
 	@Override
 	public void fillUserInfo(UserDataBean info, Phone phone, Email email, Address address) {
@@ -1218,7 +1051,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		//	Getting deselected groups
 		Integer groupId = null;
 		Group group = null;
-		List<Group> groups = new ArrayList<Group>();
+		List<Group> groups = new ArrayList<>();
 		for (int i = 0; i < deselectedGroups.size(); i++) {
 			group = null;
 			groupId = deselectedGroups.get(i);
@@ -1409,7 +1242,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			return null;
 		}
 
-		List<AdvancedProperty> pages = new ArrayList<AdvancedProperty>();
+		List<AdvancedProperty> pages = new ArrayList<>();
 
 		//	Getting pages by localized name
 		Collection<IBPageName> pagesWithName = null;
@@ -1418,7 +1251,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		Map<String, String> pagesIdAndName = new HashMap<String, String>();
+		Map<String, String> pagesIdAndName = new HashMap<>();
 		if (pagesWithName != null && !pagesWithName.isEmpty()) {
 			IBPageName pageName = null;
 			for (Iterator<IBPageName> it = pagesWithName.iterator(); it.hasNext();) {
@@ -1429,10 +1262,10 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		}
 		List<String> ids = null;
 		if (pagesIdAndName.isEmpty()) {
-			ids = new ArrayList<String>();
+			ids = new ArrayList<>();
 		}
 		else {
-			ids = new ArrayList<String>(pagesIdAndName.keySet());
+			ids = new ArrayList<>(pagesIdAndName.keySet());
 
 			Collection<ICPage> pagesByLocalizedName = null;
 			try {
@@ -1440,8 +1273,8 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			} catch (FinderException e) {
 				e.printStackTrace();
 			}
-			pages = new ArrayList<AdvancedProperty>(getFilteredPages(pagesByLocalizedName, pagesIdAndName));
-			ids = new ArrayList<String>();
+			pages = new ArrayList<>(getFilteredPages(pagesByLocalizedName, pagesIdAndName));
+			ids = new ArrayList<>();
 			for (AdvancedProperty page : pages) {
 				ids.add(page.getId());
 			}
@@ -1468,7 +1301,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	private List<AdvancedProperty> getFilteredPages(Collection<ICPage> pages, Map<String, String> pagesIdAndName) {
-		List<AdvancedProperty> filteredPages = new ArrayList<AdvancedProperty>();
+		List<AdvancedProperty> filteredPages = new ArrayList<>();
 		if (pages == null || pages.isEmpty()) {
 			return filteredPages;
 		}
@@ -1504,7 +1337,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			topGroups = getGroupHelper().getTopAndParentGroups(topGroups);
 		}
 
-		return new ArrayList<Group>(getGroupHelper().getFilteredGroups(iwc, topGroups, groupTypes, CoreConstants.COMMA, useChildrenOfTopNodesAsParentGroups));
+		return new ArrayList<>(getGroupHelper().getFilteredGroups(iwc, topGroups, groupTypes, CoreConstants.COMMA, useChildrenOfTopNodesAsParentGroups));
 	}
 
 	@Override
@@ -1540,7 +1373,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 		if (groups == null || groups.size() == 0) {
 			return null;
 		}
-		List<AdvancedProperty> result = new ArrayList<AdvancedProperty>();
+		List<AdvancedProperty> result = new ArrayList<>();
 		for (Group group: groups) {
 			if (group == null) {
 				continue;
