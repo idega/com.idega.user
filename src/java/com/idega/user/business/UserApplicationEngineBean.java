@@ -391,7 +391,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 	}
 
 	public void fillUserInfo(UserDataBean info, Phone phone, Phone mobilePhone, Email email, Address address){
-		userHelper.fillUserInfo(info, mobilePhone, mobilePhone, null, email, address);
+		userHelper.fillUserInfo(info, phone, mobilePhone, null, email, address);
 	}
 	@Override
 	public void fillUserInfo(UserDataBean info, Phone phone, Email email, Address address) {
