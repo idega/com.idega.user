@@ -340,10 +340,73 @@ public class UserHelper extends DefaultSpringBean {
 			try {
 				address = userBusiness.getUsersMainAddress(user);
 			} catch (RemoteException e) {}
-			fillUserInfo(bean, phone,mobilePhone,workphoPhone, email, address);
+			fillUserInfo(bean, phone, mobilePhone, workphoPhone, email, address);
 		}
 
 		return bean;
+	}
+
+	public void setAddress(UserDataBean info, Address address) {
+		if (address == null) {
+			return;
+		}
+
+		info = info == null ? new UserDataBean() : info;
+
+		info.setAddressId(address.getPrimaryKey().toString());
+
+		String streetNameAndNumber = address.getStreetAddress();
+		if (StringUtil.isEmpty(streetNameAndNumber)) {
+			streetNameAndNumber = address.getStreetNameOriginal();
+			String number = address.getStreetNumber();
+			streetNameAndNumber = StringUtil.isEmpty(streetNameAndNumber) ?
+					streetNameAndNumber :
+					StringUtil.isEmpty(number) ? streetNameAndNumber : streetNameAndNumber.concat(CoreConstants.SPACE).concat(number);
+		}
+		info.setStreetNameAndNumber(streetNameAndNumber == null ? CoreConstants.EMPTY : streetNameAndNumber);
+
+		String postalCodeValue = null;
+		PostalCode postalCode = address.getPostalCode();
+		if (postalCode != null) {
+			postalCodeValue = postalCode.getPostalCode();
+		}
+		info.setPostalCodeId(postalCodeValue == null ? CoreConstants.EMPTY : postalCodeValue);
+
+		String countryName = CoreConstants.EMPTY;
+		Country country = address.getCountry();
+		if (country != null) {
+			countryName = country.getName();
+		}
+		info.setCountryName(countryName == null ? CoreConstants.EMPTY : countryName);
+
+		String city = address.getCity();
+		if (StringUtil.isEmpty(city) && postalCode != null) {
+			Commune commune = postalCode.getCommune();
+			commune = commune == null ? address.getCommune() : commune;
+			if (commune != null) {
+				city = commune.getCommuneName();
+			}
+
+			if (StringUtil.isEmpty(city)) {
+				city = postalCode.getName();
+			}
+		}
+		info.setCity(city == null ? CoreConstants.EMPTY : city);
+
+		String province = address.getProvince();
+		info.setProvince(province == null ? CoreConstants.EMPTY : province);
+
+		String postalBox = address.getPOBox();
+		if (StringUtil.isEmpty(postalBox) && postalCode != null) {
+			postalBox = postalCode.getPostalCode();
+		}
+		info.setPostalBox(postalBox == null ? CoreConstants.EMPTY : postalBox);
+
+		Commune commune = address.getCommune();
+		if (commune != null) {
+			String communeName = commune.getCommuneName();
+			info.setCommune(communeName == null ? CoreConstants.EMPTY : communeName);
+		}
 	}
 
 	public void fillUserInfo(UserDataBean info, Phone phone, Phone mobilePhone, Phone workPhone, Email email, Address address) {
@@ -362,62 +425,7 @@ public class UserHelper extends DefaultSpringBean {
 			info.setEmail(email.getEmailAddress());
 		}
 
-		if (address != null) {
-			info.setAddressId(address.getPrimaryKey().toString());
-
-			String streetNameAndNumber = address.getStreetAddress();
-			if (StringUtil.isEmpty(streetNameAndNumber)) {
-				streetNameAndNumber = address.getStreetNameOriginal();
-				String number = address.getStreetNumber();
-				streetNameAndNumber = StringUtil.isEmpty(streetNameAndNumber) ?
-						streetNameAndNumber :
-						StringUtil.isEmpty(number) ? streetNameAndNumber : streetNameAndNumber.concat(CoreConstants.SPACE).concat(number);
-			}
-			info.setStreetNameAndNumber(streetNameAndNumber == null ? CoreConstants.EMPTY : streetNameAndNumber);
-
-			String postalCodeValue = null;
-			PostalCode postalCode = address.getPostalCode();
-			if (postalCode != null) {
-				postalCodeValue = postalCode.getPostalCode();
-			}
-			info.setPostalCodeId(postalCodeValue == null ? CoreConstants.EMPTY : postalCodeValue);
-
-			String countryName = CoreConstants.EMPTY;
-			Country country = address.getCountry();
-			if (country != null) {
-				countryName = country.getName();
-			}
-			info.setCountryName(countryName == null ? CoreConstants.EMPTY : countryName);
-
-			String city = address.getCity();
-			if (StringUtil.isEmpty(city) && postalCode != null) {
-				Commune commune = postalCode.getCommune();
-				commune = commune == null ? address.getCommune() : commune;
-				if (commune != null) {
-					city = commune.getCommuneName();
-				}
-
-				if (StringUtil.isEmpty(city)) {
-					city = postalCode.getName();
-				}
-			}
-			info.setCity(city == null ? CoreConstants.EMPTY : city);
-
-			String province = address.getProvince();
-			info.setProvince(province == null ? CoreConstants.EMPTY : province);
-
-			String postalBox = address.getPOBox();
-			if (StringUtil.isEmpty(postalBox) && postalCode != null) {
-				postalBox = postalCode.getPostalCode();
-			}
-			info.setPostalBox(postalBox == null ? CoreConstants.EMPTY : postalBox);
-
-			Commune commune = address.getCommune();
-			if (commune != null) {
-				String communeName = commune.getCommuneName();
-				info.setCommune(communeName == null ? CoreConstants.EMPTY : communeName);
-			}
-		}
+		setAddress(info, address);
 	}
 
 }
