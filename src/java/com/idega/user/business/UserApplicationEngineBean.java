@@ -701,6 +701,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				ICFile picture = ((ICFileHome) IDOLookup.getHome(ICFile.class)).create();
 				picture.setFileValue(getRepositoryService().getInputStreamAsRoot(userInfo.getPictureUri()
 						.replace(CoreConstants.WEBDAV_SERVLET_URI, CoreConstants.EMPTY)));
+				picture.setPublic(true);
 				picture.setFileUri(userInfo.getPictureUri());
 				picture.setName(userInfo.getPictureUri().substring(userInfo.getPictureUri().lastIndexOf(CoreConstants.SLASH) + 1));
 				picture.store();
