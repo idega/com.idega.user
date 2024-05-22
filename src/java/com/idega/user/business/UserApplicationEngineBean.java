@@ -22,6 +22,9 @@ import javax.ejb.RemoveException;
 import javax.faces.component.UIComponent;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jdom2.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -512,13 +515,14 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 
 	@Override
 	public AdvancedProperty createUser(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
-			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password) {
-		return createUserWithEmailProps(userInfo, primaryGroupId, childGroups, deselectedGroups, allFieldsEditable, sendEmailWithLoginInfo, login, password, null);
+			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password, HttpServletRequest request, HttpServletResponse response, ServletContext context) {
+		return createUserWithEmailProps(userInfo, primaryGroupId, childGroups, deselectedGroups, allFieldsEditable, sendEmailWithLoginInfo, login, password, null, request, response, context);
 	}
 
 	@Override
 	public AdvancedProperty createUserWithEmailProps(UserDataBean userInfo, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
-			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password, Map<String, String> emailProps) {
+			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password, Map<String, String> emailProps,
+			HttpServletRequest request, HttpServletResponse response, ServletContext context) {
 		if (userInfo == null) {
 			logger.warning("User info is not provided!");
 			return null;
@@ -536,7 +540,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 			return result;
 		}
 
-		IWContext iwc = CoreUtil.getIWContext();
+		IWContext iwc = request == null || response == null || context == null ? null : new IWContext(request, response, context);
 		if (iwc == null) {
 			logger.warning(IWContext.class.getName() + " is unavailable");
 			return result;
@@ -618,7 +622,7 @@ public class UserApplicationEngineBean extends DefaultSpringBean implements User
 				password = LoginDBHandler.getGeneratedPasswordForUser(user);
 			}
 			try {
-				loginTable = LoginDBHandler.createLogin(user, login, password);
+				loginTable = LoginDBHandler.createLogin(iwc, user, login, password);
 			} catch (LoginCreateException e) {
 				logger.log(Level.WARNING, "Error creating login '" + login + "' for user " + user, e);
 				String message = iwrb.getLocalizedString("error_creating_account_with_username_{0}_for_{1}", "Error creating account for {1} with username {0}: username {0} is already in use");

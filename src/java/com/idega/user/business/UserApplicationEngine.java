@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.mail.MessagingException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jdom2.Document;
 
@@ -45,13 +48,14 @@ public interface UserApplicationEngine {
 	public UserDataBean getUserById(Integer id);
 
 	public AdvancedProperty createUser(UserDataBean userData, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
-			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password);
+			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password, HttpServletRequest request, HttpServletResponse response, ServletContext context);
 
 	public AdvancedProperty createUserWithEmailProps(UserDataBean userData, Integer primaryGroupId, List<Integer> childGroups, List<Integer> deselectedGroups,
-			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password, Map<String, String> emailProps);
+			boolean allFieldsEditable, boolean sendEmailWithLoginInfo, String login, String password, Map<String, String> emailProps,
+			HttpServletRequest request, HttpServletResponse response, ServletContext context);
 
 	public String isValidEmail(String email);
-	
+
 	public void sendMailWithLoginInfo(
 			IWContext iwc,
 			IWResourceBundle iwrb,

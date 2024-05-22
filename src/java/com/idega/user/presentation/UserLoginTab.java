@@ -199,7 +199,7 @@ public class UserLoginTab extends UserTab {
 		}
 		else {
 			this.errorMessageTable.empty();
-			return saveLoginChanges(updateLoginTable, newLoginName, passw, mustChangePassw, accountEnabled);
+			return saveLoginChanges(iwc, updateLoginTable, newLoginName, passw, mustChangePassw, accountEnabled);
 		}
 	}
 
@@ -290,23 +290,23 @@ public class UserLoginTab extends UserTab {
 	 * @param accountEnabled
 	 * @return
 	 */
-	protected boolean saveLoginChanges(boolean updateLoginTable, String login, String passw, Boolean mustChangePassw, Boolean accountEnabled) {
+	protected boolean saveLoginChanges(IWContext iwc, boolean updateLoginTable, String login, String passw, Boolean mustChangePassw, Boolean accountEnabled) {
 		try {
 			LoginTable loginTable = LoginDBHandler.getDefaultUserLogin(this.getUserId());
 			if (loginTable != null) {
 				if (updateLoginTable) {
-					LoginDBHandler.updateLogin(loginTable, this.getUserId(), login, passw);
+					LoginDBHandler.updateLogin(iwc, loginTable, this.getUserId(), login, passw);
 				}
 				//removed password expires
 				//LoginDBHandler.updateLoginInfo(loginTable, accountEnabled, IWTimestamp.RightNow(), 5000,passwExpires, canChangePassw, mustChangePassw, null);
 				LoginDBHandler.updateLoginInfo(loginTable, accountEnabled, IWTimestamp.RightNow(), 5000,Boolean.FALSE, Boolean.TRUE, mustChangePassw, null);
 			}
 			else if (updateLoginTable) {
-				LoginDBHandler.createLogin(this.getUserId(), login, passw, accountEnabled, IWTimestamp.RightNow(),5000, Boolean.FALSE, Boolean.TRUE, mustChangePassw, null);
+				LoginDBHandler.createLogin(iwc, this.getUserId(), login, passw, accountEnabled, IWTimestamp.RightNow(),5000, Boolean.FALSE, Boolean.TRUE, mustChangePassw, null);
 			}
 			else {
 				if(login!=null && !"".equals(login) && passw!=null && !"".equals(passw)){
-					LoginDBHandler.createLogin(this.getUserId(), login, passw);
+					LoginDBHandler.createLogin(iwc, this.getUserId(), login, passw);
 				}
 			}
 			return true;
