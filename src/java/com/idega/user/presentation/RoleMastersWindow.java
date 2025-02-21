@@ -216,7 +216,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 					user = getUserBusiness(iwc).getUser((Integer) group.getPrimaryKey());
 
 					aLink = new Link(user.getName());
-					if (!group.equals(this.administrator)) {
+					if (!group.getId().equals(this.administrator.getPrimaryKey().toString())) {
 						aLink.setWindowToOpen(UserPropertyWindow.class);
 						aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, group.getPrimaryKey().toString());
 					}
@@ -353,7 +353,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 		if (this.groupBiz == null) {
 
 			try {
-				this.groupBiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				this.groupBiz = IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
@@ -376,7 +376,7 @@ public class RoleMastersWindow extends StyledIWAdminWindow {
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
 		if (this.userBiz == null) {
 			try {
-				this.userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+				this.userBiz = com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
